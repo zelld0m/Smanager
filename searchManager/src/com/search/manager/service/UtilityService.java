@@ -221,6 +221,7 @@ public class UtilityService {
 	public static String getStoreParameters(){
 		JSONObject json = new JSONObject();
 		json.put("username", getUsername());
+		json.put("solrSelectorParam", getSolrSelectorParam());
 		json.put("storeId", getStoreId());
 		json.put("storeCore", getStoreCore());
 		json.put("storeName", getStoreName());
@@ -341,6 +342,12 @@ public class UtilityService {
 
 		return storeFacetTemplate;
 	}
+	
+	@RemoteMethod
+	public static String getSolrSelectorParam(){
+		return ConfigManager.getInstance().getSolrSelectorParam();
+	}
+
 		
 	public static String getStoreSetting(String property) {
 		return ConfigManager.getInstance().getStoreSetting(getStoreId(), property);

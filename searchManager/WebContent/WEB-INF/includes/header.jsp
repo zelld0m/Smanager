@@ -50,6 +50,7 @@
 	// Store parameters
 	var GLOBAL_storeParameters = $.parseJSON('${storeParameters}');
 	var GLOBAL_username = GLOBAL_storeParameters["username"];
+	var GLOBAL_solrSelectorParam = GLOBAL_storeParameters["solrSelectorParam"];
 	var GLOBAL_storeId = GLOBAL_storeParameters["storeId"];
 	var GLOBAL_storeCore = GLOBAL_storeParameters["storeCore"];
 	var GLOBAL_storeName = GLOBAL_storeParameters["storeName"];

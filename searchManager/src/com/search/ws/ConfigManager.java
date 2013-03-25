@@ -153,6 +153,14 @@ public class ConfigManager {
     	return nameValuePairList;
     }
     
+    public boolean isSharedCore(){
+    	return xmlConfig.getBoolean("/shared-core", false);
+    }
+    
+    public String getSolrSelectorParam(){
+    	return xmlConfig.getString("/solr-selector-param");
+    }
+    
     @SuppressWarnings("unchecked")
     public Map<String, String> getServersByStoreId(String storeId) {
     	Map<String, String> map = new LinkedHashMap<String, String>();
@@ -253,6 +261,7 @@ public class ConfigManager {
 	
     public static void main(String[] args) {
     	final ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
+    	System.out.println("qt: " + configManager.getSolrSelectorParam());
 //		System.out.println("qt: " + configManager.getStoreParameter("pcmall", "core"));
 		System.out.println("qt: " + configManager.getStoreIdByAliases("pcm"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "fields"));

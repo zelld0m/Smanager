@@ -85,9 +85,10 @@
 					'facet.limit': -1,
 					'facet.sort':'HEX',
 					'gui': true,
-					'store': GLOBAL_storeId,
 					'json.nl':'map'
 			};
+			
+			params[GLOBAL_solrSelectorParam] = GLOBAL_storeId;
 
 			for (var name in params) {
 				if ($.isArray(params[name])){

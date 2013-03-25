@@ -446,16 +446,20 @@ public class SearchServlet extends HttpServlet {
 		String coreName = matcher.group(3);
 		String storeId = coreName;
 		String storeName = configManager.getStoreName(storeId);
-
-		// Verify if request parameter store is a valid store id
-		String storeParam = request.getParameter("store");
-		String storeIdFromAlias =  configManager.getStoreIdByAliases(storeParam);
-		if (StringUtils.isNotBlank(storeParam) && StringUtils.isNotBlank(storeIdFromAlias)) {
-			storeId = storeIdFromAlias;
-			logger.info(String.format("Request parameter store %s -> %s", storeParam, coreName));
-		}
-		else {
-			logger.info(String.format("Core as storeId: %s", coreName));
+		
+		String solrSelectorParam = configManager.getSolrSelectorParam();
+		
+		if(configManager.isSharedCore() && StringUtils.isNotBlank(solrSelectorParam)){
+			// Verify if request parameter store is a valid store id
+			String storeParam = request.getParameter(solrSelectorParam);
+			String storeIdFromAlias =  configManager.getStoreIdByAliases(storeParam);
+			if (StringUtils.isNotBlank(storeParam) && StringUtils.isNotBlank(storeIdFromAlias)) {
+				storeId = storeIdFromAlias;
+				logger.info(String.format("Request parameter store %s -> %s", storeParam, coreName));
+			}
+			else {
+				logger.info(String.format("Core as storeId: %s", coreName));
+			}
 		}
 		
 		if (logger.isDebugEnabled()) {

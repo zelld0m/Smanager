@@ -137,6 +137,7 @@
 					'json.nl':'map'
 			};
 
+			params[GLOBAL_solrSelectorParam] = GLOBAL_storeId;
 			var storeparams = self.manager.store.params;
 			//merge params
 			for(var name in storeparams){

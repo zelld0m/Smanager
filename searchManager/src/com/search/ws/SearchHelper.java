@@ -149,7 +149,13 @@ public class SearchHelper {
 				nameValuePairs.add(new BasicNameValuePair("qt", qt));
 				nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
 				nameValuePairs.add(new BasicNameValuePair("fq", edps.toString()));
-				nameValuePairs.add(new BasicNameValuePair("store", storeId));
+				
+				String solrSelectorParam = configManager.getSolrSelectorParam();
+				
+				if(StringUtils.isNotBlank(solrSelectorParam)){
+					nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
+				}
+				
 				nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 				nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 				if (logger.isDebugEnabled()) {
@@ -286,7 +292,13 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("fl", fields));
 			nameValuePairs.add(new BasicNameValuePair("qt", qt));
 			nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
-			nameValuePairs.add(new BasicNameValuePair("store", storeId));
+			
+			String solrSelectorParam = configManager.getSolrSelectorParam();
+			
+			if(StringUtils.isNotBlank(solrSelectorParam)){
+				nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
+			}
+			
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
@@ -453,7 +465,12 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("facet", "true"));
 			nameValuePairs.add(new BasicNameValuePair("facet.sort", "true"));
-			nameValuePairs.add(new BasicNameValuePair("store", storeId));
+			String solrSelectorParam = configManager.getSolrSelectorParam();
+			
+			if(StringUtils.isNotBlank(solrSelectorParam)){
+				nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
+			}
+			
 			nameValuePairs.add(new BasicNameValuePair("facet.limit", "-1"));
 			if(hasMincount) {
 				nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));				
@@ -556,7 +573,13 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
 			nameValuePairs.add(new BasicNameValuePair("qt", "standard"));
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
-			nameValuePairs.add(new BasicNameValuePair("store", storeId));
+			
+			String solrSelectorParam = configManager.getSolrSelectorParam();
+			
+			if(StringUtils.isNotBlank(solrSelectorParam)){
+				nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
+			}
+			
 			nameValuePairs.add(new BasicNameValuePair("q", "DPNo:" + partNumber));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
@@ -617,9 +640,9 @@ public class SearchHelper {
 		try {
 			// build the query
 			
-			ConfigManager cm= ConfigManager.getInstance();
-			String core = cm.getStoreParameter(storeId, "core");
-			String serverUrl = cm.getServerParameter(server, "url")
+			ConfigManager configManager= ConfigManager.getInstance();
+			String core = configManager.getStoreParameter(storeId, "core");
+			String serverUrl = configManager.getServerParameter(server, "url")
 					.replaceAll("\\(core\\)", core).concat("select?")
 					.replace("http://",PropsUtils.getValue("browsejssolrurl"));
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -629,7 +652,12 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
-			nameValuePairs.add(new BasicNameValuePair("store", storeId));
+			String solrSelectorParam = configManager.getSolrSelectorParam();
+			
+			if(StringUtils.isNotBlank(solrSelectorParam)){
+				nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
+			}
+			
 			nameValuePairs.add(new BasicNameValuePair("disableElevate", ""));
 			nameValuePairs.add(new BasicNameValuePair("disableExclude", ""));
 			nameValuePairs.add(new BasicNameValuePair("disableDemote", ""));
