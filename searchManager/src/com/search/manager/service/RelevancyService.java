@@ -21,6 +21,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -41,7 +42,6 @@ import com.search.manager.schema.model.bq.BoostQueryModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryField;
 import com.search.manager.schema.model.qf.QueryFieldsModel;
-import com.search.manager.utility.DateAndTimeUtils;
 import com.search.ws.SearchHelper;
 
 @Service(value = "relevancyService")
@@ -59,7 +59,7 @@ public class RelevancyService extends RuleService{
 	public RuleEntity getRuleEntity() {
 		return RuleEntity.RANKING_RULE;
 	}
-	
+
 	@RemoteMethod
 	public Relevancy getRule(String ruleId){
 		try {
@@ -87,7 +87,7 @@ public class RelevancyService extends RuleService{
 		}
 		return duplicateRuleNames;
 	}
-	
+
 	@RemoteMethod
 	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
 		Relevancy relevancy = new Relevancy();
@@ -106,7 +106,7 @@ public class RelevancyService extends RuleService{
 		}
 		return false;
 	}
-	
+
 	@RemoteMethod
 	public int addRuleFieldValue(String relevancyId, String fieldName, String fieldValue) throws Exception{
 		try {
@@ -164,6 +164,7 @@ public class RelevancyService extends RuleService{
 			relevancy.setStore(new Store(UtilityService.getStoreId()));
 			relevancy.setRelevancyName(name);
 			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, page, itemsPerPage);
+
 			return daoService.searchRelevancy(criteria, MatchType.LIKE_NAME);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllByName()",e);
@@ -179,13 +180,13 @@ public class RelevancyService extends RuleService{
 		if(ruleId.equalsIgnoreCase(""))
 			ruleId=UtilityService.getStoreId()+"_default";
 		try {
-			String store = UtilityService.getStoreId();
+			String storeId = UtilityService.getStoreId();
 			Relevancy relevancy = new Relevancy();
-			relevancy.setStore(new Store(store));
+			relevancy.setStore(new Store(storeId));
 			relevancy.setRelevancyName(name);
 			relevancy.setDescription(description);
-			relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : DateAndTimeUtils.toSQLDate(store, startDate));
-			relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : DateAndTimeUtils.toSQLDate(store, endDate));
+			relevancy.setStartDateTime(StringUtils.isBlank(startDate) ? null :  JodaTimeUtil.toDateTimeFromStorePattern(storeId, startDate));
+			relevancy.setEndDateTime(StringUtils.isBlank(endDate) ? null : JodaTimeUtil.toDateTimeFromStorePattern(storeId, endDate));
 			relevancy.setCreatedBy(userName);
 			clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
 			Relevancy hostRelevancy = getRule(ruleId);
@@ -198,14 +199,14 @@ public class RelevancyService extends RuleService{
 					logger.error("Failed during cloneRule()",e);
 				}
 			}
-			
+
 			try {
-				daoService.addRuleStatus(new RuleStatus(RuleEntity.RANKING_RULE, store, clonedId, name, 
+				daoService.addRuleStatus(new RuleStatus(RuleEntity.RANKING_RULE, storeId, clonedId, name, 
 						userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
 			} catch (DaoException de) {
 				logger.error("Failed to create rule status for ranking rule: " + name);
 			}
-			
+
 			clonedRelevancy = getRule(clonedId);
 		} catch (DaoException e) {
 			logger.error("Failed during addRelevancy()",e);
@@ -217,14 +218,14 @@ public class RelevancyService extends RuleService{
 	public int updateRule(String id, String name, String description , String startDate, String endDate){
 		try {
 			logger.info(String.format("%s %s %s %s %s", id, name, description, startDate, endDate));
-			String store = UtilityService.getStoreId();
+			String storeId = UtilityService.getStoreId();
 			Relevancy rule = new Relevancy();
-			rule.setStore(new Store(store));
+			rule.setStore(new Store(storeId));
 			rule.setRuleId(id);
 			rule.setRuleName(name);
 			rule.setDescription(description);
-			rule.setStartDate(DateAndTimeUtils.toSQLDate(store, startDate));
-			rule.setEndDate(DateAndTimeUtils.toSQLDate(store, endDate));
+			rule.setStartDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, startDate));
+			rule.setEndDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, endDate));
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.updateRelevancy(rule);
 		} catch (DaoException e) {
@@ -443,8 +444,8 @@ public class RelevancyService extends RuleService{
 			Field field = schema.getField(string);
 			excludeFieldList.add(field);
 			// do not remove related fields
-//			List<Field> relatedFields = field.getRelatedFields();
-//			if (CollectionUtils.isNotEmpty(relatedFields)) excludeFieldList.addAll(relatedFields);
+			//			List<Field> relatedFields = field.getRelatedFields();
+			//			if (CollectionUtils.isNotEmpty(relatedFields)) excludeFieldList.addAll(relatedFields);
 		}
 
 		List<Field> fields = new LinkedList<Field>(schema.getIndexedFields(filter, excludeFieldList));

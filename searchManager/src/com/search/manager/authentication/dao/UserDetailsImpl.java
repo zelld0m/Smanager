@@ -37,6 +37,8 @@ public class UserDetailsImpl implements UserDetails {
 	private String currentPage;	
 	
 	private String storeId;
+
+	private String dateTimeZoneId;
 	
 	public UserDetailsImpl() {}
 	
@@ -61,6 +63,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.credentialsNonExpired = user.isCredentialsNonExpired();
 		this.enabled = user.isEnabled();
 		this.storeId = user.getStoreId();
+		this.dateTimeZoneId = user.getDateTimeZoneId();
 	}
 
 	public Collection<GrantedAuthority> getAuthorities() {
@@ -157,5 +160,13 @@ public class UserDetailsImpl implements UserDetails {
 
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
+	}
+
+	public String getDateTimeZoneId() {
+		return dateTimeZoneId;
+	}
+
+	public void setDateTimeZoneId(String dateTimeZoneId) {
+		this.dateTimeZoneId = dateTimeZoneId;
 	}
 }

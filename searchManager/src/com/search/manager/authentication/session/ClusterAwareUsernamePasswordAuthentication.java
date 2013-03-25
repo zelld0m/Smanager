@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -21,6 +22,7 @@ import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.cookie.CookieUtils;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.User;
 import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
@@ -46,8 +48,13 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		String storeName = cm.getStoreName(storeId);
 		String serverName = cm.getStoreParameter(storeId, "default-server");
 		
+		String userTimeZoneId = ((UserDetailsImpl)authResult.getPrincipal()).getDateTimeZoneId();
+		String storeTimeZoneId = cm.getStoreParameter(storeId, "default-timezone");
+		DateTimeZone dateTimeZone = JodaTimeUtil.setTimeZoneID(userTimeZoneId, storeTimeZoneId);
+		
 		UtilityService.setStoreId(storeId);
 		UtilityService.setStoreName(storeName);
+		UtilityService.setTimeZoneId(dateTimeZone.getID());
 		UtilityService.setServerName(serverName);
 		
 		//Delete cookies

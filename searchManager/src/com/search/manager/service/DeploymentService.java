@@ -4,7 +4,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -96,7 +96,7 @@ public class DeploymentService {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
-			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), new Date()));
+			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
 		}
@@ -123,7 +123,7 @@ public class DeploymentService {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType),RuleStatusEntity.REJECTED.toString());
-			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, UtilityService.getUsername(), new Date()));
+			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
 		} catch (DaoException e) {
 			logger.error("Failed during unapproveRule()",e);
 		}
@@ -262,7 +262,7 @@ public class DeploymentService {
 	private Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
-			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), new Date());
+			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), DateTime.now());
 
 			if(ruleMap != null && ruleMap.size() > 0)
 				return ruleMap;
@@ -318,7 +318,7 @@ public class DeploymentService {
 	private Map<String,Boolean> unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());	
-			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, UtilityService.getUsername(), new Date());
+			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, UtilityService.getUsername(), DateTime.now());
 
 			if(ruleMap != null && ruleMap.size() > 0)
 				return ruleMap;
@@ -372,7 +372,7 @@ public class DeploymentService {
 			ruleStatus.setLastModifiedBy(username);
 			ruleStatus.setStoreId(UtilityService.getStoreId());
 			result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
-					: daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, new Date());
+					: daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
 			if (result > 0) return getRuleStatus(ruleType, ruleRefId);
 		} catch (DaoException e) {
 			logger.error("Failed during processRuleStatus()",e);

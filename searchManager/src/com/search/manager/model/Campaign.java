@@ -1,7 +1,8 @@
 package com.search.manager.model;
 
-import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
 
 public class Campaign extends ModelBean {
 	
@@ -11,8 +12,8 @@ public class Campaign extends ModelBean {
 	private List<Banner> bannerList;
 	
 	private Store store;
-	private Date startDate;
-	private Date endDate;
+	private DateTime startDateTime;
+	private DateTime endDateTime;
 	
 	public Campaign() {
 	}
@@ -23,38 +24,38 @@ public class Campaign extends ModelBean {
 		this.store = store;
 	}
 	
-	public Campaign(String campaignId, String campaignName, Store store, Date startDate, Date endDate) {
+	public Campaign(String campaignId, String campaignName, Store store, DateTime startDateTime, DateTime endDateTime) {
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
 		this.store = store;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
 	}
 
-	public Campaign(String campaignId, String campaignName, Store store, Date startDate, Date endDate, String comment,
-			String createdBy, String lastModifiedBy, Date createdDate, Date lastModifiedDate) {
+	public Campaign(String campaignId, String campaignName, Store store, DateTime startDateTime, DateTime endDateTime, String comment,
+			String createdBy, String lastModifiedBy, DateTime createdDateTime, DateTime lastModifiedDateTime) {
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
 		this.store = store;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
+		this.createdDateTime = createdDateTime;
+		this.lastModifiedDateTime = lastModifiedDateTime;
 	}
 	
 	public Campaign(String campaignId, String campaignName,
 			List<Banner> bannerList, Store store,
-			Date startDate, Date endDate) {
+			DateTime startDateTime, DateTime endDateTime) {
 		super();
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
 		this.bannerList = bannerList;
 		this.store = store;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
 	}
 
 	public List<Banner> getBannerList() {
@@ -64,23 +65,23 @@ public class Campaign extends ModelBean {
 	public void setBannerList(List<Banner> bannerList) {
 		this.bannerList = bannerList;
 	}
+	
+	public DateTime getStartDateTime() {
+		return startDateTime;
+	}
 
-	public Date getStartDate() {
-		return startDate;
+	public void setStartDateTime(DateTime startDateTime) {
+		this.startDateTime = startDateTime;
 	}
-	
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+
+	public DateTime getEndDateTime() {
+		return endDateTime;
 	}
-	
-	public Date getEndDate() {
-		return endDate;
+
+	public void setEndDateTime(DateTime endDateTime) {
+		this.endDateTime = endDateTime;
 	}
-	
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-	
+
 	public void setCampaignName(String campaignName) {
 		this.campaignName = campaignName;
 	}

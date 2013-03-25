@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.FacetGroup;
@@ -52,7 +53,6 @@ import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.DateAndTimeUtils;
 
 public class RuleXmlReportUtil{
 	private static Logger logger = Logger.getLogger(RuleXmlReportUtil.class);
@@ -78,11 +78,13 @@ public class RuleXmlReportUtil{
 	
 	public static SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity){
 		SubReportHeader subReportHeader = new SubReportHeader();
-		
+
+		String storeId = UtilityService.getStoreId();
+
 		subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
 		subReportHeader.addRow("Name: ", StringUtils.defaultIfBlank(xml.getName(),""));
 		subReportHeader.addRow("Notes: ", StringUtils.defaultIfBlank(xml.getNotes(),""));
-		subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), xml.getCreatedDate()) : "");
+		subReportHeader.addRow("Date Created: ", xml.getCreatedDateTime() != null ? JodaTimeUtil.formatDateTimeFromStorePattern(storeId,  xml.getCreatedDateTime()) : "");
 		subReportHeader.addRow("Created By: ", xml.getCreatedBy());
 		
 		return subReportHeader;

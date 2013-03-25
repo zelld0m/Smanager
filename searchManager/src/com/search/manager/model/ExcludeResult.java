@@ -1,6 +1,6 @@
 package com.search.manager.model;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.report.model.xml.ExcludeItemXml;
@@ -16,8 +16,8 @@ public class ExcludeResult extends SearchResult {
 	}
 	
 	public ExcludeResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, 
-			Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
-		super(storeKeyword, edp, comment, createdBy, lastModifiedBy, expiryDate, createdDate, lastModifiedDate, memberTypeId, memberId);
+			DateTime expiryDateTime, DateTime createdDateTime, DateTime lastModifiedDateTime, String memberTypeId, String memberId) {
+		super(storeKeyword, edp, comment, createdBy, lastModifiedBy, expiryDateTime, createdDateTime, lastModifiedDateTime, memberTypeId, memberId);
 	}
 
 	public ExcludeResult(StoreKeyword storeKeyword, ExcludeItemXml xml) {
@@ -25,7 +25,7 @@ public class ExcludeResult extends SearchResult {
 		this.storeKeyword = storeKeyword;
 		this.edp = xml.getEdp();
 		this.condition = xml.getRuleCondition();
-		this.expiryDate = xml.getExpiryDate();
+		this.expiryDateTime = xml.getExpiryDateTime();
 		this.entity = xml.getMemberType();
 	}
 	

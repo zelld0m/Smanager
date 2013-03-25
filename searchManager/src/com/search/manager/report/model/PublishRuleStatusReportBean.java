@@ -3,8 +3,6 @@ package com.search.manager.report.model;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.annotation.ReportField;
-import com.search.manager.service.UtilityService;
-import com.search.manager.utility.DateAndTimeUtils;
 
 public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 
@@ -34,7 +32,7 @@ public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 	
 	@ReportField(label="Last Published Date", size=20, sortOrder=5)
 	public String getLastPublishedDate() {
-		return DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), model.getLastPublishedDate());
+		return ""; //TODO: DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), model.getLastPublishedDate());
 	}
 	
 	@ReportField(label="Comment", size=20, sortOrder=6)
@@ -42,12 +40,10 @@ public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 		StringBuilder comments = new StringBuilder();
 		if (model.getCommentList() != null && model.getCommentList().size() > 0) {
 			for (Comment comment : model.getCommentList()) {
-				comments.append("\n").append(comment.getUsername()).append(" : ").append(comment.getCreatedDate()).append(" : " ).append(comment.getComment());
+				comments.append("\n").append(comment.getUsername()).append(" : ").append(comment.getCreatedDateTime()).append(" : " ).append(comment.getComment());
 			}
 			comments.deleteCharAt(0);
 		}
 		return comments.toString();			
-	}
-	
-	
+	}	
 }

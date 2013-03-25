@@ -1,7 +1,7 @@
 package com.search.manager.model;
 
-import java.util.Date;
 import java.util.List;
+import org.joda.time.DateTime;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -38,7 +38,7 @@ public class Banner extends ModelBean {
 	}
 	
 	public Banner(String bannerId, String bannerName, Store store, String imagePath, String linkPath, String comment,
-			String createdBy, String lastModifiedBy, Date createdDate, Date lastModifiedDate) {
+			String createdBy, String lastModifiedBy, DateTime createdDateTime, DateTime lastModifiedDateTime) {
 		this.bannerId = bannerId;
 		this.bannerName = bannerName;
 		this.store = store;
@@ -47,8 +47,8 @@ public class Banner extends ModelBean {
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
+		this.createdDateTime = createdDateTime;
+		this.lastModifiedDateTime = lastModifiedDateTime;
 	}
 	
 	public Banner(Store store, String bannerId, String bannerName,

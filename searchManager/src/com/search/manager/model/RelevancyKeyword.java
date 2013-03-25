@@ -1,9 +1,8 @@
 package com.search.manager.model;
 
-import java.util.Date;
-
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class RelevancyKeyword extends ModelBean {
@@ -22,14 +21,14 @@ public class RelevancyKeyword extends ModelBean {
 	}
 	
 	public RelevancyKeyword(Keyword keyword, Relevancy relevancy, Integer priority,
-			String createdBy, String lastModifiedBy, Date createdDate, Date lastModifiedDate) {
+			String createdBy, String lastModifiedBy, DateTime createdDateTime, DateTime lastModifiedDateTime) {
 		this.keyword = keyword;
 		this.relevancy = relevancy;
 		this.priority = priority;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
+		this.createdDateTime = createdDateTime;
+		this.lastModifiedDateTime = lastModifiedDateTime;
 	}
 	
 	public void setKeyword(Keyword keyword) {
@@ -55,5 +54,4 @@ public class RelevancyKeyword extends ModelBean {
 	public Integer getPriority() {
 		return priority;
 	}
-	
 }

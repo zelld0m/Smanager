@@ -1000,6 +1000,8 @@
 						showOn: "both",
 						buttonImage: "../images/icon_calendar.png",
 						buttonImageOnly: true,
+						changeMonth: true,
+					    changeYear: true,
 						onSelect: function(selectedDate) {
 							var option = this.id == "popStartDate" ? "minDate" : "maxDate",
 									instance = $(this).data("datepicker"),
@@ -1366,6 +1368,8 @@
 								showOn: "both",
 								buttonImage: "../images/icon_calendar.png",
 								buttonImageOnly: true,
+								changeMonth: true,
+							    changeYear: true,
 								onSelect: function(selectedDate) {
 									var option = this.id == "popStartDate" ? "minDate" : "maxDate",
 											instance = $(this).data("datepicker"),

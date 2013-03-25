@@ -4,7 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.EnumConverter;
 
-@DataTransferObject(converter=EnumConverter.class, javascript="ExportRuleMapSortType")
+@DataTransferObject(
+		converter=EnumConverter.class, 
+		type="enum")
 public enum ExportRuleMapSortType {
 	
 	EXPORT_DATE_DESC(0, "EXPORT_DATE_DESC"),

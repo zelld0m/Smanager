@@ -1,12 +1,10 @@
 package com.search.manager.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
-
-import com.search.manager.utility.DateAndTimeUtils;
+import org.joda.time.DateTime;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class AuditTrail extends ModelBean implements Serializable {
@@ -19,21 +17,21 @@ public class AuditTrail extends ModelBean implements Serializable {
 	private String storeId;
 	private String keyword;
 	private String referenceId;
-	private Date   date;
+	private DateTime dateTime;
 	private String details;
 	
 	public AuditTrail() {
 	}
 	
 	public AuditTrail(String username, String entity, String operation, String storeId, String keyword,
-			String referenceId, Date date, String details) {
+			String referenceId, DateTime dateTime, String details) {
 		this.username = username;
 		this.entity = entity;
 		this.operation = operation;
 		this.storeId = storeId;
 		this.keyword = keyword;
 		this.referenceId = referenceId;
-		this.date = date;
+		this.dateTime = dateTime;
 		this.details = details;
 	}
 
@@ -81,14 +79,14 @@ public class AuditTrail extends ModelBean implements Serializable {
 		this.referenceId = referenceId;
 	}
 	
-	public Date getDate() {
-		return date;
+	public DateTime getDateTime() {
+		return dateTime;
 	}
-	
-	public void setDate(Date date) {
-		this.date = date;
+
+	public void setDateTime(DateTime dateTime) {
+		this.dateTime = dateTime;
 	}
-	
+
 	public String getDetails() {
 		return details;
 	}
@@ -104,12 +102,12 @@ public class AuditTrail extends ModelBean implements Serializable {
 	public String getStoreId() {
 		return storeId;
 	}
-	
-	public String getFormatDateTimeUsingConfig(){
-		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getDate());
-	}
-	
-	public String getElapsedTime(){
-		return DateAndTimeUtils.getElapsedTime(getDate(), new Date());
-	}
+	//TODO: use tld or JodaTimeUtil
+//	public String getFormatDateTimeUsingConfig(){
+//		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getDate());
+//	}
+//	
+//	public String getElapsedTime(){
+//		return DateAndTimeUtils.getElapsedTime(getDate(), new Date());
+//	}
 }

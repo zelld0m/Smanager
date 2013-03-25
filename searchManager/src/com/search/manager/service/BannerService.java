@@ -1,8 +1,5 @@
 package com.search.manager.service;
 
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -15,15 +12,12 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
-import com.search.manager.enums.RuleType;
 import com.search.manager.model.Banner;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
-import com.search.manager.model.StoreKeyword;
-import com.search.manager.model.SearchCriteria.MatchType;
 
 @Service(value = "bannerService")
 @RemoteProxy(

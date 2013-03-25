@@ -1,10 +1,10 @@
 package com.search.manager.report.model.xml;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.RedirectRuleCondition;
@@ -27,7 +27,7 @@ public class RuleItemXml extends BaseEntityXml{
 	private String mfrNo;
 	private String manufacturer;
 	private RedirectRuleCondition ruleCondition;
-	private Date expiryDate;
+	private DateTime expiryDateTime;
 	
 	@XmlAttribute(name="id", required=true)
 	public String getMemberId() {
@@ -79,12 +79,12 @@ public class RuleItemXml extends BaseEntityXml{
 		this.ruleCondition = ruleCondition;
 	}
 
-	public Date getExpiryDate() {
-		return expiryDate;
+	public DateTime getExpiryDateTime() {
+		return expiryDateTime;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
-		this.expiryDate = expiryDate;
+	public void setExpiryDateTime(DateTime expiryDateTime) {
+		this.expiryDateTime = expiryDateTime;
 	}
 
 	@XmlTransient

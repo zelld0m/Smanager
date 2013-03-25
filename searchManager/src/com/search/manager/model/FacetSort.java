@@ -15,7 +15,6 @@ import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.report.model.xml.FacetSortGroupXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class FacetSort extends ModelBean{
@@ -39,7 +38,7 @@ public class FacetSort extends ModelBean{
 		this.sortType = xml.getSortType();
 		this.ruleType = xml.getRuleType();
 		this.createdBy = xml.getCreatedBy();
-		this.createdDate = xml.getCreatedDate();
+		this.createdDateTime = xml.getCreatedDateTime();
 		
 		items = new HashMap<String, List<String>>();
 		groupSortType = new HashMap<String, SortType>(); 
@@ -165,13 +164,14 @@ public class FacetSort extends ModelBean{
 		return null;
 	}
 	
-	public String getFormattedCreatedDate() {
-		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getCreatedDate());
-	}
-	
-	public String getFormattedLastModifiedDate() {
-		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getLastModifiedDate());
-	}
+	//TODO: translate using joda tlds
+//	public String getFormattedCreatedDate() {
+//		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getCreatedDate());
+//	}
+//	
+//	public String getFormattedLastModifiedDate() {
+//		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getLastModifiedDate());
+//	}
 	
 	public Map<String, List<String>> getItems() {
 		return items;

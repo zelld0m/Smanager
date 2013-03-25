@@ -29,8 +29,9 @@ public class ExportRuleReportBean extends ReportBean<RuleStatus> {
 	
 	@ReportField(label="Published Date", size=20, sortOrder=3)
 	public String getPublishedDate(){
-		if(model.getLastPublishedDate() != null){
-			return model.getLastPublishedDate().toString();
+		//TODO: use formatting JodaTimeUtil
+		if(model.getLastPublishedDateTime() != null){
+			return model.getLastPublishedDateTime().toString();
 		}
 		return "";
 	}
@@ -45,8 +46,9 @@ public class ExportRuleReportBean extends ReportBean<RuleStatus> {
 	
 	@ReportField(label="Export Date", size=20, sortOrder=5)
 	public String getCreatedBy(){
-		if(model.getLastExportDate() != null){
-			return model.getLastExportDate().toString();
+		//TODO: use formatting JodaTimeUtil
+		if(model.getLastExportDateTime() != null){
+			return model.getLastExportDateTime().toString();
 		}
 		return "";
 	}

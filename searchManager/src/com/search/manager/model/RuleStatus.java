@@ -1,11 +1,11 @@
 package com.search.manager.model;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
 import com.search.manager.enums.ExportType;
@@ -24,27 +24,27 @@ public class RuleStatus extends ModelBean {
 	private String 		description;
 
 	/* Rule Submission / Approval Request */
-	private Date 		lastRequestDate;
+	private DateTime 	lastRequestDateTime;
 	private String 		requestBy;
 	private String 		updateStatus;
-	
+
 	/* Approval */
-	private Date 		lastApprovalDate;
+	private DateTime 	lastApprovalDateTime;
 	private String 		approvalStatus;
 	private String 		approvalBy;
-	
+
 	/* Publishing */
-	private Date 		lastPublishedDate;
+	private DateTime 	lastPublishedDateTime;
 	private String 		publishedBy;
 	private String 		publishedStatus;
-	
+
 	/* Export */
-	private Date 		lastExportDate;
+	private DateTime 	lastExportDateTime;
 	private String 		exportBy;
 	private ExportType	exportType;
-	
+
 	private List<Comment> commentList;
-	
+
 	public RuleStatus() {
 		super();
 	}
@@ -55,9 +55,9 @@ public class RuleStatus extends ModelBean {
 		this.ruleRefId = ruleRefId;
 		this.storeId = storeId;
 	}
-	
+
 	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String storeId, String description, String approvalStatus, String updateStatus,
-			String publishedStatus, Date lastPublishedDate, String createdBy, String modifiedBy, Date dateCreated, Date dateModified) {
+			String publishedStatus, DateTime lastPublishedDateTime, String createdBy, String modifiedBy, DateTime createdDateTime, DateTime modifiedDateTime) {
 		super();
 		this.ruleStatusId = ruleStatusId;
 		this.ruleTypeId = ruleTypeId;
@@ -67,11 +67,11 @@ public class RuleStatus extends ModelBean {
 		this.approvalStatus = approvalStatus;
 		this.updateStatus = updateStatus;
 		this.publishedStatus = publishedStatus;
-		this.lastPublishedDate = lastPublishedDate;
+		this.lastPublishedDateTime = lastPublishedDateTime;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = modifiedBy;
-		this.createdDate = dateCreated;
-		this.lastModifiedDate = dateModified;
+		this.createdDateTime = createdDateTime;
+		this.lastModifiedDateTime = modifiedDateTime;
 	}
 
 	public RuleStatus(RuleEntity ruleEntity, String storeId, String ruleId, String ruleName, String createdBy, String modifiedBy, 
@@ -91,23 +91,23 @@ public class RuleStatus extends ModelBean {
 			this.updateStatus = String.valueOf(ruleStatus);
 		}
 	}
-	
+
 	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String storeId, String description,
-			String updateStatus, String requestBy, Date lastRequestDate,
-			String approvalStatus, String approvalBy, Date lastApprovalDate,
-			String publishedStatus, String publishedBy, Date lastPublishedDate,
-			ExportType exportType, String exportBy, Date lastExportDate,
-			String createdBy, String modifiedBy, Date dateCreated, Date dateModified) {
+			String updateStatus, String requestBy, DateTime lastRequestDateTime,
+			String approvalStatus, String approvalBy, DateTime lastApprovalDateTime,
+			String publishedStatus, String publishedBy, DateTime lastPublishedDateTime,
+			ExportType exportType, String exportBy, DateTime lastExportDateTime,
+			String createdBy, String modifiedBy, DateTime dateCreated, DateTime dateModified) {
 		this(ruleStatusId, ruleTypeId, ruleRefId, storeId, description, approvalStatus, updateStatus,
-				publishedStatus, lastPublishedDate, createdBy, modifiedBy, dateCreated, dateModified);
+				publishedStatus, lastPublishedDateTime, createdBy, modifiedBy, dateCreated, dateModified);
 		this.requestBy = requestBy;
-		this.lastRequestDate = lastRequestDate;
+		this.lastRequestDateTime = lastRequestDateTime;
 		this.approvalBy = approvalBy;
-		this.lastApprovalDate = lastApprovalDate;
+		this.lastApprovalDateTime = lastApprovalDateTime;
 		this.publishedBy = publishedBy;
 		this.exportType = exportType;
 		this.exportBy = exportBy;
-		this.lastExportDate = lastExportDate;
+		this.lastExportDateTime = lastExportDateTime;
 	}
 
 	public String getRuleStatusId() {
@@ -133,7 +133,7 @@ public class RuleStatus extends ModelBean {
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -156,14 +156,6 @@ public class RuleStatus extends ModelBean {
 
 	public void setUpdateStatus(String updateStatus) {
 		this.updateStatus = updateStatus;
-	}
-
-	public Date getLastPublishedDate() {
-		return lastPublishedDate;
-	}
-
-	public void setLastPublishedDate(Date lastPublishedDate) {
-		this.lastPublishedDate = lastPublishedDate;
 	}
 
 	public String getComment() {
@@ -197,16 +189,16 @@ public class RuleStatus extends ModelBean {
 	public void setCommentList(List<Comment> commentList) {
 		this.commentList = commentList;
 	}
-	
+
 	public boolean isLocked(){
-		 // TODO: move to constant
-		 List<String> locked = Arrays.asList(StringUtils.delimitedListToStringArray("PENDING,APPROVED", ","));
-		 return locked.contains(getApprovalStatus());
+		// TODO: move to constant
+		List<String> locked = Arrays.asList(StringUtils.delimitedListToStringArray("PENDING,APPROVED", ","));
+		return locked.contains(getApprovalStatus());
 	}
-	
+
 	@Override
 	public String toString() {
-	    return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this);
+		return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this);
 	}
 
 	public String getRequestBy() {
@@ -217,14 +209,6 @@ public class RuleStatus extends ModelBean {
 		this.requestBy = requestBy;
 	}
 
-	public Date getLastRequestDate() {
-		return lastRequestDate;
-	}
-
-	public void setLastRequestDate(Date lastRequestDate) {
-		this.lastRequestDate = lastRequestDate;
-	}
-
 	public String getApprovalBy() {
 		return approvalBy;
 	}
@@ -233,28 +217,12 @@ public class RuleStatus extends ModelBean {
 		this.approvalBy = approvalBy;
 	}
 
-	public Date getLastApprovalDate() {
-		return lastApprovalDate;
-	}
-
-	public void setLastApprovalDate(Date lastApprovalDate) {
-		this.lastApprovalDate = lastApprovalDate;
-	}
-
 	public String getPublishedBy() {
 		return publishedBy;
 	}
 
 	public void setPublishedBy(String publishedBy) {
 		this.publishedBy = publishedBy;
-	}
-
-	public Date getLastExportDate() {
-		return lastExportDate;
-	}
-
-	public void setLastExportDate(Date lastExportDate) {
-		this.lastExportDate = lastExportDate;
 	}
 
 	public String getExportBy() {
@@ -272,12 +240,44 @@ public class RuleStatus extends ModelBean {
 	public void setExportType(ExportType exportType) {
 		this.exportType = exportType;
 	}
-	
+
 	public String getRuleId(){
 		return this.ruleRefId;
 	}
-	
+
 	public String getRuleName(){
 		return this.description;
+	}
+
+	public DateTime getLastRequestDateTime() {
+		return lastRequestDateTime;
+	}
+
+	public void setLastRequestDateTime(DateTime lastRequestDateTime) {
+		this.lastRequestDateTime = lastRequestDateTime;
+	}
+
+	public DateTime getLastApprovalDateTime() {
+		return lastApprovalDateTime;
+	}
+
+	public void setLastApprovalDateTime(DateTime lastApprovalDateTime) {
+		this.lastApprovalDateTime = lastApprovalDateTime;
+	}
+
+	public DateTime getLastPublishedDateTime() {
+		return lastPublishedDateTime;
+	}
+
+	public void setLastPublishedDateTime(DateTime lastPublishedDateTime) {
+		this.lastPublishedDateTime = lastPublishedDateTime;
+	}
+
+	public DateTime getLastExportDateTime() {
+		return lastExportDateTime;
+	}
+
+	public void setLastExportDateTime(DateTime lastExportDateTime) {
+		this.lastExportDateTime = lastExportDateTime;
 	}
 }

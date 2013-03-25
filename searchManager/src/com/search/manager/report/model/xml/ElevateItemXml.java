@@ -29,11 +29,11 @@ public class ElevateItemXml extends RuleItemXml{
 		}else{
 			this.setEdp(er.getEdp()) ;
 		}
-		this.setExpiryDate(er.getExpiryDate());
+		this.setExpiryDateTime(er.getExpiryDateTime());
 		this.setCreatedBy(er.getCreatedBy());
 		this.setLastModifiedBy(er.getLastModifiedBy());
-		this.setCreatedDate(er.getCreatedDate());
-		this.setLastModifiedDate(er.getLastModifiedDate());
+		this.setCreatedDateTime(er.getCreatedDateTime());
+		this.setLastModifiedDateTime(er.getLastModifiedDateTime());
 		this.location = er.getLocation();
 		this.forceAdd = er.isForceAdd();
 	}

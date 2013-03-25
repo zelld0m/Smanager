@@ -144,6 +144,13 @@ public class UtilityService {
 	}
 
 	@RemoteMethod
+	public static String getTimeZoneId(){
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		String timeZoneId= (String)attr.getAttribute("timeZoneId", RequestAttributes.SCOPE_SESSION);
+		return timeZoneId;
+	}
+	
+	@RemoteMethod
 	public static String getStoreCore(String storeId){
 		ConfigManager cm = ConfigManager.getInstance();
 		if(StringUtils.isNotBlank(storeId))
@@ -175,15 +182,11 @@ public class UtilityService {
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
 	}
-
+	
 	@RemoteMethod
-	public static String getStoreLabel(){
-		String storeLabel = null;
-		ConfigManager cm = ConfigManager.getInstance();
-		if (cm != null) {
-			storeLabel = cm.getStoreName(getStoreName());
-		}
-		return storeLabel;
+	public static void setTimeZoneId(String timeZoneId) {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		attr.setAttribute("timeZoneId", timeZoneId, RequestAttributes.SCOPE_SESSION);
 	}
 
 	@RemoteMethod
@@ -195,7 +198,7 @@ public class UtilityService {
 		if (m.matches()) {
 			json.put("solrUrl", PropsUtils.getValue("browsejssolrurl") + m.group(1));
 		}
-		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
+
 		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
 		return json.toString();
 	}
@@ -219,6 +222,7 @@ public class UtilityService {
 	public static String getStoreParameters(){
 		JSONObject json = new JSONObject();
 		json.put("username", getUsername());
+		json.put("solrSelectorParam", getSolrSelectorParam());
 		json.put("storeId", getStoreId());
 		json.put("storeCore", getStoreCore());
 		json.put("storeName", getStoreName());
@@ -339,6 +343,12 @@ public class UtilityService {
 
 		return storeFacetTemplate;
 	}
+	
+	@RemoteMethod
+	public static String getSolrSelectorParam(){
+		return ConfigManager.getInstance().getSolrSelectorParam();
+	}
+
 		
 	public static String getStoreSetting(String property) {
 		return ConfigManager.getInstance().getStoreSetting(getStoreId(), property);

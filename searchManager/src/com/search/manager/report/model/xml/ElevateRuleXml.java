@@ -1,6 +1,5 @@
 package com.search.manager.report.model.xml;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
@@ -10,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.ElevateProduct;
@@ -39,7 +39,7 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 		this.setRuleEntity(RULE_ENTITY);
 		this.setVersion(version);
 		this.keyword = keyword;
-		this.setCreatedDate(new Date());
+		this.setCreatedDateTime(DateTime.now());
 		setElevateItem(eItemXml);
 	}
 	

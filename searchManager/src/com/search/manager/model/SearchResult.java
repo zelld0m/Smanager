@@ -1,6 +1,7 @@
 package com.search.manager.model;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.report.model.xml.RuleItemXml;
@@ -11,7 +12,7 @@ public class SearchResult extends ModelBean {
 
 	protected StoreKeyword storeKeyword;
 	protected String edp;
-	protected Date expiryDate;
+	@DateTimeFormat protected DateTime expiryDateTime;
 	protected MemberTypeEntity entity;
 	protected RedirectRuleCondition condition;
 	protected String memberId;
@@ -21,17 +22,17 @@ public class SearchResult extends ModelBean {
 	public SearchResult(StoreKeyword storeKeyword, RuleItemXml xml) {
 		this.storeKeyword = storeKeyword;
 		this.edp = xml.getEdp();
-		this.expiryDate = xml.getExpiryDate();
+		this.expiryDateTime = xml.getExpiryDateTime();
 		this.entity = xml.getMemberType();
 		this.condition = xml.getRuleCondition();
 		this.memberId = xml.getMemberId();
 		this.lastModifiedBy = xml.getLastModifiedBy();
-		this.lastModifiedDate = xml.getLastModifiedDate();
+		this.lastModifiedDateTime = xml.getLastModifiedDateTime();
 		this.createdBy = xml.getCreatedBy();
-		this.createdDate = xml.getCreatedDate();
+		this.createdDateTime = xml.getCreatedDateTime();
 	}
 	
-	public SearchResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
+	public SearchResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, DateTime expiryDateTime, DateTime createdDateTime, DateTime lastModifiedDateTime, String memberTypeId, String memberId) {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
 			entity = MemberTypeEntity.FACET;
 			condition = new RedirectRuleCondition(edp);
@@ -47,9 +48,9 @@ public class SearchResult extends ModelBean {
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.expiryDate = expiryDate;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
+		this.expiryDateTime = expiryDateTime;
+		this.createdDateTime = createdDateTime;
+		this.lastModifiedDateTime = lastModifiedDateTime;
 		this.memberId = memberId;
 	}
 	
@@ -60,13 +61,13 @@ public class SearchResult extends ModelBean {
 	public void setStoreKeyword(StoreKeyword storeKeyword) {
 		this.storeKeyword = storeKeyword;
 	}
-
-	public Date getExpiryDate() {
-		return expiryDate;
+	
+	public DateTime getExpiryDateTime() {
+		return expiryDateTime;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
-		this.expiryDate = expiryDate;
+	public void setExpiryDateTime(DateTime expiryDateTime) {
+		this.expiryDateTime = expiryDateTime;
 	}
 
 	public String getEdp() {

@@ -1,6 +1,5 @@
 package com.search.manager.report.model.xml;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -11,6 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.SortType;
@@ -33,18 +33,18 @@ public class FacetSortGroupXml extends BaseEntityXml{
 	}
 
 	public FacetSortGroupXml(String groupName, List<String> items, SortType sortType, 
-			SortType defaultSortType, String createdBy, Date createdDate) {
+			SortType defaultSortType, String createdBy, DateTime createdDateTime) {
 		super();
 		this.groupName = groupName;
 		this.groupType = FacetGroupType.get(groupName);
 		this.groupItem = items;
 		this.sortType = sortType == null? defaultSortType: sortType;
 		setCreatedBy(createdBy);
-		setCreatedDate(createdDate);
+		setCreatedDateTime(createdDateTime);
 	}
 
 	public FacetSortGroupXml(String groupName, FacetGroupType groupType, SortType sortType, 
-			List<String> groupItem, String groupId, String createdBy, Date createdDate) {
+			List<String> groupItem, String groupId, String createdBy, DateTime createdDateTime) {
 		super();
 		this.groupName = groupName;
 		this.groupType = groupType;
@@ -52,7 +52,7 @@ public class FacetSortGroupXml extends BaseEntityXml{
 		this.groupItem = groupItem;
 		this.groupId = groupId;
 		setCreatedBy(createdBy);
-		setCreatedDate(createdDate);
+		setCreatedDateTime(createdDateTime);
 	}
 
 	@XmlAttribute(name="name")

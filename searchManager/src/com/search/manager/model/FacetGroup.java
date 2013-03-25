@@ -6,7 +6,6 @@ import org.directwebremoting.convert.BeanConverter;
 import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.SortType;
 import com.search.manager.report.model.xml.FacetSortGroupXml;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class FacetGroup extends ModelBean {
@@ -69,7 +68,7 @@ public class FacetGroup extends ModelBean {
 		this.sequence = sequence;
 		this.storeId = storeId;
 		setCreatedBy(xml.getCreatedBy());
-		setCreatedDate(xml.getCreatedDate());
+		setCreatedDateTime(xml.getCreatedDateTime());
 		//TODO add groupId
 	}
 
@@ -140,11 +139,12 @@ public class FacetGroup extends ModelBean {
 		this.storeId = storeId;
 	}
 
-	public String getFormattedCreatedDate() {
-		return DateAndTimeUtils.formatMMddyyyy(getCreatedDate());
-	}
-	
-	public String getFormattedLastModifiedDate() {
-		return DateAndTimeUtils.formatMMddyyyy(getLastModifiedDate());
-	}
+	//TODO: translate using joda tlds
+//	public String getFormattedCreatedDate() {
+//		return DateAndTimeUtils.formatMMddyyyy(getCreatedDate());
+//	}
+//	
+//	public String getFormattedLastModifiedDate() {
+//		return DateAndTimeUtils.formatMMddyyyy(getLastModifiedDate());
+//	}
 }

@@ -2,7 +2,6 @@ package com.search.manager.report.model;
 
 import com.search.manager.model.Relevancy;
 import com.search.manager.report.annotation.ReportField;
-import com.search.manager.utility.DateAndTimeUtils;
 
 public class RelevancyReportBean extends ReportBean<Relevancy>{
 
@@ -27,14 +26,14 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 	
 	@ReportField(label="Schedule", size=20, sortOrder=4)
 	public String getValidity(){
-		StringBuilder builder = new StringBuilder();
-		if (model.getStartDate() != null) {
-			builder.append("from " + model.getFormattedStartDate());
-		}
-		if (model.getEndDate() != null) {
-			builder.append(" to " + model.getFormattedEndDate());
-		}
-		return builder.toString();
+//		StringBuilder builder = new StringBuilder();
+//		if (model.getStartDateTime() != null) {
+//			builder.append("from " + model.getFormattedStartDate());
+//		}
+//		if (model.getEndDateTime() != null) {
+//			builder.append(" to " + model.getFormattedEndDate());
+//		}
+		return ""; //TODO: builder.toString();
 	}
 
 	@ReportField(label="Created By", size=20, sortOrder=5)
@@ -44,7 +43,7 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 
 	@ReportField(label="Created Date", size=20, sortOrder=6)
 	public String getCreatedDate(){
-		return DateAndTimeUtils.formatDateTimeUsingConfig(model.getStore().getStoreId(), model.getCreatedDate());
+		return ""; //TODO: DateAndTimeUtils.formatDateTimeUsingConfig(model.getStore().getStoreId(), model.getCreatedDate());
 	}
 
 	@ReportField(label="Modified By", size=20, sortOrder=7)
@@ -54,7 +53,7 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 	
 	@ReportField(label="Modified Date", size=20, sortOrder=8)
 	public String getModifiedDate(){
-		return DateAndTimeUtils.formatDateTimeUsingConfig(model.getStore().getStoreId(), model.getLastModifiedDate());
+		return ""; //TODO: DateAndTimeUtils.formatDateTimeUsingConfig(model.getStore().getStoreId(), model.getLastModifiedDate());
 	}
 	
 }

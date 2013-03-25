@@ -17,13 +17,17 @@
 				$("#fromDate").datepicker({
 					constrainInput : true,
 					defaultDate : "-7",
-					dateFormat : 'M d, yy'
+					dateFormat : 'M d, yy',
+					changeMonth: true,
+				    changeYear: true
 				}).datepicker("setDate", "-7");
 
 				$("#toDate").datepicker({
 					constrainInput : true,
 					defaultDate : "0",
-					dateFormat : 'M d, yy'
+					dateFormat : 'M d, yy',
+					changeMonth: true,
+				    changeYear: true
 				}).datepicker("setDate", "0");
 
 				$("#updateDateBtn").click(function(){

@@ -134,9 +134,10 @@
 				'spellcheck.count': 3,
 				'spellcheck.collate': true,
 				'gui': GLOBAL_isFromGUI,
-				'store': GLOBAL_storeId,
 				'json.nl': 'map'
 		};
+		
+		params[GLOBAL_solrSelectorParam] = GLOBAL_storeId;
 
 		for (var name in params) {
 			Manager.store.addByValue(name, params[name]);

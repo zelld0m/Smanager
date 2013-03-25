@@ -45,7 +45,7 @@ public class SolrDocUtil {
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
 				solrInputDocument
-						.addField("expiryDate", result.getExpiryDate());
+						.addField("expiryDate", result.getExpiryDateTime());
 				solrInputDocument.addField("entity", result.getEntity());
 				solrInputDocument.addField("memberId", result.getMemberId());
 				solrInputDocument.addField("ruleType",
@@ -80,7 +80,7 @@ public class SolrDocUtil {
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
 				solrInputDocument
-						.addField("expiryDate", result.getExpiryDate());
+						.addField("expiryDate", result.getExpiryDateTime());
 				solrInputDocument.addField("entity", result.getEntity());
 				solrInputDocument.addField("memberId", result.getMemberId());
 				solrInputDocument.addField("ruleType",
@@ -112,7 +112,7 @@ public class SolrDocUtil {
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
 				solrInputDocument
-						.addField("expiryDate", result.getExpiryDate());
+						.addField("expiryDate", result.getExpiryDateTime());
 				solrInputDocument.addField("entity", result.getEntity());
 				solrInputDocument.addField("memberId", result.getMemberId());
 				solrInputDocument.addField("ruleType",

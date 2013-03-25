@@ -84,7 +84,8 @@ public class UsersDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP),
 	                		rs.getTimestamp(DAOConstants.COLUMN_THRU_DATE),
-	                		rs.getString(DAOConstants.COLUMN_STORE_ID));
+	                		rs.getString(DAOConstants.COLUMN_STORE_ID),
+	                		rs.getString(DAOConstants.COLUMN_TIMEZONE_ID));
 	        	}
 
 	        }));
