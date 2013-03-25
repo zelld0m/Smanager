@@ -164,13 +164,17 @@
 				$("#fromDate").datepicker({
 					constrainInput : true,
 					defaultDate : from,
-					dateFormat : 'M d, yy'
+					dateFormat : 'M d, yy',
+					changeMonth: true,
+				    changeYear: true
 				}).datepicker("setDate", from);
 
 				$("#toDate").datepicker({
 					constrainInput : true,
 					defaultDate : to,
-					dateFormat : 'M d, yy'
+					dateFormat : 'M d, yy',
+					changeMonth: true,
+				    changeYear: true
 				}).datepicker("setDate", to);
 
 				self.fromDate = $("#fromDate").datepicker("getDate");
@@ -221,6 +225,8 @@
 				dateFormat : 'M d, yy',
 				showWeek: true,
 				firstDay: 1,
+				changeMonth: true,
+			    changeYear: true,
 				onSelect: function(dateStr, obj) {
 					var date = $.getFirstDayOfWeek($("#fromWeek").datepicker("getDate"));
 
@@ -235,6 +241,8 @@
 				dateFormat : 'M d, yy',
 				showWeek: true,
 				firstDay: 1,
+				changeMonth: true,
+			    changeYear: true,
 				onSelect: function(dateStr, obj) {
 					var date = $.getFirstDayOfWeek($("#toWeek").datepicker("getDate"));
 

@@ -192,6 +192,8 @@
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
+			changeMonth: true,
+		    changeYear: true,
 			onSelect: function(selectedDate) {
 				var option = (this.id === "startDate") ? "minDate" : "maxDate",
 						instance = $(this).data("datepicker"),

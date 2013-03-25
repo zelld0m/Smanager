@@ -166,6 +166,8 @@
 									showOn: "both",
 									minDate: sec.dateMinDate,
 									maxDate: sec.dateMaxDate,
+									changeMonth: true,
+								    changeYear: true,
 									buttonText: "Expiration Date",
 									buttonImage: "../images/icon_calendar.png",
 									buttonImageOnly: true,
@@ -268,6 +270,8 @@
 									showOn: "both",
 									minDate: sec.dateMinDate,
 									maxDate: sec.dateMaxDate,
+									changeMonth: true,
+								    changeYear: true,
 									buttonText: "Expiration Date",
 									buttonImage: "../images/icon_calendar.png",
 									buttonImageOnly: true,
@@ -443,6 +447,8 @@
 
 					$('#refmem').prop({readonly: true}).datepicker({
 						showOn: "both",
+						changeMonth: true,
+					    changeYear: true,
 						buttonText: "Member Since",
 						buttonImage: "../images/icon_calendar.png",
 						buttonImageOnly: true,

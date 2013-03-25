@@ -168,9 +168,9 @@
 					$li.find(".validityDays").html($item["validityText"]);
 				} 
 
-				DateTime dt;
-				console.log(dt.now());
-				 //= $item["expiryDateTime"];
+				var formattedExpiryDate = $item["expiryDateTime"];
+				
+				
 				if($.isBlank(formattedExpiryDate)){
 					$li.find(".clearDate").hide();
 				}else{
@@ -182,8 +182,12 @@
 					showOn: "both",
 					minDate: self.dateMinDate,
 					maxDate: self.dateMaxDate,
+					changeMonth: true,
+				    changeYear: true,
 					buttonText: "Expiration Date",
 					buttonImage: "../images/icon_calendar.png",
+					changeMonth: true,
+					changeYear: true,
 					buttonImageOnly: true,
 					disabled: self.selectedRuleStatus["locked"] || !allowModify,
 					onSelect: function(dateText, inst) {	

@@ -129,6 +129,8 @@
 				disabled: base.options.locked,
 				minDate: base.options.validityDateMinDate,
 				maxDate: base.options.validityDateMaxDate,
+				changeMonth: true,
+			    changeYear: true,
 				buttonText: "Validity Date",
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true,
