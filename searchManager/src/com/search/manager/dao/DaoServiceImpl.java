@@ -1854,5 +1854,4 @@ public class DaoServiceImpl implements DaoService {
     public RecordSet<SpellRule> checkDuplicateSearchTerm(String storeId, String searchTerm) throws DaoException {
         return spellRuleDAO.checkDuplicateSearchTerm(storeId, searchTerm);
     }
-	
 }

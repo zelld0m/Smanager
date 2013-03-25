@@ -198,6 +198,7 @@
 				com.search.manager.service.UtilityService,
 				com.search.manager.service.ZeroResultService,
 				com.search.manager.service.KeywordTrendsService,
+                com.search.manager.service.SpellRuleService,
 				com.search.manager.cache.service.CacheService,
 				com.search.manager.model.AuditTrail,
 				com.search.manager.model.Category,
@@ -269,7 +270,9 @@
 				com.search.manager.enums.RuleType,				
 				com.search.manager.enums.SortType,	
 				com.search.manager.enums.ReplaceKeywordMessageType,
-				com.search.manager.exception.PublishLockException
+				com.search.manager.exception.PublishLockException,
+				com.search.manager.response.ServiceResponse,
+				com.search.manager.response.ErrorMessage
 			</param-value>
 		</init-param>
 	</servlet>

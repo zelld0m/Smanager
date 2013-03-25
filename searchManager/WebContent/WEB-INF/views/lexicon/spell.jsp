@@ -15,32 +15,33 @@
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
   <div class="clearB floatL w240">
-    <div class="sideHeader">Site Updates</div>
+    <div class="sideHeader">Filters</div>
     <div class="clearB floatL w230 padL5">
-      <ul class="listSU fsize11 marT10">
-        <li><p class="notification">
-            <strong>lorem 2 items</strong> Etiam dui justo, consect<br> <a href="#">20 minutes ago</a>
-          </p></li>
-        <li class="alt"><p class="notification">
-            <strong>lorem 2 items</strong> Etiam dui justo, consect<br> <a href="#">20 minutes ago</a>
-          </p></li>
-        <li><p class="alert">
-            <strong>lorem 2 items</strong> Etiam dui justo, consect<br> <a href="#">20 minutes ago</a>
-          </p></li>
-        <li class="alt"><p class="notification">
-            <strong>lorem 2 items</strong> Etiam dui justo, consect<br> <a href="#">20 minutes ago</a>
-          </p></li>
-        <li><p class="alert">
-            <strong>lorem 2 items</strong> Etiam dui justo, consect<br> <a href="#">20 minutes ago</a>
-          </p></li>
-        <li class="alt"><p class="alert">
-            <strong>lorem 2 items</strong> Etiam dui justo, consect<br> <a href="#">20 minutes ago</a>
-          </p></li>
-        <li><p class="alert">
-            <strong>lorem 2 items</strong> Etiam dui justo, consect<br> <a href="#">20 minutes ago</a>
-          </p></li>
-        <li class="textAR"><a href="#">see all updates &raquo;</a></li>
-      </ul>
+      <div class="box marT8">
+        <h2 style="font-size: 12px;">Status</h2>
+        <select id="status-filter" class="dropDownFilter mar10 w200">
+          <option value=""></option>
+          <option value="new">New</option>
+          <option value="modified">Updated</option>
+          <option value="pending">Pending</option>
+          <option value="not-modified">Published</option>
+        </select>
+      </div>
+      
+      <div class="box marT8">
+        <h2 style="font-size: 12px;">Search Term</h2>
+        <input id="searchTerm-filter" type="text" maxlength="100" class="mar10 w200"></input>
+      </div>
+      
+      <div class="box marT8">
+        <h2 style="font-size: 12px;">Suggestion</h2>
+        <input id="suggestion-filter" type="text" maxlength="100" class="mar10 w200"></input>
+      </div>
+      <div id="action-buttons" class="floatR marT20">
+          <div class="button-group">
+            <a class="new-button" href="javascript:void(0);" id="clear-button">Clear</a>
+          </div>
+      </div>
     </div>
   </div>
 </div>
@@ -52,44 +53,57 @@
     <h1 class="padT7 padL15 fsize20 fnormal">Did You Mean</h1>
   </div>
   <div class="clearB"></div>
-  <div style="width: 95%" class="marT20 mar0">
+  <div id="action-buttons" class="floatR marT20">
+    <div class="button-group" id="button-group-0">
+      <a href="javascript:void(0);" id="add-button" class="new-button">Add</a>
+      <a href="javascript:void(0);" id="edit-button" class="new-button">Edit</a>
+      <a href="javascript:void(0);" id="submit-button" class="new-button" title="Submit for approval">Submit</a>
+    </div>
+    <div class="button-group" id="button-group-1" style="display:none;">
+      <a href="javascript:void(0);" id="save-button" class="new-button">Save</a>
+      <a href="javascript:void(0);" id="cancel-button" class="new-button">Cancel</a>
+    </div>
+  </div>
+  <div class="clearB"></div>
+  <div style="min-height: 600px; max-width: 100%">
     <div class="clearB"></div>
     <div class="linguistics marT20">
-      <div style="height: 600px; overflow-y: auto">
+      <div id="topPaging"></div>
+      <div class="clearB"></div>
+      <div style="max-height: 600px; overflow-y: auto">
         <table id="spell-table" width="100%" class="fsize12 tblAlpha marT8">
-          <tr>
-            <th width="50%">Misspellings</th>
+          <tr id="header">
+            <th width="50%">Search Terms</th>
             <th width="50%">Suggestions</th>
           </tr>
-          <tr id="itemTemplate" style="display:none;">
-            <td>
-              <div class="misspell-list term-list">
-                  &lt;Click here to add new term&gt;
-              </div>
-            </td>
-            <td>
-              <div class="suggest-list term-list">
-                  &lt;Click here to add new term&gt;
-              </div>
-              <div class="icons" style="display: none;">
-                <a href="javascript:void(0);" title="Locked" id="edit-locked"><img src="<spring:url value="/images/noedit.png" />"></img></a>
-                <a href="javascript:void(0);" title="Edit" id="edit-link"><img src="<spring:url value="/images/page_edit.png" />"></img></a>
-                <a href="javascript:void(0);" title="Submit for approval" id="submit-link"><img src="<spring:url value="/images/submit-approval.jpg" />"></img></a>
-                <a href="javascript:void(0);" title="Delete" id="delete-link"><img src="<spring:url value="/images/delete_icon.png" />"></img></a>
-                <a href="javascript:void(0);" title="Save" id="save-link"><img src="<spring:url value="/images/icon_disk.png" />"></img></a>
-                <a href="javascript:void(0);" title="Cancel" id="cancel-link"><img src="<spring:url value="/images/stop_icon.png" />"></img></a>
-              </div>
-            </td>
+          <tr id="itemTemplate" class="spell-rule" style="display:none;">
+            <td id="searchTerms" class="term-list"></td>
+            <td id="suggestions" class="term-list"></td>
           </tr>
-          <tr id="spell-table-footer">
+          <tr id="noResultsFound" style="display:none;">
+             <td colspan="2" class="txtAL">No results found.</td>
+          </tr>
+          <tr id="spell-table-footer" style="display:none;">
             <td colspan="2">
                   &lt;Click here to add new rule&gt;
             </td>
           </tr>
         </table>
       </div>
+      <div class="clearB"></div>
+      <div id="bottomPaging"></div>
     </div>
     <div class="clearB"></div>
+    <div id="templates" style="display:none;">
+	  <div class="icons">
+	    <!-- visible when rule is pending approval/publishing in edit mode -->
+	    <a href="javascript:void(0);" title="Locked" id="edit-locked"><img src="<spring:url value="/images/noedit.png" />"></img></a>
+	    <!-- visible in edit/add modes -->
+	    <a href="javascript:void(0);" title="Delete" id="delete-link"><img src="<spring:url value="/images/delete_icon.png" />"></img></a>
+	    <!-- revert to original value | visible in edit mode -->
+	    <a href="javascript:void(0);" title="Revert" id="undo-link"><img src="<spring:url value="/images/icon-undo.png" />"></img></a>
+	  </div>
 	</div>
+  </div>
 </div>
 <%@ include file="/WEB-INF/includes/footer.jsp"%>

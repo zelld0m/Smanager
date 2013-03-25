@@ -36,6 +36,7 @@ public class SpellRuleDAO {
         createSpellRuleStoredProcedure = new CreateSpellRuleStoredProcedure(jdbcTemplate);
         updateSpellRuleStoredProcedure = new UpdateSpellRuleStoredProcedure(jdbcTemplate);
         deleteSpellRuleStoredProcedure = new DeleteSpellRuleStoredProcedure(jdbcTemplate);
+        checkSpellRuleDuplicatesStoredProcedure = new CheckSpellRuleDuplicatesStoredProcedure(jdbcTemplate);
     }
 
     public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException {
@@ -47,7 +48,7 @@ public class SpellRuleDAO {
             input.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
             input.put(DAOConstants.PARAM_SEARCH_TERM_LIKE, rule.getSearchTerms() != null ? rule.getSearchTerms()[0]
                     : null);
-            input.put(DAOConstants.PARAM_SUGGESTION_LIKE, rule.getSuggestions() != null ? rule.getSuggestions()[0]
+            input.put(DAOConstants.PARAM_SUGGEST_LIKE, rule.getSuggestions() != null ? rule.getSuggestions()[0]
                     : null);
             input.put(DAOConstants.PARAM_STATUS, rule.getStatus());
             input.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
@@ -69,9 +70,8 @@ public class SpellRuleDAO {
             input.put(DAOConstants.PARAM_RULE_ID, ruleId);
             input.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
             input.put(DAOConstants.PARAM_SEARCH_TERM, StringUtils.join(rule.getSearchTerms(), DELIMITER));
-            input.put(DAOConstants.PARAM_SUGGESTION, StringUtils.join(rule.getSuggestions(), DELIMITER));
+            input.put(DAOConstants.PARAM_SUGGEST, StringUtils.join(rule.getSuggestions(), DELIMITER));
             input.put(DAOConstants.PARAM_CREATED_BY, rule.getCreatedBy());
-            input.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
 
             if (DAOUtils.getUpdateCount(createSpellRuleStoredProcedure.execute(input)) > 0) {
                 retVal = ruleId;
@@ -92,7 +92,7 @@ public class SpellRuleDAO {
             input.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
             input.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
             input.put(DAOConstants.PARAM_SEARCH_TERM, StringUtils.join(rule.getSearchTerms(), DELIMITER));
-            input.put(DAOConstants.PARAM_SUGGESTION, StringUtils.join(rule.getSuggestions(), DELIMITER));
+            input.put(DAOConstants.PARAM_SUGGEST, StringUtils.join(rule.getSuggestions(), DELIMITER));
             input.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
 
             retVal = DAOUtils.getUpdateCount(updateSpellRuleStoredProcedure.execute(input));
@@ -173,8 +173,8 @@ public class SpellRuleDAO {
         protected void declareParameters() {
             declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-            declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
-            declareParameter(new SqlParameter(DAOConstants.PARAM_SUGGESTION, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM_LIKE, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_SUGGEST_LIKE, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_STATUS, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
             declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
@@ -205,9 +205,8 @@ public class SpellRuleDAO {
             declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
-            declareParameter(new SqlParameter(DAOConstants.PARAM_SUGGESTION, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_SUGGEST, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-            declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
         }
     }
 
@@ -222,7 +221,7 @@ public class SpellRuleDAO {
             declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
-            declareParameter(new SqlParameter(DAOConstants.PARAM_SUGGESTION, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_SUGGEST, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
         }
     }

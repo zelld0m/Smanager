@@ -426,6 +426,6 @@ public class DAOConstants {
 
     // Parameters
     public static final String PARAM_STATUS                         = "status";
-    public static final String PARAM_SUGGESTION                     = "suggestion";
-    public static final String PARAM_SUGGESTION_LIKE                = "suggestion_like";
+    public static final String PARAM_SUGGEST                        = "suggest";
+    public static final String PARAM_SUGGEST_LIKE                   = "suggest_like";
 }

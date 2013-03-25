@@ -3,26 +3,26 @@
 	$.cutebar = function(el, options) {
 		var base = this;
 
-		base.opt = $.extend({}, $.cutebar.defaultOptions, options, true);
+		base.options = $.extend({}, $.cutebar.defaultOptions, options, true);
 		base.$el = $(el);
 		base.$groups = {};
 
-		for (g in base.opt.groups) {
+		for (g in base.options.groups) {
 			base.$groups[g] = $("<div style='white-space: nowrap;'>").attr("id", g);
 
-			for (var i = 0; i < base.opt.groups[g].length; i++) {
-				var $button = base.$el.find("#" + base.opt.groups[g][i]);
+			for (var i = 0; i < base.options.groups[g].length; i++) {
+				var $button = base.$el.find("#" + base.options.groups[g][i]);
 				var id = $button.attr("id");
 
 				base.$groups[g].append($button);
 
-				if (base.opt.events[id]) {
-					$button.on({click: base.opt.events[id]});
+				if (base.options.events[id]) {
+					$button.on({click: base.options.events[id]});
 				}
 			}
 
-			if (base.opt.events[g]) {
-				base.$groups[g].on(base.opt.events[g]);
+			if (base.options.events[g]) {
+				base.$groups[g].on(base.options.events[g]);
 			}
 
 			base.$el.append(base.$groups[g]);
@@ -30,26 +30,20 @@
 
 		base.qtipOptions = {
 				content  : base.$el, 
-				position : base.opt.qtip.position,
-				hide     : base.opt.qtip.hide,
-				style    : base.opt.qtip.style,
-				events   : base.opt.qtip.events,
-				show     : base.opt.qtip.show
+				position : base.options.qtip.position,
+				hide     : base.options.qtip.hide,
+				style    : base.options.qtip.style,
+				events   : base.options.qtip.events,
+				show     : base.options.qtip.show
 			};
-		$(base.opt.container).qtip(base.qtipOptions);
+		$(base.options.container).qtip(base.qtipOptions);
 
 		// associate this cutebar with the element
 		base.$el.data('cutebar', base);
-		
+
 		base.redraw = function() {
 			if (base.$el.parent().parent().data('qtip')) {
-			    base.$el.parent().parent().data('qtip').redraw();
-			    
-			    if (base.$el.parent().parent().data('qtip').rendered) {
-				    base.$el.parent().parent().data('qtip').hide();
-				    base.$el.parent().parent().data('qtip').show();
-				    base.$el.parent().parent().data('qtip').show();
-			    }
+				base.$el.parent().parent().data('qtip').hide().redraw().reposition().show();
 			}
 		};
 	};
@@ -60,17 +54,24 @@
 			hide     : { fixed : true },
 			style    : { tip : false, classes : 'actions' },
 			events   : {},
-			show     : {ready: true}
+			show     : {ready: false}
 		}
 	};
 	
 	var methods = {
-		showGroup: function(name) {
-			this.$groups[name].show();
+		showGroup: function(groups) {
+			var self = this;
+			$.each(groups, function() {
+				self.$groups[this].show();
+			});
 			this.redraw();
 		},
-		hideGroup: function(name) {
-			this.$groups[name].hide();
+		hideGroup: function(groups) {
+			var self = this;
+			$.each(groups, function() {
+				self.$groups[this].hide();
+			});
+			this.redraw();
 		}
 	};
 

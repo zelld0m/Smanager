@@ -46,7 +46,8 @@ public class SpellRuleService {
             if (StringUtils.isNotEmpty(suggestion))
                 rule.setSuggestions(new String[] { suggestion });
 
-            rule.setStatus(status);
+            if (StringUtils.isNotEmpty(status))
+                rule.setStatus(status);
 
             response.success(daoService.getSpellRule(new SearchCriteria<SpellRule>(rule, pageNumber, itemsPerPage)));
         } catch (DaoException e) {
@@ -73,7 +74,6 @@ public class SpellRuleService {
 
                 rule.setStoreId(storeId);
                 rule.setCreatedBy(username);
-                rule.setLastModifiedBy(username);
                 rule.setSearchTerms(searchTerms);
                 rule.setSuggestions(suggestions);
                 rule.setRuleId(daoService.addSpellRuleAndGetId(rule));
@@ -123,6 +123,22 @@ public class SpellRuleService {
         return response;
     }
 
+    @RemoteMethod
+    public ServiceResponse<Void> deleteSpellRule(String ruleId) {
+        ServiceResponse<Void> response = new ServiceResponse<Void>();
+
+        try {
+            SpellRule rule = new SpellRule(ruleId, UtilityService.getStoreId());
+            daoService.deleteSpellRule(rule);
+            response.success(null);
+        } catch (DaoException e) {
+            logger.error("Error occured in deleteSpellRule()", e);
+            response.error("Unable to delete rule.");
+        }
+
+        return response;
+    }
+
     private String[] checkDuplicatedSearchTerms(final String ruleId, final String[] searchTerms) throws DaoException {
         List<String> duplicates = new ArrayList<String>();
 
@@ -137,8 +153,7 @@ public class SpellRuleService {
 
     private boolean isDuplicateSearchTerm(String ruleId, String searchTerm) throws DaoException {
         boolean retVal = false;
-        RecordSet<SpellRule> spellRules = daoService
-                .checkDuplicateSearchTerm(UtilityService.getStoreId(), searchTerm);
+        RecordSet<SpellRule> spellRules = daoService.checkDuplicateSearchTerm(UtilityService.getStoreId(), searchTerm);
 
         if (spellRules.getTotalSize() > 0 && StringUtils.isNotEmpty(ruleId)) {
             retVal = !ruleId.equals(spellRules.getList().get(0).getRuleId());

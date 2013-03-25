@@ -1,310 +1,444 @@
-(function($){
-	
-	var Messages = {
-		addNewTerm: "<Click to add new term>"
+(function($) {
+
+	var Term = function(options) {
+		var base = this;
+
+		base.options = $.extend({}, options);
+		delete options['term'];
+		base.$container = $("<span class=\"term\">");
+		base.$container.on({
+			keydown : function(e) {
+				switch (e.keyCode) {
+				case 9: // tab
+					e.preventDefault();
+					if (e.shiftKey && base.$container.prev().length > 0) {
+						base.$container.prev().click();
+						break;
+					}
+
+					if (!e.shiftKey && base.$container.text().trim()
+							&& base.$container.next().length > 0) {
+						$(base.$container.next()).click();
+						break;
+					}
+				case 13: // enter
+					e.preventDefault();
+					if (base.$container.text().trim()
+							&& base.$container.next().length == 0) {
+						new Term(options);
+					} else {
+						base.$container.blur();
+					}
+				}
+			},
+
+			blur : function(e) {
+				var val = base.$container.text();
+				base.$container.removeClass("error");
+
+				if (!val) {
+					base.$container.remove();
+				}
+				base.options.container.trigger("change");
+			}
+		}).editable({editEnabled: function() {
+			return base.options.rule.editable;
+		}});
+
+		base.options.container.append(base.$container);
+		base.$container.text(base.options.term);
+		base.$container.click();
 	};
 
-	var Term = function(data) {
-		var $container = $("<span class=\"term\">");
-		var $inputEl = $("<input type=\"text\" class=\"term-input\">");
-		var $displayEl = $("<span class=\"term-input-display\">");
+	var SpellRule = function(data) {
+		var base = this;
 
-		$inputEl.on({
-			click : function(e) {
-				return false;
-			},
+		base.$el = base.$spellRuleTemplate.clone().removeAttr("id");
+		base.$searchTerms = base.$el.find("#searchTerms");
+		base.$suggestions = base.$el.find("#suggestions");
 
-			keydown: function(e) {
-				switch (e.keyCode) {
-					case 27:
-						$inputEl.val($displayEl.text());
-						$inputEl.blur();
-						break;
-					case 9:
-						e.preventDefault();
-						if (e.shiftKey && $container.prev().length > 0) {
-							$container.prev().click();
-							break;
-						}
-
-						if (!e.shiftKey && $inputEl.val().trim() && $container.next().length > 0) {
-							$($container.next()).click();
-							break;
-						}
-					case 13:
-						if ($inputEl.val().trim() && $container.next().length == 0) {
-							new Term(data);
-						} else {
-							$inputEl.blur();
-						}
-				}
-			},
+		// When spell rule is created with data provided
+		if (data) {
+			base.id = data.ruleId;
+			base.$el.attr("id", data.ruleId);
+			base.originalSearchTerms = data.searchTerms;
+			base.originalSuggestions = data.suggestions;
+			base.editable = false;
 			
-			focus: function(e) {
-				$inputEl.select();
-			},
+			// render search terms and suggestions
+			base.$searchTerms.text("");
+			$.each(data.searchTerms, function(idx) {
+				new Term({term: data.searchTerms[idx], rule: base, container: base.$searchTerms});
+			});
 
-			blur: function(e) {
-				var val = $inputEl.val().trim();
-
-				if (val) {
-					$displayEl.text(val);
-					$inputEl.val(val);
-					$inputEl.hide();
-					$displayEl.show();
-				} else {
-					var idx = 0;
-
-					while (idx < data.collection.length) {
-						if (data.collection[idx] == object) {
-							break;
-						}
-
-						idx++;
-					}
-
-					if (idx < data.collection.length) {
-						data.collection.splice(idx, 1);
-					}
-
-					if (!data.rule.hasContents()) {
-						data.rule.destroy();
-					} else {
-						$container.remove();
-	
-						if (data.collection.length == 0) {
-							data.container.text(Messages.addNewTerm);
-						}
-					}
-				}
-			}
-		});
-
-		$container.on({
-			click: function(e) {
-				if (data.rule.editable) {
-					$displayEl.hide();
-					$inputEl.show();
-					$inputEl.focus();
-				}
-				return false;
-			}
-		});
-
-		$container.append($displayEl).append($inputEl);
-
-		var object = {
-			$el : $container,
-			focus: function() {
-				if (data.rule.editable) {
-					$displayEl.hide();
-					$inputEl.show();
-					$inputEl.focus();
-				}
-			},
-		};
-
-		data.collection.push(object);
-		data.container.append($container);
-
-		if (data.term) {
-			$inputEl.val(data.term.$el.text()).hide();
-			$displayEl.text(data.term.$el.text());
-			data.term = null;
+			base.$suggestions.text("");
+			$.each(data.suggestions, function(idx) {
+				new Term({term: data.suggestions[idx], rule: base, container: base.$suggestions});
+			});
 		} else {
-		    object.focus();
+			base.id = null;
+			base.originalSearchTerms = [];
+			base.originalSuggestions = [];
+			base.editable = true;
+		}
+
+		base.$el.data('spellRule', base);
+		base.$searchTerms.on({
+			click: function(e) {
+				if (base.editable) {
+					if (base.$searchTerms.find(".term").length == 0) {
+						base.$searchTerms.text("");
+					}
+					new Term({rule: base, container: base.$searchTerms });
+				}
+			},
+			change: function() {
+				if (base.$searchTerms.find(".term").length == 0) {
+					base.$searchTerms.html(DidYouMean.messages.addNewTerm);
+				}
+			}
+		});
+		base.$suggestions.on({
+			click: function(e) {
+				if (base.editable) {
+					if (base.$suggestions.find(".term").length == 0) {
+						base.$suggestions.text("");
+					}
+					new Term({rule: base, container: base.$suggestions });
+				}
+			},
+			change: function() {
+				if (base.$suggestions.find(".term").length == 0) {
+					base.$suggestions.html(DidYouMean.messages.addNewTerm);
+				}
+			}
+		});
+
+		if (DidYouMean.mode === 'add') {
+			DidYouMean.$footer.before(base.$el);
+		} else {
+			DidYouMean.$table.append(base.$el);
 		}
 		
-		return object;
-	};
+//		base.$tooltip = base.$iconsTemplate.clone().cutebar({
+//			container : base.$el,
+//			groups : {
+//				'locked' : [ 'edit-locked' ],
+//				'editing' : [ 'undo-link' ],
+//				'editing-adding' : [ 'delete-link' ]
+//			},
+//			events : {
+//				'delete-link' : function() {
+//					if (base.id) {
+//						SpellRuleServiceJS.deleteSpellRule(base.id);
+//						DidYouMean.handlePageLink();
+//					} else {
+//						base.$el.remove();
+//					}
+//				},
+//				'undo-link' : function() {
+//					base.$searchTerms.text("");
+//					base.$suggestions.text("");
+//					base.editable = false;
+//	
+//					$.each(base.originalSearchTerms, function() {
+//						new Term({
+//							container : base.$searchTerms,
+//							term : this.toString(),
+//							rule : base
+//						});
+//					});
+//	
+//					$.each(base.originalSuggestions, function() {
+//						new Term({
+//							container : base.$suggestions,
+//							term : this.toString(),
+//							rule : base
+//						});
+//					});
+//				}
+//			},
+//			qtip : $.extend({}, $.cutebar.defaultOptions.qtip, {
+//				events : {
+//					hide : function() {
+//						return !base.locked;
+//					},
+//					show: function() {
+//						if (DidYouMean.mode === 'add') {
+//							base.$tooltip.cutebar("hideGroup", ["editing", "editing-adding"]);
+//							base.$tooltip.cutebar("showGroup", ["locked"]);
+//						} else if (DidYouMean.mode === 'edit') {
+//							base.$el.attr("sr-editable", true);
+//							base.$tooltip.cutebar("hideGroup", ["locked"]);
+//							base.$tooltip.cutebar("showGroup", ["editing", "editing-adding"]);
+//							base.$suggestions.sortable('enable');
+//						}
+//
+//						return DidYouMean.mode == 'edit' || DidYouMean.mode == 'add';
+//					}
+//				}
+//			})
+//		});
 
-	var SpellRule = function(parent) {
-		var self = this;
+		base.$el.show();
 
-		var $el = $("#spell-table #itemTemplate").clone().removeAttr("id");
-		var $misspellings = $el.find(".misspell-list");
-		var $suggestions = $el.find(".suggest-list");
-		var origMisspelledTerms = [];
-		var origSuggestedTerms = [];
-		var misspelledTerms = [];
-		var suggestedTerms = [];
-
-		var afterEdit = function() {
-			if (misspelledTerms.length == 0) {
-				$misspellings.text("");
-			}
-			if (suggestedTerms.length == 0) {
-				$suggestions.text("");
-			}
-		};
-
-		var beforeEdit = function() {
-			if (misspelledTerms.length == 0) {
-				$misspellings.text(Messages.addNewTerm);
-			}
-			if (suggestedTerms.length == 0) {
-				$suggestions.text(Messages.addNewTerm);
-			}
-		};
-
-		var obj = {
-			id: null,
-			init: function() {
-				var _self = this;
-				$("#spell-table #itemTemplate").before($el);
-				self.addTerm({data: {rule: _self, collection: misspelledTerms, container: $misspellings}});
-			},
-			hasContents: function() {
-				return misspelledTerms.length > 0 || suggestedTerms.length > 0;
-			},
-			destroy: function() {
-				$el.remove();
-			},
-			editable: true
-		};
-
-		var $tooltip = $el.find(".icons").cutebar({
-			container : $el,
-			groups : {
-				'locked' : [ 'edit-locked' ],
-				'not-editing' : [ 'edit-link', 'submit-link', 'delete-link' ],
-				'editing' : [ 'save-link', 'cancel-link' ]
-			},
-			events : {
-				'edit-link' : function() {
-					$tooltip.cutebar('hideGroup', 'not-editing');
-					$tooltip.cutebar('showGroup', 'editing');
-					obj.editable = true;
-					beforeEdit();
-				},
-				'submit-link' : function() {
-					$tooltip.cutebar('hideGroup', 'not-editing');
-					$tooltip.cutebar('showGroup', 'locked');
-					obj.locked = true;
-				},
-				'delete-link' : function() {
-					obj.destroy();
-				},
-				'save-link' : function() {
-					Test.save(obj, function() {
-						$tooltip.cutebar('hideGroup', 'editing');
-						$tooltip.cutebar('showGroup', 'not-editing');
-						obj.editable = false;
-
-						origMisspelledTerms = misspelledTerms.slice();
-						origSuggestedTerms = suggestedTerms.slice();
-						afterEdit();
-					});
-				},
-				'cancel-link' : function() {
-					if (obj.id) {
-						$tooltip.cutebar('hideGroup', 'editing');
-						$tooltip.cutebar('showGroup', 'not-editing');
-						obj.editable = false;
-
-						misspelledTerms.splice(0);
-						suggestedTerms.splice(0);
-						$misspellings.text("");
-						$suggestions.text("");
-
-						$.each(origMisspelledTerms, function(idx) {
-							new Term({
-								collection : misspelledTerms,
-								container : $misspellings,
-								term : origMisspelledTerms[idx],
-								rule : obj
-							});
-						});
-
-						$.each(origSuggestedTerms, function(idx) {
-							new Term({
-								collection : suggestedTerms,
-								container : $suggestions,
-								term : origSuggestedTerms[idx],
-								rule : obj
-							});
-						});
-						
-						afterEdit();
-					} else {
-						obj.destroy();
-					}
-				}
-			},
-			qtip : $.extend({}, $.cutebar.defaultOptions.qtip, {
-				events : {
-					hide: function() {
-						return !obj.editable && !obj.locked;
-					}
-				}
-			})
-		});
-
-		$misspellings.text(Messages.addNewTerm).parent().on({click: this.addTerm}, {rule: obj, collection: misspelledTerms, container: $misspellings});
-		$suggestions.text(Messages.addNewTerm).parent().on({click: this.addTerm}, {rule: obj, collection: suggestedTerms, container: $suggestions});
-		$tooltip.cutebar("showGroup", "editing");
-		$tooltip.cutebar("hideGroup", "not-editing");
-		$tooltip.cutebar("hideGroup", "locked");
-		$el.show();
-
-		return obj;
-	};
-
-	SpellRule.prototype = {
-		addTerm : function(e) {
-			if (e.data.rule.editable) {
-				if (e.data.collection.length == 0) {
-					e.data.container.text("");
-				}
-
-				new Term(e.data);
-			}
+		if (!data) {
+			base.$searchTerms.html(DidYouMean.messages.addNewTerm);
+			base.$suggestions.html(DidYouMean.messages.addNewTerm);
 		}
-	};
-	
-	var Test = {
-			charset: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-",
-	
-			generateId: function() {
-				var id = "";
-				
-				for (var i = 0; i < 20; i++) {
-					id += this.charset.charAt(Math.floor(Math.random() * this.charset.length));
-				}
-				
-				return id;
-			},
 
-			save: function(rule, callback) {
-				if (!rule.id) {
-				    rule.id = this.generateId();
-				}
-
-				if (typeof(callback) == 'function') {
-					callback();
-				}
+		base.setEditable = function(editable) {
+			if (editable) {
+				base.$suggestions.sortable().sortable('enable');
+				base.editable = true;
+			} else {
+				base.$suggestions.sortable().sortable('disable');
+				base.editable = false;
 			}
+		};
+		
+		base.revert = function() {
+			base.$searchTerms.text("");
+			base.$suggestions.text("");
+
+			$.each(base.originalSearchTerms, function() {
+				new Term({
+					container : base.$searchTerms,
+					term : this.toString(),
+					rule : base
+				});
+			});
+
+			$.each(base.originalSuggestions, function() {
+				new Term({
+					container : base.$suggestions,
+					term : this.toString(),
+					rule : base
+				});
+			});
+		};
 	};
 
 	var DidYouMean = {
-		$table: null,
-		$itemTemplate: null,
-		$footer: null,
+		// filters
+		searchTerm : null,
+		suggestion : null,
+		status : null,
 
-		init: function(){
-			var self= this;
+		// editing mode (display, add, edit)
+		mode: 'display',
 
-			this.$table = $("#spell-table");
-			this.$footer = this.$table.find("#spell-table-footer");
-			this.$itemTemplate = $("#spell-table #itemTemplate");
-			this.$footer.on({click: function() {
-				var rule = new SpellRule();
-				rule.init();
+		// page size
+		PAGE_SIZE : 10,
+		currentPage: 1,
+
+		init : function() {
+			var self = this;
+
+			// action buttons
+			self.$addButton = $("#add-button");
+			self.$editButton = $("#edit-button");
+			self.$submitButton = $("#submit-button");
+			self.$saveButton = $("#save-button");
+			self.$cancelButton = $("#cancel-button");
+
+			// table
+			self.$table = $("#spell-table");
+			self.$footer = self.$table.find("#spell-table-footer").detach();
+			self.$itemTemplate = self.$table.find("#itemTemplate");
+			self.$noResultsRow = self.$table.find("#noResultsFound").detach();
+			self.$pager = $("#topPaging, #bottomPaging");
+
+			// search filters
+			self.$searchTermFilter = $("#searchTerm-filter");
+			self.$suggestionFilter = $("#suggestion-filter");
+			self.$statusFilter = $("#status-filter");
+			self.$clearButton = $("#clear-button");
+			
+			var changeHandler = function(e) {
+				self.searchTerm = self.$searchTermFilter.val();
+				self.suggestion = self.$suggestionFilter.val();
+				self.status = self.$statusFilter.val();
+				
+				self.handlePageLink(1);
+			};
+			
+			self.$searchTermFilter.on({change: changeHandler});
+			self.$suggestionFilter.on({change: changeHandler});
+			self.$statusFilter.on({change: changeHandler});
+			self.$clearButton.on({click: function(e) {
+				self.$searchTermFilter.val("");
+				self.$suggestionFilter.val("");
+				self.$statusFilter.val("");
+				
+				changeHandler(e);
 			}});
+
+			self.$footer.on({
+				click : function() {
+					new SpellRule();
+				}
+			});
+
+			$("#add-button")
+					.on({
+						click : function(e) {
+							$("#button-group-0").hide();
+							$("#button-group-1").show();
+							self.mode = 'add';
+
+							self.$rows = self.$table.find("tr:not(#header)").detach();
+							self.$table.append(self.$footer);
+							self.$footer.show();
+							self.$pager.hide();
+						}
+					});
+
+			$("#edit-button")
+					.on({
+						click : function(e) {
+							$("#button-group-0").hide();
+							$("#button-group-1").show();
+							self.mode = 'edit';
+							
+							var rows = self.$table.find("tr:not(#header)");
+
+							for (var i = 0; i < rows.length; i++) {
+								$(rows[i]).data('spellRule').setEditable(true);
+							}
+						}
+					});
+
+			$("#cancel-button")
+					.on({
+						click : function(e) {
+							$("#button-group-1").hide();
+							$("#button-group-0").show();
+							
+							if (self.mode == 'add') {
+								self.$footer.detach();
+								self.$table.find("tr:not(#header)").remove();
+								self.$table.append(self.$rows);
+							} else if (self.mode == 'edit') {
+								var rows = self.$table.find("tr:not(#header)");
+								
+								for (var i = 0; i < rows.length; i++) {
+									$(rows).data('spellRule').revert();
+									$(rows).data('spellRule').setEditable(false);
+								}
+							}
+							
+							self.$pager.show();
+							self.mode = 'display';
+						}
+					});
+
+			self.handlePageLink(1);
+		},
+
+		handleSearchResponse : function(response, page) {
+			var self = this;
+
+			if (response.status == 0) {
+				this.$table.find("tr:not(#header)").remove();
+
+				if (response.data.list.length > 0) {
+					self.currentPage = page;
+					for (var i = 0; i < response.data.list.length; i++) {
+						new SpellRule(response.data.list[i]);
+					}
+					self.$pager.paginate(self.getPageOptions(page, response.data.totalSize));
+				} else {
+					this.$table.append(this.$noResultsRow.clone().show());
+					self.$pager.hide();
+				}
+			} else {
+				jAlert(response.errorMessage.data);
+			}
+		},
+
+		handlePageLink : function(page) {
+			var self = this;
+			var nextPage = page || self.currentPage;
+
+			SpellRuleServiceJS.getSpellRule(null, self.searchTerm, self.suggestion, self.status, nextPage, self.PAGE_SIZE,
+				function(response) {
+					self.handleSearchResponse(response, nextPage);
+				});
+		},
+
+		getPageOptions : function(currentPage, totalSize) {
+			var self = this;
+			var options = {
+				totalItem : totalSize,
+				currentPage : currentPage,
+				pageSize : self.PAGE_SIZE,
+				pageLinkCallback : function(e) {
+					self.handlePageLink(e.data.page);
+				},
+				firstLinkCallback : function(e) {
+					self.handlePageLink(1);
+				},
+				nextLinkCallback : function(e) {
+					self.handlePageLink(e.data.page + 1);
+				},
+				prevLinkCallback : function(e) {
+					self.handlePageLink(e.data.page - 1);
+				},
+				lastLinkCallback : function(e) {
+					self.handlePageLink(Math.ceil(self.totalSize
+							/ self.itemsPerPage));
+				}
+			};
+			
+			return options;
+		},
+
+		messages : {
+			addNewTerm : "<span style=\"color: #CCC\">Click to add new term</span>",
+			requiredFields : "Search Terms and Suggestions are required.",
+			noDataFound : "No data found."
 		}
 	};
 
-    $(document).ready(function() {
-	    DidYouMean.init();
+	$(document).ready(function() {
+		SpellRule.prototype = {
+			data : function() {
+				var self = this;
+
+				return {
+					id : self.id,
+					searchTerms : self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get(),
+					suggestions : self.$suggestions.find(".term").map(function() { return $(this).text(); }).get()
+				};
+			},
+			resetTooltip: function() {
+				/*
+				if (this.locked) {
+					this.$tooltip.cutebar("hideGroup", ["not-editing", "editing"]);
+					this.$tooltip.cutebar("showGroup", ["locked"]);
+				} else {
+					this.$tooltip.cutebar("hideGroup", ["editing", "locked"]);
+					this.$tooltip.cutebar("showGroup", ["not-editing"]);
+				}
+				*/
+			},
+			highlight: function(data) {
+				var self = this;
+				$.each(data, function(){
+					var duplicateTerm = this.toString();
+
+					self.$searchTerms.find(".term:contains(" + duplicateTerm + ")").each(function() {
+						if ($(this).text() == duplicateTerm) {
+							$(this).addClass("error");
+						}
+					});
+				});
+			},
+			$iconsTemplate : $("#templates .icons").detach(),
+			$spellRuleTemplate: $("#spell-table #itemTemplate").detach(),
+		};
+		
+		DidYouMean.init();
 	});
 })(jQuery);
