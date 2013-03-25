@@ -7,7 +7,9 @@ import java.util.Map;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.EnumConverter;
 
-@DataTransferObject(converter=EnumConverter.class)
+@DataTransferObject(
+		converter=EnumConverter.class, 
+		type="enum")
 public enum RuleType {
 	KEYWORD("Keyword", "Keyword"),
 	TEMPLATE("Template", "Template");

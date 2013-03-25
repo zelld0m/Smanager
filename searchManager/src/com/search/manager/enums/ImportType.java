@@ -7,7 +7,9 @@ import java.util.Map;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.EnumConverter;
 
-@DataTransferObject(converter=EnumConverter.class)
+@DataTransferObject(
+		converter=EnumConverter.class, 
+		type="enum")
 public enum ImportType {
 	FOR_REVIEW("For Review", "For Review"),
 	FOR_APPROVAL("For Approval", "For Approval"),

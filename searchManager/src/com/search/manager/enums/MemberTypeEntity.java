@@ -8,7 +8,9 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.EnumConverter;
 
-@DataTransferObject(converter=EnumConverter.class)
+@DataTransferObject(
+		converter=EnumConverter.class,
+		type="enum")
 public enum MemberTypeEntity {
 	PART_NUMBER("Part Number", "Part Number"),
 	FACET("Facet", "Facet");
@@ -34,7 +36,7 @@ public enum MemberTypeEntity {
 	public String getDescription() {
 		return description;
 	}
-
+	
 	public static MemberTypeEntity get(String displayText) { 
 		return lookup.get(StringUtils.lowerCase(displayText)); 
 	}
