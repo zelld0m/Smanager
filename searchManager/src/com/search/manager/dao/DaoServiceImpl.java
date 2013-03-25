@@ -779,6 +779,11 @@ public class DaoServiceImpl implements DaoService {
 	}
 	
 	@Override
+	public String addBannerAndGetId(Banner banner) throws DaoException {
+		return bannerDAO.addBannerAndGetId(banner);
+	}
+	
+	@Override
 	public int updateBanner(Banner banner) throws DaoException {
 		return bannerDAO.updateBanner(banner);
 	}

@@ -34,6 +34,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRuleCondition;
+import com.search.manager.model.Store;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Schema;
 import com.search.manager.utility.PropsUtils;
@@ -383,5 +384,4 @@ public class UtilityService {
 			}
 		}
 	}
-
 }

@@ -13,7 +13,101 @@
 				headerText : "Banner",
 				page: page,
 				pageSize: self.rulePageSize,
-				showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
+				showAddButton: allowModify,
+				filterText: self.ruleFilterText,
+
+				itemDataCallback: function(base, ruleName, page){
+					self.rulePage = page;
+					self.ruleFilterText = ruleName;
+					BannerServiceJS.getRules(ruleName, page, base.options.pageSize, {
+						callback: function(data){
+							base.populateList(data, ruleName);
+							base.addPaging(ruleName, page, data.totalSize);
+						},
+						preHook: function(){ base.prepareList(); },
+						
+					});
+				},
+				
+				itemAddCallback: function(base, name){
+					$("a#addButton").qtip({
+						id: "add-facetsort",
+						content: {
+							text: $('<div/>'),
+							title: { text: 'New ' + self.moduleName, button: true }
+						},
+						position: {
+							target: $("a#addButton")
+						},
+						show: {
+							ready: true
+						},
+						style: {width: 'auto'},
+						events: { 
+							show: function(e, api){
+								var $contentHolder = $("div", api.elements.content).html(self.getAddBannerTemplate());
+								
+								if ($.isNotBlank(name)) $contentHolder.find('input[id="popKeywordName"]').val(name);
+								
+								$contentHolder.find('a#addButton').off().on({
+									click: function(e){
+										var bannerName = $contentHolder.find("#popKeywordName").val();
+										var description = $contentHolder.find("#description").val();
+										var imagePath = $contentHolder.find("#imagePath").val();
+										var linkPath = "";
+										var imageAlt = "";
+										
+										if($.isBlank(bannerName)){
+											jAlert("Name is required.", self.moduleName);
+										}else if(!isAllowedName(bannerName)){
+											jAlert("Name contains invalid value.",self.moduleName);
+										}else if($.isBlank(imagePath)){
+											jAlert("Image path is required.", self.moduleName);
+										}else if (!isXssSafe(imagePath)){
+											jAlert("Image path contains XSS.",self.moduleName);
+										}else if($.isNotBlank(description) && !isXssSafe(description)){
+											jAlert("Description contains XSS.",self.moduleName);
+										}else if($.isNotBlank(linkPath) && !isXssSafe(linkPath)){
+											jAlert("Link path contains XSS.",self.moduleName);
+										}else if($.isNotBlank(imageAlt) && !isXssSafe(imageAlt)){
+											jAlert("Image alt contains XSS.",self.moduleName);
+										}else{
+											BannerServiceJS.getRuleByName(bannerName, {
+												callback: function(data){
+													if (data != null){
+														jAlert("Another banner is already using the name provided.",self.moduleName);
+													}else{
+														BannerServiceJS.addRule(bannerName, linkPath, imagePath, imageAlt, description, {
+															callback: function(data){
+																if(data != null){
+																	showActionResponse(1, "add", bannerName);
+																	self.getBannerList(1);
+																	self.setBanner(data);
+																}
+															},
+															preHook: function(){ base.prepareList(); },
+														});
+													}
+												}
+											});
+										}
+									}
+								});
+
+								$contentHolder.find('a#clearButton').off().on({
+									click: function(e){
+										$contentHolder.find("#popKeywordName").html("");
+										$contentHolder.find("#imagePath").html("");
+										$contentHolder.find("#description").html("");
+									}
+								});
+							},
+							hide: function (e, api){
+								api.destroy();
+							}
+						}
+					});
+				}
 			});
 		},
 		
@@ -35,7 +129,7 @@
 			template += '	<div class="clearB"></div>';
 			template += '	<div id="bannerImage">';
 			template += '		<label class="floatL w80 txtLabel">Image: </label>'; 
-			template += '		<label class="floatL"><label class="floatL padTB2"><textarea id="comment" class="w240"></textarea></label></label>';
+			template += '		<label class="floatL"><label class="floatL padTB2"><textarea id="imagePath" class="w240"></textarea></label></label>';
 			template += '	</div>';
 			template += '	<div class="clearB"></div>';
 			

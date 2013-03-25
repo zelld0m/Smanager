@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -17,8 +18,8 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.model.Banner;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
 
 @Repository(value="bannerDAO")
 public class BannerDAO {
@@ -35,6 +36,7 @@ public class BannerDAO {
 	private UpdateBannerCommentStoredProcedure updateCommentSP;
 	private AppendBannerCommentStoredProcedure appendCommentSP;
 	
+	@Autowired
 	public BannerDAO(JdbcTemplate jdbcTemplate) {
     	addSP = new AddBannerStoredProcedure(jdbcTemplate);
     	updateSP = new UpdateBannerStoredProcedure(jdbcTemplate) ;
@@ -183,15 +185,21 @@ public class BannerDAO {
 	   }
 	}
 	
+	public String addBannerAndGetId(Banner banner) throws DaoException {
+		String bannerId = banner.getBannerId();
+    	if (StringUtils.isEmpty(bannerId)) {
+    		bannerId = DAOUtils.generateUniqueId();
+    	}
+		
+		banner.setBannerId(bannerId);
+		return (addBanner(banner) > 0) ?  bannerId : null;
+	}
 	
 	public int addBanner(Banner banner) throws DaoException {
     	try {
         	Map<String, Object> inputs = new HashMap<String, Object>();
-        	String bannerId = banner.getBannerId();
-        	if (StringUtils.isEmpty(bannerId)) {
-        		bannerId = DAOUtils.generateUniqueId();
-        	}
-            inputs.put(DAOConstants.PARAM_BANNER_ID, bannerId);
+        	
+            inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getBannerId());
             inputs.put(DAOConstants.PARAM_BANNER_NAME, StringUtils.trimToEmpty(banner.getBannerName()));
             inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(banner.getStore()));
             inputs.put(DAOConstants.PARAM_IMAGE_URL, StringUtils.trimToEmpty(banner.getImagePath()));

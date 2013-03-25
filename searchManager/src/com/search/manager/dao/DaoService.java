@@ -92,6 +92,7 @@ public interface DaoService extends SearchDaoService {
 	
 	/* Banners */
 	public int addBanner(Banner banner) throws DaoException;
+	public String addBannerAndGetId(Banner rule) throws DaoException;
 	public int updateBanner(Banner banner) throws DaoException;
 	public int deleteBanner(Banner banner) throws DaoException;
 	public int updateBannerComment(Banner banner) throws DaoException;
@@ -278,5 +279,6 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+	
 
 }

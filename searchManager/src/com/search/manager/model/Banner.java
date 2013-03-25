@@ -3,7 +3,10 @@ package com.search.manager.model;
 import java.util.Date;
 import java.util.List;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
+@DataTransferObject(converter = BeanConverter.class)
 public class Banner extends ModelBean {
 	
 	private static final long serialVersionUID = 1L;
@@ -18,6 +21,12 @@ public class Banner extends ModelBean {
 	private List<Keyword> keywordList;
 	
 	public Banner() {
+	}
+	
+	public Banner(String bannerId, String bannerName, Store store) {
+		this.bannerId = bannerId;
+		this.bannerName = bannerName;
+		this.store = store;
 	}
 	
 	public Banner(String bannerId, String bannerName, Store store, String imagePath, String linkPath) {
@@ -67,17 +76,15 @@ public class Banner extends ModelBean {
 		this.imageAlt = imageAlt;
 	}
 	
-	public Banner(Store store, String bannerId, String bannerName,
-			String linkPath, String imagePath, String thumbnailPath,
-			String imageAlt) {
+	public Banner(String storeId, String bannerName,
+			String linkPath, String imagePath, String description, String createdBy) {
 		super();
-		this.store = store;
-		this.bannerId = bannerId;
+		this.store = new Store(storeId);
 		this.bannerName = bannerName;
 		this.linkPath = linkPath;
 		this.imagePath = imagePath;
-		this.thumbnailPath = thumbnailPath;
-		this.imageAlt = imageAlt;
+		this.comment = description;
+		this.createdBy = createdBy;
 	}
 
 	public String getBannerId() {
