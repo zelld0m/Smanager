@@ -1652,11 +1652,15 @@
 							jAlert('Please specify at least one filter condition',"Query Cleaning");
 							return;
 						}else{
+							var inputFields = ["CatCode","Name","Description"];
+							
 							$.each(condMap, function(idx, el){
 								$.each(el, function(i,elem){
-									if(!validateGeneric("Input", elem)) {
-										valid = false;
-										return;
+									if($.inArray(elem, inputFields) !== -1){
+										if(!validateGeneric("Input", elem)) {
+											valid = false;
+											return;
+										}
 									}
 								});
 							});
