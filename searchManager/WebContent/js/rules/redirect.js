@@ -1144,8 +1144,8 @@
 						$table.find("select.selectCombo").prop("disabled", false);
 						self.makeSelectSearchable(ui, condition, $select);
 						if ($.isNotBlank(condition) && !$.isEmptyObject(condition.dynamicAttributes)){
-							$select.val(condition.dynamicAttributes["FacetTemplateName"][0]);
-							self.populateIMSDynamicAttributes(ui, condition, condition.dynamicAttributes["FacetTemplateName"][0]);
+							$select.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateNameField][0]);
+							self.populateIMSDynamicAttributes(ui, condition, condition.dynamicAttributes[GLOBAL_storeFacetTemplateNameField][0]);
 						}
 					}
 				});
@@ -1175,8 +1175,8 @@
 						$table.find("select.selectCombo").prop("disabled", false);
 						self.makeSelectSearchable(ui, condition, $select);
 						if ($.isNotBlank(condition) && !$.isEmptyObject(condition.dynamicAttributes)){
-							$select.val(condition.dynamicAttributes["FacetTemplateName"][0]);
-							self.populateCNETDynamicAttributes(ui, condition, condition.dynamicAttributes["FacetTemplateName"][0]);
+							$select.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateNameField][0]);
+							self.populateCNETDynamicAttributes(ui, condition, condition.dynamicAttributes[GLOBAL_storeFacetTemplateNameField][0]);
 						}
 					}
 				});
@@ -1477,10 +1477,9 @@
 				if(ui.find("div.dynamicAttribute").is(":visible")){
 					var inTemplateName = ui.find("select#templateNameList > option:gt(0):selected:eq(0)").text();
 					var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
-					var storeFacetTemplateNameLabel = GLOBAL_PCMGroup ? "FacetTemplateName" : "TemplateName";
 					
 					if($.isNotBlank(inTemplateName)){
-						condMap[storeFacetTemplateNameLabel] = $.makeArray(inTemplateName);
+						condMap[GLOBAL_storeFacetTemplateNameField] = $.makeArray(inTemplateName);
 
 						$divDynamicAttrItems.find("div").each(function(){ 
 							var attributeItem = this.title;
