@@ -133,6 +133,40 @@ public class AuditService {
 	}
 	
 	@RemoteMethod
+	public RecordSet<AuditTrail> getCampaignTrail(String ruleId, int page,int itemsPerPage) {
+		try {
+			String store = UtilityService.getStoreId();
+			
+			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
+			AuditTrail auditTrail = new AuditTrail();
+			auditTrail.setEntity(Entity.campaign.toString());
+			auditTrail.setReferenceId(ruleId);
+			auditTrail.setStoreId(store);
+			
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+		} catch (DaoException e) {
+			return null;
+		}
+	}
+	
+	@RemoteMethod
+	public RecordSet<AuditTrail> getBannerTrail(String ruleId, int page,int itemsPerPage) {
+		try {
+			String store = UtilityService.getStoreId();
+			
+			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
+			AuditTrail auditTrail = new AuditTrail();
+			auditTrail.setEntity(Entity.banner.toString());
+			auditTrail.setReferenceId(ruleId);
+			auditTrail.setStoreId(store);
+			
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+		} catch (DaoException e) {
+			return null;
+		}
+	}
+	
+	@RemoteMethod
 	public RecordSet<AuditTrail> getFacetSortTrail(String ruleId, int page,int itemsPerPage) {
 		try {
 			String store = UtilityService.getStoreId();

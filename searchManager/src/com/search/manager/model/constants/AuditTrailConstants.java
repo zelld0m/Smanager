@@ -136,6 +136,20 @@ public class AuditTrailConstants {
 		Operation.update,
 		Operation.updateComment
 		 };
+	
+	public static Operation[] campaignBannerOperations = {
+		Operation.addBanner,
+		Operation.removeBanner,
+	};
+	
+	public static Operation[] campaignKeywordOperations = {
+		
+	};
+	
+	public static Operation[] bannerToCampaignOperations = {
+		Operation.addToCampaign,
+		Operation.removeFromCampaign
+	};
 
 	public static Operation[] queryCleaningOperations = {
 		Operation.add,

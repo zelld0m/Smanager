@@ -17,13 +17,13 @@
 				showAddButton: allowModify,
 				filterText: self.ruleFilterText,
 
-				itemDataCallback: function(base, ruleName, page){
+				itemDataCallback: function(base, bannerName, page){
 					self.rulePage = page;
-					self.ruleFilterText = ruleName;
-					BannerServiceJS.getRules(ruleName, page, base.options.pageSize, {
+					self.ruleFilterText = bannerName;
+					BannerServiceJS.getRules(bannerName, page, base.options.pageSize, {
 						callback: function(data){
-							base.populateList(data, ruleName);
-							base.addPaging(ruleName, page, data.totalSize);
+							base.populateList(data, bannerName);
+							base.addPaging(bannerName, page, data.totalSize);
 						},
 						preHook: function(){ base.prepareList(); }
 						
@@ -32,7 +32,7 @@
 				
 				itemOptionCallback: function(base, item){
 					//TODO
-					//BannerServiceJS.getTotalCampaignUsingBanner(item.model["ruleId"],{
+					//BannerServiceJS.getTotalCampaignUsingBanner(item.model["bannerId"],{
 					//	callback: function(count){
 					//		if (count > 0) item.ui.find("#itemLinkValue").html("(" + count + ")");
 							
@@ -201,13 +201,13 @@
 			$("#submitForApproval").rulestatus({
 				moduleName: self.moduleName,
 				rule: self.selectedRule,
-				ruleType: "Facet Sort",
+				ruleType: "Banner",
 				enableVersion: true,
 				authorizeRuleBackup: allowModify,
 				authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 				postRestoreCallback: function(base, rule){
 					base.api.destroy();
-					FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
+					BannerServiceJS.getRuleById(self.selectedRule["bannerId"],{
 						callback: function(data){
 							self.setBanner(data);
 						},
@@ -226,13 +226,15 @@
 					$("#preloader").hide();
 					$("#submitForApproval").show();
 					$("#titleText").html(self.moduleName + " for ");
-					$("#titleHeader").text(self.selectedRule["ruleName"]);
-					$("#readableString").html(self.selectedRule["readableString"]);
+					$("#titleHeader").text(self.selectedRule["bannerName"]);
 
 					self.selectedRuleStatus = ruleStatus;
 
-					$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
+					$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["bannerId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
+				//set name, description, etc
+					
+					self.getBannerInCampaignList(1);
 					self.addSaveRuleListener();
 					self.addDeleteRuleListener();
 					self.addDownloadListener();
@@ -241,8 +243,7 @@
 						click: function(e){
 							$(e.currentTarget).viewaudit({
 								itemDataCallback: function(base, page){
-									//TODO
-									AuditServiceJS.getFacetSortTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
+									AuditServiceJS.getBannerTrail(self.selectedRule["bannerId"], base.options.page, base.options.pageSize, {
 										callback: function(data){
 											var total = data.totalSize;
 											base.populateList(data);
@@ -258,6 +259,165 @@
 					});
 				}
 			});
+		},
+		
+		getBannerInCampaignList : function(page){
+			var self = this;
+			$("#campaignWithBannerPanel").sidepanel({
+				fieldName: "campaignName",
+				itemTitle: "New Campaign",
+				page: page,
+				region: "content",
+				pageStyle: "style2",
+				pageSize: self.keywordInRulePageSize,
+				headerText : "Using This Banner",
+				headerTextAlt : "Campaign",
+				itemTextClass: "cursorText",
+				showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
+				showStatus: false,
+
+				itemDataCallback: function(base, keyword, page){
+					RedirectServiceJS.getAllKeywordInRule(self.selectedRule["ruleId"], keyword, page, base.options.pageSize, {
+						callback: function(data){
+							base.populateList(data, keyword);
+							base.addPaging(keyword, page, data.totalSize);
+						},
+						preHook: function(){ base.prepareList(); }
+					});
+				},
+
+				itemOptionCallback: function(base, item){
+					var icon = '<a id="deleteKw" href="javascript:void(0);"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png"></a>';
+
+					item.ui.find(".itemLink").html($(icon));
+
+					item.ui.find(".itemLink > a#deleteKw").off().on({
+						click: function(e){
+							if (e.data.locked) return;
+
+							jConfirm('Delete "' + item.name + '" in ' + self.selectedRule["ruleName"]  + '?', "Delete Keyword", function(result){
+								if(result){
+									RedirectServiceJS.deleteBannerInCampaign(self.selectedRule["ruleId"], item.name,{
+										callback:function(code){
+											showActionResponse(code, "delete", item.name);
+											self.getKeywordInRuleList(1);
+											self.getBannerList(1);
+										},
+										preHook: function(){ 
+											base.prepareList(); 
+										}
+									});
+								}
+							});					
+						},
+						mouseenter: showHoverInfo
+					},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+				},
+
+				itemAddCallback: function(base, keyword){
+					if (!self.selectedRuleStatus["locked"] && allowModify){
+						RedirectServiceJS.addKeywordToRule(self.selectedRule["ruleId"], keyword, {
+							callback: function(code){
+								showActionResponse(code, "add", keyword);
+								self.getKeywordInRuleList(1);
+								self.getRedirectRuleList(1);
+							},
+							preHook: function(){ base.prepareList(); }
+						});
+					}
+				}
+			});
+		},
+		
+		addSaveRuleListener: function(){
+			var self = this;
+			$("#saveBtn").off().on({
+				click: function(e){
+					if (e.data.locked) return;
+
+					setTimeout(function() {
+						var description = "";
+						var imagePath = "";
+						var linkPath = "";
+
+						var response = 0;
+						BannerServiceJS.updateRule(self.selectedRule["bannerId"], self.selectedRule["bannerName"], sortType, facetGroupItems, sortOrders,  {
+							callback: function(data){
+								response = data;
+								showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["bannerName"]);
+							},
+							preHook: function(){
+								self.prepareBanner();
+							},
+							postHook: function(){
+								if(response>0){
+									BannerServiceJS.getRuleById(self.selectedRule["bannerId"],{
+										callback: function(data){
+											self.setBanner(data);
+										},
+										preHook: function(){
+											self.prepareBanner();
+										}
+									});
+								}
+								else{
+									self.setBanner(self.selectedRule);
+								}
+
+							}
+						});
+					}, 500 );
+				},
+				mouseenter: showHoverInfo
+			},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+		},
+
+		addDownloadListener: function(){
+			var self = this;
+			$("a#downloadIcon").download({
+				headerText:"Download " + self.moduleName,
+				requestCallback:function(e){
+					var params = new Array();
+					var url = document.location.pathname + "/xls";
+					var urlParams = "";
+					var count = 0;
+					params["id"] = self.selectedRule["bannerId"];
+					params["filename"] = e.data.filename;
+					params["type"] = e.data.type;
+					params["clientTimezone"] = +new Date();
+
+					for(var key in params){
+						if (count>0) urlParams +='&';
+						urlParams += (key + '=' + encodeURIComponent(params[key]));
+						count++;
+					};
+
+					document.location.href = url + '?' + urlParams;
+				}
+			});
+		},
+
+		addDeleteRuleListener: function(){
+			var self = this;
+			$("#deleteBtn").off().on({
+				click: function(e){
+					if (e.data.locked) return;
+
+					jConfirm("Delete " + self.selectedRule["bannerName"] + "'s rule?", self.moduleName, function(result){
+						if(result){
+							BannerServiceJS.deleteRule(self.selectedRule["bannerId"],{
+								callback: function(code){
+									showActionResponse(code, "delete", self.selectedRule["bannerName"]);
+									if(code==1) {
+										self.setBanner(null);
+									}
+								}
+							});
+						}
+					});
+				},
+				mouseenter: showHoverInfo
+			},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 		},
 		
 		init : function() {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.search.manager.cache.dao.DaoCacheService;
+import com.search.manager.model.Banner;
 import com.search.manager.service.BannerService;
 import com.search.manager.service.UtilityService;
 
@@ -22,9 +23,16 @@ public class BannerController {
 	
 	private static final Logger logger = Logger.getLogger(BannerController.class);
 	
+	private final Banner banner;
+	
 	@Autowired private DaoCacheService daoCacheService;
 	@SuppressWarnings("unused")
 	@Autowired private BannerService bannerService;
+	
+	@Autowired
+	public BannerController(Banner banner){
+		this.banner = banner;
+	}
 	
 	@RequestMapping(value="/{store}")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model,@PathVariable String store){

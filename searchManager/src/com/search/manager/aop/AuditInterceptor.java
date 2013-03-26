@@ -97,8 +97,20 @@ public class AuditInterceptor {
 
 		switch(auditable.entity()) {
 			case banner:
+				if (ArrayUtils.contains(AuditTrailConstants.bannerOperations, auditable.operation())) {
+					logBanner(jp, auditable, auditTrail);
+				}else if(ArrayUtils.contains(AuditTrailConstants.bannerToCampaignOperations, auditable.operation())){
+					logBannerToCampaign(jp, auditable, auditTrail);
+				}
 				break;
 			case campaign:
+				if (ArrayUtils.contains(AuditTrailConstants.campaignOperations, auditable.operation())) {
+					logCampaign(jp, auditable, auditTrail);
+				}else if(ArrayUtils.contains(AuditTrailConstants.campaignBannerOperations, auditable.operation())){
+					logCampaignBanner(jp, auditable, auditTrail);
+				}else if(ArrayUtils.contains(AuditTrailConstants.campaignKeywordOperations, auditable.operation())){
+					logCampaignKeyword(jp, auditable, auditTrail);
+				}
 				break;
 			case elevate:
 				logElevate(jp, auditable, auditTrail);
@@ -382,6 +394,30 @@ public class AuditInterceptor {
 		}
 		
 		logAuditTrail(auditTrail);
+	}
+	
+	private void logBanner(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		
+	}
+	
+	private void logCampaign(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		
+	}
+	
+	private void logCampaignBanner(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		
+	}
+	
+	private void logCampaignKeyword(JoinPoint jp, Audit auditable,
+			AuditTrail auditTrail) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void logBannerToCampaign(JoinPoint jp, Audit auditable,
+			AuditTrail auditTrail) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	private void logFacetSort(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {

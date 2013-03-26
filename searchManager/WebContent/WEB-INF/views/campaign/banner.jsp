@@ -28,9 +28,10 @@
 <!-- Start Right Side -->
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
-    	<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">Banner List</div>
-        <div class="floatL w180 txtAR padT7">
-	            
+    	<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+			<span id="ruleTypeIcon" class="ruleTypeIcon marR5 posRel top3"></span>
+			<span id="titleText"></span>
+			<span id="titleHeader" class="fLblue fnormal"></span>
 		</div>
 	</div>
 	<div class="clearB"></div>
