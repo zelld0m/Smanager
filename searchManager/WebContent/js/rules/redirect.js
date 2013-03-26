@@ -1656,7 +1656,7 @@
 							
 							$.each(condMap, function(idx, el){
 								$.each(el, function(i,elem){
-									if($.inArray(elem, inputFields) !== -1){
+									if($.inArray(idx, inputFields) !== -1){
 										if(!validateGeneric("Input", elem)) {
 											valid = false;
 											return;
