@@ -412,20 +412,4 @@ public class DAOConstants {
 	// used by settings
 	public static final String SETTINGS_AUTO_EXPORT 				= "auto_export";
 	public static final String SETTINGS_EXPORT_TARGET				= "export_target";
-
-	// Spell rule procedures
-    public static final String SP_GET_SPELL_RULE                    = "usp_Get_Spell_Rule";
-    public static final String SP_ADD_SPELL_RULE                    = "usp_Add_Spell_Rule";
-    public static final String SP_UPDATE_SPELL_RULE                 = "usp_Update_Spell_Rule";
-    public static final String SP_DELETE_SPELL_RULE                 = "usp_Delete_Spell_Rule";
-    public static final String SP_CHECK_SPELL_RULE_DUPLICATES       = "usp_Check_Spell_Rule_Duplicates";
-
-    // Columns
-    public static final String COLUMN_STATUS                        = "status";
-    public static final String COLUMN_SUGGESTION                    = "suggestion";
-
-    // Parameters
-    public static final String PARAM_STATUS                         = "status";
-    public static final String PARAM_SUGGEST                        = "suggest";
-    public static final String PARAM_SUGGEST_LIKE                   = "suggest_like";
 }

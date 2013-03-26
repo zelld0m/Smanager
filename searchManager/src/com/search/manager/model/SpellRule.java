@@ -3,6 +3,8 @@ package com.search.manager.model;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.report.model.xml.SpellRuleXml;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class SpellRule extends ModelBean {
 
@@ -17,6 +19,20 @@ public class SpellRule extends ModelBean {
 
     public SpellRule() {
         super();
+    }
+
+    public SpellRule(SpellRuleXml ruleXml) {
+        this.ruleId = ruleXml.getRuleId();
+        this.storeId = ruleXml.getStore();
+        this.status = "new";
+        this.searchTerms = ruleXml.getRuleKeyword().getKeyword()
+                .toArray(new String[ruleXml.getRuleKeyword().getKeyword().size()]);
+        this.suggestions = ruleXml.getSuggestKeyword().getSuggest()
+                .toArray(new String[ruleXml.getSuggestKeyword().getSuggest().size()]);
+        this.createdBy = ruleXml.getCreatedBy();
+        this.lastModifiedBy = ruleXml.getLastModifiedBy();
+        this.createdDate = ruleXml.getCreatedDate();
+        this.lastModifiedDate = ruleXml.getLastModifiedDate();
     }
 
     public SpellRule(String ruleId, String storeId) {

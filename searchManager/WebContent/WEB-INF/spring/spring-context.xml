@@ -90,6 +90,8 @@
 	    <property name="maxCount" value="1000" />
 	    <property name="interval" value="1000" />
 	</bean>
+    
+    <bean id="spellIndex" class="com.search.manager.xml.file.SpellIndex" init-method="init" destroy-method="destroy" scope="singleton" />
 	
 	<import resource="file:/home/solr/conf/cron-app.xml"/>
 </beans>

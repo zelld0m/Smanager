@@ -279,11 +279,4 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
-
-	/* Did you mean */
-	public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException;
-	public String addSpellRuleAndGetId(SpellRule rule) throws DaoException;
-	public int updateSpellRule(SpellRule rule) throws DaoException;
-	public int deleteSpellRule(SpellRule rule) throws DaoException;
-	public RecordSet<SpellRule> checkDuplicateSearchTerm(String storeId, String searchTerm) throws DaoException;
 }

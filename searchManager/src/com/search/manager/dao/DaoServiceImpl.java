@@ -37,7 +37,6 @@ import com.search.manager.dao.sp.RedirectRuleDAO;
 import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
-import com.search.manager.dao.sp.SpellRuleDAO;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
 import com.search.manager.enums.ExportRuleMapSortType;
@@ -72,7 +71,6 @@ import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
@@ -114,7 +112,6 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private RedirectRuleVersionDAO queryCleaningVersionDAO;
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
 	@Autowired private ExportRuleMapDAO	exportRuleMapDAO;
-	@Autowired private SpellRuleDAO spellRuleDAO;
 
 	private DaoServiceImpl instance;
 	private final static Logger logger = Logger.getLogger(DaoServiceImpl.class);
@@ -1829,29 +1826,4 @@ public class DaoServiceImpl implements DaoService {
 		return getDemoteResultList(new SearchCriteria<DemoteResult>(
 				new DemoteResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
 	}
-
-    @Override
-    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException {
-        return spellRuleDAO.getSpellRule(criteria);
-    }
-
-    @Override
-    public String addSpellRuleAndGetId(SpellRule rule) throws DaoException {
-        return spellRuleDAO.addSpellRuleAndGetId(rule);
-    }
-
-    @Override
-    public int updateSpellRule(SpellRule rule) throws DaoException {
-        return spellRuleDAO.updateSpellRule(rule);
-    }
-
-    @Override
-    public int deleteSpellRule(SpellRule rule) throws DaoException {
-        return spellRuleDAO.deleteSpellRule(rule);
-    }
-
-    @Override
-    public RecordSet<SpellRule> checkDuplicateSearchTerm(String storeId, String searchTerm) throws DaoException {
-        return spellRuleDAO.checkDuplicateSearchTerm(storeId, searchTerm);
-    }
 }

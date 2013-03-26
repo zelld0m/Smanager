@@ -119,7 +119,7 @@
 		} else {
 			DidYouMean.$table.append(base.$el);
 		}
-		
+
 //		base.$tooltip = base.$iconsTemplate.clone().cutebar({
 //			container : base.$el,
 //			groups : {
@@ -186,37 +186,6 @@
 			base.$searchTerms.html(DidYouMean.messages.addNewTerm);
 			base.$suggestions.html(DidYouMean.messages.addNewTerm);
 		}
-
-		base.setEditable = function(editable) {
-			if (editable) {
-				base.$suggestions.sortable().sortable('enable');
-				base.editable = true;
-			} else {
-				base.$suggestions.sortable().sortable('disable');
-				base.editable = false;
-			}
-		};
-		
-		base.revert = function() {
-			base.$searchTerms.text("");
-			base.$suggestions.text("");
-
-			$.each(base.originalSearchTerms, function() {
-				new Term({
-					container : base.$searchTerms,
-					term : this.toString(),
-					rule : base
-				});
-			});
-
-			$.each(base.originalSuggestions, function() {
-				new Term({
-					container : base.$suggestions,
-					term : this.toString(),
-					rule : base
-				});
-			});
-		};
 	};
 
 	var DidYouMean = {
@@ -254,12 +223,15 @@
 			self.$suggestionFilter = $("#suggestion-filter");
 			self.$statusFilter = $("#status-filter");
 			self.$clearButton = $("#clear-button");
-			
+
+			// rules
+			self.rules = {};
+
 			var changeHandler = function(e) {
 				self.searchTerm = self.$searchTermFilter.val();
 				self.suggestion = self.$suggestionFilter.val();
 				self.status = self.$statusFilter.val();
-				
+
 				self.handlePageLink(1);
 			};
 			
@@ -332,6 +304,62 @@
 							self.mode = 'display';
 						}
 					});
+
+			$("#save-button").on({
+				click : function(e) {
+					if (self.mode == 'add') {
+						var rules = self.$table.find("tr.spell-rule");
+						var entities = [];
+						
+						for (var i = 0; i < rules.length; i++) {
+							entities.push($(rules[i]).data('spellRule').data());
+						}
+						
+						if (entities.length > 0) {
+							SpellRuleServiceJS.addSpellRuleBatch(entities, function(response) {
+								// success
+								if (response.status == 0) {
+									self.$footer.detach();
+									self.$table.find("tr:not(#header)").remove();
+									self.mode = 'display';
+									self.handlePageLink(1);
+									$("#button-group-1").hide();
+									$("#button-group-0").show();
+									self.$pager.show();
+								} else {
+									jAlert(response.errorMessage.message);
+								}
+							});
+						}
+					} else if (self.mode == 'edit') {
+						var rules = self.$table.find("tr.spell-rule");
+						var entities = [];
+
+						for (var i = 0; i < rules.length; i++) {
+							var spellRuleData = $(rules[i]).data('spellRule');
+							if (spellRuleData.isModified()) {
+								entities.push(spellRuleData.data());
+							}
+						}
+
+						if (entities.length > 0) {
+							SpellRuleServiceJS.updateSpellRuleBatch(entities, function(response) {
+								// success
+								if (response.status == 0) {
+									self.$table.find("tr:not(#header)").remove();
+									self.mode = 'display';
+									self.handlePageLink();
+									$("#button-group-1").hide();
+									$("#button-group-0").show();
+									self.$pager.show();
+								} else {
+									jAlert(response.errorMessage.message);
+								}
+							});
+						}
+					}
+				}
+			});
 
 			self.handlePageLink(1);
 		},
@@ -407,12 +435,13 @@
 				var self = this;
 
 				return {
-					id : self.id,
+					ruleId : self.id,
 					searchTerms : self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get(),
 					suggestions : self.$suggestions.find(".term").map(function() { return $(this).text(); }).get()
 				};
 			},
-			resetTooltip: function() {
+
+			resetTooltip : function() {
 				/*
 				if (this.locked) {
 					this.$tooltip.cutebar("hideGroup", ["not-editing", "editing"]);
@@ -423,7 +452,8 @@
 				}
 				*/
 			},
-			highlight: function(data) {
+
+			highlight : function(data) {
 				var self = this;
 				$.each(data, function(){
 					var duplicateTerm = this.toString();
@@ -435,6 +465,66 @@
 					});
 				});
 			},
+
+			setEditable : function(editable) {
+				var self = this;
+
+				if (editable) {
+					self.$suggestions.sortable().sortable('enable');
+					self.editable = true;
+				} else {
+					self.$suggestions.sortable().sortable('disable');
+					self.editable = false;
+				}
+			},
+			
+			revert : function() {
+				var self = this;
+				
+				self.$searchTerms.text("");
+				self.$suggestions.text("");
+
+				$.each(self.originalSearchTerms, function() {
+					new Term({
+						container : self.$searchTerms,
+						term : this.toString(),
+						rule : self
+					});
+				});
+
+				$.each(self.originalSuggestions, function() {
+					new Term({
+						container : self.$suggestions,
+						term : this.toString(),
+						rule : self
+					});
+				});
+			},
+			
+			isModified : function() {
+				var self = this;
+				var data = self.data();
+
+				if (self.originalSearchTerms.length != data.searchTerms.length
+						|| self.originalSuggestions.length != data.suggestions.length) {
+					return true;
+				}
+
+				for (var i = 0; i < self.originalSearchTerms.length; i++) {
+					if (data.searchTerms[i] != self.originalSearchTerms[i]) {
+						return true;
+					}
+				}
+
+				for (var i = 0; i < self.originalSuggestions.length; i++) {
+					if (data.suggestions[i] != self.originalSuggestions[i]) {
+						return true;
+					}
+				}
+
+				return false;
+			},
+
 			$iconsTemplate : $("#templates .icons").detach(),
 			$spellRuleTemplate: $("#spell-table #itemTemplate").detach(),
 		};
