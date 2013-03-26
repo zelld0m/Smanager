@@ -11,6 +11,7 @@
 			$("#keywordSidePanel").sidepanel({
 				moduleName: self.moduleName,
 				headerText : "Banner",
+				fieldName: "bannerName",
 				page: page,
 				pageSize: self.rulePageSize,
 				showAddButton: allowModify,
@@ -24,9 +25,32 @@
 							base.populateList(data, ruleName);
 							base.addPaging(ruleName, page, data.totalSize);
 						},
-						preHook: function(){ base.prepareList(); },
+						preHook: function(){ base.prepareList(); }
 						
 					});
+				},
+				
+				itemOptionCallback: function(base, item){
+					//TODO
+					//BannerServiceJS.getTotalCampaignUsingBanner(item.model["ruleId"],{
+					//	callback: function(count){
+					//		if (count > 0) item.ui.find("#itemLinkValue").html("(" + count + ")");
+							
+							item.ui.find("#itemLinkValue").on({
+								click: function(e){
+									self.setBanner(item.model);
+								}
+							});
+					//	},
+					//	preHook: function(){ 
+					//		item.ui.find("#itemLinkValue").hide();
+					//		item.ui.find("#itemLinkPreloader").show();
+					//	},
+					//	postHook: function(){ 
+					//		item.ui.find("#itemLinkValue").show();
+					//		item.ui.find("#itemLinkPreloader").hide();
+					//	}
+					//});
 				},
 				
 				itemAddCallback: function(base, name){
@@ -63,7 +87,7 @@
 											jAlert("Name contains invalid value.",self.moduleName);
 										}else if($.isBlank(imagePath)){
 											jAlert("Image path is required.", self.moduleName);
-										}else if (!isXssSafe(imagePath)){
+										}else if (!isXSSSafe(imagePath)){
 											jAlert("Image path contains XSS.",self.moduleName);
 										}else if($.isNotBlank(description) && !isXssSafe(description)){
 											jAlert("Description contains XSS.",self.moduleName);
@@ -185,10 +209,10 @@
 					base.api.destroy();
 					FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
 						callback: function(data){
-							self.setFacetSort(data);
+							self.setBanner(data);
 						},
 						preHook: function(){
-							self.prepareFacetSort();
+							self.prepareBanner();
 						}
 					});
 				},
@@ -196,7 +220,7 @@
 					self.showBannerContent();
 				},
 				beforeRuleStatusRequest: function(){
-					self.prepareFacetSort();	
+					self.prepareBanner();	
 				},
 				afterRuleStatusRequest: function(ruleStatus){
 					$("#preloader").hide();
@@ -217,6 +241,7 @@
 						click: function(e){
 							$(e.currentTarget).viewaudit({
 								itemDataCallback: function(base, page){
+									//TODO
 									AuditServiceJS.getFacetSortTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
 										callback: function(data){
 											var total = data.totalSize;
@@ -233,29 +258,6 @@
 					});
 				}
 			});
-			
-			/*$("a#addPromoBannerIcon").qtip({
-				id: "add-banner",
-				content: {
-					text: $('<div/>'),
-					title: { text: 'New Promo Banner', button: true }
-				},
-				position: {
-					target: $("a#addPromoBannerIcon")
-				},
-				show: {
-					ready: true
-				},
-				style: {width: 'auto'},
-				events: { 
-					show: function(e, api){
-						var $contentHolder = $("div", api.elements.content).html(self.getAddBannerTemplate());
-					},
-					hide: function (e, api){
-						api.destroy();
-					}
-				}
-			});*/
 		},
 		
 		init : function() {

@@ -45,7 +45,7 @@ public class CampaignDAO {
 	private AddBannerToCampaignStoredProcedure addBannerSP;
 	private UpdateCampaignBannerStoredProcedure updateBannerSP;
 	private DeleteCampaignBannerStoredProcedure deleteBannerSP;
-	private GetCampaignBannersStoredProcedure getBannerSP;
+	private GetCampaignBannersStoredProcedure getCampaignBannerSP;
 	private SearchCampaignBannersStoredProcedure searchBannerSP;
 	private AddKeywordToCampaignBannerStoredProcedure addBannerKeywordSP;
 	private DeleteCampaignBannerKeywordStoredProcedure deleteBannerKeywordSP;
@@ -64,7 +64,7 @@ public class CampaignDAO {
     	addBannerSP = new AddBannerToCampaignStoredProcedure(jdbcTemplate);
     	updateBannerSP = new UpdateCampaignBannerStoredProcedure(jdbcTemplate);
     	deleteBannerSP = new DeleteCampaignBannerStoredProcedure(jdbcTemplate);
-    	getBannerSP = new GetCampaignBannersStoredProcedure(jdbcTemplate);
+    	getCampaignBannerSP = new GetCampaignBannersStoredProcedure(jdbcTemplate);
     	searchBannerSP = new SearchCampaignBannersStoredProcedure(jdbcTemplate);
     	addBannerKeywordSP = new AddKeywordToCampaignBannerStoredProcedure(jdbcTemplate);
     	deleteBannerKeywordSP = new DeleteCampaignBannerKeywordStoredProcedure(jdbcTemplate);
@@ -399,7 +399,7 @@ public class CampaignDAO {
 			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
-			return DAOUtils.getRecordSet(getBannerSP.execute(inputs));
+			return DAOUtils.getRecordSet(getCampaignBannerSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getCampaign()", e);
 		}

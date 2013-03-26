@@ -9,6 +9,7 @@ public class CampaignBanner extends ModelBean {
 	
 	private Campaign campaign;
 	private Banner banner;
+	private Store store;
 	private List<Keyword> keywords;
 	private DateTime startDateTime;
 	private DateTime endDateTime;
@@ -16,6 +17,24 @@ public class CampaignBanner extends ModelBean {
 	public CampaignBanner() {
 	}
 	
+	public CampaignBanner(Campaign campaign, Banner banner, Store store) {
+		super();
+		this.campaign = campaign;
+		this.banner = banner;
+		this.store = store;
+	}
+
+	public CampaignBanner(Campaign campaign, Banner banner, Store store,
+			List<Keyword> keywords, DateTime startDateTime, DateTime endDateTime) {
+		super();
+		this.campaign = campaign;
+		this.banner = banner;
+		this.store = store;
+		this.keywords = keywords;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+	}
+
 	public CampaignBanner(Campaign campaign, Banner banner, List<Keyword> keywords, DateTime startDateTime, DateTime endDateTime,
 			String createdBy, String lastModifiedBy, DateTime createdDateTime, DateTime lastModifiedDateTime) {
 		this.campaign = campaign;
@@ -29,6 +48,14 @@ public class CampaignBanner extends ModelBean {
 		this.lastModifiedDateTime = lastModifiedDateTime;
 	}
 	
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
+	}
+
 	public Campaign getCampaign() {
 		return campaign;
 	}

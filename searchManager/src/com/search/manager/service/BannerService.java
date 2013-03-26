@@ -13,11 +13,15 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Banner;
+import com.search.manager.model.CampaignBanner;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
+import com.search.manager.model.SearchCriteria.ExactMatch;
+import com.search.manager.model.SearchCriteria.MatchType;
 
 @Service(value = "bannerService")
 @RemoteProxy(
