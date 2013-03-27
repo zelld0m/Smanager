@@ -53,6 +53,7 @@
 	var SpellRule = function(data) {
 		var base = this;
 
+		base._data = data;
 		base.$el = base.$spellRuleTemplate.clone().removeAttr("id");
 		base.$searchTerms = base.$el.find("#searchTerms");
 		base.$suggestions = base.$el.find("#suggestions");
@@ -79,7 +80,6 @@
 			base.id = null;
 			base.originalSearchTerms = [];
 			base.originalSuggestions = [];
-			base.editable = true;
 		}
 
 		base.$el.data('spellRule', base);
@@ -120,65 +120,50 @@
 			DidYouMean.$table.append(base.$el);
 		}
 
-//		base.$tooltip = base.$iconsTemplate.clone().cutebar({
-//			container : base.$el,
-//			groups : {
-//				'locked' : [ 'edit-locked' ],
-//				'editing' : [ 'undo-link' ],
-//				'editing-adding' : [ 'delete-link' ]
-//			},
-//			events : {
-//				'delete-link' : function() {
-//					if (base.id) {
-//						SpellRuleServiceJS.deleteSpellRule(base.id);
-//						DidYouMean.handlePageLink();
-//					} else {
-//						base.$el.remove();
-//					}
-//				},
-//				'undo-link' : function() {
-//					base.$searchTerms.text("");
-//					base.$suggestions.text("");
-//					base.editable = false;
-//	
-//					$.each(base.originalSearchTerms, function() {
-//						new Term({
-//							container : base.$searchTerms,
-//							term : this.toString(),
-//							rule : base
-//						});
-//					});
-//	
-//					$.each(base.originalSuggestions, function() {
-//						new Term({
-//							container : base.$suggestions,
-//							term : this.toString(),
-//							rule : base
-//						});
-//					});
-//				}
-//			},
-//			qtip : $.extend({}, $.cutebar.defaultOptions.qtip, {
-//				events : {
-//					hide : function() {
-//						return !base.locked;
-//					},
-//					show: function() {
-//						if (DidYouMean.mode === 'add') {
-//							base.$tooltip.cutebar("hideGroup", ["editing", "editing-adding"]);
-//							base.$tooltip.cutebar("showGroup", ["locked"]);
-//						} else if (DidYouMean.mode === 'edit') {
-//							base.$el.attr("sr-editable", true);
-//							base.$tooltip.cutebar("hideGroup", ["locked"]);
-//							base.$tooltip.cutebar("showGroup", ["editing", "editing-adding"]);
-//							base.$suggestions.sortable('enable');
-//						}
-//
-//						return DidYouMean.mode == 'edit' || DidYouMean.mode == 'add';
-//					}
-//				}
-//			})
-//		});
+		base.$tooltip = base.$iconsTemplate.clone().cutebar({
+			container : base.$el,
+			groups : {
+				'editing'        : [ 'undo-link'   ],
+				'editing-adding' : [ 'delete-link' ]
+			},
+			events : {
+				'delete-link' : function() {
+					if (base.id) {
+						DidYouMean.deleted.push({el : base.$el, previous: base.$el.prev()});
+						base.$el.detach();
+					} else {
+						base.$el.remove();
+					}
+				},
+				'undo-link' : function() {
+					base.$searchTerms.text("");
+					base.$suggestions.text("");
+	
+					$.each(base.originalSearchTerms, function() {
+						new Term({
+							container : base.$searchTerms,
+							term : this.toString(),
+							rule : base
+						});
+					});
+	
+					$.each(base.originalSuggestions, function() {
+						new Term({
+							container : base.$suggestions,
+							term : this.toString(),
+							rule : base
+						});
+					});
+				}
+			},
+			qtip : $.extend({}, $.cutebar.defaultOptions.qtip, {
+				events : {
+					show: function() {
+						return DidYouMean.mode == 'edit' || DidYouMean.mode == 'add';
+					}
+				}
+			})
+		});
 
 		base.$el.show();
 
@@ -193,6 +178,9 @@
 		searchTerm : null,
 		suggestion : null,
 		status : null,
+		
+		// deleted rules
+		deleted : [],
 
 		// editing mode (display, add, edit)
 		mode: 'display',
@@ -203,7 +191,7 @@
 		
 		// default ref id for did you mean
 		RULE_TYPE : 'Did You Mean',
-		rule: {ruleId: 'spell_rule_2', ruleName: ""},
+		rule: {ruleId: 'spell_rule', ruleName: ""},
 
 		initButtons: function() {
 			var self = this;
@@ -225,6 +213,7 @@
 						self.$table.append(self.$footer);
 						self.$footer.show();
 						self.$pager.hide();
+						
 					}
 				});
 
@@ -252,11 +241,17 @@
 							self.$table.find("tr:not(#header)").remove();
 							self.$table.append(self.$rows);
 						} else if (self.mode == 'edit') {
+							for (var i = self.deleted.length - 1; i >= 0; i--) {
+								$(self.deleted[i].previous).after(self.deleted[i].el);
+							}
+
+							self.deleted = [];
+
 							var rows = self.$table.find("tr:not(#header)");
 
 							for ( var i = 0; i < rows.length; i++) {
-								$(rows).data('spellRule').revert();
-								$(rows).data('spellRule').setEditable(false);
+								$(rows[i]).data('spellRule').revert();
+								$(rows[i]).data('spellRule').setEditable(false);
 							}
 						}
 
@@ -289,12 +284,19 @@
 											self.$pager.show();
 										} else {
 											jAlert(response.errorMessage.message);
+											
+											if (response.errorMessage.data) {
+												for ( var i = 0; i < rules.length; i++) {
+													$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
+												}
+											}
 										}
 									});
 							}
 						} else if (self.mode == 'edit') {
 							var rules = self.$table.find("tr.spell-rule");
 							var entities = [];
+							var deleted = [];
 
 							for ( var i = 0; i < rules.length; i++) {
 								var spellRuleData = $(rules[i]).data('spellRule');
@@ -303,8 +305,12 @@
 								}
 							}
 
-							if (entities.length > 0) {
-								SpellRuleServiceJS.updateSpellRuleBatch(entities,
+							for ( var i = 0; i < self.deleted.length; i++) {
+								deleted.push($(self.deleted[i].el).data('spellRule').data());
+							}
+
+							if (entities.length > 0 || deleted.length > 0) {
+								SpellRuleServiceJS.updateSpellRuleBatch(entities, deleted,
 									function(response) {
 										// success
 										if (response.status == 0) {
@@ -316,6 +322,12 @@
 											self.$pager.show();
 										} else {
 											jAlert(response.errorMessage.message);
+											
+											if (response.errorMessage.data) {
+												for ( var i = 0; i < rules.length; i++) {
+													$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
+												}
+											}
 										}
 									});
 							}
@@ -343,7 +355,7 @@
 
 			self.$footer.on({
 				click : function() {
-					new SpellRule();
+					new SpellRule().setEditable(true);
 				}
 			});
 		},
@@ -482,24 +494,30 @@
 		SpellRule.prototype = {
 			data : function() {
 				var self = this;
+				
+				if (!self._data) {
+					self._data = {
+							ruleId : self.id,
+							searchTerms : self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get(),
+							suggestions : self.$suggestions.find(".term").map(function() { return $(this).text(); }).get()
+						};
+				} else {
+					self._data.searchTerms = self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get();
+					self._data.suggestions = self.$suggestions.find(".term").map(function() { return $(this).text(); }).get();
+				}
 
-				return {
-					ruleId : self.id,
-					searchTerms : self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get(),
-					suggestions : self.$suggestions.find(".term").map(function() { return $(this).text(); }).get()
-				};
+				return self._data;
 			},
 
 			resetTooltip : function() {
-				/*
-				if (this.locked) {
-					this.$tooltip.cutebar("hideGroup", ["not-editing", "editing"]);
-					this.$tooltip.cutebar("showGroup", ["locked"]);
-				} else {
-					this.$tooltip.cutebar("hideGroup", ["editing", "locked"]);
-					this.$tooltip.cutebar("showGroup", ["not-editing"]);
+				if (DidYouMean.mode == 'add') {
+					this.$tooltip.cutebar('hideGroup', ['editing']);
+					this.$tooltip.cutebar('showGroup', ['editing-adding']);
+				} else if (DidYouMean.mode == 'edit') {
+					this.$tooltip.cutebar('showGroup', ['editing']);
+					this.$tooltip.cutebar('showGroup', ['editing-adding']);
 				}
-				*/
+				
 			},
 
 			highlight : function(data) {
@@ -517,14 +535,11 @@
 
 			setEditable : function(editable) {
 				var self = this;
-
-				if (editable) {
-					self.$suggestions.sortable().sortable('enable');
-					self.editable = true;
-				} else {
-					self.$suggestions.sortable().sortable('disable');
-					self.editable = false;
-				}
+				
+				self.$el.attr("sr-editable", editable);
+				self.editable = editable;
+				self.$suggestions.sortable().sortable(editable ? 'enable' : 'disable');
+				self.resetTooltip();
 			},
 			
 			revert : function() {

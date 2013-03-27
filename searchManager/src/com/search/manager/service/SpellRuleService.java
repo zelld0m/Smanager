@@ -2,9 +2,11 @@ package com.search.manager.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -16,10 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
-import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.response.ServiceResponse;
@@ -65,160 +65,176 @@ public class SpellRuleService {
 
     @RemoteMethod
     public ServiceResponse<Void> addSpellRuleBatch(SpellRule[] spellRules) {
+        int errorLevel = 0;
+        String store = UtilityService.getStoreId();
         ServiceResponse<Void> response = new ServiceResponse<Void>();
-        List<String> duplicates = new ArrayList<String>();
-
-        for (SpellRule rule : spellRules) {
-            ServiceResponse<SpellRule> internalResponse = addSpellRule(rule.getSearchTerms(), rule.getSuggestions());
-
-            if (internalResponse.getErrorMessage() != null && internalResponse.getErrorMessage().getData() != null) {
-                duplicates.addAll(Arrays.asList(((String[]) internalResponse.getErrorMessage().getData())));
-            } else if (internalResponse.getStatus() != 0) {
-                response.error("Error occured during batch addition.");
-            }
-        }
-
-        if (duplicates.size() > 0 && response.getStatus() == 0) {
-            response.error("Duplicate search terms exist.", duplicates);
-        } else {
-            response.success(null);
-        }
-
-        spellIndex.save(UtilityService.getStoreId());
-
-        return response;
-    }
-
-    @RemoteMethod
-    public ServiceResponse<Void> updateSpellRuleBatch(SpellRule[] spellRules) {
-        ServiceResponse<Void> response = new ServiceResponse<Void>();
-        List<String> duplicates = new ArrayList<String>();
-
-        for (SpellRule rule : spellRules) {
-            ServiceResponse<Void> internalResponse = updateSpellRule(rule.getRuleId(), rule.getSearchTerms(),
-                    rule.getSuggestions());
-
-            if (internalResponse.getErrorMessage() != null && internalResponse.getErrorMessage().getData() != null) {
-                duplicates.addAll(Arrays.asList(((String[]) internalResponse.getErrorMessage().getData())));
-            } else if (internalResponse.getStatus() != 0) {
-                response.error("Error occured during batch addition.");
-            }
-        }
-
-        if (duplicates.size() > 0 && response.getStatus() == 0) {
-            response.error("Duplicate search terms exist.", duplicates);
-        } else {
-            response.success(null);
-        }
-
-        spellIndex.save(UtilityService.getStoreId());
-        return response;
-    }
-
-    @RemoteMethod
-    public ServiceResponse<SpellRule> addSpellRule(String[] searchTerms, String[] suggestions) {
-        ServiceResponse<SpellRule> response = new ServiceResponse<SpellRule>();
 
         try {
-            String[] duplicates = checkDuplicatedSearchTerms(null, searchTerms);
-            String username = UtilityService.getUsername();
-            String storeId = UtilityService.getStoreId();
+            // Check for duplicate search terms.
+            List<String> duplicates = null;
 
-            if (duplicates.length > 0) {
+            try {
+                duplicates = checkDuplicatedSearchTerms(store, spellRules, true);
+            } catch (DaoException e) {
+                response.error("Error occured in during spell rule creation.");
+                errorLevel = 1;
+            }
+
+            if (errorLevel == 0 && duplicates.size() > 0) {
                 response.error("Duplicate search terms exist.", duplicates);
-            } else {
-                SpellRule rule = new SpellRule();
-                Date now = new Date();
+                errorLevel = 1;
+            } else if (errorLevel == 0) {
+                for (SpellRule rule : spellRules) {
+                    if (!addSpellRule(rule.getSearchTerms(), rule.getSuggestions())) {
+                        response.error("Error occured in during spell rule creation.");
+                        errorLevel = 2;
+                        break;
+                    }
+                }
 
-                rule.setStoreId(storeId);
-                rule.setCreatedBy(username);
-                rule.setCreatedDate(now);
-                rule.setLastModifiedBy(username);
-                rule.setLastModifiedDate(now);
-                rule.setSearchTerms(searchTerms);
-                rule.setSuggestions(suggestions);
-                rule.setStatus("new");
-                rule.setRuleId(spellRuleDAO.addSpellRuleAndGetId(rule));
-
-                // try {
-                // daoService.addRuleStatus(new RuleStatus(RuleEntity.SPELL,
-                // storeId, rule.getRuleId(), rule
-                // .getRuleId(), username, username, RuleStatusEntity.ADD,
-                // RuleStatusEntity.UNPUBLISHED));
-                // } catch (DaoException e) {
-                // logger.error("Failed to create rule status for did you mean:)"
-                // + rule.getRuleId(), e);
-                // }
-
-                response.success(rule);
+                if (errorLevel == 0) {
+                    spellIndex.save(store);
+                    response.success(null);
+                }
             }
         } catch (DaoException ex) {
-            logger.error("Error occured in addSpellRule()", ex);
-            response.error("Error occured during spell rule creation.");
+            logger.error("Error occured in addSpellRuleBatch()", ex);
+            errorLevel = 2;
+            response.error("Error occured in during spell rule creation.");
+        }
+
+        if (errorLevel == 2) {
+            try {
+                spellIndex.rollback(store);
+            } catch (Exception e) {
+                logger.error("Unable to rollback spell index for " + store, e);
+            }
         }
 
         return response;
     }
 
     @RemoteMethod
-    public ServiceResponse<Void> updateSpellRule(String ruleId, String[] searchTerms, String[] suggestions) {
+    public ServiceResponse<Void> updateSpellRuleBatch(SpellRule[] spellRules, SpellRule[] deleted) {
+        String store = UtilityService.getStoreId();
         ServiceResponse<Void> response = new ServiceResponse<Void>();
+        int errorLevel = 0;
 
         try {
-            String[] duplicates = checkDuplicatedSearchTerms(ruleId, searchTerms);
+            deleteSpellRules(deleted);
 
-            if (duplicates.length > 0) {
+            List<String> duplicates = null;
+
+            try {
+                duplicates = checkDuplicatedSearchTerms(store, spellRules, true);
+            } catch (DaoException e) {
+                response.error("Error occured in during spell rule creation.");
+                errorLevel = 1;
+            }
+
+            if (errorLevel == 0 && duplicates.size() > 0) {
                 response.error("Duplicate search terms exist.", duplicates);
-            } else {
-                SpellRule rule = new SpellRule();
+                errorLevel = 1;
+            } else if (errorLevel == 0) {
+                for (SpellRule rule : spellRules) {
+                    if (!updateSpellRule(rule.getRuleId(), rule.getSearchTerms(), rule.getSuggestions())) {
+                        response.error("Error occured in during spell rule update.");
+                        errorLevel = 2;
+                        break;
+                    }
+                }
 
-                rule.setRuleId(ruleId);
-                rule.setStoreId(UtilityService.getStoreId());
-                rule.setLastModifiedBy(UtilityService.getUsername());
-                rule.setSearchTerms(searchTerms);
-                rule.setSuggestions(suggestions);
-
-                spellRuleDAO.updateSpellRule(rule);
+                if (errorLevel == 0) {
+                    spellIndex.save(UtilityService.getStoreId());
+                    response.success(null);
+                }
             }
         } catch (DaoException e) {
-            logger.error("Error occured in updateSpellRule()", e);
-            response.error("Error occured during spell rule update.");
+            logger.error("Error occured in updateSpellRuleBatch()", e);
+            response.error("Error occured in during spell rule update.");
+            errorLevel = 2;
+        }
+
+        if (errorLevel == 2) {
+            try {
+                spellIndex.rollback(store);
+            } catch (Exception e) {
+                logger.error("Unable to rollback spell index for " + store, e);
+            }
         }
 
         return response;
     }
 
-    @RemoteMethod
-    public ServiceResponse<Void> deleteSpellRule(String ruleId) {
-        ServiceResponse<Void> response = new ServiceResponse<Void>();
+    private boolean addSpellRule(String[] searchTerms, String[] suggestions) throws DaoException {
+        String username = UtilityService.getUsername();
+        String storeId = UtilityService.getStoreId();
+        SpellRule rule = new SpellRule();
+        Date now = new Date();
 
-        try {
-            SpellRule rule = new SpellRule(ruleId, UtilityService.getStoreId());
+        rule.setStoreId(storeId);
+        rule.setCreatedBy(username);
+        rule.setCreatedDate(now);
+        rule.setLastModifiedBy(username);
+        rule.setLastModifiedDate(now);
+        rule.setSearchTerms(searchTerms);
+        rule.setSuggestions(suggestions);
+        rule.setStatus("new");
+
+        return spellRuleDAO.addSpellRuleAndGetId(rule) != null;
+    }
+
+    private boolean updateSpellRule(String ruleId, String[] searchTerms, String[] suggestions) throws DaoException {
+        SpellRule rule = new SpellRule();
+
+        rule.setRuleId(ruleId);
+        rule.setStoreId(UtilityService.getStoreId());
+        rule.setLastModifiedBy(UtilityService.getUsername());
+        rule.setSearchTerms(searchTerms);
+        rule.setSuggestions(suggestions);
+
+        return spellRuleDAO.updateSpellRule(rule) > 0;
+    }
+
+    private void deleteSpellRules(SpellRule[] rules) throws DaoException {
+        for (SpellRule rule : rules) {
             spellRuleDAO.deleteSpellRule(rule);
-            response.success(null);
-        } catch (DaoException e) {
-            logger.error("Error occured in deleteSpellRule()", e);
-            response.error("Unable to delete rule.");
         }
-
-        spellIndex.save(UtilityService.getStoreId());
-
-        return response;
     }
 
-    private String[] checkDuplicatedSearchTerms(final String ruleId, final String[] searchTerms) throws DaoException {
+    private List<String> checkDuplicatedSearchTerms(String store, SpellRule[] spellRules, boolean isUpdate)
+            throws DaoException {
+        List<String> searchTerms = new ArrayList<String>();
+        List<String> duplicates = new ArrayList<String>();
+
+        // Check for duplicate search terms.
+        for (SpellRule rule : spellRules) {
+            List<String> curTerms = Arrays.asList(rule.getSearchTerms());
+            Collection<String> inter = CollectionUtils.intersection(searchTerms, curTerms);
+
+            if (inter.size() == 0) {
+                searchTerms.addAll(curTerms);
+                duplicates.addAll(checkDuplicatedSearchTerms(store, isUpdate ? rule.getRuleId() : null,
+                        rule.getSearchTerms()));
+            } else {
+                searchTerms.addAll(curTerms);
+                duplicates.addAll(inter);
+            }
+        }
+
+        return duplicates;
+    }
+
+    private List<String> checkDuplicatedSearchTerms(String store, String ruleId, final String[] searchTerms)
+            throws DaoException {
         List<String> duplicates = new ArrayList<String>();
 
         for (String searchTerm : searchTerms) {
-            if (isDuplicateSearchTerm(ruleId, searchTerm)) {
+            if (spellRuleDAO.isDuplicateSearchTerm(store, searchTerm, ruleId)) {
                 duplicates.add(searchTerm);
             }
         }
 
-        return duplicates.toArray(new String[duplicates.size()]);
-    }
-
-    private boolean isDuplicateSearchTerm(String ruleId, String searchTerm) throws DaoException {
-        return spellRuleDAO.checkDuplicateSearchTerm(UtilityService.getStoreId(), searchTerm, ruleId);
+        return duplicates;
     }
 }

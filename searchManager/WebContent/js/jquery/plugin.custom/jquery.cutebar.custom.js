@@ -8,7 +8,7 @@
 		base.$groups = {};
 
 		for (g in base.options.groups) {
-			base.$groups[g] = $("<div style='white-space: nowrap;'>").attr("id", g);
+			base.$groups[g] = $("<div style='white-space: nowrap; display:inline-block;'>").attr("id", g);
 
 			for (var i = 0; i < base.options.groups[g].length; i++) {
 				var $button = base.$el.find("#" + base.options.groups[g][i]);
@@ -43,7 +43,7 @@
 
 		base.redraw = function() {
 			if (base.$el.parent().parent().data('qtip')) {
-				base.$el.parent().parent().data('qtip').hide().redraw().reposition().show();
+				base.$el.parent().parent().data('qtip').hide().redraw().reposition();
 			}
 		};
 	};

@@ -77,8 +77,12 @@ public class SpellIndex {
             } else {
                 rules.put(store, read(xmlPath.get(store)));
             }
-
         }
+    }
+
+    public void unload(String store) throws Exception {
+        xmlPath.remove(store);
+        rules.remove(store);
     }
 
     private SpellRules read(String filepath) {
@@ -91,7 +95,7 @@ public class SpellIndex {
 
             reader = new FileReader(filepath);
             rules = (SpellRules) m.unmarshal(reader);
-            rules.generateMap();
+            rules.generateSecondaryIndex();
         } catch (JAXBException e) {
             logger.error("Unable to create marshaller", e);
         } catch (Exception e) {
@@ -183,5 +187,10 @@ public class SpellIndex {
             write(rules, filepath);
         }
         logger.info("Spell index destroyed.");
+    }
+
+    public void rollback(String store) throws Exception {
+        unload(store);
+        load(store);
     }
 }

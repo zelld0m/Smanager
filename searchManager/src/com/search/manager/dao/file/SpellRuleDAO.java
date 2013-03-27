@@ -168,6 +168,7 @@ public class SpellRuleDAO {
                     xml.setStatus("modified");
                 }
 
+                rules.deleteFromSecondaryIndex(xml);
                 retVal = 1;
             }
         } catch (Exception e) {
@@ -177,19 +178,12 @@ public class SpellRuleDAO {
         return retVal;
     }
 
-    public boolean checkDuplicateSearchTerm(String storeId, String searchTerm, String ruleId) throws DaoException {
+    public boolean isDuplicateSearchTerm(String storeId, String searchTerm, String ruleId) throws DaoException {
         try {
             SpellRules rules = spellIndex.get(storeId);
+            SpellRuleXml xml = rules.checkSearchTerm(searchTerm);
 
-            for (SpellRuleXml xml : rules.getSpellRule()) {
-                for (String kw : xml.getRuleKeyword().getKeyword()) {
-                    if (kw.equals(searchTerm) && (ruleId == null || !ruleId.equals(xml.getRuleId()))) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return xml != null && !StringUtils.equals(xml.getRuleId(), ruleId);
         } catch (Exception e) {
             throw new DaoException("Faild during checkDuplicateSearchTerm()", e);
         }

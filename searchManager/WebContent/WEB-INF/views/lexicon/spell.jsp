@@ -55,57 +55,6 @@
   <div class="clearB"></div>
   <div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
   <div id="ruleStatus"></div>
-  <%--
-  <div id="ruleStatusTemplate" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine">
-    <div class="txtAL w730 minHeight36" style="background: #e8e8e8">
-      <div class="floatL padT10 padL10" style="width: 70%">
-        <div id="versionHolder" style="">
-          <label class="floatL wAuto padL5 fsize11 fLgray">
-            <span title="Download Rule Versions">
-              <img id="downloadVersionIcon" class="pointer" src="<spring:url value="/images/icon_download.gif"/>" alt="Download">
-            </span>
-          </label> 
-          <label class="floatL marTn7">
-            <a id="backupBtn" title="Backup Now" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">
-              <div class="btnGraph btnBackUp"></div>
-            </a>
-          </label>
-          <label class="floatL wAuto marRL5 fLgray2">|</label>
-        </div>
-        <div id="commentHolder" style="display: none;">
-          <label class="floatL wAuto padL5 fsize11 fLgray">
-            <span id="commentIcon" title="Rule Comment">
-              <img src="<spring:url value="/images/icon_comment.png" />" class="pointer">
-            </span>
-          </label>
-        </div>
-        <div id="statusHolder" style="display: none;">
-          <label class="floatL wAuto marRL5 fLgray2">|</label>
-          <label class="floatL wAuto">Status:</label>
-          <label class="floatL wAuto padL5 fsize11 fLgray">
-            <span id="status"></span>
-            <span id="statusMode" class="fsize11 forange padL5"></span>
-          </label>
-        </div>
-        <div id="publishHolder" style="display: none;">
-          <label class="floatL wAuto marRL5 fLgray2">|</label>
-          <label class="floatL wAuto">Last Published:</label>
-          <label class="padL5 fLgray fsize11">
-            <span id="statusDate"></span>
-          </label>
-        </div>
-      </div>
-      <div class="floatR marL8 marR3 padT5">
-	    <a href="javascript:void(0);" id="add-button" class="buttons btnGray clearfix button-group-0" style="display:none;"><div class="buttons fontBold">Add</div></a>
-	    <a href="javascript:void(0);" id="edit-button" class="buttons btnGray clearfix button-group-0" style="display:none;"><div class="buttons fontBold">Edit</div></a>
-	    <a href="javascript:void(0);" id="submit-button" class="buttons btnGray clearfix button-group-0" title="Submit for approval" style="display:none;"><div class="buttons fontBold">Submit</div></a>
-	    <a href="javascript:void(0);" id="save-button" class="buttons btnGray clearfix button-group-1" style="display:none;"><div class="buttons fontBold">Save</div></a>
-	    <a href="javascript:void(0);" id="cancel-button" class="buttons btnGray clearfix button-group-1" style="display:none;"><div class="buttons fontBold">Cancel</div></a>
-      </div>
-    </div>
-    <div class="clearB"></div>
-  </div>
-  --%>
   <div class="clearB"></div>
   <div id="spell-rules" class="padT20" style="min-height: 600px; max-width: 100%; display:none;">
     <div id="action-buttons" class="floatR marL8 marR3 padB5" style="display:none;">
@@ -115,7 +64,7 @@
       </span>
       <span class="button-group">
         <a href="javascript:void(0);" id="save-button" class="new-button button-group-1" style="display:none;">Save</a>
-        <a href="javascript:void(0);" id="cancel-button" class="new-button button-group-1" style="display:none;">Cancel></a>
+        <a href="javascript:void(0);" id="cancel-button" class="new-button button-group-1" style="display:none;">Cancel</a>
       </span>
     </div>
     <div class="clearB"></div>
@@ -148,8 +97,6 @@
     <div class="clearB"></div>
     <div id="templates" style="display:none;">
 	  <div class="icons">
-	    <!-- visible when rule is pending approval/publishing in edit mode -->
-	    <a href="javascript:void(0);" title="Locked" id="edit-locked"><img src="<spring:url value="/images/noedit.png" />"></img></a>
 	    <!-- visible in edit/add modes -->
 	    <a href="javascript:void(0);" title="Delete" id="delete-link"><img src="<spring:url value="/images/delete_icon.png" />"></img></a>
 	    <!-- revert to original value | visible in edit mode -->
