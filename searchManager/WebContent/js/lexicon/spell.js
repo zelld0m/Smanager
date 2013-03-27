@@ -200,16 +200,139 @@
 		// page size
 		PAGE_SIZE : 10,
 		currentPage: 1,
+		
+		// default ref id for did you mean
+		RULE_TYPE : 'Did You Mean',
+		rule: {ruleId: 'spell_rule_2', ruleName: ""},
 
-		init : function() {
+		initButtons: function() {
 			var self = this;
-
+			
 			// action buttons
 			self.$addButton = $("#add-button");
 			self.$editButton = $("#edit-button");
-			self.$submitButton = $("#submit-button");
 			self.$saveButton = $("#save-button");
 			self.$cancelButton = $("#cancel-button");
+			
+			if (!self.ruleStatus.locked) {
+				self.$addButton.on({
+					click : function(e) {
+						$(".button-group-0").hide();
+						$(".button-group-1").show();
+						self.mode = 'add';
+
+						self.$rows = self.$table.find("tr:not(#header)").detach();
+						self.$table.append(self.$footer);
+						self.$footer.show();
+						self.$pager.hide();
+					}
+				});
+
+				self.$editButton.on({
+					click : function(e) {
+						$(".button-group-0").hide();
+						$(".button-group-1").show();
+						self.mode = 'edit';
+
+						var rows = self.$table.find("tr:not(#header)");
+
+						for ( var i = 0; i < rows.length; i++) {
+							$(rows[i]).data('spellRule').setEditable(true);
+						}
+					}
+				});
+
+				self.$cancelButton.on({
+					click : function(e) {
+						$(".button-group-1").hide();
+						$(".button-group-0").show();
+
+						if (self.mode == 'add') {
+							self.$footer.detach();
+							self.$table.find("tr:not(#header)").remove();
+							self.$table.append(self.$rows);
+						} else if (self.mode == 'edit') {
+							var rows = self.$table.find("tr:not(#header)");
+
+							for ( var i = 0; i < rows.length; i++) {
+								$(rows).data('spellRule').revert();
+								$(rows).data('spellRule').setEditable(false);
+							}
+						}
+
+						self.$pager.show();
+						self.mode = 'display';
+					}
+				});
+
+				self.$saveButton.on({
+					click : function(e) {
+						if (self.mode == 'add') {
+							var rules = self.$table.find("tr.spell-rule");
+							var entities = [];
+
+							for ( var i = 0; i < rules.length; i++) {
+								entities.push($(rules[i]).data('spellRule').data());
+							}
+
+							if (entities.length > 0) {
+								SpellRuleServiceJS.addSpellRuleBatch(entities,
+									function(response) {
+										// success
+										if (response.status == 0) {
+											self.$footer.detach();
+											self.$table.find("tr:not(#header)").remove();
+											self.mode = 'display';
+											self.handlePageLink(1);
+											$(".button-group-1").hide();
+											$(".button-group-0").show();
+											self.$pager.show();
+										} else {
+											jAlert(response.errorMessage.message);
+										}
+									});
+							}
+						} else if (self.mode == 'edit') {
+							var rules = self.$table.find("tr.spell-rule");
+							var entities = [];
+
+							for ( var i = 0; i < rules.length; i++) {
+								var spellRuleData = $(rules[i]).data('spellRule');
+								if (spellRuleData.isModified()) {
+									entities.push(spellRuleData.data());
+								}
+							}
+
+							if (entities.length > 0) {
+								SpellRuleServiceJS.updateSpellRuleBatch(entities,
+									function(response) {
+										// success
+										if (response.status == 0) {
+											self.$table.find("tr:not(#header)").remove();
+											self.mode = 'display';
+											self.handlePageLink();
+											$(".button-group-1").hide();
+											$(".button-group-0").show();
+											self.$pager.show();
+										} else {
+											jAlert(response.errorMessage.message);
+										}
+									});
+							}
+						}
+					}
+				});
+
+				self.$addButton.show();
+				self.$editButton.show();
+				$("#spell-rules #action-buttons").show();
+			} else {
+				$("#spell-rules #action-buttons").hide();
+			}
+		},
+
+		initTable: function() {
+			var self = this;
 
 			// table
 			self.$table = $("#spell-table");
@@ -218,14 +341,21 @@
 			self.$noResultsRow = self.$table.find("#noResultsFound").detach();
 			self.$pager = $("#topPaging, #bottomPaging");
 
+			self.$footer.on({
+				click : function() {
+					new SpellRule();
+				}
+			});
+		},
+		
+		initFilters: function() {
+			var self = this;
+
 			// search filters
 			self.$searchTermFilter = $("#searchTerm-filter");
 			self.$suggestionFilter = $("#suggestion-filter");
 			self.$statusFilter = $("#status-filter");
 			self.$clearButton = $("#clear-button");
-
-			// rules
-			self.rules = {};
 
 			var changeHandler = function(e) {
 				self.searchTerm = self.$searchTermFilter.val();
@@ -234,7 +364,7 @@
 
 				self.handlePageLink(1);
 			};
-			
+
 			self.$searchTermFilter.on({change: changeHandler});
 			self.$suggestionFilter.on({change: changeHandler});
 			self.$statusFilter.on({change: changeHandler});
@@ -242,124 +372,44 @@
 				self.$searchTermFilter.val("");
 				self.$suggestionFilter.val("");
 				self.$statusFilter.val("");
-				
 				changeHandler(e);
 			}});
+		},
 
-			self.$footer.on({
-				click : function() {
-					new SpellRule();
+		init : function() {
+			var self = this;
+
+			$("#ruleStatus").rulestatus({
+				moduleName: self.RULE_TYPE,
+				ruleType: self.RULE_TYPE,
+				rule: self.rule,
+				enableVersion: true,
+				authorizeRuleBackup: true,
+				authorizeSubmitForApproval: true,
+				postRestoreCallback: function(base, rule){
+				},
+				afterSubmitForApprovalRequest:function(ruleStatus){
+					self.selectedRuleStatus = ruleStatus;
+					self.init();
+				},
+				beforeRuleStatusRequest: function(){
+				},
+				afterRuleStatusRequest: function(ruleStatus){
+					$("#ruleStatus").show();
+					$("#spell-rules").show();
+					$("#preloader").hide();
+					self.ruleStatus = ruleStatus;
+					self.initButtons();
 				}
 			});
 
-			$("#add-button")
-					.on({
-						click : function(e) {
-							$("#button-group-0").hide();
-							$("#button-group-1").show();
-							self.mode = 'add';
+			//self.locked = ruleStatus && (ruleStatus.approvalStatus == 'PENDING' || ruleStatus.approvalStatus == 'APPROVED');
 
-							self.$rows = self.$table.find("tr:not(#header)").detach();
-							self.$table.append(self.$footer);
-							self.$footer.show();
-							self.$pager.hide();
-						}
-					});
+			self.initTable();
+			self.initFilters();
 
-			$("#edit-button")
-					.on({
-						click : function(e) {
-							$("#button-group-0").hide();
-							$("#button-group-1").show();
-							self.mode = 'edit';
-							
-							var rows = self.$table.find("tr:not(#header)");
-
-							for (var i = 0; i < rows.length; i++) {
-								$(rows[i]).data('spellRule').setEditable(true);
-							}
-						}
-					});
-
-			$("#cancel-button")
-					.on({
-						click : function(e) {
-							$("#button-group-1").hide();
-							$("#button-group-0").show();
-							
-							if (self.mode == 'add') {
-								self.$footer.detach();
-								self.$table.find("tr:not(#header)").remove();
-								self.$table.append(self.$rows);
-							} else if (self.mode == 'edit') {
-								var rows = self.$table.find("tr:not(#header)");
-								
-								for (var i = 0; i < rows.length; i++) {
-									$(rows).data('spellRule').revert();
-									$(rows).data('spellRule').setEditable(false);
-								}
-							}
-							
-							self.$pager.show();
-							self.mode = 'display';
-						}
-					});
-
-			$("#save-button").on({
-				click : function(e) {
-					if (self.mode == 'add') {
-						var rules = self.$table.find("tr.spell-rule");
-						var entities = [];
-						
-						for (var i = 0; i < rules.length; i++) {
-							entities.push($(rules[i]).data('spellRule').data());
-						}
-						
-						if (entities.length > 0) {
-							SpellRuleServiceJS.addSpellRuleBatch(entities, function(response) {
-								// success
-								if (response.status == 0) {
-									self.$footer.detach();
-									self.$table.find("tr:not(#header)").remove();
-									self.mode = 'display';
-									self.handlePageLink(1);
-									$("#button-group-1").hide();
-									$("#button-group-0").show();
-									self.$pager.show();
-								} else {
-									jAlert(response.errorMessage.message);
-								}
-							});
-						}
-					} else if (self.mode == 'edit') {
-						var rules = self.$table.find("tr.spell-rule");
-						var entities = [];
-
-						for (var i = 0; i < rules.length; i++) {
-							var spellRuleData = $(rules[i]).data('spellRule');
-							if (spellRuleData.isModified()) {
-								entities.push(spellRuleData.data());
-							}
-						}
-
-						if (entities.length > 0) {
-							SpellRuleServiceJS.updateSpellRuleBatch(entities, function(response) {
-								// success
-								if (response.status == 0) {
-									self.$table.find("tr:not(#header)").remove();
-									self.mode = 'display';
-									self.handlePageLink();
-									$("#button-group-1").hide();
-									$("#button-group-0").show();
-									self.$pager.show();
-								} else {
-									jAlert(response.errorMessage.message);
-								}
-							});
-						}
-					}
-				}
-			});
+			// rules
+			self.rules = {};
 
 			self.handlePageLink(1);
 		},
@@ -414,8 +464,7 @@
 					self.handlePageLink(e.data.page - 1);
 				},
 				lastLinkCallback : function(e) {
-					self.handlePageLink(Math.ceil(self.totalSize
-							/ self.itemsPerPage));
+					self.handlePageLink(Math.ceil(self.totalSize / self.itemsPerPage));
 				}
 			};
 			
@@ -528,7 +577,7 @@
 			$iconsTemplate : $("#templates .icons").detach(),
 			$spellRuleTemplate: $("#spell-table #itemTemplate").detach(),
 		};
-		
+
 		DidYouMean.init();
 	});
 })(jQuery);

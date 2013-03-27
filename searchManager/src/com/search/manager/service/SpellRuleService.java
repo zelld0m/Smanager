@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
+import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.response.ServiceResponse;
