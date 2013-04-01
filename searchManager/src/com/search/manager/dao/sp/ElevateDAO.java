@@ -252,7 +252,7 @@ public class ElevateDAO {
 				inputs.put(DAOConstants.PARAM_VALUE, value);
 				inputs.put(DAOConstants.PARAM_COMMENT, comment);
 				inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, sequence);
-				inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDateTime);
+				inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(expiryDateTime));
 				inputs.put(DAOConstants.PARAM_CREATED_BY, username);
 				inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, elevate.getElevateEntity());
 				inputs.put(DAOConstants.PARAM_FORCE_ADD, elevate.isForceAdd()!=null && elevate.isForceAdd()?1:0);
@@ -339,7 +339,7 @@ public class ElevateDAO {
 			DAOValidation.checkElevatePK(elevate);
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
-			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, new Date(elevate.getExpiryDateTime().getMillis()));
+			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(elevate.getExpiryDateTime()));
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
 			int af = DAOUtils.getUpdateCount(updateExpiryDateSP.execute(inputs));
 			return af;

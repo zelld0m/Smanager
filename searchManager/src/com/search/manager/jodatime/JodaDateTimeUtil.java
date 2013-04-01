@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
 import org.joda.time.format.DateTimeFormat;
@@ -25,6 +26,10 @@ public class JodaDateTimeUtil {
 	
 	public static String getTimeZoneID(){
 		return getTimeZone().getID();
+	}
+	
+	public static Date toSqlDate(DateTime dateTime){
+		return dateTime!=null ? new Date(dateTime.getMillis()): null;
 	}
 	
 	public static DateTimeZone setTimeZoneID(String timeZoneId, String defaultTimeZoneId){
@@ -110,23 +115,22 @@ public class JodaDateTimeUtil {
 		return StringUtils.isNotBlank(storeId)? String.format("%s [%s]", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()): "";
 	}
 	
-	public static String getRemainingDateTimeText(DateTime startDateTime, DateTime endDateTime) {
+	public static String getRemainingDays(DateTime startDateTime, DateTime endDateTime) {
 		
 		if(endDateTime == null){
 			endDateTime = DateTime.now();
 		}
 		
-		if(startDateTime!=null && startDateTime.isBefore(endDateTime)){
-			Period period = new Period(startDateTime, endDateTime, PeriodType.dayTime());
+		if(startDateTime!=null &&  Days.daysBetween(startDateTime.toDateMidnight(), endDateTime.toDateMidnight()).getDays() > 0){
+			Period period = new Period(startDateTime.toDateMidnight(), endDateTime.toDateMidnight(), PeriodType.days());
 			
 			PeriodFormatter formatter = new PeriodFormatterBuilder()
 			.appendDays().appendSuffix(" day ", " days ")
-			.appendHours().appendSuffix(" hr ", " hrs ")
-			.appendMinutes().appendSuffix(" min ", " mins ")
-			.appendSeconds().appendSuffix(" sec ", " secs ")
 			.toFormatter();
 			
 			return formatter.print(period);
+		}else if(startDateTime.isEqualNow()){
+			return "Today";
 		}
 		
 		return StringUtils.EMPTY;

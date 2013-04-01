@@ -170,7 +170,7 @@ public class ExcludeDAO {
 				inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
 				inputs.put(DAOConstants.PARAM_VALUE, value);
 				inputs.put(DAOConstants.PARAM_COMMENT, comment);
-				inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDateTime);
+				inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(expiryDateTime));
 				inputs.put(DAOConstants.PARAM_CREATED_BY, username);
 				inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, exclude.getExcludeEntity());
 				count = DAOUtils.getUpdateCount(addSP.execute(inputs));
@@ -280,7 +280,7 @@ public class ExcludeDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
-			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, exclude.getExpiryDateTime());
+			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(exclude.getExpiryDateTime()));
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, exclude.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(updateExpiryDateSP.execute(inputs));
 		} catch (Exception e) {
