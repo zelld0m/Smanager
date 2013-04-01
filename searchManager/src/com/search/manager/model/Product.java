@@ -4,6 +4,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -173,7 +174,12 @@ public class Product extends ModelBean {
 
 	public boolean getIsExpired() {
 		DateTime expiration = getExpiryDateTime();
-		return (expiration!=null? expiration.isAfterNow():false);
+
+		if(expiration!=null && Days.daysBetween(DateTime.now().toDateMidnight(), expiration.toDateMidnight()).getDays() < 0){
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public boolean isExpired(){
@@ -182,7 +188,7 @@ public class Product extends ModelBean {
 	
 	public String getValidityText() {
 		DateTime expiration = getExpiryDateTime();
-		return expiration!=null ? JodaDateTimeUtil.getRemainingDateTimeText(expiration, DateTime.now()): "";
+		return expiration!=null ? JodaDateTimeUtil.getRemainingDays(DateTime.now(), expiration): "";
 	}
 
 	public RedirectRuleCondition getCondition() {
