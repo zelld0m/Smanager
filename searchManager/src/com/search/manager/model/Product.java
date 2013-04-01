@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class Product extends ModelBean {
@@ -225,10 +226,10 @@ public class Product extends ModelBean {
 	}
 	
 	public String getFormattedExpiryDateTime(){
-		return JodaDateTimeUtil.formatDateTimeFromStorePattern(getExpiryDateTime());
+		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDateTime(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getFormattedExpiryDate(){
-		return JodaDateTimeUtil.formatDateFromStorePattern(getExpiryDateTime());
+		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDateTime(),JodaPatternType.DATE);
 	}
 }

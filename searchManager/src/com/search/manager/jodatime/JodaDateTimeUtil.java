@@ -72,12 +72,8 @@ public class JodaDateTimeUtil {
 		return toDateTime(null, pattern, dateTimeText, null);
 	}
 
-	public static DateTime toDateTimeFromStoreDatePattern(String storeId, String dateTimeText){
-		return toDateTime(storeId, null, dateTimeText, "date-format");
-	}
-	
-	public static DateTime toDateTimeFromStoreDateTimePattern(String storeId, String dateTimeText){
-		return toDateTime(storeId, null, dateTimeText, "datetime-format");
+	public static DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText, JodaPatternType patternType){
+		return toDateTime(storeId, null, dateTimeText, patternType.equals(JodaPatternType.DATE) ? "date-format":"datetime-format");
 	}
 	
 	private static String formatDateTime(String storeId, String pattern, DateTime dateTime, String xmlTag){
@@ -99,33 +95,19 @@ public class JodaDateTimeUtil {
 	public static String formatDateTimeFromPattern(String pattern, DateTime dateTime){
 		return StringUtils.isNotBlank(pattern)? formatDateTime(null, pattern, dateTime, null): "";
 	}
-
-	public static String formatDateTimeFromStorePattern(String storeId, DateTime dateTime){
-		return formatDateTime(storeId, null, dateTime, "datetime-format");
+	
+	public static String formatFromStorePattern(DateTime dateTime, JodaPatternType patternType){
+		String storeId = UtilityService.getStoreId();
+		return StringUtils.isNotBlank(storeId)? formatFromStorePattern(storeId, dateTime, patternType): "";
 	}
 	
-	public static String formatDateTimeFromStorePattern(DateTime dateTime){
-		String storeId = UtilityService.getStoreId();
-		return StringUtils.isNotBlank(storeId)? formatDateTimeFromStorePattern(storeId, dateTime): "";
+	public static String formatFromStorePattern(String storeId, DateTime dateTime, JodaPatternType patternType){
+		return formatDateTime(storeId, null, dateTime, JodaPatternType.DATE.equals(patternType)? "date-format": "datetime-format");
 	}
 	
-	public static String formatDateFromStorePattern(String storeId, DateTime dateTime){
-		return formatDateTime(storeId, null, dateTime, "date-format");
-	}
-	
-	public static String formatDateFromStorePattern(DateTime dateTime){
+	public static String formatFromStorePatternWithZone(DateTime dateTime, JodaPatternType patternType){
 		String storeId = UtilityService.getStoreId();
-		return StringUtils.isNotBlank(storeId)? formatDateFromStorePattern(storeId, dateTime): "";
-	}
-
-	public static String formatDateFromStorePatternWithZone(DateTime dateTime){
-		String storeId = UtilityService.getStoreId();
-		return StringUtils.isNotBlank(storeId)? String.format("%s [%s]", formatDateFromStorePattern(storeId, dateTime), getTimeZoneID()): "";
-	}
-	
-	public static String formatDateTimeFromStorePatternWithZone(DateTime dateTime){
-		String storeId = UtilityService.getStoreId();
-		return StringUtils.isNotBlank(storeId)? String.format("%s [%s]", formatDateTimeFromStorePattern(storeId, dateTime), getTimeZoneID()): "";
+		return StringUtils.isNotBlank(storeId)? String.format("%s [%s]", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()): "";
 	}
 	
 	public static String getRemainingDateTimeText(DateTime startDateTime, DateTime endDateTime) {

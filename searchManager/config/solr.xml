@@ -15,8 +15,8 @@
     <solr-param-value name="fq">
     	<param-value>PcMall_StoreFlag:true</param-value>
     </solr-param-value>    
-    <dateformat>MM/dd/yyyy</dateformat>
-    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+    <date-format>MM/dd/yyyy</date-format>
+    <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>
   	<default-server>search</default-server>
     <default-timezone>Asia/Manila</default-timezone>
     <facet-template>PCMall_FacetTemplate</facet-template>

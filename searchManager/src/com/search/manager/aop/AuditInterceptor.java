@@ -21,6 +21,8 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
@@ -213,7 +215,7 @@ public class AuditInterceptor {
 			case updateExpiryDate:
 				message = new StringBuilder();
 				if(e.getExpiryDateTime() != null)
-					message.append("Changing expiry date to [%2$tF] for elevated entry ID[%1$s]");
+					message.append("Changing expiry date to [%2$s] for elevated entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for elevated entry ID[%1$s]");
 				break;
@@ -234,7 +236,7 @@ public class AuditInterceptor {
 			}
 
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), e.getExpiryDateTime(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		
 		logAuditTrail(auditTrail);

@@ -35,6 +35,8 @@
     var GLOBAL_serverName = "<%=request.getServerName()%>";  
     var GLOBAL_serverPort = "<%=request.getServerPort()%>";  
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
+	var GLOBAL_requestURL = "<%=request.getRequestURL()%>";	
+	var GLOBAL_requestURI = "<%=request.getRequestURI()%>";	
 	
 	//store schema indexed fields
 	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
@@ -57,8 +59,9 @@
 	var GLOBAL_storeFacetName = GLOBAL_storeParameters["storeFacetName"];
 	var GLOBAL_storeFacetTemplate = GLOBAL_storeParameters["storeFacetTemplate"];
 	var GLOBAL_storeFacetTemplateName = GLOBAL_storeParameters["storeFacetTemplateName"];
-	
 	var GLOBAL_storeGroupMembership = GLOBAL_storeParameters["storeGroupMembership"];
+	var GLOBAL_storeDateFormat = GLOBAL_storeParameters["storeDateFormat"];
+	var GLOBAL_storeDateTimeFormat = GLOBAL_storeParameters["storeDateTimeFormat"];
 	
 	var GLOBAL_storeGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
 	var GLOBAL_storeGroupTotal = GLOBAL_storeGroupMembership.length;

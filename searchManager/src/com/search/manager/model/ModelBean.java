@@ -3,7 +3,9 @@ package com.search.manager.model;
 import java.io.Serializable;
 
 import org.joda.time.DateTime;
-import org.springframework.format.annotation.DateTimeFormat;
+
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 
 public class ModelBean implements Serializable {
 	
@@ -39,7 +41,6 @@ public class ModelBean implements Serializable {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 	
-	@DateTimeFormat(pattern="SM") 
 	public DateTime getCreatedDateTime() {
 		return createdDateTime;
 	}
@@ -54,5 +55,21 @@ public class ModelBean implements Serializable {
 
 	public void setLastModifiedDateTime(DateTime lastModifiedDateTime) {
 		this.lastModifiedDateTime = lastModifiedDateTime;
+	}
+	
+	public String getFormattedCreatedDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDateTime(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedLastModifiedDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDateTime(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedCreatedDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDateTime(), JodaPatternType.DATE);
+	}
+	
+	public String getFormattedLastModifiedDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDateTime(), JodaPatternType.DATE);
 	}
 }
