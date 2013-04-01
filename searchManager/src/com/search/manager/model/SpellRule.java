@@ -24,7 +24,7 @@ public class SpellRule extends ModelBean {
     public SpellRule(SpellRuleXml ruleXml) {
         this.ruleId = ruleXml.getRuleId();
         this.storeId = ruleXml.getStore();
-        this.status = "new";
+        this.status = ruleXml.getStatus();
         this.searchTerms = ruleXml.getRuleKeyword().getKeyword()
                 .toArray(new String[ruleXml.getRuleKeyword().getKeyword().size()]);
         this.suggestions = ruleXml.getSuggestKeyword().getSuggest()

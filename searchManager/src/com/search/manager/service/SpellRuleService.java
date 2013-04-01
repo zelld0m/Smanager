@@ -3,7 +3,6 @@ package com.search.manager.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -170,18 +169,15 @@ public class SpellRuleService {
         String username = UtilityService.getUsername();
         String storeId = UtilityService.getStoreId();
         SpellRule rule = new SpellRule();
-        Date now = new Date();
 
         rule.setStoreId(storeId);
         rule.setCreatedBy(username);
-        rule.setCreatedDate(now);
         rule.setLastModifiedBy(username);
-        rule.setLastModifiedDate(now);
         rule.setSearchTerms(searchTerms);
         rule.setSuggestions(suggestions);
         rule.setStatus("new");
 
-        return spellRuleDAO.addSpellRuleAndGetId(rule) != null;
+        return spellRuleDAO.addSpellRule(rule) > 0;
     }
 
     private boolean updateSpellRule(String ruleId, String[] searchTerms, String[] suggestions) throws DaoException {

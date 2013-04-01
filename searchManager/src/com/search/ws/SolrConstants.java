@@ -85,7 +85,14 @@ public class SolrConstants {
 	public final static String ATTR_NAME_VALUE_PARAMS = "params";
 	public final static String ATTR_NAME_VALUE_DEBUG = "debug";
 	public final static String ATTR_NAME_VALUE_EXPLAIN = "explain";
+
 	public final static String ATTR_NAME_VALUE_SPELLCHECK = "spellcheck";
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION = "suggestion";  
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS = "suggestions";  
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET = "startOffset";  
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET = "endOffset";
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_COLLATION = "collation";
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_NUMFOUND = "numFound";
 	
 	// active rules
 	// params submitted by simulator
@@ -120,6 +127,5 @@ public class SolrConstants {
 	public final static String REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP 		= "excludeOverrideMap";
 	public final static String REQUEST_ATTRIB_DEMOTE_OVERRIDE_MAP 		= "demoteOverrideMap";
 	public final static String REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP 	= "redirectOverrideMap";	
-	public final static String REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP 	= "relevancyOverrideMap";	
-	
+	public final static String REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP 	= "relevancyOverrideMap";
 }

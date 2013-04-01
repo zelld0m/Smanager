@@ -37,6 +37,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
+import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
@@ -48,6 +49,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.SearchResult;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.SearchLogger;
@@ -63,6 +65,8 @@ public class SearchServlet extends HttpServlet {
 	@Autowired
 	@Qualifier("solrService")
 	SearchDaoService solrService;
+	
+	@Autowired private SpellRuleDAO spellRuleDAO;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -1137,6 +1141,8 @@ public class SearchServlet extends HttpServlet {
 			// TASK 1B - get spellcheck if requested
 			/* Run spellcheck if needed */
 			if (performSpellCheck) {
+			    final String fStore = storeId;
+			    final String foKeyword = originalKeyword;
 				final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
 				getSpellingSuggestionsParams.add(defTypeNVP);
@@ -1145,7 +1151,8 @@ public class SearchServlet extends HttpServlet {
 				completionService.submit(new Callable<Integer>() {
 					@Override
 					public Integer call() throws Exception {
-						solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+					    solrHelper.setSpellRule(spellRuleDAO.getSpellRuleForSearchTerm(fStore, foKeyword));
+                        solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
 						return 0;
 					}
 				});

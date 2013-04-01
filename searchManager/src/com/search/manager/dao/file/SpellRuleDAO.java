@@ -105,7 +105,22 @@ public class SpellRuleDAO {
         }
     }
 
-    public String addSpellRuleAndGetId(SpellRule rule) throws DaoException {
+    public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm) {
+        SpellRules rules = spellIndex.get(store);
+        SpellRule rule = null;
+
+        if (rules != null) {
+            SpellRuleXml ruleXml = rules.checkSearchTerm(searchTerm);
+
+            if (ruleXml != null) {
+                rule = new SpellRule(ruleXml);
+            }
+        }
+
+        return rule;
+    }
+
+    public int addSpellRule(SpellRule rule) throws DaoException {
         try {
             Date now = new Date();
             String ruleId = DAOUtils.generateUniqueId();
@@ -122,15 +137,13 @@ public class SpellRuleDAO {
             ruleXml.setStatus(rule.getStatus());
 
             spellIndex.get(rule.getStoreId()).addRule(ruleXml);
-            return ruleId;
+            return 1;
         } catch (Exception e) {
             throw new DaoException("Failed during addSpellRuleAndGetId()", e);
         }
     }
 
     public int updateSpellRule(SpellRule rule) throws DaoException {
-        int retVal = -1;
-
         try {
             SpellRules rules = spellIndex.get(rule.getStoreId());
             SpellRuleXml xml = rules.getSpellRule(rule.getRuleId());
@@ -145,18 +158,16 @@ public class SpellRuleDAO {
                     xml.setStatus("modified");
                 }
 
-                retVal = 1;
+                return 1;
             }
+
+            return 0;
         } catch (Exception e) {
             throw new DaoException("Failed during addSpellRuleAndGetId()", e);
         }
-
-        return retVal;
     }
 
     public int deleteSpellRule(SpellRule rule) throws DaoException {
-        int retVal = -1;
-
         try {
             SpellRules rules = spellIndex.get(rule.getStoreId());
             SpellRuleXml xml = rules.getSpellRule(rule.getRuleId());
@@ -169,13 +180,14 @@ public class SpellRuleDAO {
                 }
 
                 rules.deleteFromSecondaryIndex(xml);
-                retVal = 1;
+                return 1;
             }
+
+            return 0;
         } catch (Exception e) {
             throw new DaoException("Failed during addSpellRuleAndGetId()", e);
         }
 
-        return retVal;
     }
 
     public boolean isDuplicateSearchTerm(String storeId, String searchTerm, String ruleId) throws DaoException {

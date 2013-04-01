@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -24,6 +26,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -545,14 +548,165 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		}
 	}
 
-	private void addSpellcheckEntries() throws SearchException {
-		if (spellcheckNode != null) {
-			locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE).appendChild(mainDoc.importNode(spellcheckNode, true));
-		}
-		for (Node node: spellCheckParams) {
-			responseHeaderParamsNode.appendChild(mainDoc.importNode(node, true));
-		}
-	}
+    private void addSpellcheckEntries() throws SearchException {
+        int count = 0;
+
+        if (spellRule != null) {
+            try {
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                Document doc = db.newDocument();
+                List<String> suggestedKeywords = new ArrayList<String>();
+                String[] ruleSuggestions = spellRule.getSuggestions();
+
+                // TODO: This should be configurable.
+                int MAX_RESULTS = 5;
+
+                // create spellcheck element
+                Element spellcheck = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
+                doc.appendChild(spellcheck);
+
+                // create suggestions element
+                Element suggestions = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
+                spellcheck.appendChild(suggestions);
+
+                // create suggestion array without appending to document
+                LinkedHashMap<String, Node> suggestionsMap = new LinkedHashMap<String, Node>();
+                LinkedHashMap<String, Node> suggestionArrayMap = new LinkedHashMap<String, Node>();
+                LinkedHashMap<String, Node> startOffsetMap = new LinkedHashMap<String, Node>();
+                LinkedHashMap<String, Node> endOffsetMap = new LinkedHashMap<String, Node>();
+
+                // create suggestion element for original keyword
+                Element origKeyword = createLstElement(doc, originalKeyword);
+                suggestionsMap.put(originalKeyword, origKeyword);
+
+                Element suggestionArray = createElement(doc, SolrConstants.TAG_ARR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                suggestionArrayMap.put(originalKeyword, suggestionArray);
+
+                Element origStartOffset = createElement(doc, SolrConstants.TAG_INT,
+                        SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET, "0");
+                startOffsetMap.put(originalKeyword, origStartOffset);
+
+                Element origEndOffset = createElement(doc, SolrConstants.TAG_INT,
+                        SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, String.valueOf(originalKeyword.length()));
+                endOffsetMap.put(originalKeyword, origEndOffset);
+
+                for (int i = 0; count < MAX_RESULTS && i < ruleSuggestions.length; i++) {
+                    if (!suggestedKeywords.contains(ruleSuggestions[i])) {
+                        Element sug = createUnnamedElement(doc, SolrConstants.TAG_STR, ruleSuggestions[i]);
+                        suggestionArray.appendChild(sug);
+                        suggestedKeywords.add(ruleSuggestions[i]);
+                        count++;
+                    }
+                }
+
+                if (count < MAX_RESULTS && spellcheckNode != null) {
+                    // retrieve solr spellcheck results
+                    Node solrSuggestions = locateElementNode(spellcheckNode, SolrConstants.TAG_LIST,
+                            SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
+
+                    // prioritize collation suggestion before per term suggestion
+                    Node collation = solrSuggestions != null ? locateElementNode(solrSuggestions,
+                            SolrConstants.TAG_STR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION) : null;
+                    String collationString = collation == null ? null : collation.getTextContent();
+
+                    if (collationString != null && !suggestedKeywords.contains(collationString)) {
+                        Element e = createUnnamedElement(doc, SolrConstants.TAG_STR, collationString);
+                        suggestionArray.appendChild(e);
+                        suggestedKeywords.add(collationString);
+                        count++;
+                    }
+
+                    Node solrSuggestion = solrSuggestions != null ? solrSuggestions.getFirstChild() : null;
+
+                    while (solrSuggestion != null && count < MAX_RESULTS) {
+                        String name = solrSuggestion.getAttributes().getNamedItem(SolrConstants.ATTR_NAME)
+                                .getTextContent();
+
+                        if (SolrConstants.TAG_STR.equals(solrSuggestion.getNodeName())
+                                && SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(name)) {
+                            solrSuggestion = solrSuggestion.getNextSibling();
+                            continue;
+                        }
+
+                        if (suggestionsMap.get(name) == null) {
+                            // suggest list
+                            Element el = createLstElement(doc, name);
+                            suggestionsMap.put(name, el);
+
+                            // actual suggestions
+                            Element kwSuggestions = doc.createElement(SolrConstants.TAG_ARR);
+                            suggestionArrayMap.put(name, kwSuggestions);
+
+                            // offset
+                            startOffsetMap.put(name, doc.importNode(
+                                    locateElementNode(solrSuggestion, SolrConstants.TAG_INT,
+                                            SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET), true));
+                            endOffsetMap.put(name, doc.importNode(
+                                    locateElementNode(solrSuggestion, SolrConstants.TAG_INT,
+                                            SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET), true));
+                        }
+
+                        Node solrkw = locateElementNode(solrSuggestion, SolrConstants.TAG_ARR,
+                                SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                        NodeList children = solrkw.getChildNodes();
+
+                        for (int i = 0; i < children.getLength(); i++) {
+                            Node n = children.item(i);
+                            String s = n.getTextContent();
+
+                            if (!suggestedKeywords.contains(s)) {
+                                suggestionArrayMap.get(name).appendChild(doc.importNode(n, true));
+                                suggestedKeywords.add(s);
+                                count++;
+                            }
+
+                            if (count >= MAX_RESULTS)
+                                break;
+                        }
+
+                        solrSuggestion = solrSuggestion.getNextSibling();
+                    }
+                }
+
+                // Build complete spellcheck element
+                for (String name : suggestionsMap.keySet()) {
+                    Node suggest = suggestionsMap.get(name);
+                    Node arr = suggestionArrayMap.get(name);
+                    Node startOffset = startOffsetMap.get(name);
+                    Node endOffset = endOffsetMap.get(name);
+
+                    NodeList childNodes = arr.getChildNodes();
+
+                    if (childNodes.getLength() > 0) {
+                        suggest.appendChild(createElement(doc, SolrConstants.TAG_INT,
+                                SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_NUMFOUND,
+                                String.valueOf(childNodes.getLength())));
+                        suggest.appendChild(startOffset);
+                        suggest.appendChild(endOffset);
+                        suggest.appendChild(arr);
+
+                        suggestions.appendChild(suggest);
+                    }
+                }
+
+                locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE)
+                        .appendChild(mainDoc.importNode(spellcheck, true));
+            } catch (ParserConfigurationException pce) {
+                count = 0;
+                logger.error("Error occured during spelling document creation. Reverting to solr results.", pce);
+            }
+        }
+
+        if (count == 0 && spellcheckNode != null) {
+            locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE)
+                    .appendChild(mainDoc.importNode(spellcheckNode, true));
+        }
+
+        for (Node node : spellCheckParams) {
+            responseHeaderParamsNode.appendChild(mainDoc.importNode(node, true));
+        }
+    }
 	
 	private void applyFacetSort() {
 		if (facetSortRule == null || facetFieldsNode == null) {
@@ -664,56 +818,89 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		return templateName;
 	}
 
-	@Override
-	public void getSpellingSuggestion(List<NameValuePair> requestParams) throws SearchException {
-		HttpClient client  = null;
-		HttpPost post = null;
-		InputStream in = null;
-		HttpResponse solrResponse = null;
+    @Override
+    public void getSpellingSuggestion(List<NameValuePair> requestParams) throws SearchException {
+        HttpClient client = null;
+        HttpPost post = null;
+        InputStream in = null;
+        HttpResponse solrResponse = null;
 
-		try {
-			client = new DefaultHttpClient();
-			post = new HttpPost(getSpellCheckRequestPath());
-			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
-			post.addHeader("Connection", "close");
-			if (logger.isDebugEnabled()) {
-				logger.debug("URL: " + post.getURI());
-				logger.debug("Parameter: " + requestParams);
-			}
-			solrResponse = client.execute(post);
-			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			in = solrResponse.getEntity().getContent();
-			Document currentDoc  = docBuilder.parse(in);
+        try {
+            client = new DefaultHttpClient();
+            post = new HttpPost(getSpellCheckRequestPath());
+            post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+            post.addHeader("Connection", "close");
+            if (logger.isDebugEnabled()) {
+                logger.debug("URL: " + post.getURI());
+                logger.debug("Parameter: " + requestParams);
+            }
+            solrResponse = client.execute(post);
+            DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            in = solrResponse.getEntity().getContent();
+            Document currentDoc = docBuilder.parse(in);
 
-			Node responseNode = locateElementNode(currentDoc, SolrConstants.TAG_RESPONSE);
-			spellcheckNode = locateElementNode(responseNode, SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
+            Node responseNode = locateElementNode(currentDoc, SolrConstants.TAG_RESPONSE);
+            spellcheckNode = locateElementNode(responseNode, SolrConstants.TAG_LIST,
+                    SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
 
-			NodeList paramNodes = locateElementNode(locateElementNode(responseNode, SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER), 
-					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_PARAMS).getChildNodes();
-			for (int i = 0, size = paramNodes.getLength(); i < size; i++) {
-				Node kNode = paramNodes.item(i);
-				if (kNode.getNodeType() == Node.ELEMENT_NODE && kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_STR) 
-						&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue().startsWith(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK)) {
-					spellCheckParams.add(kNode);
-				}
-			}
-			
-		} catch (Exception e) {
-			String error = "Error occured while trying to get spelling suggestion";
-			logSolrError(post, error, e);
-			throw new SearchException(error ,e);
-		} finally {
-			try { if (in != null) in.close();  } catch (IOException e) { }
-			if (post != null) {
-				if (solrResponse != null) {
-					EntityUtils.consumeQuietly(solrResponse.getEntity());
-				}
-				post.releaseConnection();
-			}
-			if (client != null) {
-				client.getConnectionManager().shutdown();
-			}
-		}
-	}
-	
+            NodeList paramNodes = locateElementNode(
+                    locateElementNode(responseNode, SolrConstants.TAG_LIST,
+                            SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER), SolrConstants.TAG_LIST,
+                    SolrConstants.ATTR_NAME_VALUE_PARAMS).getChildNodes();
+            for (int i = 0, size = paramNodes.getLength(); i < size; i++) {
+                Node kNode = paramNodes.item(i);
+                if (kNode.getNodeType() == Node.ELEMENT_NODE
+                        && kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_STR)
+                        && kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
+                                .startsWith(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK)) {
+                    spellCheckParams.add(kNode);
+                }
+            }
+
+        } catch (Exception e) {
+            String error = "Error occured while trying to get spelling suggestion";
+            logSolrError(post, error, e);
+            throw new SearchException(error, e);
+        } finally {
+            try {
+                if (in != null)
+                    in.close();
+            } catch (IOException e) {
+            }
+            if (post != null) {
+                if (solrResponse != null) {
+                    EntityUtils.consumeQuietly(solrResponse.getEntity());
+                }
+                post.releaseConnection();
+            }
+            if (client != null) {
+                client.getConnectionManager().shutdown();
+            }
+        }
+    }
+
+    private Element createLstElement(Document doc, String nameValue) {
+        Element el = doc.createElement(SolrConstants.TAG_LIST);
+        el.setAttribute(SolrConstants.ATTR_NAME, nameValue);
+        return el;
+    }
+
+    private Element createElement(Document doc, String tag, String name, String value) {
+        Element el = doc.createElement(tag);
+        el.setAttribute(SolrConstants.ATTR_NAME, name);
+        el.setTextContent(value);
+        return el;
+    }
+
+    private Element createUnnamedElement(Document doc, String tag, String value) {
+        Element el = doc.createElement(tag);
+        el.setTextContent(value);
+        return el;
+    }
+
+    private Element createElement(Document doc, String tag, String name) {
+        Element el = doc.createElement(tag);
+        el.setAttribute(SolrConstants.ATTR_NAME, name);
+        return el;
+    }
 }
