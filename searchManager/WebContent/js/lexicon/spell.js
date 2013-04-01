@@ -173,6 +173,105 @@
 		}
 	};
 
+	SpellRule.prototype = {
+		data : function() {
+			var self = this;
+			
+			if (!self._data) {
+				self._data = {
+						ruleId : self.id,
+						searchTerms : self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get(),
+						suggestions : self.$suggestions.find(".term").map(function() { return $(this).text(); }).get()
+					};
+			} else {
+				self._data.searchTerms = self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get();
+				self._data.suggestions = self.$suggestions.find(".term").map(function() { return $(this).text(); }).get();
+			}
+
+			return self._data;
+		},
+
+		resetTooltip : function() {
+			if (DidYouMean.mode == 'add') {
+				this.$tooltip.cutebar('hideGroup', ['editing']);
+				this.$tooltip.cutebar('showGroup', ['editing-adding']);
+			} else if (DidYouMean.mode == 'edit') {
+				this.$tooltip.cutebar('showGroup', ['editing']);
+				this.$tooltip.cutebar('showGroup', ['editing-adding']);
+			}
+			
+		},
+
+		highlight : function(data) {
+			var self = this;
+			$.each(data, function(){
+				var duplicateTerm = this.toString();
+
+				self.$searchTerms.find(".term:contains(" + duplicateTerm + ")").each(function() {
+					if ($(this).text() == duplicateTerm) {
+						$(this).addClass("error");
+					}
+				});
+			});
+		},
+
+		setEditable : function(editable) {
+			var self = this;
+			
+			self.$el.attr("sr-editable", editable);
+			self.editable = editable;
+			self.$suggestions.sortable().sortable(editable ? 'enable' : 'disable');
+			self.resetTooltip();
+		},
+		
+		revert : function() {
+			var self = this;
+			
+			self.$searchTerms.text("");
+			self.$suggestions.text("");
+
+			$.each(self.originalSearchTerms, function() {
+				new Term({
+					container : self.$searchTerms,
+					term : this.toString(),
+					rule : self
+				});
+			});
+
+			$.each(self.originalSuggestions, function() {
+				new Term({
+					container : self.$suggestions,
+					term : this.toString(),
+					rule : self
+				});
+			});
+		},
+		
+		isModified : function() {
+			var self = this;
+			var data = self.data();
+
+			if (self.originalSearchTerms.length != data.searchTerms.length
+					|| self.originalSuggestions.length != data.suggestions.length) {
+				return true;
+			}
+
+			for (var i = 0; i < self.originalSearchTerms.length; i++) {
+				if (data.searchTerms[i] != self.originalSearchTerms[i]) {
+					return true;
+				}
+			}
+
+			for (var i = 0; i < self.originalSuggestions.length; i++) {
+				if (data.suggestions[i] != self.originalSuggestions[i]) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+	};
+
 	var DidYouMean = {
 		// filters
 		searchTerm : null,
@@ -491,108 +590,8 @@
 	};
 
 	$(document).ready(function() {
-		SpellRule.prototype = {
-			data : function() {
-				var self = this;
-				
-				if (!self._data) {
-					self._data = {
-							ruleId : self.id,
-							searchTerms : self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get(),
-							suggestions : self.$suggestions.find(".term").map(function() { return $(this).text(); }).get()
-						};
-				} else {
-					self._data.searchTerms = self.$searchTerms.find(".term").map(function() { return $(this).text(); }).get();
-					self._data.suggestions = self.$suggestions.find(".term").map(function() { return $(this).text(); }).get();
-				}
-
-				return self._data;
-			},
-
-			resetTooltip : function() {
-				if (DidYouMean.mode == 'add') {
-					this.$tooltip.cutebar('hideGroup', ['editing']);
-					this.$tooltip.cutebar('showGroup', ['editing-adding']);
-				} else if (DidYouMean.mode == 'edit') {
-					this.$tooltip.cutebar('showGroup', ['editing']);
-					this.$tooltip.cutebar('showGroup', ['editing-adding']);
-				}
-				
-			},
-
-			highlight : function(data) {
-				var self = this;
-				$.each(data, function(){
-					var duplicateTerm = this.toString();
-
-					self.$searchTerms.find(".term:contains(" + duplicateTerm + ")").each(function() {
-						if ($(this).text() == duplicateTerm) {
-							$(this).addClass("error");
-						}
-					});
-				});
-			},
-
-			setEditable : function(editable) {
-				var self = this;
-				
-				self.$el.attr("sr-editable", editable);
-				self.editable = editable;
-				self.$suggestions.sortable().sortable(editable ? 'enable' : 'disable');
-				self.resetTooltip();
-			},
-			
-			revert : function() {
-				var self = this;
-				
-				self.$searchTerms.text("");
-				self.$suggestions.text("");
-
-				$.each(self.originalSearchTerms, function() {
-					new Term({
-						container : self.$searchTerms,
-						term : this.toString(),
-						rule : self
-					});
-				});
-
-				$.each(self.originalSuggestions, function() {
-					new Term({
-						container : self.$suggestions,
-						term : this.toString(),
-						rule : self
-					});
-				});
-			},
-			
-			isModified : function() {
-				var self = this;
-				var data = self.data();
-
-				if (self.originalSearchTerms.length != data.searchTerms.length
-						|| self.originalSuggestions.length != data.suggestions.length) {
-					return true;
-				}
-
-				for (var i = 0; i < self.originalSearchTerms.length; i++) {
-					if (data.searchTerms[i] != self.originalSearchTerms[i]) {
-						return true;
-					}
-				}
-
-				for (var i = 0; i < self.originalSuggestions.length; i++) {
-					if (data.suggestions[i] != self.originalSuggestions[i]) {
-						return true;
-					}
-				}
-
-				return false;
-			},
-
-			$iconsTemplate : $("#templates .icons").detach(),
-			$spellRuleTemplate: $("#spell-table #itemTemplate").detach(),
-		};
-
+		SpellRule.prototype.$iconsTemplate = $("#templates .icons").detach();
+		SpellRule.prototype.$spellRuleTemplate = $("#spell-table #itemTemplate").detach();
 		DidYouMean.init();
 	});
 })(jQuery);
