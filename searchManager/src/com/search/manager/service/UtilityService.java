@@ -230,6 +230,8 @@ public class UtilityService {
 		json.put("storeFacetTemplate", getStoreFacetTemplate());
 		json.put("storeFacetTemplateName", getStoreFacetTemplateName());
 		json.put("storeGroupMembership", getStoreGroupMembership());
+		json.put("storeDateFormat", getStoreDateFormat());
+		json.put("storeDateTimeFormat", getStoreDateTimeFormat());
 		return json.toString();
 	}
 
@@ -393,5 +395,13 @@ public class UtilityService {
 				}
 			}
 		}
+	}
+	
+	public static String getStoreDateFormat() {
+		return ConfigManager.getInstance().getStoreParameter(getStoreId(), "date-format");
+	}
+	
+	public static String getStoreDateTimeFormat() {
+		return ConfigManager.getInstance().getStoreParameter(getStoreId(), "datetime-format");
 	}
 }

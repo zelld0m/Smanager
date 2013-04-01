@@ -18,7 +18,7 @@ import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.CampaignBanner;
@@ -116,13 +116,13 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
 							rs.getString(DAOConstants.COLUMN_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_COMMENT),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 				}
 			}));
 		}
@@ -205,13 +205,13 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
 							rs.getString(DAOConstants.COLUMN_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_COMMENT),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 				}
 			}));
 		}
@@ -369,12 +369,12 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
 							rs.getString(DAOConstants.COLUMN_LINK_URL));
 					return new CampaignBanner(campaign, banner, (List<Keyword>)null,
-							JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 				}
 			}));
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
@@ -423,12 +423,12 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
 							rs.getString(DAOConstants.COLUMN_LINK_URL));
 					return new CampaignBanner(campaign, banner, (List<Keyword>)null,
-							JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 				}
 			}));
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
@@ -484,7 +484,7 @@ public class CampaignDAO {
 					map.put(DAOConstants.COLUMN_BANNER_ID, rs.getString(DAOConstants.COLUMN_BANNER_ID));
 					map.put(DAOConstants.COLUMN_BANNER_NAME, rs.getString(DAOConstants.COLUMN_BANNER_NAME));
 					map.put(DAOConstants.COLUMN_CREATED_BY, rs.getString(DAOConstants.COLUMN_CREATED_BY));
-					map.put(DAOConstants.COLUMN_CREATED_DATE, JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)));
+					map.put(DAOConstants.COLUMN_CREATED_DATE, JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)));
 					return map;
 				}
 			}));
@@ -513,8 +513,8 @@ public class CampaignDAO {
 					map.put(DAOConstants.COLUMN_CAMPAIGN_NAME, rs.getString(DAOConstants.COLUMN_CAMPAIGN_NAME));
 					map.put(DAOConstants.COLUMN_BANNER_ID, rs.getString(DAOConstants.COLUMN_BANNER_ID));
 					map.put(DAOConstants.COLUMN_BANNER_NAME, rs.getString(DAOConstants.COLUMN_BANNER_NAME));
-					map.put(DAOConstants.COLUMN_START_DATE, JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)));
-					map.put(DAOConstants.COLUMN_END_DATE, JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)));
+					map.put(DAOConstants.COLUMN_START_DATE, JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)));
+					map.put(DAOConstants.COLUMN_END_DATE, JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)));
 					//	            	map.put(DAOConstants.COLUMN_CREATED_BY, rs.getString(DAOConstants.COLUMN_CREATED_BY));
 					//	            	map.put(DAOConstants.COLUMN_CREATED_DATE, rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE));
 					return map;

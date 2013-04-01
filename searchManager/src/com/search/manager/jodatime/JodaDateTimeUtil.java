@@ -13,9 +13,10 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
 
-public class JodaTimeUtil {
+public class JodaDateTimeUtil {
 	
 	
 	public static DateTimeZone getTimeZone(){
@@ -51,11 +52,11 @@ public class JodaTimeUtil {
 		return (date==null? null: new DateTime(date.getTime(),getTimeZone()));
 	}
 	
-	private static DateTime toDateTime(String storeId, String pattern, String dateTimeText){
+	private static DateTime toDateTime(String storeId, String pattern, String dateTimeText, String xmlTag){
 		ConfigManager configManager = ConfigManager.getInstance();
 		
 		if(StringUtils.isNotBlank(storeId)){
-			pattern = configManager.getStoreParameter(storeId, "datetimeformat");
+			pattern = configManager.getStoreParameter(storeId, xmlTag);
 		}
 
 		if(StringUtils.isBlank(pattern) || StringUtils.isBlank(dateTimeText)){
@@ -68,18 +69,18 @@ public class JodaTimeUtil {
 	}
 	
 	public static DateTime toDateTimeFromPattern(String pattern, String dateTimeText){
-		return toDateTime(null, pattern, dateTimeText);
+		return toDateTime(null, pattern, dateTimeText, null);
 	}
 
-	public static DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText){
-		return toDateTime(storeId, null, dateTimeText);
+	public static DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText, JodaPatternType patternType){
+		return toDateTime(storeId, null, dateTimeText, patternType.equals(JodaPatternType.DATE) ? "date-format":"datetime-format");
 	}
 	
-	private static String formatDateTime(String storeId, String pattern, DateTime dateTime){
+	private static String formatDateTime(String storeId, String pattern, DateTime dateTime, String xmlTag){
 		ConfigManager configManager = ConfigManager.getInstance();
 		
 		if(StringUtils.isNotBlank(storeId)){
-			pattern = configManager.getStoreParameter(storeId, "datetimeformat");
+			pattern = configManager.getStoreParameter(storeId, xmlTag);
 		}
 
 		if(StringUtils.isBlank(pattern) || dateTime==null){
@@ -92,23 +93,42 @@ public class JodaTimeUtil {
 	}
 	
 	public static String formatDateTimeFromPattern(String pattern, DateTime dateTime){
-		return formatDateTime(null, pattern, dateTime);
+		return StringUtils.isNotBlank(pattern)? formatDateTime(null, pattern, dateTime, null): "";
 	}
-
-	public static String formatDateTimeFromStorePattern(String storeId, DateTime dateTime){
-		return formatDateTime(storeId, null, dateTime);
+	
+	public static String formatFromStorePattern(DateTime dateTime, JodaPatternType patternType){
+		String storeId = UtilityService.getStoreId();
+		return StringUtils.isNotBlank(storeId)? formatFromStorePattern(storeId, dateTime, patternType): "";
+	}
+	
+	public static String formatFromStorePattern(String storeId, DateTime dateTime, JodaPatternType patternType){
+		return formatDateTime(storeId, null, dateTime, JodaPatternType.DATE.equals(patternType)? "date-format": "datetime-format");
+	}
+	
+	public static String formatFromStorePatternWithZone(DateTime dateTime, JodaPatternType patternType){
+		String storeId = UtilityService.getStoreId();
+		return StringUtils.isNotBlank(storeId)? String.format("%s [%s]", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()): "";
 	}
 	
 	public static String getRemainingDateTimeText(DateTime startDateTime, DateTime endDateTime) {
-		Period period = new Period(startDateTime, endDateTime, PeriodType.dayTime());
-
-		PeriodFormatter formatter = new PeriodFormatterBuilder()
-		        .appendDays().appendSuffix(" day ", " days ")
-		        .appendHours().appendSuffix(" hr ", " hrs ")
-		        .appendMinutes().appendSuffix(" min ", " mins ")
-		        .appendSeconds().appendSuffix(" sec ", " secs ")
-		        .toFormatter();
-
-		return formatter.print(period);
+		
+		if(endDateTime == null){
+			endDateTime = DateTime.now();
+		}
+		
+		if(startDateTime!=null && startDateTime.isBefore(endDateTime)){
+			Period period = new Period(startDateTime, endDateTime, PeriodType.dayTime());
+			
+			PeriodFormatter formatter = new PeriodFormatterBuilder()
+			.appendDays().appendSuffix(" day ", " days ")
+			.appendHours().appendSuffix(" hr ", " hrs ")
+			.appendMinutes().appendSuffix(" min ", " mins ")
+			.appendSeconds().appendSuffix(" sec ", " secs ")
+			.toFormatter();
+			
+			return formatter.print(period);
+		}
+		
+		return StringUtils.EMPTY;
 	}
 }

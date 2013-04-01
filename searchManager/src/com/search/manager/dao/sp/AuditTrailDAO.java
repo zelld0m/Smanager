@@ -1,5 +1,6 @@
 package com.search.manager.dao.sp;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -15,7 +16,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -92,7 +93,7 @@ public class AuditTrailDAO {
 		                		rs.getString(DAOConstants.COLUMN_STORE),
 		                		rs.getString(DAOConstants.COLUMN_KEYWORD),
 		                		rs.getString(DAOConstants.COLUMN_REFERENCE),
-		                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_DATE)),
+		                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_DATE)),
 		                		rs.getString(DAOConstants.COLUMN_DETAILS)
 		                		);
 		            }
@@ -135,7 +136,7 @@ public class AuditTrailDAO {
             inputs.put(DAOConstants.PARAM_STORE, auditTrail.getStoreId());
             inputs.put(DAOConstants.PARAM_KEYWORD, auditTrail.getKeyword());
             inputs.put(DAOConstants.PARAM_REFERENCE, auditTrail.getReferenceId());
-            inputs.put(DAOConstants.PARAM_DATE, auditTrail.getDateTime());
+            inputs.put(DAOConstants.PARAM_DATE, new Date(auditTrail.getDateTime().getMillis()));
             inputs.put(DAOConstants.PARAM_DETAILS, auditTrail.getDetails());
             			
            	i = DAOUtils.getUpdateCount(addSP.execute(inputs));

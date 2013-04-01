@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.ReplaceKeywordMessageType;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
@@ -104,8 +104,8 @@ public class RedirectRuleDAO {
 	                		rs.getString(DAOConstants.COLUMN_CONDITION),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_CREATED_DATE)),
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
 	                		isIncludeKeyword,

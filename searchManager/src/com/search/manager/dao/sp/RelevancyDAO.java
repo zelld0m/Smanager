@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -120,13 +120,13 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_NAME),
 	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 	                		new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -211,13 +211,13 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_NAME),
 	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 	                		new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -261,8 +261,8 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_FIELD_VALUE),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-	                				JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                				JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -332,8 +332,8 @@ public class RelevancyDAO {
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -394,8 +394,8 @@ public class RelevancyDAO {
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-	                				JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                				JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}

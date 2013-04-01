@@ -1,7 +1,6 @@
 package com.search.manager.model;
 
 import org.joda.time.DateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.report.model.xml.RuleItemXml;
@@ -12,7 +11,7 @@ public class SearchResult extends ModelBean {
 
 	protected StoreKeyword storeKeyword;
 	protected String edp;
-	@DateTimeFormat protected DateTime expiryDateTime;
+	protected DateTime expiryDateTime;
 	protected MemberTypeEntity entity;
 	protected RedirectRuleCondition condition;
 	protected String memberId;
