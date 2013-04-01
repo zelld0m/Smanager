@@ -162,7 +162,7 @@ public class AuditInterceptor {
 				logStoreKeyword(jp, auditable, auditTrail);
 				break;
 			case ruleStatus:
-				logRuleStatus(jp, auditable, auditTrail);
+				//logRuleStatus(jp, auditable, auditTrail);
 				break;
 			case security:
 				logSecurity(jp, auditable, auditTrail);

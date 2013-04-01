@@ -117,6 +117,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/KeywordTrendsServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ReportGeneratorServiceJS.js"/>"></script>  
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/CampaignServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/BannerServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->

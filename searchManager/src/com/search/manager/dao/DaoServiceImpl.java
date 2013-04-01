@@ -828,6 +828,11 @@ public class DaoServiceImpl implements DaoService {
 	public int addCampaign(Campaign campaign) throws DaoException {
 		return campaignDAO.addCampaign(campaign);
 	}
+	
+	@Override
+	public String addCampaignAndGetId(Campaign campaign) throws DaoException {
+		return campaignDAO.addCampaignAndGetId(campaign);
+	}
 
 	@Override
 	public int updateCampaign(Campaign campaign) throws DaoException {

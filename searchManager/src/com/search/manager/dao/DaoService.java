@@ -82,6 +82,7 @@ public interface DaoService extends SearchDaoService {
 
 	/* Campaigns */
 	public int addCampaign(Campaign campaign) throws DaoException;
+	public String addCampaignAndGetId(Campaign rule) throws DaoException;
 	public int updateCampaign(Campaign campaign) throws DaoException;
 	public int deleteCampaign(Campaign campaign) throws DaoException;
 	public int updateCampaignComment(Campaign campaign) throws DaoException;

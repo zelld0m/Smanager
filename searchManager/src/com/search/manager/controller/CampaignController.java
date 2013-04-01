@@ -23,12 +23,10 @@ public class CampaignController {
 	private static final Logger logger = Logger.getLogger(CampaignController.class);
 	
 	@Autowired private DaoCacheService daoCacheService;
-	@Autowired private CampaignService campaignService;
 	
 	@RequestMapping(value="/{store}")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model,@PathVariable String store){
 		model.addAttribute("store", store);
-		model.addAttribute("campaignList", campaignService.getCampaignList(store));
 		
 		try {
 			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Campaigns");

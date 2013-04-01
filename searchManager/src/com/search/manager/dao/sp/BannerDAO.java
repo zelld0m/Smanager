@@ -14,12 +14,15 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.Banner;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.model.Store;
 
 @Repository(value="bannerDAO")
@@ -187,24 +190,24 @@ public class BannerDAO {
 	}
 	
 	public String addBannerAndGetId(Banner banner) throws DaoException {
-		String bannerId = banner.getBannerId();
+		String bannerId = banner.getRuleId();
     	if (StringUtils.isEmpty(bannerId)) {
     		bannerId = DAOUtils.generateUniqueId();
     	}
 		
-		banner.setBannerId(bannerId);
+		banner.setRuleId(bannerId);
 		return (addBanner(banner) > 0) ?  bannerId : null;
 	}
 	
 	public int addBanner(Banner banner) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			String bannerId = banner.getBannerId();
+			String bannerId = banner.getRuleId();
 			if (StringUtils.isEmpty(bannerId)) {
 				bannerId = DAOUtils.generateUniqueId();
 			}
 			inputs.put(DAOConstants.PARAM_BANNER_ID, bannerId);
-			inputs.put(DAOConstants.PARAM_BANNER_NAME, StringUtils.trimToEmpty(banner.getBannerName()));
+			inputs.put(DAOConstants.PARAM_BANNER_NAME, StringUtils.trimToEmpty(banner.getRuleName()));
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(banner.getStore()));
 			inputs.put(DAOConstants.PARAM_IMAGE_URL, StringUtils.trimToEmpty(banner.getImagePath()));
 			inputs.put(DAOConstants.PARAM_LINK_URL, StringUtils.trimToEmpty(banner.getLinkPath()));
@@ -220,7 +223,7 @@ public class BannerDAO {
 	public Banner getBanner(Banner banner) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getBannerId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getRuleId());
 			String storeId = null;
 			if (banner.getStore() != null) {
 				storeId = StringUtils.lowerCase(StringUtils.trim(banner.getStore().getStoreId()));
@@ -242,7 +245,7 @@ public class BannerDAO {
 			if (model.getStore() != null) {
 				storeId = StringUtils.lowerCase(StringUtils.trim(model.getStore().getStoreId()));
 			}
-			inputs.put(DAOConstants.PARAM_BANNER_ID, model.getBannerId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
@@ -255,8 +258,8 @@ public class BannerDAO {
 	public int updateBanner(Banner banner) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getBannerId());
-			inputs.put(DAOConstants.PARAM_BANNER_NAME, StringUtils.trimToEmpty(banner.getBannerName()));
+			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getRuleId());
+			inputs.put(DAOConstants.PARAM_BANNER_NAME, StringUtils.trimToEmpty(banner.getRuleName()));
 			inputs.put(DAOConstants.PARAM_IMAGE_URL, banner.getImagePath());
 			inputs.put(DAOConstants.PARAM_LINK_URL, banner.getLinkPath());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, banner.getLastModifiedBy());
@@ -270,7 +273,7 @@ public class BannerDAO {
 	public int updateBannerComment(Banner banner) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getBannerId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getRuleId());
 			inputs.put(DAOConstants.PARAM_COMMENT, banner.getComment());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, banner.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
@@ -282,7 +285,7 @@ public class BannerDAO {
 	public int appendBannerComment(Banner banner) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getBannerId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getRuleId());
 			inputs.put(DAOConstants.PARAM_COMMENT, banner.getComment());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, banner.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(appendCommentSP.execute(inputs));
@@ -291,11 +294,12 @@ public class BannerDAO {
 		}
 	}
 
+	@Audit(entity = Entity.banner, operation = Operation.delete)
 	public int deleteBanner(Banner banner) throws DaoException {
 		try {
-			if (banner != null && banner.getBannerId() != null) {
+			if (banner != null && banner.getRuleId() != null) {
 				Map<String, Object> inputs = new HashMap<String, Object>();
-				inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getBannerId());
+				inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getRuleId());
 				return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
 			}
 			return -1;
@@ -309,7 +313,7 @@ public class BannerDAO {
 			Banner model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(model.getStore()));
-			inputs.put(DAOConstants.PARAM_BANNER, bannerMatchType.equals(MatchType.MATCH_ID) ? model.getBannerId() : model.getBannerName());
+			inputs.put(DAOConstants.PARAM_BANNER, bannerMatchType.equals(MatchType.MATCH_ID) ? model.getRuleId() : model.getRuleName());
 			inputs.put(DAOConstants.PARAM_MATCH_TYPE_BANNER, String.valueOf(bannerMatchType.getIntValue()));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());

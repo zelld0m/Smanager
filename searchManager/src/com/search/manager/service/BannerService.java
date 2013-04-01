@@ -1,5 +1,7 @@
 package com.search.manager.service;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -13,15 +15,11 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Banner;
-import com.search.manager.model.CampaignBanner;
-import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
-import com.search.manager.model.SearchCriteria.ExactMatch;
-import com.search.manager.model.SearchCriteria.MatchType;
 
 @Service(value = "bannerService")
 @RemoteProxy(
@@ -35,12 +33,40 @@ public class BannerService {
 	@Autowired private DaoService daoService;
 	
 	@RemoteMethod
+	public Banner addKeywordsToBanner(String ruleId, String[] keywordList){
+		return null;
+	}
+	
+	@RemoteMethod
 	public Banner getRuleById(String ruleId){
+		try {
+			String store = UtilityService.getStoreId();
+			Banner rule = new Banner(ruleId, new Store(store));
+			return daoService.getBanner(rule);
+			
+		} catch (DaoException e) {
+			logger.error("Failed during getRuleById()",e);
+		}
 		return null;
 	}
 	
 	@RemoteMethod
 	public Banner getRuleByName(String ruleName){
+		try {
+			String store = UtilityService.getStoreId();
+			Banner rule = new Banner(new Store(store), ruleName);
+			SearchCriteria<Banner> criteria = new SearchCriteria<Banner>(rule, 1, 1);
+			RecordSet<Banner> bannerList = daoService.getBannerListWithNameMatching(criteria);
+			
+			if(bannerList != null && bannerList.getTotalSize() > 0){
+				return bannerList.getList().get(0);
+			}
+			
+			
+			
+		} catch (DaoException e) {
+			logger.error("Failed during getRuleByName()",e);
+		}
 		return null;
 	}
 	
@@ -49,7 +75,7 @@ public class BannerService {
 		try{
 			String storeId = UtilityService.getStoreId();
 			Banner banner = new Banner("", filter, new Store(storeId));
-			banner.setBannerName(filter);
+			banner.setRuleName(filter);
 			
 			SearchCriteria<Banner> criteria = new SearchCriteria<Banner>(banner, page, itemsPerPage);
 			return daoService.getBannerListWithNameLike(criteria);
@@ -60,13 +86,7 @@ public class BannerService {
 	}
 	
 	@RemoteMethod
-	public Banner addKeywordsToBanner(String ruleId, String[] keywordList){
-		return null;
-	}
-	
-	@RemoteMethod
 	public Banner addRule(String bannerName, String linkPath, String imagePath, String imageAlt, String description) {
-		int result = -1;
 		String ruleId = "";
 		String storeId = UtilityService.getStoreId();
 		String username = UtilityService.getUsername();
@@ -77,30 +97,63 @@ public class BannerService {
 			ruleId = daoService.addBannerAndGetId(rule);
 
 			try {
-				daoService.addRuleStatus(new RuleStatus(RuleEntity.BANNER, storeId, ruleId, bannerName, 
+				if(StringUtils.isNotEmpty(ruleId)){
+					daoService.addRuleStatus(new RuleStatus(RuleEntity.BANNER, storeId, ruleId, bannerName, 
 						username, username, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+				}
 			} catch (DaoException de) {
 				logger.error("Failed to create rule status for search banner: " + bannerName);
 			}
 			
-			if (result>0){
+			if (StringUtils.isNotBlank(ruleId)){
 				return getRuleById(ruleId);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addRule()",e);
-			try {
-				daoService.deleteFacetSort(new FacetSort(ruleId, storeId));
-			} catch (DaoException de) {
-				logger.error("Unable to complete process, need to manually delete rule", de);
-			}
+		} catch (Exception e) {
+			logger.error("Failed during addRule()",e);
 		}
 
 		return null;
 	}
 	
 	@RemoteMethod
+	public int updateRule(String ruleId, String ruleName, String description) {
+		int result = -1;
+		String storeId = UtilityService.getStoreId();
+		try {
+			Banner rule = new Banner(new Store(storeId), ruleId, ruleName, description);
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.updateBanner(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during updateRule()",e);
+		}
+		return result;
+	}
+	
+	@RemoteMethod
 	public int deleteRule(String ruleId) {
 		int result = -1;
+		
+		try {
+			String store = UtilityService.getStoreId();
+			String username = UtilityService.getUsername();
+			Banner rule = new Banner(ruleId, new Store(store));
+			rule.setLastModifiedBy(username);
+			result = daoService.deleteBanner(rule);
+			if (result > 0) {
+				RuleStatus ruleStatus = new RuleStatus();
+				ruleStatus.setRuleTypeId(RuleEntity.BANNER.getCode());
+				ruleStatus.setRuleRefId(ruleId);
+				ruleStatus.setStoreId(store);
+				daoService.updateRuleStatusDeletedInfo(ruleStatus, username);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during deleteRule()",e);
+		} catch (Exception e) {
+			logger.error("Failed during deleteRule()",e);
+		}
+		
 		return result;
 	}
 	

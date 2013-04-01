@@ -23,16 +23,9 @@ public class BannerController {
 	
 	private static final Logger logger = Logger.getLogger(BannerController.class);
 	
-	private final Banner banner;
-	
 	@Autowired private DaoCacheService daoCacheService;
 	@SuppressWarnings("unused")
 	@Autowired private BannerService bannerService;
-	
-	@Autowired
-	public BannerController(Banner banner){
-		this.banner = banner;
-	}
 	
 	@RequestMapping(value="/{store}")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model,@PathVariable String store){
@@ -43,11 +36,5 @@ public class BannerController {
 			logger.error("Failed to access local cache ", e);
 		}
 		return "campaign/banner";
-	}
-	
-	@RequestMapping(value="/add/{store}")
-	public String addBanner(HttpServletRequest request,HttpServletResponse response, Model model,@PathVariable String store){
-		model.addAttribute("store", store);
-		return "campaign/addbanner";
 	}
 }

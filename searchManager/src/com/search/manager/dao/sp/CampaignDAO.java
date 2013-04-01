@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -23,8 +25,8 @@ import com.search.manager.model.CampaignBanner;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
 
 @Repository(value="campaignDAO")
 public class CampaignDAO {
@@ -52,6 +54,7 @@ public class CampaignDAO {
 	private GetCampaignBannerKeywordsStoredProcedure getBannerKeywordSP;
 	private SearchCampaignBannerKeywordsStoredProcedure searchBannerKeywordSP;
 
+	@Autowired
 	public CampaignDAO(JdbcTemplate jdbcTemplate) {
     	addSP = new AddCampaignStoredProcedure(jdbcTemplate);
     	updateSP = new UpdateCampaignStoredProcedure(jdbcTemplate) ;
@@ -233,8 +236,8 @@ public class CampaignDAO {
 		try {
 			// TODO: add checking for duplicates
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getCampaignId());
-			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getBannerId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getRuleId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getRuleId());
 			inputs.put(DAOConstants.PARAM_START_DATE, campaignBanner.getStartDateTime());
 			inputs.put(DAOConstants.PARAM_END_DATE, campaignBanner.getEndDateTime());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(campaignBanner.getCreatedBy()));
@@ -260,8 +263,8 @@ public class CampaignDAO {
 	public int updateCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getCampaignId());
-			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getBannerId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getRuleId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getRuleId());
 			inputs.put(DAOConstants.PARAM_START_DATE, campaignBanner.getStartDateTime());
 			inputs.put(DAOConstants.PARAM_END_DATE, campaignBanner.getEndDateTime());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(campaignBanner.getLastModifiedBy()));
@@ -284,8 +287,8 @@ public class CampaignDAO {
 	public int deleteCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getCampaignId());
-			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getBannerId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getRuleId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getRuleId());
 			return DAOUtils.getUpdateCount(deleteBannerSP.execute(inputs));
 		}
 		catch (Exception e) {
@@ -309,8 +312,8 @@ public class CampaignDAO {
 			// TODO: add checking for duplicates
 			int i = 0;
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getCampaignId());
-			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getBannerId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getRuleId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getRuleId());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, campaignBanner.getBanner().getCreatedBy());
 			for (Keyword keyword: campaignBanner.getKeywords()) {
 				inputs.put(DAOConstants.PARAM_KEYWORD, keyword.getKeywordId());
@@ -338,8 +341,8 @@ public class CampaignDAO {
 			// TODO: add checking for duplicates
 			int i = 0;
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getCampaignId());
-			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getBannerId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getRuleId());
+			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getRuleId());
 			for (Keyword keyword: campaignBanner.getKeywords()) {
 				inputs.put(DAOConstants.PARAM_KEYWORD, keyword.getKeywordId());
 				i += DAOUtils.getUpdateCount(deleteBannerKeywordSP.execute(inputs));
@@ -393,7 +396,7 @@ public class CampaignDAO {
 		try {
 			Campaign model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, model.getCampaignId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStore().getStoreId().toLowerCase().trim());
 			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
@@ -453,10 +456,10 @@ public class CampaignDAO {
 			Banner banner = model.getBanner();
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(campaign.getStore()));
-			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaign.getCampaignId());
-			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaignMatchType.equals(MatchType.MATCH_ID) ? campaign.getCampaignId() : campaign.getCampaignName());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaign.getRuleId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaignMatchType.equals(MatchType.MATCH_ID) ? campaign.getRuleId() : campaign.getRuleName());
 			inputs.put(DAOConstants.PARAM_MATCH_TYPE_CAMPAIGN, campaignMatchType.getIntValue());
-			inputs.put(DAOConstants.PARAM_BANNER, bannerMatchType.equals(MatchType.MATCH_ID) ? banner.getBannerId() : banner.getBannerName());
+			inputs.put(DAOConstants.PARAM_BANNER, bannerMatchType.equals(MatchType.MATCH_ID) ? banner.getRuleId() : banner.getRuleName());
 			inputs.put(DAOConstants.PARAM_MATCH_TYPE_BANNER, bannerMatchType.getIntValue());
 			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
@@ -533,12 +536,12 @@ public class CampaignDAO {
 	public int addCampaign(Campaign campaign) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			String campaignId = campaign.getCampaignId();
+			String campaignId = campaign.getRuleId();
 			if (StringUtils.isEmpty(campaignId)) {
 				campaignId = DAOUtils.generateUniqueId();
 			}
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, DAOUtils.generateUniqueId());
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_NAME, StringUtils.trimToEmpty(campaign.getCampaignName()));
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_NAME, StringUtils.trimToEmpty(campaign.getRuleName()));
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(campaign.getStore()));
 			inputs.put(DAOConstants.PARAM_START_DATE, campaign.getStartDateTime());
 			inputs.put(DAOConstants.PARAM_END_DATE, campaign.getEndDateTime());
@@ -555,7 +558,7 @@ public class CampaignDAO {
 		try {
 			Campaign model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, model.getCampaignId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStore().getStoreId().toLowerCase().trim());
 			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
@@ -570,7 +573,7 @@ public class CampaignDAO {
 	public Campaign getCampaign(Campaign campaign) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getCampaignId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, campaign.getStore().getStoreId().toLowerCase().trim());
 			inputs.put(DAOConstants.PARAM_START_DATE, null);
 			inputs.put(DAOConstants.PARAM_END_DATE, null);
@@ -585,8 +588,8 @@ public class CampaignDAO {
 	public int updateCampaign(Campaign campaign) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getCampaignId());
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_NAME, StringUtils.trimToEmpty(campaign.getCampaignName()));
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getRuleId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_NAME, StringUtils.trimToEmpty(campaign.getRuleName()));
 			inputs.put(DAOConstants.PARAM_START_DATE, campaign.getStartDateTime());
 			inputs.put(DAOConstants.PARAM_END_DATE, campaign.getEndDateTime());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(campaign.getLastModifiedBy()));
@@ -600,7 +603,7 @@ public class CampaignDAO {
 	public int updateCampaignComment(Campaign campaign) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getCampaignId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getRuleId());
 			inputs.put(DAOConstants.PARAM_COMMENT, campaign.getComment());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, campaign.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
@@ -612,7 +615,7 @@ public class CampaignDAO {
 	public int appendCampaignComment(Campaign campaign) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getCampaignId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getRuleId());
 			inputs.put(DAOConstants.PARAM_COMMENT, campaign.getComment());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, campaign.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(appendCommentSP.execute(inputs));
@@ -623,9 +626,9 @@ public class CampaignDAO {
 
 	public int deleteCampaign(Campaign campaign) throws DaoException {
 		try {
-			if (campaign != null && campaign.getCampaignId() != null) {
+			if (campaign != null && campaign.getRuleId() != null) {
 				Map<String, Object> inputs = new HashMap<String, Object>();
-				inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getCampaignId());
+				inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getRuleId());
 				return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
 			}
 			return -1;
@@ -639,7 +642,7 @@ public class CampaignDAO {
 			Campaign model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStore().getStoreId().toLowerCase().trim());
-			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaignMatchType.equals(MatchType.MATCH_ID) ? model.getCampaignId() : model.getCampaignName());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaignMatchType.equals(MatchType.MATCH_ID) ? model.getRuleId() : model.getRuleName());
 			inputs.put(DAOConstants.PARAM_MATCH_TYPE_CAMPAIGN, campaignMatchType.getIntValue());
 			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
@@ -649,6 +652,16 @@ public class CampaignDAO {
 		} catch (Exception e) {
 			throw new DaoException("Failed during searchCampaign()", e);
 		}
+	}
+
+	public String addCampaignAndGetId(Campaign campaign) throws DaoException {
+		String ruleId = campaign.getRuleId();
+    	if (StringUtils.isEmpty(ruleId)) {
+    		ruleId = DAOUtils.generateUniqueId();
+    	}
+		
+    	campaign.setRuleId(ruleId);
+		return (addCampaign(campaign) > 0) ?  ruleId : null;
 	}
 
 }

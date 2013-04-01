@@ -11,19 +11,19 @@
 			$("#keywordSidePanel").sidepanel({
 				moduleName: self.moduleName,
 				headerText : "Banner",
-				fieldName: "bannerName",
+				fieldName: "ruleName",
 				page: page,
 				pageSize: self.rulePageSize,
 				showAddButton: allowModify,
 				filterText: self.ruleFilterText,
 
-				itemDataCallback: function(base, bannerName, page){
+				itemDataCallback: function(base, ruleName, page){
 					self.rulePage = page;
-					self.ruleFilterText = bannerName;
-					BannerServiceJS.getRules(bannerName, page, base.options.pageSize, {
+					self.ruleFilterText = ruleName;
+					BannerServiceJS.getRules(ruleName, page, base.options.pageSize, {
 						callback: function(data){
-							base.populateList(data, bannerName);
-							base.addPaging(bannerName, page, data.totalSize);
+							base.populateList(data, ruleName);
+							base.addPaging(ruleName, page, data.totalSize);
 						},
 						preHook: function(){ base.prepareList(); }
 						
@@ -32,7 +32,7 @@
 				
 				itemOptionCallback: function(base, item){
 					//TODO
-					//BannerServiceJS.getTotalCampaignUsingBanner(item.model["bannerId"],{
+					//BannerServiceJS.getTotalCampaignUsingBanner(item.model["ruleId"],{
 					//	callback: function(count){
 					//		if (count > 0) item.ui.find("#itemLinkValue").html("(" + count + ")");
 							
@@ -55,7 +55,7 @@
 				
 				itemAddCallback: function(base, name){
 					$("a#addButton").qtip({
-						id: "add-facetsort",
+						id: "add-banner",
 						content: {
 							text: $('<div/>'),
 							title: { text: 'New ' + self.moduleName, button: true }
@@ -75,15 +75,15 @@
 								
 								$contentHolder.find('a#addButton').off().on({
 									click: function(e){
-										var bannerName = $contentHolder.find("#popKeywordName").val();
+										var ruleName = $contentHolder.find("#popKeywordName").val();
 										var description = $contentHolder.find("#description").val();
 										var imagePath = $contentHolder.find("#imagePath").val();
 										var linkPath = "";
 										var imageAlt = "";
 										
-										if($.isBlank(bannerName)){
+										if($.isBlank(ruleName)){
 											jAlert("Name is required.", self.moduleName);
-										}else if(!isAllowedName(bannerName)){
+										}else if(!isAllowedName(ruleName)){
 											jAlert("Name contains invalid value.",self.moduleName);
 										}else if($.isBlank(imagePath)){
 											jAlert("Image path is required.", self.moduleName);
@@ -96,15 +96,15 @@
 										}else if($.isNotBlank(imageAlt) && !isXssSafe(imageAlt)){
 											jAlert("Image alt contains XSS.",self.moduleName);
 										}else{
-											BannerServiceJS.getRuleByName(bannerName, {
+											BannerServiceJS.getRuleByName(ruleName, {
 												callback: function(data){
 													if (data != null){
 														jAlert("Another banner is already using the name provided.",self.moduleName);
 													}else{
-														BannerServiceJS.addRule(bannerName, linkPath, imagePath, imageAlt, description, {
+														BannerServiceJS.addRule(ruleName, linkPath, imagePath, imageAlt, description, {
 															callback: function(data){
 																if(data != null){
-																	showActionResponse(1, "add", bannerName);
+																	showActionResponse(1, "add", ruleName);
 																	self.getBannerList(1);
 																	self.setBanner(data);
 																}
@@ -175,7 +175,7 @@
 		prepareBanner : function(){
 			clearAllQtip();
 			$("#preloader").show();
-			$("#submitForApproval").hide();
+			$("#submitForApproval, #bannerContent, #noSelected").hide();
 			$("#titleHeader").empty();
 		},
 		
@@ -190,10 +190,11 @@
 			var self = this;
 			
 			self.prepareBanner();
+			$("#preloader").hide();
 			self.getBannerList(1);
 
 			if(self.selectedRule==null){
-				$("#preloader").hide();
+				$("#noSelected").show();
 				$("#titleText").html(self.moduleName);
 				return;
 			}
@@ -207,7 +208,7 @@
 				authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 				postRestoreCallback: function(base, rule){
 					base.api.destroy();
-					BannerServiceJS.getRuleById(self.selectedRule["bannerId"],{
+					BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
 						callback: function(data){
 							self.setBanner(data);
 						},
@@ -226,13 +227,16 @@
 					$("#preloader").hide();
 					$("#submitForApproval").show();
 					$("#titleText").html(self.moduleName + " for ");
-					$("#titleHeader").text(self.selectedRule["bannerName"]);
-
+					$("#titleHeader").text(self.selectedRule["ruleName"]);
+					$("#bannerContent").show();
+					
 					self.selectedRuleStatus = ruleStatus;
 
-					$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["bannerId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
+					$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
-				//set name, description, etc
+					//set name, description, etc
+					$("#name").val(self.selectedRule["ruleName"]);
+					$("#description").val(self.selectedRule["comment"]);
 					
 					self.getBannerInCampaignList(1);
 					self.addSaveRuleListener();
@@ -243,7 +247,7 @@
 						click: function(e){
 							$(e.currentTarget).viewaudit({
 								itemDataCallback: function(base, page){
-									AuditServiceJS.getBannerTrail(self.selectedRule["bannerId"], base.options.page, base.options.pageSize, {
+									AuditServiceJS.getBannerTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
 										callback: function(data){
 											var total = data.totalSize;
 											base.populateList(data);
@@ -341,17 +345,17 @@
 						var linkPath = "";
 
 						var response = 0;
-						BannerServiceJS.updateRule(self.selectedRule["bannerId"], self.selectedRule["bannerName"], sortType, facetGroupItems, sortOrders,  {
+						BannerServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], description,  {
 							callback: function(data){
 								response = data;
-								showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["bannerName"]);
+								showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
 							},
 							preHook: function(){
 								self.prepareBanner();
 							},
 							postHook: function(){
 								if(response>0){
-									BannerServiceJS.getRuleById(self.selectedRule["bannerId"],{
+									BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
 										callback: function(data){
 											self.setBanner(data);
 										},
@@ -381,7 +385,7 @@
 					var url = document.location.pathname + "/xls";
 					var urlParams = "";
 					var count = 0;
-					params["id"] = self.selectedRule["bannerId"];
+					params["id"] = self.selectedRule["ruleId"];
 					params["filename"] = e.data.filename;
 					params["type"] = e.data.type;
 					params["clientTimezone"] = +new Date();
@@ -403,11 +407,11 @@
 				click: function(e){
 					if (e.data.locked) return;
 
-					jConfirm("Delete " + self.selectedRule["bannerName"] + "'s rule?", self.moduleName, function(result){
+					jConfirm("Delete " + self.selectedRule["ruleName"] + "'s rule?", self.moduleName, function(result){
 						if(result){
-							BannerServiceJS.deleteRule(self.selectedRule["bannerId"],{
+							BannerServiceJS.deleteRule(self.selectedRule["ruleId"],{
 								callback: function(code){
-									showActionResponse(code, "delete", self.selectedRule["bannerName"]);
+									showActionResponse(code, "delete", self.selectedRule["ruleName"]);
 									if(code==1) {
 										self.setBanner(null);
 									}
