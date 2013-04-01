@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.ExportType;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -115,24 +115,24 @@ public class RuleStatusDAO {
 
 							rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
 							rs.getString(DAOConstants.COLUMN_REQUEST_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE)),
 
 							rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
 							rs.getString(DAOConstants.COLUMN_APPROVAL_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE)),
 
 							rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
 							rs.getString(DAOConstants.COLUMN_PUBLISHED_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE)),
 
 							exportType,
 							rs.getString(DAOConstants.COLUMN_EXPORT_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE)),
 
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP))	                		
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP))	                		
 					);
 				}
 

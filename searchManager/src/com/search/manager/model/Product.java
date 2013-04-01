@@ -4,10 +4,9 @@ import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.search.manager.enums.MemberTypeEntity;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class Product extends ModelBean {
@@ -173,14 +172,16 @@ public class Product extends ModelBean {
 
 	public boolean getIsExpired() {
 		DateTime expiration = getExpiryDateTime();
-		return (expiration!=null? DateTime.now().isAfter(expiration) :false);
+		return (expiration!=null? expiration.isAfterNow():false);
+	}
+	
+	public boolean isExpired(){
+		return getIsExpired();
 	}
 	
 	public String getValidityText() {
 		DateTime expiration = getExpiryDateTime();
-		if(expiration!=null)
-			return JodaTimeUtil.getRemainingDateTimeText(expiration, DateTime.now());
-		return "";
+		return expiration!=null ? JodaDateTimeUtil.getRemainingDateTimeText(expiration, DateTime.now()): "";
 	}
 
 	public RedirectRuleCondition getCondition() {
@@ -221,5 +222,13 @@ public class Product extends ModelBean {
 	
 	public boolean isForceAdd(){
 		return BooleanUtils.isTrue(getForceAdd());
+	}
+	
+	public String getFormattedExpiryDateTime(){
+		return JodaDateTimeUtil.formatDateTimeFromStorePattern(getExpiryDateTime());
+	}
+	
+	public String getFormattedExpiryDate(){
+		return JodaDateTimeUtil.formatDateFromStorePattern(getExpiryDateTime());
 	}
 }

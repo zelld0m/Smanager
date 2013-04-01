@@ -21,7 +21,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -185,8 +185,8 @@ public class RelevancyService extends RuleService{
 			relevancy.setStore(new Store(storeId));
 			relevancy.setRelevancyName(name);
 			relevancy.setDescription(description);
-			relevancy.setStartDateTime(StringUtils.isBlank(startDate) ? null :  JodaTimeUtil.toDateTimeFromStorePattern(storeId, startDate));
-			relevancy.setEndDateTime(StringUtils.isBlank(endDate) ? null : JodaTimeUtil.toDateTimeFromStorePattern(storeId, endDate));
+			relevancy.setStartDateTime(StringUtils.isBlank(startDate) ? null :  JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate));
+			relevancy.setEndDateTime(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate));
 			relevancy.setCreatedBy(userName);
 			clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
 			Relevancy hostRelevancy = getRule(ruleId);
@@ -224,8 +224,8 @@ public class RelevancyService extends RuleService{
 			rule.setRuleId(id);
 			rule.setRuleName(name);
 			rule.setDescription(description);
-			rule.setStartDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, startDate));
-			rule.setEndDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, endDate));
+			rule.setStartDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate));
+			rule.setEndDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate));
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.updateRelevancy(rule);
 		} catch (DaoException e) {

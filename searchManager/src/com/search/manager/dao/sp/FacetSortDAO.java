@@ -23,7 +23,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
@@ -165,8 +165,8 @@ public class FacetSortDAO {
 					
 					facetSort.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
 					facetSort.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
-					facetSort.setCreatedDateTime(JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-					facetSort.setLastModifiedDateTime(JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+					facetSort.setCreatedDateTime(JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+					facetSort.setLastModifiedDateTime(JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 			
 					return facetSort;
 				}
@@ -195,8 +195,8 @@ public class FacetSortDAO {
 					
 					facetGroup.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
 					facetGroup.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
-					facetGroup.setCreatedDateTime(JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-					facetGroup.setLastModifiedDateTime(JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+					facetGroup.setCreatedDateTime(JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+					facetGroup.setLastModifiedDateTime(JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 					
 					return facetGroup;
 				}
@@ -223,8 +223,8 @@ public class FacetSortDAO {
 					
 					facetGroupItem.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
 					facetGroupItem.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
-					facetGroupItem.setCreatedDateTime(JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-					facetGroupItem.setLastModifiedDateTime(JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+					facetGroupItem.setCreatedDateTime(JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+					facetGroupItem.setLastModifiedDateTime(JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 					
 					return facetGroupItem;
 				}

@@ -26,7 +26,7 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
@@ -88,7 +88,7 @@ public class ElevateService extends RuleService{
 			changes += ((updateElevate(keyword, memberId, position, condition) > 0)? 1 : 0);
 		}
 
-		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaTimeUtil.formatDateTimeFromStorePattern(storeId, elevateProduct.getExpiryDateTime())))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaDateTimeUtil.formatDateTimeFromStorePattern(storeId, elevateProduct.getExpiryDateTime())))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 
@@ -138,7 +138,7 @@ public class ElevateService extends RuleService{
 			changes += ((updateElevate(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 
-		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaTimeUtil.formatDateTimeFromStorePattern(storeId, elevateProduct.getExpiryDateTime())))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaDateTimeUtil.formatDateTimeFromStorePattern(storeId, elevateProduct.getExpiryDateTime())))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 
@@ -155,7 +155,7 @@ public class ElevateService extends RuleService{
 
 			ElevateResult e = new ElevateResult(new StoreKeyword(storeId, keyword));
 			e.setLocation(sequence);
-			e.setExpiryDateTime(StringUtils.isEmpty(expiryDate) ? null : JodaTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
+			e.setExpiryDateTime(StringUtils.isEmpty(expiryDate) ? null : JodaDateTimeUtil.toDateTimeFromStoreDatePattern(storeId, expiryDate));
 			e.setCreatedBy(userName);
 			e.setComment(UtilityService.formatComment(comment));
 			e.setElevateEntity(entity);
@@ -260,13 +260,18 @@ public class ElevateService extends RuleService{
 			ElevateResult e = new ElevateResult(new StoreKeyword(storeId, keyword), memberId);
 			e = daoService.getElevateItem(e);
 			if (e != null) {
-				e.setExpiryDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
+				e.setExpiryDateTime(JodaDateTimeUtil.toDateTimeFromStoreDatePattern(storeId, expiryDate));
 				e.setLastModifiedBy(UtilityService.getUsername());
 				result = daoService.updateElevateResultExpiryDate(e);
+				System.out.println(result);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during updateExpiryDate()",e);
+		} catch(Exception e){
+			logger.error("Failed during updateExpiryDate()",e);
 		}
+		
+		
 		return result;
 	}
 

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.MemberTypeEntity;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
@@ -94,9 +94,9 @@ public class ExcludeDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
-									JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-									JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
 									rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 				}

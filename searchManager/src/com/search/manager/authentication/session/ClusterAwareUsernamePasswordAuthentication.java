@@ -22,7 +22,7 @@ import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.cookie.CookieUtils;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.User;
 import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
@@ -50,7 +50,7 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		
 		String userTimeZoneId = ((UserDetailsImpl)authResult.getPrincipal()).getDateTimeZoneId();
 		String storeTimeZoneId = cm.getStoreParameter(storeId, "default-timezone");
-		DateTimeZone dateTimeZone = JodaTimeUtil.setTimeZoneID(userTimeZoneId, storeTimeZoneId);
+		DateTimeZone dateTimeZone = JodaDateTimeUtil.setTimeZoneID(userTimeZoneId, storeTimeZoneId);
 		
 		UtilityService.setStoreId(storeId);
 		UtilityService.setStoreName(storeName);

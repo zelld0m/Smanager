@@ -21,7 +21,7 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
@@ -82,7 +82,7 @@ public class DemoteService extends RuleService{
 			changes += ((update(keyword, memberId, position, condition) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaTimeUtil.formatDateTimeFromStorePattern(storeId, demoteProduct.getExpiryDateTime())))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaDateTimeUtil.formatDateTimeFromStorePattern(storeId, demoteProduct.getExpiryDateTime())))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		
@@ -133,7 +133,7 @@ public class DemoteService extends RuleService{
 			changes += ((update(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), JodaTimeUtil.formatDateTimeFromStorePattern(storeId, demoteProduct.getExpiryDateTime()))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), JodaDateTimeUtil.formatDateTimeFromStorePattern(storeId, demoteProduct.getExpiryDateTime()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		
@@ -150,7 +150,7 @@ public class DemoteService extends RuleService{
 
 			DemoteResult e = new DemoteResult(new StoreKeyword(storeId, keyword));
 			e.setLocation(sequence);
-			e.setExpiryDateTime(StringUtils.isEmpty(expiryDate) ? null : JodaTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
+			e.setExpiryDateTime(StringUtils.isEmpty(expiryDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
 			e.setCreatedBy(userName);
 			e.setComment(UtilityService.formatComment(comment));
 			e.setDemoteEntity(entity);
@@ -246,7 +246,7 @@ public class DemoteService extends RuleService{
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(storeId, keyword));
 			e.setMemberId(memberId);
-			e.setExpiryDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
+			e.setExpiryDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.updateDemoteResultExpiryDate(e);
 		} catch (DaoException e) {

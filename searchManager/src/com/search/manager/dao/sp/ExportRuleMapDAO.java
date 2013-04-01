@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.ExportRuleMapSortType;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.ExportRuleMap;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -72,9 +72,9 @@ public class ExportRuleMapDAO {
 	                		rs.getString(DAOConstants.COLUMN_PROD_STORE_ID_TARGET), 
 	                		rs.getString(DAOConstants.COLUMN_RULE_ID_TARGET), 
 	                		rs.getString(DAOConstants.COLUMN_RULE_NAME_TARGET),
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_PUBLISHED_DATE)),
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPORT_DATE)),
-	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_IMPORT_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_PUBLISHED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPORT_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_IMPORT_DATE)),
 	                		BooleanUtils.toBooleanObject(rs.getString(DAOConstants.COLUMN_DELETED), "Y", "N", null), 
 	                		BooleanUtils.toBooleanObject(rs.getString(DAOConstants.COLUMN_REJECTED), "Y", "N", null), 
 	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID));
