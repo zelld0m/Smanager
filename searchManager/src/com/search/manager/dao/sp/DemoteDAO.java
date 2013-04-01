@@ -247,7 +247,7 @@ public class DemoteDAO {
 				inputs.put(DAOConstants.PARAM_VALUE, value);
 				inputs.put(DAOConstants.PARAM_COMMENT, comment);
 				inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, sequence);
-				inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDateTime);
+				inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(expiryDateTime));
 				inputs.put(DAOConstants.PARAM_CREATED_BY, username);
 				inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, demote.getDemoteEntity());
 
@@ -336,7 +336,7 @@ public class DemoteDAO {
 			DAOValidation.checkDemotePK(demote);
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, demote.getMemberId());
-			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, demote.getExpiryDateTime());
+			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(demote.getExpiryDateTime()));
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, demote.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(updateExpiryDateSP.execute(inputs));
 		} catch (Exception e) {

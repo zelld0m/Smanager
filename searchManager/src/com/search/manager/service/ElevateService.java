@@ -264,7 +264,6 @@ public class ElevateService extends RuleService{
 				e.setExpiryDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
 				e.setLastModifiedBy(UtilityService.getUsername());
 				result = daoService.updateElevateResultExpiryDate(e);
-				System.out.println(result);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during updateExpiryDate()",e);

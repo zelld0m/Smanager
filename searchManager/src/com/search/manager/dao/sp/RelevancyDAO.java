@@ -422,8 +422,8 @@ public class RelevancyDAO {
             inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
             inputs.put(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, StringUtils.trimToEmpty(relevancy.getDescription()));
             inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(relevancy.getStore()));
-            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDateTime());
-            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDateTime());
+            inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(relevancy.getStartDateTime()));
+            inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(relevancy.getEndDateTime()));
             inputs.put(DAOConstants.PARAM_COMMENT, relevancy.getComment());
             inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(relevancy.getCreatedBy()));
             return DAOUtils.getUpdateCount(addSP.execute(inputs));
@@ -441,8 +441,8 @@ public class RelevancyDAO {
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
             inputs.put(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, StringUtils.trimToEmpty(relevancy.getDescription()));
-            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDateTime());
-            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDateTime());
+            inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(relevancy.getStartDateTime()));
+            inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(relevancy.getEndDateTime()));
             inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(relevancy.getLastModifiedBy()));
             return DAOUtils.getUpdateCount(updateSP.execute(inputs));
     	}

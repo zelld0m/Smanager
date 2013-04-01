@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
@@ -77,13 +79,13 @@ public class UsersDAO {
 	                		rs.getString(DAOConstants.COLUMN_GROUP_ID),
 	                		rs.getBoolean(DAOConstants.COLUMN_ACCT_NON_LOCKED),
 	                		!rs.getBoolean(DAOConstants.COLUMN_CRED_NON_EXPIRED),
-	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_ACCESS_DATE),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_ACCESS_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_IP),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
-	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP),
-	                		rs.getTimestamp(DAOConstants.COLUMN_THRU_DATE),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_THRU_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_STORE_ID),
 	                		rs.getString(DAOConstants.COLUMN_TIMEZONE_ID));
 	        	}
@@ -168,7 +170,7 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_IP, null);
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
 			inputs.put(DAOConstants.PARAM_STORE, user.getStoreId());
-			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate()==null?DateAndTimeUtils.addYearToDate(5):user.getThruDate());
+			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate()==null? DateTime.now().plusYears(5): JodaDateTimeUtil.toSqlDate(user.getThruDate()));
 			inputs.put(DAOConstants.PARAM_CREATED_BY, user.getCreatedBy());
 			result = DAOUtils.getUpdateCount(addUserStoredProcedure.execute(inputs));
     	}
@@ -225,11 +227,11 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_HAS_LOGGED_OUT, null);
 			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, BooleanUtils.toString(user.isCredentialsNonExpired(),"0","1", null));
 			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, BooleanUtils.toString(user.isAccountNonLocked(),"1","0", null));
-			inputs.put(DAOConstants.PARAM_LAST_ACCESS_DATE, user.getLastAccessDate());
+			inputs.put(DAOConstants.PARAM_LAST_ACCESS_DATE, JodaDateTimeUtil.toSqlDate(user.getLastAccessDate()));
 			inputs.put(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, user.getSuccessiveFailedLogin());
 			inputs.put(DAOConstants.PARAM_IP, user.getIp());
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
-			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate());
+			inputs.put(DAOConstants.PARAM_THRU_DATE, JodaDateTimeUtil.toSqlDate(user.getThruDate()));
 			String modifiedBy = user.getLastModifiedBy();
 			if (StringUtils.isEmpty(modifiedBy)) {
 				modifiedBy = "SYSTEM";

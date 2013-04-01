@@ -27,6 +27,10 @@ public class JodaDateTimeUtil {
 		return getTimeZone().getID();
 	}
 	
+	public static Date toSqlDate(DateTime dateTime){
+		return dateTime!=null ? new Date(dateTime.getMillis()): null;
+	}
+	
 	public static DateTimeZone setTimeZoneID(String timeZoneId, String defaultTimeZoneId){
 		DateTimeZone defaultTimeZone = DateTimeZone.UTC;
 		
