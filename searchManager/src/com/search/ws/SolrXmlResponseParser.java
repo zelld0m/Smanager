@@ -559,9 +559,6 @@ public class SolrXmlResponseParser extends SolrResponseParser {
                 List<String> suggestedKeywords = new ArrayList<String>();
                 String[] ruleSuggestions = spellRule.getSuggestions();
 
-                // TODO: This should be configurable.
-                int MAX_RESULTS = 5;
-
                 // create spellcheck element
                 Element spellcheck = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
                 doc.appendChild(spellcheck);
@@ -591,7 +588,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
                         SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, String.valueOf(originalKeyword.length()));
                 endOffsetMap.put(originalKeyword, origEndOffset);
 
-                for (int i = 0; count < MAX_RESULTS && i < ruleSuggestions.length; i++) {
+                for (int i = 0; count < MAX_SPELL_RESULTS && i < ruleSuggestions.length; i++) {
                     if (!suggestedKeywords.contains(ruleSuggestions[i])) {
                         Element sug = createUnnamedElement(doc, SolrConstants.TAG_STR, ruleSuggestions[i]);
                         suggestionArray.appendChild(sug);
@@ -600,7 +597,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
                     }
                 }
 
-                if (count < MAX_RESULTS && spellcheckNode != null) {
+                if (count < MAX_SPELL_RESULTS && spellcheckNode != null) {
                     // retrieve solr spellcheck results
                     Node solrSuggestions = locateElementNode(spellcheckNode, SolrConstants.TAG_LIST,
                             SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
@@ -619,7 +616,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 
                     Node solrSuggestion = solrSuggestions != null ? solrSuggestions.getFirstChild() : null;
 
-                    while (solrSuggestion != null && count < MAX_RESULTS) {
+                    while (solrSuggestion != null && count < MAX_SPELL_RESULTS) {
                         String name = solrSuggestion.getAttributes().getNamedItem(SolrConstants.ATTR_NAME)
                                 .getTextContent();
 
@@ -661,7 +658,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
                                 count++;
                             }
 
-                            if (count >= MAX_RESULTS)
+                            if (count >= MAX_SPELL_RESULTS)
                                 break;
                         }
 
