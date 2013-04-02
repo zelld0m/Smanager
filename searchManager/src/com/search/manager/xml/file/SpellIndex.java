@@ -118,7 +118,7 @@ public class SpellIndex {
         try {
             JAXBContext context = JAXBContext.newInstance(SpellRules.class);
             Marshaller m = context.createMarshaller();
-
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             writer = new FileWriter(filepath);
             m.marshal(rules, writer);
             success = true;

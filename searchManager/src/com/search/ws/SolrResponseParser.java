@@ -29,9 +29,6 @@ public abstract class SolrResponseParser {
  
 	private static Logger logger = Logger.getLogger(SolrResponseParser.class);
 
-    // TODO: This should be configurable.
-    int MAX_SPELL_RESULTS = 5;
-
 	/* Sends the original Solr Query Parameters, in case implementation needs to do something with it. Example JSON implemenation would need to get wrf parameter */
 	public abstract int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
 	public abstract int getCount(List<NameValuePair> requestParams) throws SearchException;
@@ -59,6 +56,8 @@ public abstract class SolrResponseParser {
     
     /* Did You Mean rule */
 	protected SpellRule spellRule = null;
+    // TODO: This should be configurable.
+    protected int maxSuggestCount = 5;
 	
 	protected FacetSort facetSortRule;
 	protected RedirectRule redirectRule;
@@ -422,5 +421,8 @@ public abstract class SolrResponseParser {
 	protected String getSpellCheckRequestPath() {
 		return StringUtils.replaceOnce(requestPath, "select", "spellCheckCompRH");
 	}
-
+	
+    public void setMaxSuggestCount(Integer maxSuggestCount) {
+        this.maxSuggestCount = maxSuggestCount;
+    }
 }

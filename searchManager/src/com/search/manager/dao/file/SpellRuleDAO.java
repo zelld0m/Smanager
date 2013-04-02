@@ -193,7 +193,6 @@ public class SpellRuleDAO {
         } catch (Exception e) {
             throw new DaoException("Failed during addSpellRuleAndGetId()", e);
         }
-
     }
 
     public boolean isDuplicateSearchTerm(String storeId, String searchTerm, String ruleId) throws DaoException {
@@ -204,6 +203,14 @@ public class SpellRuleDAO {
             return xml != null && !StringUtils.equals(xml.getRuleId(), ruleId);
         } catch (Exception e) {
             throw new DaoException("Faild during checkDuplicateSearchTerm()", e);
+        }
+    }
+
+    public Integer getMaxSuggest(String storeId) throws DaoException {
+        try {
+            return spellIndex.get(storeId).getMaxSuggest();
+        } catch (Exception e) {
+            throw new DaoException("Faild during getMaxSuggest()", e);
         }
     }
 }

@@ -57,6 +57,10 @@
   <div id="ruleStatus"></div>
   <div class="clearB"></div>
   <div id="spell-rules" class="padT20" style="min-height: 600px; max-width: 100%; display:none;">
+    <div class="floatL">
+      <label for="max-suggest" style="font-size:12px">Max suggestion count</label>
+      <input type="text" id="max-suggest" maxlength="3" size="5" disabled/>
+    </div>
     <div id="action-buttons" class="floatR marL8 marR3 padB5" style="display:none;">
       <span class="button-group">
         <a href="javascript:void(0);" id="add-button" class="new-button button-group-0" style="display:none;">Add</a>

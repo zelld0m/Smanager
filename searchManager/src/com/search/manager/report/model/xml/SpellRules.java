@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "spellRules")
@@ -14,6 +15,17 @@ public class SpellRules {
     private List<SpellRuleXml> spellRule = new ArrayList<SpellRuleXml>();
     private Map<String, SpellRuleXml> ruleMap = new HashMap<String, SpellRuleXml>();
     private Map<String, SpellRuleXml> searchTermMap = new TreeMap<String, SpellRuleXml>();
+
+    private int maxSuggest = 5;
+
+    @XmlAttribute(name = "maxSuggest")
+    public int getMaxSuggest() {
+        return maxSuggest;
+    }
+
+    public void setMaxSuggest(int maxSuggest) {
+        this.maxSuggest = maxSuggest;
+    }
 
     public List<SpellRuleXml> getSpellRule() {
         return spellRule;

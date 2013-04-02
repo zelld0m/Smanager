@@ -312,7 +312,7 @@
 						self.$table.append(self.$footer);
 						self.$footer.show();
 						self.$pager.hide();
-						
+						self.$maxSuggest.parent().hide();
 					}
 				});
 
@@ -321,6 +321,7 @@
 						$(".button-group-0").hide();
 						$(".button-group-1").show();
 						self.mode = 'edit';
+						self.$maxSuggest.removeAttr("disabled");
 
 						var rows = self.$table.find("tr:not(#header)");
 
@@ -339,6 +340,7 @@
 							self.$footer.detach();
 							self.$table.find("tr:not(#header)").remove();
 							self.$table.append(self.$rows);
+							self.$maxSuggest.parent().show();
 						} else if (self.mode == 'edit') {
 							for (var i = self.deleted.length - 1; i >= 0; i--) {
 								$(self.deleted[i].previous).after(self.deleted[i].el);
@@ -352,6 +354,9 @@
 								$(rows[i]).data('spellRule').revert();
 								$(rows[i]).data('spellRule').setEditable(false);
 							}
+							
+							self.$maxSuggest.attr("disabled", "true");
+							self.$maxSuggest.val(self.maxSuggest);
 						}
 
 						self.$pager.show();
@@ -381,6 +386,7 @@
 											$(".button-group-1").hide();
 											$(".button-group-0").show();
 											self.$pager.show();
+											self.$maxSuggest.parent().show();
 										} else {
 											jAlert(response.errorMessage.message);
 											
@@ -408,16 +414,18 @@
 								deleted.push($(self.deleted[i].el).data('spellRule').data());
 							}
 
-							if (entities.length > 0 || deleted.length > 0) {
-								SpellRuleServiceJS.updateSpellRuleBatch(entities, deleted,
+							if (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0) {
+								SpellRuleServiceJS.updateSpellRuleBatch(self.$maxSuggest.val(), entities, deleted,
 									function(response) {
 										// success
 										if (response.status == 0) {
 											self.$table.find("tr:not(#header)").remove();
 											self.mode = 'display';
 											self.handlePageLink();
+											self.maxSuggest = self.$maxSuggest.val();
 											$(".button-group-1").hide();
 											$(".button-group-0").show();
+											self.$maxSuggest.attr("disabled", true);
 											self.$pager.show();
 										} else {
 											jAlert(response.errorMessage.message);
@@ -514,7 +522,15 @@
 				}
 			});
 
-			//self.locked = ruleStatus && (ruleStatus.approvalStatus == 'PENDING' || ruleStatus.approvalStatus == 'APPROVED');
+			self.$maxSuggest = $("#max-suggest");
+			SpellRuleServiceJS.getMaxSuggest(function(response) {
+				if (response.status == 0) {
+					self.$maxSuggest.val(response.data);
+					self.maxSuggest = response.data;
+				} else {
+					jAlert(response.errorMessage.message);
+				}
+			});
 
 			self.initTable();
 			self.initFilters();

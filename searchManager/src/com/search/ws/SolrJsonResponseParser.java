@@ -676,7 +676,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             JSONObject suggestionsJson = spellcheckObject != null ? spellcheckObject
                     .getJSONObject(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS) : null;
 
-            if (count < MAX_SPELL_RESULTS && suggestionsJson != null) {
+            if (count < maxSuggestCount && suggestionsJson != null) {
                 if (suggestionsJson.has(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION)) {
                     String collation = suggestionsJson.getString(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION);
 
@@ -688,7 +688,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 
                 JSONArray names = suggestionsJson.names();
 
-                for (int i = 0; i < names.size() && count < MAX_SPELL_RESULTS; i++) {
+                for (int i = 0; i < names.size() && count < maxSuggestCount; i++) {
                     if (SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(names.getString(i))) {
                         continue;
                     }
@@ -719,7 +719,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                             count++;
                         }
 
-                        if (count >= MAX_SPELL_RESULTS) {
+                        if (count >= maxSuggestCount) {
                             break;
                         }
                     }

@@ -21,6 +21,7 @@ import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
+import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.response.ServiceResponse;
 import com.search.manager.xml.file.SpellIndex;
 
@@ -114,7 +115,7 @@ public class SpellRuleService {
     }
 
     @RemoteMethod
-    public ServiceResponse<Void> updateSpellRuleBatch(SpellRule[] spellRules, SpellRule[] deleted) {
+    public ServiceResponse<Void> updateSpellRuleBatch(Integer maxSuggest, SpellRule[] spellRules, SpellRule[] deleted) {
         String store = UtilityService.getStoreId();
         ServiceResponse<Void> response = new ServiceResponse<Void>();
         int errorLevel = 0;
@@ -144,6 +145,12 @@ public class SpellRuleService {
                 }
 
                 if (errorLevel == 0) {
+                    SpellRules rules = spellIndex.get(store);
+
+                    if (rules != null) {
+                        rules.setMaxSuggest(maxSuggest);
+                    }
+
                     spellIndex.save(UtilityService.getStoreId());
                     response.success(null);
                 }
@@ -160,6 +167,19 @@ public class SpellRuleService {
             } catch (Exception e) {
                 logger.error("Unable to rollback spell index for " + store, e);
             }
+        }
+
+        return response;
+    }
+
+    @RemoteMethod
+    public ServiceResponse<Integer> getMaxSuggest() {
+        ServiceResponse<Integer> response = new ServiceResponse<Integer>();
+
+        try {
+            response.success(spellRuleDAO.getMaxSuggest(UtilityService.getStoreId()));
+        } catch (DaoException e) {
+            response.error("Unable to retrieve maximum suggestions count.");
         }
 
         return response;

@@ -588,7 +588,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
                         SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, String.valueOf(originalKeyword.length()));
                 endOffsetMap.put(originalKeyword, origEndOffset);
 
-                for (int i = 0; count < MAX_SPELL_RESULTS && i < ruleSuggestions.length; i++) {
+                for (int i = 0; count < maxSuggestCount && i < ruleSuggestions.length; i++) {
                     if (!suggestedKeywords.contains(ruleSuggestions[i])) {
                         Element sug = createUnnamedElement(doc, SolrConstants.TAG_STR, ruleSuggestions[i]);
                         suggestionArray.appendChild(sug);
@@ -597,7 +597,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
                     }
                 }
 
-                if (count < MAX_SPELL_RESULTS && spellcheckNode != null) {
+                if (count < maxSuggestCount && spellcheckNode != null) {
                     // retrieve solr spellcheck results
                     Node solrSuggestions = locateElementNode(spellcheckNode, SolrConstants.TAG_LIST,
                             SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
@@ -616,7 +616,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 
                     Node solrSuggestion = solrSuggestions != null ? solrSuggestions.getFirstChild() : null;
 
-                    while (solrSuggestion != null && count < MAX_SPELL_RESULTS) {
+                    while (solrSuggestion != null && count < maxSuggestCount) {
                         String name = solrSuggestion.getAttributes().getNamedItem(SolrConstants.ATTR_NAME)
                                 .getTextContent();
 
@@ -658,7 +658,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
                                 count++;
                             }
 
-                            if (count >= MAX_SPELL_RESULTS)
+                            if (count >= maxSuggestCount)
                                 break;
                         }
 
