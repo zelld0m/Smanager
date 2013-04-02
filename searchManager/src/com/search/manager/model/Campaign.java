@@ -6,6 +6,9 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class Campaign extends ModelBean {
 	
@@ -139,10 +142,18 @@ public class Campaign extends ModelBean {
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getFormattedStartDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getStartDateTime(), JodaPatternType.DATE);
+	}
+
+	public String getFormattedEndDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getEndDateTime(), JodaPatternType.DATE);
 	}
 }

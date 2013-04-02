@@ -1,5 +1,8 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -16,6 +19,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
@@ -113,6 +117,36 @@ public class CampaignService {
 		}
 
 		return null;
+	}
+	
+	@RemoteMethod
+	public List<String> checkForRuleNameDuplicates(String[] ruleIds, String[] ruleNames) throws DaoException {
+		List<String> duplicateRuleNames = new ArrayList<String>();
+		for (int i = 0; i < ruleIds.length; i++) {
+			String ruleName = ruleNames[i];
+			if (checkForRuleNameDuplicate(ruleIds[i], ruleName)) {
+				duplicateRuleNames.add(ruleName);				
+			}
+		}
+		return duplicateRuleNames;
+	}
+
+	@RemoteMethod
+	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
+		Campaign rule = new Campaign(ruleId, ruleName, new Store(UtilityService.getStoreId()));
+		
+		SearchCriteria<Campaign> criteria = new SearchCriteria<Campaign>(rule, null, null, 0, 0);
+		RecordSet<Campaign> set = daoService.getCampaignsWithName(criteria);
+		if (set.getTotalSize() > 0) {
+			for (Campaign r: set.getList()) {
+				if (StringUtils.equals(StringUtils.trim(ruleName), StringUtils.trim(r.getRuleName()))) {
+					if (StringUtils.isBlank(ruleId) || !StringUtils.equals(ruleId, r.getRuleId())){
+						return true;						
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	@RemoteMethod

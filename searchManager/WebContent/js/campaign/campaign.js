@@ -258,10 +258,34 @@
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
 					//set name, description, etc
-					$("#name").val(self.selectedRule["ruleName"]);
-					$("#description").val(self.selectedRule["description"]);
+					$("div#ruleContent input#name").val(self.selectedRule["ruleName"]);
+					$("div#ruleContent textarea#description").val(self.selectedRule["comment"]);
+					$("div#ruleContent input#startDate").val(self.selectedRule["formattedStartDateTime"]);
+					$("div#ruleContent input#endDate").val(self.selectedRule["formattedEndDateTime"]);
 					
-					self.getBannerInCampaignList(1);
+					$("div#ruleContent input#startDate, div#ruleContent input#endDate").datepicker("destroy");
+
+					var dates = $("div#ruleContent input#startDate, div#ruleContent input#endDate").prop({readonly: true}).datepicker({
+						minDate: 0,
+						maxDate: '+1Y',
+						showOn: "both",
+						buttonImage: "../images/icon_calendar.png",
+						buttonImageOnly: true,
+						changeMonth: true,
+					    changeYear: true,
+						disabled: self.selectedRuleStatus.locked || $.endsWith(self.selectedRule["ruleId"], "_default") || !allowModify,
+						onSelect: function(selectedDate) {
+							var option = this.id == "startDate" ? "minDate" : "maxDate",
+									instance = $(this).data("datepicker"),
+									date = $.datepicker.parseDate(
+											instance.settings.dateFormat ||
+											$.datepicker._defaults.dateFormat,
+											selectedDate, instance.settings);
+							dates.not(this).datepicker("option", option, date);
+						}
+					});
+					
+					//TODO self.getBannerInCampaignList(1);
 					self.addSaveRuleListener();
 					self.addDeleteRuleListener();
 					self.addDownloadListener();
@@ -310,36 +334,70 @@
 				click: function(e){
 					if (e.data.locked) return;
 
-					setTimeout(function() {
-						var description = "";
-
-						var response = 0;
-						CampaignServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], description, {
+					
+					var ruleName = $.trim($('div#ruleContent input[id="name"]').val()); 
+					var description = $.trim($('div#ruleContent textarea[id="description"]').val()); 
+					var startDate = $.trim($('div#ruleContent input[name="startDate"]').val());
+					var endDate = $.trim($('div#ruleContent input[name="endDate"]').val());
+					
+					var response = 0;
+					if ($.isBlank(ruleName)){
+						jAlert("Rule name is required.", self.moduleName);
+					}
+					else if (!isAllowedName(ruleName)){
+						jAlert("Rule name contains invalid value.", self.moduleName);
+					}
+					else if (ruleName.length>100){
+						jAlert("Name should not exceed 100 characters.", self.moduleName);
+					}
+					else if (!isAscii(description)) {
+						jAlert("Description contains non-ASCII characters.", self.moduleName);
+					}
+					else if (!isXSSSafe(description)){
+						jAlert("Description contains XSS.", self.moduleName);
+					}
+					else if (description.length>255){
+						jAlert("Description should not exceed 255 characters.", self.moduleName);
+					}
+					else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
+						jAlert("Please provide a valid date range!",self.moduleName);
+					} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
+						jAlert("End date cannot be earlier than start date!",self.moduleName);
+					}
+					else {
+						CampaignServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
 							callback: function(data){
-								response = data;
-								showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
-							},
-							preHook: function(){
-								self.prepareRule();
-							},
-							postHook: function(){
-								if(response>0){
-									CampaignServiceJS.getRuleById(self.selectedRule["ruleId"],{
+								if (data==true){
+									jAlert("Another campaign is already using the name provided.", self.moduleName);
+								}else{
+									CampaignServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, startDate, endDate, description, {
 										callback: function(data){
-											self.setRule(data);
+											response = data;
+											showActionResponse(response, "update", ruleName);
 										},
 										preHook: function(){
 											self.prepareRule();
+										},
+										postHook: function(){
+											if(response==1){
+												CampaignServiceJS.getRuleById(self.selectedRule["ruleId"],{
+													callback: function(data){
+														self.setRule(data);
+													},
+													preHook: function(){
+														self.prepareRule();
+													}
+												});						
+											}
+											else{
+												self.setRule(self.selectedRule);
+											}
 										}
 									});
 								}
-								else{
-									self.setRule(self.selectedRule);
-								}
-
 							}
 						});
-					}, 500 );
+					}
 				},
 				mouseenter: showHoverInfo
 			},{locked:self.selectedRuleStatus["locked"] || !allowModify});

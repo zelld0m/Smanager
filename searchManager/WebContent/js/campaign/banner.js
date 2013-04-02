@@ -3,8 +3,11 @@
 	var Banner = {
 		moduleName: "Banner",
 		selectedRule:  null,
+		rulePage: 1,
 		rulePageSize: 15,
 		selectedRuleStatus: null,
+		keywordInRulePageSize: 5,
+		ruleFilterText: "",
 		
 		getBannerList : function(page) {
 			var self = this;
@@ -80,9 +83,9 @@
 								$contentHolder.find('a#addButton').off().on({
 									click: function(e){
 										var ruleName = $contentHolder.find("#popKeywordName").val();
-										var description = $contentHolder.find("#description").val();
+										var description = $contentHolder.find("input#description").val();
 										var imagePath = $contentHolder.find("#imagePath").val();
-										var linkPath = "";
+										var linkPath = $contentHolder.find("input#linkUrl").val();
 										var imageAlt = "";
 										
 										if($.isBlank(ruleName)){
@@ -93,11 +96,11 @@
 											jAlert("Image path is required.", self.moduleName);
 										}else if (!isXSSSafe(imagePath)){
 											jAlert("Image path contains XSS.",self.moduleName);
-										}else if($.isNotBlank(description) && !isXssSafe(description)){
+										}else if($.isNotBlank(description) && !isXSSSafe(description)){
 											jAlert("Description contains XSS.",self.moduleName);
-										}else if($.isNotBlank(linkPath) && !isXssSafe(linkPath)){
+										}else if($.isNotBlank(linkPath) && !isXSSSafe(linkPath)){
 											jAlert("Link path contains XSS.",self.moduleName);
-										}else if($.isNotBlank(imageAlt) && !isXssSafe(imageAlt)){
+										}else if($.isNotBlank(imageAlt) && !isXSSSafe(imageAlt)){
 											jAlert("Image alt contains XSS.",self.moduleName);
 										}else{
 											BannerServiceJS.getRuleByName(ruleName, {
@@ -158,6 +161,12 @@
 			template += '	<div id="bannerImage">';
 			template += '		<label class="floatL w80 txtLabel">Image: </label>'; 
 			template += '		<label class="floatL"><label class="floatL padTB2"><textarea id="imagePath" class="w240"></textarea></label></label>';
+			template += '	</div>';
+			template += '	<div class="clearB"></div>';
+			
+			template += '	<div id="linkUrl">';
+			template += '		<label class="floatL w80 txtLabel">Link URL: </label>'; 
+			template += '		<label class="floatL"><input id="linkUrl" type="text" class="w188" maxlength="200"></label>';
 			template += '	</div>';
 			template += '	<div class="clearB"></div>';
 			
@@ -242,11 +251,13 @@
 					$("#name").val(self.selectedRule["ruleName"]);
 					$("#description").val(self.selectedRule["description"]);
 					
-					self.getBannerInCampaignList(1);
+					
 					self.addSaveRuleListener();
 					self.addDeleteRuleListener();
 					self.addDownloadListener();
 
+					//TODO self.getBannerInCampaignList(1);
+					
 					$('#auditIcon').off().on({
 						click: function(e){
 							$(e.currentTarget).viewaudit({
@@ -271,7 +282,7 @@
 		
 		getBannerInCampaignList : function(page){
 			var self = this;
-			$("#campaignWithBannerPanel").selectbox({
+			$("#campaignWithBannerPanel").sidepanel({
 				fieldName: "campaignName",
 				itemTitle: "New Campaign",
 				page: page,
@@ -376,7 +387,7 @@
 									if (data==true){
 										jAlert("Another banner is already using the name provided.", self.moduleName);
 									}else{
-										BannerServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description,  {
+										BannerServiceJS.updateRule(self.selectedRule["ruleId"],self.selectedRule["linkPath"],self.selectedRule["imagePath"], ruleName, description,  {
 											callback: function(data){
 												response = data;
 												showActionResponse(data > 0 ? 1 : data, "update", ruleName);

@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.Banner;
@@ -25,6 +26,8 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.model.Store;
 
 @Repository(value="campaignDAO")
@@ -138,6 +141,7 @@ public class CampaignDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
@@ -643,6 +647,7 @@ public class CampaignDAO {
 		}
 	}
 
+	@Audit(entity = Entity.campaign, operation = Operation.update)
 	public int updateCampaign(Campaign campaign) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -650,6 +655,7 @@ public class CampaignDAO {
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_NAME, StringUtils.trimToEmpty(campaign.getRuleName()));
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(campaign.getStartDateTime()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(campaign.getEndDateTime()));
+			inputs.put(DAOConstants.PARAM_DESCRIPTION, campaign.getDescription());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(campaign.getLastModifiedBy()));
 			return DAOUtils.getUpdateCount(updateSP.execute(inputs));
 		}
@@ -682,6 +688,7 @@ public class CampaignDAO {
 		}
 	}
 
+	@Audit(entity = Entity.campaign, operation = Operation.delete)
 	public int deleteCampaign(Campaign campaign) throws DaoException {
 		try {
 			if (campaign != null && campaign.getRuleId() != null) {
@@ -712,6 +719,7 @@ public class CampaignDAO {
 		}
 	}
 
+	@Audit(entity = Entity.campaign, operation = Operation.add)
 	public String addCampaignAndGetId(Campaign campaign) throws DaoException {
 		String ruleId = campaign.getRuleId();
     	if (StringUtils.isEmpty(ruleId)) {

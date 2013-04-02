@@ -42,17 +42,18 @@ import com.search.manager.model.Store;
 	
 	@RemoteMethod
 	public List<Campaign> getAllCampaignUsingThisBanner(String bannerId, String campaignNameFilter, int page, int pageSize){
+		List<Campaign> list = new ArrayList<Campaign>();
 		/*try {
 			RecordSet<Campaign> campaignList = daoService.getCampaignsUsingBanner(bannerId);
 			
 			if(campaignList != null && campaignList.getTotalSize() > 0){
-				return campaignList.getList();
+				list = campaignList.getList();
 			}
 			
 		} catch (DaoException e) {
 			logger.error("Failed during getRuleById()",e);
 		}*/
-		return null;
+		return list;
 	}
 	
 	@RemoteMethod
@@ -166,11 +167,13 @@ import com.search.manager.model.Store;
 	}
 	
 	@RemoteMethod
-	public int updateRule(String ruleId, String ruleName, String description) {
+	public int updateRule(String ruleId, String linkPath, String imagePath, String ruleName, String description) {
 		int result = -1;
 		String storeId = UtilityService.getStoreId();
 		try {
 			Banner rule = new Banner(new Store(storeId), ruleId, ruleName, description);
+			rule.setLinkPath(linkPath);
+			rule.setImagePath(imagePath);
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateBanner(rule);
 		} catch (DaoException e) {
