@@ -9,11 +9,14 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
@@ -120,6 +123,7 @@ public class SpellRuleDAO {
         return rule;
     }
 
+    @Audit(entity = Entity.spell, operation = Operation.add)
     public int addSpellRule(SpellRule rule) throws DaoException {
         try {
             Date now = new Date();
@@ -143,6 +147,7 @@ public class SpellRuleDAO {
         }
     }
 
+    @Audit(entity = Entity.spell, operation = Operation.update)
     public int updateSpellRule(SpellRule rule) throws DaoException {
         try {
             SpellRules rules = spellIndex.get(rule.getStoreId());
@@ -167,6 +172,7 @@ public class SpellRuleDAO {
         }
     }
 
+    @Audit(entity = Entity.spell, operation = Operation.delete)
     public int deleteSpellRule(SpellRule rule) throws DaoException {
         try {
             SpellRules rules = spellIndex.get(rule.getStoreId());
