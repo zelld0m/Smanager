@@ -290,7 +290,7 @@
 		
 		// default ref id for did you mean
 		RULE_TYPE : 'Did You Mean',
-		rule: {ruleId: 'spell_rule', ruleName: ""},
+		rule: {ruleId: 'spell_rule_coy', ruleName: ""},
 
 		initButtons: function() {
 			var self = this;

@@ -128,19 +128,12 @@ public class SpellRuleDAO {
         try {
             Date now = new Date();
             String ruleId = DAOUtils.generateUniqueId();
-            SpellRuleXml ruleXml = new SpellRuleXml();
+            
+            rule.setRuleId(ruleId);
+            rule.setCreatedDate(now);
+            rule.setLastModifiedDate(now);
 
-            ruleXml.setRuleId(ruleId);
-            ruleXml.setStore(rule.getStoreId());
-            ruleXml.setRuleKeyword(new RuleKeywordXml(Arrays.asList(rule.getSearchTerms())));
-            ruleXml.setSuggestKeyword(new SuggestKeywordXml(Arrays.asList(rule.getSuggestions())));
-            ruleXml.setCreatedBy(rule.getCreatedBy());
-            ruleXml.setCreatedDate(now);
-            ruleXml.setLastModifiedBy(rule.getCreatedBy());
-            ruleXml.setLastModifiedDate(now);
-            ruleXml.setStatus(rule.getStatus());
-
-            spellIndex.get(rule.getStoreId()).addRule(ruleXml);
+            spellIndex.get(rule.getStoreId()).addRule(new SpellRuleXml(rule));
             return 1;
         } catch (Exception e) {
             throw new DaoException("Failed during addSpellRuleAndGetId()", e);
@@ -154,15 +147,8 @@ public class SpellRuleDAO {
             SpellRuleXml xml = rules.getSpellRule(rule.getRuleId());
 
             if (xml != null) {
-                xml.getRuleKeyword().setKeyword(Arrays.asList(rule.getSearchTerms()));
-                xml.getSuggestKeyword().setSuggest(Arrays.asList(rule.getSuggestions()));
-                xml.setLastModifiedBy(rule.getLastModifiedBy());
-                xml.setLastModifiedDate(new Date());
-
-                if (xml.getStatus() == "published") {
-                    xml.setStatus("modified");
-                }
-
+                rule.setLastModifiedDate(new Date());
+                xml.update(rule);
                 return 1;
             }
 
