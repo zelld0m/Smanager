@@ -49,7 +49,6 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.SearchResult;
-import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.SearchLogger;
@@ -1152,6 +1151,7 @@ public class SearchServlet extends HttpServlet {
 					@Override
 					public Integer call() throws Exception {
 					    solrHelper.setSpellRule(spellRuleDAO.getSpellRuleForSearchTerm(fStore, foKeyword));
+					    solrHelper.setMaxSuggestCount(spellRuleDAO.getMaxSuggest(fStore));
                         solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
 						return 0;
 					}
