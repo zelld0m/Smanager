@@ -398,7 +398,11 @@ public class AuditInterceptor {
 		
 		switch (auditable.operation()) {
 			case add:
-				message = new StringBuilder("Adding ID[%1$s]");	
+				message = new StringBuilder("Adding");
+				if(StringUtils.isNotBlank(e.getRuleId())){
+					message.append(" ID [%1$s]");
+				}
+				
 				if(e.getSearchTerms() != null){
 					message.append(" Search Terms [%2$s]");
 				}
