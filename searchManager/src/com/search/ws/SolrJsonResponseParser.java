@@ -735,7 +735,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 
             JSONObject obj = new JSONObject();
 
-            obj.element("suggestions", suggestions);
+            obj.element(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS, suggestions);
             initialJson.element(SolrConstants.TAG_SPELLCHECK, obj);
         }
 
