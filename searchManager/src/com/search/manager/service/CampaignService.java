@@ -14,7 +14,8 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
-import com.search.manager.model.Banner;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
@@ -84,10 +85,11 @@ public class CampaignService {
 		String ruleId = "";
 		String storeId = UtilityService.getStoreId();
 		String username = UtilityService.getUsername();
-		DateTime startDateTime = new DateTime();
-		DateTime endDateTime = new DateTime();
 		
 		try {
+			DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE);
+			DateTime endDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE);
+			
 			Campaign rule = new Campaign(new Store(storeId), ruleName, startDateTime, endDateTime, description);
 			rule.setCreatedBy(username);
 			ruleId = daoService.addCampaignAndGetId(rule);
@@ -111,6 +113,23 @@ public class CampaignService {
 		}
 
 		return null;
+	}
+	
+	@RemoteMethod
+	public int updateRule(String ruleId, String ruleName, String startDate, String endDate, String description) {
+		int result = -1;
+		String storeId = UtilityService.getStoreId();
+		try {
+			DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE);
+			DateTime endDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE);
+			
+			Campaign rule = new Campaign(new Store(storeId), ruleId, ruleName, startDateTime, endDateTime, description);
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.updateCampaign(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during updateRule()",e);
+		}
+		return result;
 	}
 	
 	@RemoteMethod

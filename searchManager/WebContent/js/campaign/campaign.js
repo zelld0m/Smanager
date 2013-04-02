@@ -6,6 +6,9 @@
 		selectedRuleStatus: null,
 	
 		showMicroGallery: function(){
+			//TODO
+			//populate images 
+			
 			$("#mG1").microgallery({
 				size		: 'large',	/*small,medium,large*/
 				menu		: true,
@@ -14,31 +17,8 @@
 				autoplay	: true,
 				autoplayTime: 3000});
 			
-			
-			$("#mG2").microgallery({
-				size		: 'large',	/*small,medium,large*/
-				menu		: true,
-				mode    	: 'thumbs',
-				cycle		: true,
-				autoplay	: true,
-				autoplayTime: 3000});
-			
-			$("#mG3").microgallery({
-				size		: 'large',	/*small,medium,large*/
-				menu		: true,
-				mode    	: 'thumbs',
-				cycle		: true,
-				autoplay	: true,
-				autoplayTime: 3000});
-			
-			$("#mG4").microgallery({
-				size		: 'large',	/*small,medium,large*/
-				menu		: true,
-				mode    	: 'thumbs',
-				cycle		: true,
-				autoplay	: true,
-				autoplayTime: 3000});
-			
+			//TODO
+			//addBanner event listener
 			
 		    $("#startdatepicker").datepicker({
 			    showOn: "both",
@@ -93,6 +73,10 @@
 					});
 				},
 				
+				itemNameCallback: function(base, item){
+					self.setRule(item.model);
+				},
+				
 				itemOptionCallback: function(base, item){
 					//TODO
 					//CampaignServiceJS.getTotalKeywordInRule(item.model["ruleId"],{
@@ -136,6 +120,23 @@
 								
 								if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val(name);
 								
+								var popDates = $contentHolder.find("#popStartDate, #popEndDate").prop({readonly: true}).datepicker({			
+									minDate: 0,
+									maxDate: '+1Y',			
+									showOn: "both",
+									buttonImage: "../images/icon_calendar.png",
+									buttonImageOnly: true,
+									changeMonth: true,
+								    changeYear: true,
+									onSelect: function(selectedDate) {
+										var option = this.id == "popStartDate" ? "minDate" : "maxDate",
+												instance = $(this).data("datepicker"),
+												date = $.datepicker.parseDate( instance.settings.dateFormat ||
+														$.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+										popDates.not(this).datepicker("option", option, date);
+									}
+								});
+								
 								$contentHolder.find('a#addButton').off().on({
 									click: function(e){
 										var ruleName = $contentHolder.find("#popName").val();
@@ -163,13 +164,11 @@
 													}else{
 														CampaignServiceJS.addRule(ruleName, startDate, endDate, description, {
 															callback: function(data){
-																if(data != null){
-																	showActionResponse(1, "add", ruleName);
-																	self.getRuleList(1);
-																	self.setRule(data);
-																}
+																showActionResponse(1, "add", ruleName);
+																self.getRuleList(1);														
+																self.setRule(data);
 															},
-															preHook: function(){ base.prepareList(); },
+															preHook: function(){ base.prepareList(); }
 														});
 													}
 												}
@@ -199,9 +198,9 @@
 		getAddRuleTemplate: function(){
 			var template = "";
 			template += '<div id="addRuleTemplate">';
-			template += 	'<div class="w282 padT10 newRule">';
+			template += 	'<div class="w282 padT10 newCampaign">';
 			template +=			'<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185" maxlength="100"></label><div class="clearB"></div>';
-			template += 		'<label class="w72 txtLabel">Schedule </label> <label><input name="popStartDate" type="text" class="w65 fsize11"></label> <label class="txtLabel"> - </label> <label><input name="popEndDate" type="text" class="w65 fsize11"></label><div class="clearB"></div>';
+			template += 		'<label class="w72 txtLabel">Schedule </label> <label><input id="popStartDate" type="text" class="w65 fsize11"></label> <label class="txtLabel"> - </label> <label><input id="popEndDate" type="text" class="w65 fsize11"></label><div class="clearB"></div>';
 			template += 		'<label class="w72 txtLabel">Description</label> <label><textarea id="popDescription" rows="1" class="w185" maxlength="255"></textarea> </label><div class="clearB"></div>';
 			template += 		'<div class="txtAR pad3"><a id="addButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> <a id="clearButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>';
 			template += 	'</div>';
@@ -266,6 +265,8 @@
 					self.addSaveRuleListener();
 					self.addDeleteRuleListener();
 					self.addDownloadListener();
+					
+					self.showMicroGallery();
 
 					$('#auditIcon').off().on({
 						click: function(e){

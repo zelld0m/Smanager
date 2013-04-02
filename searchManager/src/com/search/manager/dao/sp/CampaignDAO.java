@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -87,7 +86,7 @@ public class CampaignDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
@@ -118,7 +117,7 @@ public class CampaignDAO {
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
 							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
 							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
-							rs.getString(DAOConstants.COLUMN_COMMENT),
+							rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
@@ -207,7 +206,7 @@ public class CampaignDAO {
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
 							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
 							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
-							rs.getString(DAOConstants.COLUMN_COMMENT),
+							rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
@@ -391,6 +390,65 @@ public class CampaignDAO {
 			compile();
 		}
 	}
+	
+	public RecordSet<CampaignBanner> getCampaignsUsingBanner(SearchCriteria<Banner> criteria) throws DaoException{
+		try {
+			Banner model = criteria.getModel();
+			Map<String, Object> inputs = new HashMap<String, Object>();
+			inputs.put(DAOConstants.PARAM_BANNER_ID, model.getRuleId());
+			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStore().getStoreId().toLowerCase().trim());
+			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
+			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+			return DAOUtils.getRecordSet(getCampaignBannerSP.execute(inputs));
+		} catch (Exception e) {
+			throw new DaoException("Failed during getCampaign()", e);
+		}
+	}
+	
+	/*
+	 * private class SearchCampaignBannersStoredProcedure extends StoredProcedure {
+		private SearchCampaignBannersStoredProcedure(JdbcTemplate jdbcTemplate) {
+			super(jdbcTemplate, DAOConstants.SP_SEARCH_CAMPAIGN_BANNER);
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<CampaignBanner>() {
+				public CampaignBanner mapRow(ResultSet rs, int rowNum) throws SQLException
+				{
+					Campaign campaign = new Campaign(rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
+							rs.getString(DAOConstants.COLUMN_CAMPAIGN_NAME),
+							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)));
+					Banner banner = new Banner(rs.getString(DAOConstants.COLUMN_BANNER_ID),
+							rs.getString(DAOConstants.COLUMN_BANNER_NAME),
+							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
+							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
+							rs.getString(DAOConstants.COLUMN_LINK_URL));
+					return new CampaignBanner(campaign, banner, (List<Keyword>)null,
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							rs.getString(DAOConstants.COLUMN_CREATED_BY),
+							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
+				}
+			}));
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
+				public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
+				}
+			}));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_CAMPAIGN, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_BANNER, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+			compile();
+		}
+	}
+	 * */
 
 	public RecordSet<CampaignBanner> getCampaignBanners(SearchCriteria<Campaign> criteria) throws DaoException {
 		try {
@@ -456,7 +514,7 @@ public class CampaignDAO {
 			Banner banner = model.getBanner();
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(campaign.getStore()));
-			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaign.getRuleId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaign != null ? campaign.getRuleId() : "");
 			inputs.put(DAOConstants.PARAM_CAMPAIGN, campaignMatchType.equals(MatchType.MATCH_ID) ? campaign.getRuleId() : campaign.getRuleName());
 			inputs.put(DAOConstants.PARAM_MATCH_TYPE_CAMPAIGN, campaignMatchType.getIntValue());
 			inputs.put(DAOConstants.PARAM_BANNER, bannerMatchType.equals(MatchType.MATCH_ID) ? banner.getRuleId() : banner.getRuleName());
@@ -540,12 +598,12 @@ public class CampaignDAO {
 			if (StringUtils.isEmpty(campaignId)) {
 				campaignId = DAOUtils.generateUniqueId();
 			}
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, DAOUtils.generateUniqueId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignId);
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_NAME, StringUtils.trimToEmpty(campaign.getRuleName()));
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(campaign.getStore()));
-			inputs.put(DAOConstants.PARAM_START_DATE, campaign.getStartDateTime());
-			inputs.put(DAOConstants.PARAM_END_DATE, campaign.getEndDateTime());
-			inputs.put(DAOConstants.PARAM_COMMENT, campaign.getComment());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(campaign.getStartDateTime()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(campaign.getEndDateTime()));
+			inputs.put(DAOConstants.PARAM_DESCRIPTION, campaign.getDescription());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(campaign.getCreatedBy()));
 			return DAOUtils.getUpdateCount(addSP.execute(inputs));
 		}
@@ -590,8 +648,8 @@ public class CampaignDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getRuleId());
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_NAME, StringUtils.trimToEmpty(campaign.getRuleName()));
-			inputs.put(DAOConstants.PARAM_START_DATE, campaign.getStartDateTime());
-			inputs.put(DAOConstants.PARAM_END_DATE, campaign.getEndDateTime());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(campaign.getStartDateTime()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(campaign.getEndDateTime()));
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(campaign.getLastModifiedBy()));
 			return DAOUtils.getUpdateCount(updateSP.execute(inputs));
 		}
@@ -604,7 +662,7 @@ public class CampaignDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getRuleId());
-			inputs.put(DAOConstants.PARAM_COMMENT, campaign.getComment());
+			inputs.put(DAOConstants.PARAM_DESCRIPTION, campaign.getDescription());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, campaign.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
 		} catch (Exception e) {
@@ -616,7 +674,7 @@ public class CampaignDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaign.getRuleId());
-			inputs.put(DAOConstants.PARAM_COMMENT, campaign.getComment());
+			inputs.put(DAOConstants.PARAM_DESCRIPTION, campaign.getDescription());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, campaign.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(appendCommentSP.execute(inputs));
 		} catch (Exception e) {
@@ -663,5 +721,4 @@ public class CampaignDAO {
     	campaign.setRuleId(ruleId);
 		return (addCampaign(campaign) > 0) ?  ruleId : null;
 	}
-
 }

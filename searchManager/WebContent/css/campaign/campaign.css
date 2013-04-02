@@ -1,3 +1,8 @@
-.hasDatepicker			 	{ margin-top:-17px; height: 18px; margin-left:10px; margin-right:4px; width: 205px !important }
+.ruleContent ul			{ list-style: none;}
 
-.campaignContent ul			{ list-style: none;}
+.ruleContent .landingCont			{ padding:6px 10px; margin-top:1px; margin-bottom:20px;  }
+.ruleContent .landingCont ul		{ list-style: none; margin:0 }
+.ruleContent .landingCont li		{ padding: 4px; margin:0 }
+
+.landingCont label img.ui-datepicker-trigger  { margin-left:3px; position:relative; top:7px } 
+.newCampaign label img.ui-datepicker-trigger { margin-left:3px; position:relative; top:4px }

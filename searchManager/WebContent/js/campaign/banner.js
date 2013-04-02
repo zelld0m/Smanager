@@ -38,7 +38,7 @@
 							
 							item.ui.find("#itemLinkValue").on({
 								click: function(e){
-									self.setBanner(item.model);
+									self.setRule(item.model);
 								}
 							});
 					//	},
@@ -51,6 +51,10 @@
 					//		item.ui.find("#itemLinkPreloader").hide();
 					//	}
 					//});
+				},
+				
+				itemNameCallback: function(base, item){
+					self.setRule(item.model);
 				},
 				
 				itemAddCallback: function(base, name){
@@ -103,11 +107,11 @@
 													}else{
 														BannerServiceJS.addRule(ruleName, linkPath, imagePath, imageAlt, description, {
 															callback: function(data){
-																if(data != null){
+																//if(data != null){
 																	showActionResponse(1, "add", ruleName);
 																	self.getBannerList(1);
-																	self.setBanner(data);
-																}
+																	self.setRule(data);
+																//}
 															},
 															preHook: function(){ base.prepareList(); },
 														});
@@ -172,24 +176,24 @@
 			return template;
 		},
 		
-		prepareBanner : function(){
+		prepareRule : function(){
 			clearAllQtip();
 			$("#preloader").show();
-			$("#submitForApproval, #bannerContent, #noSelected").hide();
+			$("#submitForApproval, #ruleContent, #noSelected").hide();
 			$("#titleHeader").empty();
 		},
 		
-		setBanner : function(rule){
+		setRule : function(rule){
 			var self = this;
 			self.selectedRule = rule;
 
-			self.showBannerContent();
+			self.showRuleContent();
 		},
 		
-		showBannerContent : function(){
+		showRuleContent : function(){
 			var self = this;
 			
-			self.prepareBanner();
+			self.prepareRule();
 			$("#preloader").hide();
 			self.getBannerList(1);
 
@@ -210,25 +214,25 @@
 					base.api.destroy();
 					BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
 						callback: function(data){
-							self.setBanner(data);
+							self.setRule(data);
 						},
 						preHook: function(){
-							self.prepareBanner();
+							self.prepareRule();
 						}
 					});
 				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
-					self.showBannerContent();
+					self.showRuleContent();
 				},
 				beforeRuleStatusRequest: function(){
-					self.prepareBanner();	
+					self.prepareRule();	
 				},
 				afterRuleStatusRequest: function(ruleStatus){
 					$("#preloader").hide();
 					$("#submitForApproval").show();
 					$("#titleText").html(self.moduleName + " for ");
 					$("#titleHeader").text(self.selectedRule["ruleName"]);
-					$("#bannerContent").show();
+					$("#ruleContent").show();
 					
 					self.selectedRuleStatus = ruleStatus;
 
@@ -236,7 +240,7 @@
 
 					//set name, description, etc
 					$("#name").val(self.selectedRule["ruleName"]);
-					$("#description").val(self.selectedRule["comment"]);
+					$("#description").val(self.selectedRule["description"]);
 					
 					self.getBannerInCampaignList(1);
 					self.addSaveRuleListener();
@@ -267,27 +271,31 @@
 		
 		getBannerInCampaignList : function(page){
 			var self = this;
-			$("#campaignWithBannerPanel").sidepanel({
+			$("#campaignWithBannerPanel").selectbox({
 				fieldName: "campaignName",
 				itemTitle: "New Campaign",
 				page: page,
 				region: "content",
 				pageStyle: "style2",
 				pageSize: self.keywordInRulePageSize,
-				headerText : "Using This Banner",
+				headerText : "Campaigns Using This Banner",
 				headerTextAlt : "Campaign",
 				itemTextClass: "cursorText",
 				showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
 				showStatus: false,
 
 				itemDataCallback: function(base, keyword, page){
-					RedirectServiceJS.getAllKeywordInRule(self.selectedRule["ruleId"], keyword, page, base.options.pageSize, {
+					BannerServiceJS.getAllCampaignUsingThisBanner(self.selectedRule["ruleId"], campaignNameFilter, page, base.options.pageSize, {
 						callback: function(data){
 							base.populateList(data, keyword);
 							base.addPaging(keyword, page, data.totalSize);
 						},
 						preHook: function(){ base.prepareList(); }
 					});
+				},
+				
+				itemNameCallback: function(base, item){
+					self.setRule(item.model);
 				},
 
 				itemOptionCallback: function(base, item){
@@ -340,36 +348,63 @@
 					if (e.data.locked) return;
 
 					setTimeout(function() {
-						var description = "";
-						var imagePath = "";
-						var linkPath = "";
+						var ruleName = $.trim($('div#ruleContent input[id="name"]').val()); 
+						var description = $.trim($('div#ruleContent textarea[id="description"]').val());
 
 						var response = 0;
-						BannerServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], description,  {
-							callback: function(data){
-								response = data;
-								showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
-							},
-							preHook: function(){
-								self.prepareBanner();
-							},
-							postHook: function(){
-								if(response>0){
-									BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
-										callback: function(data){
-											self.setBanner(data);
-										},
-										preHook: function(){
-											self.prepareBanner();
-										}
-									});
+						
+						if ($.isBlank(ruleName)){
+							jAlert("Rule name is required.", self.moduleName);
+						}
+						else if (!isAllowedName(ruleName)){
+							jAlert("Rule name contains invalid value.", self.moduleName);
+						}
+						else if (ruleName.length>100){
+							jAlert("Name should not exceed 100 characters.", self.moduleName);
+						}
+						else if (!isAscii(description)) {
+							jAlert("Description contains non-ASCII characters.", self.moduleName);
+						}
+						else if (!isXSSSafe(description)){
+							jAlert("Description contains XSS.", self.moduleName);
+						}
+						else if (description.length>255){
+							jAlert("Description should not exceed 255 characters.", self.moduleName);
+						}else{
+							BannerServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
+								callback: function(data){
+									if (data==true){
+										jAlert("Another banner is already using the name provided.", self.moduleName);
+									}else{
+										BannerServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description,  {
+											callback: function(data){
+												response = data;
+												showActionResponse(data > 0 ? 1 : data, "update", ruleName);
+											},
+											preHook: function(){
+												self.prepareRule();
+											},
+											postHook: function(){
+												if(response>0){
+													BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
+														callback: function(data){
+															self.setRule(data);
+														},
+														preHook: function(){
+															self.prepareRule();
+														}
+													});
+												}
+												else{
+													self.setRule(self.selectedRule);
+												}
+				
+											}
+										});
+									}
 								}
-								else{
-									self.setBanner(self.selectedRule);
-								}
-
-							}
-						});
+							});
+						}
 					}, 500 );
 				},
 				mouseenter: showHoverInfo
@@ -413,7 +448,7 @@
 								callback: function(code){
 									showActionResponse(code, "delete", self.selectedRule["ruleName"]);
 									if(code==1) {
-										self.setBanner(null);
+										self.setRule(null);
 									}
 								}
 							});
@@ -426,7 +461,7 @@
 		
 		init : function() {
 			var self = this;
-			self.showBannerContent();
+			self.showRuleContent();
 		}
 	};
 	

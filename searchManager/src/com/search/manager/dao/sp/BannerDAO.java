@@ -211,7 +211,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(banner.getStore()));
 			inputs.put(DAOConstants.PARAM_IMAGE_URL, StringUtils.trimToEmpty(banner.getImagePath()));
 			inputs.put(DAOConstants.PARAM_LINK_URL, StringUtils.trimToEmpty(banner.getLinkPath()));
-			inputs.put(DAOConstants.PARAM_COMMENT, banner.getComment());
+			inputs.put(DAOConstants.PARAM_COMMENT, banner.getDescription());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(banner.getCreatedBy()));
 			return DAOUtils.getUpdateCount(addSP.execute(inputs));
 		}
@@ -274,7 +274,7 @@ public class BannerDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getRuleId());
-			inputs.put(DAOConstants.PARAM_COMMENT, banner.getComment());
+			inputs.put(DAOConstants.PARAM_COMMENT, banner.getDescription());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, banner.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
 		} catch (Exception e) {
@@ -286,7 +286,7 @@ public class BannerDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_BANNER_ID, banner.getRuleId());
-			inputs.put(DAOConstants.PARAM_COMMENT, banner.getComment());
+			inputs.put(DAOConstants.PARAM_COMMENT, banner.getDescription());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, banner.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(appendCommentSP.execute(inputs));
 		} catch (Exception e) {

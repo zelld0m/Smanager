@@ -1,4 +1,11 @@
-.bannerContent ul			{ list-style: none;}
+.ruleContent ul			{ list-style: none;}
+
+.ruleContent .landingCont			{ padding:6px 10px; margin-top:1px; margin-bottom:20px;  }
+.ruleContent .landingCont ul		{ list-style: none; margin:0 }
+.ruleContent .landingCont li		{ padding: 4px; margin:0 }
+
+.ruleContent .AlphaCont			{ padding:6px}
+.ruleContent .AlphaCont label		{ float:left; margin-left:10px; }
 
 /*tile view */
 ul.sortableTile							{ list-style: none }
@@ -8,8 +15,8 @@ ul.sortableTile	li						{ float:left; display: inline; width:360px; min-height: 
 .cssReset .sortableTile #sortableBox div.sortableHighlights { background:#ffffe0 !important;}
 .cssReset .sortableHighlights, .sortableHighlights  { background:#ffffe0 !important;}
 
-.cssReset .sortableTile .sortableBox .bannerName { float:left; width:300px; text-align: left; margin-left:4px }
-.bannerContent .listalpha				{ width: 250px !important; text-align:left !important }
+.cssReset .sortableTile .sortableBox .ruleName { float:left; width:300px; text-align: left; margin-left:4px }
+.ruleContent .listalpha				{ width: 250px !important; text-align:left !important }
 
 ul.sortableTile .ui-datepicker-trigger	{ margin-bottom:-4px; margin-left:3px; }
 

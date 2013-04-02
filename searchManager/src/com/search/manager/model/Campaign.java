@@ -2,8 +2,11 @@ package com.search.manager.model;
 
 import java.util.List;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
+@DataTransferObject(converter = BeanConverter.class)
 public class Campaign extends ModelBean {
 	
 	private static final long serialVersionUID = 1L;
@@ -72,6 +75,15 @@ public class Campaign extends ModelBean {
 
 	public Campaign(Store store, String ruleName, DateTime startDateTime,DateTime endDateTime, String description) {
 		this.store = store;
+		this.ruleName = ruleName;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.description = description;
+	}
+
+	public Campaign(Store store, String ruleId, String ruleName, DateTime startDateTime,DateTime endDateTime, String description) {
+		this.store = store;
+		this.ruleId = ruleId;
 		this.ruleName = ruleName;
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;

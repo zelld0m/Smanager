@@ -1,6 +1,8 @@
 package com.search.manager.service;
 
-import org.apache.commons.collections.CollectionUtils;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -15,8 +17,8 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Banner;
+import com.search.manager.model.Campaign;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
@@ -27,13 +29,29 @@ import com.search.manager.model.Store;
 	    creator = SpringCreator.class,
 	    creatorParams = @Param(name = "beanName", value = "bannerService")
 	)
-public class BannerService {
+
+	public class BannerService {
 	private static final Logger logger = Logger.getLogger(BannerService.class);
 	
 	@Autowired private DaoService daoService;
 	
 	@RemoteMethod
 	public Banner addKeywordsToBanner(String ruleId, String[] keywordList){
+		return null;
+	}
+	
+	@RemoteMethod
+	public List<Campaign> getAllCampaignUsingThisBanner(String bannerId, String campaignNameFilter, int page, int pageSize){
+		/*try {
+			RecordSet<Campaign> campaignList = daoService.getCampaignsUsingBanner(bannerId);
+			
+			if(campaignList != null && campaignList.getTotalSize() > 0){
+				return campaignList.getList();
+			}
+			
+		} catch (DaoException e) {
+			logger.error("Failed during getRuleById()",e);
+		}*/
 		return null;
 	}
 	
@@ -83,6 +101,36 @@ public class BannerService {
 			logger.error("Failed during getRules()",e);
 		}
 		return null;
+	}
+	
+	@RemoteMethod
+	public List<String> checkForRuleNameDuplicates(String[] ruleIds, String[] ruleNames) throws DaoException {
+		List<String> duplicateRuleNames = new ArrayList<String>();
+		for (int i = 0; i < ruleIds.length; i++) {
+			String ruleName = ruleNames[i];
+			if (checkForRuleNameDuplicate(ruleIds[i], ruleName)) {
+				duplicateRuleNames.add(ruleName);				
+			}
+		}
+		return duplicateRuleNames;
+	}
+
+	@RemoteMethod
+	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
+		Banner rule = new Banner(ruleId, ruleName, new Store(UtilityService.getStoreId()));
+		
+		SearchCriteria<Banner> criteria = new SearchCriteria<Banner>(rule, null, null, 0, 0);
+		RecordSet<Banner> set = daoService.getBannerListWithNameMatching(criteria);
+		if (set.getTotalSize() > 0) {
+			for (Banner r: set.getList()) {
+				if (StringUtils.equals(StringUtils.trim(ruleName), StringUtils.trim(r.getRuleName()))) {
+					if (StringUtils.isBlank(ruleId) || !StringUtils.equals(ruleId, r.getRuleId())){
+						return true;						
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	@RemoteMethod

@@ -32,11 +32,14 @@
 	<div id="submitForApproval"></div>
 	<div class="clearB"></div>
 	
-	<div id="bannerContainer" style="width:95%" class="marT20 mar0">
+	<div id="versions"></div>
+	<div class="clearB"></div>
+	
+	<div id="ruleContainer" style="width:95%" class="marT20 mar0">
 		<div id="preloader" class="circlePreloader" style="display:none"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>
 		<div id="noSelected"><img id="no-items-img" src="../images/bannerGuidelines.jpg"></div>
 	
-		<div id="bannerContent" class="bannerContent fsize12">
+		<div id="ruleContent" class="ruleContent fsize12">
 			<div class="landingCont bgboxGray w45p83 minHeight185 floatL">	
 				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 					<div class="floatL">Rule Name</div>
@@ -59,6 +62,23 @@
 			
 			<div class="landingCont bgboxGray w45p83 minHeight185 floatL marL13">
 				<div id="campaignWithBannerPanel"></div>
+			</div>
+			
+			<div id="bannerImage" class="AlphaCont bgboxAlpha marB10 floatL txtAC" style="width:98%">
+				<label class="marT5 txtAL w120"><span id="fieldLabel" class="fbold fsize13">Banner Image</span></label>
+				<label class="marT5"><input type="text" class="w460" readonly/></label> 
+				<label class="marT6">
+					<span class="preloader" style="display:none"><img src="../images/ajax-loader-rect.gif"></span>
+					<span class="crudIcon">
+						<a class="saveIcon" href="javascript:void(0);"><img src="<spring:url value="/images/icon_disk.png" />"></a>
+						<a class="infoIcon" href="javascript:void(0);"><img src="<spring:url value="/images/icon_info.png" />"></a>
+					</span>
+				</label>
+				<div class="clearB"></div>
+				
+				<div class="imagePreview minHeight185 floatL">
+					<h2 class="marT5 txtAL w120 borderB">Preview</h2>
+				</div>
 			</div>
 			<div class="clearB"></div>
 		</div>
