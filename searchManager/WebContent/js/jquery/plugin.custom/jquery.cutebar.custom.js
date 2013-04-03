@@ -54,7 +54,7 @@
 			hide     : { fixed : true },
 			style    : { tip : false, classes : 'actions' },
 			events   : {},
-			show     : {ready: false}
+			show     : {ready: false, event: 'hover'}
 		}
 	};
 	

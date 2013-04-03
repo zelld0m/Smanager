@@ -7,8 +7,6 @@
 <!--  slider checkbox -->
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/lexicon/linguistics.css" />" />
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/lexicon/spell.css" />" />
-<link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/qTip/jquery.qtip.css" />" />
-<script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.cutebar.custom.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/lexicon/spell.js" />"></script>
 
