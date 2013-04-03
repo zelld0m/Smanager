@@ -374,7 +374,7 @@
 								entities.push($(rules[i]).data('spellRule').data());
 							}
 
-							if (entities.length > 0) {
+							if (self.validate(entities) && entities.length > 0) {
 								SpellRuleServiceJS.addSpellRuleBatch(entities,
 									function(response) {
 										// success
@@ -414,7 +414,7 @@
 								deleted.push($(self.deleted[i].el).data('spellRule').data());
 							}
 
-							if (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0) {
+							if (self.validate(entities) && (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0)) {
 								SpellRuleServiceJS.updateSpellRuleBatch(self.$maxSuggest.val(), entities, deleted,
 									function(response) {
 										// success
@@ -448,6 +448,17 @@
 			} else {
 				$("#spell-rules #action-buttons").hide();
 			}
+		},
+		
+		validate: function(entities, maxSuggest) {
+			for (var i = 0; i < entities.length; i++) {
+				if (entities[i].searchTerms.length == 0 || entities[i].suggestions.length == 0) {
+					jAlert(DidYouMean.messages.requiredFields);
+					return false;
+				}
+			}
+			
+			return true;
 		},
 
 		initTable: function() {
