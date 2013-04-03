@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <solr-config>
   <shared-core>false</shared-core>	
-  <solr-selector-param>storeAlias</solr-selector-param>	
+  <solr-selector-param>storeAlias</solr-selector-param>
   
   <store id="pcmall" name="PCM">
     <core>pcmall</core>

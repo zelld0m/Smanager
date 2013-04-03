@@ -6,6 +6,9 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class AuditTrail extends ModelBean implements Serializable {
 	
@@ -102,12 +105,8 @@ public class AuditTrail extends ModelBean implements Serializable {
 	public String getStoreId() {
 		return storeId;
 	}
-	//TODO: use tld or JodaTimeUtil
-//	public String getFormatDateTimeUsingConfig(){
-//		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getDate());
-//	}
-//	
-//	public String getElapsedTime(){
-//		return DateAndTimeUtils.getElapsedTime(getDate(), new Date());
-//	}
+	
+	public String getFormattedDateTime(){
+		return JodaDateTimeUtil.formatFromStorePattern(getDateTime(), JodaPatternType.DATE_TIME);
+	}
 }

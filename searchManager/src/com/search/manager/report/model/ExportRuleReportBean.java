@@ -2,6 +2,8 @@ package com.search.manager.report.model;
 
 import java.util.List;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.annotation.ReportField;
 
@@ -29,9 +31,8 @@ public class ExportRuleReportBean extends ReportBean<RuleStatus> {
 	
 	@ReportField(label="Published Date", size=20, sortOrder=3)
 	public String getPublishedDate(){
-		//TODO: use formatting JodaTimeUtil
 		if(model.getLastPublishedDateTime() != null){
-			return model.getLastPublishedDateTime().toString();
+			return JodaDateTimeUtil.formatFromStorePattern(model.getLastPublishedDateTime(), JodaPatternType.DATE_TIME);
 		}
 		return "";
 	}
@@ -46,9 +47,8 @@ public class ExportRuleReportBean extends ReportBean<RuleStatus> {
 	
 	@ReportField(label="Export Date", size=20, sortOrder=5)
 	public String getCreatedBy(){
-		//TODO: use formatting JodaTimeUtil
 		if(model.getLastExportDateTime() != null){
-			return model.getLastExportDateTime().toString();
+			return model.getFormattedLastExportDateTime();
 		}
 		return "";
 	}

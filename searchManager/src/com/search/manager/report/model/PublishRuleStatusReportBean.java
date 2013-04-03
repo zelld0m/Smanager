@@ -32,7 +32,7 @@ public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 	
 	@ReportField(label="Last Published Date", size=20, sortOrder=5)
 	public String getLastPublishedDate() {
-		return ""; //TODO: DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), model.getLastPublishedDate());
+		return model.getFormattedLastPublishedDateTime();
 	}
 	
 	@ReportField(label="Comment", size=20, sortOrder=6)

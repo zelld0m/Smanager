@@ -19,5 +19,4 @@ public class RelevancyFieldReportBean extends ReportBean<BasicNameValuePair>  {
 	public String getValue(){
 		return model.getValue();
 	}
-
 }

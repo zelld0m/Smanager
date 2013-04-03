@@ -29,7 +29,7 @@ public class JodaDateTimeUtil {
 	}
 	
 	public static Date toSqlDate(DateTime dateTime){
-		return dateTime!=null ? new Date(dateTime.getMillis()): null;
+		return dateTime!=null ? new Date(dateTime.getMillis()) : null;
 	}
 	
 	public static DateTimeZone setTimeZoneID(String timeZoneId, String defaultTimeZoneId){

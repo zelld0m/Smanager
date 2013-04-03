@@ -35,9 +35,9 @@
 						}
 
 						base.$el.find("div#publishHolder").hide();
-						if($.isNotBlank(ruleStatus["lastPublishedDate"])){
+						if($.isNotBlank(ruleStatus["formattedLastPublishedDateTime"])){
 							base.$el.find("div#publishHolder").show();
-							base.$el.find("span#statusDate").html(ruleStatus["lastPublishedDate"].toUTCString());
+							base.$el.find("span#statusDate").empty().append(ruleStatus["formattedLastPublishedDateTime"]);
 						}
 
 						base.$el.find("a#submitForApprovalBtn").show();
