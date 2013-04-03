@@ -1,6 +1,5 @@
 package com.search.manager.dao.sp;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -136,7 +135,7 @@ public class AuditTrailDAO {
             inputs.put(DAOConstants.PARAM_STORE, auditTrail.getStoreId());
             inputs.put(DAOConstants.PARAM_KEYWORD, auditTrail.getKeyword());
             inputs.put(DAOConstants.PARAM_REFERENCE, auditTrail.getReferenceId());
-            inputs.put(DAOConstants.PARAM_DATE, new Date(auditTrail.getDateTime().getMillis()));
+            inputs.put(DAOConstants.PARAM_DATE, JodaDateTimeUtil.toSqlDate(auditTrail.getDateTime()));
             inputs.put(DAOConstants.PARAM_DETAILS, auditTrail.getDetails());
             			
            	i = DAOUtils.getUpdateCount(addSP.execute(inputs));
@@ -168,8 +167,8 @@ public class AuditTrailDAO {
         inputs.put(DAOConstants.PARAM_KEYWORD, auditTrail.getKeyword());
         inputs.put(DAOConstants.PARAM_REFERENCE, auditTrail.getReferenceId());
         inputs.put(DAOConstants.PARAM_ADMIN, adminFlag?'Y':'N');
-        inputs.put(DAOConstants.PARAM_START_DATE, auditDetail.getStartDate());
-        inputs.put(DAOConstants.PARAM_END_DATE, auditDetail.getEndDate());
+        inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(auditDetail.getStartDate()));
+        inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(auditDetail.getEndDate()));
         inputs.put(DAOConstants.PARAM_START_ROW, auditDetail.getStartRow());
         inputs.put(DAOConstants.PARAM_END_ROW, auditDetail.getEndRow());
 
@@ -213,5 +212,4 @@ public class AuditTrailDAO {
 					}
 				});
 	}
-	
  }

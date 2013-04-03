@@ -230,7 +230,7 @@
 								contentHolder.html($("#userInfoTemplate").html());
 								contentHolder.find(".shuser").html(data.username);
 								contentHolder.find(".shfname").html(data.fullName);
-								contentHolder.find(".shlacss").html(data.lastAccessDate==null? '': data.lastAccessDate.toUTCString());
+								contentHolder.find(".shlacss").html($.isBlank(data["formattedLastAccessDateTime"])? '': data["formattedLastAccessDateTime"]);
 								contentHolder.find(".ship").html(data.ip);
 								contentHolder.find("#shemail").val(data.email);	
 
@@ -262,7 +262,7 @@
 
 								contentHolder.find("#shexp").attr("id", "shexp_1");
 								
-								var formattedThruDate = $.isNotBlank(data.thruDate)? $.datepicker.formatDate('mm/dd/yy', data.thruDate):data.thruDate;
+								var formattedThruDate = $.isNotBlank(data.thruDate)? data["formattedThruDate"]: data.thruDate;
 								
 								contentHolder.find("#shexp_1").val(formattedThruDate);
 
@@ -396,17 +396,17 @@
 												$tr.find("td#delIcon > a").prop("id", "del"+$.formatAsId(list[i].username));
 											}
 											$tr.find("td#userInfo > span#username > a").prop("id", "user"+$.formatAsId(list[i].username)).html(list[i].username);
-											$tr.find("td#userInfo > span#fullName").html(list[i].fullName);
-											$tr.find("td#userInfo > span#email").html(list[i].email);
-											$tr.find("td#role > span").html(list[i].groupId);
+											$tr.find("td#userInfo > span#fullName").text(list[i].fullName);
+											$tr.find("td#userInfo > span#email").text(list[i].email);
+											$tr.find("td#role > span").text(list[i].groupId);
 
-											$tr.find("td#memberSince > span").html(list[i].createdDate==null? "" : list[i].formattedCreatedDate);
-											$tr.find("td#status > span#nonLocked").html(list[i].isAccountNonLocked==true? "Active" : "Locked");
-											$tr.find("td#status > span#nonExpired").html(list[i].isAccountNonExpired==true? "Valid" : "Expired");
-											$tr.find("td#validity > span").html(list[i].thruDate==null? "" : list[i].formattedThruDate);
+											$tr.find("td#memberSince > span").text(list[i].createdDateTime!=null? list[i]["formattedCreatedDateTime"]: "");
+											$tr.find("td#status > span#nonLocked").text(list[i].isAccountNonLocked==true? "Active" : "Locked");
+											$tr.find("td#status > span#nonExpired").text(list[i].isAccountNonExpired==true? "Valid" : "Expired");
+											$tr.find("td#validity > span").text(list[i].thruDate!=null? list[i]["formattedThruDate"]: "");
 
-											$tr.find("td#lastAccess > span#dateAccess").html(list[i].lastAccessDate==null? "" : list[i].lastAccessDate.toUTCString());
-											$tr.find("td#lastAccess > span#ipAccess").html(list[i].ip);
+											$tr.find("td#lastAccess > span#dateAccess").text(list[i].lastAccessDate==null? "" : list[i]["formattedLastAccessDateTime"]);
+											$tr.find("td#lastAccess > span#ipAccess").text(list[i].ip);
 											if (i%2!=0) $tr.addClass("alt"); 
 											$table.append($tr);
 											sec.setUserValues(list[i]);

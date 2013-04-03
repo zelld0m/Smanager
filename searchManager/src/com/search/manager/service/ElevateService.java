@@ -17,6 +17,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -434,7 +435,7 @@ public class ElevateService extends RuleService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreId();
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, new Date(), null,  page, itemsPerPage);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, DateTime.now(), null,  page, itemsPerPage);
 			return daoService.getElevatedProducts(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getActiveElevatedProducts()",e);
@@ -449,7 +450,7 @@ public class ElevateService extends RuleService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreId();
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, new Date(), null,  page, itemsPerPage);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, DateTime.now(), null,  page, itemsPerPage);
 			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getActiveElevatedProducts()",e);
@@ -464,7 +465,7 @@ public class ElevateService extends RuleService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreId();
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateTime.now().minusDays(1),  page, itemsPerPage);
 			return daoService.getElevatedProducts(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredElevatedProducts()",e);
@@ -479,7 +480,7 @@ public class ElevateService extends RuleService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreId();
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateTime.now().minusDays(1),  page, itemsPerPage);
 			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredElevatedProducts()",e);

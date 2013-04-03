@@ -81,6 +81,11 @@ public class JodaDateTimeUtil {
 		return toDateTime(storeId, null, dateTimeText, patternType.equals(JodaPatternType.DATE) ? "date-format":"datetime-format");
 	}
 	
+	public static DateTime toDateTimeFromStorePattern(String dateTimeText, JodaPatternType patternType){
+		String storeId = UtilityService.getStoreId();
+		return toDateTimeFromStorePattern(storeId, dateTimeText, patternType);
+	}
+	
 	private static String formatDateTime(String storeId, String pattern, DateTime dateTime, String xmlTag){
 		ConfigManager configManager = ConfigManager.getInstance();
 		

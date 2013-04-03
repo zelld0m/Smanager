@@ -6,6 +6,9 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class Comment implements Serializable {
 	
@@ -112,10 +115,7 @@ private static final long serialVersionUID = 1L;
 		this.store = store;
 	}
 
-	//TODO: tlds or JodaTimeUtil
-//	public String getFormatDateTimeUsingConfig(){
-//		//TODO: fix call to getStoreId()
-//		// currently only used in GUI so no issue
-//		return DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), createdDateTime);
-//	}
+	public String getFormattedDateTime(){
+		return JodaDateTimeUtil.formatFromStorePattern(createdDateTime, JodaPatternType.DATE_TIME);
+	}
 }

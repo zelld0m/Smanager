@@ -151,12 +151,12 @@
 					$li.find("#restoreLink").show();
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
-					$li.find("#verDate").text(item["createdDate"] ? item["createdDate"].toUTCString() : "");
+					$li.find("#verDate").text(item["formattedCreatedDateTime"] ? item["formattedCreatedDateTime"] : "");
 				}
 				else {
 					$li.find("#verName").text("Not Available");
 					$li.find("#verNote").text("Not Available");
-					if(item["lastModifiedDate"]) $li.find("#verDate").text(item["lastModifiedDate"].toUTCString());
+					if(item["formattedLastModifiedDateTime"]) $li.find("#verDate").text(item["formattedLastModifiedDateTime"]);
 				}
 				$li.find("#ruleId").text(item["ruleId"]);
 				$li.find("#ruleName").text(item["ruleName"]);
@@ -530,7 +530,7 @@
 									base.ruleMap[version] = item;
 									$tr.prop("id", "item" + $.formatAsId(version));
 									$tr.find("td#itemId").html(item["version"]);
-									$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
+									$tr.find("td#itemDate").html(item["formattedCreatedDateTime"]);
 									$tr.find("td#itemInfo > p#name").html(item["name"]);
 									$tr.find("td#itemInfo > p#notes").html(item["notes"]);
 									base.addDeleteVersionListener($tr, item);

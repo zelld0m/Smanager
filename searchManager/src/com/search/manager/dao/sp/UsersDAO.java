@@ -22,10 +22,9 @@ import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.User;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
-import com.search.manager.model.User;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @Repository(value="usersDAO")
 public class UsersDAO {
@@ -113,8 +112,8 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, user.getStoreId());
 			inputs.put(DAOConstants.PARAM_PERMISSION_ID, user.getPermissionId());
 			inputs.put(DAOConstants.PARAM_ACTIVE_USER, BooleanUtils.toString(user.isAccountNonExpired(),"Y","N", null));
-			inputs.put(DAOConstants.PARAM_START_DATE2, DateAndTimeUtils.convertToSqlTimestampStartOfDay(searchCriteria.getStartDate()));
-			inputs.put(DAOConstants.PARAM_END_DATE2, DateAndTimeUtils.convertToSqlTimestampEndOfDay(searchCriteria.getEndDate()));
+			inputs.put(DAOConstants.PARAM_START_DATE2, JodaDateTimeUtil.toSqlDate(searchCriteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE2, JodaDateTimeUtil.toSqlDate(searchCriteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_USER_LOCKED, BooleanUtils.toString(user.isAccountNonLocked(),"1","0", null));
 			inputs.put(DAOConstants.PARAM_START_ROW2, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW2, searchCriteria.getEndRow());
@@ -200,7 +199,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_HAS_LOGGED_OUT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, Types.CHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ACCT_NON_LOCKED, Types.CHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_ACCESS_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_ACCESS_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IP, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
@@ -227,7 +226,7 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_HAS_LOGGED_OUT, null);
 			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, BooleanUtils.toString(user.isCredentialsNonExpired(),"0","1", null));
 			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, BooleanUtils.toString(user.isAccountNonLocked(),"1","0", null));
-			inputs.put(DAOConstants.PARAM_LAST_ACCESS_DATE, JodaDateTimeUtil.toSqlDate(user.getLastAccessDate()));
+			inputs.put(DAOConstants.PARAM_LAST_ACCESS_DATE, JodaDateTimeUtil.toSqlDate(user.getLastAccessDateTime()));
 			inputs.put(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, user.getSuccessiveFailedLogin());
 			inputs.put(DAOConstants.PARAM_IP, user.getIp());
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());

@@ -26,7 +26,6 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.User;
 import com.search.manager.schema.MessagesConfig;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "securityService")
 @RemoteProxy(
@@ -58,7 +57,7 @@ public class SecurityService {
 		}
 		
 		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);
-		searchCriteria.setEndDate(DateAndTimeUtils.getDateWithEndingTime(DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), memberSince)));
+		searchCriteria.setEndDate(JodaDateTimeUtil.toDateTimeFromStorePattern(memberSince, JodaPatternType.DATE));
 		RecordSet<User> users = getUsers(searchCriteria, MatchType.LIKE_NAME);
 		for (User u: users.getList()) {
 			// clear the password before returning
@@ -280,6 +279,4 @@ public class SecurityService {
 		json.put("message", MessagesConfig.getInstance().getMessage("common.not.updated", username));
 		return json;
 	}
-	
-
 }

@@ -14,7 +14,7 @@
 					if(!$.isEmptyObject(data)){
 						$li.find('.ruleStatus > .status').text(getRuleNameSubTextStatus(data));
 						$li.find('.ruleStatus > .statusMode').text($.isNotBlank(data["locked"]) && data["locked"]? " [ Read-Only ]" : "");
-						$li.find('.lastPublished').text($.isNotBlank(data["lastPublishedDate"])? 'Published on ' + data["lastPublishedDate"].toUTCString(): '');
+						$li.find('.lastPublished').text($.isNotBlank(data["formattedLastPublishedDateTime"])? 'Published on ' + data["formattedLastPublishedDateTime"]: '');
 					}
 				}
 			});
