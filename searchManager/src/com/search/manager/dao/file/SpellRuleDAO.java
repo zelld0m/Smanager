@@ -1,7 +1,7 @@
 package com.search.manager.dao.file;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOUtils;
@@ -17,10 +18,8 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
-import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
-import com.search.manager.report.model.xml.SuggestKeywordXml;
 import com.search.manager.xml.file.SpellIndex;
 
 @Component("spellRuleDAO")
@@ -45,7 +44,7 @@ public class SpellRuleDAO {
                     total = 1;
                 }
             } else {
-                List<SpellRuleXml> searchCollection = spellRules.getSpellRule();
+                List<SpellRuleXml> searchCollection = spellRules.selectActiveRules();
 
                 boolean hasSearchTerm = rule.getSearchTerms() != null
                         && StringUtils.isNotEmpty(rule.getSearchTerms()[0]);
@@ -92,12 +91,7 @@ public class SpellRuleDAO {
                     searchCollection = rules;
                 }
 
-                for (SpellRuleXml xml : searchCollection) {
-                    if (!xml.isDeleted()) {
-                        retList.add(new SpellRule(xml));
-                    }
-                }
-
+                retList = Lists.transform(searchCollection, SpellRuleXml.transformer);
                 total = retList.size();
             }
 
@@ -123,12 +117,22 @@ public class SpellRuleDAO {
         return rule;
     }
 
+    public List<SpellRule> getActiveRules(String store) {
+        SpellRules rules = spellIndex.get(store);
+
+        if (rules != null) {
+            return Lists.transform(rules.selectActiveRules(), SpellRuleXml.transformer);
+        }
+
+        return Collections.emptyList();
+    }
+
     @Audit(entity = Entity.spell, operation = Operation.add)
     public int addSpellRule(SpellRule rule) throws DaoException {
         try {
             Date now = new Date();
             String ruleId = DAOUtils.generateUniqueId();
-            
+
             rule.setRuleId(ruleId);
             rule.setCreatedDate(now);
             rule.setLastModifiedDate(now);
@@ -147,8 +151,10 @@ public class SpellRuleDAO {
             SpellRuleXml xml = rules.getSpellRule(rule.getRuleId());
 
             if (xml != null) {
+                String oldStatus = xml.getStatus();
                 rule.setLastModifiedDate(new Date());
                 xml.update(rule);
+                rules.updateStatusIndex(oldStatus, xml);
                 return 1;
             }
 
@@ -165,20 +171,39 @@ public class SpellRuleDAO {
             SpellRuleXml xml = rules.getSpellRule(rule.getRuleId());
 
             if (xml != null) {
-                xml.setDeleted(true);
+                String oldStatus = xml.getStatus();
 
-                if (xml.getStatus() == "published") {
-                    xml.setStatus("modified");
+                if ("published".equalsIgnoreCase(oldStatus) || "modified".equalsIgnoreCase(oldStatus)) {
+                    xml.setStatus("deleted");
+                    rules.deleteFromSearchTermIndex(xml);
+                    rules.updateStatusIndex(oldStatus, xml);
+
+                    return 1;
+                } else {
+                    return deleteRulePhysically(rule);
                 }
-
-                rules.deleteFromSecondaryIndex(xml);
-                return 1;
             }
 
             return 0;
         } catch (Exception e) {
-            throw new DaoException("Failed during addSpellRuleAndGetId()", e);
+            throw new DaoException("Failed during deleteSpellRule()", e);
         }
+    }
+
+    public int deleteRulePhysically(SpellRule rule) throws DaoException {
+        try {
+            SpellRules rules = spellIndex.get(rule.getStoreId());
+            SpellRuleXml xml = rules.getSpellRule(rule.getRuleId());
+
+            if (xml != null) {
+                rules.deletePhysically(xml);
+                return 1;
+            }
+        } catch (Exception e) {
+            throw new DaoException("Failed during deleteRulePhysically()", e);
+        }
+
+        return 0;
     }
 
     public boolean isDuplicateSearchTerm(String storeId, String searchTerm, String ruleId) throws DaoException {

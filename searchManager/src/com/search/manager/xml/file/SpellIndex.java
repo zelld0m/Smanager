@@ -3,11 +3,7 @@ package com.search.manager.xml.file;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -20,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.report.model.xml.RuleKeywordXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
-import com.search.manager.report.model.xml.SuggestKeywordXml;
 import com.search.manager.utility.FileUtil;
 import com.search.manager.utility.PropsUtils;
 
@@ -131,50 +124,6 @@ public class SpellIndex {
         }
 
         return success;
-    }
-
-    public static void main(String[] args) {
-        testRead();
-    }
-
-    public static void testRead() {
-        String filepath = "/home/solr/test.xml";
-        SpellRules rules = new SpellIndex().read(filepath);
-
-        System.out.println(rules);
-    }
-
-    public static void testWrite() {
-        String filepath = "/home/solr/test.xml";
-        SpellRules rules = new SpellRules();
-        List<SpellRuleXml> xmls = new ArrayList<SpellRuleXml>();
-        SpellRuleXml xml1 = new SpellRuleXml();
-        SpellRuleXml xml2 = new SpellRuleXml();
-
-        xml1.setRuleId("sr1");
-        xml1.setSuggestKeyword(new SuggestKeywordXml(Arrays.asList("sk11", "sk12")));
-        xml1.setRuleKeyword(new RuleKeywordXml(Arrays.asList("r11", "rk12")));
-        xml1.setCreatedBy("coy");
-        xml1.setLastModifiedBy("coy");
-        xml1.setCreatedDate(new Date());
-        xml1.setLastModifiedDate(new Date());
-        xml1.setStore("macmall");
-
-        xml2.setRuleId("sr2");
-        xml2.setSuggestKeyword(new SuggestKeywordXml(Arrays.asList("sk21", "sk22")));
-        xml2.setRuleKeyword(new RuleKeywordXml(Arrays.asList("r21", "rk22")));
-        xml2.setCreatedBy("coy");
-        xml2.setLastModifiedBy("coy");
-        xml2.setCreatedDate(new Date());
-        xml2.setLastModifiedDate(new Date());
-        xml2.setStore("macmall");
-
-        xmls.add(xml1);
-        xmls.add(xml2);
-
-        rules.setSpellRule(xmls);
-        new SpellIndex().write(rules, filepath);
-
     }
 
     public void destroy() throws Exception {

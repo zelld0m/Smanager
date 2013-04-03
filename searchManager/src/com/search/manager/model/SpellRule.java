@@ -3,12 +3,19 @@ package com.search.manager.model;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.google.common.base.Function;
 import com.search.manager.report.model.xml.SpellRuleXml;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class SpellRule extends ModelBean {
 
     private static final long serialVersionUID = 4743020520448226037L;
+    
+    public static final Function<SpellRule, SpellRuleXml> transformer = new Function<SpellRule, SpellRuleXml>() {
+        public SpellRuleXml apply(SpellRule rule) {
+            return new SpellRuleXml(rule);
+        }
+    };
 
     private String ruleId;
     private String storeId;
@@ -23,7 +30,6 @@ public class SpellRule extends ModelBean {
 
     public SpellRule(SpellRuleXml ruleXml) {
         this.ruleId = ruleXml.getRuleId();
-        this.storeId = ruleXml.getStore();
         this.status = ruleXml.getStatus();
         this.searchTerms = ruleXml.getRuleKeyword().getKeyword()
                 .toArray(new String[ruleXml.getRuleKeyword().getKeyword().size()]);

@@ -1,19 +1,28 @@
 package com.search.manager.report.model.xml;
 
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.base.Function;
+import com.search.manager.model.ModelBean;
 import com.search.manager.model.SpellRule;
 import com.sun.xml.internal.txw2.annotation.XmlAttribute;
 
 @XmlRootElement(name = "spellRule")
-public class SpellRuleXml extends RuleXml {
+public class SpellRuleXml extends ModelBean {
 
     private static final long serialVersionUID = 1L;
+    
+    public static final Function<SpellRuleXml, SpellRule> transformer = new Function<SpellRuleXml, SpellRule>() {
+        public SpellRule apply(SpellRuleXml xml) {
+            return new SpellRule(xml);
+        }
+    };
 
+    private String ruleId;
+    
     private RuleKeywordXml ruleKeyword;
 
     private SuggestKeywordXml suggestKeyword;
@@ -21,12 +30,10 @@ public class SpellRuleXml extends RuleXml {
     private String status;
 
     public SpellRuleXml() {
-        super(serialVersionUID);
     }
 
     public SpellRuleXml(SpellRule rule) {
         this.setRuleId(rule.getRuleId());
-        this.setStore(rule.getStoreId());
         this.setRuleKeyword(new RuleKeywordXml(Arrays.asList(rule.getSearchTerms())));
         this.setSuggestKeyword(new SuggestKeywordXml(Arrays.asList(rule.getSuggestions())));
         this.setCreatedBy(rule.getCreatedBy());
@@ -69,9 +76,16 @@ public class SpellRuleXml extends RuleXml {
         this.setLastModifiedBy(rule.getLastModifiedBy());
         this.setLastModifiedDate(rule.getLastModifiedDate());
 
-        if (this.getStatus() == "published") {
+        if ("published".equalsIgnoreCase(this.status)) {
             this.setStatus("modified");
         }
-        
+    }
+
+    public String getRuleId() {
+        return ruleId;
+    }
+
+    public void setRuleId(String ruleId) {
+        this.ruleId = ruleId;
     }
 }

@@ -15,6 +15,7 @@ public class SpellRules {
     private List<SpellRuleXml> spellRule = new ArrayList<SpellRuleXml>();
     private Map<String, SpellRuleXml> ruleMap = new HashMap<String, SpellRuleXml>();
     private Map<String, SpellRuleXml> searchTermMap = new TreeMap<String, SpellRuleXml>();
+    private Map<String, List<SpellRuleXml>> statusMap = new HashMap<String, List<SpellRuleXml>>();
 
     private int maxSuggest = 5;
 
@@ -40,15 +41,22 @@ public class SpellRules {
     }
 
     public void generateSecondaryIndex() {
+        statusMap.put("new", new ArrayList<SpellRuleXml>());
+        statusMap.put("modified", new ArrayList<SpellRuleXml>());
+        statusMap.put("published", new ArrayList<SpellRuleXml>());
+        statusMap.put("deleted", new ArrayList<SpellRuleXml>());
+
         if (spellRule != null) {
             for (SpellRuleXml xml : spellRule) {
                 ruleMap.put(xml.getRuleId(), xml);
 
-                if (!xml.isDeleted()) {
+                if ("deleted".equalsIgnoreCase(xml.getStatus())) {
                     for (String term : xml.getRuleKeyword().getKeyword()) {
                         searchTermMap.put(term, xml);
                     }
                 }
+
+                statusMap.get(xml.getStatus()).add(xml);
             }
         }
     }
@@ -60,9 +68,11 @@ public class SpellRules {
         for (String term : ruleXml.getRuleKeyword().getKeyword()) {
             searchTermMap.put(term, ruleXml);
         }
+
+        statusMap.get("new").add(ruleXml);
     }
 
-    public void deleteFromSecondaryIndex(SpellRuleXml ruleXml) {
+    public void deleteFromSearchTermIndex(SpellRuleXml ruleXml) {
         for (String term : ruleXml.getRuleKeyword().getKeyword()) {
             searchTermMap.remove(term);
         }
@@ -70,5 +80,34 @@ public class SpellRules {
 
     public SpellRuleXml checkSearchTerm(String searchTerm) {
         return searchTermMap.get(searchTerm);
+    }
+
+    public void updateStatusIndex(String oldStatus, SpellRuleXml xml) {
+        statusMap.get(oldStatus).remove(xml);
+        statusMap.get(xml.getStatus()).add(xml);
+    }
+
+    public void deleteFromStatusIndex(SpellRuleXml xml) {
+        statusMap.get(xml.getStatus()).remove(xml);
+    }
+
+    public void deletePhysically(SpellRuleXml xml) {
+        spellRule.remove(xml);
+        deleteFromStatusIndex(xml);
+        deleteFromSearchTermIndex(xml);
+        ruleMap.remove(xml.getRuleId());
+    }
+
+    public List<SpellRuleXml> selectActiveRules() {
+        List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
+
+        rules.addAll(spellRule);
+        rules.removeAll(statusMap.get("deleted"));
+
+        return rules;
+    }
+
+    public List<SpellRuleXml> selectRulesByStatus(String status) {
+        return statusMap.get(status);
     }
 }

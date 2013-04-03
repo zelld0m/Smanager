@@ -21,8 +21,7 @@
           <option value=""></option>
           <option value="new">New</option>
           <option value="modified">Updated</option>
-          <option value="pending">Pending</option>
-          <option value="not-modified">Published</option>
+          <option value="published">Published</option>
         </select>
       </div>
 

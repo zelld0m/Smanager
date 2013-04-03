@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.response.ServiceResponse;
+import com.search.manager.utility.CsvTransformer;
+import com.search.manager.utility.FileTransferUtils;
 import com.search.manager.xml.file.SpellIndex;
 
 @Service(value = "spellRuleService")
@@ -121,7 +124,7 @@ public class SpellRuleService {
         int errorLevel = 0;
 
         try {
-            deleteSpellRules(deleted);
+            deleteSpellRules(store, deleted);
 
             List<String> duplicates = null;
 
@@ -212,8 +215,9 @@ public class SpellRuleService {
         return spellRuleDAO.updateSpellRule(rule) > 0;
     }
 
-    private void deleteSpellRules(SpellRule[] rules) throws DaoException {
+    private void deleteSpellRules(String storeId, SpellRule[] rules) throws DaoException {
         for (SpellRule rule : rules) {
+            rule.setStoreId(storeId);
             spellRuleDAO.deleteSpellRule(rule);
         }
     }
@@ -252,5 +256,25 @@ public class SpellRuleService {
         }
 
         return duplicates;
+    }
+
+    @RemoteMethod
+    public FileTransfer downloadRules(String customFilename) {
+        List<SpellRule> rules = spellRuleDAO.getActiveRules(UtilityService.getStoreId());
+        return FileTransferUtils.downloadCsv(new CsvTransformer<SpellRule>() {
+            @Override
+            protected String[] toStringArray(SpellRule rule) {
+                return new String[] {
+                        rule.getRuleId(),
+                        StringUtils.join(rule.getSearchTerms(), ','),
+                        StringUtils.join(rule.getSuggestions(), ','),
+                        rule.getStatus(),
+                        rule.getCreatedBy(),
+                        rule.getCreatedDate().toString(),
+                        rule.getLastModifiedBy(),
+                        rule.getLastModifiedDate().toString()
+                };
+            }
+        }.getCsvStream(rules), "ID,SEARCH TERMS,SUGGESTIONS,STATUS,CREATED BY,CREATED DATE,LAST MODIFIED BY,LAST MODIFIED DATE", "DidYouMean", customFilename);
     }
 }
