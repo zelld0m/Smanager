@@ -32,6 +32,7 @@
 					var shemail = $.trim(e.find('#shemail').val());
 					var shrole = $.trim(e.find('#shrole').val());
 					var shlck = e.find('div[rel="shlck"]').hasClass('off');
+					var shtimezone = e.find('#shtimezone').val();
 
 					minDate = new Date();
 					//ignore time of current date 
@@ -42,7 +43,7 @@
 					else if(!validateDate('Validity Date',shexp,1,minDate))
 						return;
 
-					SecurityServiceJS.updateUser(shrole,user,shexp,shlck,shemail,{
+					SecurityServiceJS.updateUser(shrole,user,shexp,shlck,shemail,shtimezone,{
 						callback:function(data){
 							if(data.status == '200'){
 								jAlert(data.message,"Security");
@@ -72,6 +73,7 @@
 					var adfull = $.trim(e.find('#adfull').val());
 					var ademail = $.trim(e.find('#ademail').val());			
 					var adrole = $.trim(e.find('#adrole').val());			
+					var adtimezone = e.find('#adtimezone').val();			
 					var adexp = $.trim(e.find('#adexp_1').val());
 					var adlck = e.find('div[rel="adlck"]').hasClass('off');
 
@@ -92,7 +94,7 @@
 					else if(!validateDate('Validity Date',adexp,1,minDate))
 						return;
 
-					SecurityServiceJS.addUser(adrole,sec.curname,aduser,adfull,adpass,adexp,adlck,ademail,{
+					SecurityServiceJS.addUser(adrole,sec.curname,aduser,adfull,adpass,adexp,adlck,ademail,adtimezone,{
 						callback:function(data){
 							if(data.status == '200'){
 								jAlert(data.message,"Security");
@@ -106,7 +108,7 @@
 				},	
 
 				showAdd : function(e){		
-					sec.adexp = '';
+					sec.adexp = '';				
 					$(this).qtip({
 						content: {
 							text: $('<div/>'),
@@ -136,6 +138,8 @@
 								contentHolder.find('input#adlck').slidecheckbox({
 									initOn: true
 								});
+								
+								contentHolder.find('#adtimezone').searchable();
 								
 								contentHolder.find("#adgen").on({
 									click: function(e){	
@@ -227,11 +231,11 @@
 						events: { 
 							show: function(event, api){
 								var contentHolder = $("div", api.elements.content);
-								contentHolder.html($("#userInfoTemplate").html());
-								contentHolder.find(".shuser").html(data.username);
-								contentHolder.find(".shfname").html(data.fullName);
-								contentHolder.find(".shlacss").html($.isBlank(data["formattedLastAccessDateTime"])? '': data["formattedLastAccessDateTime"]);
-								contentHolder.find(".ship").html(data.ip);
+								contentHolder.empty().append($("#userInfoTemplate"));
+								contentHolder.find(".shuser").text(data.username);
+								contentHolder.find(".shfname").text(data.fullName);
+								contentHolder.find(".shlacss").text($.isBlank(data["formattedLastAccessDateTime"])? '': data["formattedLastAccessDateTime"]);
+								contentHolder.find(".ship").text(data.ip);
 								contentHolder.find("#shemail").val(data.email);	
 
 								for (var i=0; i < roleList.list.length; i++){
@@ -245,6 +249,8 @@
 								contentHolder.find('input#shlck').slidecheckbox({
 									initOn: data.isAccountNonLocked
 								});
+								
+								contentHolder.find('#shtimezone').val(data.timezoneId).searchable();
 							
 								contentHolder.find("#view-profile").tabs({
 									cookie: {
@@ -405,7 +411,7 @@
 											$tr.find("td#status > span#nonExpired").text(list[i].isAccountNonExpired==true? "Valid" : "Expired");
 											$tr.find("td#validity > span").text(list[i].thruDate!=null? list[i]["formattedThruDate"]: "");
 
-											$tr.find("td#lastAccess > span#dateAccess").text(list[i].lastAccessDate==null? "" : list[i]["formattedLastAccessDateTime"]);
+											$tr.find("td#lastAccess > span#dateAccess").text(list[i].lastAccessDateTime==null? "" : list[i]["formattedLastAccessDateTime"]);
 											$tr.find("td#lastAccess > span#ipAccess").text(list[i].ip);
 											if (i%2!=0) $tr.addClass("alt"); 
 											$table.append($tr);

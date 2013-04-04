@@ -271,8 +271,8 @@ public class ElevateDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
-			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());

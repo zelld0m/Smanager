@@ -88,7 +88,6 @@ public class UsersDAO {
 	                		rs.getString(DAOConstants.COLUMN_STORE_ID),
 	                		rs.getString(DAOConstants.COLUMN_TIMEZONE_ID));
 	        	}
-
 	        }));
 		}
 	}
@@ -147,6 +146,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_TIMEZONE_ID, Types.VARCHAR));
 		}
 	}
 	
@@ -171,6 +171,7 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_STORE, user.getStoreId());
 			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate()==null? DateTime.now().plusYears(5): JodaDateTimeUtil.toSqlDate(user.getThruDate()));
 			inputs.put(DAOConstants.PARAM_CREATED_BY, user.getCreatedBy());
+			inputs.put(DAOConstants.PARAM_TIMEZONE_ID, user.getTimezoneId());
 			result = DAOUtils.getUpdateCount(addUserStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -205,6 +206,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_TIMEZONE_ID, Types.VARCHAR));
 		}
 	}
 
@@ -236,6 +238,7 @@ public class UsersDAO {
 				modifiedBy = "SYSTEM";
 			}
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, modifiedBy);
+			inputs.put(DAOConstants.PARAM_TIMEZONE_ID, user.getTimezoneId());
 			result = DAOUtils.getUpdateCount(updateUserStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {

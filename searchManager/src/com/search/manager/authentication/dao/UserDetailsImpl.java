@@ -63,7 +63,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.credentialsNonExpired = user.isCredentialsNonExpired();
 		this.enabled = user.isEnabled();
 		this.storeId = user.getStoreId();
-		this.dateTimeZoneId = user.getDateTimeZoneId();
+		this.dateTimeZoneId = user.getTimezoneId();
 	}
 
 	public Collection<GrantedAuthority> getAuthorities() {

@@ -513,8 +513,8 @@ public class RelevancyDAO {
 							model.getRelevancyId() : model.getRelevancyName()));
 	        inputs.put(DAOConstants.PARAM_MATCH_TYPE_RELEVANCY, (relevancyMatchType == null) ?
 	        		null : relevancyMatchType.getIntValue());
-	        inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+	        inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+	        inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        return DAOUtils.getRecordSet(searchSP.execute(inputs));
@@ -726,8 +726,8 @@ public class RelevancyDAO {
 	        		null : relevancyMatchType.getIntValue());
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(model.getKeyword()));
 	        inputs.put(DAOConstants.PARAM_EXACT_MATCH, keywordExactMatch == null ? null : keywordExactMatch.getIntValue());
-	        inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+	        inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+	        inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        RecordSet<RelevancyKeyword>  rs = DAOUtils.getRecordSet(searchRelevancyKeywordSP.execute(inputs));

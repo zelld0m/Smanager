@@ -211,8 +211,8 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, StringUtils.isNotBlank(ruleStatus.getApprovalStatus())?ruleStatus.getApprovalStatus():null);
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, StringUtils.isNotBlank(ruleStatus.getPublishedStatus())?ruleStatus.getPublishedStatus():null);
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, StringUtils.isNotBlank(ruleStatus.getUpdateStatus())?ruleStatus.getUpdateStatus():null);
-			inputs.put(DAOConstants.PARAM_START_DATE, searchCriteria.getStartDate());
-			inputs.put(DAOConstants.PARAM_END_DATE, searchCriteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(searchCriteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(searchCriteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
