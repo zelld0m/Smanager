@@ -798,7 +798,7 @@
 
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
-								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
+								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["formattedLastPublishedDateTime"]))? rule["ruleStatus"]["formattedLastPublishedDateTime"]: "";
 
 								if(rule["deleted"]){
 									var msg = "Data for rule <b>" + ruleName + "</b> ";

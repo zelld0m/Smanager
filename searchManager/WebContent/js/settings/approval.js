@@ -270,7 +270,7 @@
 							$table = $(tabSelected).find("table#rule");
 							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 							var ruleStatus = list[i];
-							var requestedDate = $.isNotBlank(list[i]["lastModifiedDate"])? list[i]["lastModifiedDate"].toUTCString(): "";
+							var requestedDate = $.isNotBlank(list[i]["formattedLastModifiedDateTime"])? list[i]["formattedLastModifiedDateTime"]: "";
 							var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
