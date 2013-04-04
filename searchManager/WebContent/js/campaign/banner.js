@@ -9,6 +9,8 @@
 		keywordInRulePageSize: 5,
 		ruleFilterText: "",
 		
+		noPreviewImagePath: GLOBAL_contextPath + "/images/nopreview.png",
+		
 		getBannerList : function(page) {
 			var self = this;
 			$("#keywordSidePanel").sidepanel({
@@ -189,7 +191,15 @@
 			clearAllQtip();
 			$("#preloader").show();
 			$("#submitForApproval, #ruleContent, #noSelected").hide();
+			$("div.uploadImage, label.uploadImage").hide();
+			$("div.imageLink, label.imageLink").show();
 			$("#titleHeader").empty();
+			$("#name, #description").off().prop("readOnly", false);
+			
+			var $bannerImg = $("div#bannerImage");
+			$bannerImg.find("input#linkPath, input#imageAlt, input#imageURL").off().prop("readOnly", false);
+			
+			
 		},
 		
 		setRule : function(rule){
@@ -255,8 +265,15 @@
 					self.addSaveRuleListener();
 					self.addDeleteRuleListener();
 					self.addDownloadListener();
+					
+					self.addImageUploadListener(self.selectedRule["linkPath"], self.selectedRule["imagePath"], self.selectedRule["imageAlt"]);
 
 					//TODO self.getBannerInCampaignList(1);
+					
+					//lock input fields
+					if(self.selectedRuleStatus["locked"] || !allowModify){
+						self.lockInputFields();
+					}
 					
 					$('#auditIcon').off().on({
 						click: function(e){
@@ -279,6 +296,169 @@
 				}
 			});
 		},
+		
+		lockInputFields : function(){
+			var $bannerImg = $("div#bannerImage");
+			$bannerImg.find("input#linkPath, input#imageAlt, input#imageURL").off().on({
+				mouseenter: showHoverInfo
+			},{locked: true}).prop("readOnly", true);
+			
+			$("#name, #description").off().on({
+				mouseenter: showHoverInfo
+			},{locked: true}).prop("readOnly", true);
+		},
+		
+		addImageUploadListener : function(linkPath, imagePath, imageAlt){
+			var self = this;
+			var $bannerImg = $("div#bannerImage");
+			
+			self.previewImageURL($bannerImg, imagePath);
+			$bannerImg.find("input#linkPath").val(linkPath);
+			$bannerImg.find("input#imageAlt").val(imageAlt);
+
+			$bannerImg.find("a.switchToUploadImage,a.switchToImageLink").off().on({
+				click: function(e){
+					if (e.data.locked) return;
+					
+					var $table = $bannerImg.find("table.bannerImage");
+
+					switch($(e.currentTarget).attr("class")){
+					case "switchToImageLink" : 
+						var imageURL = $table.find("label.imageLink input#imageURL").val();
+						$table.find("div.uploadImage, label.uploadImage").hide();
+						$table.find("div.imageLink, label.imageLink").show();
+						self.previewImageURL($bannerImg, imageURL);
+						break;
+					case "switchToUploadImage" : 
+						$table.find("div.uploadImage, label.uploadImage").show();
+						$table.find("div.imageLink, label.imageLink").hide();
+						self.previewImageURL($bannerImg, self.noPreviewImagePath);
+						break;
+					}
+				},
+				mouseenter: showHoverInfo
+			},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+
+			$bannerImg.find("#clearBtn").off().on({
+				click: function(e){
+					if (e.data.locked) return;
+					var $table = $bannerImg.find("table.bannerImage");
+					$table.find("div.uploadImage, label.uploadImage").hide();
+					$table.find("div.imageLink, label.imageLink").show();
+					$bannerImg.find("input[id='imageURL']:visible").val(e.data.imagePath);
+					self.previewImageURL($bannerImg, e.data.imagePath);
+					
+					$bannerImg.find("input#linkPath").val(e.data.linkPath);
+					$bannerImg.find("input#imageAlt").val(e.data.imageAlt);
+				},
+				mouseenter: showHoverInfo
+			}, {locked:self.selectedRuleStatus["locked"] || !allowModify, imagePath:imagePath, imageAlt: imageAlt, linkPath: linkPath});
+			
+			$bannerImg.find("#saveBtn").off().on({
+				click: function(e){
+					if (e.data.locked) return;
+					
+					var imagePath = $.trim($bannerImg.find("input[id='imageURL']:visible").val());
+					var linkPath = $.trim($bannerImg.find("input#linkPath").val());
+					var imageAlt = $.trim($bannerImg.find("input#imageAlt").val());
+					var response = 0;
+
+					if($.isBlank(imagePath)){
+						jAlert("Image path is required.", self.moduleName);
+					}else if (!isXSSSafe(imagePath)){
+						jAlert("Image path contains XSS.",self.moduleName);
+					}else if($.isNotBlank(linkPath) && !isXSSSafe(linkPath)){
+						jAlert("Link path contains XSS.",self.moduleName);
+					}else if($.isNotBlank(imageAlt) && !isXSSSafe(imageAlt)){
+						jAlert("Image alt contains XSS.",self.moduleName);
+					}else{
+						jConfirm("Update " + self.selectedRule["ruleName"] + "'s rule?", self.moduleName, function(result){
+							if(result){
+								BannerServiceJS.updateRule(self.selectedRule["ruleId"],linkPath, imagePath, imageAlt, self.selectedRule["ruleName"],self.selectedRule["description"],   {
+									callback: function(data){
+										response = data;
+										showActionResponse(data, "update", ruleName);
+									},
+									preHook: function(){
+										self.prepareRule();
+									},
+									postHook: function(){
+										if(response>0){
+											BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
+												callback: function(data){
+													self.setRule(data);
+												},
+												preHook: function(){
+													self.prepareRule();
+												}
+											});
+										}
+										else{
+											self.setRule(self.selectedRule);
+										}
+									}
+								});
+							}
+						});
+					}
+				},
+				mouseenter: showHoverInfo
+			},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+			
+			var $input = $bannerImg.find("input[id='imageURL']:visible");
+			$input.off().on({
+				mouseenter: function(e){
+					if(e.data.locked){
+						showHoverInfo
+					}
+					else{
+						e.data.input = $.trim($(e.currentTarget).val());
+					}
+				},
+				focusin: function(e){
+					if(e.data.locked){
+						showHoverInfo
+					}
+					else{
+						e.data.input = $.trim($(e.currentTarget).val());
+					}
+				},
+				mouseleave: function(e){
+					if (e.data.locked) return;
+					
+					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
+						self.previewImageURL(e.data.ui, $(e.currentTarget).val());
+					}
+				},
+				focusout: function(e){
+					if (e.data.locked) return;
+					
+					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
+						self.previewImageURL(e.data.ui, $(e.currentTarget).val());
+					}
+				}
+			},{locked:self.selectedRuleStatus["locked"] || !allowModify, input: "", ui:$bannerImg}).val(imagePath);
+		},
+		
+		previewImageURL : function(ui, imagePath){
+			var self = this;
+			var previewHolder = ui.find("div.imagePreview");
+			
+			if($.isBlank(imagePath)){
+				imagePath = self.noPreviewImagePath;
+			}
+			
+			previewHolder.find("span.preloader").show();
+			setTimeout(function(){
+				previewHolder.find("img#bannerPreview").prop("src",imagePath).off().on({
+					error:function(){ 
+						$(this).unbind("error").prop("src", self.noPreviewImagePath); 
+					}
+				});
+			},10);
+			previewHolder.find("span.preloader").hide();
+		},
+
 		
 		getBannerInCampaignList : function(page){
 			var self = this;
@@ -358,65 +538,63 @@
 				click: function(e){
 					if (e.data.locked) return;
 
-					setTimeout(function() {
-						var ruleName = $.trim($('div#ruleContent input[id="name"]').val()); 
-						var description = $.trim($('div#ruleContent textarea[id="description"]').val());
+					var ruleName = $.trim($('div#ruleContent input[id="name"]').val()); 
+					var description = $.trim($('div#ruleContent textarea[id="description"]').val());
 
-						var response = 0;
-						
-						if ($.isBlank(ruleName)){
-							jAlert("Rule name is required.", self.moduleName);
-						}
-						else if (!isAllowedName(ruleName)){
-							jAlert("Rule name contains invalid value.", self.moduleName);
-						}
-						else if (ruleName.length>100){
-							jAlert("Name should not exceed 100 characters.", self.moduleName);
-						}
-						else if (!isAscii(description)) {
-							jAlert("Description contains non-ASCII characters.", self.moduleName);
-						}
-						else if (!isXSSSafe(description)){
-							jAlert("Description contains XSS.", self.moduleName);
-						}
-						else if (description.length>255){
-							jAlert("Description should not exceed 255 characters.", self.moduleName);
-						}else{
-							BannerServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
-								callback: function(data){
-									if (data==true){
-										jAlert("Another banner is already using the name provided.", self.moduleName);
-									}else{
-										BannerServiceJS.updateRule(self.selectedRule["ruleId"],self.selectedRule["linkPath"],self.selectedRule["imagePath"], ruleName, description,  {
-											callback: function(data){
-												response = data;
-												showActionResponse(data > 0 ? 1 : data, "update", ruleName);
-											},
-											preHook: function(){
-												self.prepareRule();
-											},
-											postHook: function(){
-												if(response>0){
-													BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
-														callback: function(data){
-															self.setRule(data);
-														},
-														preHook: function(){
-															self.prepareRule();
-														}
-													});
-												}
-												else{
-													self.setRule(self.selectedRule);
-												}
-				
+					var response = 0;
+					
+					if ($.isBlank(ruleName)){
+						jAlert("Rule name is required.", self.moduleName);
+					}
+					else if (!isAllowedName(ruleName)){
+						jAlert("Rule name contains invalid value.", self.moduleName);
+					}
+					else if (ruleName.length>100){
+						jAlert("Name should not exceed 100 characters.", self.moduleName);
+					}
+					else if (!isAscii(description)) {
+						jAlert("Description contains non-ASCII characters.", self.moduleName);
+					}
+					else if (!isXSSSafe(description)){
+						jAlert("Description contains XSS.", self.moduleName);
+					}
+					else if (description.length>255){
+						jAlert("Description should not exceed 255 characters.", self.moduleName);
+					}else{
+						BannerServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
+							callback: function(data){
+								if (data==true){
+									jAlert("Another banner is already using the name provided.", self.moduleName);
+								}else{
+									BannerServiceJS.updateRule(self.selectedRule["ruleId"],self.selectedRule["linkPath"],self.selectedRule["imagePath"],self.selectedRule["imageAlt"], ruleName, description,  {
+										callback: function(data){
+											response = data;
+											showActionResponse(data > 0 ? 1 : data, "update", ruleName);
+										},
+										preHook: function(){
+											self.prepareRule();
+										},
+										postHook: function(){
+											if(response>0){
+												BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
+													callback: function(data){
+														self.setRule(data);
+													},
+													preHook: function(){
+														self.prepareRule();
+													}
+												});
 											}
-										});
-									}
+											else{
+												self.setRule(self.selectedRule);
+											}
+			
+										}
+									});
 								}
-							});
-						}
-					}, 500 );
+							}
+						});
+					}
 				},
 				mouseenter: showHoverInfo
 			},{locked:self.selectedRuleStatus["locked"] || !allowModify});

@@ -167,13 +167,14 @@ import com.search.manager.model.Store;
 	}
 	
 	@RemoteMethod
-	public int updateRule(String ruleId, String linkPath, String imagePath, String ruleName, String description) {
+	public int updateRule(String ruleId, String linkPath, String imagePath, String imageAlt, String ruleName, String description) {
 		int result = -1;
 		String storeId = UtilityService.getStoreId();
 		try {
 			Banner rule = new Banner(new Store(storeId), ruleId, ruleName, description);
 			rule.setLinkPath(linkPath);
 			rule.setImagePath(imagePath);
+			rule.setImageAlt(imageAlt);
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateBanner(rule);
 		} catch (DaoException e) {
