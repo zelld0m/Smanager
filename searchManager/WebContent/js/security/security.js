@@ -231,7 +231,7 @@
 						events: { 
 							show: function(event, api){
 								var contentHolder = $("div", api.elements.content);
-								contentHolder.html($("#userInfoTemplate").empty.append());
+								contentHolder.empty().append($("#userInfoTemplate"));
 								contentHolder.find(".shuser").text(data.username);
 								contentHolder.find(".shfname").text(data.fullName);
 								contentHolder.find(".shlacss").text($.isBlank(data["formattedLastAccessDateTime"])? '': data["formattedLastAccessDateTime"]);
