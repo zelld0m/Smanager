@@ -1122,9 +1122,13 @@
 					modal: true
 				},
 				style: {
-					width: 'auto'
+					width: 'auto',
+					position: 'fixed'
 				},
 				events: { 
+					render: function(event, api) {
+						$(this).css('position', 'fixed');
+					},
 					show: function(event, api){
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
