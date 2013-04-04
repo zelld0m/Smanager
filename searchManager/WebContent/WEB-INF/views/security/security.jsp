@@ -172,7 +172,17 @@
 				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox active-locked">
 				            </label>
 				            <div class="clearB marT10"></div>
-				            
+				           	<div>
+					            <div class="floatL w80 padT3 marL10">Timezone:</div>
+					            <div class="floatR w200">
+						            <select id="shtimezone">
+						            	<c:forEach var="tzId" items="${timezoneIds}">
+						            		<option value="${tzId}">${tzId}</option>
+						            	</c:forEach>
+						        	</select>
+					        	</div>
+					        </div>
+					        <div class="clearB marT10"></div>
 				            <div class="txtAR marT10">
 				            	<a id="shsv" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
 				            </div>
@@ -229,9 +239,22 @@
 				        <div class="clearB marT10"></div>
 				        
 				        <label class="floatL w80 padT3 marL10">Status:</label>
-				            <label class="floatL w140">
-				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox active-locked">
-				            </label>
+				        <label class="floatL w140">
+				        	<input type="checkbox" id="adlck" class="firerift-style-checkbox active-locked">
+				        </label>
+				        
+				        <div class="clearB marT10"></div>
+				        <div>
+				            <div class="floatL w80 padT3 marL10">Timezone:</div>
+				            <div class="floatR w200">
+					            <select id="adtimezone">
+					            	<c:forEach var="tzId" items="${timezoneIds}">
+					            		<option value="${tzId}">${tzId}</option>
+					            	</c:forEach>
+					        	</select>
+				        	</div>
+				        </div>
+				        <div class="clearB marT10"></div>
 			     </div>
 			                        
 				       <div class="clearB marT10"></div>     

@@ -133,7 +133,7 @@ public class SecurityService {
 	}
 	
 	@RemoteMethod
-	public JSONObject addUser(String roleId, String rolename, String username, String fullname, String password, String expire, String locked, String email){
+	public JSONObject addUser(String roleId, String rolename, String username, String fullname, String password, String expire, String locked, String email, String timezoneId){
 		JSONObject json = new JSONObject();
 		String storeId = UtilityService.getStoreId();
 		
@@ -155,6 +155,7 @@ public class SecurityService {
 			user.setEmail(email);
 			user.setGroupId(roleId);
 			user.setStoreId(storeId);
+			user.setTimezoneId(timezoneId);
 			
 			if(StringUtils.isNotEmpty(locked))
 				user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
@@ -237,7 +238,7 @@ public class SecurityService {
 	}
 	
 	@RemoteMethod
-	public JSONObject updateUser(String roleId, String username, String expire, String locked, String email) {
+	public JSONObject updateUser(String roleId, String username, String expire, String locked, String email, String timezoneId) {
 		JSONObject json = new JSONObject();
 		username = StringUtils.trim(username);
 		String storeId = UtilityService.getStoreId();
@@ -262,6 +263,7 @@ public class SecurityService {
 				if(StringUtils.isNotEmpty(locked))
 					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 				user.setEmail(email);
+				user.setTimezoneId(timezoneId);
 				user.setLastModifiedBy(UtilityService.getUsername());
 				result = daoService.updateUser(user);
 			}

@@ -26,36 +26,14 @@ public class User extends ModelBean {
 	private DateTime thruDate;
 	private Integer successiveFailedLogin;
 	private String storeId;
-	private String dateTimeZoneId;
+	private String timezoneId;
 	private String permissionId; 
 
-
-	//	private String username;
-	//	private String fullName;
-	//	private String password;
-	//	private String email;
-	//	private String groupId;				private String roleId;			private String type; -> change to Role class
-	//	private Boolean accountNonLocked;		private String status;
-	//	private Boolean credentialsNonExpired;
-	//	private Boolean accountNonExpired;
-	//	private Date lastAccessDate;			private String lastAccess;
-	//	private String ip;
-	//	private String createdBy;
-	//	private String lastModifiedBy;
-	//	private Date createdDate;			private String dateStarted;
-	//	private Date lastModifiedDate;
-	//	private Date thruDate;				private String expired;
-	//	private Integer successiveFailedLogin;		private boolean locked;
-	//	private String storeId;
-
-
-
-	public User() {
-	}
+	public User() {}
 
 	public User(String username, String fullName, String password, String email, String groupId, boolean accountNonLocked,
 			boolean credentialsNonExpired, DateTime lastAccessDateTime, String ip, String createdBy, String lastModifiedBy,
-			DateTime createdDateTime, DateTime lastModifiedDateTime, DateTime thruDate, String storeId, String dateTimeZoneId) {
+			DateTime createdDateTime, DateTime lastModifiedDateTime, DateTime thruDate, String storeId, String timezoneId) {
 		super();
 		this.username = username;
 		this.fullName = fullName;
@@ -72,7 +50,7 @@ public class User extends ModelBean {
 		super.lastModifiedDateTime = lastModifiedDateTime;
 		setThruDate(thruDate);
 		this.storeId = storeId;
-		this.dateTimeZoneId = dateTimeZoneId;
+		this.timezoneId = timezoneId;
 	}
 
 	public String getUsername() {
@@ -206,13 +184,13 @@ public class User extends ModelBean {
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
 	}
-	
-	public String getDateTimeZoneId() {
-		return dateTimeZoneId;
+
+	public String getTimezoneId() {
+		return timezoneId;
 	}
 
-	public void setDateTimeZoneId(String dateTimeZoneId) {
-		this.dateTimeZoneId = dateTimeZoneId;
+	public void setTimezoneId(String timezoneId) {
+		this.timezoneId = timezoneId;
 	}
 
 	public String getPermissionId() {
