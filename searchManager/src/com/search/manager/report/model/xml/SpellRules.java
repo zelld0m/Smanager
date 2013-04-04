@@ -10,7 +10,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "spellRules")
-public class SpellRules {
+public class SpellRules extends RuleXml {
+
+    private static final long serialVersionUID = 1L;
 
     private List<SpellRuleXml> spellRule = new ArrayList<SpellRuleXml>();
     private Map<String, SpellRuleXml> ruleMap = new HashMap<String, SpellRuleXml>();
@@ -18,6 +20,10 @@ public class SpellRules {
     private Map<String, List<SpellRuleXml>> statusMap = new HashMap<String, List<SpellRuleXml>>();
 
     private int maxSuggest = 5;
+
+    public SpellRules() {
+        super(serialVersionUID);
+    }
 
     @XmlAttribute(name = "maxSuggest")
     public int getMaxSuggest() {
