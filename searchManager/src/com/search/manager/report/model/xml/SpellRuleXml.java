@@ -2,13 +2,13 @@ package com.search.manager.report.model.xml;
 
 import java.util.Arrays;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Function;
 import com.search.manager.model.ModelBean;
 import com.search.manager.model.SpellRule;
-import com.sun.xml.internal.txw2.annotation.XmlAttribute;
 
 @XmlRootElement(name = "spellRule")
 public class SpellRuleXml extends ModelBean {
@@ -61,7 +61,7 @@ public class SpellRuleXml extends ModelBean {
         this.suggestKeyword = suggestKeyword;
     }
 
-    @XmlAttribute("status")
+    @XmlAttribute(name = "status")
     public String getStatus() {
         return status;
     }
