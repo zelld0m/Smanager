@@ -13,5 +13,4 @@ public class RedirectRuleConditionReportBean extends ReportBean<String> {
 	public String getElevation(){
 		return String.valueOf(model);
 	}
-
 }

@@ -36,5 +36,4 @@ public class ApprovalRuleStatusReportBean extends ReportBean<RuleStatus> {
 		}
 		return comments.toString();			
 	}
-	
 }

@@ -164,15 +164,6 @@ public class FacetSort extends ModelBean{
 		return null;
 	}
 	
-	//TODO: translate using joda tlds
-//	public String getFormattedCreatedDate() {
-//		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getCreatedDate());
-//	}
-//	
-//	public String getFormattedLastModifiedDate() {
-//		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getLastModifiedDate());
-//	}
-	
 	public Map<String, List<String>> getItems() {
 		return items;
 	}

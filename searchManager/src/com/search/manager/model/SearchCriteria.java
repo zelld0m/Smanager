@@ -1,15 +1,16 @@
 package com.search.manager.model;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.joda.time.DateTime;
 
 public class SearchCriteria<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	private T model;
-	private Date startDate;
-	private Date endDate;
+	private DateTime startDate;
+	private DateTime endDate;
 	private Integer pageNumber;
 	private Integer itemsPerPage;
 	
@@ -46,7 +47,7 @@ public class SearchCriteria<T> implements Serializable {
 		}
 	}
 	
-	public SearchCriteria(T model, Date startDate, Date endDate, Integer pageNumber, Integer itemsPerPage) {
+	public SearchCriteria(T model, DateTime startDate, DateTime endDate, Integer pageNumber, Integer itemsPerPage) {
 		this.model = model;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -62,11 +63,11 @@ public class SearchCriteria<T> implements Serializable {
 		this(model, null, null, 0, 0);
 	}
 	
-	public Date getStartDate() {
+	public DateTime getStartDate() {
 		return startDate;
 	}
 
-	public Date getEndDate() {
+	public DateTime getEndDate() {
 		return endDate;
 	}
 
@@ -109,11 +110,11 @@ public class SearchCriteria<T> implements Serializable {
 		return itemsPerPage;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(DateTime startDate) {
 		this.startDate = startDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(DateTime endDate) {
 		this.endDate = endDate;
 	}
 }

@@ -119,7 +119,7 @@ public class DAOConstants {
 
 	//RULE STATUS
 	public static final String SP_ADD_RULE_STATUS					= "usp_Add_Rule_Status";
-	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status";
+	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status_NEW";
 	public static final String SP_DELETE_RULE_STATUS				= "usp_Delete_Rule_Status";
 	public static final String SP_GET_RULE_STATUS					= "usp_Get_Rule_Status";
 	//COMMENT
@@ -260,6 +260,7 @@ public class DAOConstants {
 	public static final String PARAM_LAST_REQUEST_DATE				= "last_request_date";
 	public static final String PARAM_APPROVAL_BY					= "approval_by";
 	public static final String PARAM_LAST_APPROVAL_DATE				= "last_approval_date";
+	public static final String PARAM_LAST_PUBLISHED_DATE			= "last_published_date";
 	public static final String PARAM_PUBLISHED_BY					= "published_by";
 	public static final String PARAM_EXPORT_TYPE					= "export_type";
 	public static final String PARAM_EXPORT_BY						= "export_by";

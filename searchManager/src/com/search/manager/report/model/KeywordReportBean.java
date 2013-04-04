@@ -13,5 +13,4 @@ public class KeywordReportBean extends ReportBean<Keyword> {
 	public String getElevation(){
 		return String.valueOf(model.getKeywordId());
 	}
-
 }

@@ -350,7 +350,6 @@ public class UtilityService {
 	public static String getSolrSelectorParam(){
 		return ConfigManager.getInstance().getSolrSelectorParam();
 	}
-
 		
 	public static String getStoreSetting(String property) {
 		return ConfigManager.getInstance().getStoreSetting(getStoreId(), property);

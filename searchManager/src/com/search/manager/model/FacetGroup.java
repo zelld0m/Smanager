@@ -138,13 +138,4 @@ public class FacetGroup extends ModelBean {
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
 	}
-
-	//TODO: translate using joda tlds
-//	public String getFormattedCreatedDate() {
-//		return DateAndTimeUtils.formatMMddyyyy(getCreatedDate());
-//	}
-//	
-//	public String getFormattedLastModifiedDate() {
-//		return DateAndTimeUtils.formatMMddyyyy(getLastModifiedDate());
-//	}
 }

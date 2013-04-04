@@ -12,6 +12,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -394,7 +395,7 @@ public class DemoteService extends RuleService{
 			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, new Date(), null,  page, itemsPerPage);
+			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, DateTime.now(), null,  page, itemsPerPage);
 			return daoService.getDemotedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getActiveProducts()",e);
@@ -410,7 +411,7 @@ public class DemoteService extends RuleService{
 			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
+			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, DateTime.now().minusDays(1),  page, itemsPerPage);
 			return daoService.getDemotedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredProducts()",e);

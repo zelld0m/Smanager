@@ -29,7 +29,7 @@ public class JodaDateTimeUtil {
 	}
 	
 	public static Date toSqlDate(DateTime dateTime){
-		return dateTime!=null ? new Date(dateTime.getMillis()): null;
+		return dateTime!=null ? new Date(dateTime.getMillis()) : null;
 	}
 	
 	public static DateTimeZone setTimeZoneID(String timeZoneId, String defaultTimeZoneId){
@@ -79,6 +79,11 @@ public class JodaDateTimeUtil {
 
 	public static DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText, JodaPatternType patternType){
 		return toDateTime(storeId, null, dateTimeText, patternType.equals(JodaPatternType.DATE) ? "date-format":"datetime-format");
+	}
+	
+	public static DateTime toDateTimeFromStorePattern(String dateTimeText, JodaPatternType patternType){
+		String storeId = UtilityService.getStoreId();
+		return toDateTimeFromStorePattern(storeId, dateTimeText, patternType);
 	}
 	
 	private static String formatDateTime(String storeId, String pattern, DateTime dateTime, String xmlTag){

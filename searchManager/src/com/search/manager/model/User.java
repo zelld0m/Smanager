@@ -21,9 +21,8 @@ public class User extends ModelBean {
 	private Boolean accountNonLocked;
 	private Boolean credentialsNonExpired;
 	private Boolean accountNonExpired;
-	private DateTime lastAccessDate;
+	private DateTime lastAccessDateTime;
 	private String ip;
-	private String createdBy;
 	private DateTime thruDate;
 	private Integer successiveFailedLogin;
 	private String storeId;
@@ -55,8 +54,8 @@ public class User extends ModelBean {
 	}
 
 	public User(String username, String fullName, String password, String email, String groupId, boolean accountNonLocked,
-			boolean credentialsNonExpired, DateTime lastAccessDate, String ip, String createdBy, String lastModifiedBy,
-			DateTime createdDate, DateTime lastModifiedDate, DateTime thruDate, String storeId, String dateTimeZoneId) {
+			boolean credentialsNonExpired, DateTime lastAccessDateTime, String ip, String createdBy, String lastModifiedBy,
+			DateTime createdDateTime, DateTime lastModifiedDateTime, DateTime thruDate, String storeId, String dateTimeZoneId) {
 		super();
 		this.username = username;
 		this.fullName = fullName;
@@ -65,7 +64,7 @@ public class User extends ModelBean {
 		this.groupId = groupId;
 		this.accountNonLocked = accountNonLocked;
 		this.credentialsNonExpired = credentialsNonExpired;
-		this.lastAccessDate = lastAccessDate;
+		this.lastAccessDateTime = lastAccessDateTime;
 		this.ip = ip;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
@@ -140,7 +139,6 @@ public class User extends ModelBean {
 		return BooleanUtils.toBoolean(isAccountNonLocked());
 	}
 
-
 	public Boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
@@ -157,18 +155,12 @@ public class User extends ModelBean {
 		this.accountNonLocked = enabled;
 	}
 
-	
-
 	public String getIp() {
 		return ip;
 	}
 
 	public void setIp(String ip) {
 		this.ip = ip;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
 	}
 
 	public void setCreatedBy(String createdBy) {
@@ -230,12 +222,16 @@ public class User extends ModelBean {
 	public void setPermissionId(String permissionId) {
 		this.permissionId = permissionId;
 	}
-
-	public DateTime getLastAccessDate() {
-		return lastAccessDate;
+	
+	public DateTime getLastAccessDateTime() {
+		return lastAccessDateTime;
 	}
 
-	public void setLastAccessDate(DateTime lastAccessDate) {
-		this.lastAccessDate = lastAccessDate;
+	public void setLastAccessDateTime(DateTime lastAccessDateTime) {
+		this.lastAccessDateTime = lastAccessDateTime;
+	}
+
+	public String getFormattedLastAccessDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastAccessDateTime(), JodaPatternType.DATE_TIME);
 	}
 }
