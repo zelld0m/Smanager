@@ -2,8 +2,11 @@ package com.search.manager.model;
 
 import java.util.List;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
+@DataTransferObject(converter = BeanConverter.class)
 public class CampaignBanner extends ModelBean {
 	private static final long serialVersionUID = -4219527385069110630L;
 	
@@ -20,6 +23,18 @@ public class CampaignBanner extends ModelBean {
 	public CampaignBanner(Campaign campaign, Banner banner, Store store) {
 		super();
 		this.campaign = campaign;
+		this.banner = banner;
+		this.store = store;
+	}
+	
+	public CampaignBanner(Campaign campaign, Store store) {
+		super();
+		this.campaign = campaign;
+		this.store = store;
+	}
+	
+	public CampaignBanner(Banner banner, Store store) {
+		super();
 		this.banner = banner;
 		this.store = store;
 	}
@@ -94,5 +109,33 @@ public class CampaignBanner extends ModelBean {
 
 	public void setEndDateTime(DateTime endDateTime) {
 		this.endDateTime = endDateTime;
+	}
+	
+	public String getCampaignName(){
+		if(campaign != null){
+			return campaign.getRuleName();
+		}
+		return "";
+	}
+	
+	public String getCampaignId(){
+		if(campaign != null){
+			return getCampaign().getRuleId();
+		}
+		return "";
+	}
+	
+	public String getBannerName(){
+		if(banner != null){
+			return banner.getRuleName();
+		}
+		return "";
+	}
+	
+	public String getBannerId(){
+		if(banner !=null){
+			return banner.getRuleId();
+		}
+		return "";
 	}
 }

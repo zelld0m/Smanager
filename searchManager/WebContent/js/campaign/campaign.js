@@ -4,45 +4,62 @@
 		selectedRule:  null,
 		rulePageSize: 15,
 		selectedRuleStatus: null,
+		
+		noPreviewImagePath: GLOBAL_contextPath + "/images/nopreview.png",
 	
 		showMicroGallery: function(){
-			//TODO
-			//populate images 
+			var self = this;
+			var $gallery = $("div#microGallery");
 			
-			$("#mG1").microgallery({
-				size		: 'large',	/*small,medium,large*/
-				menu		: true,
-		        mode    	: 'thumbs',
-				cycle		: true,
-				autoplay	: true,
-				autoplayTime: 3000});
+			$gallery.prop({title: self.selectedRule["readableString"]});
+
+			CampaignServiceJS.getBannersInCampaign(self.selectedRule["ruleId"],{
+				callback : function(data){
+					var imgCount = 0;
+					if(data){
+						var list = data.list;
+						imgCount = list.length;
+						
+						//populate images
+						for(var i = 0; i < list.imgCount; i++){
+							$newImg = $('<img />');
+							$.newImg.prop({
+								alt: $.isNotBlank(list[i]["imageAlt"]) ? list[i]["imageAlt"] : "img"+i,
+								src: $.isNotBlank(list[i]["imagePath"]) ? list[i]["imagePath"] : self.noPreviewImagePath
+							});
+							
+							$gallery.append($newImg);
+						}
+					}
+					
+					$("#microGallery").microgallery({
+						size		: 'large',	/*small,medium,large*/
+						menu		: true,
+				        mode    	: 'thumbs',
+						cycle		: true,
+						autoplay	: true,
+						autoplayTime: 3000,
+						imgCount	: imgCount,
+						headerText	: "Banners",
+						/*ruleId		: e.data.ruleId,
+						addImageCallback : function(ruleId){
+							//show popup
+							jAlert(ruleId);
+						}*/
+					}/*, {ruleId:self.selectedRule["ruleId"]}*/);
+				},
+				preHook: function(){
+					//show preloader
+					$gallery.find("img:visible").remove();
+				},
+				postHook: function(){
+					//hide preloader
+				}
+			});
 			
 			//TODO
 			//addBanner event listener
 			
-		    $("#startdatepicker").datepicker({
-			    showOn: "both",
-			    buttonImage: "../../images/icon_calendarwithBG.png",
-			    buttonImageOnly: true
-		    });
-		    
-		    $("#enddatepicker").datepicker({
-			    showOn: "both",
-			    buttonImage: "../../images/icon_calendarwithBG.png",
-			    buttonImageOnly: true
-		    });
-		    
-		    $("#startdatepicker2").datepicker({
-			    showOn: "both",
-			    buttonImage: "../images/icon_calendarwithBG.png",
-			    buttonImageOnly: true
-		    });
-		    
-		    $("#enddatepicker2").datepicker({
-			    showOn: "both",
-			    buttonImage: "../images/icon_calendarwithBG.png",
-			    buttonImageOnly: true
-		    });
 		},
 		
 		getBannerInCampaignList: function(page){},

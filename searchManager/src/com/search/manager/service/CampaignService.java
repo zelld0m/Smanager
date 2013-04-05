@@ -21,6 +21,7 @@ import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
+import com.search.manager.model.CampaignBanner;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -192,6 +193,58 @@ public class CampaignService {
 		return result;
 	}
 	
+	@RemoteMethod
+	public RecordSet<CampaignBanner> getBannersInCampaign(String campaignId){
+		Store store = new Store(UtilityService.getStoreId());
+		Campaign campaign = new Campaign(campaignId, store);
+		try{
+			CampaignBanner campaignBanner = new CampaignBanner(campaign, store);
+			SearchCriteria<CampaignBanner> criteria = new SearchCriteria<CampaignBanner>(campaignBanner, 0, 0);
+			return daoService.getBannersInCampaign(criteria);
+		}catch (DaoException e) {
+			logger.error("Failed during getBannersInCampaign()",e);
+		} catch (Exception e) {
+			logger.error("Failed during getBannersInCampaign()",e);
+		}
+		return null;	
+	}
+	
+	@RemoteMethod
+	public int deleteCampaignBanner(String campaignId, String bannerId){
+		int result = -1;
+		Store store = new Store(UtilityService.getStoreId());
+		Campaign campaign = new Campaign(campaignId, store);
+		Banner banner = new Banner(bannerId, store);
+		try{
+			CampaignBanner campaignBanner = new CampaignBanner(campaign, banner, store);
+			result = daoService.deleteCampaignBanner(campaignBanner);
+		}catch (DaoException e) {
+			logger.error("Failed during deleteCampaignBanner()",e);
+		} catch (Exception e) {
+			logger.error("Failed during deleteCampaignBanner()",e);
+		}
+		
+		return result;
+	}
+	
+	@RemoteMethod
+	public int addCampaignBanner(String campaignId, String bannerId){
+		int result = -1;
+		Store store = new Store(UtilityService.getStoreId());
+		Campaign campaign = new Campaign(campaignId, store);
+		Banner banner = new Banner(bannerId, store);
+		try{
+			CampaignBanner campaignBanner = new CampaignBanner(campaign, banner, store);
+			result = daoService.addCampaignBanner(campaignBanner);
+		}catch (DaoException e) {
+			logger.error("Failed during addCampaignBanner()",e);
+		} catch (Exception e) {
+			logger.error("Failed during addCampaignBanner()",e);
+		}
+		
+		return result;
+	}
+	
 	public DaoService getDaoService() {
 		return daoService;
 	}
@@ -199,4 +252,5 @@ public class CampaignService {
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
+	
 }

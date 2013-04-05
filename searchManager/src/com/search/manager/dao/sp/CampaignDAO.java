@@ -48,7 +48,7 @@ public class CampaignDAO {
 	// banner keywords
 	private AddBannerToCampaignStoredProcedure addBannerSP;
 	private UpdateCampaignBannerStoredProcedure updateBannerSP;
-	private DeleteCampaignBannerStoredProcedure deleteBannerSP;
+	private DeleteCampaignBannerStoredProcedure deleteCampaignBannerSP;
 	private GetCampaignBannersStoredProcedure getCampaignBannerSP;
 	private SearchCampaignBannersStoredProcedure searchBannerSP;
 	private AddKeywordToCampaignBannerStoredProcedure addBannerKeywordSP;
@@ -68,7 +68,7 @@ public class CampaignDAO {
     	
     	addBannerSP = new AddBannerToCampaignStoredProcedure(jdbcTemplate);
     	updateBannerSP = new UpdateCampaignBannerStoredProcedure(jdbcTemplate);
-    	deleteBannerSP = new DeleteCampaignBannerStoredProcedure(jdbcTemplate);
+    	deleteCampaignBannerSP = new DeleteCampaignBannerStoredProcedure(jdbcTemplate);
     	getCampaignBannerSP = new GetCampaignBannersStoredProcedure(jdbcTemplate);
     	searchBannerSP = new SearchCampaignBannersStoredProcedure(jdbcTemplate);
     	addBannerKeywordSP = new AddKeywordToCampaignBannerStoredProcedure(jdbcTemplate);
@@ -278,12 +278,15 @@ public class CampaignDAO {
 		}
 	}
 
-	private class DeleteCampaignBannerStoredProcedure extends StoredProcedure {
-		private DeleteCampaignBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
+	private class DeleteCampaignBannerStoredProcedure extends CUDStoredProcedure {
+		public DeleteCampaignBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, DAOConstants.SP_DELETE_CAMPAIGN_BANNER);
+		}
+		
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
-			compile();
 		}
 	}
 
@@ -292,7 +295,7 @@ public class CampaignDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getRuleId());
 			inputs.put(DAOConstants.PARAM_BANNER_ID, campaignBanner.getBanner().getRuleId());
-			return DAOUtils.getUpdateCount(deleteBannerSP.execute(inputs));
+			return DAOUtils.getUpdateCount(deleteCampaignBannerSP.execute(inputs));
 		}
 		catch (Exception e) {
 			throw new DaoException("Failed during deleteCampaignBanner()", e);
@@ -454,11 +457,12 @@ public class CampaignDAO {
 	}
 	 * */
 
-	public RecordSet<CampaignBanner> getCampaignBanners(SearchCriteria<Campaign> criteria) throws DaoException {
+	public RecordSet<CampaignBanner> getCampaignBanners(SearchCriteria<CampaignBanner> criteria) throws DaoException {
 		try {
-			Campaign model = criteria.getModel();
+			CampaignBanner model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, model.getRuleId());
+			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, model.getCampaign() != null ? model.getCampaign().getRuleId(): null);
+			inputs.put(DAOConstants.PARAM_BANNER_ID, model.getBanner() != null ? model.getBanner().getRuleId(): null);
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStore().getStoreId().toLowerCase().trim());
 			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
@@ -479,7 +483,7 @@ public class CampaignDAO {
 					Campaign campaign = new Campaign(rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
 							rs.getString(DAOConstants.COLUMN_CAMPAIGN_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)));
-					Banner banner = new Banner(rs.getString(DAOConstants.COLUMN_BANNER_ID),
+					Banner banner = new Banner(null,
 							rs.getString(DAOConstants.COLUMN_BANNER_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
@@ -493,7 +497,7 @@ public class CampaignDAO {
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 				}
 			}));
-			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_TOTAL, new RowMapper<Integer>() {
 				public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
 					return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
 				}
@@ -622,8 +626,8 @@ public class CampaignDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStore().getStoreId().toLowerCase().trim());
-			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 			return DAOUtils.getRecordSet(getSP.execute(inputs));

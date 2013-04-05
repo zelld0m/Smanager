@@ -61,13 +61,10 @@
 				</div>
 			</div>
 			
-			<div id="mG1" class="microGallery marL13" title="Early Holiday Treats | Jan 1 - Jan 30">
-				<img src="http://t0.gstatic.com/images?q=tbn:ANd9GcRZynMzjEr8vMvQbt5zUmCkI52bxXkW4ElcIIfRU9csAjE9tAqRN2bk3AkW"/>
-				<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcRTqfWIn_gA1034cj3zFLElp62rHyJj8Zrxc8KMvx-WVuu5gSHP"/>
-				<img src="http://t3.gstatic.com/images?q=tbn:ANd9GcSEuglQt5IId5Y_UfQOP55l8V2uPLb8KGtbL7t8s7iXB2zucT2lnw"/>
-				<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcT_rEtxR8JPtb3MDtn5do3GOHyvgHJ6mkvK_wvxZ6t_P7ASqjeQ"/>
-				<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcQLKMYGMHenPHLWQggtsIgn5l8HtQYQv4cWKsS6ZaY5xWQ5SKOsmA"/>
-				<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcREnV_irVsWDX8Q8LSlji5BA1Cz0hNtFCnc6zZitSaroYEFKYSKQA"/>
+			<div id="microGallery" class="microGallery marL13" title="Early Holiday Treats | Jan 1 - Jan 30">
+				<img alt="image1" src="http://t0.gstatic.com/images?q=tbn:ANd9GcRZynMzjEr8vMvQbt5zUmCkI52bxXkW4ElcIIfRU9csAjE9tAqRN2bk3AkW"/>
+				<img alt="image2" src="http://t2.gstatic.com/images?q=tbn:ANd9GcRTqfWIn_gA1034cj3zFLElp62rHyJj8Zrxc8KMvx-WVuu5gSHP"/>
+				<img alt="image3" src="http://t3.gstatic.com/images?q=tbn:ANd9GcSEuglQt5IId5Y_UfQOP55l8V2uPLb8KGtbL7t8s7iXB2zucT2lnw"/>
 			</div>
 			<div class="clearB"></div>
 		</div>

@@ -2,6 +2,7 @@ package com.search.manager.model;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
@@ -155,5 +156,31 @@ public class Campaign extends ModelBean {
 
 	public String getFormattedEndDateTime() {
 		return JodaDateTimeUtil.formatFromStorePattern(getEndDateTime(), JodaPatternType.DATE);
+	}
+	
+	public String getFormattedStartEndDate(){
+		if(StringUtils.isBlank(getFormattedStartDateTime()) || StringUtils.isBlank(getFormattedEndDateTime())){
+			return "";
+		}
+		
+		return getFormattedStartDateTime() + " - " + getFormattedEndDateTime();
+	}
+	
+	public String getReadableString(){
+		StringBuilder sb = new StringBuilder();
+		
+		if(StringUtils.isNotBlank(getRuleName())){
+			sb.append(getRuleName());
+		}
+		
+		if(StringUtils.isNotBlank(getRuleName()) && StringUtils.isNotBlank(getFormattedStartEndDate())){
+			sb.append(" | ");
+		}
+		
+		if(StringUtils.isNotBlank(getFormattedStartEndDate())){
+			sb.append(getFormattedStartEndDate());
+		}
+		
+		return sb.toString();
 	}
 }

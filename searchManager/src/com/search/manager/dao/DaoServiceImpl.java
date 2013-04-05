@@ -48,6 +48,7 @@ import com.search.manager.enums.RuleType;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
+import com.search.manager.model.CampaignBanner;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
@@ -874,28 +875,35 @@ public class DaoServiceImpl implements DaoService {
 	
 	
 	@Override
-	public Banner addCampaignBanner(String campaignId, String bannerId, DateTime startDateTime, DateTime endDateTime, List<String> keywordList) throws DaoException {
+	public int addCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
+		return campaignDAO.addCampaignBanner(campaignBanner);
+	}
+
+	@Override
+	public int deleteCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
+		return campaignDAO.deleteCampaignBanner(campaignBanner);
+	}
+
+	@Override
+	public Banner updateCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
 		// TODO Auto-generated method stub
 		throw new DaoException("Unsupported operation");
 	}
 
 	@Override
-	public void deleteCampaignBanner(String campaignId, String bannerId) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
+	public RecordSet<CampaignBanner> getBannersInCampaign(SearchCriteria<CampaignBanner> criteria) throws DaoException {
+		return campaignDAO.getCampaignBanners(criteria);
 	}
-
+	
 	@Override
-	public Banner updateCampaignBanner(String campaignId, String bannerId, DateTime startDateTime, DateTime endDateTime, List<String> keywordList) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
+	public RecordSet<CampaignBanner> getCampaignsUsingThisBanner(SearchCriteria<CampaignBanner> criteria) throws DaoException {
+		return campaignDAO.getCampaignBanners(criteria);
 	}
-
+	
 	@Override
-	public RecordSet<Banner> getCampaignBannerList(String campaignId) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
+	public RecordSet<CampaignBanner> searchCampaignBanner(SearchCriteria<CampaignBanner> criteria, MatchType campaignMatchType, MatchType bannerMatchType) throws DaoException {
+		return campaignDAO.searchCampaignBanners(criteria, campaignMatchType, bannerMatchType);
+	};
 
 	/* Relevancy */
 	@Override

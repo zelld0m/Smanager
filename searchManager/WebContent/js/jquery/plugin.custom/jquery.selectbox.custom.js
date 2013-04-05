@@ -16,18 +16,20 @@
 				click: function(e){
 					var ruleName = $.trim(base.$el.find('input[type="text"]').val());
 					var alertMsg = $.isBlank(base.options.headerTextAlt) ? base.options.headerText : base.options.headerTextAlt;
-
+					
 					if(base.options.customAddRule){
 						//Skip validation
-					}else if ($.isBlank(ruleName) ||  ruleName.replace(/\s+(?=\s)/g,'').toLowerCase() === $.trim(base.options.searchText.replace(/\s+(?=\s)/g,'')).toLowerCase()){
-						jAlert(alertMsg + " is required.", base.options.headerText);
-						return
-					}else if (!isAllowedName(ruleName)){
-						jAlert(alertMsg + " contains invalid value.", base.options.headerText);
-						return
+						base.options.addButtonActionCallback(base, ruleName.toLowerCase() !== base.options.searchText.toLowerCase()? $.trim(ruleName.replace(/\s+(?=\s)/g,'')): "");
+					}else{
+						if ($.isBlank(ruleName) ||  ruleName.replace(/\s+(?=\s)/g,'').toLowerCase() === $.trim(base.options.searchText.replace(/\s+(?=\s)/g,'')).toLowerCase()){
+							jAlert(alertMsg + " is required.", base.options.headerText);
+							return
+						}else if (!isAllowedName(ruleName)){
+							jAlert(alertMsg + " contains invalid value.", base.options.headerText);
+							return
+						}
+						base.options.itemAddCallback(base, ruleName.toLowerCase() !== base.options.searchText.toLowerCase()? $.trim(ruleName.replace(/\s+(?=\s)/g,'')): "");
 					}
-
-					base.options.itemAddCallback(base, ruleName.toLowerCase() !== base.options.searchText.toLowerCase()? $.trim(ruleName.replace(/\s+(?=\s)/g,'')): ""); 
 				}
 			});
 		};
@@ -305,7 +307,8 @@
 			itemNameCallback: function(base, item){},
 			itemAddCallback: function(e){},
 			pageChangeCallback: function(e){},
-			reloadRate: 2000
+			reloadRate: 2000,
+			addButtonActionCallback : function(base, item){}
 	};
 
 	$.fn.selectbox = function(options){

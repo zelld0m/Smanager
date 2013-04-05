@@ -18,9 +18,11 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
+import com.search.manager.model.CampaignBanner;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 
 @Service(value = "bannerService")
@@ -41,19 +43,36 @@ import com.search.manager.model.Store;
 	}
 	
 	@RemoteMethod
-	public List<Campaign> getAllCampaignUsingThisBanner(String bannerId, String campaignNameFilter, int page, int pageSize){
-		List<Campaign> list = new ArrayList<Campaign>();
-		/*try {
-			RecordSet<Campaign> campaignList = daoService.getCampaignsUsingBanner(bannerId);
-			
-			if(campaignList != null && campaignList.getTotalSize() > 0){
-				list = campaignList.getList();
-			}
-			
-		} catch (DaoException e) {
-			logger.error("Failed during getRuleById()",e);
-		}*/
-		return list;
+	public RecordSet<CampaignBanner> searchCampaignUsingThisBanner(String bannerId, String campaignNameFilter, int page, int pageSize){
+		Store store = new Store(UtilityService.getStoreId());
+		Banner banner = new Banner(bannerId, store);
+		Campaign campaign = new Campaign(store, campaignNameFilter);
+		try{
+			CampaignBanner campaignBanner = new CampaignBanner(campaign, banner, store);
+			SearchCriteria<CampaignBanner> criteria = new SearchCriteria<CampaignBanner>(campaignBanner, page, pageSize);
+			return daoService.searchCampaignBanner(criteria, MatchType.LIKE_NAME, MatchType.MATCH_ID);
+		}catch (DaoException e) {
+			logger.error("Failed during searchCampaignUsingThisBanner()",e);
+		} catch (Exception e) {
+			logger.error("Failed during searchCampaignUsingThisBanner()",e);
+		}
+		return null;
+	}
+	
+	@RemoteMethod
+	public RecordSet<CampaignBanner> getAllCampaignUsingThisBanner(String bannerId, int page, int pageSize){
+		Store store = new Store(UtilityService.getStoreId());
+		Banner banner = new Banner(bannerId, store);
+		try{
+			CampaignBanner campaignBanner = new CampaignBanner(banner, store);
+			SearchCriteria<CampaignBanner> criteria = new SearchCriteria<CampaignBanner>(campaignBanner, page, pageSize);
+			return daoService.getCampaignsUsingThisBanner(criteria);
+		}catch (DaoException e) {
+			logger.error("Failed during getAllCampaignUsingThisBanner()",e);
+		} catch (Exception e) {
+			logger.error("Failed during getAllCampaignUsingThisBanner()",e);
+		}
+		return null;
 	}
 	
 	@RemoteMethod

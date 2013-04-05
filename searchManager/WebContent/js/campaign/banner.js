@@ -8,8 +8,11 @@
 		selectedRuleStatus: null,
 		keywordInRulePageSize: 5,
 		ruleFilterText: "",
-		
+		campaignNameSearchText: "",
+		sfSearchKeyword: "",
+		excFields: new Array(),
 		noPreviewImagePath: GLOBAL_contextPath + "/images/nopreview.png",
+		reloadRate: 1000,
 		
 		getBannerList : function(page) {
 			var self = this;
@@ -118,7 +121,7 @@
 																	self.setRule(data);
 																//}
 															},
-															preHook: function(){ base.prepareList(); },
+															preHook: function(){ base.prepareList(); }
 														});
 													}
 												}
@@ -268,7 +271,7 @@
 					
 					self.addImageUploadListener(self.selectedRule["linkPath"], self.selectedRule["imagePath"], self.selectedRule["imageAlt"]);
 
-					//TODO self.getBannerInCampaignList(1);
+					self.getBannerInCampaignList(1);
 					
 					//lock input fields
 					if(self.selectedRuleStatus["locked"] || !allowModify){
@@ -458,11 +461,99 @@
 			},10);
 			previewHolder.find("span.preloader").hide();
 		},
+		
+		removeSelected : function(content, fieldName, fieldId){
+			var self = this;
+			if (confirm("Delete \"" + fieldName + "\" from selection?")){
+				CampaignServiceJS.deleteCampaignBanner(fieldId, self.selectedRule["ruleId"],{
+					callback:function(code){
+						showActionResponse(code, "delete", fieldName);
+						if(code){
+							content.find('tr#fieldSelected_' + fieldId).remove();
+							var idx = self.excFields.indexOf(fieldName);
+							if (idx!=-1) self.excFields.splice(idx,1);
+							
+							content.find('tr.fieldSelectedItem').removeClass("alt");
+							content.find('tr.fieldSelectedItem:even').addClass("alt");
+						}
+					},
+					postHook: function(){ 
+						self.populateCampaignList(content, 1); 
+					}
+				});
+				
+			}
+		},
 
+		populateSelectedCampaignField : function(content, campaignName, campaignId){
+			var self = this;
+			content.find("tr#fieldSelectedPattern").clone().prependTo("tbody#fieldSelectedBody").attr("id","fieldSelected_"+campaignId).attr("style","display:float");
+			content.find("tr#fieldSelected_" + campaignId + " .txtHolder").html(campaignName);
+
+			content.find('tr#fieldSelected_' + campaignId + ' a.removeSelected').on({ click:function(e){
+				self.removeSelected(content, campaignName, campaignId);}
+			});
+			content.find('tr.fieldSelectedItem').removeClass("alt");
+			content.find('tr.fieldSelectedItem:even').addClass("alt");
+		},
+		
+		populateCampaignList : function(content, page){
+			var self = this;
+			var currVal = "";
+			CampaignServiceJS.getRules(currVal, page, self.rulePageSize, {
+				callback:function(data){
+					var list = data.list;
+					listSize = data.totalSize;
+
+					content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+
+					for (var i=0; i< listSize; i++){
+						if(list[i]!=null){
+							var idx = self.excFields.indexOf(list[i].ruleName);
+							if(idx == -1){
+								content.find("#fieldListingPattern").clone().appendTo("ul#fieldListing").attr("id","fieldListing_"+i).attr("style","display:float");
+								content.find('#fieldListing_' + i + ' span').html(list[i].ruleName);
+	
+								content.find('#fieldListing_' + i + ' a').on({click: function(e){
+									var element = e.data.campaignName;
+	
+									CampaignServiceJS.addCampaignBanner(e.data.campaignId, e.data.bannerId, {
+										callback: function(data){
+											if(data){
+												if($.pushIfNotExist(self.excFields, element, function(el){ return el === element; })){
+													self.populateSelectedCampaignField(content, element, 0);
+													self.populateCampaignList(content, 1);
+												}
+											}else{
+												showActionResponse(code, "add", element);
+											}
+										}
+									});
+								}},{campaignName:list[i].ruleName, campaignId:list[i].ruleId, bannerId:self.selectedRule["ruleId"]});
+							}
+						}	
+					}
+
+					//content.find('span#sfCount').html(schemaFieldsTotal + " Record" + (schemaFieldsTotal > 1 ? "s":""));
+					//var selectedCount = content.find('tr.fieldSelectedItem:not(#fieldSelectedPattern)').length;
+					//content.find('span#sfSelectedCount').html(selectedCount + " Record" + (selectedCount > 1 ? "s":""));
+					//addSchemaFieldsPaging(content, page);
+				},
+				preHook:function(){
+					content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+					content.find("div#fieldListing div#preloader").show();					
+					content.find("div#fieldListing div#content").hide();					
+				},
+				postHook:function(){
+					content.find("div#fieldListing div#preloader").hide();	
+					content.find("div#fieldListing div#content").show();						
+				}
+			});
+		},
 		
 		getBannerInCampaignList : function(page){
 			var self = this;
-			$("#campaignWithBannerPanel").sidepanel({
+			$("#campaignWithBannerPanel").selectbox({
 				fieldName: "campaignName",
 				itemTitle: "New Campaign",
 				page: page,
@@ -474,19 +565,111 @@
 				itemTextClass: "cursorText",
 				showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
 				showStatus: false,
+				customAddRule : true,
+
+				addButtonActionCallback : function(base,item){
+					base.$el.find("#addButton").qtip({
+						content: { text: $('<div>'), title: { text: base.options.headerText, button: true }},
+						show: {modal:true},
+						events: { 
+							render: function(e, api){
+								var $contentHolder = $("div", api.elements.content).html($("#setupFieldValueS1").html());
+
+								$contentHolder.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+								$contentHolder.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
+								sfSearchKeyword = "";
+
+								BannerServiceJS.searchCampaignUsingThisBanner(self.selectedRule["ruleId"], "", 1, self.rulePageSize, {
+									callback:function(data){
+										var campaignList = data.list;
+
+										for (var i=0; i< data.totalSize; i++){
+											var campaignName = campaignList[i].campaignName;
+											var campaignId = campaignList[i].campaignId;
+
+											if ($.isNotBlank(campaignName)){
+												$.pushIfNotExist(self.excFields, campaignName, function(el){ return el === name; });
+												self.populateSelectedCampaignField($contentHolder, campaignName, campaignId);
+											}
+										}	
+
+										self.populateCampaignList($contentHolder,1);
+									},
+									preHook: function(){
+										$contentHolder.find("tbody#fieldSelectedPattern > tr").not("#fieldSelectedPattern").remove();
+									}
+								});
+								
+								$contentHolder.find('a#closeBtn').on({
+									click: function(e){
+										api.hide();
+									}
+								});
+							
+								var searchActivated = false;
+								var newSearch = "";
+								var oldSearch = "";
+								
+								var sendRequest = function(event){
+									setTimeout(function(){
+										self.sfSearchKeyword = newSearch = $.trim($(event.target).val());
+
+										if (newSearch === self.campaignNameSearchText) {
+											newSearch = "";
+										};
+
+										if (oldSearch !== newSearch) {
+											self.populateCampaignList($contentHolder,1);
+											oldSearch = newSearch;
+											sendRequest(event);
+											newSearch = "";
+										}
+										else {
+											searchActivated = false;
+										}
+									}, self.reloadRate);  
+								};
+
+								var timeout = function(event){
+									if (!searchActivated) {
+										searchActivated = true;
+										sendRequest(event);
+									}
+								};
+								
+								$contentHolder.find('input[id="searchBoxField"]').val(self.campaignNameSearchText).on({
+									blur: function(e){
+										if ($.trim($(e.target).val()).length == 0) 
+											$(e.target).val(self.campaignNameSearchText);
+										timeout(e);
+									},
+									focus: function(e){
+										if ($.trim($(e.target).val()) == self.campaignNameSearchText) 
+											$(e.target).val("");
+										timeout(e);
+									},
+									keyup: timeout 
+								});
+
+							},
+							hide: function (e, api){
+								//TODO refresh campaign list in edit campaign page
+								self.excFields = new Array();
+								self.getBannerInCampaignList(1);
+								api.destroy();
+							}
+						}
+					});
+				},
 
 				itemDataCallback: function(base, keyword, page){
-					BannerServiceJS.getAllCampaignUsingThisBanner(self.selectedRule["ruleId"], campaignNameFilter, page, base.options.pageSize, {
+					BannerServiceJS.searchCampaignUsingThisBanner(self.selectedRule["ruleId"], keyword, page, base.options.pageSize, {
 						callback: function(data){
 							base.populateList(data, keyword);
 							base.addPaging(keyword, page, data.totalSize);
 						},
 						preHook: function(){ base.prepareList(); }
 					});
-				},
-				
-				itemNameCallback: function(base, item){
-					self.setRule(item.model);
 				},
 
 				itemOptionCallback: function(base, item){
@@ -500,10 +683,10 @@
 
 							jConfirm('Delete "' + item.name + '" in ' + self.selectedRule["ruleName"]  + '?', "Delete Keyword", function(result){
 								if(result){
-									RedirectServiceJS.deleteBannerInCampaign(self.selectedRule["ruleId"], item.name,{
+									CampaignServiceJS.deleteCampaignBanner(item["model"].campaignId, self.selectedRule["ruleId"],{
 										callback:function(code){
 											showActionResponse(code, "delete", item.name);
-											self.getKeywordInRuleList(1);
+											self.getBannerInCampaignList(1);
 											self.getBannerList(1);
 										},
 										preHook: function(){ 
