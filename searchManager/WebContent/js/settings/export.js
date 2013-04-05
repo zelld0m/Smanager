@@ -223,8 +223,8 @@
 							var rule = list[i];
 							var $table = $selectedTab.find("table#rule");
 							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(rule["ruleRefId"])).show();
-							var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
-							var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportDate"].toUTCString(): "";
+							var lastPublishedDate = $.isNotBlank(rule["formattedLastPublishedDateTime"])? rule["formattedLastPublishedDateTime"]: "";
+							var lastExportedDate = $.isNotBlank(rule["formattedLastExportDateTime"])? rule["formattedLastExportDateTime"]: "";
 							var showId = rule["ruleRefId"].toLowerCase() !== rule["description"].toLowerCase();
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", rule["ruleRefId"]);
