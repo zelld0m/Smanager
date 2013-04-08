@@ -349,6 +349,36 @@
 				});
 
 				break;
+			case "didyoumean":
+			case "did you mean": 
+				// TODO
+				var $table = $content.find("table#item");
+				var $rulePreview = $content.find("div#leftPreview");
+
+				SpellRuleServiceJS.getRuleById(base.options.ruleId, {
+					callback: function(data){
+						
+						var list1 = data["searchTerms"];
+						var str1 = "";
+						for(var i=0; i<list1.length; i++) {
+							str1 += "<span class='term' >" + list1[i] + "</span>";
+						}
+						
+						var list2 = data["suggestions"];
+						var str2 = "";
+						for(var i=0; i<list2.length; i++) {
+							str2 += "<span class='term' >" + list2[i] + "</span>";
+						}
+						
+						$rulePreview.find("td#itemSearchTerms").html(str1);
+						$rulePreview.find("td#itemSuggestions").html(str2);
+					},
+					postHook:function() {
+						$table.find("tr#preloader").hide();
+						base.options.templateEvent(base);
+					}
+				});
+				break;
 			}
 		};
 
@@ -628,6 +658,34 @@
 				template += '				</tbody>';
 				template += '			</table>';
 				template += '		</div>	';
+				template += '	</div>';
+				break;
+			// TODO 
+			case "did you mean":
+				template += '	<div class="w600 mar0 pad0">';
+				template += '		<table class="tblItems w100p marT5">';
+				template += '			<tbody>';
+				template += '				<tr>';
+				template += '					<th width="60px">Search Terms</th>';
+				template += '					<th width="84px">Suggestion</th>';
+				template += '				</tr>';
+				template += '			<tbody>';
+				template += '		</table>';
+				template += '	</div>';
+				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '		<table id="item" class="tblItems w100p">';
+				template += '			<tbody>';
+				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
+				template += '					<td width="60px" class="txtAC" id="itemSearchTerms"></td>';
+				template += '					<td width="84px" class="txtAL" id="itemSuggestions"></td>';
+				template += '				</tr>';
+				template += '				<tr id="preloader">';
+				template += '					<td colspan="2" class="txtAC">';
+				template += '						<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';
+				template += '					</td>';
+				template += '				</tr>';
+				template += '			</tbody>';
+				template += '		</table>';
 				template += '	</div>';
 				break;
 			}
