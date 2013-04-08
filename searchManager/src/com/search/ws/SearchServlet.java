@@ -49,6 +49,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.SearchResult;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.SearchLogger;
@@ -658,7 +659,8 @@ public class SearchServlet extends HttpServlet {
 			String  disableRedirectId = disableRedirect ? request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT): "";
 			boolean disableRelevancy  = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
 			boolean disableFacetSort  = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
-			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
+			final boolean disableDidYouMean = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_DID_YOU_MEAN) != null;
+			final List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
 			// redirect 
 			try {
@@ -1149,10 +1151,16 @@ public class SearchServlet extends HttpServlet {
 				getSpellingSuggestionsParams.addAll(spellcheckParams);
 				completionService.submit(new Callable<Integer>() {
 					@Override
-					public Integer call() throws Exception {
-					    solrHelper.setSpellRule(spellRuleDAO.getSpellRuleForSearchTerm(fStore, foKeyword));
-					    solrHelper.setMaxSuggestCount(spellRuleDAO.getMaxSuggest(fStore));
-                        solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+					public Integer call() throws Exception { // TODO here...
+						SpellRule spellRule = spellRuleDAO.getSpellRuleForSearchTerm(fStore, foKeyword);
+						if(spellRule != null) {
+							activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DID_YOU_MEAN, spellRule.getRuleId(), foKeyword, !disableDidYouMean)));
+					    	if(!disableDidYouMean) {
+								solrHelper.setSpellRule(spellRule);
+					    	}
+					    	solrHelper.setMaxSuggestCount(spellRuleDAO.getMaxSuggest(fStore));
+                        	solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+						}
 						return 0;
 					}
 				});
