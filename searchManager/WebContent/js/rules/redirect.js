@@ -481,6 +481,7 @@
 				$("div#searchHeaderText").rkMessageType({
 					id: 1,
 					rule: self.selectedRule,
+					locked: self.selectedRuleStatus["locked"] || !allowModify,
 					successTypeUpdateCallback: function(value){
 						self.selectedRule["replaceKeywordMessageType"] = value;
 					},

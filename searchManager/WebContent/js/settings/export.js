@@ -137,8 +137,9 @@
 						var a = [];
 						var arrSelectedKeys = Object.keys(self.getSelectedItems());
 						
+						
 						$.each(arrSelectedKeys, function(k){ 
-							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+							a.push($selectedTab.find("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
 						
 						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
