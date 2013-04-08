@@ -102,6 +102,7 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_DISABLE_REDIRECT = "disableRedirect";
 	public final static String SOLR_PARAM_DISABLE_RELEVANCY = "disableRelevancy";
 	public final static String SOLR_PARAM_DISABLE_FACET_SORT = "disableFacetSort";
+	public final static String SOLR_PARAM_DISABLE_DID_YOU_MEAN = "disableDidYouMean";
 	
 	public final static String SOLR_PARAM_FACET_NAME 			= "facet-name";
 	public final static String SOLR_PARAM_FACET_TEMPLATE 		= "facet-template";
@@ -121,7 +122,8 @@ public class SolrConstants {
 	public final static String TAG_VALUE_RULE_TYPE_REDIRECT = "Query Cleaning";
 	public final static String TAG_VALUE_RULE_TYPE_RELEVANCY = "Ranking Rule";
 	public final static String TAG_VALUE_RULE_TYPE_FACET_SORT = "Facet Sort";
-
+	public final static String TAG_VALUE_RULE_TYPE_DID_YOU_MEAN = "Did You Mean";
+	
 	// Enterprise Search overrides
 	public final static String REQUEST_ATTRIB_ELEVATE_OVERRIDE_MAP 		= "elevateOverrideMap";
 	public final static String REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP 		= "excludeOverrideMap";
