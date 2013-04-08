@@ -277,4 +277,22 @@ public class SpellRuleService {
             }
         }.getCsvStream(rules), "ID,SEARCH TERMS,SUGGESTIONS,STATUS,CREATED BY,CREATED DATE,LAST MODIFIED BY,LAST MODIFIED DATE", "DidYouMean", customFilename);
     }
+    
+    @RemoteMethod
+    public SpellRule getRuleById(String ruleId) {
+    	ServiceResponse<RecordSet<SpellRule>> response = new ServiceResponse<RecordSet<SpellRule>>();
+    	
+        try {
+            SpellRule spellRuleFilter = new SpellRule(ruleId, UtilityService.getStoreId());
+            RecordSet<SpellRule> spellRules = spellRuleDAO.getSpellRule(new SearchCriteria<SpellRule>(spellRuleFilter, 1, 1));
+            if(spellRules != null && spellRules.getTotalSize() > 0) {
+            	return spellRules.getList().get(0);
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during getRuleById()", e);
+            response.error("Failed to retrieve Did You Mean rules by id.");
+        }
+
+        return null;
+    }
 }
