@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
+import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -39,7 +40,10 @@ public class SpellRuleService {
 
     @Autowired
     private SpellRuleDAO spellRuleDAO;
-
+    
+    @Autowired
+    private DaoService daoService;
+    
     @RemoteMethod
     public ServiceResponse<RecordSet<SpellRule>> getSpellRule(String ruleId, String searchTerm, String suggestion,
             String status, int pageNumber, int itemsPerPage) {
@@ -66,6 +70,36 @@ public class SpellRuleService {
         return response;
     }
 
+    static List<String> modifiedStatusList;
+    
+    static {
+    	modifiedStatusList = new ArrayList<String>();
+    	modifiedStatusList.add("new");
+    	modifiedStatusList.add("modified");
+    	modifiedStatusList.add("deleted");
+    }
+    
+    @RemoteMethod
+    public ServiceResponse<SpellRules> getModifiedSpellRules(String ruleId, String searchTerm, String suggestion,
+            int pageNumber, int itemsPerPage) {
+        ServiceResponse<SpellRules> response = new ServiceResponse<SpellRules>();
+        try {
+            SpellRule rule = new SpellRule(ruleId, UtilityService.getStoreId());
+            if (StringUtils.isNotEmpty(searchTerm))
+                rule.setSearchTerms(new String[] { searchTerm });
+            if (StringUtils.isNotEmpty(suggestion))
+                rule.setSuggestions(new String[] { suggestion });
+            SpellRules spellRule = new SpellRules();
+            spellRule.setMaxSuggest(daoService.getMaxSuggest(UtilityService.getStoreId()));
+            spellRule.setSpellRule(spellRuleDAO.getSpellRuleXml(new SearchCriteria<SpellRule>(rule, pageNumber, itemsPerPage), modifiedStatusList).getList());
+            response.success(spellRule);
+        } catch (DaoException e) {
+            logger.error("Failed during getSpellRule()", e);
+            response.error("Failed to retrieve Did You Mean rules.");
+        }
+        return response;
+    }
+    
     @RemoteMethod
     public ServiceResponse<Void> addSpellRuleBatch(SpellRule[] spellRules) {
         int errorLevel = 0;
@@ -276,5 +310,23 @@ public class SpellRuleService {
                 };
             }
         }.getCsvStream(rules), "ID,SEARCH TERMS,SUGGESTIONS,STATUS,CREATED BY,CREATED DATE,LAST MODIFIED BY,LAST MODIFIED DATE", "DidYouMean", customFilename);
+    }
+    
+    @RemoteMethod
+    public SpellRule getRuleById(String ruleId) {
+    	ServiceResponse<RecordSet<SpellRule>> response = new ServiceResponse<RecordSet<SpellRule>>();
+    	
+        try {
+            SpellRule spellRuleFilter = new SpellRule(ruleId, UtilityService.getStoreId());
+            RecordSet<SpellRule> spellRules = spellRuleDAO.getSpellRule(new SearchCriteria<SpellRule>(spellRuleFilter, 1, 1));
+            if(spellRules != null && spellRules.getTotalSize() > 0) {
+            	return spellRules.getList().get(0);
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during getRuleById()", e);
+            response.error("Failed to retrieve Did You Mean rules by id.");
+        }
+
+        return null;
     }
 }

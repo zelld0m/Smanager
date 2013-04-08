@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,33 +30,47 @@ public class SpellRuleDAO {
     @Autowired
     private SpellIndex spellIndex;
 
+    private static Logger logger = Logger.getLogger(SpellRuleDAO.class);
+    
     public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException {
+    	List<String> statusList = new ArrayList<String>();
+    	String status = criteria.getModel().getStatus();
+    	if (StringUtils.isNotBlank(status)) {
+        	statusList.add(status);
+    	}
+    	return getSpellRule(criteria, statusList);
+    }
+
+    public SpellRules getSpellRules(String storeId) throws DaoException {
+    	return spellIndex.get(storeId);
+    }
+    
+    public RecordSet<SpellRuleXml> getSpellRuleXml(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
         try {
             SpellRule rule = criteria.getModel();
             SpellRules spellRules = spellIndex.get(rule.getStoreId());
 
-            List<SpellRule> retList = new ArrayList<SpellRule>();
+            List<SpellRuleXml> retList = new ArrayList<SpellRuleXml>();
             int total = 0;
 
             if (rule.getRuleId() != null) {
                 SpellRuleXml xml = spellRules.getSpellRule(rule.getRuleId());
-
                 if (xml != null) {
-                    retList.add(new SpellRule(xml));
+                    retList.add(xml);
                     total = 1;
                 }
             } else {
-                List<SpellRuleXml> searchCollection = spellRules.selectActiveRules();
+                retList = spellRules.selectActiveRules();
 
                 boolean hasSearchTerm = rule.getSearchTerms() != null
                         && StringUtils.isNotEmpty(rule.getSearchTerms()[0]);
                 boolean hasSuggestTerm = rule.getSuggestions() != null
                         && StringUtils.isNotEmpty(rule.getSuggestions()[0]);
-                boolean hasStatus = StringUtils.isNotEmpty(rule.getStatus());
+                boolean hasStatus = CollectionUtils.isNotEmpty(statusList);
 
                 if (hasSearchTerm) {
                     List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
-                    for (SpellRuleXml xml : searchCollection) {
+                    for (SpellRuleXml xml : retList) {
                         for (String kw : xml.getRuleKeyword().getKeyword()) {
                             if (kw.contains(rule.getSearchTerms()[0])) {
                                 rules.add(xml);
@@ -63,12 +79,12 @@ public class SpellRuleDAO {
                         }
                     }
 
-                    searchCollection = rules;
+                    retList = rules;
                 }
 
                 if (hasSuggestTerm) {
                     List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
-                    for (SpellRuleXml xml : searchCollection) {
+                    for (SpellRuleXml xml : retList) {
                         for (String kw : xml.getSuggestKeyword().getSuggest()) {
                             if (kw.contains(rule.getSuggestions()[0])) {
                                 rules.add(xml);
@@ -77,26 +93,44 @@ public class SpellRuleDAO {
                         }
                     }
 
-                    searchCollection = rules;
+                    retList = rules;
                 }
 
                 if (hasStatus) {
+                	// TODO: check if need to call String.intern()
                     List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
-                    for (SpellRuleXml xml : searchCollection) {
-                        if (xml.getStatus().equals(rule.getStatus())) {
+                    for (SpellRuleXml xml : retList) {
+                        if (xml.getStatus() != null && statusList.contains(xml.getStatus().intern())) {
                             rules.add(xml);
                         }
                     }
-
-                    searchCollection = rules;
+                    retList = rules;
                 }
-
-                retList = Lists.transform(searchCollection, SpellRuleXml.transformer);
                 total = retList.size();
             }
 
-            return new RecordSet<SpellRule>(retList.subList(Math.max(0, criteria.getStartRow() - 1),
+            int startRow = criteria.getStartRow() == null ? 0 : criteria.getStartRow();
+            int endRow = criteria.getEndRow() == null ? 0 : criteria.getEndRow();
+
+            logger.debug("start row: " + criteria.getStartRow());
+            logger.debug("end row: " + criteria.getEndRow());
+
+            if (startRow == 0 || endRow == 0) {
+            	return new RecordSet<SpellRuleXml>(retList, total);
+            }
+            return new RecordSet<SpellRuleXml>(retList.subList(Math.max(0, criteria.getStartRow() - 1),
                     Math.min(retList.size(), criteria.getEndRow())), total);
+            
+        } catch (Exception e) {
+            throw new DaoException("Failed during getSpellRuleXml()", e);
+        }
+    }
+    
+    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
+        try {
+        	RecordSet<SpellRuleXml> resultSet = getSpellRuleXml(criteria, statusList);
+            List<SpellRule> retList = Lists.transform(resultSet.getList(), SpellRuleXml.transformer);
+        	return new RecordSet<SpellRule>(retList, resultSet.getTotalSize());	
         } catch (Exception e) {
             throw new DaoException("Failed during getSpellRule()", e);
         }
@@ -221,7 +255,20 @@ public class SpellRuleDAO {
         try {
             return spellIndex.get(storeId).getMaxSuggest();
         } catch (Exception e) {
-            throw new DaoException("Faild during getMaxSuggest()", e);
+            throw new DaoException("Failed during getMaxSuggest()", e);
         }
     }
+    
+    public boolean save(String storeId) throws DaoException {
+        return spellIndex.save(storeId);
+    }
+    
+    public void rollback(String storeId) throws DaoException {
+        try {
+			spellIndex.rollback(storeId);
+		} catch (Exception e) {
+            throw new DaoException("Failed during rollback()", e);
+		}
+    }
+    
 }

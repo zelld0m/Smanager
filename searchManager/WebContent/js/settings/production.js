@@ -102,7 +102,7 @@
 						var arrSelectedKeys = Object.keys(getSelectedItems());
 						
 						$.each(arrSelectedKeys, function(k){ 
-							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+							a.push($(tabSelected).find("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
 
 						comment = comment.replace(/\n\r?/g, '<br/>');
@@ -184,38 +184,75 @@
 			DeploymentServiceJS.getDeployedRules(entityName, filterBy, {
 				callback:function(data){
 					var list = data.list;
-					
-						var HTML = $("div#tabContentTemplate").html();
+						
+						var HTML;
+						if (entityName === "didYouMean") {
+							HTML = $("div#tabContentTemplateLinguistics").html();
+						}
+						else {
+							HTML = $("div#tabContentTemplate").html();
+						}
 						$(tabSelected).html(HTML);
 						
 						if (data.totalSize>0){
 							
-							$(tabSelected).find("div#ruleCount").html(data.totalSize == 1 ? "1 Rule" : data.totalSize + " Rules");
-							// Populate table row
-							for(var i=0; i<data.totalSize ; i++){
-								$table = $(tabSelected).find("table#rule");
-								$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
-
-								var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
-								var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
-
-								$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
-								$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-								
-								if($.isBlank(filterBy))
-									$tr.find("td#select").html(i+1);
-								
-								//if(showId)
-								//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
-								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
-
-								$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
-								if($.isNotBlank(list[i]["approvalStatus"])) 
-									$tr.find("td#requestType").html(list[i]["updateStatus"]);
-
-								$tr.find("td#production > p#productionStatus").html(list[i]["publishedStatus"]);
-								$tr.find("td#production > p#productionDate").html(lastPublishedDate);
-								$tr.appendTo($table);
+							if (entityName === 'didYouMean'){
+								$(tabSelected).find("div#ruleCount").html(data.totalSize == 1 ? "1 Rule" : data.totalSize + " Rules");
+								// Populate table row
+								for(var i=0; i<data.totalSize ; i++){
+									$table = $(tabSelected).find("table#rule");
+									$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
+	
+									var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
+									var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
+	
+									$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
+									$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
+									
+									if($.isBlank(filterBy))
+										$tr.find("td#select").html(i+1);
+									
+									//if(showId)
+									//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+									$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
+	
+									$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
+									if($.isNotBlank(list[i]["approvalStatus"])) 
+										$tr.find("td#requestType").html(list[i]["updateStatus"]);
+	
+									$tr.find("td#production > p#productionStatus").html(list[i]["publishedStatus"]);
+									$tr.find("td#production > p#productionDate").html(lastPublishedDate);
+									$tr.appendTo($table);
+								}
+							}
+							else {
+								$(tabSelected).find("div#ruleCount").html(data.totalSize == 1 ? "1 Rule" : data.totalSize + " Rules");
+								// Populate table row
+								for(var i=0; i<data.totalSize ; i++){
+									$table = $(tabSelected).find("table#rule");
+									$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
+	
+									var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
+									var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
+	
+									$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
+									$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
+									
+									if($.isBlank(filterBy))
+										$tr.find("td#select").html(i+1);
+									
+									//if(showId)
+									//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+									$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
+	
+									$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
+									if($.isNotBlank(list[i]["approvalStatus"])) 
+										$tr.find("td#requestType").html(list[i]["updateStatus"]);
+	
+									$tr.find("td#production > p#productionStatus").html(list[i]["publishedStatus"]);
+									$tr.find("td#production > p#productionDate").html(lastPublishedDate);
+									$tr.appendTo($table);
+								}
 							}
 
 							// Alternate row style
@@ -265,6 +302,7 @@
 		
 		var prepareTabContent = function(){
 			if (!$("div.circlePreloader").is(":visible")) $('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo($(tabSelected));
+			$(tabSelected).find('div#requestDetails').hide();
 			$(tabSelected).find('table.tblItems').hide();
 			$(tabSelected).find('div.filter').hide();
 			$(tabSelected).find('div#actionBtn').hide();

@@ -40,6 +40,7 @@
 				<li><a href="#facetSortTab"><span>Facet Sort</span></a></li>
 				<li><a href="#queryCleaningTab"><span>Query Cleaning</span></a></li>
 				<li><a href="#rankingRuleTab"><span>Ranking Rule</span></a></li>
+		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
 			</ul>
 
 			<div class="minHeight400 marL3" id="elevateTab"></div>
@@ -48,6 +49,7 @@
 			<div class="minHeight400 marL3" id="facetSortTab"></div>
 			<div class="minHeight400 marL3" id="queryCleaningTab"></div>
 			<div class="minHeight400 marL3" id="rankingRuleTab"></div>
+			<div class="minHeight400 marL3" id="didYouMeanTab"></div>
 		</div>
 		<!--  end tabs -->
 
@@ -128,6 +130,62 @@
 			<div class="clearB"></div>
 		</div>
 
+		<div id="tabContentTemplateLinguistics" style="display: none">
+			<div class="filter padT5 fsize12 marT8">
+				<div class="floatR padT3" id="ruleCount"></div>
+			</div>
+			<div id = "requestDetails">
+				<label>Number of search terms:</label><label id="numSearchTerms"></label><p>	
+				<label>Requested by:</label> <label id="requestedBy"></label><p>	
+				<label>Requested date:</label> <label id="requestedDate"></label><p>	
+			</div> 		
+			<div class="clearB"></div>
+			<div>
+				<table class="tblItems w100p marT5">
+					<tr>
+						<th width="152px">Keyword Terms</th>
+						<th width="152px">Suggestions</th>
+						<th width="85px">Request Type</th>
+					</tr>
+				</table>
+			</div>
+			<div style="max-height: 360px; overflow-y: auto">
+				<table class="tblItems w100p" id="rule">
+					<tbody>
+						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
+							<td width="152px" id="searchTerms" class="term-list"></td>
+							<td width="152px" id="suggestions" class="term-list"></td>
+							<td width="85px" class="txtAC" id="type"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div id="actionBtn"
+				class="floatR marT10 fsize12 border pad10 w650 marB20"
+				style="background: #f3f3f3;">
+				<h3 style="border: none">Publishing Guidelines</h3>
+				<div class="fgray padL10 padR10 padB15 fsize11">Suspendisse
+					ultricies faucibus ultricies. Etiam sit amet nibh id lorem
+					malesuada congue at et lacus. Curabitur eget ligula quis libero
+					porta lacinia. Morbi accumsan suscipit diam, id placerat ante
+					euismod et. Pellentesque convallis lectus eget nibh condimentum nec
+					suscipit nisi euismod. Vivamus accumsan, dolor non porttitor
+					convallis, velit nulla vehicula sapien, quis mattis sapien urna ac
+					massa.</div>
+				<label class="floatL w100 padL13"><span class="fred">*</span>
+					Comment: </label> <label class="floatL w510"><textarea
+						id="approvalComment" rows="5" class="w510" style="height: 32px"></textarea>
+				</label>
+				<div class="clearB"></div>
+				<div align="right" class="padR15 marT10">
+					<a id="publishBtn" href="javascript:void(0);" class="buttons btnGray clearfix">
+						<div class="buttons fontBold">Publish</div>
+					</a> 
+				</div>
+			</div>
+			<div class="clearB"></div>
+		</div>
+		
 	</div>
 	<!-- End Main Content -->
 </div>

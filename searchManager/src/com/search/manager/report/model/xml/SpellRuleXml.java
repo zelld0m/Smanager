@@ -2,15 +2,19 @@ package com.search.manager.report.model.xml;
 
 import java.util.Arrays;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
 import com.google.common.base.Function;
 import com.search.manager.model.ModelBean;
 import com.search.manager.model.SpellRule;
-import com.sun.xml.internal.txw2.annotation.XmlAttribute;
 
 @XmlRootElement(name = "spellRule")
+@DataTransferObject(converter = BeanConverter.class)
 public class SpellRuleXml extends ModelBean {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +65,7 @@ public class SpellRuleXml extends ModelBean {
         this.suggestKeyword = suggestKeyword;
     }
 
-    @XmlAttribute("status")
+    @XmlAttribute(name = "status")
     public String getStatus() {
         return status;
     }

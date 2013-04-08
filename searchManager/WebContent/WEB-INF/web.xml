@@ -243,6 +243,10 @@
 				com.search.manager.report.model.xml.RuleKeywordXml,
 				com.search.manager.report.model.xml.RuleConditionXml,
 				com.search.manager.report.model.xml.RuleXml,
+				com.search.manager.report.model.xml.SpellRules,
+				com.search.manager.report.model.xml.SpellRuleXml,
+				com.search.manager.report.model.xml.RuleKeywordXml,
+				com.search.manager.report.model.xml.SuggestKeywordXml,
 				com.search.manager.schema.model.Field,
 				com.search.manager.schema.model.FieldType,
 				com.search.manager.schema.model.GenericType,
@@ -273,6 +277,7 @@
 				com.search.manager.exception.PublishLockException,
 				com.search.manager.response.ServiceResponse,
 				com.search.manager.response.ErrorMessage
+				
 			</param-value>
 		</init-param>
 	</servlet>

@@ -96,6 +96,10 @@ public class DeploymentService {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
+			if (RuleEntity.SPELL.equals(RuleEntity.find(ruleType))) {
+				// generate file
+				daoService.compressSpellRule(UtilityService.getStoreId());
+			}
 			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), new Date()));
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);

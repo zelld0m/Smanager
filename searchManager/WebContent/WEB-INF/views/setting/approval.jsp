@@ -36,6 +36,7 @@
 		        <li><a href="#facetSortTab"><span>Facet Sort</span></a></li>
 		        <li><a href="#queryCleaningTab"><span>Query Cleaning</span></a></li>
 		        <li><a href="#rankingRuleTab"><span>Ranking Rule</span></a></li>
+		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
 		    </ul>
 		   
 			<div class="minHeight400" id="elevateTab"></div>
@@ -44,6 +45,7 @@
 			<div class="minHeight400" id="facetSortTab"></div>
 			<div class="minHeight400" id="queryCleaningTab"></div>
 			<div class="minHeight400" id="rankingRuleTab"></div>
+			<div class="minHeight400" id="didYouMeanTab"></div>
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">
@@ -77,6 +79,57 @@
 								<p id="requestedBy"></p>
 								<p id="requestedDate" class="fsize11"></p>
 							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="background: #f3f3f3;">
+				<h3 style="border:none;">Approval Guidelines</h3>
+				<div class="fgray padL10 padR10 padB15 fsize11">
+					<p align="justify">
+					Before approving any rule, it is advisable to review each one. Click on <strong>Preview Content</strong> to view the rule details.<br/><br/>
+					If the rule is ready to be pushed to production, click on <strong>Approve</strong>. If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.
+					<p>
+				</div>
+				<label class="floatL padL13 w100"><span class="fred">*</span> Comment: </label>
+				<label class="floatL w480"><textarea id="approvalComment" class="w510" style="height:32px"></textarea>	</label>
+				<div class="clearB"></div>
+				<div align="right" class="padR15 marT10">
+					<a id="approveBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
+					</a>
+					<a id="rejectBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					</a>
+				</div>
+			</div>
+			<div class="clearB"></div>
+		</div>
+		
+		<div id="tabContentTemplateLinguistics" style="display: none">
+			<div class="">
+				<div id = "requestDetails">
+					<label>Number of search terms:</label><label id="numSearchTerms"></label><p>	
+					<label>Requested by:</label> <label id="requestedBy"></label><p>	
+					<label>Requested date:</label> <label id="requestedDate"></label><p>	
+				</div> 
+				<table class="tblItems w100p marT5">
+					<tbody>
+						<tr>
+							<th width="152px">Keyword Terms</th>
+							<th width="152px">Suggestions</th>
+							<th width="85px">Request Type</th>
+						</tr>
+					<tbody>
+				</table>
+			</div>
+			<div style="max-height:360px; overflow-y:auto">
+				<table id="rule" class="tblItems w100p">
+					<tbody>
+						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
+							<td width="152px" id="searchTerms" class="term-list"></td>
+							<td width="152px" id="suggestions" class="term-list"></td>
+							<td width="85px" class="txtAC" id="type"></td>
 						</tr>
 					</tbody>
 				</table>

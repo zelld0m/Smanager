@@ -33,9 +33,9 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.SpellRule;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
@@ -279,4 +279,18 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+	
+	/* Spell */
+	public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException;
+    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException;
+    public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm);
+    public int addSpellRule(SpellRule rule) throws DaoException;
+    public int updateSpellRule(SpellRule rule) throws DaoException;
+    public int deleteSpellRule(SpellRule rule) throws DaoException;
+    public boolean isDuplicateSearchTerm(String storeId, String searchTerm, String ruleId) throws DaoException;
+    public Integer getMaxSuggest(String storeId) throws DaoException;
+    public boolean compressSpellRule(String store) throws DaoException;
+    public boolean publishSpellRule(String store) throws DaoException;
+//    public boolean copyPublishedSpellRule(String store, String store) throws DaoException;
+	    	
 }
