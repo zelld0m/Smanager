@@ -42,7 +42,7 @@
 				var rules = self.manager.response.responseHeader["search_rules"];
 				var $ul = $(self.target).find("ul#itemListing");
 				$ul.find("li.items:not(#itemPattern)").remove();
-				$(self.target).find('#switcherText').text(rules.length + ' Active ' + (rules.length > 1 ? 'Rules': 'Rule'))
+				$(self.target).find('#switcherText').text(rules.length + ' Active ' + (rules.length > 1 ? 'Rules': 'Rule'));
 				
 				for(var i=0; i<rules.length; i++){
 					var rule = rules[i]["rule"];
@@ -50,7 +50,7 @@
 					
 					$li.removeClass("fgray");
 					if(rule["active"]!=="true") {
-						$li.addClass("fgray"); 
+						$li.addClass("fgray");
 					}
 					
 					var checkboxId = "";
@@ -62,6 +62,7 @@
 						case "demote": checkboxId="disableDemote"; break;
 						case "exclude": checkboxId="disableExclude"; break;
 						case "facet sort": checkboxId="disableFacetSort"; break;
+						case "did you mean": checkboxId="disableDidYouMean"; break;
 					}
 					
 					$li.find('.select > input[type="checkbox"]').prop({
