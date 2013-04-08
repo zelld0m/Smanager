@@ -93,8 +93,9 @@
 						var a = [];
 						var arrSelectedKeys = Object.keys(getSelectedItems());
 
+						
 						$.each(arrSelectedKeys, function(k){ 
-							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+							a.push($(tabSelected).find("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
 
 						switch($(evt.currentTarget).attr("id")){
