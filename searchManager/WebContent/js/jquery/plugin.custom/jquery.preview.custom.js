@@ -357,21 +357,19 @@
 
 				SpellRuleServiceJS.getRuleById(base.options.ruleId, {
 					callback: function(data){
+						var $tr = $content.find("tr#itemPattern").clone();
 						
 						var list1 = data["searchTerms"];
-						var str1 = "";
 						for(var i=0; i<list1.length; i++) {
-							str1 += "<span class='term' >" + list1[i] + "</span>";
+							$tr.find("td#itemSearchTerms").append("<span class='term' >" + list1[i] + "</span>");
 						}
 						
 						var list2 = data["suggestions"];
-						var str2 = "";
 						for(var i=0; i<list2.length; i++) {
-							str2 += "<span class='term' >" + list2[i] + "</span>";
+							$tr.find("td#itemSuggestions").append("<span class='term' >" + list2[i] + "</span>");
 						}
-						
-						$rulePreview.find("td#itemSearchTerms").html(str1);
-						$rulePreview.find("td#itemSuggestions").html(str2);
+						$tr.show();
+						$table.append($tr);
 					},
 					postHook:function() {
 						$table.find("tr#preloader").hide();
@@ -666,8 +664,8 @@
 				template += '		<table class="tblItems w100p marT5">';
 				template += '			<tbody>';
 				template += '				<tr>';
-				template += '					<th width="60px">Search Terms</th>';
-				template += '					<th width="84px">Suggestion</th>';
+				template += '					<th width="72px">Search Terms</th>';
+				template += '					<th width="72px">Suggestions</th>';
 				template += '				</tr>';
 				template += '			<tbody>';
 				template += '		</table>';
@@ -676,8 +674,8 @@
 				template += '		<table id="item" class="tblItems w100p">';
 				template += '			<tbody>';
 				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
-				template += '					<td width="60px" class="txtAC" id="itemSearchTerms"></td>';
-				template += '					<td width="84px" class="txtAL" id="itemSuggestions"></td>';
+				template += '					<td width="72px" class="txtAC term-list" id="itemSearchTerms"></td>';
+				template += '					<td width="72px" class="txtAL term-list" id="itemSuggestions"></td>';
 				template += '				</tr>';
 				template += '				<tr id="preloader">';
 				template += '					<td colspan="2" class="txtAC">';

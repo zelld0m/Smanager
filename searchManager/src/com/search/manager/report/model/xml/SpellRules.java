@@ -60,7 +60,7 @@ public class SpellRules extends RuleXml {
             for (SpellRuleXml xml : spellRule) {
                 ruleMap.put(xml.getRuleId(), xml);
 
-                if ("deleted".equalsIgnoreCase(xml.getStatus())) {
+                if (! "deleted".equalsIgnoreCase(xml.getStatus())) {
                     for (String term : xml.getRuleKeyword().getKeyword()) {
                         searchTermMap.put(term, xml);
                     }
