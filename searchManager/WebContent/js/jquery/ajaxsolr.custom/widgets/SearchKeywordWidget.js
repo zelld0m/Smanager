@@ -64,6 +64,7 @@
 					self.manager.store.remove('disableFacetSort');
 					self.manager.store.remove('disableRedirect');
 					self.manager.store.remove('disableRelevancy');
+					self.manager.store.remove('disableDidYouMean');
 					self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
 				}
 
