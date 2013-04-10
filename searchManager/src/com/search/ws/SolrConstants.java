@@ -73,6 +73,8 @@ public class SolrConstants {
 	public final static String TAG_FACET_LIMIT = "facet.limit";
 	public final static String TAG_FACET = "facet";
 	
+	public final static String TAG_DID_YOU_MEAN = "did_you_mean";
+	
 	public final static String ATTR_NUM_FOUND = "numFound";
 	public final static String ATTR_MAX_SCORE = "maxScore";
 	
