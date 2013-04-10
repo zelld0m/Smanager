@@ -37,6 +37,7 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
 import com.search.manager.model.constants.AuditTrailConstants;
@@ -157,6 +158,8 @@ public class AuditInterceptor {
 			case security:
 				logSecurity(jp, auditable, auditTrail);
 				break;
+			case spell:
+				logDidYouMean(jp, auditable, auditTrail);
 		}
 	}
 	
@@ -386,6 +389,68 @@ public class AuditInterceptor {
 		logAuditTrail(auditTrail);
 	}
 	
+	private void logDidYouMean(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		SpellRule e = null;
+		e = (SpellRule)jp.getArgs()[0];
+		auditTrail.setReferenceId(e.getRuleId());
+		auditTrail.setStoreId(e.getStoreId());
+				
+		StringBuilder message = null;
+		
+		switch (auditable.operation()) {
+			case add:
+				message = new StringBuilder("Adding");
+				if(StringUtils.isNotBlank(e.getRuleId())){
+					message.append(" ID [%1$s]");
+				}
+				
+				if(e.getSearchTerms() != null){
+					message.append(" Search Terms [%2$s]");
+				}
+				
+				if(e.getSuggestions() != null){
+					message.append(" Suggestions [%3$s]");
+				}
+				
+				if(StringUtils.isNotBlank(e.getComment())){
+					message.append(" Comment [%4$s]");
+				}
+				break;
+			case update:
+				message = new StringBuilder("Updating ID[%1$s]");
+				if(e.getSearchTerms() != null){
+					message.append(" Search Terms [%2$s]");
+				}
+				
+				if(e.getSuggestions() != null){
+					message.append(" Suggestions [%3$s]");
+				}
+				
+				if(StringUtils.isNotBlank(e.getComment())){
+					message.append(" Comment [%4$s]");
+				}
+				break;
+			case delete:
+				message = new StringBuilder("Removing ID[%1$s]");
+				break;
+			default:
+				message = new StringBuilder();
+				return;
+		}
+		
+		auditTrail.setDetails(
+				String.format(message.toString(),
+						auditTrail.getReferenceId(), 
+						e.getSearchTerms() != null ? StringUtils.join(e.getSearchTerms(), "|") : "", 
+						e.getSuggestions() != null ? StringUtils.join(e.getSuggestions(), "|") : "",
+						e.getComment()
+				)
+		);
+				
+		logAuditTrail(auditTrail);
+	}
+	
+
 	private void logFacetSort(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		
 		FacetSort e = null;

@@ -1,0 +1,165 @@
+#spell-table .term-list {
+  width: 335px;
+  text-align: left;
+}
+
+#spell-table tr:nth-child(odd) {
+	background-color: #F6F6F6;
+}
+
+#spell-table .term-list .term {
+	min-width: 10px;
+	min-height: 12px;
+    border: 1px solid #ccc;
+    padding: 2px 2px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    display: inline-block;
+    color: rgb(70, 70, 70);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    white-space: nowrap;
+}
+
+#spell-table tr[sr-editable=true] .term:hover {
+    border: 1px solid #0090D2;
+}
+
+#spell-table tr[sr-editable=true] .term[contenteditable] {
+    border: 1px solid #0090D2;
+    background-color: #ff5;
+}
+
+#spell-table tr[sr-editable=true] .term.error {
+    background: rgb(243, 208, 208);
+    padding: 2px 2px !important;
+}
+
+.actions .ui-tooltip-content {
+	padding: 3px;
+	margin: 0;
+	border: 1px solid #bbbbbb !important;
+    border-right-width: 0px !important;
+    border-top-width: 0px !important;
+	background-color: rgba(187, 187, 187, 0.3) !important;
+	border-bottom-left-radius: 3px;
+}
+
+.actions .ui-tooltip-content img {
+	width: 12px;
+	height: 12px;
+	margin: 2px;
+}
+
+#action-buttons .new-button { 
+    position: relative; 
+    overflow: visible; 
+    display: inline-block; 
+    padding: 0.5em 1em; 
+    border: 1px solid #c3c3c3; 
+    margin: 0;
+    text-decoration: none; 
+    text-shadow: 1px 1px 0 #000000; 
+    font:13px/normal sans-serif; 
+    color: #ffffff; 
+    white-space: nowrap; 
+    cursor: pointer; 
+    outline: none; 
+    background-color: #969696;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#aaaaaa), to(#969696));
+    background-image: -moz-linear-gradient(#aaaaaa, #969696);
+    background-image: -o-linear-gradient(#aaaaaa, #969696);
+    background-image: linear-gradient(#aaaaaa, #969696);
+    -webkit-background-clip: padding;
+    -moz-background-clip: padding;
+    -o-background-clip: padding-box; 
+    /*background-clip: padding-box;*/ /* commented out due to Opera 11.10 bug */
+    -webkit-border-radius: 0.2em; 
+    -moz-border-radius: 0.2em; 
+    border-radius: 0.2em; 
+    /* IE hacks */
+    zoom: 1; 
+    *display: inline; 
+}
+
+#action-buttons .new-button:hover,
+#action-buttons .new-button:focus,
+#action-buttons .new-button:active {
+    border-color: #3072b3;
+    border-bottom-color: #2a65a0;
+    text-decoration: none; 
+    text-shadow: -1px -1px 0 rgba(0,0,0,0.3); 
+    color: #fff; 
+    background-color: #3072b3;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#599bdc), to(#3072b3));
+    background-image: -moz-linear-gradient(#599bdc, #3072b3);
+    background-image: -o-linear-gradient(#599bdc, #3072b3);
+    background-image: linear-gradient(#599bdc, #3072b3);
+}
+
+#action-buttons .new-button:active,
+#action-buttons .new-button.active {
+    border-color: #2a65a0;
+    border-bottom-color: #3884CF;
+    color: #fff; 
+    background-color: #3072b3;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#3072b3), to(#599bdc));
+    background-image: -moz-linear-gradient(#3072b3, #599bdc);
+    background-image: -o-linear-gradient(#3072b3, #599bdc);
+    background-image: linear-gradient(#3072b3, #599bdc);
+}
+
+/* overrides extra padding on button elements in Firefox */
+#action-buttons .new-button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+
+#action-buttons .button-group {
+    display: inline-block;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    /* IE hacks */
+    zoom: 1; 
+    *display: inline; 
+}
+
+#action-buttons .new-button + .new-button {
+    margin-left: -5px;
+}
+
+
+
+#action-buttons .button-group > .new-button:not(:first-child):not(:last-child) { 
+    -webkit-border-radius: 0; 
+    -moz-border-radius: 0; 
+    border-radius: 0; 
+}
+
+#action-buttons .button-group > .new-button:first-child:last-child { 
+    -webkit-border-radius: 0.2em; 
+    -moz-border-radius: 0.2em; 
+    border-radius: 0.2em; 
+}
+
+#action-buttons .button-group > .new-button:first-child { 
+    margin-left: 0; 
+    -webkit-border-top-right-radius: 0; 
+    -webkit-border-bottom-right-radius: 0; 
+    -moz-border-radius-topright: 0; 
+    -moz-border-radius-bottomright: 0; 
+    border-top-right-radius: 0; 
+    border-bottom-right-radius: 0; 
+}
+
+#action-buttons .button-group > .new-button:last-child { 
+    -webkit-border-top-left-radius: 0; 
+    -webkit-border-bottom-left-radius: 0; 
+    -moz-border-radius-topleft: 0; 
+    -moz-border-radius-bottomleft: 0; 
+    border-top-left-radius: 0; 
+    border-bottom-left-radius: 0; 
+}

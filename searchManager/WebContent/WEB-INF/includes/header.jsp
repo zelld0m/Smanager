@@ -82,6 +82,8 @@
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
 	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
+	
+	var GLOBAL_storeFacetTemplateNameField = GLOBAL_PCMGroup ? "FacetTemplateName" : "TemplateName";
   </script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
@@ -120,6 +122,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/KeywordTrendsServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ReportGeneratorServiceJS.js"/>"></script>  
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/SpellRuleServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-array-functions.js" />" ></script>
@@ -143,6 +146,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.slidecheckbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.importas.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.rk-message-type-1.0.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.editable.custom.js" />" ></script>
   
   <script type="text/javascript"  src="<spring:url value="/js/jquery/searchabledropdown-1.0.8/jquery.searchabledropdown-1.0.8-modified.src.js" />"></script>  
  

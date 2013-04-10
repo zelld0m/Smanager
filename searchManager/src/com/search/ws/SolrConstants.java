@@ -85,7 +85,14 @@ public class SolrConstants {
 	public final static String ATTR_NAME_VALUE_PARAMS = "params";
 	public final static String ATTR_NAME_VALUE_DEBUG = "debug";
 	public final static String ATTR_NAME_VALUE_EXPLAIN = "explain";
+
 	public final static String ATTR_NAME_VALUE_SPELLCHECK = "spellcheck";
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION = "suggestion";  
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS = "suggestions";  
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET = "startOffset";  
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET = "endOffset";
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_COLLATION = "collation";
+    public static final String ATTR_NAME_VALUE_SPELLCHECK_NUMFOUND = "numFound";
 	
 	// active rules
 	// params submitted by simulator
@@ -95,6 +102,7 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_DISABLE_REDIRECT = "disableRedirect";
 	public final static String SOLR_PARAM_DISABLE_RELEVANCY = "disableRelevancy";
 	public final static String SOLR_PARAM_DISABLE_FACET_SORT = "disableFacetSort";
+	public final static String SOLR_PARAM_DISABLE_DID_YOU_MEAN = "disableDidYouMean";
 	
 	public final static String SOLR_PARAM_FACET_NAME 			= "facet-name";
 	public final static String SOLR_PARAM_FACET_TEMPLATE 		= "facet-template";
@@ -114,12 +122,12 @@ public class SolrConstants {
 	public final static String TAG_VALUE_RULE_TYPE_REDIRECT = "Query Cleaning";
 	public final static String TAG_VALUE_RULE_TYPE_RELEVANCY = "Ranking Rule";
 	public final static String TAG_VALUE_RULE_TYPE_FACET_SORT = "Facet Sort";
-
+	public final static String TAG_VALUE_RULE_TYPE_DID_YOU_MEAN = "Did You Mean";
+	
 	// Enterprise Search overrides
 	public final static String REQUEST_ATTRIB_ELEVATE_OVERRIDE_MAP 		= "elevateOverrideMap";
 	public final static String REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP 		= "excludeOverrideMap";
 	public final static String REQUEST_ATTRIB_DEMOTE_OVERRIDE_MAP 		= "demoteOverrideMap";
 	public final static String REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP 	= "redirectOverrideMap";	
-	public final static String REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP 	= "relevancyOverrideMap";	
-	
+	public final static String REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP 	= "relevancyOverrideMap";
 }

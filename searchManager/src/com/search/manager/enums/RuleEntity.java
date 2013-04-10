@@ -21,7 +21,8 @@ public enum RuleEntity {
 	RANKING_RULE(8, "Ranking Rule"),
 	RULE_STATUS(9, "Rule Status"),
 	DEMOTE(10, "Demote"),
-	FACET_SORT(11, "Facet Sort");
+	FACET_SORT(11, "Facet Sort"),
+    SPELL(12, "Did You Mean");
 
 	private final int code;
 	private final List<String> values;

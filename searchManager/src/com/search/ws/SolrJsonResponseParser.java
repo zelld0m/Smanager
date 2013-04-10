@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -655,20 +656,104 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 	}
 
-	private void addSpellcheckEntries() throws SearchException {
-		if (spellcheckObject != null) {
-			initialJson.element(SolrConstants.TAG_SPELLCHECK, spellcheckObject);
-		}
-		if (spellcheckParams != null) {
-			JSONArray names = spellcheckParams.names();
-			for (int i = 0; i < names.size(); i++) {
-				String name = String.valueOf(names.get(i));
-				if (name.startsWith(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK)) {
-					responseHeaderParams.element(name, spellcheckParams.get(name));
-				}
-			}
-		}
-	}
+    private void addSpellcheckEntries() throws SearchException {
+        int count = 0;
+
+        if (spellRule != null) {
+            List<String> addedKeywords = new ArrayList<String>();
+            LinkedHashMap<String, Object> suggestions = new LinkedHashMap<String, Object>();
+            Map<String, Object> orig = new HashMap<String, Object>();
+
+            suggestions.put(originalKeyword, orig);
+
+            orig.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET, 0);
+            orig.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, originalKeyword.length());
+            orig.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION,
+                    new ArrayList<String>(Arrays.asList(spellRule.getSuggestions())));
+            addedKeywords.addAll(Arrays.asList(spellRule.getSuggestions()));
+            count = spellRule.getSuggestions().length;
+
+            JSONObject suggestionsJson = spellcheckObject != null ? spellcheckObject
+                    .getJSONObject(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS) : null;
+
+            if (count < maxSuggestCount && suggestionsJson != null) {
+                if (suggestionsJson.has(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION)) {
+                    String collation = suggestionsJson.getString(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION);
+
+                    if (!addedKeywords.contains(collation)) {
+                        ((List<String>) orig.get(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION)).add(collation);
+                        count++;
+                    }
+                }
+
+                JSONArray names = suggestionsJson.names();
+
+                for (int i = 0; i < names.size() && count < maxSuggestCount; i++) {
+                    if (SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(names.getString(i))) {
+                        continue;
+                    }
+
+                    JSONObject obj = suggestionsJson.getJSONObject(names.getString(i));
+                    JSONArray sugs = obj.getJSONArray(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+
+                    if (!suggestions.containsKey(names.getString(i))) {
+                        Map<String, Object> val = new HashMap<String, Object>();
+                        suggestions.put(names.getString(i), val);
+                        val.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION, new ArrayList<String>());
+
+                        val.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET,
+                                obj.getInt(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET));
+                        val.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET,
+                                obj.getInt(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET));
+                    }
+
+                    Map<String, Object> val = (Map<String, Object>) suggestions.get(names.getString(i));
+                    List<String> sug = (List<String>) val.get(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+
+                    for (int j = 0; j < sugs.size(); j++) {
+                        String kw = sugs.getString(j);
+
+                        if (!addedKeywords.contains(kw)) {
+                            sug.add(kw);
+                            addedKeywords.add(kw);
+                            count++;
+                        }
+
+                        if (count >= maxSuggestCount) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (String k : suggestions.keySet()) {
+                Map<String, Object> val = (Map<String, Object>) suggestions.get(k);
+                List<String> sug = (List<String>) val.get(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+
+                val.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_NUMFOUND, sug.size());
+            }
+
+            JSONObject obj = new JSONObject();
+
+            obj.element(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS, suggestions);
+            initialJson.element(SolrConstants.TAG_SPELLCHECK, obj);
+        }
+
+        if (count == 0) {
+            if (spellcheckObject != null) {
+                initialJson.element(SolrConstants.TAG_SPELLCHECK, spellcheckObject);
+            }
+        }
+        if (spellcheckParams != null) {
+            JSONArray names = spellcheckParams.names();
+            for (int i = 0; i < names.size(); i++) {
+                String name = String.valueOf(names.get(i));
+                if (name.startsWith(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK)) {
+                    responseHeaderParams.element(name, spellcheckParams.get(name));
+                }
+            }
+        }
+    }
 	
 	@SuppressWarnings("unchecked")
 	private void applyFacetSort() {

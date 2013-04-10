@@ -604,8 +604,10 @@
 				if(arrImportIds.length>0){
 					confirmationMessage += "Rules to be imported:\n";
 				}
+
+				var $selectedTab = $("#"+self.tabSelected);
 				for(var i=0; i < arrImportIds.length; i++){
-					$row = $("tr#ruleItem" + $.formatAsId(arrImportIds[i]));
+					$row = $selectedTab.find("tr#ruleItem" + $.formatAsId(arrImportIds[i]));
 					rName = $row.find("#ruleName").text();
 					iType = $row.find("#importTypeList option:selected:eq(0)").text();
 					iAs = $row.find("#newName").val();

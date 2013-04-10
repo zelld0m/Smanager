@@ -9,7 +9,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
 import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
 
 import com.search.manager.model.KeywordStats;
 import com.search.manager.model.TopKeyword;
@@ -172,21 +171,6 @@ public class StatisticsUtil {
         } finally {
             IOUtils.closeQuietly(reader);
         }
-    }
-
-    public static InputStream getCustomRangeReportStream(List<TopKeyword> topKeywords,
-            CsvTransformer<TopKeyword> transformer) {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        CSVWriter writer = new CSVWriter(new OutputStreamWriter(os));
-
-        for (TopKeyword kw : topKeywords) {
-            writer.writeNext(transformer.toStringArray(kw));
-        }
-
-        // close writer before passing to downloader
-        IOUtils.closeQuietly(writer);
-
-        return new ByteArrayInputStream(os.toByteArray());
     }
     
     public static List<TopKeyword> getTopKeywordsInRange(Date from, Date to, String storeName) {

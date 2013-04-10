@@ -412,12 +412,15 @@
 							}
 
 							if ($.isNotBlank(data["changeKeyword"])){
-								$content.find("div#ruleChange > div#hasChangeKeyword").show();
-								$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
-							}else{
-								$content.find("div#ruleChange > #noChangeKeyword").show();
+								$content.find("div#ruleChange").find("#replaceKeywordVal").html(data["changeKeyword"]);
 							}
 
+							$content.find("div#ruleChange").find("#searchHeaderTextOpt").text(
+									data["replaceKeywordMessageType"]["intValue"] == 3 ? 
+											data["replaceKeywordMessageCustomText"] :
+												data["replaceKeywordMessageType"]["description"]
+							);
+							
 							var includeKeywordText = "Include keyword in search: <b>NO</b>";
 							if($.isNotBlank(data["includeKeyword"])){
 								includeKeywordText = "Include keyword in search: ";
@@ -614,11 +617,14 @@
 				}
 
 				if ($.isNotBlank(xml["replacementKeyword"])){
-					$content.find("div#ruleChange > div#hasChangeKeyword").show();
-					$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(xml["replacementKeyword"]);
-				}else{
-					$content.find("div#ruleChange > #noChangeKeyword").show();
+					$content.find("div#ruleChange").find("#replaceKeywordVal").html(xml["replacementKeyword"]);
 				}
+
+				$content.find("div#ruleChange").find("#searchHeaderTextOpt").text(
+						xml["replaceKeywordMessageType"]["intValue"] == 3 ? 
+								xml["replaceKeywordMessageCustomText"] :
+									xml["replaceKeywordMessageType"]["description"]
+				);
 
 				var includeKeywordText = "Include keyword in search: <b>NO</b>";
 				if($.isNotBlank(xml["includeKeyword"])){
@@ -931,15 +937,15 @@
 				template += '		<li><a href="#ruleChange"><span>Replace KW</span></a></li>';
 				template += '	</ul>';
 				template += '	<div class="clearB"></div>';
-
-				template += '	<div id="ruleChange" class="ruleChange marB10">';
-				template += '		<div id="noChangeKeyword" class="txtAC mar20" style="display:none">';
-				template += '			<span class="fsize11">No replacement keyword associated to this rule</span>';
+				
+				template += '	<div id="ruleChange" class="ruleChange marB10 w602">';
+				template += '		<div id="replaceKeyword" class="txtAL border bgf6f6f6 pad5 mar10">';
+				template += '			<span>Replacement Keyword:</span>';
+				template += '			<span id="replaceKeywordVal" class="fbold">None</span>';
 				template += '		</div>';
-				template += '		<div id="hasChangeKeyword" style="display:none">';
-				template += '			<div class="fsize12 txtAL mar20">';
-				template += '				Replace Keyword: <span id="changeKeyword" class="fbold"></span>';
-				template += '			</div>';
+				template += '		<div id="searchHeaderText" class="txtAL border bgf6f6f6 pad5 mar10">';
+				template += '			<span>Search Header Text:</span>';
+				template += '			<span id="searchHeaderTextOpt" class="fbold">None</span>';
 				template += '		</div>';
 				template += '		<div class="clearB"></div>';
 				template += '	</div>';
@@ -1122,9 +1128,13 @@
 					modal: true
 				},
 				style: {
-					width: 'auto'
+					width: 'auto',
+					position: 'fixed'
 				},
 				events: { 
+					render: function(event, api) {
+						$(this).css('position', 'fixed');
+					},
 					show: function(event, api){
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
