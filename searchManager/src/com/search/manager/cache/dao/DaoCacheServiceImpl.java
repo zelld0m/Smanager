@@ -2,7 +2,6 @@ package com.search.manager.cache.dao;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -12,6 +11,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -280,7 +280,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		UserDetailsImpl user = new UserDetailsImpl();
 		user.setUsername(userDetails.getUsername());
 		user.setFullName(userDetails.getFullName());
-		user.setLoggedInTime(new Date());
+		user.setLoggedInTime(DateTime.now());
 		if (user != null && StringUtils.isNotEmpty(user.getUsername())) {
 			return userCacheDao.addUser(user);
 		}

@@ -1,15 +1,14 @@
 package com.search.manager.authentication.dao;
 
 import java.util.Collection;
-import java.util.Date;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.search.manager.model.User;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class UserDetailsImpl implements UserDetails {
@@ -32,7 +31,7 @@ public class UserDetailsImpl implements UserDetails {
 
 	private boolean enabled;
 
-	private Date loggedInTime;
+	private DateTime loggedInTime;
 	
 	private String currentPage;	
 	
@@ -134,7 +133,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.enabled = enabled;
 	}		
 	
-	public void setLoggedInTime(Date loggedintime) {
+	public void setLoggedInTime(DateTime loggedintime) {
 		this.loggedInTime = loggedintime;
 	}
 
@@ -142,7 +141,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.currentPage = currentPage;
 	}
 
-	public Date getLoggedIntime() {
+	public DateTime getLoggedIntime() {
 		return loggedInTime;
 	}
 
@@ -150,10 +149,6 @@ public class UserDetailsImpl implements UserDetails {
 		return currentPage;
 	}
 	
-	public String getElapsedTime(){
-		return DateAndTimeUtils.getElapsedTime(getLoggedIntime(), new Date());
-	}
-
 	public String getStoreId() {
 		return storeId;
 	}

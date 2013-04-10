@@ -129,7 +129,7 @@
 						events: { 
 							show: function(event, api){
 								var contentHolder = $("div", api.elements.content);
-								contentHolder.html($("#addUserInfoTemplate").html());
+								contentHolder.empty().append($("#addUserInfoTemplate").html());
 
 								for (var i=0; i < roleList.list.length; i++){
 									contentHolder.find("#adrole").append($("<option>", { value : roleList.list[i]["id"]}).text(roleList.list[i]["rolename"]));
@@ -231,7 +231,7 @@
 						events: { 
 							show: function(event, api){
 								var contentHolder = $("div", api.elements.content);
-								contentHolder.empty().append($("#userInfoTemplate"));
+								contentHolder.empty().append($("#userInfoTemplate").html());
 								contentHolder.find(".shuser").text(data.username);
 								contentHolder.find(".shfname").text(data.fullName);
 								contentHolder.find(".shlacss").text($.isBlank(data["formattedLastAccessDateTime"])? '': data["formattedLastAccessDateTime"]);
