@@ -369,7 +369,7 @@ public class CampaignDAO {
 					Campaign campaign = new Campaign(rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
 							rs.getString(DAOConstants.COLUMN_CAMPAIGN_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)));
-					Banner banner = new Banner(rs.getString(DAOConstants.COLUMN_BANNER_ID),
+					Banner banner = new Banner("",
 							rs.getString(DAOConstants.COLUMN_BANNER_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
