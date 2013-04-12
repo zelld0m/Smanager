@@ -294,13 +294,13 @@
 
 		initButtons: function() {
 			var self = this;
-			
+
 			// action buttons
 			self.$addButton = $("#add-button");
 			self.$editButton = $("#edit-button");
 			self.$saveButton = $("#save-button");
 			self.$cancelButton = $("#cancel-button");
-			
+
 			if (!self.ruleStatus.locked) {
 				self.$addButton.on({
 					click : function(e) {
@@ -476,6 +476,16 @@
 					new SpellRule().setEditable(true);
 				}
 			});
+
+			SpellRuleServiceJS.getMaxSuggest(function(response) {
+				if (response.status == 0) {
+					self.$maxSuggest.val(response.data);
+					self.maxSuggest = response.data;
+					self.handlePageLink(1);
+				} else {
+					jAlert(response.errorMessage.message);
+				}
+			});
 		},
 		
 		initFilters: function() {
@@ -509,6 +519,8 @@
 		init : function() {
 			var self = this;
 
+			self.$maxSuggest = $("#max-suggest");
+
 			$("#ruleStatus").rulestatus({
 				moduleName: self.RULE_TYPE,
 				ruleType: self.RULE_TYPE,
@@ -516,7 +528,12 @@
 				enableVersion: true,
 				authorizeRuleBackup: true,
 				authorizeSubmitForApproval: true,
+				deleteVersionsPhysically: true,
+				enableCompare: false,
 				postRestoreCallback: function(base, rule){
+					jAlert("Did you mean rules restored.", "Version Restored", function() {
+						location.reload();
+					});
 				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
 					self.selectedRuleStatus = ruleStatus;
@@ -530,26 +547,10 @@
 					$("#preloader").hide();
 					self.ruleStatus = ruleStatus;
 					self.initButtons();
+					self.initTable();
+					self.initFilters();
 				}
 			});
-
-			self.$maxSuggest = $("#max-suggest");
-			SpellRuleServiceJS.getMaxSuggest(function(response) {
-				if (response.status == 0) {
-					self.$maxSuggest.val(response.data);
-					self.maxSuggest = response.data;
-				} else {
-					jAlert(response.errorMessage.message);
-				}
-			});
-
-			self.initTable();
-			self.initFilters();
-
-			// rules
-			self.rules = {};
-
-			self.handlePageLink(1);
 		},
 
 		handleSearchResponse : function(response, page) {

@@ -20,7 +20,8 @@ import com.search.manager.model.RuleStatus;
 	RankingRuleXml.class,
 	RuleStatus.class,
 	RuleEntity.class,
-	Product.class
+	Product.class,
+	SpellRules.class
 })
 @DataTransferObject(converter = BeanConverter.class)
 public class RuleXml extends BaseEntityXml{

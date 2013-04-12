@@ -32,18 +32,6 @@ public class SpellIndex {
     private Map<String, String> xmlPath = new HashMap<String, String>();
     private String dirPath;
 
-    public SpellRules get(String store) {
-        if (rules.get(store) == null) {
-            try {
-                load(store);
-            } catch (Exception e) {
-                logger.error("Unable to load spell rules for " + store, e);
-            }
-        }
-
-        return rules.get(store);
-    }
-
     public void init() throws Exception {
         dirPath = new StringBuilder()
                 .append(BASE_RULE_DIR)
@@ -78,6 +66,39 @@ public class SpellIndex {
         rules.remove(store);
     }
 
+    public void reload(String store) throws Exception {
+        unload(store);
+        load(store);
+    }
+
+    public SpellRules get(String store) {
+        if (rules.get(store) == null) {
+            try {
+                load(store);
+            } catch (Exception e) {
+                logger.error("Unable to load spell rules for " + store, e);
+            }
+        }
+
+        return rules.get(store);
+    }
+
+    public boolean save(String storeId) {
+        return write(rules.get(storeId), xmlPath.get(storeId));
+    }
+
+    public void destroy() throws Exception {
+        logger.info("Destroying spell index.");
+        for (String store : xmlPath.keySet()) {
+            String filepath = xmlPath.get(store);
+            SpellRules rules = this.rules.get(store);
+
+            logger.info("Writing spell rules for {} to file.", store);
+            write(rules, filepath);
+        }
+        logger.info("Spell index destroyed.");
+    }
+
     private SpellRules read(String filepath) {
         FileReader reader = null;
         SpellRules rules = null;
@@ -100,10 +121,6 @@ public class SpellIndex {
         return rules;
     }
 
-    public boolean save(String storeId) {
-        return write(rules.get(storeId), xmlPath.get(storeId));
-    }
-
     private boolean write(SpellRules rules, String filepath) {
         boolean success = false;
         FileWriter writer = null;
@@ -124,22 +141,5 @@ public class SpellIndex {
         }
 
         return success;
-    }
-
-    public void destroy() throws Exception {
-        logger.info("Destroying spell index.");
-        for (String store : xmlPath.keySet()) {
-            String filepath = xmlPath.get(store);
-            SpellRules rules = this.rules.get(store);
-
-            logger.info("Writing spell rules for {} to file.", store);
-            write(rules, filepath);
-        }
-        logger.info("Spell index destroyed.");
-    }
-
-    public void rollback(String store) throws Exception {
-        unload(store);
-        load(store);
     }
 }

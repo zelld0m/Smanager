@@ -40,6 +40,7 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRules;
 
 public interface DaoService extends SearchDaoService {
 	
@@ -265,6 +266,7 @@ public interface DaoService extends SearchDaoService {
 	/* Version */
 	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
 	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version);
+    public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version, boolean physical);
 	public boolean restoreRuleVersion(RuleXml xml);	
 	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId);
 	public int getRuleVersionsCount(String store, String ruleType, String ruleId);
@@ -279,4 +281,16 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+
+	/* Did you mean */
+    public SpellRules getSpellRules(String store);
+    public boolean replaceSpellRules(SpellRules rules) throws DaoException;
+    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> searchCriteria) throws DaoException;
+    public void saveSpellRules(String store) throws DaoException;
+    public void reloadSpellRules(String store) throws DaoException;
+    public Integer getMaxSuggest(String storeId) throws DaoException;
+    public int addSpellRule(SpellRule rule) throws DaoException;
+    public int updateSpellRule(SpellRule rule) throws DaoException;
+    public void deleteSpellRule(SpellRule rule) throws DaoException;
+    public boolean isDuplicateSearchTerm(String store, String searchTerm, String ruleId) throws DaoException;
 }

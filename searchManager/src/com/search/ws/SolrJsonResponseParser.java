@@ -690,10 +690,11 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 
             if (count < maxSuggestCount && suggestionsJson != null) {
                 if (suggestionsJson.has(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION)) {
-                    String collation = suggestionsJson.getString(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION);
+                    String collation = StringUtils.trim(suggestionsJson.getString(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION));
 
-                    if (!addedKeywords.contains(collation)) {
+                    if (!addedKeywords.contains(collation.toLowerCase())) {
                         ((List<String>) orig.get(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION)).add(collation);
+                        addedKeywords.add(collation.toLowerCase());
                         count++;
                     }
                 }
@@ -701,33 +702,36 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 JSONArray names = suggestionsJson.names();
 
                 for (int i = 0; i < names.size() && count < maxSuggestCount; i++) {
-                    if (SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(names.getString(i))) {
+                    String searchTerm = names.getString(i);
+
+                    if (SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(searchTerm)) {
                         continue;
                     }
 
-                    JSONObject obj = suggestionsJson.getJSONObject(names.getString(i));
+                    JSONObject obj = suggestionsJson.getJSONObject(searchTerm);
                     JSONArray sugs = obj.getJSONArray(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                    Map<String, Object> val = (Map<String, Object>) suggestions.get(searchTerm);
+                    List<String> sug = val != null ? (List<String>) val.get(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION) : null;
 
-                    if (!suggestions.containsKey(names.getString(i))) {
-                        Map<String, Object> val = new HashMap<String, Object>();
-                        suggestions.put(names.getString(i), val);
-                        val.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION, new ArrayList<String>());
+                    if (val == null) {
+                        val = new HashMap<String, Object>();
+                        sug = new ArrayList<String>();
 
+                        val.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION, sug);
                         val.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET,
                                 obj.getInt(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET));
                         val.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET,
                                 obj.getInt(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET));
+
+                        suggestions.put(searchTerm, val);
                     }
 
-                    Map<String, Object> val = (Map<String, Object>) suggestions.get(names.getString(i));
-                    List<String> sug = (List<String>) val.get(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
-
                     for (int j = 0; j < sugs.size(); j++) {
-                        String kw = sugs.getString(j);
+                        String kw = StringUtils.trim(sugs.getString(j));
 
-                        if (!addedKeywords.contains(kw)) {
+                        if (!addedKeywords.contains(kw.toLowerCase())) {
                             sug.add(kw);
-                            addedKeywords.add(kw);
+                            addedKeywords.add(kw.toLowerCase());
                             count++;
                         }
 
