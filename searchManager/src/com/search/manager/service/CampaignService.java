@@ -26,6 +26,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
+import com.search.manager.model.SearchCriteria.MatchType;
 
 @Service(value = "campaignService")
 @RemoteProxy(
@@ -207,6 +208,23 @@ public class CampaignService {
 			logger.error("Failed during getBannersInCampaign()",e);
 		}
 		return null;	
+	}
+	
+	@RemoteMethod
+	public RecordSet<CampaignBanner> searchBannersInThisCampaign(String campaignId, String bannerNameFilter, int page, int pageSize){
+		Store store = new Store(UtilityService.getStoreId());
+		Campaign campaign = new Campaign(campaignId, store);
+		Banner banner = new Banner(store, bannerNameFilter);
+		try{
+			CampaignBanner campaignBanner = new CampaignBanner(campaign, banner, store);
+			SearchCriteria<CampaignBanner> criteria = new SearchCriteria<CampaignBanner>(campaignBanner, page, pageSize);
+			return daoService.searchCampaignBanner(criteria, MatchType.MATCH_ID, MatchType.LIKE_NAME);
+		}catch (DaoException e) {
+			logger.error("Failed during searchCampaignUsingThisBanner()",e);
+		} catch (Exception e) {
+			logger.error("Failed during searchCampaignUsingThisBanner()",e);
+		}
+		return null;
 	}
 	
 	@RemoteMethod

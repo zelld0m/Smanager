@@ -503,7 +503,7 @@
 			CampaignServiceJS.getRules(currVal, page, self.rulePageSize, {
 				callback:function(data){
 					var list = data.list;
-					listSize = data.totalSize;
+					var listSize = data.totalSize;
 
 					content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
 
@@ -534,6 +534,7 @@
 						}	
 					}
 
+					//TODO
 					//content.find('span#sfCount').html(schemaFieldsTotal + " Record" + (schemaFieldsTotal > 1 ? "s":""));
 					//var selectedCount = content.find('tr.fieldSelectedItem:not(#fieldSelectedPattern)').length;
 					//content.find('span#sfSelectedCount').html(selectedCount + " Record" + (selectedCount > 1 ? "s":""));

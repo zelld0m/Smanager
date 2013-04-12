@@ -72,6 +72,50 @@
 	<div class="clearB"></div>
 </div>
 <!--  end right side -->
-
+<div id="setupFieldValueS1" style="display:none">
+	<div style="width:610px;">
+		<!-- Menu fields -->
+		<div id="fieldListing" class="fieldListing floatL w240 minHeight300">			
+			<h3 class="borderB fsize14 fbold padB4 mar0 marT15">Add Banner to Campaign<span id="sfCount" class="txtAR fsize11 floatR"></span></h3>
+			<input id="searchBoxField" name="searchBoxField" type="text" class="farial fsize12 fgray searchBoxIconBg w233">
+			<div class="borderT marT8"></div>
+			
+			<div id="preloader" class="marT30 txtAC"><img src="../images/preloader30x30Trans.gif"></div>
+			
+			<div id="content">
+				<ul id="fieldListing" class="menuFields">
+					<li id="fieldListingPattern" class="fieldListingItem" style="display:none">
+						<a href="javascript:void(0);"><img src="../images/icon_addField.png" style="margin-bottom:-3px"></a>
+						<span></span>
+					</li>
+				</ul>
+				<div id="fieldsBottomPaging"></div>			
+			</div>
+		</div>
+		<!--  end menu fields -->
+		<div id="fieldSelected" class="floatL marL3 w350">
+		<h3 class="fsize14 fbold pad8 mar0" style="background:#cacaca">Add Keyword to <label id="addKeywordToBannerName"></label><span id="sfSelectedCount" class="txtAR fsize11 floatR"></span></h3>
+			<div style="overflow-y:scroll; height: 250px">
+				<table class="tblfields" style="width:100%" cellpadding="0" cellspacing="0">
+					<tbody id="fieldSelectedBody">
+						<tr id="fieldSelectedPattern" style="display: none" class="fieldSelectedItem">
+							<td class="pad0 txtAC"><a class="removeSelected" href="javascript:void(0);"><img src="../images/icon_delete2.png" class="marL3"></a></td>
+							<td class="fields">
+								<div class="fieldsHolder marL3">
+									<span class="txtHolder"></span>
+									<div class="bargraph borderR3 height24">							
+										<div class="clearB"></div>
+									</div>																		
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>					
+			</div>
+			<div align="right" class="marT15"><a id="closeBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Close</div></a></div>
+		</div>
+	
+	</div>
+</div>
 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

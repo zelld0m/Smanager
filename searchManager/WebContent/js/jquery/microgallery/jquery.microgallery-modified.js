@@ -181,9 +181,9 @@
 		autoplay	: false,
 		autoplayTime: 3000,
 		imgCount	: 0,
-		headerText	: "Images"/*,
+		headerText	: "Images",
 		ruleId		: "",
-		addImageCallback : function(ruleId){}*/
+		addImageCallback : function(base, contentHolder){}
 	};
 	$.fn.microgallery.sizes = {
 		smallW		: 102,
@@ -268,6 +268,7 @@
 					o.addImageCallback(o.ruleId);
 				}
 			});*/
+			o.addImageCallback(o, $description.find("input.btnAdd"));
 			
 			$this.append($nav).append($description).append($images);
 			if(descFirst!='' && mode=='single')

@@ -4,6 +4,7 @@
 		selectedRule:  null,
 		rulePageSize: 15,
 		selectedRuleStatus: null,
+		excFields: new Array(),
 		
 		noPreviewImagePath: GLOBAL_contextPath + "/images/nopreview.png",
 	
@@ -41,12 +42,103 @@
 						autoplayTime: 3000,
 						imgCount	: imgCount,
 						headerText	: "Banners",
-						/*ruleId		: e.data.ruleId,
-						addImageCallback : function(ruleId){
-							//show popup
-							jAlert(ruleId);
-						}*/
-					}/*, {ruleId:self.selectedRule["ruleId"]}*/);
+						ruleId		: ruleId,
+						
+						//TODO
+						//addBanner event listener
+						addImageCallback : function(base, contentHolder){
+							contentHolder.qtip({
+								content: { text: $('<div>'), title: { text: base.headerText, button: true }},
+								show: {modal:true},
+								events: { 
+									render: function(e, api){
+										var $contentHolder = $("div", api.elements.content).html($("#setupFieldValueS1").html());
+
+										$contentHolder.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+										$contentHolder.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
+
+										CampaignServiceJS.searchBannersInThisCampaign(self.selectedRule["ruleId"],"", 1, self.rulePageSize, {
+											callback:function(data){
+												var list = data.list;
+
+												for (var i=0; i< data.totalSize; i++){
+													var bannerName = list[i].bannerName;
+													var bannerId = list[i].bannerId;
+
+													if ($.isNotBlank(bannerName)){
+														//$.pushIfNotExist(self.excFields, bannerName, function(el){ return el === name; });
+														//self.populateSelectedField($contentHolder, bannerName, bannerId);
+													}
+												}	
+
+												self.populateFieldList($contentHolder,1);
+											},
+											preHook: function(){
+												$contentHolder.find("tbody#fieldSelectedPattern > tr").not("#fieldSelectedPattern").remove();
+											}
+										});
+										
+										$contentHolder.find('a#closeBtn').on({
+											click: function(e){
+												api.hide();
+											}
+										});
+									
+										/*var searchActivated = false;
+										var newSearch = "";
+										var oldSearch = "";
+										
+										var sendRequest = function(event){
+											setTimeout(function(){
+												self.sfSearchKeyword = newSearch = $.trim($(event.target).val());
+
+												if (newSearch === self.campaignNameSearchText) {
+													newSearch = "";
+												};
+
+												if (oldSearch !== newSearch) {
+													self.populateCampaignList($contentHolder,1);
+													oldSearch = newSearch;
+													sendRequest(event);
+													newSearch = "";
+												}
+												else {
+													searchActivated = false;
+												}
+											}, self.reloadRate);  
+										};
+
+										var timeout = function(event){
+											if (!searchActivated) {
+												searchActivated = true;
+												sendRequest(event);
+											}
+										};*/
+										
+										/*$contentHolder.find('input[id="searchBoxField"]').val(self.searchText).on({
+											blur: function(e){
+												if ($.trim($(e.target).val()).length == 0) 
+													$(e.target).val(self.searchText);
+												timeout(e);
+											},
+											focus: function(e){
+												if ($.trim($(e.target).val()) == self.searchText) 
+													$(e.target).val("");
+												timeout(e);
+											},
+											keyup: timeout 
+										});*/
+
+									},
+									hide: function (e, api){
+										self.excFields = new Array();
+										self.showMicroGallery();
+										api.destroy();
+									}
+								}
+							});
+						}
+					});
 				},
 				preHook: function(){
 					//show preloader
@@ -56,10 +148,61 @@
 					//hide preloader
 				}
 			});
-			
-			//TODO
-			//addBanner event listener
-			
+		},
+		
+		populateFieldList : function(content, page){
+			var self = this;
+			var currVal = "";
+			BannerServiceJS.getRules(currVal, page, self.rulePageSize, {
+				callback:function(data){
+					var list = data.list;
+					var listSize = data.totalSize;
+
+					content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+
+					for (var i=0; i< listSize; i++){
+						if(list[i]!=null){
+							var idx = self.excFields.indexOf(list[i].ruleName);
+							if(idx == -1){
+								content.find("#fieldListingPattern").clone().appendTo("ul#fieldListing").attr("id","fieldListing_"+i).attr("style","display:float");
+								content.find('#fieldListing_' + i + ' span').html(list[i].ruleName);
+	
+								content.find('#fieldListing_' + i + ' a').on({click: function(e){
+									var element = e.data.bannerName;
+	
+									CampaignServiceJS.addCampaignBanner(e.data.campaignId, e.data.bannerId, {
+										callback: function(data){
+											if(data){
+												if($.pushIfNotExist(self.excFields, element, function(el){ return el === element; })){
+													//self.populateSelectedField(content, element, 0);
+													self.populateFieldList(content, 1);
+												}
+											}else{
+												showActionResponse(code, "add", element);
+											}
+										}
+									});
+								}},{bannerName:list[i].ruleName, bannerId:list[i].ruleId, campaignId:self.selectedRule["ruleId"]});
+							}
+						}	
+					}
+
+					//TODO
+					//content.find('span#sfCount').html(schemaFieldsTotal + " Record" + (schemaFieldsTotal > 1 ? "s":""));
+					//var selectedCount = content.find('tr.fieldSelectedItem:not(#fieldSelectedPattern)').length;
+					//content.find('span#sfSelectedCount').html(selectedCount + " Record" + (selectedCount > 1 ? "s":""));
+					//addSchemaFieldsPaging(content, page);
+				},
+				preHook:function(){
+					content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+					content.find("div#fieldListing div#preloader").show();					
+					content.find("div#fieldListing div#content").hide();					
+				},
+				postHook:function(){
+					content.find("div#fieldListing div#preloader").hide();	
+					content.find("div#fieldListing div#content").show();						
+				}
+			});
 		},
 		
 		getBannerInCampaignList: function(page){},
@@ -302,7 +445,6 @@
 						}
 					});
 					
-					//TODO self.getBannerInCampaignList(1);
 					self.addSaveRuleListener();
 					self.addDeleteRuleListener();
 					self.addDownloadListener();
