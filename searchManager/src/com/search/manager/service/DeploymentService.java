@@ -1,5 +1,10 @@
 package com.search.manager.service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +39,12 @@ import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SpellRule;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRuleXml;
+import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.xml.file.RuleXmlUtil;
+import com.search.ws.ConfigManager;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -91,15 +100,11 @@ public class DeploymentService {
 		daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, UtilityService.getStoreId(), UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 		return result;
 	}
-
+	
 	private List<String> approveRule(String ruleType, List<String> ruleRefIdList) {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
-			if (RuleEntity.SPELL.equals(RuleEntity.find(ruleType))) {
-				// generate file
-				daoService.compressSpellRule(UtilityService.getStoreId());
-			}
 			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), new Date()));
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
@@ -115,6 +120,90 @@ public class DeploymentService {
 		}
 	}
 
+	private boolean generateSpellRuleFile(String storeId) throws DaoException {
+		boolean success = false;
+		Writer fw = null;
+		File tmpFile = null;
+		String fileName = null;
+		
+		try {
+			// TODO: read from new config
+			fileName = ConfigManager.getInstance().getPublishedDidYouMeanPath(storeId);
+			if (fileName == null) {
+				return false;
+			}
+			
+			if (StringUtils.isNotBlank(fileName)) {
+				fileName += File.separator + storeId + File.separator + "Spell" + File.separator + "spell.csv";
+			}
+			tmpFile = new File(fileName + "_tmp");
+			tmpFile.getParentFile().mkdirs();
+			fw = new BufferedWriter(new FileWriter(tmpFile));
+			List<SpellRule> spellRules = daoService.getActiveSpellRules(storeId);
+			for (SpellRule rule: spellRules) {
+				fw.write(rule.getRuleId());
+				if (rule.getSearchTerms()!= null) {
+					for (String searchTerm: rule.getSearchTerms()) {
+						if (StringUtils.isNotEmpty(searchTerm)) {
+							fw.write('\t');
+							fw.write(searchTerm);
+							fw.write('\t');
+						}
+					}
+				}
+				if (rule.getSuggestions()!= null) {
+					for (String suggestion: rule.getSuggestions()) {
+						if (StringUtils.isNotEmpty(suggestion)) {
+							fw.write((char)0x0B);
+							fw.write(suggestion);
+							fw.write((char)0x0B);
+						}
+					}
+				}
+				fw.append("\n");
+			}
+			success = true;
+		} catch (IOException e) {
+			logger.error(String.format("Failed to generate spell rule for Store %s", storeId), e);
+		}
+		finally {
+			if (fw != null) {
+				try { fw.close(); } catch (IOException e) {}
+			}
+		}
+		
+		// rename file to actual file
+		if (StringUtils.isNotBlank(fileName) && success) {
+			success = tmpFile.renameTo(new File(fileName));
+		}
+		
+		return success;
+	}
+
+	private boolean publishSpellRule(String storeId) throws DaoException {
+		boolean success = false;
+		try {
+			SpellRules rules = daoService.getSpellRules(storeId);
+			for (SpellRuleXml rule: rules.selectRulesByStatus("new")) {
+				rule.setStatus("published");
+			}
+			for (SpellRuleXml rule: rules.selectRulesByStatus("new")) {
+				rule.setStatus("published");
+			}
+			rules.selectRulesByStatus("modified");
+			for (SpellRuleXml rule: rules.selectRulesByStatus("deleted")) {
+				rules.deletePhysically(rule);
+			}
+			
+			ConfigManager.getInstance().setPublishedStoreLinguisticSetting(storeId, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(storeId)));
+			generateSpellRuleFile(UtilityService.getStoreId());
+			success = true;
+		} catch (Exception e) {
+			logger.error(String.format("Failed to publish spell rule for Store %s", storeId), e);
+		}
+		return success;
+	}
+	
 	@RemoteMethod
 	public List<String> unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
@@ -265,6 +354,12 @@ public class DeploymentService {
 	@SuppressWarnings("unchecked")
 	private Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
+			
+			// insert custom handling for linguistics rules here
+			if (RuleEntity.SPELL.equals(RuleEntity.find(ruleType))) {
+				publishSpellRule(UtilityService.getStoreId());
+			}
+			
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
 			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), new Date());
 

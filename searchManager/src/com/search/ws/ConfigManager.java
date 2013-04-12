@@ -23,6 +23,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
+import com.search.manager.utility.PropsUtils;
+
 public class ConfigManager {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -33,6 +35,7 @@ public class ConfigManager {
     
     //TODO: will eventually move out if settings is migrated to DB instead of file
     private Map<String, PropertiesConfiguration> serverSettingsMap = new HashMap<String, PropertiesConfiguration>();
+    private Map<String, PropertiesConfiguration> linguisticSettingsMap = new HashMap<String, PropertiesConfiguration>();
     
     private ConfigManager() {
     	// do nothing...
@@ -64,6 +67,26 @@ public class ConfigManager {
 					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
 					serverSettingsMap.put(storeId, propConfig);
 					logger.info("Settings file for " + storeId + ": " + propConfig.getFileName());
+				}
+				
+				// did you mean
+				String fileName = PropsUtils.getValue("publishedfilepath");
+				if (StringUtils.isNotBlank(fileName)) {
+					// TODO: move to settings file
+					fileName += File.separator + storeId + File.separator + "Spell" + File.separator + "spell.properties";
+					File spellFile = new File(fileName);
+					if (!spellFile.exists()) {
+						spellFile.getParentFile().mkdirs();
+						try {
+							spellFile.createNewFile();
+						} catch (IOException e) {
+							logger.error("No spell file detected and unable to create spell file", e);
+						}
+					}
+					PropertiesConfiguration propConfig = new PropertiesConfiguration(spellFile.getAbsolutePath());
+					propConfig.setAutoSave(true);
+					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+					linguisticSettingsMap.put(storeId, propConfig);
 				}
 			}
 			
@@ -234,6 +257,30 @@ public class ConfigManager {
 		}
 		return null;
 	}
+
+	public boolean setPublishedStoreLinguisticSetting(String storeId, String field, String value) {
+		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
+		if (config != null) {
+			synchronized(config) {
+				config.setProperty(field, value);
+				return StringUtils.equals(config.getString(field), value);
+			}
+		}
+		return false;
+	}
+	
+	/** 
+	 * For a property that has multiple values, getString() will return the first value of the list
+	 * */
+	public String getPublishedStoreLinguisticSetting(String storeId, String field) {
+		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
+		if (config != null) {
+			synchronized(config) {
+				return config.getString(field);
+			}
+		}
+		return null;
+	}
 	
 	/** 
 	 * For a property that has multiple values, getList() will return the complete list 
@@ -257,6 +304,14 @@ public class ConfigManager {
 		}
 		
 		return false;
+	}
+	
+	public String getPublishedDidYouMeanPath(String storeId) {
+		String fileName = PropsUtils.getValue("publishedfilepath");
+		if (StringUtils.isNotBlank(fileName)) {
+			fileName += File.separator + storeId + File.separator + "Spell" + File.separator + "spell.csv";
+		}
+		return StringUtils.trimToNull(fileName);
 	}
 	
     public static void main(String[] args) {

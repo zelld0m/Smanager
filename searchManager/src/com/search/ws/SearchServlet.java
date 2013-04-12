@@ -37,7 +37,6 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
-import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
@@ -65,8 +64,6 @@ public class SearchServlet extends HttpServlet {
 	@Autowired
 	@Qualifier("solrService")
 	SearchDaoService solrService;
-	
-	@Autowired private SpellRuleDAO spellRuleDAO;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -246,6 +243,14 @@ public class SearchServlet extends HttpServlet {
 	
 	protected SearchDaoService getDaoService(boolean fromSearchGui) {
 		return fromSearchGui ? daoService : solrService;
+	}
+	
+	protected Integer getMaxSuggestCount(String storeId, boolean fromSearchGui) throws DaoException {
+		return getDaoService(fromSearchGui).getMaxSuggest(storeId);
+	}
+	
+	protected SpellRule getSpellRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
+		return getDaoService(fromSearchGui).getSpellRuleForSearchTerm(sk.getStoreId(), sk.getKeywordId());
 	}
 	
 	protected RedirectRule getRedirectRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
@@ -640,7 +645,7 @@ public class SearchServlet extends HttpServlet {
 			String originalKeyword = keyword;
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
-				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:")) {
+				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:") || keyword.startsWith("Manufacturer:")) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 					nvp = new BasicNameValuePair("fq", keyword);
 					if (addNameValuePairToMap(paramMap, "fq", nvp)) {
@@ -1142,9 +1147,21 @@ public class SearchServlet extends HttpServlet {
 			// TASK 1B - get spellcheck if requested
 			/* Run spellcheck if needed */
 			if (performSpellCheck) {
-			    final String fStore = storeId;
-			    final String foKeyword = originalKeyword;
-				final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
+			    StoreKeyword sk = getStoreKeywordOverride(RuleEntity.SPELL, storeId, originalKeyword);
+				SpellRule spellRule = getSpellRule(sk, fromSearchGui);
+				if(spellRule != null) {
+					activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DID_YOU_MEAN, spellRule.getRuleId(), originalKeyword, !disableDidYouMean)));
+			    	if(!disableDidYouMean) {
+						solrHelper.setSpellRule(spellRule);
+			    	}
+				}
+				Integer suggestCount = getMaxSuggestCount(storeId, fromSearchGui);
+				if (suggestCount == null) {
+					suggestCount = 3;
+				}
+		    	solrHelper.setMaxSuggestCount(suggestCount);
+			    
+			    final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
 				getSpellingSuggestionsParams.add(defTypeNVP);
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0"));
@@ -1152,16 +1169,8 @@ public class SearchServlet extends HttpServlet {
 				completionService.submit(new Callable<Integer>() {
 					@Override
 					public Integer call() throws Exception { // TODO here...
-						SpellRule spellRule = spellRuleDAO.getSpellRuleForSearchTerm(fStore, foKeyword);
-						if(spellRule != null) {
-							activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DID_YOU_MEAN, spellRule.getRuleId(), foKeyword, !disableDidYouMean)));
-					    	if(!disableDidYouMean) {
-								solrHelper.setSpellRule(spellRule);
-					    	}
-					    	solrHelper.setMaxSuggestCount(spellRuleDAO.getMaxSuggest(fStore));
-                        	solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
-						}
-						return 0;
+                       	solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+                       	return 0;
 					}
 				});
 				tasks++;

@@ -1,10 +1,5 @@
 package com.search.manager.dao;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,12 +84,10 @@ import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.xml.file.RuleTransferUtil;
-import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -188,6 +181,10 @@ public class DaoServiceImpl implements DaoService {
 
 	public void setUsersDAO(UsersDAO usersDAO) {
 		this.usersDAO = usersDAO;
+	}
+
+	public void setSpellRuleDAO(SpellRuleDAO spellRuleDAO) {
+		this.spellRuleDAO = spellRuleDAO;
 	}
 
 	public void setGroupsDAO(GroupsDAO groupsDAO) {
@@ -1879,69 +1876,13 @@ public class DaoServiceImpl implements DaoService {
     }
 
 	@Override 
-	public boolean compressSpellRule(String store) throws DaoException {
-		boolean success = false;
-		
-		Writer fw = null;
-		try {
-			File f = new File(ConfigManager.getInstance().getStoreSetting(UtilityService.getStoreId(), "approved-spell-file"));
-			f.getParentFile().mkdirs();
-			fw = new BufferedWriter(new FileWriter(f));
-			List<SpellRule> spellRules = spellRuleDAO.getActiveRules(store);
-			for (SpellRule rule: spellRules) {
-				fw.write(rule.getRuleId());
-				if (rule.getSearchTerms()!= null) {
-					for (String searchTerm: rule.getSearchTerms()) {
-						if (StringUtils.isNotEmpty(searchTerm)) {
-							fw.write('\t');
-							fw.write(searchTerm);
-							fw.write('\t');
-						}
-					}
-				}
-				if (rule.getSuggestions()!= null) {
-					for (String suggestion: rule.getSearchTerms()) {
-						if (StringUtils.isNotEmpty(suggestion)) {
-							fw.write((char)0x0B);
-							fw.write(suggestion);
-							fw.write((char)0x0B);
-						}
-					}
-				}
-				fw.append("\n");
-			}
-			success = true;
-		} catch (IOException e) {
-			logger.error(String.format("Failed to compress spell rule for Store %s", store), e);
-		}
-		finally {
-			if (fw != null) {
-				try { fw.close(); } catch (IOException e) {}
-			}
-		}
-		return success;
-	}
-	
-	@Override 
-	public boolean publishSpellRule(String store) throws DaoException {
-		boolean success = false;
-		try {
-			SpellRules rules = spellRuleDAO.getSpellRules(UtilityService.getStoreId());
-			for (SpellRuleXml rule: rules.selectRulesByStatus("new")) {
-				rule.setStatus("published");
-			}
-			for (SpellRuleXml rule: rules.selectRulesByStatus("new")) {
-				rule.setStatus("published");
-			}
-			rules.selectRulesByStatus("modified");
-			for (SpellRuleXml rule: rules.selectRulesByStatus("deleted")) {
-				rules.deletePhysically(rule);
-			}
-			success = true;
-		} catch (Exception e) {
-			logger.error(String.format("Failed to publish spell rule for Store %s", store), e);
-		}
-		return success;
+    public List<SpellRule> getActiveSpellRules(String storeId) {
+		return spellRuleDAO.getActiveRules(storeId);
+    }
+
+	@Override
+	public SpellRules getSpellRules(String storeId) throws DaoException {
+		return spellRuleDAO.getSpellRules(storeId);
 	}
 	
 }

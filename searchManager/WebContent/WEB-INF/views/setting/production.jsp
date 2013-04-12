@@ -136,8 +136,8 @@
 			</div>
 			<div id = "requestDetails">
 				<label>Number of search terms:</label><label id="numSearchTerms"></label><p>	
-				<label>Requested by:</label> <label id="requestedBy"></label><p>	
-				<label>Requested date:</label> <label id="requestedDate"></label><p>	
+				<label>Production Status:</label> <label id="productionStatus"></label><p>	
+				<label>Last Published Date:</label> <label id="productionDate"></label><p>
 			</div> 		
 			<div class="clearB"></div>
 			<div>

@@ -77,6 +77,8 @@
 	<beans:bean name="groupsDAO" id="groupsDAO" class="com.search.manager.dao.sp.GroupsDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
+	<beans:bean name="spellRuleDAO" id="spellRuleDAO" class="com.search.manager.dao.file.SpellRuleDAO" scope="singleton">
+	</beans:bean>
 
 	<beans:bean name="elevateVersionDAO" id="elevateVersionDAO" class="com.search.manager.dao.file.ElevateVersionDAO" scope="singleton" />
 	<beans:bean name="excludeVersionDAO" id="excludeVersionDAO" class="com.search.manager.dao.file.ExcludeVersionDAO" scope="singleton" />
@@ -102,6 +104,7 @@
 		<beans:property name="commentDAO" ref="commentDAO"/>
 		<beans:property name="usersDAO" ref="usersDAO"/>
 		<beans:property name="groupsDAO" ref="groupsDAO"/>
+		<beans:property name="spellRuleDAO" ref="spellRuleDAO"/>
     </beans:bean>
     
     <!--  dao services stg-->	
@@ -153,7 +156,8 @@
 	<beans:bean name="groupsDAOStg" id="groupsDAOStg" class="com.search.manager.dao.sp.GroupsDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplateStg" />
 	</beans:bean>
-	
+	<beans:bean name="spellRuleDAOStg" id="spellRuleDAOStg" class="com.search.manager.dao.file.SpellRuleDAO" scope="singleton">
+	</beans:bean>	
 
 	<beans:bean name="daoServiceStg" id="daoServiceStg" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAOStg"/>
@@ -171,6 +175,7 @@
 		<beans:property name="commentDAO" ref="commentDAOStg"/>
 		<beans:property name="usersDAO" ref="usersDAOStg"/>
 		<beans:property name="groupsDAO" ref="groupsDAOStg"/>
+		<beans:property name="spellRuleDAO" ref="spellRuleDAOStg"/>
     </beans:bean>
     
 </beans:beans>

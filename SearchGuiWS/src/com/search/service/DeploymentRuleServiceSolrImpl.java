@@ -1061,4 +1061,14 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		mailSender.send(message);
 	}
 
+	@Override
+	public Map<String, Boolean> publishDidYouMeanRulesMap(String store, List<String> list) {
+		// copying of updated spell files will be handled by rsync cron job
+		Map<String, Boolean> resultMap = getKeywordStatusMap(list);
+		for (String id: resultMap.keySet()) {
+			resultMap.put(id, Boolean.TRUE);
+		}
+		return resultMap;
+	}
+
 }

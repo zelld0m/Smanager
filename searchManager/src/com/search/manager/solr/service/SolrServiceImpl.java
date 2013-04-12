@@ -1,9 +1,15 @@
 package com.search.manager.solr.service;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -16,6 +22,7 @@ import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.dao.DemoteDao;
@@ -24,6 +31,7 @@ import com.search.manager.solr.dao.ExcludeDao;
 import com.search.manager.solr.dao.FacetSortDao;
 import com.search.manager.solr.dao.RedirectDao;
 import com.search.manager.solr.dao.RelevancyDao;
+import com.search.ws.ConfigManager;
 
 @Service("solrService")
 public class SolrServiceImpl implements SolrService {
@@ -51,6 +59,8 @@ public class SolrServiceImpl implements SolrService {
 	@Autowired
 	@Qualifier("facetSortDaoSolr")
 	private FacetSortDao facetSortDao;
+
+	private final static Logger logger = Logger.getLogger(SolrServiceImpl.class);
 
 	@Override
 	public List<ElevateResult> getElevateRules(Store store) throws DaoException {
@@ -545,4 +555,84 @@ public class SolrServiceImpl implements SolrService {
 		return getRelevancyRuleById(store, relevancyId);
 	}
 
+	@Override
+	public SpellRule getSpellRuleForSearchTerm(String storeId, String searchTerm) throws DaoException {
+		// TODO: place in utility. check DaoCacheServiceImpl
+		SpellRule spellRule = null;
+		String os = System.getProperty("os.name");
+		String fileName = ConfigManager.getInstance().getPublishedDidYouMeanPath(storeId);
+		String rule = null;
+		if (StringUtils.containsIgnoreCase(os, "window")) {
+			// assume this is dev workstation
+			BufferedReader reader = null;
+			try {
+				reader = new BufferedReader(new FileReader(fileName));
+				while ((rule = reader.readLine()) != null) {
+					if (rule.contains("\t" + searchTerm + "\t")) {
+						// found a match
+						break;
+					}
+				}
+			}
+			catch (Exception e) {
+				logger.error("Error occured while readig file " + fileName, e);
+			}
+			finally {
+				if (reader != null) { try { reader.close(); } catch (Exception e) {} };
+			}
+		}
+		else {
+			try {
+				String[] shellCommand = {
+						"/bin/sh", "-c", String.format("grep -P \"%s\" %s", storeId, fileName)
+				};
+				Process p = Runtime.getRuntime().exec(shellCommand);
+				try {
+					p.waitFor();
+					if (logger.isDebugEnabled()) {
+						StringBuilder command = new StringBuilder();
+						for (String arg: shellCommand) {
+							command.append(arg).append(" ");
+						}
+						logger.debug("Shell command: " + command.toString());
+					}
+					BufferedReader reader = null;
+					try {
+						reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+						rule = reader.readLine();
+					} finally {
+						if (reader != null) { try { reader.close(); } catch (Exception e) {} };
+					}
+				} catch (InterruptedException e) {
+					logger.error("Error occured while readig file " + fileName, e);
+				}
+			} catch (IOException e) {
+				logger.error("Error occured while readig file " + fileName, e);
+			}
+		}
+		if (StringUtils.isEmpty(rule)) {
+			logger.debug("No matching rule found.");
+		}
+		else {
+			int keywordPos = rule.indexOf('\t');
+			int spellingPos = rule.indexOf((char)0x0B);
+			String ruleId = rule.substring(0, keywordPos);
+			String[] searchTerms = StringUtils.split(rule.substring(keywordPos, spellingPos), "\t");
+			String[] suggestions = StringUtils.split(rule.substring(spellingPos), (char)0x0B);
+			spellRule = new SpellRule(ruleId, storeId, null, searchTerms, suggestions);
+		}
+		return spellRule;
+	}
+
+	@Override
+	public Integer getMaxSuggest(String storeId) throws DaoException {
+		Integer value = null;
+		try {
+			String val = ConfigManager.getInstance().getPublishedStoreLinguisticSetting(storeId, "maxSpellSuggestions");
+			value = Integer.parseInt(val);
+		} catch (Exception e){ 
+			e.printStackTrace();
+		}
+		return value;
+	}
 }

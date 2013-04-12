@@ -40,6 +40,7 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRules;
 
 public interface DaoService extends SearchDaoService {
 	
@@ -283,14 +284,11 @@ public interface DaoService extends SearchDaoService {
 	/* Spell */
 	public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException;
     public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException;
-    public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm);
     public int addSpellRule(SpellRule rule) throws DaoException;
     public int updateSpellRule(SpellRule rule) throws DaoException;
     public int deleteSpellRule(SpellRule rule) throws DaoException;
     public boolean isDuplicateSearchTerm(String storeId, String searchTerm, String ruleId) throws DaoException;
-    public Integer getMaxSuggest(String storeId) throws DaoException;
-    public boolean compressSpellRule(String store) throws DaoException;
-    public boolean publishSpellRule(String store) throws DaoException;
-//    public boolean copyPublishedSpellRule(String store, String store) throws DaoException;
+    public List<SpellRule> getActiveSpellRules(String storeId) throws DaoException;
+    public SpellRules getSpellRules(String storeId) throws DaoException;
 	    	
 }

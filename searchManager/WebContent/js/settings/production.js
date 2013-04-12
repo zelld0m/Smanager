@@ -114,8 +114,8 @@
 								if(status){
 									var exception = false;
 									DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-										callback: function(data){									
-											postMsg(data,true);	
+										callback: function(data){
+											jAlert("Updated Did You Mean was successfully published.", "Push to Prod");
 											getForProductionList(selRuleFltr);	
 										},
 										preHook:function(){ 
@@ -179,6 +179,54 @@
 			});
 		};
 		
+		var publishHandlerLinguistics = function(){
+			$(tabSelected).find("a#publishBtn").on({
+				click: function(evt){
+					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
+					
+					if (!validateComment("Push to Prod", comment, 1)){
+						//error alert in validateComment
+					}else{
+						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
+						comment = comment.replace(/\n\r?/g, '<br/>');
+						switch($(evt.currentTarget).attr("id")){
+						case "publishBtn": 
+							jConfirm("Continue publishing of Did You Mean List?", "Confirm Publish", function(status){
+								if(status){
+									var exception = false;
+									DeploymentServiceJS.publishRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
+										callback: function(data){									
+											postMsg(data,true);	
+											getForProductionList(selRuleFltr);	
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											if (!exception) {
+												cleanUpTabContent()
+											}
+											else {
+												$("div.circlePreloader").hide();
+												$(tabSelected).find('table.tblItems').show();
+												$(tabSelected).find('div.filter').show();
+												$(tabSelected).find('div#actionBtn').show();
+											}; 
+										},
+										exceptionHandler: function(message, exc){ 
+											exception = true; 
+											jAlert(message, "Publish Rule"); 
+										}
+									});
+								}
+							});
+							break;
+						}	
+					}
+				}
+			});
+		};		
+		
 		var getForProductionList = function(filterBy){
 			
 			DeploymentServiceJS.getDeployedRules(entityName, filterBy, {
@@ -197,33 +245,35 @@
 						if (data.totalSize>0){
 							
 							if (entityName === 'didYouMean'){
-								$(tabSelected).find("div#ruleCount").html(data.totalSize == 1 ? "1 Rule" : data.totalSize + " Rules");
 								// Populate table row
-								for(var i=0; i<data.totalSize ; i++){
-									$table = $(tabSelected).find("table#rule");
-									$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
-	
-									var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
-									var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
-	
-									$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
-									$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-									
-									if($.isBlank(filterBy))
-										$tr.find("td#select").html(i+1);
-									
-									//if(showId)
-									//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
-									$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
-	
-									$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
-									if($.isNotBlank(list[i]["approvalStatus"])) 
-										$tr.find("td#requestType").html(list[i]["updateStatus"]);
-	
-									$tr.find("td#production > p#productionStatus").html(list[i]["publishedStatus"]);
-									$tr.find("td#production > p#productionDate").html(lastPublishedDate);
-									$tr.appendTo($table);
-								}
+								SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 0, 0, {
+									callback: function(response) {
+										// Populate table row
+										var responseData = response.data;
+										var responseList = responseData.spellRule;
+										$(tabSelected).find("label#numSearchTerms").append(responseData.maxSuggest);
+										$(tabSelected).find("label#productionStatus").html(list[0]["publishedStatus"]);
+										$(tabSelected).find("label#productionDate").html($.isNotBlank(list[0]["lastPublishedDate"])? list[0]["lastPublishedDate"].toUTCString(): "");
+										for(var i=0; i<responseList.length ; i++){
+											var termHTML = "";
+											var suggestionHTML = "";
+											$table = $(tabSelected).find("table#rule");
+											$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(responseList[i]["ruleId"])).show();
+											responseList[i].ruleKeyword["keyword"].forEach(function (item) {
+												termHTML += "<span class=\"term\">" + item + "</span>";
+											});
+											$tr.find("td#searchTerms").html(termHTML);
+											responseList[i].suggestKeyword["suggest"].forEach(function (item) {
+												suggestionHTML += "<span class=\"term\">" + item + "</span>";
+											});
+											$tr.find("td#suggestions").html(suggestionHTML);
+											$tr.find("td#type").html(responseList[i]["status"]);
+											$tr.appendTo($table);
+										}
+										
+										publishHandlerLinguistics();
+									}
+								});
 							}
 							else {
 								$(tabSelected).find("div#ruleCount").html(data.totalSize == 1 ? "1 Rule" : data.totalSize + " Rules");
@@ -253,17 +303,19 @@
 									$tr.find("td#production > p#productionDate").html(lastPublishedDate);
 									$tr.appendTo($table);
 								}
+								
+								checkSelectHandler();
+								checkSelectAllHandler();
+								publishHandler();
+								
+								if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+
 							}
 
 							// Alternate row style
 							$(tabSelected).find("tr:not(#ruleItemPattern):even").addClass("alt");
 
-							checkSelectHandler();
-							checkSelectAllHandler();
-							publishHandler();
-							$(tabSelected).find('div#actionBtn').show();
-							
-							if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+							$(tabSelected).find('div#actionBtn').show();							
 							
 						}else{
 							$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
