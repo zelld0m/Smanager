@@ -6,11 +6,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 import com.google.common.base.Function;
 import com.search.manager.model.ModelBean;
 import com.search.manager.model.SpellRule;
 
 @XmlRootElement(name = "spellRule")
+@DataTransferObject(converter = BeanConverter.class)
 public class SpellRuleXml extends ModelBean {
 
     private static final long serialVersionUID = 1L;

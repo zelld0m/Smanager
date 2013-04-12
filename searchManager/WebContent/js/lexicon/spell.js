@@ -312,6 +312,8 @@
 						self.$table.append(self.$footer);
 						self.$footer.show();
 						self.$pager.hide();
+						self.$clearButton.off();
+						self.$filterButton.off();
 						self.$maxSuggest.parent().hide();
 					}
 				});
@@ -322,6 +324,9 @@
 						$(".button-group-1").show();
 						self.mode = 'edit';
 						self.$maxSuggest.removeAttr("disabled");
+						self.$pager.hide();
+						self.$clearButton.off();
+						self.$filterButton.off();
 
 						var rows = self.$table.find("tr:not(#header)");
 
@@ -361,6 +366,7 @@
 
 						self.$pager.show();
 						self.mode = 'display';
+						self.addFilterEventHandlers();
 					}
 				});
 
@@ -387,6 +393,7 @@
 											$(".button-group-0").show();
 											self.$pager.show();
 											self.$maxSuggest.parent().show();
+											self.addFilterEventHandlers();
 										} else {
 											jAlert(response.errorMessage.message);
 											
@@ -427,6 +434,7 @@
 											$(".button-group-0").show();
 											self.$maxSuggest.attr("disabled", true);
 											self.$pager.show();
+											self.addFilterEventHandlers();
 										} else {
 											jAlert(response.errorMessage.message);
 											
@@ -498,22 +506,32 @@
 			self.$filterButton = $("#filter-button");
 			self.$clearButton = $("#clear-button");
 
-			var changeHandler = function(e) {
-				self.searchTerm = self.$searchTermFilter.val();
-				self.suggestion = self.$suggestionFilter.val();
-				self.status = self.$statusFilter.val();
+			self.addFilterEventHandlers();
+		},
 
-				self.handlePageLink(1);
-			};
+		addFilterEventHandlers: function() {
+			var self = this;
 
-			self.$filterButton.on({click: changeHandler});
-			
-			self.$clearButton.on({click: function(e) {
+			self.$filterButton.off().on({click: function(e) {
+				self.filter();
+			}});
+
+			self.$clearButton.off().on({click: function(e) {
 				self.$searchTermFilter.val("");
 				self.$suggestionFilter.val("");
 				self.$statusFilter.val("");
-				changeHandler(e);
+				self.filter();
 			}});
+		},
+
+		filter:  function(e) {
+			var self = this;
+
+			self.searchTerm = self.$searchTermFilter.val();
+			self.suggestion = self.$suggestionFilter.val();
+			self.status = self.$statusFilter.val();
+
+			self.handlePageLink(1);
 		},
 
 		init : function() {
