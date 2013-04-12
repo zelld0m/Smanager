@@ -21,16 +21,20 @@
 
 		getTemplate : function(){
 			var self = this;
-			var $dym = self.manager.response.responseHeader["did_you_mean"];
+			var $dym = self.manager.response.responseHeader['did_you_mean'];
 			var template = '';
-
 			var maxDidyouMean = self.maxDidyouMean;
 			var didYouMean = "";
+			var zeroResult = self.manager.response.response['numFound'];
 			var i=0;
 			
 			if(!$.isEmptyObject($dym)) {
 				if(maxDidyouMean == 0) {
 					maxDidyouMean = Object.keys($dym).length;
+				}
+				
+				if(zeroResult != 0) {
+					template += '<div class="info notification border fsize11 marB10 marT10"> 		Did You Mean will only appear in production if there are no search results. 	</div>';
 				}
 				
 				template += '<div>';
@@ -39,7 +43,7 @@
 				template += '		<span class="val">%%keyword%%</span>';
 				template += '	</div>';
 				template += '</div>';
-	
+				
 				for (var key in $dym){
 					if($.isNotBlank(key)) {
 						i++;
