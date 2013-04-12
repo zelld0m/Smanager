@@ -258,7 +258,7 @@ public class SpellRuleService {
     	
         try {
             SpellRule spellRuleFilter = new SpellRule(ruleId, UtilityService.getStoreId());
-            RecordSet<SpellRule> spellRules = spellRuleDAO.getSpellRule(new SearchCriteria<SpellRule>(spellRuleFilter, 1, 1));
+            RecordSet<SpellRule> spellRules = daoService.getSpellRule(new SearchCriteria<SpellRule>(spellRuleFilter, 1, 1));
             if(spellRules != null && spellRules.getTotalSize() > 0) {
             	return spellRules.getList().get(0);
             }

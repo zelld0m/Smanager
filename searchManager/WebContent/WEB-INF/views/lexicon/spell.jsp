@@ -35,8 +35,8 @@
       </label>
       <div class="clearB"></div>
       <div align="right" class="padR5 marT10">
-        <a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="filter-button">Filter</div></a>
-        <a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="clear-button">Reset</div></a>
+        <a href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold" id="filter-button">Filter</div></a>
+        <a href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold" id="clear-button">Reset</div></a>
       </div>
     </div>
   </div>
