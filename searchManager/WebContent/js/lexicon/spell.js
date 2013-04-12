@@ -495,6 +495,7 @@
 			self.$searchTermFilter = $("#searchTerm-filter");
 			self.$suggestionFilter = $("#suggestion-filter");
 			self.$statusFilter = $("#status-filter");
+			self.$filterButton = $("#filter-button");
 			self.$clearButton = $("#clear-button");
 
 			var changeHandler = function(e) {
@@ -505,9 +506,8 @@
 				self.handlePageLink(1);
 			};
 
-			self.$searchTermFilter.on({change: changeHandler});
-			self.$suggestionFilter.on({change: changeHandler});
-			self.$statusFilter.on({change: changeHandler});
+			self.$filterButton.on({click: changeHandler});
+			
 			self.$clearButton.on({click: function(e) {
 				self.$searchTermFilter.val("");
 				self.$suggestionFilter.val("");
