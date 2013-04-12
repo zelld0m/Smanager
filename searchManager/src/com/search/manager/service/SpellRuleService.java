@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
-import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
-import com.search.manager.dao.file.SpellRuleDAO;
+import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.response.ServiceResponse;
-import com.search.manager.utility.CsvTransformer;
-import com.search.manager.utility.FileTransferUtils;
-import com.search.manager.xml.file.SpellIndex;
 
 @Service(value = "spellRuleService")
 @RemoteProxy(name = "SpellRuleServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "spellRuleService"))
@@ -35,10 +31,7 @@ public class SpellRuleService {
     private static final Logger logger = LoggerFactory.getLogger(SpellRuleService.class);
 
     @Autowired
-    private SpellIndex spellIndex;
-
-    @Autowired
-    private SpellRuleDAO spellRuleDAO;
+    private DaoService daoService;
 
     @RemoteMethod
     public ServiceResponse<RecordSet<SpellRule>> getSpellRule(String ruleId, String searchTerm, String suggestion,
@@ -57,7 +50,7 @@ public class SpellRuleService {
             if (StringUtils.isNotEmpty(status))
                 rule.setStatus(status);
 
-            response.success(spellRuleDAO.getSpellRule(new SearchCriteria<SpellRule>(rule, pageNumber, itemsPerPage)));
+            response.success(daoService.getSpellRule(new SearchCriteria<SpellRule>(rule, pageNumber, itemsPerPage)));
         } catch (DaoException e) {
             logger.error("Failed during getSpellRule()", e);
             response.error("Failed to retrieve Did You Mean rules.");
@@ -96,7 +89,7 @@ public class SpellRuleService {
                 }
 
                 if (errorLevel == 0) {
-                    spellIndex.save(store);
+                    daoService.saveSpellRules(store);
                     response.success(null);
                 }
             }
@@ -108,7 +101,7 @@ public class SpellRuleService {
 
         if (errorLevel == 2) {
             try {
-                spellIndex.rollback(store);
+                daoService.reloadSpellRules(store);
             } catch (Exception e) {
                 logger.error("Unable to rollback spell index for " + store, e);
             }
@@ -148,13 +141,13 @@ public class SpellRuleService {
                 }
 
                 if (errorLevel == 0) {
-                    SpellRules rules = spellIndex.get(store);
+                    SpellRules rules = daoService.getSpellRules(store);
 
                     if (rules != null) {
                         rules.setMaxSuggest(maxSuggest);
                     }
 
-                    spellIndex.save(UtilityService.getStoreId());
+                    daoService.saveSpellRules(UtilityService.getStoreId());
                     response.success(null);
                 }
             }
@@ -166,7 +159,7 @@ public class SpellRuleService {
 
         if (errorLevel == 2) {
             try {
-                spellIndex.rollback(store);
+                daoService.reloadSpellRules(store);
             } catch (Exception e) {
                 logger.error("Unable to rollback spell index for " + store, e);
             }
@@ -180,7 +173,7 @@ public class SpellRuleService {
         ServiceResponse<Integer> response = new ServiceResponse<Integer>();
 
         try {
-            response.success(spellRuleDAO.getMaxSuggest(UtilityService.getStoreId()));
+            response.success(daoService.getMaxSuggest(UtilityService.getStoreId()));
         } catch (DaoException e) {
             response.error("Unable to retrieve maximum suggestions count.");
         }
@@ -200,7 +193,7 @@ public class SpellRuleService {
         rule.setSuggestions(suggestions);
         rule.setStatus("new");
 
-        return spellRuleDAO.addSpellRule(rule) > 0;
+        return daoService.addSpellRule(rule) > 0;
     }
 
     private boolean updateSpellRule(String ruleId, String[] searchTerms, String[] suggestions) throws DaoException {
@@ -212,13 +205,13 @@ public class SpellRuleService {
         rule.setSearchTerms(searchTerms);
         rule.setSuggestions(suggestions);
 
-        return spellRuleDAO.updateSpellRule(rule) > 0;
+        return daoService.updateSpellRule(rule) > 0;
     }
 
     private void deleteSpellRules(String storeId, SpellRule[] rules) throws DaoException {
         for (SpellRule rule : rules) {
             rule.setStoreId(storeId);
-            spellRuleDAO.deleteSpellRule(rule);
+            daoService.deleteSpellRule(rule);
         }
     }
 
@@ -230,6 +223,7 @@ public class SpellRuleService {
         // Check for duplicate search terms.
         for (SpellRule rule : spellRules) {
             List<String> curTerms = Arrays.asList(rule.getSearchTerms());
+            @SuppressWarnings("unchecked")
             Collection<String> inter = CollectionUtils.intersection(searchTerms, curTerms);
 
             if (inter.size() == 0) {
@@ -250,7 +244,7 @@ public class SpellRuleService {
         List<String> duplicates = new ArrayList<String>();
 
         for (String searchTerm : searchTerms) {
-            if (spellRuleDAO.isDuplicateSearchTerm(store, searchTerm, ruleId)) {
+            if (daoService.isDuplicateSearchTerm(store, searchTerm, ruleId)) {
                 duplicates.add(searchTerm);
             }
         }
@@ -259,32 +253,12 @@ public class SpellRuleService {
     }
 
     @RemoteMethod
-    public FileTransfer downloadRules(String customFilename) {
-        List<SpellRule> rules = spellRuleDAO.getActiveRules(UtilityService.getStoreId());
-        return FileTransferUtils.downloadCsv(new CsvTransformer<SpellRule>() {
-            @Override
-            protected String[] toStringArray(SpellRule rule) {
-                return new String[] {
-                        rule.getRuleId(),
-                        StringUtils.join(rule.getSearchTerms(), ','),
-                        StringUtils.join(rule.getSuggestions(), ','),
-                        rule.getStatus(),
-                        rule.getCreatedBy(),
-                        rule.getCreatedDate().toString(),
-                        rule.getLastModifiedBy(),
-                        rule.getLastModifiedDate().toString()
-                };
-            }
-        }.getCsvStream(rules), "ID,SEARCH TERMS,SUGGESTIONS,STATUS,CREATED BY,CREATED DATE,LAST MODIFIED BY,LAST MODIFIED DATE", "DidYouMean", customFilename);
-    }
-    
-    @RemoteMethod
     public SpellRule getRuleById(String ruleId) {
     	ServiceResponse<RecordSet<SpellRule>> response = new ServiceResponse<RecordSet<SpellRule>>();
     	
         try {
             SpellRule spellRuleFilter = new SpellRule(ruleId, UtilityService.getStoreId());
-            RecordSet<SpellRule> spellRules = spellRuleDAO.getSpellRule(new SearchCriteria<SpellRule>(spellRuleFilter, 1, 1));
+            RecordSet<SpellRule> spellRules = daoService.getSpellRule(new SearchCriteria<SpellRule>(spellRuleFilter, 1, 1));
             if(spellRules != null && spellRules.getTotalSize() > 0) {
             	return spellRules.getList().get(0);
             }

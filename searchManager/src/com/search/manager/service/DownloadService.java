@@ -300,6 +300,39 @@ public class DownloadService {
 		
 		download(response, workbook, fileName);
 	}
+    
+    
+    /**
+     * Processes the download for Excel format.
+     * It does the following steps:
+     * <pre>1. Create new workbook
+     * 2. Create new worksheet
+     * 3. Define starting indices for rows and columns
+     * 4. Build layout
+     * 5. Fill report
+     * 6. Set the HttpServletResponse properties
+     * 7. Write to the output stream
+     * </pre>
+     */
+    public void downloadMultiSheetXLS(HttpServletResponse response, ReportModel<? extends ReportBean<?>> mainModel, 
+            List<ReportModel<? extends ReportBean<?>>> subModels) throws ClassNotFoundException {
+        logger.debug("Downloading Excel report");
+        // 1. Create new workbook
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        String fileName = mainModel.getReportHeader().getFileName() + ".xls";
+        Map<String, HSSFCellStyle> styleMap = new HashMap<String, HSSFCellStyle>();
+
+        if (subModels != null) {
+            for (ReportModel<? extends ReportBean<?>> model: subModels) {
+                model.getSubReportHeader().getRows().get("Version No:");
+                // 2. Create new worksheet
+                HSSFSheet worksheet = workbook.createSheet("Version " + model.getSubReportHeader().getVersion());
+                prepareXls(workbook, worksheet, styleMap, 0, model, true);
+            }
+        }
+        
+        download(response, workbook, fileName);
+    }
 	
 	public void download(HttpServletResponse response, HSSFWorkbook workbook, String fileName) throws ClassNotFoundException {
 		logger.debug("Downloading Excel report");

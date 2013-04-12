@@ -51,6 +51,7 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 
@@ -84,6 +85,17 @@ public class RuleXmlReportUtil{
 		subReportHeader.addRow("Notes: ", StringUtils.defaultIfBlank(xml.getNotes(),""));
 		subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), xml.getCreatedDate()) : "");
 		subReportHeader.addRow("Created By: ", xml.getCreatedBy());
+
+		switch (ruleEntity) {
+		    case SPELL:
+		        // for spell rules, one sheet per version will be created,
+		        // hence we need to set version number if subReportHeader to be used in naming sheets
+		        subReportHeader.setVersion(((SpellRules) xml).getVersion());
+		        subReportHeader.addRow("Maximum Suggestion:", String.valueOf(((SpellRules) xml).getMaxSuggest()));
+		        break;
+            default:
+                break;
+		}
 		
 		return subReportHeader;
 	}
