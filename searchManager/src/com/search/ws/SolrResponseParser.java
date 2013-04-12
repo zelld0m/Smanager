@@ -23,6 +23,7 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchResult;
+import com.search.manager.model.SpellRule;
 
 public abstract class SolrResponseParser {
  
@@ -52,6 +53,11 @@ public abstract class SolrResponseParser {
 	protected List<DemoteResult> demotedList = null;
 	protected List<String> expiredDemotedEDPs = null;
 	protected List<String> forceAddedEDPs = null;
+    
+    /* Did You Mean rule */
+	protected SpellRule spellRule = null;
+    // TODO: This should be configurable.
+    protected int maxSuggestCount = 5;
 	
 	protected FacetSort facetSortRule;
 	protected RedirectRule redirectRule;
@@ -131,7 +137,14 @@ public abstract class SolrResponseParser {
 		this.redirectRule = redirectRule;
 	}
 	
-	/* Used by both elevate and demote */
+	public SpellRule getSpellRule() {
+        return spellRule;
+    }
+    public void setSpellRule(SpellRule spellRule) {
+        this.spellRule = spellRule;
+    }
+    
+    /* Used by both elevate and demote */
 	private static void generateEdpList(StringBuilder values, Collection<? extends SearchResult> list) {
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (SearchResult result: list) {
@@ -408,5 +421,8 @@ public abstract class SolrResponseParser {
 	protected String getSpellCheckRequestPath() {
 		return StringUtils.replaceOnce(requestPath, "select", "spellCheckCompRH");
 	}
-
+	
+    public void setMaxSuggestCount(Integer maxSuggestCount) {
+        this.maxSuggestCount = maxSuggestCount;
+    }
 }

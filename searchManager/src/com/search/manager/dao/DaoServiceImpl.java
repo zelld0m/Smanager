@@ -1844,3 +1844,4 @@ public class DaoServiceImpl implements DaoService {
 				new DemoteResult(storeKeyword), null, DateTime.now().minusDays(1), 0, 0)).getList();
 	}
 }
+

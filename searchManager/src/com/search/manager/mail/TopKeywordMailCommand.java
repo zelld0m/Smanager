@@ -108,8 +108,7 @@ public class TopKeywordMailCommand implements Command {
     }
 
     private void sendMail() {
-        mailService.sendTopKeyword(StatisticsUtil.getCustomRangeReportStream(keywords, transformer), filename,
-                recipients, bias, contentType);
+        mailService.sendTopKeyword(transformer.getCsvStream(keywords), filename, recipients, bias, contentType);
     }
 
     private String getSolrUrl() {

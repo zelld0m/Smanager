@@ -35,6 +35,7 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
@@ -284,6 +285,4 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
-	
-
 }

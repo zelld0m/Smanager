@@ -13,8 +13,12 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -269,6 +273,16 @@ public class SecurityService {
 			}
 
 			if(result > -1){
+				
+				//Reload authentication if modified user is the current logged in user
+				UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();	
+				
+				if(userDetailsImpl!=null && userDetailsImpl.getUsername().equalsIgnoreCase(username)){
+					userDetailsImpl.setDateTimeZoneId(timezoneId);
+					Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsImpl, userDetailsImpl.getPassword(), userDetailsImpl.getAuthorities());
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+				}
+				
 				json.put("status", RESPONSE_STATUS_OK);
 				json.put("message", MessagesConfig.getInstance().getMessage("common.updated", username));
 				return json;	
