@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -88,9 +89,13 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	public String getRuleVersionFilename(String store, String ruleId) {
 		return RuleVersionUtil.getRuleVersionFilename(store, getRuleEntity(), StringUtil.escapeKeyword(ruleId));
 	}
-	
+
+	public boolean deleteRuleVersion(String store, String ruleId, String username, long version) {
+	    return deleteRuleVersion(store, ruleId, username, version, false);
+	}
+
 	@SuppressWarnings("unchecked")
-	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version){
+	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version, boolean physical){
 
 		FileWriter writer = null;
 		try {
@@ -105,15 +110,24 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 
 			List<RuleXml> versions = (List<RuleXml>) prefsJaxb.getVersions();
 
-			CollectionUtils.forAllDo(versions, new Closure(){
-				public void execute(Object o) {
-					if(((T)o).getVersion() == version){
-						((T)o).setDeleted(true);
-						((T)o).setLastModifiedBy(username);
-						((T)o).setLastModifiedDate(new Date());
-					}
-				};
-			});
+			if (physical) {
+	            CollectionUtils.filter(versions, new Predicate() {
+	                @Override
+	                public boolean evaluate(Object o) {
+	                    return ((T) o).getVersion() != version;
+	                }
+	            });
+			} else {
+    			CollectionUtils.forAllDo(versions, new Closure(){
+    				public void execute(Object o) {
+    					if(((T)o).getVersion() == version){
+    						((T)o).setDeleted(true);
+    						((T)o).setLastModifiedBy(username);
+    						((T)o).setLastModifiedDate(new Date());
+    					}
+    				};
+    			});
+			}
 
 			prefsJaxb.setVersions(versions);
 			Marshaller m = context.createMarshaller();

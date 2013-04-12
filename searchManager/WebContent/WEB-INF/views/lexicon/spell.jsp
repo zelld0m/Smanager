@@ -14,30 +14,29 @@
 <div class="clearB floatL minW240 sideMenuArea">
   <div class="clearB floatL w240">
     <div class="sideHeader">Filters</div>
-    <div class="clearB floatL w230 padL5">
-      <div class="box marT8">
-        <h2 style="font-size: 12px;">Status</h2>
-        <select id="status-filter" class="dropDownFilter mar10 w200">
-          <option value=""></option>
+    <!--  info -->
+    <div class="info fsize12 clearfix">
+      <label class="txtLabel">Status:</label>
+      <label class="details marR15">
+	    <select id="status-filter" class="dropDownFilter mar10 w205">
+	      <option value=""></option>
           <option value="new">New</option>
           <option value="modified">Updated</option>
-          <option value="published">Published</option>
-        </select>
-      </div>
-
-      <div class="box marT8">
-        <h2 style="font-size: 12px;">Search Term</h2>
-        <input id="searchTerm-filter" type="text" maxlength="100" class="mar10 w200"></input>
-      </div>
-      
-      <div class="box marT8">
-        <h2 style="font-size: 12px;">Suggestion</h2>
-        <input id="suggestion-filter" type="text" maxlength="100" class="mar10 w200"></input>
-      </div>
-      <div id="action-buttons" class="floatR marT20">
-          <div class="button-group">
-            <a class="new-button" href="javascript:void(0);" id="clear-button">Clear</a>
-          </div>
+	      <option value="published">Published</option>
+	    </select>
+      </label>
+      <label class="txtLabel">Search Term:</label>
+      <label class="details marR15">
+        <input id="searchTerm-filter" type="text" maxlength="100" class="w200"></input>
+      </label>
+      <label class="txtLabel">Suggestion:</label>
+      <label class="details marR15">
+        <input id="suggestion-filter" type="text" maxlength="100" class="w200"></input>
+      </label>
+      <div class="clearB"></div>
+      <div align="right" class="padR5 marT10">
+        <a href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold" id="filter-button">Filter</div></a>
+        <a href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold" id="clear-button">Reset</div></a>
       </div>
     </div>
   </div>

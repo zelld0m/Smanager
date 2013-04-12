@@ -61,6 +61,7 @@ import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
 import com.search.ws.ConfigManager;
@@ -846,6 +847,37 @@ public class RuleXmlUtil{
 		return false;
 	}
 
+    private static boolean restoreSpellRule(String path, RuleXml xml, boolean createPreRestore) {
+        SpellRules rules = (SpellRules) xml;
+        String store = rules.getStore();
+
+        try {
+            SpellRules crules = daoService.getSpellRules(store);
+
+            if (crules != null) {
+                // create backup of current spell rules.
+                if (createPreRestore) {
+                    if (!RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, rules.getRuleId(), crules, path)) {
+                        logger.error("Failed to create pre-import rule");
+                        return false;
+                    }
+                }
+            }
+
+            // replace current spell rules with rules to restore
+            if (daoService.replaceSpellRules(rules)) {
+                logger.info("Rollback spell rules succeeded");
+                return true;
+            } else {
+                logger.error("Failed to rollback ranking rule");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 	public static boolean restoreRule(RuleXml xml) {
 		return RuleXmlUtil.restoreRule(xml, true);
 	}
@@ -878,6 +910,8 @@ public class RuleXmlUtil{
 			isRestored = RuleXmlUtil.restoreQueryCleaning(path, xml, createPreRestore);
 		}else if(xml instanceof RankingRuleXml){
 			isRestored = RuleXmlUtil.restoreRankingRule(path, xml, createPreRestore);
+		}else if(xml instanceof SpellRules) {
+		    isRestored = RuleXmlUtil.restoreSpellRule(path, xml, createPreRestore);
 		}
 
 		return isRestored;

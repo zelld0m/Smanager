@@ -1,6 +1,7 @@
 package com.search.manager.report.model.xml;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.TreeMap;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.search.manager.enums.RuleEntity;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -27,6 +30,22 @@ public class SpellRules extends RuleXml {
 
     public SpellRules() {
         super(serialVersionUID);
+    }
+
+    public SpellRules(String store, long version, String name, String notes, String username, Date date,
+            String ruleId, int maxSuggest, List<SpellRuleXml> spellRule) {
+        this();
+        this.setSpellRule(spellRule);
+        this.setRuleId(ruleId);
+        this.setRuleName(ruleId);
+        this.setName(name);
+        this.setNotes(notes);
+        this.setCreatedBy(username);
+        this.setCreatedDate(date);
+        this.setStore(store);
+        this.setRuleEntity(RuleEntity.SPELL);
+        this.setVersion(version);
+        this.setMaxSuggest(maxSuggest);
     }
 
     @XmlAttribute(name = "maxSuggest")
@@ -51,6 +70,12 @@ public class SpellRules extends RuleXml {
     }
 
     public void generateSecondaryIndex() {
+        // clear secondary index
+        statusMap.clear();
+        ruleMap.clear();
+        statusMap.clear();
+        searchTermMap.clear();
+
         statusMap.put("new", new ArrayList<SpellRuleXml>());
         statusMap.put("modified", new ArrayList<SpellRuleXml>());
         statusMap.put("published", new ArrayList<SpellRuleXml>());
@@ -60,7 +85,7 @@ public class SpellRules extends RuleXml {
             for (SpellRuleXml xml : spellRule) {
                 ruleMap.put(xml.getRuleId(), xml);
 
-                if (! "deleted".equalsIgnoreCase(xml.getStatus())) {
+                if (!"deleted".equalsIgnoreCase(xml.getStatus())) {
                     for (String term : xml.getRuleKeyword().getKeyword()) {
                         searchTermMap.put(term, xml);
                     }
