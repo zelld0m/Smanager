@@ -129,12 +129,8 @@ public class DeploymentService {
 		try {
 			// TODO: read from new config
 			fileName = ConfigManager.getInstance().getPublishedDidYouMeanPath(storeId);
-			if (fileName == null) {
+			if (StringUtils.isBlank(fileName)) {
 				return false;
-			}
-			
-			if (StringUtils.isNotBlank(fileName)) {
-				fileName += File.separator + storeId + File.separator + "Spell" + File.separator + "spell.csv";
 			}
 			tmpFile = new File(fileName + "_tmp");
 			tmpFile.getParentFile().mkdirs();
@@ -174,7 +170,9 @@ public class DeploymentService {
 		
 		// rename file to actual file
 		if (StringUtils.isNotBlank(fileName) && success) {
-			success = tmpFile.renameTo(new File(fileName));
+			File actualFile = new File(fileName);
+			actualFile.delete();
+			success = tmpFile.renameTo(actualFile);
 		}
 		
 		return success;
@@ -187,16 +185,17 @@ public class DeploymentService {
 			for (SpellRuleXml rule: rules.selectRulesByStatus("new")) {
 				rule.setStatus("published");
 			}
-			for (SpellRuleXml rule: rules.selectRulesByStatus("new")) {
+			for (SpellRuleXml rule: rules.selectRulesByStatus("modified")) {
 				rule.setStatus("published");
 			}
-			rules.selectRulesByStatus("modified");
 			for (SpellRuleXml rule: rules.selectRulesByStatus("deleted")) {
 				rules.deletePhysically(rule);
 			}
 			
 			ConfigManager.getInstance().setPublishedStoreLinguisticSetting(storeId, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(storeId)));
 			generateSpellRuleFile(UtilityService.getStoreId());
+			daoService.saveSpellRules(storeId);
+			
 			success = true;
 		} catch (Exception e) {
 			logger.error(String.format("Failed to publish spell rule for Store %s", storeId), e);
