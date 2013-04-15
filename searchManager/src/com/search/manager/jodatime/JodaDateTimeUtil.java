@@ -1,9 +1,11 @@
 package com.search.manager.jodatime;
 
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
@@ -18,7 +20,7 @@ import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
 
 public class JodaDateTimeUtil {
-	
+	private static final Logger logger = Logger.getLogger(JodaDateTimeUtil.class);
 	
 	public static DateTimeZone getTimeZone(){
 		return DateTimeZone.getDefault();
@@ -29,7 +31,15 @@ public class JodaDateTimeUtil {
 	}
 	
 	public static Date toSqlDate(DateTime dateTime){
-		return dateTime!=null ? new Date(dateTime.getMillis()) : null;
+		TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
+		if(dateTime!=null ){
+			logger.info(String.format("Read Timezone: %s", String.valueOf(dateTime.getZone().getID())));
+			DateTime dTime = dateTime.withZone(DateTimeZone.forID("America/Los_Angeles"));
+			logger.info(String.format("Zone conversion to %s", String.valueOf(dTime.getZone().getID())));
+			logger.info(String.format("DateTime conversion %s to %s", String.valueOf(dateTime.getMillis()), String.valueOf(dTime.getMillis())));
+			return new Date(dTime.getMillis());
+		}
+		return null;
 	}
 	
 	public static DateTimeZone setTimeZoneID(String timeZoneId, String defaultTimeZoneId){

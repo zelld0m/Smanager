@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.configuration.ConfigurationException;
@@ -66,6 +67,12 @@ public class ConfigManager {
 					logger.info("Settings file for " + storeId + ": " + propConfig.getFileName());
 				}
 			}
+			
+			// timezone settings
+			String systemTimeZoneId = xmlConfig.getString("/system-timezone", "US/Los_Angeles");
+			logger.info(String.format("Attempted to set system timezone from %s to %s", TimeZone.getDefault().getID(), systemTimeZoneId));
+			TimeZone.setDefault(TimeZone.getTimeZone(systemTimeZoneId));
+			logger.info(String.format("TimeZone is %s",TimeZone.getDefault().getID()));
 			
 		} catch (ConfigurationException ex) {
 			ex.printStackTrace();
@@ -304,5 +311,4 @@ public class ConfigManager {
 //		}
 		
     }
-    
  }
