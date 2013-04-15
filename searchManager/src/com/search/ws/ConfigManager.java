@@ -69,10 +69,10 @@ public class ConfigManager {
 			}
 			
 			// timezone settings
-			String systemTimeZoneId = xmlConfig.getString("/system-timezone", "US/Los_Angeles");
+			String systemTimeZoneId = xmlConfig.getString("/system-timezone", "America/Los_Angeles");
 			logger.info(String.format("Attempted to set system timezone from %s to %s", TimeZone.getDefault().getID(), systemTimeZoneId));
 			TimeZone.setDefault(TimeZone.getTimeZone(systemTimeZoneId));
-			logger.info(String.format("TimeZone is %s",TimeZone.getDefault().getID()));
+			logger.info(String.format("TimeZone is %s",TimeZone.getDefault().getDisplayName()));
 			
 		} catch (ConfigurationException ex) {
 			ex.printStackTrace();

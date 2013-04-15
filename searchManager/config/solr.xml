@@ -2,7 +2,7 @@
 <solr-config>
   <shared-core>false</shared-core>	
   <solr-selector-param>storeAlias</solr-selector-param>
-  <system-timezone>US/Los_Angeles</system-timezone>
+  <system-timezone>America/Los_Angeles</system-timezone>
   
   <store id="pcmall" name="PCM">
     <core>pcmall</core>
