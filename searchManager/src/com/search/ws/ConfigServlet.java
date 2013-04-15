@@ -36,5 +36,6 @@ public class ConfigServlet extends HttpServlet {
 		conf = config.getInitParameter("config-folder") + fileSeparator + config.getInitParameter("messages-config-file");
 		logger.info("messages config file: " + conf);
 		MessagesConfig.getInstance(conf);
+		
 	}
 }
