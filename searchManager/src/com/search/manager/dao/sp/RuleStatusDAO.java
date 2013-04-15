@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.ExportType;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -115,24 +115,24 @@ public class RuleStatusDAO {
 
 							rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
 							rs.getString(DAOConstants.COLUMN_REQUEST_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE)),
 
 							rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
 							rs.getString(DAOConstants.COLUMN_APPROVAL_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE)),
 
 							rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
 							rs.getString(DAOConstants.COLUMN_PUBLISHED_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE)),
 
 							exportType,
 							rs.getString(DAOConstants.COLUMN_EXPORT_BY),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE)),
 
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
-							JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP))	                		
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP))	                		
 					);
 				}
 
@@ -180,6 +180,7 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_TYPE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_PUBLISHED_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_EXPORT_DATE, Types.TIMESTAMP));
 		}
 	}
@@ -210,8 +211,8 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, StringUtils.isNotBlank(ruleStatus.getApprovalStatus())?ruleStatus.getApprovalStatus():null);
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, StringUtils.isNotBlank(ruleStatus.getPublishedStatus())?ruleStatus.getPublishedStatus():null);
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, StringUtils.isNotBlank(ruleStatus.getUpdateStatus())?ruleStatus.getUpdateStatus():null);
-			inputs.put(DAOConstants.PARAM_START_DATE, searchCriteria.getStartDate());
-			inputs.put(DAOConstants.PARAM_END_DATE, searchCriteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(searchCriteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(searchCriteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
@@ -239,8 +240,8 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
 			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
 			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
-			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDateTime());
-			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastApprovalDateTime());
+			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, JodaDateTimeUtil.toSqlDate(ruleStatus.getLastRequestDateTime()));
+			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, JodaDateTimeUtil.toSqlDate(ruleStatus.getLastApprovalDateTime()));
 			result = DAOUtils.getUpdateCount(addRuleStatusStoredProcedure.execute(inputs));
 		}
 		catch (Exception e) {
@@ -265,12 +266,13 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
 			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
 			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
+			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
 			inputs.put(DAOConstants.PARAM_EXPORT_BY, ruleStatus.getExportBy());
 			inputs.put(DAOConstants.PARAM_EXPORT_TYPE, ruleStatus.getExportType() != null ? ruleStatus.getExportType().toString() : null);
-			inputs.put(DAOConstants.PARAM_LAST_EXPORT_DATE, ruleStatus.getLastExportDateTime());
-			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDateTime());
-			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastApprovalDateTime());
-			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
+			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, JodaDateTimeUtil.toSqlDate(ruleStatus.getLastRequestDateTime()));
+			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, JodaDateTimeUtil.toSqlDate(ruleStatus.getLastApprovalDateTime()));
+			inputs.put(DAOConstants.PARAM_LAST_PUBLISHED_DATE, JodaDateTimeUtil.toSqlDate(ruleStatus.getLastPublishedDateTime()));
+			inputs.put(DAOConstants.PARAM_LAST_EXPORT_DATE, JodaDateTimeUtil.toSqlDate(ruleStatus.getLastExportDateTime()));
 			result = DAOUtils.getUpdateCount(updateRuleStatusStoredProcedure.execute(inputs));
 		}
 		catch (Exception e) {

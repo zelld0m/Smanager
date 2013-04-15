@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.MemberTypeEntity;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
@@ -100,9 +100,9 @@ public class DemoteDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
-									JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-									JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
 									rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 				}
@@ -125,9 +125,9 @@ public class DemoteDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
-									JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-									JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
 									rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 				}
@@ -165,9 +165,9 @@ public class DemoteDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
-									JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-									JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
 									rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 				}
@@ -247,7 +247,7 @@ public class DemoteDAO {
 				inputs.put(DAOConstants.PARAM_VALUE, value);
 				inputs.put(DAOConstants.PARAM_COMMENT, comment);
 				inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, sequence);
-				inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDateTime);
+				inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(expiryDateTime));
 				inputs.put(DAOConstants.PARAM_CREATED_BY, username);
 				inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, demote.getDemoteEntity());
 
@@ -266,8 +266,8 @@ public class DemoteDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(demote.getStoreKeyword()));
 			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(demote.getStoreKeyword()));
-			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());
@@ -336,7 +336,7 @@ public class DemoteDAO {
 			DAOValidation.checkDemotePK(demote);
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, demote.getMemberId());
-			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, demote.getExpiryDateTime());
+			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(demote.getExpiryDateTime()));
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, demote.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(updateExpiryDateSP.execute(inputs));
 		} catch (Exception e) {

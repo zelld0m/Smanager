@@ -93,8 +93,9 @@
 						var a = [];
 						var arrSelectedKeys = Object.keys(getSelectedItems());
 
+						
 						$.each(arrSelectedKeys, function(k){ 
-							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+							a.push($(tabSelected).find("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
 
 						switch($(evt.currentTarget).attr("id")){
@@ -270,7 +271,7 @@
 							$table = $(tabSelected).find("table#rule");
 							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 							var ruleStatus = list[i];
-							var requestedDate = $.isNotBlank(list[i]["lastModifiedDate"])? list[i]["lastModifiedDate"].toUTCString(): "";
+							var requestedDate = $.isNotBlank(list[i]["formattedLastModifiedDateTime"])? list[i]["formattedLastModifiedDateTime"]: "";
 							var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);

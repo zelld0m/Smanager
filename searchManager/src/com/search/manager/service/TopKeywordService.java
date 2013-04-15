@@ -120,25 +120,8 @@ public class TopKeywordService {
     @RemoteMethod
     public FileTransfer downloadFileAsCSV(String filename, String customFilename) {
         try {
-            return downloadCsv(new FileInputStream(getFile(filename)), filename, customFilename);
+            return FileTransferUtils.downloadCsv(new FileInputStream(getFile(filename)), getFileHeader(filename), filename, customFilename);
         } catch (FileNotFoundException e) {
-            logger.error(e.getMessage());
-        }
-
-        return null;
-    }
-
-    private FileTransfer downloadCsv(InputStream content, String filename, String customFilename) {
-        BufferedInputStream bis = null;
-
-        try {
-            bis = new BufferedInputStream(content);
-            CombinedInputStream cis = new CombinedInputStream(new InputStream[] {
-                    new ByteArrayInputStream(getFileHeader(filename).getBytes()), bis });
-            // FileTransfer auto-closes the stream
-            return new FileTransfer(StringUtils.isBlank(customFilename) ? filename : customFilename + ".csv",
-                    "application/csv", cis);
-        } catch (Exception e) {
             logger.error(e.getMessage());
         }
 
@@ -148,14 +131,12 @@ public class TopKeywordService {
     @RemoteMethod
     public FileTransfer downloadCustomRangeAsCSV(Date from, Date to, String customFilename) {
         List<TopKeyword> topKeywords = StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreId());
-        return downloadCsv(StatisticsUtil.getCustomRangeReportStream(topKeywords, new CsvTransformer<TopKeyword>() {
-
+        return FileTransferUtils.downloadCsv(new CsvTransformer<TopKeyword>() {
             @Override
             public String[] toStringArray(TopKeyword t) {
                 return new String[] { String.valueOf(t.getCount()), t.getKeyword() };
             }
-
-        }), "customRangeTopKeywords", customFilename);
+        }.getCsvStream(topKeywords), getFileHeader("customRangeTopKeywords"), "customRangeTopKeywords", customFilename);
     }
 
     @RemoteMethod

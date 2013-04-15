@@ -158,6 +158,8 @@
 								showOn: "both",
 								minDate: self.expDateMinDate,
 								maxDate: self.expDateMaxDate,
+								changeMonth: true,
+						        changeYear: true,
 								buttonText: "Expiration Date",
 								buttonImage: "../images/icon_calendar.png",
 								buttonImageOnly: true
@@ -405,8 +407,7 @@
 							},
 							preHook: function() { 
 								base.prepareList();
-								if(validateComment("Comment", comment, 1)){
-									var nl2br = comment.replace(/\n\r?/g, '<br/>');
+								if ($.isNotBlank(comment) && validateComment("Comment", comment, 1)){
 									ExcludeServiceJS.addRuleComment(keyword, memberId, comment, {
 										callback : function(data){
 											if (data>0) base.hasChanges++;
@@ -415,6 +416,17 @@
 								}
 							}
 						});
+						
+						DemoteServiceJS.updateItem(keyword, memberId, position, comment, validityDate, {
+							callback : function(data){
+								if (data>0) base.hasChanges++;
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
+						
 					},
 
 					itemDeleteItemCallback:function(base, memberId){

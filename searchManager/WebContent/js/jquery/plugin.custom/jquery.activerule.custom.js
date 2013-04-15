@@ -41,7 +41,7 @@
 			var configURL = GLOBAL_solrUrl.replace("http://", "").split("/")[0];
 			
 			$.getJSON(
-					GLOBAL_solrUrl.replace(configURL,currentURL) + GLOBAL_storeCore + "/select?rows=0&wt=json&json.nl=map&gui=" + $.parseJSON(GLOBAL_solrConfig)["isFmGui"] + "&store=" + GLOBAL_storeId + "&q=" + base.options.keyword,
+					GLOBAL_solrUrl.replace(configURL,currentURL) + GLOBAL_storeCore + "/select?rows=0&wt=json&json.nl=map&gui=" + $.parseJSON(GLOBAL_solrConfig)["isFmGui"] + "&" + GLOBAL_solrSelectorParam + "=" + GLOBAL_storeId + "&q=" + base.options.keyword,
 					function (json, textStatus) { 
 						base.$el.html(base.getTemplate());
 						var rules = json.responseHeader["search_rules"];

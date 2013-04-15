@@ -119,7 +119,8 @@
 						.removeClass("txtAC")
 						.addClass("txtAL")
 						.attr("width", "363px");
-						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						
+						$tr.find("#itemValidity").html(list[i]["formattedExpiryDateTime"] + "<br/>" +  list[i]["validityText"]); 
 
 						if ($.isBlank(list[i]["isExpired"])){
 							$tr.find("#itemValidityDaysExpired").remove();
@@ -198,12 +199,12 @@
 			case "facetsort": 
 			case "facet sort": 
 				var $table = $content.find("table#item");
-				var $ruleInfo = $content.find("div#ruleInfo");
+				var $rulePreview = $content.find("div#leftPreview");
 
 				FacetSortServiceJS.getRuleById(base.options.ruleId, {
 					callback: function(data){
-						$ruleInfo.find("#ruleName").text(data.name);
-						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
+						$rulePreview.find("#ruleInfo").text(data.name);
+						$rulePreview.find("#ruleType").text(data.ruleType.toLowerCase());
 
 						for(var facetGroup in data.items){
 							var facetName = facetGroup;
@@ -348,6 +349,34 @@
 					}
 				});
 
+				break;
+			case "didyoumean":
+			case "did you mean": 
+				// TODO
+				var $table = $content.find("table#item");
+				var $rulePreview = $content.find("div#leftPreview");
+
+				SpellRuleServiceJS.getRuleById(base.options.ruleId, {
+					callback: function(data){
+						var $tr = $content.find("tr#itemPattern").clone();
+						
+						var list1 = data["searchTerms"];
+						for(var i=0; i<list1.length; i++) {
+							$tr.find("td#itemSearchTerms").append("<span class='term' >" + list1[i] + "</span>");
+						}
+						
+						var list2 = data["suggestions"];
+						for(var i=0; i<list2.length; i++) {
+							$tr.find("td#itemSuggestions").append("<span class='term' >" + list2[i] + "</span>");
+						}
+						$tr.show();
+						$table.append($tr);
+					},
+					postHook:function() {
+						$table.find("tr#preloader").hide();
+						base.options.templateEvent(base);
+					}
+				});
 				break;
 			}
 		};
@@ -628,6 +657,34 @@
 				template += '				</tbody>';
 				template += '			</table>';
 				template += '		</div>	';
+				template += '	</div>';
+				break;
+			// TODO 
+			case "did you mean":
+				template += '	<div class="w600 mar0 pad0">';
+				template += '		<table class="tblItems w100p marT5">';
+				template += '			<tbody>';
+				template += '				<tr>';
+				template += '					<th width="72px">Search Terms</th>';
+				template += '					<th width="72px">Suggestions</th>';
+				template += '				</tr>';
+				template += '			<tbody>';
+				template += '		</table>';
+				template += '	</div>';
+				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '		<table id="item" class="tblItems w100p">';
+				template += '			<tbody>';
+				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
+				template += '					<td width="72px" class="txtAC term-list" id="itemSearchTerms"></td>';
+				template += '					<td width="72px" class="txtAL term-list" id="itemSuggestions"></td>';
+				template += '				</tr>';
+				template += '				<tr id="preloader">';
+				template += '					<td colspan="2" class="txtAC">';
+				template += '						<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';
+				template += '					</td>';
+				template += '				</tr>';
+				template += '			</tbody>';
+				template += '		</table>';
 				template += '	</div>';
 				break;
 			}

@@ -17,7 +17,7 @@
 					var counter = items[0].count;
 					var objectedItems = items[0].objectedItems;
 
-					selectedFacetTemplateName = self.getSelectedFacetTemplateName(this.manager.response.responseHeader.params.fq);
+					selectedFacetTemplateName = self.getSelectedFacetTemplateName(this.manager.store.params.fq);
 
 					if(counter == 1 && (selectedFacetTemplateName === "" || selectedFacetTemplateName.indexOf(objectedItems[0].facet) != -1)){
 						selectedFacetTemplateName = objectedItems[0].facet;
@@ -46,8 +46,9 @@
 
 			if ($.isNotBlank(fq)){
 				for (var i = 0, l = fq.length; i < l; i++) {
-					if(fq[i].indexOf(GLOBAL_storeFacetTemplateName) != -1){// Facet Template Name / Or Find By display
-						facetTemplateName = fq[i].substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].length);
+					if(!$.isEmptyObject(fq[i]) && fq[i].value.indexOf(GLOBAL_storeFacetTemplateName) != -1){// Facet Template Name / Or Find By display
+						facetTemplateName = fq[i].value.substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].value.length);
+						return facetTemplateName;
 					}
 				}
 			}
@@ -136,6 +137,7 @@
 					'json.nl':'map'
 			};
 
+			params[GLOBAL_solrSelectorParam] = GLOBAL_storeId;
 			var storeparams = self.manager.store.params;
 			//merge params
 			for(var name in storeparams){

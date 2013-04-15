@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.cache.model.CacheModel;
@@ -59,7 +60,7 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 		Relevancy relevancy = new Relevancy("", "");
 		relevancy.setStore(new Store(storeKeyword.getStoreId()));
 		RecordSet<RelevancyKeyword> rk = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
+				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), DateTime.now(), DateTime.now(), 0, 0),
 				MatchType.LIKE_NAME, ExactMatch.MATCH);
 		if (rk.getTotalSize() > 0) {
 			relevancy = daoService.getRelevancyDetails(rk.getList().get(0).getRelevancy());
@@ -75,7 +76,7 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 		Relevancy relevancy = new Relevancy("", "");
 		relevancy.setStore(new Store(storeKeyword.getStoreId()));
 		RecordSet<RelevancyKeyword> rk = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
+				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), DateTime.now(), DateTime.now(), 0, 0),
 				MatchType.LIKE_NAME, ExactMatch.MATCH);
 		if (rk.getTotalSize() > 0) {
 			relevancy = daoService.getRelevancyDetails(rk.getList().get(0).getRelevancy());

@@ -22,7 +22,14 @@ instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
   <div class="dockFooter">
   <div class="footerFix">
   	<div style="width:1024px; margin: 0 auto; padding:5px 10px"> 
-  		<div class="floatL w45p fsize12 padT7"><img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" class="marBn3 marR3"> Welcome <sec:authentication property="principal.username" /></span></div>
+  		<div class="floatL w45p fsize12 padT7">
+  			<img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" class="marBn3 marR3"> 
+  			Welcome <sec:authentication property="principal.username" />
+  		</div>
+  		<div  class="floatL fsize12 padT7">
+  			<img src="<spring:url value="/images/timezone.png" />" class="marBn3 marR3"> 
+  			${timeZoneId}
+  		</div>
   		<div class="floatR w45p posRel" >			
   			<ul id="dockIcon">
   				<li id="Basket" class="basket">

@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<% pageContext.setAttribute("now", org.joda.time.DateTime.now()); %>
 
 <!DOCTYPE html>
 <html>
@@ -24,6 +25,7 @@
   <spring:eval expression="T(com.search.manager.service.UtilityService).getIndexedSchemaFields()" var="schemaFields" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreId()" var="storeId" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="storeName" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getTimeZoneId()" var="timeZoneId" />
   
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
@@ -33,6 +35,8 @@
     var GLOBAL_serverName = "<%=request.getServerName()%>";  
     var GLOBAL_serverPort = "<%=request.getServerPort()%>";  
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
+	var GLOBAL_requestURL = "<%=request.getRequestURL()%>";	
+	var GLOBAL_requestURI = "<%=request.getRequestURI()%>";	
 	
 	//store schema indexed fields
 	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
@@ -48,14 +52,16 @@
 	// Store parameters
 	var GLOBAL_storeParameters = $.parseJSON('${storeParameters}');
 	var GLOBAL_username = GLOBAL_storeParameters["username"];
+	var GLOBAL_solrSelectorParam = GLOBAL_storeParameters["solrSelectorParam"];
 	var GLOBAL_storeId = GLOBAL_storeParameters["storeId"];
 	var GLOBAL_storeCore = GLOBAL_storeParameters["storeCore"];
 	var GLOBAL_storeName = GLOBAL_storeParameters["storeName"];
 	var GLOBAL_storeFacetName = GLOBAL_storeParameters["storeFacetName"];
 	var GLOBAL_storeFacetTemplate = GLOBAL_storeParameters["storeFacetTemplate"];
 	var GLOBAL_storeFacetTemplateName = GLOBAL_storeParameters["storeFacetTemplateName"];
-	
 	var GLOBAL_storeGroupMembership = GLOBAL_storeParameters["storeGroupMembership"];
+	var GLOBAL_storeDateFormat = GLOBAL_storeParameters["storeDateFormat"];
+	var GLOBAL_storeDateTimeFormat = GLOBAL_storeParameters["storeDateTimeFormat"];
 	
 	var GLOBAL_storeGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
 	var GLOBAL_storeGroupTotal = GLOBAL_storeGroupMembership.length;
@@ -76,6 +82,8 @@
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
 	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
+	
+	var GLOBAL_storeFacetTemplateNameField = GLOBAL_PCMGroup ? "FacetTemplateName" : "TemplateName";
   </script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
@@ -114,6 +122,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/KeywordTrendsServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ReportGeneratorServiceJS.js"/>"></script>  
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/SpellRuleServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-array-functions.js" />" ></script>
@@ -137,6 +146,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.slidecheckbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.importas.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.rk-message-type-1.0.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.editable.custom.js" />" ></script>
   
   <script type="text/javascript"  src="<spring:url value="/js/jquery/searchabledropdown-1.0.8/jquery.searchabledropdown-1.0.8-modified.src.js" />"></script>  
  
@@ -196,8 +206,8 @@
         <tr>
           <td align="left" class="padTB5">
           	<div class="clearB floatL farial fsize12 fLgray2">
-	          	<img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" style="margin-bottom:-3px"> Welcome <span class="fbold"><sec:authentication property="principal.username" /></span> <span class="fsize10">|</span> 
-			    <span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href=""> help</a></span> <span class="fsize10">|</span>
+	          	<img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" style="margin-bottom:-3px"> Welcome <span class="fbold"><sec:authentication property="principal.username" /></span> <span class="fsize10">|</span>
+	          	<span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href=""> help</a></span> <span class="fsize10">|</span>
 			    <span class="fLALink fdecoNone fsize11 txtCapitalize"><a href="<spring:url value="/logout" />">Logout</a></span>
 		    </div>
           </td>

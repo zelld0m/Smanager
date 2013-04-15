@@ -67,7 +67,8 @@
 		       <ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'synonym'? 'class="active"': ''}><a href="<spring:url value="/synonym/"/>${storeId}">Synonym</a></li>
 		      		<li ${submenu eq 'stopword'? 'class="active"': ''}><a href="<spring:url value="/stopword/"/>${storeId}">Stopword</a></li>	      		
-		      		<li ${submenu eq 'protword'? 'class="active"': ''}><a href="<spring:url value="/protword/"/>${storeId}">Protword</a></li>	      		
+		      		<li ${submenu eq 'protword'? 'class="active"': ''}><a href="<spring:url value="/protword/"/>${storeId}">Protword</a></li>	
+		      		<li ${submenu eq 'spell'? 'class="active"': ''}><a href="<spring:url value="/spell/"/>${store}">Did You Mean</a></li>
 		       </ul>
 	      </c:if>
 	      

@@ -43,7 +43,7 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 
 	@ReportField(label="Created Date", size=20, sortOrder=6)
 	public String getCreatedDate(){
-		return ""; //TODO: DateAndTimeUtils.formatDateTimeUsingConfig(model.getStore().getStoreId(), model.getCreatedDate());
+		return model.getFormattedCreatedDate();
 	}
 
 	@ReportField(label="Modified By", size=20, sortOrder=7)
@@ -53,7 +53,6 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 	
 	@ReportField(label="Modified Date", size=20, sortOrder=8)
 	public String getModifiedDate(){
-		return ""; //TODO: DateAndTimeUtils.formatDateTimeUsingConfig(model.getStore().getStoreId(), model.getLastModifiedDate());
-	}
-	
+		return model.getFormattedLastModifiedDate();
+	}	
 }

@@ -1,10 +1,10 @@
 package com.search.manager.cache.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.cache.model.CacheModel;
@@ -54,7 +54,7 @@ public class DemoteCacheDao extends CacheDao<DemoteResult> {
 		DemoteResult demoteFilter = new DemoteResult();
 		demoteFilter.setStoreKeyword(storeKeyword);
 		// load only non-expired items
-		SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter, new Date(), null, 0, 0);
+		SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter, DateTime.now(), null, 0, 0);
 		List<DemoteResult> demotedList = daoService.getDemoteResultList(criteria).getList();
 		if (demotedList == null) {
 			demotedList = new ArrayList<DemoteResult>();
@@ -69,7 +69,7 @@ public class DemoteCacheDao extends CacheDao<DemoteResult> {
 		StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
 		demoteFilter.setStoreKeyword(storeKeyword);
 		// load only non-expired items
-		SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter, new Date(), null, 0, 0);
+		SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter, DateTime.now(), null, 0, 0);
 		List<DemoteResult> demotedList = daoService.getDemoteResultList(criteria).getList();
 		if (demotedList == null) {
 			demotedList = new ArrayList<DemoteResult>();

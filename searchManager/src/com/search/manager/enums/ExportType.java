@@ -9,7 +9,9 @@ import java.util.Map;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.EnumConverter;
 
-@DataTransferObject(converter=EnumConverter.class)
+@DataTransferObject(
+		converter=EnumConverter.class, 
+		type="enum")
 public enum ExportType {
 
 	AUTOMATIC("Automatic", "Automatic"),

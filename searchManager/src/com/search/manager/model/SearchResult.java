@@ -1,6 +1,7 @@
 package com.search.manager.model;
 
 import org.joda.time.DateTime;
+
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.report.model.xml.RuleItemXml;
 
@@ -59,7 +60,7 @@ public class SearchResult extends ModelBean {
 	public void setStoreKeyword(StoreKeyword storeKeyword) {
 		this.storeKeyword = storeKeyword;
 	}
-
+	
 	public DateTime getExpiryDateTime() {
 		return expiryDateTime;
 	}

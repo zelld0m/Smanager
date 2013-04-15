@@ -137,8 +137,9 @@
 						var a = [];
 						var arrSelectedKeys = Object.keys(self.getSelectedItems());
 						
+						
 						$.each(arrSelectedKeys, function(k){ 
-							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+							a.push($selectedTab.find("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
 						
 						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
@@ -223,8 +224,8 @@
 							var rule = list[i];
 							var $table = $selectedTab.find("table#rule");
 							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(rule["ruleRefId"])).show();
-							var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
-							var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportDate"].toUTCString(): "";
+							var lastPublishedDate = $.isNotBlank(rule["formattedLastPublishedDateTime"])? rule["formattedLastPublishedDateTime"]: "";
+							var lastExportedDate = $.isNotBlank(rule["formattedLastExportDateTime"])? rule["formattedLastExportDateTime"]: "";
 							var showId = rule["ruleRefId"].toLowerCase() !== rule["description"].toLowerCase();
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", rule["ruleRefId"]);
@@ -265,16 +266,29 @@
 									postButtonClick: function(){
 										self.getExportList();
 									},
-									itemForceAddStatusCallback: function(base, memberIds){
-										if (self.entityName.toLowerCase() === "elevate")
-										ElevateServiceJS.isRequireForceAdd(rule["ruleRefId"], memberIds, {
-											callback:function(data){
-												base.updateForceAddStatus(data);
-											},
-											preHook: function(){
-												base.prepareForceAddStatus();
-											}
-										});
+									itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+										if (self.entityName.toLowerCase() === "elevate"){
+											ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+												callback:function(data){
+													base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+												},
+												preHook: function(){
+													base.prepareForceAddStatus(contentHolder);
+												}
+											});
+										}
+									},
+									itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+										if (self.entityName.toLowerCase() === "elevate"){
+											ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+												callback:function(data){
+													base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+												},
+												preHook: function(){
+													base.prepareForceAddStatus(contentHolder);
+												}
+											});
+										}
 									}
 								});
 							}else{

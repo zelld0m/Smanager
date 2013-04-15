@@ -37,7 +37,7 @@ public class RedirectRuleReportBean extends ReportBean<RedirectRule> {
 
 	@ReportField(label="Created Date", size=20, sortOrder=6)
 	public String getCreatedDate(){
-		return ""; //TODO: DateAndTimeUtils.formatDateTimeUsingConfig(model.getStoreId(), model.getCreatedDate());
+		return model.getFormattedCreatedDate();
 	}
 
 	@ReportField(label="Modified By", size=20, sortOrder=7)
@@ -47,7 +47,6 @@ public class RedirectRuleReportBean extends ReportBean<RedirectRule> {
 	
 	@ReportField(label="Modified Date", size=20, sortOrder=8)
 	public String getModifiedDate(){
-		return ""; //TODO:  DateAndTimeUtils.formatDateTimeUsingConfig(model.getStoreId(), model.getLastModifiedDate());
+		return model.getFormattedLastModifiedDate();
 	}
-	
 }

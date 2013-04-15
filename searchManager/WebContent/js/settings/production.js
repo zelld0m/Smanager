@@ -102,7 +102,7 @@
 						var arrSelectedKeys = Object.keys(getSelectedItems());
 						
 						$.each(arrSelectedKeys, function(k){ 
-							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+							a.push($(tabSelected).find("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
 
 						comment = comment.replace(/\n\r?/g, '<br/>');
@@ -196,7 +196,7 @@
 								$table = $(tabSelected).find("table#rule");
 								$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 
-								var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
+								var lastPublishedDate = $.isNotBlank(list[i]["formattedLastPublishedDateTime"])? list[i]["formattedLastPublishedDateTime"]: "";
 								var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
 
 								$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);

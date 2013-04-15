@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -31,6 +32,7 @@ import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
+import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Schema;
@@ -141,6 +143,13 @@ public class UtilityService {
 	}
 
 	@RemoteMethod
+	public static String getTimeZoneId(){
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		String timeZoneId= (String)attr.getAttribute("timeZoneId", RequestAttributes.SCOPE_SESSION);
+		return timeZoneId;
+	}
+	
+	@RemoteMethod
 	public static String getStoreCore(String storeId){
 		ConfigManager cm = ConfigManager.getInstance();
 		if(StringUtils.isNotBlank(storeId))
@@ -172,15 +181,11 @@ public class UtilityService {
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
 	}
-
+	
 	@RemoteMethod
-	public static String getStoreLabel(){
-		String storeLabel = null;
-		ConfigManager cm = ConfigManager.getInstance();
-		if (cm != null) {
-			storeLabel = cm.getStoreName(getStoreName());
-		}
-		return storeLabel;
+	public static void setTimeZoneId(String timeZoneId) {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		attr.setAttribute("timeZoneId", timeZoneId, RequestAttributes.SCOPE_SESSION);
 	}
 
 	@RemoteMethod
@@ -192,7 +197,7 @@ public class UtilityService {
 		if (m.matches()) {
 			json.put("solrUrl", PropsUtils.getValue("browsejssolrurl") + m.group(1));
 		}
-		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
+
 		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
 		return json.toString();
 	}
@@ -216,6 +221,7 @@ public class UtilityService {
 	public static String getStoreParameters(){
 		JSONObject json = new JSONObject();
 		json.put("username", getUsername());
+		json.put("solrSelectorParam", getSolrSelectorParam());
 		json.put("storeId", getStoreId());
 		json.put("storeCore", getStoreCore());
 		json.put("storeName", getStoreName());
@@ -223,6 +229,8 @@ public class UtilityService {
 		json.put("storeFacetTemplate", getStoreFacetTemplate());
 		json.put("storeFacetTemplateName", getStoreFacetTemplateName());
 		json.put("storeGroupMembership", getStoreGroupMembership());
+		json.put("storeDateFormat", getStoreDateFormat());
+		json.put("storeDateTimeFormat", getStoreDateTimeFormat());
 		return json.toString();
 	}
 
@@ -336,6 +344,11 @@ public class UtilityService {
 
 		return storeFacetTemplate;
 	}
+	
+	@RemoteMethod
+	public static String getSolrSelectorParam(){
+		return ConfigManager.getInstance().getSolrSelectorParam();
+	}
 		
 	public static String getStoreSetting(String property) {
 		return ConfigManager.getInstance().getStoreSetting(getStoreId(), property);
@@ -366,4 +379,27 @@ public class UtilityService {
 		}
 	}
 
+	public static void setFacetTemplateValues(List<? extends Product> list) {
+		if (CollectionUtils.isNotEmpty(list)) {
+			String facetPrefix = getStoreFacetPrefix();
+			String facetTemplate = getStoreFacetTemplate();
+			String facetTemplateName = getStoreFacetTemplateName();
+			for (Product p: list) {
+				RedirectRuleCondition condition = p.getCondition();
+				if (condition != null) {
+					condition.setFacetPrefix(facetPrefix);
+					condition.setFacetTemplate(facetTemplate);
+					condition.setFacetTemplateName(facetTemplateName);
+				}
+			}
+		}
+	}
+	
+	public static String getStoreDateFormat() {
+		return ConfigManager.getInstance().getStoreParameter(getStoreId(), "date-format");
+	}
+	
+	public static String getStoreDateTimeFormat() {
+		return ConfigManager.getInstance().getStoreParameter(getStoreId(), "datetime-format");
+	}
 }

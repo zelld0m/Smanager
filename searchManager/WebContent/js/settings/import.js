@@ -604,8 +604,10 @@
 				if(arrImportIds.length>0){
 					confirmationMessage += "Rules to be imported:\n";
 				}
+
+				var $selectedTab = $("#"+self.tabSelected);
 				for(var i=0; i < arrImportIds.length; i++){
-					$row = $("tr#ruleItem" + $.formatAsId(arrImportIds[i]));
+					$row = $selectedTab.find("tr#ruleItem" + $.formatAsId(arrImportIds[i]));
 					rName = $row.find("#ruleName").text();
 					iType = $row.find("#importTypeList option:selected:eq(0)").text();
 					iAs = $row.find("#newName").val();
@@ -662,20 +664,39 @@
 				});
 			},
 
-			getPreTemplate : function(selectedType){
+			getPreTemplate : function(entityName, selectedType){
 				var template = '';
-				template  = '<div class="rulePreview w590 marB20">';
-				template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
-				template += '	<label class="w110 floatL fbold">Rule Name:</label>';
-				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
-				template += '	<div class="clearB"></div>';
-				template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
-				template += '	<label class="wAuto floatL" id="importType">';
-				template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '	</label>';
-				template += '	<div class="clearB"></div>';
-				template += '</div>';
-
+				
+				switch(entityName.toLowerCase()){
+				case "facetsort":
+					template  = '<div class="rulePreview w590 marB20">';
+					template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL fbold">Rule Type:</label>';
+					template += '	<label class="wAuto floatL" id="ruleType"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
+					template += '	<label class="wAuto floatL" id="importType">';
+					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+					template += '	</label>';
+					template += '	<div class="clearB"></div>';
+					template += '</div>';
+					break;
+				default:	//template for elevate, exclude, demote, redirect and relevancy rule
+					template  = '<div class="rulePreview w590 marB20">';
+					template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
+					template += '	<label class="wAuto floatL" id="importType">';
+					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+					template += '	</label>';
+					template += '	<div class="clearB"></div>';
+					template += '</div>';
+				}
 				return template;
 			},
 
@@ -779,7 +800,7 @@
 
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
-								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
+								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["formattedLastPublishedDateTime"]))? rule["ruleStatus"]["formattedLastPublishedDateTime"]: "";
 
 								if(rule["deleted"]){
 									var msg = "Data for rule <b>" + ruleName + "</b> ";
@@ -814,7 +835,7 @@
 													rightPanelSourceData: "database",
 													dbRuleId: dbRuleId,
 													postTemplate: self.getPostTemplate(),
-													preTemplate: self.getPreTemplate(rule["importType"]),
+													preTemplate: self.getPreTemplate(self.entityName, rule["importType"]),
 													rightPanelTemplate: self.getRightPanelTemplate(),
 													postButtonClick: function(){
 														self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);

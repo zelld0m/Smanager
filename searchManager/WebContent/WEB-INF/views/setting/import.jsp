@@ -93,7 +93,7 @@
 					<tbody>
 				</table>
 			</div>
-			<div style="max-height:360px; height:360px !ie; overflow-y:auto">
+			<div>
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">

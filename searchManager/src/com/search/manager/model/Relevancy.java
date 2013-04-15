@@ -14,6 +14,8 @@ import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 import org.joda.time.DateTime;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.report.model.xml.RankingRuleXml;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -277,16 +279,14 @@ public class Relevancy extends ModelBean {
 		}
 		return null;
 	}
-	//TODO: tld or JodaTimeUtil
-//	public String getFormattedStartDate() {
-//		if(getStore()==null) return StringUtils.EMPTY;
-//		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreId(), getStartDate());
-//	}
-//	
-//	public String getFormattedEndDate() {
-//		if(getStore()==null) return StringUtils.EMPTY;
-//		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreId(), getEndDate());
-//	}
+
+	public String getFormattedStartDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getStartDateTime(), JodaPatternType.DATE);
+	}
+
+	public String getFormattedEndDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getEndDateTime(), JodaPatternType.DATE);
+	}
 	
 	/**
 	 * Used for GUI, return all parameters. Unassigned parameters will map to an empty string.
@@ -312,5 +312,4 @@ public class Relevancy extends ModelBean {
 	public void setFields(Map<String, String> fields) {
 		this.fields = fields;
 	}
-
 }

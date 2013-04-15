@@ -11,6 +11,8 @@ import org.springframework.util.StringUtils;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class RuleStatus extends ModelBean {
@@ -279,5 +281,21 @@ public class RuleStatus extends ModelBean {
 
 	public void setLastExportDateTime(DateTime lastExportDateTime) {
 		this.lastExportDateTime = lastExportDateTime;
+	}
+	
+	public String getFormattedLastRequestDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDateTime(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedLastApprovalDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDateTime(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedLastPublishedDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDateTime(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedLastExportDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDateTime(), JodaPatternType.DATE_TIME);
 	}
 }

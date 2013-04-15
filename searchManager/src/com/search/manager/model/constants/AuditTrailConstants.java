@@ -20,7 +20,8 @@ public class AuditTrailConstants {
 		relevancy,
 		ruleStatus,
 		security,
-		facetSort
+		facetSort,
+		spell
 	}
 	
 	public enum Operation {
@@ -74,6 +75,7 @@ public class AuditTrailConstants {
 		Entity.relevancy,
 		Entity.ruleStatus,
 		Entity.security,
+		Entity.spell,
 		Entity.storeKeyword
 	};
 	
@@ -203,6 +205,12 @@ public class AuditTrailConstants {
 		Operation.resetPassword,
 		Operation.update,
 		};
+	
+	public static Operation[] spellOperations = {
+		Operation.add,
+		Operation.delete, 
+		Operation.update,
+		};
 
 	public static Map<Entity, Operation[]> entityOperationMap;
 	
@@ -223,6 +231,7 @@ public class AuditTrailConstants {
 		entityOperationMap.put(Entity.queryCleaning, queryCleaningOperationList.toArray(new Operation[0]));
 		entityOperationMap.put(Entity.ruleStatus, ruleStatusOperations);
 		entityOperationMap.put(Entity.security, securityOperations);
+		entityOperationMap.put(Entity.spell, spellOperations);
 		ArrayList<Operation> relevancyOperationList = new ArrayList<Operation>();
 		CollectionUtils.mergeArrayIntoCollection(relevancyOperations, relevancyOperationList);
 		CollectionUtils.mergeArrayIntoCollection(relevancyFieldOperations, relevancyOperationList);

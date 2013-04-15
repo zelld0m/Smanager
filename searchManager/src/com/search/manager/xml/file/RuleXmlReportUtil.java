@@ -12,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.FacetGroup;
@@ -84,7 +85,7 @@ public class RuleXmlReportUtil{
 		subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
 		subReportHeader.addRow("Name: ", StringUtils.defaultIfBlank(xml.getName(),""));
 		subReportHeader.addRow("Notes: ", StringUtils.defaultIfBlank(xml.getNotes(),""));
-		subReportHeader.addRow("Date Created: ", xml.getCreatedDateTime() != null ? JodaTimeUtil.formatDateTimeFromStorePattern(storeId,  xml.getCreatedDateTime()) : "");
+		subReportHeader.addRow("Date Created: ", xml.getCreatedDateTime() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId,  xml.getCreatedDateTime(), JodaPatternType.DATE_TIME) : "");
 		subReportHeader.addRow("Created By: ", xml.getCreatedBy());
 		
 		return subReportHeader;

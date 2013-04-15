@@ -418,9 +418,9 @@
 			if($dynamicAttribute.length){
 				var inTemplateName = $dynamicAttribute.find("select#templateNameList > option:gt(0):selected:eq(0)").text();
 				var $divDynamicAttrItems = $dynamicAttribute.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)");
-
+				
 				if($.isNotBlank($.trim(inTemplateName))){
-					condMap["FacetTemplateName"] = $.makeArray($.trim(inTemplateName));
+					condMap[GLOBAL_storeFacetTemplateNameField] = $.makeArray($.trim(inTemplateName));
 
 					$divDynamicAttrItems.find("div").each(function(ulInd, uEl){
 						var attributeItem = $(uEl).prop("title");
@@ -1172,8 +1172,8 @@
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
 					if ($.isNotBlank($item) && !$.isEmptyObject($item.condition.dynamicAttributes)){
-						$select.val($item.condition.dynamicAttributes["FacetTemplateName"][0]);
-						base.populateCNETDynamicAttributes($item.condition.dynamicAttributes["FacetTemplateName"][0]);
+						$select.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateNameField][0]);
+						base.populateCNETDynamicAttributes($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateNameField][0]);
 					}
 				}
 			});
@@ -1338,8 +1338,8 @@
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
 					if ($.isNotBlank($item) && !$.isEmptyObject($item.condition.dynamicAttributes)){
-						$select.val($item.condition.dynamicAttributes["FacetTemplateName"][0]);
-						base.populateIMSDynamicAttributes($item.condition.dynamicAttributes["FacetTemplateName"][0]);
+						$select.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateNameField][0]);
+						base.populateIMSDynamicAttributes($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateNameField][0]);
 					}
 				}
 			});
@@ -1460,6 +1460,8 @@
 				showOn: "both",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
+				changeMonth: true,
+			    changeYear: true,
 				buttonText: "Expiration Date",
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
@@ -1518,10 +1520,14 @@
 						}
 
 						if (valid){
+							var inputFields = ["CatCode","Name","Description"];
+							
 							$.each(condMap, function(idx, el){
 								$.each(el, function(i,elem){
-									if(!validateGeneric("Input", elem)) {
-										valid = false;
+									if($.inArray(idx, inputFields) !== -1){
+										if(!validateGeneric("Input", elem)) {
+											valid = false;
+										}
 									}
 								});
 							});
@@ -1551,6 +1557,8 @@
 				showOn: "both",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
+				changeMonth: true,
+			    changeYear: true,
 				buttonText: "Expiration Date",
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true

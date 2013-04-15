@@ -41,7 +41,7 @@ public class FacetSortReportBean extends ReportBean<FacetGroup> {
 
 	@ReportField(label="Created Date", size=20, sortOrder=5)
 	public String getCreatedDate(){
-		return ""; //TODO: DateAndTimeUtils.formatMMddyyyy(model.getCreatedDate());
+		return model.getFormattedCreatedDate();
 	}
 
 	/*@ReportField(label="Modified By", size=20, sortOrder=6)

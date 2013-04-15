@@ -42,6 +42,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/PCMGSingleSelectorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SortResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultHeaderWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DidYouMeanWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchKeywordWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicAttributeWidget.js" />" ></script>
@@ -109,6 +110,9 @@
 
 		  <!-- Search Result Header Widget -->
 		  <div id="searchResultHeader" class="padT10"></div>
+		  
+		  <!-- Did You Mean Widget -->
+		  <div id="didYouMean" class="padT10"></div>
 		  
 		  <!-- Result & Pager Widget -->
 		  <div>

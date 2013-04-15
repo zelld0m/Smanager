@@ -1,7 +1,6 @@
 package com.search.manager.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -84,7 +83,6 @@ import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.SearchHelper;
 
@@ -1771,7 +1769,7 @@ public class DaoServiceImpl implements DaoService {
 		Relevancy relevancy = new Relevancy("", "");
 		relevancy.setStore(storeKeyword.getStore());
 		RecordSet<RelevancyKeyword>relevancyKeywords = searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
+				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), DateTime.now(), DateTime.now(), 0, 0),
 				MatchType.LIKE_NAME, ExactMatch.MATCH);
 		return (relevancyKeywords.getTotalSize() > 0) ? getRelevancyRule(relevancy.getStore(), 
 				relevancyKeywords.getList().get(0).getRelevancy().getRelevancyId()): null;
@@ -1795,37 +1793,36 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public List<ElevateResult> getElevateRules(StoreKeyword storeKeyword) throws DaoException {
 		return getElevateResultList(new SearchCriteria<ElevateResult>(
-				new ElevateResult(storeKeyword), new Date(), null, 0, 0)).getList();
+				new ElevateResult(storeKeyword), DateTime.now(), null, 0, 0)).getList();
 	}
 
 	@Override
 	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword) throws DaoException {
 		return getElevateResultList(new SearchCriteria<ElevateResult>(
-				new ElevateResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
+				new ElevateResult(storeKeyword), null, DateTime.now().minusDays(1), 0, 0)).getList();
 	}
 
 	@Override
 	public List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword) throws DaoException {
 		return getExcludeResultList(new SearchCriteria<ExcludeResult>(
-				new ExcludeResult(storeKeyword), new Date(), null, 0, 0)).getList();
+				new ExcludeResult(storeKeyword), DateTime.now(), null, 0, 0)).getList();
 	}
 
 	@Override
 	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword) throws DaoException {
 		return getExcludeResultList(new SearchCriteria<ExcludeResult>(
-				new ExcludeResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
+				new ExcludeResult(storeKeyword), null, DateTime.now().minusDays(1), 0, 0)).getList();
 	}
 
 	@Override
 	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword) throws DaoException {
 		return getDemoteResultList(new SearchCriteria<DemoteResult>(
-				new DemoteResult(storeKeyword), new Date(), null, 0, 0)).getList();
+				new DemoteResult(storeKeyword), DateTime.now(), null, 0, 0)).getList();
 	}
 
 	@Override
 	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword) throws DaoException {
 		return getDemoteResultList(new SearchCriteria<DemoteResult>(
-				new DemoteResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
+				new DemoteResult(storeKeyword), null, DateTime.now().minusDays(1), 0, 0)).getList();
 	}
-	
 }

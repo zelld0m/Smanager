@@ -244,7 +244,6 @@ public class DeploymentService {
 		return new RecordSet<DeploymentModel>(publishingResultList, publishingResultList.size());
 	}
 	
-	
 	@RemoteMethod
 	public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
@@ -375,6 +374,8 @@ public class DeploymentService {
 					: daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
 			if (result > 0) return getRuleStatus(ruleType, ruleRefId);
 		} catch (DaoException e) {
+			logger.error("Failed during processRuleStatus()",e);
+		} catch (Exception e) {
 			logger.error("Failed during processRuleStatus()",e);
 		}
 		return null;

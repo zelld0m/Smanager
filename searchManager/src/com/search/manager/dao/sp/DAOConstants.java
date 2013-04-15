@@ -119,7 +119,7 @@ public class DAOConstants {
 
 	//RULE STATUS
 	public static final String SP_ADD_RULE_STATUS					= "usp_Add_Rule_Status";
-	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status";
+	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status_NEW";
 	public static final String SP_DELETE_RULE_STATUS				= "usp_Delete_Rule_Status";
 	public static final String SP_GET_RULE_STATUS					= "usp_Get_Rule_Status";
 	//COMMENT
@@ -132,9 +132,9 @@ public class DAOConstants {
 	public static final String SP_GET_CATEGORY_BY_FILTER			= "usp_Get_Product_Category_by_Filter";
 
 	//USER
-	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User";
-	public static final String SP_ADD_USERS							= "usp_Add_Manager_User";
-	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User";
+	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User_NEW";
+	public static final String SP_ADD_USERS							= "usp_Add_Manager_User_NEW";
+	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User_NEW";
 	public static final String SP_DELETE_USERS						= "usp_Delete_Manager_User";
 	public static final String SP_GET_GROUP_SECURITY				= "usp_Get_Manager_Group_Security";
 
@@ -146,6 +146,7 @@ public class DAOConstants {
 	
 	/* Stored Procedure Parameter Names */
 	public static final String PARAM_STORE_ID 						= "store_id";
+	public static final String PARAM_TIMEZONE_ID					= "timezone_id";
 	public static final String PARAM_KEYWORD_ID						= "keyword_id";
 	public static final String PARAM_KEYWORD 						= "keyword";
 	public static final String PARAM_SEQUENCE 						= "sequence";
@@ -260,6 +261,7 @@ public class DAOConstants {
 	public static final String PARAM_LAST_REQUEST_DATE				= "last_request_date";
 	public static final String PARAM_APPROVAL_BY					= "approval_by";
 	public static final String PARAM_LAST_APPROVAL_DATE				= "last_approval_date";
+	public static final String PARAM_LAST_PUBLISHED_DATE			= "last_published_date";
 	public static final String PARAM_PUBLISHED_BY					= "published_by";
 	public static final String PARAM_EXPORT_TYPE					= "export_type";
 	public static final String PARAM_EXPORT_BY						= "export_by";
@@ -285,6 +287,7 @@ public class DAOConstants {
 	public static final String COLUMN_PRODUCT_STORE_ID     			= "product_store_id";
 	public static final String COLUMN_STORE_NAME  					= "store_name";
 	public static final String COLUMN_STORE_ID						= "store_id";
+	public static final String COLUMN_TIMEZONE_ID					= "timezone_id";
 	public static final String COLUMN_STORE  						= "store";
 	public static final String COLUMN_VALUE       					= "value";
 	public static final String COLUMN_SEQUENCE_NUM 					= "sequence_num";
@@ -412,5 +415,4 @@ public class DAOConstants {
 	// used by settings
 	public static final String SETTINGS_AUTO_EXPORT 				= "auto_export";
 	public static final String SETTINGS_EXPORT_TARGET				= "export_target";
-	
 }

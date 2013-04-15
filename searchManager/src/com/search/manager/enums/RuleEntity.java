@@ -7,7 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.EnumConverter;
 
-@DataTransferObject(converter=EnumConverter.class, javascript="RuleEntity")
+@DataTransferObject(
+		converter=EnumConverter.class, 
+		type="enum")
 public enum RuleEntity {
 	ELEVATE(1, "Elevate"),
 	EXCLUDE(2, "Exclude"),
@@ -19,7 +21,8 @@ public enum RuleEntity {
 	RANKING_RULE(8, "Ranking Rule"),
 	RULE_STATUS(9, "Rule Status"),
 	DEMOTE(10, "Demote"),
-	FACET_SORT(11, "Facet Sort");
+	FACET_SORT(11, "Facet Sort"),
+    SPELL(12, "Did You Mean");
 
 	private final int code;
 	private final List<String> values;

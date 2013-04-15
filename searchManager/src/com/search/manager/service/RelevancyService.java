@@ -21,7 +21,8 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
-import com.search.manager.jodatime.JodaTimeUtil;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -59,7 +60,7 @@ public class RelevancyService extends RuleService{
 	public RuleEntity getRuleEntity() {
 		return RuleEntity.RANKING_RULE;
 	}
-	
+
 	@RemoteMethod
 	public Relevancy getRule(String ruleId){
 		try {
@@ -87,7 +88,7 @@ public class RelevancyService extends RuleService{
 		}
 		return duplicateRuleNames;
 	}
-	
+
 	@RemoteMethod
 	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
 		Relevancy relevancy = new Relevancy();
@@ -106,7 +107,7 @@ public class RelevancyService extends RuleService{
 		}
 		return false;
 	}
-	
+
 	@RemoteMethod
 	public int addRuleFieldValue(String relevancyId, String fieldName, String fieldValue) throws Exception{
 		try {
@@ -164,6 +165,7 @@ public class RelevancyService extends RuleService{
 			relevancy.setStore(new Store(UtilityService.getStoreId()));
 			relevancy.setRelevancyName(name);
 			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, page, itemsPerPage);
+
 			return daoService.searchRelevancy(criteria, MatchType.LIKE_NAME);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllByName()",e);
@@ -184,8 +186,8 @@ public class RelevancyService extends RuleService{
 			relevancy.setStore(new Store(storeId));
 			relevancy.setRelevancyName(name);
 			relevancy.setDescription(description);
-			relevancy.setStartDateTime(StringUtils.isBlank(startDate) ? null :  JodaTimeUtil.toDateTimeFromStorePattern(storeId, startDate));
-			relevancy.setEndDateTime(StringUtils.isBlank(endDate) ? null : JodaTimeUtil.toDateTimeFromStorePattern(storeId, endDate));
+			relevancy.setStartDateTime(StringUtils.isBlank(startDate) ? null :  JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
+			relevancy.setEndDateTime(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
 			relevancy.setCreatedBy(userName);
 			clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
 			Relevancy hostRelevancy = getRule(ruleId);
@@ -198,14 +200,14 @@ public class RelevancyService extends RuleService{
 					logger.error("Failed during cloneRule()",e);
 				}
 			}
-			
+
 			try {
 				daoService.addRuleStatus(new RuleStatus(RuleEntity.RANKING_RULE, storeId, clonedId, name, 
 						userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
 			} catch (DaoException de) {
 				logger.error("Failed to create rule status for ranking rule: " + name);
 			}
-			
+
 			clonedRelevancy = getRule(clonedId);
 		} catch (DaoException e) {
 			logger.error("Failed during addRelevancy()",e);
@@ -223,8 +225,8 @@ public class RelevancyService extends RuleService{
 			rule.setRuleId(id);
 			rule.setRuleName(name);
 			rule.setDescription(description);
-			rule.setStartDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, startDate));
-			rule.setEndDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, endDate));
+			rule.setStartDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
+			rule.setEndDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.updateRelevancy(rule);
 		} catch (DaoException e) {
@@ -443,8 +445,8 @@ public class RelevancyService extends RuleService{
 			Field field = schema.getField(string);
 			excludeFieldList.add(field);
 			// do not remove related fields
-//			List<Field> relatedFields = field.getRelatedFields();
-//			if (CollectionUtils.isNotEmpty(relatedFields)) excludeFieldList.addAll(relatedFields);
+			//			List<Field> relatedFields = field.getRelatedFields();
+			//			if (CollectionUtils.isNotEmpty(relatedFields)) excludeFieldList.addAll(relatedFields);
 		}
 
 		List<Field> fields = new LinkedList<Field>(schema.getIndexedFields(filter, excludeFieldList));

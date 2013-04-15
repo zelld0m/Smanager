@@ -37,6 +37,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
+import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
@@ -48,6 +49,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.SearchResult;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.SearchLogger;
@@ -63,6 +65,8 @@ public class SearchServlet extends HttpServlet {
 	@Autowired
 	@Qualifier("solrService")
 	SearchDaoService solrService;
+	
+	@Autowired private SpellRuleDAO spellRuleDAO;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -446,16 +450,20 @@ public class SearchServlet extends HttpServlet {
 		String coreName = matcher.group(3);
 		String storeId = coreName;
 		String storeName = configManager.getStoreName(storeId);
-
-		// Verify if request parameter store is a valid store id
-		String storeParam = request.getParameter("store");
-		String storeIdFromAlias =  configManager.getStoreIdByAliases(storeParam);
-		if (StringUtils.isNotBlank(storeParam) && StringUtils.isNotBlank(storeIdFromAlias)) {
-			storeId = storeIdFromAlias;
-			logger.info(String.format("Request parameter store %s -> %s", storeParam, coreName));
-		}
-		else {
-			logger.info(String.format("Core as storeId: %s", coreName));
+		
+		String solrSelectorParam = configManager.getSolrSelectorParam();
+		
+		if(configManager.isSharedCore() && StringUtils.isNotBlank(solrSelectorParam)){
+			// Verify if request parameter store is a valid store id
+			String storeParam = request.getParameter(solrSelectorParam);
+			String storeIdFromAlias =  configManager.getStoreIdByAliases(storeParam);
+			if (StringUtils.isNotBlank(storeParam) && StringUtils.isNotBlank(storeIdFromAlias)) {
+				storeId = storeIdFromAlias;
+				logger.info(String.format("Request parameter store %s -> %s", storeParam, coreName));
+			}
+			else {
+				logger.info(String.format("Core as storeId: %s", coreName));
+			}
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -651,7 +659,8 @@ public class SearchServlet extends HttpServlet {
 			String  disableRedirectId = disableRedirect ? request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT): "";
 			boolean disableRelevancy  = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
 			boolean disableFacetSort  = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
-			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
+			final boolean disableDidYouMean = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_DID_YOU_MEAN) != null;
+			final List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
 			// redirect 
 			try {
@@ -1133,6 +1142,8 @@ public class SearchServlet extends HttpServlet {
 			// TASK 1B - get spellcheck if requested
 			/* Run spellcheck if needed */
 			if (performSpellCheck) {
+			    final String fStore = storeId;
+			    final String foKeyword = originalKeyword;
 				final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
 				getSpellingSuggestionsParams.add(defTypeNVP);
@@ -1140,8 +1151,16 @@ public class SearchServlet extends HttpServlet {
 				getSpellingSuggestionsParams.addAll(spellcheckParams);
 				completionService.submit(new Callable<Integer>() {
 					@Override
-					public Integer call() throws Exception {
-						solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+					public Integer call() throws Exception { // TODO here...
+						SpellRule spellRule = spellRuleDAO.getSpellRuleForSearchTerm(fStore, foKeyword);
+						if(spellRule != null) {
+							activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DID_YOU_MEAN, spellRule.getRuleId(), foKeyword, !disableDidYouMean)));
+					    	if(!disableDidYouMean) {
+								solrHelper.setSpellRule(spellRule);
+					    	}
+					    	solrHelper.setMaxSuggestCount(spellRuleDAO.getMaxSuggest(fStore));
+                        	solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+						}
 						return 0;
 					}
 				});

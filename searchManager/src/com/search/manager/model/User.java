@@ -1,12 +1,12 @@
 package com.search.manager.model;
 
-import java.util.Date;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
-import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class User extends ModelBean {
@@ -21,44 +21,19 @@ public class User extends ModelBean {
 	private Boolean accountNonLocked;
 	private Boolean credentialsNonExpired;
 	private Boolean accountNonExpired;
-	private Date lastAccessDate;
+	private DateTime lastAccessDateTime;
 	private String ip;
-	private String createdBy;
-	private String lastModifiedBy;
-	private Date createdDate;
-	private Date lastModifiedDate;
-	private Date thruDate;
+	private DateTime thruDate;
 	private Integer successiveFailedLogin;
 	private String storeId;
+	private String timezoneId;
 	private String permissionId; 
 
-
-	//	private String username;
-	//	private String fullName;
-	//	private String password;
-	//	private String email;
-	//	private String groupId;				private String roleId;			private String type; -> change to Role class
-	//	private Boolean accountNonLocked;		private String status;
-	//	private Boolean credentialsNonExpired;
-	//	private Boolean accountNonExpired;
-	//	private Date lastAccessDate;			private String lastAccess;
-	//	private String ip;
-	//	private String createdBy;
-	//	private String lastModifiedBy;
-	//	private Date createdDate;			private String dateStarted;
-	//	private Date lastModifiedDate;
-	//	private Date thruDate;				private String expired;
-	//	private Integer successiveFailedLogin;		private boolean locked;
-	//	private String storeId;
-
-
-
-	public User() {
-	}
+	public User() {}
 
 	public User(String username, String fullName, String password, String email, String groupId, boolean accountNonLocked,
-			boolean credentialsNonExpired, Date lastAccessDate, String ip, String createdBy, String lastModifiedBy,
-			Date createdDate, Date lastModifiedDate, Date thruDate, String storeId) {
+			boolean credentialsNonExpired, DateTime lastAccessDateTime, String ip, String createdBy, String lastModifiedBy,
+			DateTime createdDateTime, DateTime lastModifiedDateTime, DateTime thruDate, String storeId, String timezoneId) {
 		super();
 		this.username = username;
 		this.fullName = fullName;
@@ -67,14 +42,15 @@ public class User extends ModelBean {
 		this.groupId = groupId;
 		this.accountNonLocked = accountNonLocked;
 		this.credentialsNonExpired = credentialsNonExpired;
-		this.lastAccessDate = lastAccessDate;
+		this.lastAccessDateTime = lastAccessDateTime;
 		this.ip = ip;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
+		super.createdDateTime = createdDateTime;
+		super.lastModifiedDateTime = lastModifiedDateTime;
 		setThruDate(thruDate);
 		this.storeId = storeId;
+		this.timezoneId = timezoneId;
 	}
 
 	public String getUsername() {
@@ -141,7 +117,6 @@ public class User extends ModelBean {
 		return BooleanUtils.toBoolean(isAccountNonLocked());
 	}
 
-
 	public Boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
@@ -158,24 +133,12 @@ public class User extends ModelBean {
 		this.accountNonLocked = enabled;
 	}
 
-	public Date getLastAccessDate() {
-		return lastAccessDate;
-	}
-
-	public void setLastAccessDate(Date lastAccessDate) {
-		this.lastAccessDate = lastAccessDate;
-	}
-
 	public String getIp() {
 		return ip;
 	}
 
 	public void setIp(String ip) {
 		this.ip = ip;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
 	}
 
 	public void setCreatedBy(String createdBy) {
@@ -189,40 +152,20 @@ public class User extends ModelBean {
 	public void setLastModifiedBy(String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
 	
-	public String getFormattedCreatedDate() {
-		return DateAndTimeUtils.formatDateUsingConfig(storeId, createdDate);
-	}
-	
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	public Date getThruDate() {
+	public DateTime getThruDate() {
 		return thruDate;
 	}
 	
 	public String getFormattedThruDate() {
-		return DateAndTimeUtils.formatDateUsingConfig(storeId, getThruDate());
+		return JodaDateTimeUtil.formatFromStorePattern(getThruDate(), JodaPatternType.DATE);
 	}
 
-	public void setThruDate(Date thruDate) {
+	public void setThruDate(DateTime thruDate) {
 		this.thruDate = thruDate;
 		// TODO: expired is also used for expired password
 		if (BooleanUtils.isNotTrue(accountNonExpired)) {
-			this.accountNonExpired = DateAndTimeUtils.compare(new Date(), thruDate) <= 0;			
+			this.accountNonExpired = this.thruDate!=null? this.thruDate.isAfterNow(): false;			
 		}
 	}
 
@@ -242,6 +185,14 @@ public class User extends ModelBean {
 		this.storeId = storeId;
 	}
 
+	public String getTimezoneId() {
+		return timezoneId;
+	}
+
+	public void setTimezoneId(String timezoneId) {
+		this.timezoneId = timezoneId;
+	}
+
 	public String getPermissionId() {
 		return permissionId;
 	}
@@ -249,5 +200,16 @@ public class User extends ModelBean {
 	public void setPermissionId(String permissionId) {
 		this.permissionId = permissionId;
 	}
+	
+	public DateTime getLastAccessDateTime() {
+		return lastAccessDateTime;
+	}
 
+	public void setLastAccessDateTime(DateTime lastAccessDateTime) {
+		this.lastAccessDateTime = lastAccessDateTime;
+	}
+
+	public String getFormattedLastAccessDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastAccessDateTime(), JodaPatternType.DATE_TIME);
+	}
 }

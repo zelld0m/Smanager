@@ -15,6 +15,12 @@
 			base.options = $.extend({},$.rkMessageType.defaultOptions, options);
 			base.$el.html(base.getTemplate());
 			base.setInitSelectedOption();
+			if(base.options.locked){
+				base.$el.find("input").prop({
+					disabled: true,
+					readonly: true
+				});
+			}
 		};
 		
 		base.setInitSelectedOption = function(){
@@ -154,6 +160,7 @@
 			defaultSelectedOption: 1, 
 			customText: "Your search query did not yield any results. You might be interested in the following items instead.",
 			rule: null,
+			locked: false,
 			successTypeUpdateCallback: function(value){},
 			successCustomTextUpdateCallback: function(customText){},
 			afterUpdateCallback: function(){}

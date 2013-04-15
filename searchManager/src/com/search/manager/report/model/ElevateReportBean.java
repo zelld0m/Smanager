@@ -50,7 +50,7 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 	
 	@ReportField(label="Valid Until", size=20, sortOrder=5)
 	public String getValidity(){
-		return ""; //TODO: model.getFormattedExpiryDate();
+		return model.getFormattedExpiryDate();
 	}
 
 	@ReportField(label="Created By", size=20, sortOrder=6)
@@ -60,7 +60,7 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 
 	@ReportField(label="Created Date", size=20, sortOrder=7)
 	public String getCreatedDate(){
-		return ""; //TODO: model.getFormattedCreatedDate();
+		return model.getFormattedCreatedDate();
 	}
 
 	@ReportField(label="Modified By", size=20, sortOrder=8)
@@ -70,7 +70,7 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 	
 	@ReportField(label="Modified Date", size=20, sortOrder=9)
 	public String getModifiedDate(){
-		return ""; //TODO: model.getFormattedLastModifiedDate();
+		return model.getFormattedLastModifiedDate();
 	}
 
 	private boolean isFacet() {
@@ -90,5 +90,4 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 		
 		return new StringBuffer("EDP: ").append(model.getEdp()).toString(); 
 	}
-
 }

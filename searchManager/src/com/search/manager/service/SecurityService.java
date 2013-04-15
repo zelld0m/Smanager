@@ -1,7 +1,6 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -12,11 +11,18 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.mail.AccessNotificationMailService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RoleModel;
@@ -24,7 +30,6 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.User;
 import com.search.manager.schema.MessagesConfig;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "securityService")
 @RemoteProxy(
@@ -56,7 +61,7 @@ public class SecurityService {
 		}
 		
 		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);
-		searchCriteria.setEndDate(DateAndTimeUtils.getDateWithEndingTime(DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), memberSince)));
+		searchCriteria.setEndDate(JodaDateTimeUtil.toDateTimeFromStorePattern(memberSince, JodaPatternType.DATE));
 		RecordSet<User> users = getUsers(searchCriteria, MatchType.LIKE_NAME);
 		for (User u: users.getList()) {
 			// clear the password before returning
@@ -132,8 +137,9 @@ public class SecurityService {
 	}
 	
 	@RemoteMethod
-	public JSONObject addUser(String roleId, String rolename, String username, String fullname, String password, String expire, String locked, String email){
+	public JSONObject addUser(String roleId, String rolename, String username, String fullname, String password, String expire, String locked, String email, String timezoneId){
 		JSONObject json = new JSONObject();
+		String storeId = UtilityService.getStoreId();
 		
 		int result = -1;
 		try {
@@ -152,12 +158,13 @@ public class SecurityService {
 			user.setUsername(username);
 			user.setEmail(email);
 			user.setGroupId(roleId);
-			user.setStoreId(UtilityService.getStoreId());
+			user.setStoreId(storeId);
+			user.setTimezoneId(timezoneId);
 			
 			if(StringUtils.isNotEmpty(locked))
 				user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 
-			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), expire));
+			user.setThruDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expire, JodaPatternType.DATE));
 			user.setPassword(UtilityService.getPasswordHash(password));
 			user.setCreatedBy(UtilityService.getUsername());
 			result = daoService.addUser(user);
@@ -235,9 +242,11 @@ public class SecurityService {
 	}
 	
 	@RemoteMethod
-	public JSONObject updateUser(String roleId, String username, String expire, String locked, String email) {
+	public JSONObject updateUser(String roleId, String username, String expire, String locked, String email, String timezoneId) {
 		JSONObject json = new JSONObject();
 		username = StringUtils.trim(username);
+		String storeId = UtilityService.getStoreId();
+		
 		int result = -1;
 		
 		try {
@@ -250,19 +259,30 @@ public class SecurityService {
 			if(record != null && record.getTotalSize() > 0){
 				user.setGroupId(roleId);
 				if (StringUtils.isNotBlank(expire)) {
-					Date newExpiryDate = DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), expire);
+					DateTime newExpiryDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expire, JodaPatternType.DATE);
 					user.setThruDate(newExpiryDate);
-					user.setAccountNonExpired(newExpiryDate.after(new Date()));
+					user.setAccountNonExpired(newExpiryDate.isAfter(DateTime.now()));
 				}
 				user.setStoreId(UtilityService.getStoreId());
 				if(StringUtils.isNotEmpty(locked))
 					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 				user.setEmail(email);
+				user.setTimezoneId(timezoneId);
 				user.setLastModifiedBy(UtilityService.getUsername());
 				result = daoService.updateUser(user);
 			}
 
 			if(result > -1){
+				
+				//Reload authentication if modified user is the current logged in user
+				UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();	
+				
+				if(userDetailsImpl!=null && userDetailsImpl.getUsername().equalsIgnoreCase(username)){
+					userDetailsImpl.setDateTimeZoneId(timezoneId);
+					Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsImpl, userDetailsImpl.getPassword(), userDetailsImpl.getAuthorities());
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+				}
+				
 				json.put("status", RESPONSE_STATUS_OK);
 				json.put("message", MessagesConfig.getInstance().getMessage("common.updated", username));
 				return json;	
@@ -275,6 +295,4 @@ public class SecurityService {
 		json.put("message", MessagesConfig.getInstance().getMessage("common.not.updated", username));
 		return json;
 	}
-	
-
 }
