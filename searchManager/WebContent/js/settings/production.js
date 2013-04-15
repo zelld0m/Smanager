@@ -107,16 +107,14 @@
 
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
-						case "publishBtn": 
-							var confirmMsg = "Continue publishing of the following rules:\n" + a.join('\n');
-
-							jConfirm(confirmMsg, "Confirm Publish", function(status){
+						case "publishBtn":
+							jConfirm("Continue publishing of Did You Mean List?", "Confirm Publish", function(status){
 								if(status){
 									var exception = false;
 									DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){
-											jAlert("Updated Did You Mean was successfully published.", "Push to Prod");
-											getForProductionList(selRuleFltr);	
+											jAlert("Did You Mean List was successfully published.", "Push to Prod");
+											getForProductionList("approved");	
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -195,8 +193,8 @@
 								if(status){
 									var exception = false;
 									DeploymentServiceJS.publishRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
-										callback: function(data){									
-											postMsg(data,true);	
+										callback: function(data){	
+											jAlert("Did You Mean List was successfully published.", "Publish Rule");
 											getForProductionList(selRuleFltr);	
 										},
 										preHook:function(){ 
@@ -246,29 +244,42 @@
 							
 							if (entityName === 'didYouMean'){
 								// Populate table row
-								SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 0, 0, {
+// TODO: change to 50 after testing								
+								SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 1, 2, {
 									callback: function(response) {
 										// Populate table row
 										var responseData = response.data;
 										var responseList = responseData.spellRule;
-										$(tabSelected).find("label#numSearchTerms").append(responseData.maxSuggest);
+										$(tabSelected).find("label#numSuggestions").append(responseData.maxSuggest);
 										$(tabSelected).find("label#productionStatus").html(list[0]["publishedStatus"]);
 										$(tabSelected).find("label#productionDate").html($.isNotBlank(list[0]["lastPublishedDate"])? list[0]["lastPublishedDate"].toUTCString(): "");
-										for(var i=0; i<responseList.length ; i++){
-											var termHTML = "";
-											var suggestionHTML = "";
-											$table = $(tabSelected).find("table#rule");
-											$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(responseList[i]["ruleId"])).show();
-											responseList[i].ruleKeyword["keyword"].forEach(function (item) {
-												termHTML += "<span class=\"term\">" + item + "</span>";
-											});
-											$tr.find("td#searchTerms").html(termHTML);
-											responseList[i].suggestKeyword["suggest"].forEach(function (item) {
-												suggestionHTML += "<span class=\"term\">" + item + "</span>";
-											});
-											$tr.find("td#suggestions").html(suggestionHTML);
-											$tr.find("td#type").html(responseList[i]["status"]);
-											$tr.appendTo($table);
+										$table = $(tabSelected).find("table#rule");
+										if (responseList.length == 0) {
+											$table.append('<tr><td class="txtAC" colspan="3">No new/modified entries found. Click on link to download full list.</td></tr>');
+										}
+										else {
+											var displaySize = 1;
+											if (displaySize > responseList.length) {
+												displaySize = responseList.length;
+											}
+											for(var i=0; i<displaySize ; i++){
+												var termHTML = "";
+												var suggestionHTML = "";
+												$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(responseList[i]["ruleId"])).show();
+												responseList[i].ruleKeyword["keyword"].forEach(function (item) {
+													termHTML += "<span class=\"term\">" + item + "</span>";
+												});
+												$tr.find("td#searchTerms").html(termHTML);
+												responseList[i].suggestKeyword["suggest"].forEach(function (item) {
+													suggestionHTML += "<span class=\"term\">" + item + "</span>";
+												});
+												$tr.find("td#suggestions").html(suggestionHTML);
+												$tr.find("td#type").html(responseList[i]["status"]);
+												$tr.appendTo($table);
+											}
+											if (displaySize < responseList.length) {
+												$table.append("<tr><td colspan='3'>Click on link to download full list.</td></tr>");
+											}
 										}
 										
 										publishHandlerLinguistics();
@@ -318,6 +329,7 @@
 							$(tabSelected).find('div#actionBtn').show();							
 							
 						}else{
+							$(tabSelected).find("div#requestDetails").hide();
 							$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
 							$(tabSelected).find('div#actionBtn').hide();
 							$(tabSelected).find('th#selectAll > input[type="checkbox"]').hide();

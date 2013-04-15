@@ -75,7 +75,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			if(versions!=null){
 				index = versions.size()-1;
 				RuleXml ruleXml = (RuleXml)versions.get(index);
-				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(getRuleEntity().name(), store, ruleId);
+				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(getRuleEntity().getCode()), store, ruleId);
 				ruleXml.setRuleStatus(ruleStatus);
 			}
 		}

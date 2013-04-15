@@ -23,6 +23,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.utility.PropsUtils;
 
 public class ConfigManager {
@@ -72,8 +73,7 @@ public class ConfigManager {
 				// did you mean
 				String fileName = PropsUtils.getValue("publishedfilepath");
 				if (StringUtils.isNotBlank(fileName)) {
-					// TODO: move to settings file
-					fileName += File.separator + storeId + File.separator + "Spell" + File.separator + "spell.properties";
+					fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.properties";
 					File spellFile = new File(fileName);
 					if (!spellFile.exists()) {
 						spellFile.getParentFile().mkdirs();

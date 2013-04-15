@@ -191,10 +191,11 @@ public class DeploymentService {
 			for (SpellRuleXml rule: rules.selectRulesByStatus("deleted")) {
 				rules.deletePhysically(rule);
 			}
+			daoService.saveSpellRules(storeId);
+			daoService.reloadSpellRules(storeId);
 			
 			ConfigManager.getInstance().setPublishedStoreLinguisticSetting(storeId, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(storeId)));
-			generateSpellRuleFile(UtilityService.getStoreId());
-			daoService.saveSpellRules(storeId);
+			generateSpellRuleFile(storeId);
 			
 			success = true;
 		} catch (Exception e) {

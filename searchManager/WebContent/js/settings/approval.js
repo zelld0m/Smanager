@@ -166,7 +166,7 @@
 								if(status){
 									DeploymentServiceJS.approveRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
 										callback: function(data){
-											jAlert("Updated Did You Mean was successfully approved.", "Approval");
+											jAlert("Did You Mean List was successfully approved.", "Approval");
 											getApprovalList();
 										},
 										preHook:function(){ 
@@ -189,7 +189,7 @@
 								if(status){
 									DeploymentServiceJS.unapproveRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
 										callback: function(data){
-											jAlert("Updated Did You Mean was successfully rejected.", "Approval");
+											jAlert("Did You Mean List was successfully rejected.", "Approval");
 											getApprovalList();
 										},
 										preHook:function(){ 
@@ -333,27 +333,40 @@
 						if (entityName === 'didYouMean'){
 							$(tabSelected).find("label#requestedBy").html(list[0]["requestBy"]);
 							$(tabSelected).find("label#requestedDate").html($.isNotBlank(list[0]["lastRequestDate"])? list[0]["lastRequestDate"].toUTCString(): "");
-							SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 0, 0, {
+// TODO: change 1 to 50 after testing
+							SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 1, 2, {
 								callback: function(response) {
 									// Populate table row
 									var responseData = response.data;
 									var responseList = responseData.spellRule;
-									$(tabSelected).find("label#numSearchTerms").append(responseData.maxSuggest);
-									for(var i=0; i<responseList.length ; i++){
-										var termHTML = "";
-										var suggestionHTML = "";
-										$table = $(tabSelected).find("table#rule");
-										$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(responseList[i]["ruleId"])).show();
-										responseList[i].ruleKeyword["keyword"].forEach(function (item) {
-											termHTML += "<span class=\"term\">" + item + "</span>";
-										});
-										$tr.find("td#searchTerms").html(termHTML);
-										responseList[i].suggestKeyword["suggest"].forEach(function (item) {
-											suggestionHTML += "<span class=\"term\">" + item + "</span>";
-										});
-										$tr.find("td#suggestions").html(suggestionHTML);
-										$tr.find("td#type").html(responseList[i]["status"]);
-										$tr.appendTo($table);
+									$table = $(tabSelected).find("table#rule");
+									$(tabSelected).find("label#numSuggestions").append(responseData.maxSuggest);
+									if (responseList.length == 0) {
+										$table.append('<tr><td class="txtAC" colspan="3">No new/modified entries found. Click on link to download full list.</td></tr>');
+									}
+									else {
+										var displaySize = 1;
+										if (displaySize > responseList.length) {
+											displaySize = responseList.length;
+										}
+										for(var i=0; i<displaySize ; i++){
+											var termHTML = "";
+											var suggestionHTML = "";
+											$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(responseList[i]["ruleId"])).show();
+											responseList[i].ruleKeyword["keyword"].forEach(function (item) {
+												termHTML += "<span class=\"term\">" + item + "</span>";
+											});
+											$tr.find("td#searchTerms").html(termHTML);
+											responseList[i].suggestKeyword["suggest"].forEach(function (item) {
+												suggestionHTML += "<span class=\"term\">" + item + "</span>";
+											});
+											$tr.find("td#suggestions").html(suggestionHTML);
+											$tr.find("td#type").html(responseList[i]["status"]);
+											$tr.appendTo($table);
+										}
+										if (displaySize < responseList.length) {
+											$table.append('<tr><td class="txtAC" colspan="3">Click on link to download full list.</td></tr>');
+										}
 									}
 									
 									// Alternate row style
@@ -470,6 +483,7 @@
 							
 						}
 					}else{
+						$(tabSelected).find("div#requestDetails").hide();
 						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
 						$(tabSelected).find('div#actionBtn').hide();

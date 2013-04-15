@@ -107,11 +107,11 @@
 		</div>
 		
 		<div id="tabContentTemplateLinguistics" style="display: none">
-			<div class="">
+			<div class="fsize12">
 				<div id = "requestDetails">
-					<label>Number of search terms:</label><label id="numSearchTerms"></label><p>	
-					<label>Requested by:</label> <label id="requestedBy"></label><p>	
-					<label>Requested date:</label> <label id="requestedDate"></label><p>	
+					<label class="name floatL w150">Max suggestion count:</label><label id="numSuggestions" class="fbold"></label><p>	
+					<label class="name floatL w150">Requested by:</label> <label id="requestedBy" class="fbold"></label><p>	
+					<label class="name floatL w150">Requested date:</label> <label id="requestedDate" class="fbold"></label><p>	
 				</div> 
 				<table class="tblItems w100p marT5">
 					<tbody>

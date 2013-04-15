@@ -6,6 +6,9 @@
 
 <script type="text/javascript"
 	src="<spring:url value="/js/settings/production.js" />"></script>
+	
+<link type="text/css" rel="stylesheet" href="<spring:url value="/css/settings/settings.css" />">
+	
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
 	<div class="clearB floatL w240">
@@ -134,10 +137,10 @@
 			<div class="filter padT5 fsize12 marT8">
 				<div class="floatR padT3" id="ruleCount"></div>
 			</div>
-			<div id = "requestDetails">
-				<label>Number of search terms:</label><label id="numSearchTerms"></label><p>	
-				<label>Production Status:</label> <label id="productionStatus"></label><p>	
-				<label>Last Published Date:</label> <label id="productionDate"></label><p>
+			<div id = "requestDetails" class="fsize12">
+				<label class="name floatL w150">Max suggestion count:</label><label id="numSuggestions" class="fbold"></label><p>	
+				<label class="name floatL w150">Production Status:</label> <label id="productionStatus" class="fbold"></label><p>	
+				<label class="name floatL w150">Last Published Date:</label> <label id="productionDate" class="fbold"></label><p>
 			</div> 		
 			<div class="clearB"></div>
 			<div>

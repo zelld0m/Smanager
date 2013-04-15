@@ -60,6 +60,7 @@
 		        <li><a href="#facetSortTab"><span>Facet Sort</span></a></li>
 		        <li><a href="#queryCleaningTab"><span>Query Cleaning</span></a></li>
 		        <li><a href="#rankingRuleTab"><span>Ranking Rule</span></a></li>
+		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
 		    </ul>
 		   
 			<div class="minHeight400" id="elevateTab"></div>
@@ -68,6 +69,7 @@
 			<div class="minHeight400" id="facetSortTab"></div>
 			<div class="minHeight400" id="queryCleaningTab"></div>
 			<div class="minHeight400" id="rankingRuleTab"></div>
+			<div class="minHeight400" id="didYouMeanTab"></div>
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">
