@@ -5,36 +5,39 @@
 
 		base.options = $.extend({}, options);
 		delete options['term'];
-		base.$container = $("<span class=\"term\">");
-		base.$container.on({
+		base.$container = $("<span class=\"sorter\">");
+
+		base.$term = $("<span class=\"term\">");
+		base.$term.on({
 			keydown : function(e) {
 				switch (e.keyCode) {
 				case 9: // tab
 					e.preventDefault();
 					if (e.shiftKey && base.$container.prev().length > 0) {
-						base.$container.prev().click();
+						base.$container.prev().find(":first").click();
 						break;
 					}
 
-					if (!e.shiftKey && base.$container.text().trim()
+					if (!e.shiftKey && base.$term.text().trim()
 							&& base.$container.next().length > 0) {
-						$(base.$container.next()).click();
+						$(base.$container.next()).find(":first").click();
 						break;
 					}
 				case 13: // enter
 					e.preventDefault();
-					if (base.$container.text().trim()
-							&& base.$container.next().length == 0) {
+					if (base.$term.text().trim()
+							&& base.$container.find(":first").next().length == 0) {
 						new Term(options);
 					} else {
-						base.$container.blur();
+						base.$term.blur();
 					}
 				}
 			},
 
 			blur : function(e) {
-				var val = base.$container.text();
-				base.$container.removeClass("error");
+				var val = base.$term.text();
+				base.$term.removeClass("error");
+				base.$container.removeClass("edit-mode");
 
 				if (!val) {
 					base.$container.remove();
@@ -42,12 +45,19 @@
 				base.options.container.trigger("change");
 			}
 		}).editable({editEnabled: function() {
+			if (base.options.rule.editable) {
+				base.$container.addClass("edit-mode");
+			}
+
 			return base.options.rule.editable;
 		}});
 
+		base.$container.append(base.$term);
 		base.options.container.append(base.$container);
-		base.$container.text(base.options.term);
-		base.$container.click();
+
+		base.$term.text(base.options.term);
+		
+		if (!base.options.term) base.$term.click();
 	};
 
 	var SpellRule = function(data) {
@@ -220,7 +230,7 @@
 			
 			self.$el.attr("sr-editable", editable);
 			self.editable = editable;
-			self.$suggestions.sortable().sortable(editable ? 'enable' : 'disable');
+			self.$suggestions.sortable({cancel: 'span.term'}).sortable(editable ? 'enable' : 'disable');
 			self.resetTooltip();
 		},
 		

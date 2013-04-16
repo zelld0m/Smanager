@@ -7,6 +7,51 @@
 	background-color: #F6F6F6;
 }
 
+#spell-table .term-list.ui-sortable > span.sorter {
+    min-width: 10px;
+    min-height: 12px;
+    border: 1px solid #ccc;
+    padding: 2px 2px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    display: inline-block;
+    color: rgb(70, 70, 70);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    white-space: nowrap;
+}
+
+#spell-table tr[sr-editable=true] .term-list.ui-sortable > span.sorter:hover {
+    border: 1px solid #0090D2;
+    cursor: move;
+}
+
+#spell-table .term-list.ui-sortable > span.sorter .term {
+    min-width: 10px;
+    min-height: 12px;
+    border: 0;
+    padding: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+#spell-table tr[sr-editable=true] .term-list.ui-sortable > span.sorter .term:hover {
+    border: 0;
+    cursor: text;
+}
+
+#spell-table tr[sr-editable=true] .term-list.ui-sortable > span.sorter.edit-mode {
+    border: 1px solid #0090D2;
+    background-color: #ff5;
+}
+
+#spell-table tr[sr-editable=true] .term-list.ui-sortable > span.sorter.edit-mode .term {
+    border: 0;
+}
+
 #spell-table .term-list .term {
 	min-width: 10px;
 	min-height: 12px;
