@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTimeZone;
 
 public class ConfigManager {
 	
@@ -68,15 +69,47 @@ public class ConfigManager {
 				}
 			}
 			
-			// timezone settings
-			String systemTimeZoneId = xmlConfig.getString("/system-timezone", "America/Los_Angeles");
-			logger.info(String.format("Attempted to set system timezone from %s to %s", TimeZone.getDefault().getID(), systemTimeZoneId));
-			TimeZone.setDefault(TimeZone.getTimeZone(systemTimeZoneId));
-			logger.info(String.format("TimeZone is %s",TimeZone.getDefault().getDisplayName()));
-			
+			initTimezone();
+
 		} catch (ConfigurationException ex) {
 			ex.printStackTrace();
 			logger.error(ex.getLocalizedMessage());
+		} 
+    }
+    
+    private void initTimezone(){
+    	
+    	/* System timezone */
+    	String systemTimeZoneId = xmlConfig.getString("/system-timezone", "America/Los_Angeles");
+    	
+    	if(TimeZone.getDefault().getID().equalsIgnoreCase(systemTimeZoneId)){
+    		logger.info(String.format("-DTZ- System timezone is already set to %s", systemTimeZoneId));
+    	}else{
+    		logger.info(String.format("-DTZ- Pre-Attempt: System TimeZone is %s",TimeZone.getDefault().getDisplayName()));
+    		logger.info(String.format("-DTZ- Attempted to set System Timezone from %s to %s", TimeZone.getDefault().getID(), systemTimeZoneId));
+    		TimeZone.setDefault(TimeZone.getTimeZone(systemTimeZoneId));
+    		logger.info(String.format("-DTZ- System TimeZone is %s",TimeZone.getDefault().getDisplayName()));
+    	}
+    	
+		/* Joda timezone*/
+		DateTimeZone defaultJodaTimeZone = DateTimeZone.getDefault(); 
+		DateTimeZone jodaTimeZone = DateTimeZone.getDefault();
+		
+		if(defaultJodaTimeZone.getID().equalsIgnoreCase(systemTimeZoneId)){
+			logger.info(String.format("-DTZ- Joda timezone and system timezone are equals: %s", systemTimeZoneId));
+		}else{
+			try {
+				jodaTimeZone = DateTimeZone.forID(systemTimeZoneId);
+				
+				try {
+					DateTimeZone.setDefault(jodaTimeZone);
+				} catch (IllegalArgumentException iae) {
+					DateTimeZone.setDefault(defaultJodaTimeZone);
+					logger.error(String.format("-DTZ- Failed to set Joda Timezone from %s to %s, set default timezone to %s", defaultJodaTimeZone.getID(), systemTimeZoneId, DateTimeZone.getDefault().getID()));
+				}
+			} catch (IllegalArgumentException iae) {
+				logger.error(String.format("-DTZ- Failed to convert System Timezone to Joda Timezone : %s", systemTimeZoneId));
+			}
 		}
     }
     

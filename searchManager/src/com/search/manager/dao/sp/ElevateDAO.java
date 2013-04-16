@@ -1,6 +1,5 @@
 package com.search.manager.dao.sp;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;

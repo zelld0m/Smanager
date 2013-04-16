@@ -2,7 +2,6 @@ package com.search.manager.jodatime;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -30,33 +29,45 @@ public class JodaDateTimeUtil {
 		return getTimeZone().getID();
 	}
 	
-	public static Date toSqlDate(DateTime dateTime){
-		TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
-		if(dateTime!=null ){
-			logger.info(String.format("Read Timezone: %s", String.valueOf(dateTime.getZone().getID())));
-			DateTime dTime = dateTime.withZone(DateTimeZone.forID("America/Los_Angeles"));
+	public static Date toSqlDate(DateTime dateTime, JodaPatternType jodaPatternType){
+		if(dateTime==null) return null;
+		
+		DateTime dTime = dateTime.withZone(DateTimeZone.forID("America/Los_Angeles"));
+		
+		if((jodaPatternType==null || JodaPatternType.DATE_TIME.equals(jodaPatternType))){
 			logger.info(String.format("Zone conversion to %s", String.valueOf(dTime.getZone().getID())));
 			logger.info(String.format("DateTime conversion %s to %s", String.valueOf(dateTime.getMillis()), String.valueOf(dTime.getMillis())));
 			return new Date(dTime.getMillis());
+		}else{
+			return new Date(dTime.toDateMidnight().getMillis());
 		}
-		return null;
+	}
+	
+	public static Date toSqlDate(DateTime dateTime){
+		return toSqlDate(dateTime, JodaPatternType.DATE_TIME);
 	}
 	
 	public static DateTimeZone setTimeZoneID(String timeZoneId, String defaultTimeZoneId){
-		DateTimeZone defaultTimeZone = DateTimeZone.UTC;
+		DateTimeZone defaultJodaTimeZone = DateTimeZone.getDefault();
+		DateTimeZone jodaTimeZone = DateTimeZone.getDefault();
 		
 		try {
-			defaultTimeZone = DateTimeZone.forID(timeZoneId);
+			jodaTimeZone = DateTimeZone.forID(timeZoneId);
+			logger.info(String.format("-DTZ- Attempt to set timezone to user-defined: %s", timeZoneId));
 		} catch (IllegalArgumentException ue) {
+			logger.error(String.format("-DTZ- Failed to set Joda timezone to user-defined: %s", timeZoneId));
 			try {
-				defaultTimeZone = DateTimeZone.forID(defaultTimeZoneId);
+				jodaTimeZone = DateTimeZone.forID(defaultTimeZoneId);
+				logger.info(String.format("-DTZ- Attempt to set timezone to store default: %s", timeZoneId));
 			} catch (IllegalArgumentException se) {
-				defaultTimeZone = DateTimeZone.UTC;
+				jodaTimeZone = defaultJodaTimeZone;
+				logger.error(String.format("-DTZ- Failed to set Joda timezone to store default: %s; attempt to set timezone to default %s", defaultTimeZoneId, defaultJodaTimeZone.getID()));
 			}
 		}
 		
-		DateTimeZone.setDefault(defaultTimeZone);
-		return defaultTimeZone;
+		DateTimeZone.setDefault(jodaTimeZone);
+		logger.info(String.format("-DTZ- Joda timezone set to %s", jodaTimeZone.getID()));
+		return jodaTimeZone;
 	}
 	
 	public static DateTime toDateTime(Timestamp timestamp) {
@@ -109,7 +120,7 @@ public class JodaDateTimeUtil {
 		
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
 		
-		return formatter.print(dateTime);
+		return formatter.withZone(dateTime.getZone()).print(dateTime);
 	}
 	
 	public static String formatDateTimeFromPattern(String pattern, DateTime dateTime){

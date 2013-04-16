@@ -21,6 +21,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTimeZone;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -144,9 +145,7 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static String getTimeZoneId(){
-		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-		String timeZoneId= (String)attr.getAttribute("timeZoneId", RequestAttributes.SCOPE_SESSION);
-		return timeZoneId;
+		return DateTimeZone.getDefault().getID();
 	}
 	
 	@RemoteMethod
@@ -182,12 +181,6 @@ public class UtilityService {
 		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
 	}
 	
-	@RemoteMethod
-	public static void setTimeZoneId(String timeZoneId) {
-		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-		attr.setAttribute("timeZoneId", timeZoneId, RequestAttributes.SCOPE_SESSION);
-	}
-
 	@RemoteMethod
 	public static String getSolrConfig(){
 		JSONObject json = new JSONObject();

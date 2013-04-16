@@ -32,6 +32,7 @@
    		  <dwr:convert type="bean" class="org.joda.time.DateTime" javascript="DateTime"/>
    		  <dwr:convert type="bean" class="org.joda.time.chrono.ISOChronology"/>
    		  <dwr:convert type="bean" class="org.joda.time.tz.CachedDateTimeZone"/>
+   		  <dwr:convert type="object" class="org.joda.time.tz.DateTimeZoneBuilder$PrecalculatedZone"/>
    </dwr:configuration> 
   <!-- <dwr:configuration/>-->
  

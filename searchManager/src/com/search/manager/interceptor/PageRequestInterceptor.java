@@ -40,16 +40,18 @@ public class PageRequestInterceptor extends HandlerInterceptorAdapter{
 		UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		String storeId = UtilityService.getStoreId();
-		String storeTimezoneId = cm.getStoreParameter(storeId, "default-timezone");
-		String userTimezoneId = userDetailsImpl.getDateTimeZoneId();
+		String storeTimeZoneId = cm.getStoreParameter(storeId, "default-timezone");
+		String userTimeZoneId = userDetailsImpl.getDateTimeZoneId();
 		
 		// update if user has defined timezone
-		if(StringUtils.isNotBlank(userTimezoneId) && !DateTimeZone.getDefault().getID().equalsIgnoreCase(userTimezoneId) || 
-				!DateTimeZone.getDefault().getID().equalsIgnoreCase(storeTimezoneId)){
+		if((StringUtils.isNotBlank(userTimeZoneId) && !DateTimeZone.getDefault().getID().equalsIgnoreCase(userTimeZoneId)) || 
+		   (StringUtils.isBlank(userTimeZoneId) && !DateTimeZone.getDefault().getID().equalsIgnoreCase(storeTimeZoneId))){
 
-			DateTimeZone dateTimezone = JodaDateTimeUtil.setTimeZoneID(userTimezoneId, storeTimezoneId);
-			UtilityService.setTimeZoneId(dateTimezone.getID());
-			logger.info(String.format("Attempted to set timezone to %s : %s", dateTimezone.getID(), dateTimezone.getID().equalsIgnoreCase(UtilityService.getTimeZoneId())? "SUCCESS": "FAILED"));
+			DateTimeZone dateTimezone = JodaDateTimeUtil.setTimeZoneID(userTimeZoneId, storeTimeZoneId);
+			logger.info(String.format("-DTZ- Joda timezone update to %s : %s", dateTimezone.getID(), DateTimeZone.getDefault().getID().equalsIgnoreCase(dateTimezone.getID())? "SUCCESS": "FAILED"));
+		}else{
+			String currentTimeZoneId = DateTimeZone.getDefault().getID();
+			logger.info(String.format("-DTZ- No timezone update required, currently set to %s: %s", currentTimeZoneId, (currentTimeZoneId.equalsIgnoreCase(userTimeZoneId)? "user-defined" : ""), (currentTimeZoneId.equalsIgnoreCase(storeTimeZoneId)? "store-default" : "")));
 		}
 				
 		return true;

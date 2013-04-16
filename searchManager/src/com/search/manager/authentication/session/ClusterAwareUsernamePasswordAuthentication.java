@@ -65,7 +65,7 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		} catch (DaoException e) {
 			logger.error("Updating successful login failed! " + e.getMessage(), e);
 		}
-		
+	
 		super.successfulAuthentication(request, response, authResult);
 	}
 
