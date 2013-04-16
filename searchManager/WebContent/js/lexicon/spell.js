@@ -548,6 +548,7 @@
 				authorizeSubmitForApproval: true,
 				deleteVersionsPhysically: true,
 				enableCompare: false,
+				enableSingleVersionDownload: true,
 				postRestoreCallback: function(base, rule){
 					jAlert("Did you mean rules restored.", "Version Restored", function() {
 						location.reload();
