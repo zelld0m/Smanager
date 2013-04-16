@@ -28,7 +28,9 @@ import com.search.manager.report.model.SubReportHeader;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.DownloadService;
+import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.RuleVersionService;
+import com.search.manager.service.SpellRuleService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
@@ -40,11 +42,15 @@ public class SpellController {
     private static final Logger logger = Logger.getLogger(SpellController.class);
 
     @Autowired
-    DaoCacheService daoCacheService;
+    private DaoCacheService daoCacheService;
     @Autowired
-    RuleVersionService ruleVersionService;
+    private RuleVersionService ruleVersionService;
     @Autowired
-    DownloadService downloadService;
+    private DownloadService downloadService;
+    @Autowired 
+    private SpellRuleService spellRuleService;
+    @Autowired 
+    private RuleTransferService ruleTransferService;
 
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -58,6 +64,69 @@ public class SpellController {
         return "lexicon/spell";
     }
 
+    @RequestMapping(value = "/{store}/xls")
+    public void getCurrentVersion(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String store, @RequestParam("filename") String filename,
+            @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
+        logger.debug(String.format("Received request to download current rule as an XLS: %s", filename));
+
+        Date headerDate = new Date(clientTimezone);
+        String subTitle = "Did You Mean Rules";
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+        ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
+        ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
+        RuleXml xml = spellRuleService.getSpellRules();
+        if (xml != null) {
+            SubReportHeader subReportHeader = RuleXmlReportUtil
+                    .getVersionSubReportHeader(xml, RuleEntity.SPELL);
+            subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
+                    ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
+        }
+        download(response, reportModel, subModels, type);
+    }
+
+    @RequestMapping(value = "/{store}/export/xls")
+    public void getExportVersion(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String store, @RequestParam("filename") String filename,
+            @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
+        logger.debug(String.format("Received request to download current rule as an XLS: %s", filename));
+
+        Date headerDate = new Date(clientTimezone);
+        String subTitle = "Did You Mean Rules";
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+        ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
+        ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
+        RuleXml xml = ruleTransferService.getRuleToExport(RuleEntity.getValue(RuleEntity.SPELL.getCode()), "spell_rule");
+        if (xml != null) {
+            SubReportHeader subReportHeader = RuleXmlReportUtil
+                    .getVersionSubReportHeader(xml, RuleEntity.SPELL);
+            subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
+                    ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
+        }
+        download(response, reportModel, subModels, type);
+    }
+    
+    @RequestMapping(value = "/{store}/import/xls")
+    public void getImportVersion(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String store, @RequestParam("filename") String filename,
+            @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
+        logger.debug(String.format("Received request to download current rule as an XLS: %s", filename));
+
+        Date headerDate = new Date(clientTimezone);
+        String subTitle = "Did You Mean Rules for Import";
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+        ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
+        ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
+        RuleXml xml = ruleTransferService.getRuleToImport(RuleEntity.getValue(RuleEntity.SPELL.getCode()), "spell_rule");
+        if (xml != null) {
+            SubReportHeader subReportHeader = RuleXmlReportUtil
+                    .getVersionSubReportHeader(xml, RuleEntity.SPELL);
+            subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
+                    ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
+        }
+        download(response, reportModel, subModels, type);
+    }
+    
     @RequestMapping(value = "/{store}/version/xls")
     public void getRuleVersion(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String store, @RequestParam("filename") String filename, @RequestParam("id") String ruleId,

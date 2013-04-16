@@ -333,8 +333,9 @@
 						if (entityName === 'didYouMean'){
 							$(tabSelected).find("label#requestedBy").html(list[0]["requestBy"]);
 							$(tabSelected).find("label#requestedDate").html($.isNotBlank(list[0]["lastRequestDate"])? list[0]["lastRequestDate"].toUTCString(): "");
-// TODO: change 1 to 50 after testing
-							SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 1, 2, {
+							// set to number to be displayed + 1, to detect if there is an overflow
+							var displaySize = 50;
+							SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 1, displaySize + 1, {
 								callback: function(response) {
 									// Populate table row
 									var responseData = response.data;
@@ -342,10 +343,9 @@
 									$table = $(tabSelected).find("table#rule");
 									$(tabSelected).find("label#numSuggestions").append(responseData.maxSuggest);
 									if (responseList.length == 0) {
-										$table.append('<tr><td class="txtAC" colspan="3">No new/modified entries found. Click on link to download full list.</td></tr>');
+										$table.append('<tr><td class="txtAC" colspan="3">No new/modified entries found. Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</td></tr>');
 									}
 									else {
-										var displaySize = 1;
 										if (displaySize > responseList.length) {
 											displaySize = responseList.length;
 										}
@@ -364,13 +364,38 @@
 											$tr.find("td#type").html(responseList[i]["status"]);
 											$tr.appendTo($table);
 										}
-										if (displaySize < responseList.length) {
-											$table.append('<tr><td class="txtAC" colspan="3">Click on link to download full list.</td></tr>');
-										}
+										$table.append('<tr><td class="txtAC" colspan="3"><div>Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</div></td></tr>');
 									}
 									
 									// Alternate row style
 									$(tabSelected).find("tr:not(#ruleItemPattern):even").addClass("alt");
+									
+									$(tabSelected).find("table#rule tr td div a#downloadIcon").download({
+										headerText:"Download Did You Mean Rules",
+										moduleName: entityName,
+										ruleType: entityName,  
+										solo: $(".internal-tooltip"),
+										classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped internal-tooltip',
+										requestCallback:function(e2) {
+											var params = new Array();
+											var url = GLOBAL_contextPath + "/spell/" + GLOBAL_storeId + "/xls";
+											var urlParams = "";
+											var count = 0;
+
+											params["filename"] = e2.data.filename;
+											params["type"] = e2.data.type;
+											params["id"] = "spell_rule";
+											params["clientTimezone"] = +new Date();
+
+											for(var key in params){
+												if (count>0) urlParams +='&';
+												urlParams += (key + '=' + encodeURIComponent(params[key]));
+												count++;
+											};
+											document.location.href = url + '?' + urlParams;
+										}
+									});
+									
 									approvalHandlerLinguistics();
 								}
 							});

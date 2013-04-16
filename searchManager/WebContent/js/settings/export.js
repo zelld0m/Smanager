@@ -235,62 +235,94 @@
 							if (rule["updateStatus"]!=="DELETE"){
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", rule["ruleRefId"]);
 								
-								$tr.find("td#ruleOption > img.previewIcon").xmlpreview({
-									transferType: "export",
-									ruleType: self.entityName,
-									ruleId: rule["ruleRefId"],
-									ruleName: rule["ruleName"],
-									ruleInfo: rule["description"],
-									requestType: rule["updateStatus"],
-									enablePreTemplate: true,
-									enablePostTemplate: true,
-									leftPanelSourceData: "xml",
-									postTemplate: self.getPostTemplate(),
-									postButtonClick: function(){
-										self.getExportList();
-									},
-									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){
-										RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
-											callback: function(xml){
-												if (xml == null || $.isEmptyObject(xml)) {
-													jAlert("Unable to find published data for this rule. Please contact Search Manager Team.", self.moduleName,
-															function() {base.api.hide()});
+								if (self.entityName === "didYouMean") {
+									var preview = $tr.find("td#ruleOption > img.previewIcon");
+									preview.attr("src", "/searchManager/images/iconDownload.png");
+									preview.download({
+										headerText:"Download Did You Mean Rules",
+										moduleName: self.entityName,
+										ruleType: self.entityName,  
+										solo: $(".internal-tooltip"),
+										classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped internal-tooltip',
+										requestCallback:function(e2) {
+											var params = new Array();
+											var url = GLOBAL_contextPath + "/spell/" + GLOBAL_storeId + "/export/xls";
+											var urlParams = "";
+											var count = 0;
+
+											params["filename"] = e2.data.filename;
+											params["type"] = e2.data.type;
+											params["id"] = "spell_rule";
+											params["clientTimezone"] = +new Date();
+
+											for(var key in params){
+												if (count>0) urlParams +='&';
+												urlParams += (key + '=' + encodeURIComponent(params[key]));
+												count++;
+											};
+											document.location.href = url + '?' + urlParams;
+										}
+									});
+								}
+								else {
+									$tr.find("td#ruleOption > img.previewIcon").xmlpreview({
+										transferType: "export",
+										ruleType: self.entityName,
+										ruleId: rule["ruleRefId"],
+										ruleName: rule["ruleName"],
+										ruleInfo: rule["description"],
+										requestType: rule["updateStatus"],
+										enablePreTemplate: true,
+										enablePostTemplate: true,
+										leftPanelSourceData: "xml",
+										postTemplate: self.getPostTemplate(),
+										postButtonClick: function(){
+											self.getExportList();
+										},
+										itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){
+											RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
+												callback: function(xml){
+													if (xml == null || $.isEmptyObject(xml)) {
+														jAlert("Unable to find published data for this rule. Please contact Search Manager Team.", self.moduleName,
+																function() {base.api.hide()});
+													}
+													else {
+														base.options.ruleXml = xml;
+														base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
+													}
 												}
-												else {
-													base.options.ruleXml = xml;
-													base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
-												}
+											});
+										},
+										postButtonClick: function(){
+											self.getExportList();
+										},
+										itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+											if (self.entityName.toLowerCase() === "elevate"){
+												ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+													callback:function(data){
+														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+													},
+													preHook: function(){
+														base.prepareForceAddStatus(contentHolder);
+													}
+												});
 											}
-										});
-									},
-									postButtonClick: function(){
-										self.getExportList();
-									},
-									itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
-										if (self.entityName.toLowerCase() === "elevate"){
-											ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
-												callback:function(data){
-													base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-												},
-												preHook: function(){
-													base.prepareForceAddStatus(contentHolder);
-												}
-											});
+										},
+										itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+											if (self.entityName.toLowerCase() === "elevate"){
+												ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+													callback:function(data){
+														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+													},
+													preHook: function(){
+														base.prepareForceAddStatus(contentHolder);
+													}
+												});
+											}
 										}
-									},
-									itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
-										if (self.entityName.toLowerCase() === "elevate"){
-											ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
-												callback:function(data){
-													base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-												},
-												preHook: function(){
-													base.prepareForceAddStatus(contentHolder);
-												}
-											});
-										}
-									}
-								});
+									});
+								}
+
 							}else{
 								$tr.find("td#ruleOption > img.previewIcon").hide();
 							}

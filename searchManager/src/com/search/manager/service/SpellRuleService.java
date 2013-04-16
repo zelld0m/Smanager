@@ -300,4 +300,8 @@ public class SpellRuleService {
         return response;
     }
     
+    public SpellRules getSpellRules() {
+    	return daoService.getSpellRules(UtilityService.getStoreId());
+    }
+    
 }
