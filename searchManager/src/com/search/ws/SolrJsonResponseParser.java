@@ -159,18 +159,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				responseHeader.element(SolrConstants.TAG_REDIRECT, redirectObject);
 			}
 			
-			if(spellRule != null) {
-				JSONObject spellRuleObject = new JSONObject();
-				Map<String, String> fields = new HashMap<String, String>();
-				if(spellRule.getSuggestions() != null) {
-					for(int i=0; i<spellRule.getSuggestions().length; i++) {
-						fields.put(spellRule.getSuggestions()[i], spellRule.getSuggestions()[i]);
-					}
-				}
-				spellRuleObject.putAll(fields);
-				responseHeader.element(SolrConstants.TAG_DID_YOU_MEAN, spellRuleObject);
-			}
-			
 			// TODO: make this get value from solr.xml
 			if (StringUtils.isNotEmpty(facetTemplate)) {
 				facetTemplateJSON = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields", facetTemplate});
