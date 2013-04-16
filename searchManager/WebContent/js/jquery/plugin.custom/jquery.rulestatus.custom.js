@@ -91,6 +91,7 @@
 									locked: e.data.selectedRuleStatus.locked || $.endsWith(e.data.rule.ruleId, "_default") || !e.data.allowModify,
 									deletePhysically: base.options.deleteVersionsPhysically,
 									enableCompare: base.options.enableCompare,
+									enableSingleVersionDownload: base.options.enableSingleVersionDownload,
 									preRestoreCallback: function(el){
 										base.options.preRestoreCallback(el);
 									},
@@ -251,6 +252,7 @@
 			authorizeSubmitForApproval: false,
 			deleteVersionsPhysically: false,
 			enableCompare: true,
+			enableSingleVersionDownload: false,
 			beforeSubmitForApprovalRequest: function(){}, 
 			afterSubmitForApprovalRequest: function(status){}, 
 			beforeRuleStatusRequest: function(){}, 

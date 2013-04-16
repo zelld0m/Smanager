@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.search.manager.cache.dao.DaoCacheService;
-import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
@@ -27,9 +25,7 @@ import com.search.manager.report.model.ReportModel;
 import com.search.manager.report.model.SpellReportBean;
 import com.search.manager.report.model.SpellReportModel;
 import com.search.manager.report.model.SubReportHeader;
-import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
@@ -78,6 +74,34 @@ public class SpellController {
         if (rules != null) {
             for (RuleXml xml : rules) {
                 if (xml != null) {
+                    SubReportHeader subReportHeader = RuleXmlReportUtil
+                            .getVersionSubReportHeader(xml, RuleEntity.SPELL);
+                    subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
+                            ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
+                }
+            }
+        }
+
+        download(response, reportModel, subModels, type);
+    }
+
+    @RequestMapping(value = "/{store}/version/xls/{versionNo}")
+    public void getRuleVersion(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable("versionNo") long versionNo, @PathVariable String store,
+            @RequestParam("filename") String filename, @RequestParam("id") String ruleId,
+            @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
+        logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
+
+        Date headerDate = new Date(clientTimezone);
+        String subTitle = "Did You Mean Rules";
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+        ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
+        ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
+        List<RuleXml> rules = ruleVersionService.getRuleVersions("Did You Mean", ruleId);
+
+        if (rules != null) {
+            for (RuleXml xml : rules) {
+                if (xml != null && xml.getVersion() == versionNo) {
                     SubReportHeader subReportHeader = RuleXmlReportUtil
                             .getVersionSubReportHeader(xml, RuleEntity.SPELL);
                     subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(

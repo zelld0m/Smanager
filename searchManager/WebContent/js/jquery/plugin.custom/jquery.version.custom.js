@@ -511,6 +511,43 @@
 			});
 		};
 
+		base.addDownloadVersionListener = function(tr, item){
+			var $tr = tr;
+
+			$tr.find(".downloadIcon").download({
+				headerText:"Download Version " + item['version'],
+				moduleName: base.options.moduleName,
+				ruleType: base.options.ruleType,  
+				rule: base.options.rule,
+				solo: $(".internal-tooltip"),
+				classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped internal-tooltip',
+				requestCallback:function(e) {
+					base.downloadVersion(e, item);
+				}
+			});
+		};
+
+		base.downloadVersion = function(e, item){
+			var params = new Array();
+			var url = document.location.pathname + "/version/xls/" + item['version'];
+			var urlParams = "";
+			var count = 0;
+
+			params["filename"] = e.data.filename;
+			params["type"] = e.data.type;
+			params["keyword"] = base.options.rule["ruleName"];
+			params["id"] = base.options.rule["ruleId"];
+			params["clientTimezone"] = +new Date();
+
+			for(var key in params){
+				if (count>0) urlParams +='&';
+				urlParams += (key + '=' + encodeURIComponent(params[key]));
+				count++;
+			};
+
+			document.location.href = url + '?' + urlParams;
+		};
+
 		base.getAvailableVersion = function(){
 			var $content = base.contentHolder;
 			base.ruleMap = {};
@@ -567,6 +604,7 @@
 							$tr.find("td#itemInfo > p#notes").html(item["notes"]);
 							base.addDeleteVersionListener($tr, item);
 							base.addRestoreVersionListener($tr, item);
+							base.addDownloadVersionListener($tr, item);
 							$tr.show();
 							$table.append($tr);
 						}
@@ -648,7 +686,13 @@
 			template +=	'							<p id="notes" class="w120 fsize11 breakWord"></p>';
 			template += '						</td>';
 			template += '						<td width="120px" class="txtAC" id="itemDate"></td>';
-			template += '						<td width="auto" style="min-width:40px" class="txtAC">';
+			if (base.options.enableSingleVersionDownload) {
+				template += '						<td width="auto" style="min-width:60px" class="txtAC">';
+				template += '                           <label class="downloadIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Download" title="Download" src="' + GLOBAL_contextPath + '/images/iconDownload.png" class="top2 posRel"></label>';
+			} else {
+				template += '						<td width="auto" style="min-width:40px" class="txtAC">';
+			}
+			
 			template += '							<label class="restoreIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
 			template += '							<label class="deleteIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			template += '						</td>';
@@ -834,6 +878,7 @@
 			locked: true,
 			deletePhysically: false,
 			enableCompare: true,
+			enableSingleVersionDownload: false,
 			beforeRequest: function(){},
 			afterRequest: function(){},
 			preRestoreCallback: function(base){},

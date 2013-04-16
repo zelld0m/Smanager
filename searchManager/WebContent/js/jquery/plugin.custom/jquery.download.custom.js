@@ -95,7 +95,12 @@
 					target: base.$el
 				},
 				style: {
-					width: 'auto'
+					width: 'auto',
+					classes: base.options.classes,
+				},
+				show: {
+					event: 'click',
+					solo: base.options.solo
 				},
 				events: { 
 					show: function(event, api){
@@ -172,6 +177,8 @@
 			sendMail: false,
 			hasPageOption: false,
 			hasRuleEntityOption: false,
+			solo: true,
+			classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped',
 			requestCallback: function(e){} 
 	};
 
