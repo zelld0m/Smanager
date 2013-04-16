@@ -309,7 +309,7 @@ public class ConfigManager {
 	public String getPublishedDidYouMeanPath(String storeId) {
 		String fileName = PropsUtils.getValue("publishedfilepath");
 		if (StringUtils.isNotBlank(fileName)) {
-			fileName += File.separator + storeId + File.separator + "Spell" + File.separator + "spell.csv";
+			fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.csv";
 		}
 		return StringUtils.trimToNull(fileName);
 	}

@@ -107,14 +107,16 @@
 
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
-						case "publishBtn":
-							jConfirm("Continue publishing of Did You Mean List?", "Confirm Publish", function(status){
+						case "publishBtn": 
+							var confirmMsg = "Continue publishing of the following rules:\n" + a.join('\n');
+
+							jConfirm(confirmMsg, "Confirm Publish", function(status){
 								if(status){
 									var exception = false;
 									DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-										callback: function(data){
-											jAlert("Did You Mean List was successfully published.", "Push to Prod");
-											getForProductionList("approved");	
+										callback: function(data){									
+											postMsg(data,true);	
+											getForProductionList(selRuleFltr);	
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -195,7 +197,7 @@
 									DeploymentServiceJS.publishRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
 										callback: function(data){	
 											jAlert("Did You Mean List was successfully published.", "Publish Rule");
-											getForProductionList(selRuleFltr);	
+											getForProductionList("approved");	
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -205,6 +207,7 @@
 												cleanUpTabContent()
 											}
 											else {
+												$(tabSelected).find("div#requestDetails").hide();
 												$("div.circlePreloader").hide();
 												$(tabSelected).find('table.tblItems').show();
 												$(tabSelected).find('div.filter').show();

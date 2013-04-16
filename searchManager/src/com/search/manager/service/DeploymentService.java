@@ -312,7 +312,11 @@ public class DeploymentService {
 				ruleEntity = RuleEntity.find(ruleType);
 				deploymentModel.setPublished(1);
 				publishedRuleStatusIdList.add(ruleStatusIdList[i]);
-				if(daoService.createPublishedVersion(store, ruleEntity, ruleId, username, null, comment)) {
+				String name = null;
+				if (RuleEntity.SPELL.equals(ruleEntity)) {
+					name = "Did You Mean Rules";
+				}
+				if(daoService.createPublishedVersion(store, ruleEntity, ruleId, username, name, comment)) {
 					daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
 					logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));	
 					if (isAutoExport) {

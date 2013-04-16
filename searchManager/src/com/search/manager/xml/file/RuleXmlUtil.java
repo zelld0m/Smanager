@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +43,10 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.report.model.xml.DemoteItemXml;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateItemXml;
@@ -61,6 +62,7 @@ import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
@@ -911,9 +913,18 @@ public class RuleXmlUtil{
 		}else if(xml instanceof RankingRuleXml){
 			isRestored = RuleXmlUtil.restoreRankingRule(path, xml, createPreRestore);
 		}else if(xml instanceof SpellRules) {
+			if (!isVersion) {
+				Date date = new Date();
+				String username = xml.getCreatedBy();
+				SpellRules spellRules = (SpellRules)xml;
+				for (SpellRuleXml rule: spellRules.getSpellRule()) {
+					rule.setCreatedBy(username);
+					rule.setCreatedDate(date);
+					rule.setRuleId(DAOUtils.generateUniqueId());
+				}
+			}
 		    isRestored = RuleXmlUtil.restoreSpellRule(path, xml, createPreRestore);
 		}
-
 		return isRestored;
 	}
 

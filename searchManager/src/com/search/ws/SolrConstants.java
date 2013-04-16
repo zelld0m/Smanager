@@ -8,6 +8,7 @@ public class SolrConstants {
 	
 	public final static String SOLR_PARAM_KEYWORD = "q";
 	public final static String SOLR_PARAM_SPELLCHECK = "spellcheck";
+	public final static String SOLR_PARAM_SPELLCHECK_COUNT = "spellcheck.count";
 	public final static String SOLR_PARAM_ROWS = "rows";
 	public final static String SOLR_PARAM_START = "start";
 	public final static String SOLR_PARAM_FIELDS = "fl";

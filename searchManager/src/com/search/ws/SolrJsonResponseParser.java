@@ -668,7 +668,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 	}
 
-    private void addSpellcheckEntries() throws SearchException {
+    @SuppressWarnings("unchecked")
+	private void addSpellcheckEntries() throws SearchException {
         int count = 0;
 
         if (spellRule != null) {

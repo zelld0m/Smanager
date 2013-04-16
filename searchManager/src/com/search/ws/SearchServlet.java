@@ -607,7 +607,9 @@ public class SearchServlet extends HttpServlet {
 						if (paramName.equals(SolrConstants.SOLR_PARAM_SPELLCHECK)) {
 							performSpellCheck = true;
 						}
-						spellcheckParams.add(new BasicNameValuePair(paramName, paramValue));
+						nvp = new BasicNameValuePair(paramName, paramValue);
+						addNameValuePairToMap(paramMap, paramName, nvp);
+						spellcheckParams.add(nvp);
 						continue;
 					}
 					
@@ -1162,10 +1164,17 @@ public class SearchServlet extends HttpServlet {
 		    	solrHelper.setMaxSuggestCount(suggestCount);
 			    
 			    final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
+			    getSpellingSuggestionsParams.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
 				getSpellingSuggestionsParams.add(defTypeNVP);
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0"));
 				getSpellingSuggestionsParams.addAll(spellcheckParams);
+				// override spellcheck.count sent from client
+				NameValuePair spellCount = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_SPELLCHECK_COUNT);
+				if (spellCount != null) {
+					getSpellingSuggestionsParams.remove(spellCount);
+				}
+				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_SPELLCHECK_COUNT, String.valueOf(suggestCount)));
 				completionService.submit(new Callable<Integer>() {
 					@Override
 					public Integer call() throws Exception { // TODO here...

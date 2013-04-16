@@ -27,9 +27,11 @@ public class SpellRules extends RuleXml {
     private Map<String, List<SpellRuleXml>> statusMap = new HashMap<String, List<SpellRuleXml>>();
 
     private int maxSuggest = 5;
-
+    private static final RuleEntity RULE_ENTITY = RuleEntity.SPELL;
+    
     public SpellRules() {
         super(serialVersionUID);
+		setRuleEntity(RULE_ENTITY);
     }
 
     public SpellRules(String store, long version, String name, String notes, String username, Date date,
@@ -37,13 +39,12 @@ public class SpellRules extends RuleXml {
         this();
         this.setSpellRule(spellRule);
         this.setRuleId(ruleId);
-        this.setRuleName(ruleId);
+        this.setRuleName("Did You Mean Rules");
         this.setName(name);
         this.setNotes(notes);
         this.setCreatedBy(username);
         this.setCreatedDate(date);
         this.setStore(store);
-        this.setRuleEntity(RuleEntity.SPELL);
         this.setVersion(version);
         this.setMaxSuggest(maxSuggest);
     }
