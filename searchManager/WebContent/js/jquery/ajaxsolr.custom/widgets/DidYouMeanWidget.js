@@ -21,18 +21,13 @@
 
 		getTemplate : function(){
 			var self = this;
-			var $dym = self.manager.response.responseHeader['did_you_mean'];
-			var template = '';
-			var maxDidyouMean = self.maxDidyouMean;
-			var didYouMean = "";
+			var $sc = self.manager.response.spellcheck['suggestions'];
 			var zeroResult = self.manager.response.response['numFound'];
-			var i=0;
+			var template = '';
+			var didYouMean = '';
+			var hasPrev = false;
 			
-			if(!$.isEmptyObject($dym)) {
-				if(maxDidyouMean == 0) {
-					maxDidyouMean = Object.keys($dym).length;
-				}
-				
+			if(!$.isEmptyObject($sc)) {
 				if(zeroResult != 0) {
 					template += '<div class="info notification border fsize11 marB10 marT10"> 		Did You Mean will only appear in production if there are no search results. 	</div>';
 				}
@@ -44,11 +39,16 @@
 				template += '	</div>';
 				template += '</div>';
 				
-				for (var key in $dym){
-					if($.isNotBlank(key)) {
-						i++;
-						didYouMean += i <= maxDidyouMean ? '<a href="javascript:void(0);" alt="' + key + '" title="' + key + '">' + key + '</a>': "";
-						didYouMean += Object.keys($dym).length > i && i < maxDidyouMean ? ", ": "";
+				for(var temp in $sc) {
+					var obj = $sc[temp];
+					for(var key in obj['suggestion']) {
+						if($.isNotBlank(obj['suggestion'][key])) {
+							if(hasPrev) {
+								didYouMean += ', ';
+							}
+							didYouMean += '<a href="javascript:void(0);" alt="' + obj['suggestion'][key] + '" title="' + obj['suggestion'][key] + '">' + obj['suggestion'][key] + '</a>';
+							hasPrev = true;
+						}
 					}
 				}
 				
@@ -60,5 +60,5 @@
 			return template;
 		}
 	});
-
+	
 })(jQuery);
