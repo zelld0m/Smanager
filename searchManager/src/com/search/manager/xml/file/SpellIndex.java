@@ -134,8 +134,13 @@ public class SpellIndex {
         FileWriter writer = null;
 
         try {
+            String filePath = getSpellFilePath(storeId, false);
+
             // Create backup first.
-            FileUtils.copyFile(new File(getSpellFilePath(storeId, false)), new File(getSpellFilePath(storeId, true)));
+            if (FileUtil.isExist(filePath)) {
+                FileUtils.copyFile(new File(filePath), new File(getSpellFilePath(storeId, true)));
+            }
+
             JAXBContext context = JAXBContext.newInstance(SpellRules.class);
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
