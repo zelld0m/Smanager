@@ -584,7 +584,7 @@ public class SolrServiceImpl implements SolrService {
 		else {
 			try {
 				String[] shellCommand = {
-						"/bin/sh", "-c", String.format("grep -P \"%s\" %s", storeId, fileName)
+						"/bin/sh", "-c", String.format("grep -P \"%s\" \"%s\"", searchTerm, fileName)
 				};
 				Process p = Runtime.getRuntime().exec(shellCommand);
 				try {
