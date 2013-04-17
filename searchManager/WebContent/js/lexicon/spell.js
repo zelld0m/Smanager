@@ -390,7 +390,9 @@
 								entities.push($(rules[i]).data('spellRule').data());
 							}
 
-							if (self.validate(entities) && entities.length > 0) {
+							var hasChanges = entities.length > 0;
+
+							if (self.validate(entities) && hasChanges) {
 								SpellRuleServiceJS.addSpellRuleBatch(entities,
 									function(response) {
 										// success
@@ -414,6 +416,8 @@
 											}
 										}
 									});
+							} else if (!hasChanges) {
+								self.$cancelButton.click();
 							}
 						} else if (self.mode == 'edit') {
 							var rules = self.$table.find("tr.spell-rule");
@@ -431,7 +435,9 @@
 								deleted.push($(self.deleted[i].el).data('spellRule').data());
 							}
 
-							if (self.validate(entities) && (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0)) {
+							var hasChanges = self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0;
+							
+							if (self.validate(entities) && hasChanges) {
 								SpellRuleServiceJS.updateSpellRuleBatch(self.$maxSuggest.val(), entities, deleted,
 									function(response) {
 										// success
@@ -455,6 +461,8 @@
 											}
 										}
 									});
+							} else if (!hasChanges){
+								self.$cancelButton.click();
 							}
 						}
 					}
