@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
@@ -144,7 +145,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IP, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_TIMEZONE_ID, Types.VARCHAR));
 		}
@@ -204,7 +205,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IP, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_TIMEZONE_ID, Types.VARCHAR));
 		}

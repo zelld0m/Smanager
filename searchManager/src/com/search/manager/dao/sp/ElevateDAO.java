@@ -20,7 +20,6 @@ import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
@@ -68,7 +67,7 @@ public class ElevateDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_TYPE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FORCE_ADD, Types.VARCHAR));
@@ -84,8 +83,8 @@ public class ElevateDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
@@ -207,7 +206,7 @@ public class ElevateDAO {
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));	
 		}
 	}
@@ -339,7 +338,7 @@ public class ElevateDAO {
 			DAOValidation.checkElevatePK(elevate);
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
-			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(elevate.getExpiryDateTime(), JodaPatternType.DATE));
+			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(elevate.getExpiryDateTime()));
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
 			int af = DAOUtils.getUpdateCount(updateExpiryDateSP.execute(inputs));
 			return af;

@@ -70,7 +70,9 @@ public class JodaDateTimeUtil {
 	}
 	
 	public static DateTime toDateTime(Timestamp timestamp) {
-		return (timestamp==null? null: new DateTime(timestamp.getTime()).withZone(DateTimeZone.getDefault()));
+		ConfigManager cm = ConfigManager.getInstance();
+		DateTimeZone systemDateTimeZone = DateTimeZone.forID(cm.getSystemTimeZoneId());
+		return (timestamp==null? null: new DateTime(timestamp, systemDateTimeZone).withZone(DateTimeZone.getDefault()));
 	}
 	
 	private static DateTime toDateTime(String storeId, String pattern, String dateTimeText, String xmlTag){
