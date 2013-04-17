@@ -64,9 +64,13 @@ public class SpellIndex {
 
             if (!FileUtil.isDirectoryExist(storeDir)) {
                 FileUtil.createDirectory(storeDir);
-                rules.put(store, new SpellRules());
-            } else if (!FileUtil.isExist(spellFile)) {
-                rules.put(store, new SpellRules());
+            }
+
+            if (!FileUtil.isExist(spellFile)) {
+                SpellRules storeRules = new SpellRules();
+
+                storeRules.generateSecondaryIndex();
+                rules.put(store, storeRules);
             } else {
                 rules.put(store, read(xmlPath.get(store)));
             }
