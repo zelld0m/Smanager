@@ -20,6 +20,7 @@ import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
@@ -104,7 +105,7 @@ public class ElevateDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPIRY_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
@@ -129,7 +130,7 @@ public class ElevateDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPIRY_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
@@ -170,7 +171,7 @@ public class ElevateDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPIRY_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
@@ -338,7 +339,7 @@ public class ElevateDAO {
 			DAOValidation.checkElevatePK(elevate);
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
-			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(elevate.getExpiryDateTime()));
+			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(elevate.getExpiryDateTime(), JodaPatternType.DATE));
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
 			int af = DAOUtils.getUpdateCount(updateExpiryDateSP.execute(inputs));
 			return af;

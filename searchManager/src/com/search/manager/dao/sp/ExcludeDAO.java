@@ -94,7 +94,7 @@ public class ExcludeDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPIRY_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),

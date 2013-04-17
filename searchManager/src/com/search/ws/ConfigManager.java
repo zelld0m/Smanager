@@ -85,10 +85,10 @@ public class ConfigManager {
     	if(TimeZone.getDefault().getID().equalsIgnoreCase(systemTimeZoneId)){
     		logger.info(String.format("-DTZ- System timezone is already set to %s", systemTimeZoneId));
     	}else{
-    		logger.info(String.format("-DTZ- Pre-Attempt: System TimeZone is %s",TimeZone.getDefault().getDisplayName()));
-    		logger.info(String.format("-DTZ- Attempted to set System Timezone from %s to %s", TimeZone.getDefault().getID(), systemTimeZoneId));
+    		logger.info(String.format("-DTZ- Pre-Attempt: System timezone is %s",TimeZone.getDefault().getDisplayName()));
+    		logger.info(String.format("-DTZ- Attempted to set System timezone from %s to %s", TimeZone.getDefault().getID(), systemTimeZoneId));
     		TimeZone.setDefault(TimeZone.getTimeZone(systemTimeZoneId));
-    		logger.info(String.format("-DTZ- System TimeZone is %s",TimeZone.getDefault().getDisplayName()));
+    		logger.info(String.format("-DTZ- Post-Attempt: System timezone is now %s",TimeZone.getDefault().getDisplayName()));
     	}
     	
 		/* Joda timezone*/
@@ -146,6 +146,10 @@ public class ConfigManager {
     
     public String getStoreParameter(String storeId, String param) {
     	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
+    }
+    
+    public String getSystemTimeZoneId(){
+    	return StringUtils.defaultIfBlank(getParameter("system-timezone"), "America/Los_Angeles");
     }
     
     @SuppressWarnings("unchecked")

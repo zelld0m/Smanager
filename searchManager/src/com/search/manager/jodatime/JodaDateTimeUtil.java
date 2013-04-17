@@ -1,7 +1,6 @@
 package com.search.manager.jodatime;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -29,21 +28,21 @@ public class JodaDateTimeUtil {
 		return getTimeZone().getID();
 	}
 	
-	public static Date toSqlDate(DateTime dateTime, JodaPatternType jodaPatternType){
+	public static Timestamp toSqlDate(DateTime dateTime, JodaPatternType jodaPatternType){
 		if(dateTime==null) return null;
 		
-		DateTime dTime = dateTime.withZone(DateTimeZone.forID("America/Los_Angeles"));
+		DateTime dTime = dateTime.withZone(DateTimeZone.getDefault());
 		
 		if((jodaPatternType==null || JodaPatternType.DATE_TIME.equals(jodaPatternType))){
-			logger.info(String.format("Zone conversion to %s", String.valueOf(dTime.getZone().getID())));
-			logger.info(String.format("DateTime conversion %s to %s", String.valueOf(dateTime.getMillis()), String.valueOf(dTime.getMillis())));
-			return new Date(dTime.getMillis());
+			logger.info(String.format("-DTZ- Joda timezone conversion to %s", dTime.getZone().getID()));
+			logger.info(String.format("-DTZ- DateTime millis conversion from %s to %s", String.valueOf(dateTime.getMillis()), String.valueOf(dTime.getMillis())));
+			return new Timestamp(dTime.getMillis());
 		}else{
-			return new Date(dTime.toDateMidnight().getMillis());
+			return new Timestamp(dTime.toDateMidnight().getMillis());
 		}
 	}
 	
-	public static Date toSqlDate(DateTime dateTime){
+	public static Timestamp toSqlDate(DateTime dateTime){
 		return toSqlDate(dateTime, JodaPatternType.DATE_TIME);
 	}
 	
@@ -71,11 +70,7 @@ public class JodaDateTimeUtil {
 	}
 	
 	public static DateTime toDateTime(Timestamp timestamp) {
-		return (timestamp==null? null: new DateTime(timestamp.getTime(),getTimeZone()));
-	}
-	
-	public static DateTime toDateTime(Date date) {
-		return (date==null? null: new DateTime(date.getTime(),getTimeZone()));
+		return (timestamp==null? null: new DateTime(timestamp.getTime()).withZone(DateTimeZone.getDefault()));
 	}
 	
 	private static DateTime toDateTime(String storeId, String pattern, String dateTimeText, String xmlTag){
@@ -91,7 +86,7 @@ public class JodaDateTimeUtil {
 		
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
 		
-		return formatter.parseDateTime(dateTimeText);
+		return formatter.withZone(DateTimeZone.getDefault()).parseDateTime(dateTimeText);
 	}
 	
 	public static DateTime toDateTimeFromPattern(String pattern, String dateTimeText){
@@ -120,7 +115,7 @@ public class JodaDateTimeUtil {
 		
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
 		
-		return formatter.withZone(dateTime.getZone()).print(dateTime);
+		return formatter.withZone(DateTimeZone.getDefault()).print(dateTime);
 	}
 	
 	public static String formatDateTimeFromPattern(String pattern, DateTime dateTime){

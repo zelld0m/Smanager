@@ -113,8 +113,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
 							rs.getString(DAOConstants.COLUMN_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_COMMENT),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
@@ -202,8 +202,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
 							rs.getString(DAOConstants.COLUMN_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_COMMENT),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
@@ -366,8 +366,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
 							rs.getString(DAOConstants.COLUMN_LINK_URL));
 					return new CampaignBanner(campaign, banner, (List<Keyword>)null,
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
@@ -420,8 +420,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
 							rs.getString(DAOConstants.COLUMN_LINK_URL));
 					return new CampaignBanner(campaign, banner, (List<Keyword>)null,
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
@@ -525,8 +525,8 @@ public class CampaignDAO {
 					map.put(DAOConstants.COLUMN_CAMPAIGN_NAME, rs.getString(DAOConstants.COLUMN_CAMPAIGN_NAME));
 					map.put(DAOConstants.COLUMN_BANNER_ID, rs.getString(DAOConstants.COLUMN_BANNER_ID));
 					map.put(DAOConstants.COLUMN_BANNER_NAME, rs.getString(DAOConstants.COLUMN_BANNER_NAME));
-					map.put(DAOConstants.COLUMN_START_DATE, JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)));
-					map.put(DAOConstants.COLUMN_END_DATE, JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)));
+					map.put(DAOConstants.COLUMN_START_DATE, JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)));
+					map.put(DAOConstants.COLUMN_END_DATE, JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)));
 					//	            	map.put(DAOConstants.COLUMN_CREATED_BY, rs.getString(DAOConstants.COLUMN_CREATED_BY));
 					//	            	map.put(DAOConstants.COLUMN_CREATED_DATE, rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE));
 					return map;
