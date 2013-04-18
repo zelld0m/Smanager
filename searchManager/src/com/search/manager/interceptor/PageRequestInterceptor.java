@@ -1,5 +1,7 @@
 package com.search.manager.interceptor;
 
+import java.util.TimeZone;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,10 +42,11 @@ public class PageRequestInterceptor extends HandlerInterceptorAdapter{
 		UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		String storeId = UtilityService.getStoreId();
+		String systemTimeZoneId = cm.getSystemTimeZoneId();
 		String storeTimeZoneId = cm.getStoreParameter(storeId, "default-timezone");
 		String userTimeZoneId = userDetailsImpl.getDateTimeZoneId();
 		
-		// update if user has defined timezone
+		// Monitor and persist system timezone, update to user-defined/store-defined timezone
 		if((StringUtils.isNotBlank(userTimeZoneId) && !DateTimeZone.getDefault().getID().equalsIgnoreCase(userTimeZoneId)) || 
 		   (StringUtils.isBlank(userTimeZoneId) && !DateTimeZone.getDefault().getID().equalsIgnoreCase(storeTimeZoneId))){
 
@@ -51,7 +54,16 @@ public class PageRequestInterceptor extends HandlerInterceptorAdapter{
 			logger.info(String.format("-DTZ- Joda timezone update to %s : %s", dateTimezone.getID(), DateTimeZone.getDefault().getID().equalsIgnoreCase(dateTimezone.getID())? "SUCCESS": "FAILED"));
 		}else{
 			String currentTimeZoneId = DateTimeZone.getDefault().getID();
-			logger.info(String.format("-DTZ- No timezone update required, currently set to %s: %s", currentTimeZoneId, (currentTimeZoneId.equalsIgnoreCase(userTimeZoneId)? "user-defined" : ""), (currentTimeZoneId.equalsIgnoreCase(storeTimeZoneId)? "store-default" : "")));
+			logger.info(String.format("-DTZ- No Joda timezone update required, currently set to %s: %s %s", currentTimeZoneId, (currentTimeZoneId.equalsIgnoreCase(userTimeZoneId)? "user-defined" : ""), (currentTimeZoneId.equalsIgnoreCase(storeTimeZoneId)? "store-default" : "")));
+		}
+		
+		// Monitor and persist system timezone
+		if(TimeZone.getDefault().getID().equalsIgnoreCase(systemTimeZoneId)){
+			logger.info(String.format("-DTZ- No System timezone update required, currently set to %s", TimeZone.getDefault().getID()));
+		}else{
+			TimeZone currentTimeZone = TimeZone.getDefault();
+			TimeZone.setDefault(TimeZone.getTimeZone(systemTimeZoneId));
+			logger.info(String.format("-DTZ- System timezone update from %s to %s", currentTimeZone.getID(), TimeZone.getDefault().getID()));
 		}
 				
 		return true;
