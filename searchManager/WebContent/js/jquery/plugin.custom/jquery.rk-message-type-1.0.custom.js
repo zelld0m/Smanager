@@ -27,8 +27,17 @@
 			var name = "rkMessageTypeOpt" +  $.formatAsId(base.options.id);
 			var selectedIndex = base.options.defaultSelectedOption;
 			
-			if(base.options.rule && $.isNumeric(base.options.rule["replaceKeywordMessageType"]["intValue"]) && base.options.rule["replaceKeywordMessageType"]["intValue"] > 0){
-				selectedIndex = base.options.rule["replaceKeywordMessageType"]["intValue"];
+			//if(base.options.rule && $.isNumeric(base.options.rule["replaceKeywordMessageType"]["intValue"]) && base.options.rule["replaceKeywordMessageType"]["intValue"] > 0){
+			if(base.options.rule){
+				if(base.options.rule["replaceKeywordMessageType"]["intValue"]) {
+					selectedIndex = base.options.rule["replaceKeywordMessageType"]["intValue"];
+				} else {
+					selectedIndex = base.options.rule["replaceKeywordMessageType"];
+				}
+			
+				if(!$.isNumeric(selectedIndex) || selectedIndex == 0) {
+					selectedIndex = base.options.defaultSelectedOption;
+				}
 			}
 			
 			base.$el.find('input:radio[name=' + name + ']:nth(' +  (selectedIndex - 1) + ')').prop("checked", true);
