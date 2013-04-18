@@ -186,3 +186,18 @@ validateCatCode = function(fieldName, fieldValue) {
 	}
 	return true;
 };
+
+validateSearchKeyword = function(fieldName, fieldValue, required) {
+	fieldName = $.capitalize(fieldName);
+
+	if (!validateGeneric(fieldName, fieldValue, required ? 1 : 0, 100)) {
+		return false;
+	};
+	if (!$.isBlank(fieldValue)) {
+		if(!isAllowedSearchKeyword(fieldValue)){
+			jAlert(fieldName+" contains invalid value.");
+			return false;
+		}
+	}
+	return true;
+};

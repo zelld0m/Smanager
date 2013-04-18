@@ -108,7 +108,15 @@ jQuery.extend(
 					aDigits = vValue.toFixed(2).split(".");
 					aDigits[0] = aDigits[0].split("").reverse().join("").replace(/(\d{3})(?=\d)/g, "$1,").split("").reverse().join("");
 					return sSymbol + aDigits.join(".");
-				}
+				},
+
+				compressWhitespaces: function(text) {
+					if (text) {
+						return text.replace(/[\s]{2,}/g, " ");
+					}
+
+					return text;
+				},
 			};  
 		}(jQuery))  
 );  

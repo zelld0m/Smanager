@@ -1927,5 +1927,10 @@ public class DaoServiceImpl implements DaoService {
 	public RecordSet<SpellRuleXml> getSpellRuleXml(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
 		return spellRuleDAO.getSpellRuleXml(criteria, statusList); 
 	}
+
+    @Override
+    public SpellRule getSpellRuleById(String store, String ruleId) {
+        return spellRuleDAO.getSpellRuleById(store, ruleId);
+    }
     
 }

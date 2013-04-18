@@ -285,6 +285,7 @@ public interface DaoService extends SearchDaoService {
 	
 	/* Did you mean */
     public SpellRules getSpellRules(String store);
+    public SpellRule getSpellRuleById(String store, String ruleId);
     public boolean replaceSpellRules(SpellRules rules) throws DaoException;
     public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> searchCriteria) throws DaoException;
     public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException;

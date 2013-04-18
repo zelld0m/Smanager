@@ -13,6 +13,7 @@
 				switch (e.keyCode) {
 				case 9: // tab
 					e.preventDefault();
+
 					if (e.shiftKey && base.$container.prev().length > 0) {
 						base.$container.prev().find(":first").click();
 						break;
@@ -25,6 +26,7 @@
 					}
 				case 13: // enter
 					e.preventDefault();
+
 					if (base.$term.text().trim()
 							&& base.$container.find(":first").next().length == 0) {
 						new Term(options);
@@ -39,8 +41,14 @@
 				base.$term.removeClass("error");
 				base.$container.removeClass("edit-mode");
 
-				if (!val) {
+				if ($.isBlank(val)) {
 					base.$container.remove();
+				} else {
+					base.$term.text($.compressWhitespaces($.trim(val)));
+
+					if (base.options.rule.contains(base.$term, base.options.container)) {
+						base.$container.remove();
+					}
 				}
 				base.options.container.trigger("change");
 			}
@@ -54,10 +62,12 @@
 
 		base.$container.append(base.$term);
 		base.options.container.append(base.$container);
-
-		base.$term.text(base.options.term);
 		
-		if (!base.options.term) base.$term.click();
+		if (!base.options.term) {
+			base.$term.click();
+		} else {
+			base.$term.text(base.options.term);
+		}
 	};
 
 	var SpellRule = function(data) {
@@ -279,7 +289,19 @@
 			}
 
 			return false;
-		}
+		},
+
+		contains : function($term, $container) {
+			var otherTerms = $container.find(".term").not($term).map(function() { return $(this).text(); }).get();
+
+			for (var i = 0; i < otherTerms.length; i++) {
+				if (otherTerms[i] == $term.text()) {
+					return true;
+				}
+			}
+
+			return false;
+		},
 	};
 
 	var DidYouMean = {
@@ -481,6 +503,17 @@
 				if (entities[i].searchTerms.length == 0 || entities[i].suggestions.length == 0) {
 					jAlert(DidYouMean.messages.requiredFields);
 					return false;
+				} else {
+					for (var j = 0; j < entities[i].searchTerms.length; j++) {
+						if (!validateSearchKeyword("Search Term", entities[i].searchTerms[j])) {
+							return false;
+						}
+					}
+					for (var j = 0; j < entities[i].suggestions.length; j++) {
+						if (!validateSearchKeyword("Suggestion", entities[i].suggestions[j])) {
+							return false;
+						}
+					}
 				}
 			}
 			
