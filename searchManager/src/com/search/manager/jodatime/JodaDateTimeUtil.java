@@ -28,22 +28,19 @@ public class JodaDateTimeUtil {
 		return getTimeZone().getID();
 	}
 	
-	public static Timestamp toSqlDate(DateTime dateTime, JodaPatternType jodaPatternType){
+	public static Timestamp toSqlDate(DateTime dateTime){
 		if(dateTime==null) return null;
 		
-		DateTime dTime = dateTime.withZone(DateTimeZone.getDefault());
+		/*	For logging display, making sure that zone is set to defined system timezone
+		 * 	specified in solr.xml and jvm arguments
+		 */
+		ConfigManager cm = ConfigManager.getInstance();
+		DateTimeZone systemDateTimeZone = DateTimeZone.forID(cm.getSystemTimeZoneId());
+		DateTime dTime = dateTime.withZone(systemDateTimeZone);
 		
-		if((jodaPatternType==null || JodaPatternType.DATE_TIME.equals(jodaPatternType))){
-			logger.info(String.format("-DTZ- Joda timezone conversion to %s", dTime.getZone().getID()));
-			logger.info(String.format("-DTZ- DateTime millis conversion from %s to %s", String.valueOf(dateTime.getMillis()), String.valueOf(dTime.getMillis())));
-			return new Timestamp(dTime.getMillis());
-		}else{
-			return new Timestamp(dTime.toDateMidnight().getMillis());
-		}
-	}
-	
-	public static Timestamp toSqlDate(DateTime dateTime){
-		return toSqlDate(dateTime, JodaPatternType.DATE_TIME);
+		logger.info(String.format("-DTZ- Joda timezone conversion to %s %s", dTime.getZone().getID(), dTime.toString()));
+		logger.info(String.format("-DTZ- DateTime millis conversion from %s to %s", String.valueOf(dateTime.getMillis()), String.valueOf(dTime.getMillis())));
+		return new Timestamp(dTime.getMillis());
 	}
 	
 	public static DateTimeZone setTimeZoneID(String timeZoneId, String defaultTimeZoneId){
@@ -52,20 +49,20 @@ public class JodaDateTimeUtil {
 		
 		try {
 			jodaTimeZone = DateTimeZone.forID(timeZoneId);
-			logger.info(String.format("-DTZ- Attempt to set timezone to user-defined: %s", timeZoneId));
+			logger.info(String.format("-DTZ- Initialize Joda timezone to user-defined: %s", timeZoneId));
 		} catch (IllegalArgumentException ue) {
-			logger.error(String.format("-DTZ- Failed to set Joda timezone to user-defined: %s", timeZoneId));
+			logger.error(String.format("-DTZ- Failed to initialize Joda timezone to user-defined: %s", timeZoneId));
 			try {
 				jodaTimeZone = DateTimeZone.forID(defaultTimeZoneId);
-				logger.info(String.format("-DTZ- Attempt to set timezone to store default: %s", timeZoneId));
+				logger.info(String.format("-DTZ- Initialize Joda timezone to store-default: %s", timeZoneId));
 			} catch (IllegalArgumentException se) {
 				jodaTimeZone = defaultJodaTimeZone;
-				logger.error(String.format("-DTZ- Failed to set Joda timezone to store default: %s; attempt to set timezone to default %s", defaultTimeZoneId, defaultJodaTimeZone.getID()));
+				logger.error(String.format("-DTZ- Failed to initialize Joda timezone to store-default: %s; Set back Joda timezone to default %s", defaultTimeZoneId, defaultJodaTimeZone.getID()));
 			}
 		}
 		
 		DateTimeZone.setDefault(jodaTimeZone);
-		logger.info(String.format("-DTZ- Joda timezone set to %s", jodaTimeZone.getID()));
+		logger.info(String.format("-DTZ- Joda timezone setting to %s", jodaTimeZone.getID()));
 		return jodaTimeZone;
 	}
 	
@@ -99,9 +96,18 @@ public class JodaDateTimeUtil {
 		return toDateTime(storeId, null, dateTimeText, patternType.equals(JodaPatternType.DATE) ? "date-format":"datetime-format");
 	}
 	
+	public static DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText){
+		return toDateTime(storeId, null, dateTimeText, "datetime-format");
+	}
+	
 	public static DateTime toDateTimeFromStorePattern(String dateTimeText, JodaPatternType patternType){
 		String storeId = UtilityService.getStoreId();
 		return toDateTimeFromStorePattern(storeId, dateTimeText, patternType);
+	}
+	
+	public static DateTime toDateTimeFromStorePattern(String dateTimeText){
+		String storeId = UtilityService.getStoreId();
+		return toDateTimeFromStorePattern(storeId, dateTimeText, JodaPatternType.DATE_TIME);
 	}
 	
 	private static String formatDateTime(String storeId, String pattern, DateTime dateTime, String xmlTag){
@@ -135,7 +141,7 @@ public class JodaDateTimeUtil {
 	
 	public static String formatFromStorePatternWithZone(DateTime dateTime, JodaPatternType patternType){
 		String storeId = UtilityService.getStoreId();
-		return StringUtils.isNotBlank(storeId)? String.format("%s [%s]", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()): "";
+		return StringUtils.isNotBlank(storeId)? String.format("%s %s", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()): "";
 	}
 	
 	public static String getRemainingDays(DateTime startDateTime, DateTime endDateTime) {
