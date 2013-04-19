@@ -258,7 +258,7 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getRedirectRule(sk);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				if (configManager.getConnectToDb()) {
+				if (!configManager.isSolrImplOnly()) {
 					return daoCacheService.getRedirectRule(sk);
 				} else {
 					return null;
@@ -273,7 +273,7 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getRelevancyRule(sk);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				if (configManager.getConnectToDb()) {
+				if (!configManager.isSolrImplOnly()) {
 					return daoCacheService.getRelevancyRule(sk);
 				} else {
 					return null;
@@ -288,7 +288,7 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getRelevancyRule(store, relevancyId);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				if (configManager.getConnectToDb()) {
+				if (!configManager.isSolrImplOnly()) {
 					return daoCacheService.getRelevancyRule(store, relevancyId);
 				} else {
 					return null;
@@ -307,7 +307,7 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getFacetSortRule(storeKeyword);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				if (configManager.getConnectToDb()) {
+				if (!configManager.isSolrImplOnly()) {
 					return daoCacheService.getFacetSortRule(storeKeyword);
 				} else {
 					return null;
@@ -322,7 +322,7 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getFacetSortRule(store, templateName);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				if (configManager.getConnectToDb()) {
+				if (!configManager.isSolrImplOnly()) {
 					return daoCacheService.getFacetSortRule(store, templateName);
 				} else {
 					return null;
@@ -350,7 +350,7 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			if (configManager.getConnectToDb()) {
+			if (!configManager.isSolrImplOnly()) {
 				list = daoCacheService.getElevateRules(storeKeyword);
 			} else {
 				return null;
@@ -368,7 +368,7 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			if (configManager.getConnectToDb()) {
+			if (!configManager.isSolrImplOnly()) {
 				list = daoCacheService.getExpiredElevateRules(storeKeyword);
 			} else {
 				return null;
@@ -386,7 +386,7 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			if (configManager.getConnectToDb()) {
+			if (!configManager.isSolrImplOnly()) {
 				list = daoCacheService.getExcludeRules(storeKeyword);
 			} else {
 				return null;
@@ -404,7 +404,7 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			if (configManager.getConnectToDb()) {
+			if (!configManager.isSolrImplOnly()) {
 				list = daoCacheService.getExpiredExcludeRules(storeKeyword);
 			} else {
 				return null;
@@ -422,7 +422,7 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			if (configManager.getConnectToDb()) {
+			if (!configManager.isSolrImplOnly()) {
 				list = daoCacheService.getDemoteRules(storeKeyword);
 			} else {
 				return null;
@@ -440,7 +440,7 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			if (configManager.getConnectToDb()) {
+			if (!configManager.isSolrImplOnly()) {
 				list = daoCacheService.getExpiredDemoteRules(storeKeyword);
 			} else {
 				return null;

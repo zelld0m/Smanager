@@ -314,8 +314,8 @@ public class ConfigManager {
 		return StringUtils.trimToNull(fileName);
 	}
 	
-	public boolean getConnectToDb() {
-		return "1".equals(PropsUtils.getValue("connectToDb"));
+	public boolean isSolrImplOnly() {
+		return "1".equals(PropsUtils.getValue("solrImplOnly"));
 	}
 	
     public static void main(String[] args) {
