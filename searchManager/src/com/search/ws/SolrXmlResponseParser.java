@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -551,153 +550,106 @@ public class SolrXmlResponseParser extends SolrResponseParser {
     private void addSpellcheckEntries() throws SearchException {
         int count = 0;
 
-        if (spellRule != null) {
-            try {
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                Document doc = db.newDocument();
-                List<String> suggestedKeywords = new ArrayList<String>();
-                String[] ruleSuggestions = spellRule.getSuggestions();
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.newDocument();
+            List<String> suggestedKeywords = new ArrayList<String>();
+            String[] ruleSuggestions = spellRule == null ? new String[0] : spellRule.getSuggestions();
 
-                // create spellcheck element
-                Element spellcheck = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
-                doc.appendChild(spellcheck);
+            // create spellcheck element
+            Element spellcheck = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
+            doc.appendChild(spellcheck);
 
-                // create suggestions element
-                Element suggestions = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
-                spellcheck.appendChild(suggestions);
+            // create suggestions element
+            Element suggestions = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
+            spellcheck.appendChild(suggestions);
 
-                // create suggestion array without appending to document
-                LinkedHashMap<String, Node> suggestionsMap = new LinkedHashMap<String, Node>();
-                LinkedHashMap<String, Node> suggestionArrayMap = new LinkedHashMap<String, Node>();
-                LinkedHashMap<String, Node> startOffsetMap = new LinkedHashMap<String, Node>();
-                LinkedHashMap<String, Node> endOffsetMap = new LinkedHashMap<String, Node>();
+            // create suggestion element for original keyword
+            Element origKeyword = createLstElement(doc, originalKeyword);
+            Element suggestionArray = createElement(doc, SolrConstants.TAG_ARR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+            Element origStartOffset = createElement(doc, SolrConstants.TAG_INT,
+                    SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET, "0");
+            Element origEndOffset = createElement(doc, SolrConstants.TAG_INT,
+                    SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, String.valueOf(originalKeyword.length()));
 
-                // create suggestion element for original keyword
-                Element origKeyword = createLstElement(doc, originalKeyword);
-                suggestionsMap.put(originalKeyword, origKeyword);
-
-                Element suggestionArray = createElement(doc, SolrConstants.TAG_ARR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
-                suggestionArrayMap.put(originalKeyword, suggestionArray);
-
-                Element origStartOffset = createElement(doc, SolrConstants.TAG_INT,
-                        SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET, "0");
-                startOffsetMap.put(originalKeyword, origStartOffset);
-
-                Element origEndOffset = createElement(doc, SolrConstants.TAG_INT,
-                        SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, String.valueOf(originalKeyword.length()));
-                endOffsetMap.put(originalKeyword, origEndOffset);
-
-                for (int i = 0; count < maxSuggestCount && i < ruleSuggestions.length; i++) {
-                    if (!suggestedKeywords.contains(ruleSuggestions[i])) {
-                        Element sug = createUnnamedElement(doc, SolrConstants.TAG_STR, ruleSuggestions[i]);
-                        suggestionArray.appendChild(sug);
-                        suggestedKeywords.add(ruleSuggestions[i]);
-                        count++;
-                    }
+            for (int i = 0; count < maxSuggestCount && i < ruleSuggestions.length; i++) {
+                if (!suggestedKeywords.contains(ruleSuggestions[i])) {
+                    Element sug = createUnnamedElement(doc, SolrConstants.TAG_STR, ruleSuggestions[i]);
+                    suggestionArray.appendChild(sug);
+                    suggestedKeywords.add(ruleSuggestions[i]);
+                    count++;
                 }
-
-                if (count < maxSuggestCount && spellcheckNode != null) {
-                    // retrieve solr spellcheck results
-                    Node solrSuggestions = locateElementNode(spellcheckNode, SolrConstants.TAG_LIST,
-                            SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
-
-                    // prioritize collation suggestion before per term suggestion
-                    Node collation = solrSuggestions != null ? locateElementNode(solrSuggestions,
-                            SolrConstants.TAG_STR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION) : null;
-                    String collationString = collation == null ? null : collation.getTextContent();
-
-                    if (collationString != null && !suggestedKeywords.contains(collationString)) {
-                        Element e = createUnnamedElement(doc, SolrConstants.TAG_STR, collationString);
-                        suggestionArray.appendChild(e);
-                        suggestedKeywords.add(collationString);
-                        count++;
-                    }
-
-                    Node solrSuggestion = solrSuggestions != null ? solrSuggestions.getFirstChild() : null;
-
-                    while (solrSuggestion != null && count < maxSuggestCount) {
-                        String name = solrSuggestion.getAttributes().getNamedItem(SolrConstants.ATTR_NAME)
-                                .getTextContent();
-
-                        if (SolrConstants.TAG_STR.equals(solrSuggestion.getNodeName())
-                                && SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(name)) {
-                            solrSuggestion = solrSuggestion.getNextSibling();
-                            continue;
-                        }
-
-                        if (suggestionsMap.get(name) == null) {
-                            // suggest list
-                            Element el = createLstElement(doc, name);
-                            suggestionsMap.put(name, el);
-
-                            // actual suggestions
-                            Element kwSuggestions = doc.createElement(SolrConstants.TAG_ARR);
-                            suggestionArrayMap.put(name, kwSuggestions);
-
-                            // offset
-                            startOffsetMap.put(name, doc.importNode(
-                                    locateElementNode(solrSuggestion, SolrConstants.TAG_INT,
-                                            SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET), true));
-                            endOffsetMap.put(name, doc.importNode(
-                                    locateElementNode(solrSuggestion, SolrConstants.TAG_INT,
-                                            SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET), true));
-                        }
-
-                        Node solrkw = locateElementNode(solrSuggestion, SolrConstants.TAG_ARR,
-                                SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
-                        NodeList children = solrkw.getChildNodes();
-
-                        for (int i = 0; i < children.getLength(); i++) {
-                            Node n = children.item(i);
-                            String s = n.getTextContent();
-
-                            if (!suggestedKeywords.contains(s)) {
-                                suggestionArrayMap.get(name).appendChild(doc.importNode(n, true));
-                                suggestedKeywords.add(s);
-                                count++;
-                            }
-
-                            if (count >= maxSuggestCount)
-                                break;
-                        }
-
-                        solrSuggestion = solrSuggestion.getNextSibling();
-                    }
-                }
-
-                // Build complete spellcheck element
-                for (String name : suggestionsMap.keySet()) {
-                    Node suggest = suggestionsMap.get(name);
-                    Node arr = suggestionArrayMap.get(name);
-                    Node startOffset = startOffsetMap.get(name);
-                    Node endOffset = endOffsetMap.get(name);
-
-                    NodeList childNodes = arr.getChildNodes();
-
-                    if (childNodes.getLength() > 0) {
-                        suggest.appendChild(createElement(doc, SolrConstants.TAG_INT,
-                                SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_NUMFOUND,
-                                String.valueOf(childNodes.getLength())));
-                        suggest.appendChild(startOffset);
-                        suggest.appendChild(endOffset);
-                        suggest.appendChild(arr);
-
-                        suggestions.appendChild(suggest);
-                    }
-                }
-
-                locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE)
-                        .appendChild(mainDoc.importNode(spellcheck, true));
-            } catch (ParserConfigurationException pce) {
-                count = 0;
-                logger.error("Error occured during spelling document creation. Reverting to solr results.", pce);
             }
-        }
 
-        if (count == 0 && spellcheckNode != null) {
+            if (count < maxSuggestCount && spellcheckNode != null) {
+                // retrieve solr spellcheck results
+                Node solrSuggestions = locateElementNode(spellcheckNode, SolrConstants.TAG_LIST,
+                        SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
+
+                // prioritize collation suggestion before per term suggestion
+                Node collation = solrSuggestions != null ? locateElementNode(solrSuggestions,
+                        SolrConstants.TAG_STR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION) : null;
+                String collationString = collation == null ? null : collation.getTextContent();
+
+                if (collationString != null && !suggestedKeywords.contains(collationString)) {
+                    Element e = createUnnamedElement(doc, SolrConstants.TAG_STR, collationString);
+                    suggestionArray.appendChild(e);
+                    suggestedKeywords.add(collationString);
+                    count++;
+                }
+
+                Node solrSuggestion = solrSuggestions != null ? solrSuggestions.getFirstChild() : null;
+
+                while (solrSuggestion != null && count < maxSuggestCount) {
+                    String name = solrSuggestion.getAttributes().getNamedItem(SolrConstants.ATTR_NAME)
+                            .getTextContent();
+
+                    if (SolrConstants.TAG_STR.equals(solrSuggestion.getNodeName())
+                            && SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(name)) {
+                        solrSuggestion = solrSuggestion.getNextSibling();
+                        continue;
+                    }
+
+                    Node solrkw = locateElementNode(solrSuggestion, SolrConstants.TAG_ARR,
+                            SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                    NodeList children = solrkw.getChildNodes();
+
+                    for (int i = 0; i < children.getLength(); i++) {
+                        Node n = children.item(i);
+                        String s = n.getTextContent();
+
+                        if (!suggestedKeywords.contains(s)) {
+                        	suggestionArray.appendChild(doc.importNode(n, true));
+                            suggestedKeywords.add(s);
+                            count++;
+                        }
+
+                        if (count >= maxSuggestCount)
+                            break;
+                    }
+
+                    solrSuggestion = solrSuggestion.getNextSibling();
+                }
+            }
+
+            NodeList childNodes = suggestionArray.getChildNodes();
+            if (childNodes.getLength() > 0) {
+            	origKeyword.appendChild(createElement(doc, SolrConstants.TAG_INT,
+                        SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_NUMFOUND,
+                        String.valueOf(childNodes.getLength())));
+            	origKeyword.appendChild(origStartOffset);
+            	origKeyword.appendChild(origEndOffset);
+            	origKeyword.appendChild(suggestionArray);
+
+                suggestions.appendChild(origKeyword);
+            }
             locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE)
-                    .appendChild(mainDoc.importNode(spellcheckNode, true));
+                    .appendChild(mainDoc.importNode(spellcheck, true));
+            
+        } catch (ParserConfigurationException pce) {
+            count = 0;
+            logger.error("Error occured during spelling document creation. Reverting to solr results.", pce);
         }
 
         for (Node node : spellCheckParams) {

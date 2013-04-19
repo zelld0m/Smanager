@@ -182,15 +182,20 @@ public class DeploymentService {
 		boolean success = false;
 		try {
 			SpellRules rules = daoService.getSpellRules(storeId);
-			for (SpellRuleXml rule: rules.selectRulesByStatus("new")) {
+			List<SpellRuleXml> newRules = new ArrayList<SpellRuleXml>(rules.selectRulesByStatus("new"));
+			List<SpellRuleXml> modifiedRules = new ArrayList<SpellRuleXml>(rules.selectRulesByStatus("modified"));
+			List<SpellRuleXml> deletedRules = new ArrayList<SpellRuleXml>(rules.selectRulesByStatus("deleted"));
+			
+			for (SpellRuleXml rule: newRules) {
 				rule.setStatus("published");
 			}
-			for (SpellRuleXml rule: rules.selectRulesByStatus("modified")) {
+			for (SpellRuleXml rule: modifiedRules) {
 				rule.setStatus("published");
 			}
-			for (SpellRuleXml rule: rules.selectRulesByStatus("deleted")) {
+			for (SpellRuleXml rule: deletedRules) {
 				rules.deletePhysically(rule);
 			}
+			
 			daoService.saveSpellRules(storeId);
 			daoService.reloadSpellRules(storeId);
 			
@@ -200,6 +205,7 @@ public class DeploymentService {
 			success = true;
 		} catch (Exception e) {
 			logger.error(String.format("Failed to publish spell rule for Store %s", storeId), e);
+			success = false;
 		}
 		return success;
 	}
