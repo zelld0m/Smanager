@@ -227,8 +227,8 @@
 			$.each(data, function(){
 				var duplicateTerm = this.toString();
 
-				self.$searchTerms.find(".term:contains(" + duplicateTerm + ")").each(function() {
-					if ($(this).text() == duplicateTerm) {
+				self.$searchTerms.find(".term:icontains(" + duplicateTerm + ")").each(function() {
+					if ($(this).text().toLowerCase() == duplicateTerm.toLowerCase()) {
 						$(this).addClass("error");
 					}
 				});
@@ -295,7 +295,7 @@
 			var otherTerms = $container.find(".term").not($term).map(function() { return $(this).text(); }).get();
 
 			for (var i = 0; i < otherTerms.length; i++) {
-				if (otherTerms[i] == $term.text()) {
+				if (otherTerms[i].toLowerCase() == $term.text().toLowerCase()) {
 					return true;
 				}
 			}
