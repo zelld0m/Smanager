@@ -54,6 +54,8 @@
 				
 				if($.isNotBlank(didYouMean)) {
 					template = template.replace("%%keyword%%", didYouMean);
+				} else {
+					template = '';
 				}
 			}
 			
