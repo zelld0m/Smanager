@@ -139,10 +139,10 @@
 										};
 								
 								if($.isBlank(e.data.filename) || !isAllowedFileName(e.data.filename)){
-									alert("Please provide a valid filename");
+									jAlert("Please provide a valid filename", "Download File");
 								//TODO: add check valid email and input cleaning
 								}else if(base.options.sendMail && e.data.type.toLowerCase() == "mail" && $.isBlank(e.data.recipient)){
-									alert("Please provide at least one email recipient");
+									jAlert("Please provide at least one email recipient", "Download File");
 								}else{
 									e.data.filename = $.isBlank(e.data.filename)? $.trim(base.options.defaultFilename) : $.trim(e.data.filename);
 									base.options.requestCallback(e);
