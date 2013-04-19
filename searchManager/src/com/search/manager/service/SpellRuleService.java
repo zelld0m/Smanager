@@ -76,7 +76,7 @@ public class SpellRuleService {
             List<String> duplicates = null;
 
             try {
-                duplicates = checkDuplicatedSearchTerms(store, spellRules, true);
+                duplicates = checkDuplicatedSearchTerms(store, spellRules, false);
             } catch (DaoException e) {
                 response.error("Error occured in during spell rule creation.");
                 errorLevel = 1;
@@ -245,7 +245,7 @@ public class SpellRuleService {
 
         // Check for duplicate search terms.
         for (SpellRule rule : spellRules) {
-            List<String> curTerms = Arrays.asList(rule.getSearchTerms());
+            List<String> curTerms = Lists.transform(Arrays.asList(rule.getSearchTerms()), StringUtil.lowercaseTransformer);
             @SuppressWarnings("unchecked")
             Collection<String> inter = CollectionUtils.intersection(searchTerms, curTerms);
 

@@ -68,14 +68,14 @@ public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
-
+	
 	protected ConfigManager configManager;
 	
 	// these fields should not contain multiple entries
 	protected final static String[] uniqueFields = {
 			SolrConstants.SOLR_PARAM_ROWS,
 			SolrConstants.SOLR_PARAM_KEYWORD,
-			SolrConstants.SOLR_PARAM_WRITER_TYPE ,
+			SolrConstants.SOLR_PARAM_WRITER_TYPE,
 			SolrConstants.SOLR_PARAM_START
 			};
 
@@ -258,7 +258,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getRedirectRule(sk);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getRedirectRule(sk);
+				if (configManager.getConnectToDb()) {
+					return daoCacheService.getRedirectRule(sk);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -269,7 +273,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getRelevancyRule(sk);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getRelevancyRule(sk);
+				if (configManager.getConnectToDb()) {
+					return daoCacheService.getRelevancyRule(sk);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -280,7 +288,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getRelevancyRule(store, relevancyId);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getRelevancyRule(store, relevancyId);
+				if (configManager.getConnectToDb()) {
+					return daoCacheService.getRelevancyRule(store, relevancyId);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -295,7 +307,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getFacetSortRule(storeKeyword);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getFacetSortRule(storeKeyword);
+				if (configManager.getConnectToDb()) {
+					return daoCacheService.getFacetSortRule(storeKeyword);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -306,7 +322,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getFacetSortRule(store, templateName);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getFacetSortRule(store, templateName);
+				if (configManager.getConnectToDb()) {
+					return daoCacheService.getFacetSortRule(store, templateName);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -330,7 +350,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getElevateRules(storeKeyword);
+			if (configManager.getConnectToDb()) {
+				list = daoCacheService.getElevateRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -344,7 +368,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getExpiredElevateRules(storeKeyword);
+			if (configManager.getConnectToDb()) {
+				list = daoCacheService.getExpiredElevateRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -358,7 +386,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getExcludeRules(storeKeyword);
+			if (configManager.getConnectToDb()) {
+				list = daoCacheService.getExcludeRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -372,7 +404,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getExpiredExcludeRules(storeKeyword);
+			if (configManager.getConnectToDb()) {
+				list = daoCacheService.getExpiredExcludeRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -386,7 +422,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getDemoteRules(storeKeyword);
+			if (configManager.getConnectToDb()) {
+				list = daoCacheService.getDemoteRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -400,7 +440,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getExpiredDemoteRules(storeKeyword);
+			if (configManager.getConnectToDb()) {
+				list = daoCacheService.getExpiredDemoteRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
