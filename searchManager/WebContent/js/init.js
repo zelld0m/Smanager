@@ -184,6 +184,18 @@ function initFileUploads() {
 	}
 }
 
+/** JQuery overrides */
+(function($) {
+
+	// case-insensitive version of :contains selector
+	$.extend($.expr[":"], {
+		"icontains": function(elem, i, match, array) {
+			return (elem.textContent || elem.innerText || "").toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+		}
+	});
+
+})(jQuery);
+
 /** Global initialization of jQuery */
 (function($){
 	$(document).ready(function() {
