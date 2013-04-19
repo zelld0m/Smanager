@@ -675,12 +675,11 @@ span.duration								{ color:#3b79c2 }
 
 
 /* combo box style */
-.ui-button { margin-left: -1px; padding:1px !important }
+.ui-button { margin-left: -1px; } /*padding:1px !important*/
 .ui-button-icon-only .ui-button-text { padding: 3px !important; }
 .ui-autocomplete-input { margin: 0; padding: 3px !important; }
 .ui-autocomplete { max-height: 140px; overflow-y: scroll; overflow-x: hidden; width:200px;}
 
-span.ui-button-text	{ display:none; }
 .ui-button-icon		{ position:relative; height: 19px; top:1px; float:right }
 
 
