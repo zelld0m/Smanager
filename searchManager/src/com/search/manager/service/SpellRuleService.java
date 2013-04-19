@@ -245,7 +245,7 @@ public class SpellRuleService {
 
         // Check for duplicate search terms.
         for (SpellRule rule : spellRules) {
-            List<String> curTerms = Arrays.asList(rule.getSearchTerms());
+            List<String> curTerms = Lists.transform(Arrays.asList(rule.getSearchTerms()), StringUtil.lowercaseTransformer);
             @SuppressWarnings("unchecked")
             Collection<String> inter = CollectionUtils.intersection(searchTerms, curTerms);
 
