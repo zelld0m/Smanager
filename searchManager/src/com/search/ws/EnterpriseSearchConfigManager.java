@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -260,6 +259,7 @@ public class EnterpriseSearchConfigManager {
             		relevancy.setQueryFields(getString(relevancyConfiguration, "qf"));
             		relevancy.setQuerySlop(getString(relevancyConfiguration, "qs"));
             		relevancy.setTieBreaker(getString(relevancyConfiguration, "tie"));
+            		relevancy.setRuleName("dismax" + storeName + "relevancy");
             		sc.defaultRelevancy = relevancy;
         		}
         		sc.activeRules.put(RuleEntity.ELEVATE, generateSearchRuleConfiguration(getString(config, "search-rule/elevate"),
@@ -312,12 +312,14 @@ public class EnterpriseSearchConfigManager {
    
 	public Map<String, String> getFieldOverrideMap(String storeName, String storeOverrideName) {
 		Map<String, String> map = new HashMap<String, String>();
-		String[] originalList = getStoreSpecificFields(storeOverrideName);
-		String[] replacementList = getStoreSpecificFields(storeName);
-		for (int i = 0; i < originalList.length; i++) {
-			if (StringUtils.isNotBlank(originalList[i]) && StringUtils.isNotBlank(replacementList[i]) && !originalList[i].equals(replacementList[i])) {
-				map.put(originalList[i], replacementList[i]);
-			}
+		if (StringUtils.isNotBlank(storeOverrideName) && StringUtils.isNotBlank(storeName)) {
+			String[] originalList = getStoreSpecificFields(storeOverrideName);
+			String[] replacementList = getStoreSpecificFields(storeName);
+			for (int i = 0; i < originalList.length; i++) {
+				if (StringUtils.isNotBlank(originalList[i]) && StringUtils.isNotBlank(replacementList[i]) && !originalList[i].equals(replacementList[i])) {
+					map.put(originalList[i], replacementList[i]);
+				}
+			}		
 		}
 		return map;
 	}
@@ -336,8 +338,8 @@ public class EnterpriseSearchConfigManager {
     public static void main(String[] args) {
     	
     	//http://afs-pl-schpd01.afservice.org:8080/solr14/enterpriseSearch/?
-    	String url = "http://afs-pl-schpd01.afservice.org:8080/solr14/enterpriseSearch/select?store=pcmall";
-		Pattern pathPattern1 = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
+//    	String url = "http://afs-pl-schpd01.afservice.org:8080/solr14/enterpriseSearch/select?store=pcmall";
+//		Pattern pathPattern1 = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
 		
     	EnterpriseSearchConfigManager configManager = new EnterpriseSearchConfigManager("C:\\home\\solr\\conf\\enterpriseSearch.xml");
 //		for (String key: configManager.getStoreNames()) {
