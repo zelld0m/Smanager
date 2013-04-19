@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.http.impl.cookie.DateUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -64,19 +65,28 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	
 	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
-		if (ruleVersionListXml!=null) {
+		if (ruleVersionListXml != null) {
+
+			// keep versions separate for Did You Mean rules
+			// TODO: create a shells cript that does housekeeping to delete/archive older files
+			List<?> versions = ruleVersionListXml.getVersions();
+			if (CollectionUtils.isNotEmpty(versions)) {
+				RuleEntity ruleEntity = ((RuleXml)versions.get(0)).getRuleEntity();
+				if (ruleEntity != null && ruleEntity.equals(RuleEntity.SPELL)) {
+					RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId + DateUtils.formatDate(new Date(), "_yyyyMMdd_hhmmss"), ruleVersionListXml);
+				}
+				versions.clear();
+			}
+			
 			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
 				return false;
 			}
 			
-			List<?> versions = ruleVersionListXml.getVersions();
-			int index = -1;
-			
+			versions = ruleVersionListXml.getVersions();
 			if(versions!=null){
-				index = versions.size()-1;
-				RuleXml ruleXml = (RuleXml)versions.get(index);
+				RuleXml latestRuleXml = (RuleXml)versions.get(versions.size() - 1);
 				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(getRuleEntity().getCode()), store, ruleId);
-				ruleXml.setRuleStatus(ruleStatus);
+				latestRuleXml.setRuleStatus(ruleStatus);
 			}
 		}
 		return RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);

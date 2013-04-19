@@ -552,7 +552,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			try {
 				reader = new BufferedReader(new FileReader(fileName));
 				while ((rule = reader.readLine()) != null) {
-					if (rule.contains("\t" + searchTerm + "\t")) {
+					if (StringUtils.containsIgnoreCase(rule, "\t" + searchTerm + "\t")) {
 						// found a match
 						break;
 					}
@@ -568,7 +568,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		else {
 			try {
 				String[] shellCommand = {
-						"/bin/sh", "-c", String.format("grep -P \"%s\" \"%s\"", searchTerm, fileName)
+						"/bin/sh", "-c", String.format("grep -Pi \"\\\t%s\\\t\" \"%s\"", searchTerm, fileName)
 				};
 				Process p = Runtime.getRuntime().exec(shellCommand);
 				try {

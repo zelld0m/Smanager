@@ -618,7 +618,7 @@ public class SearchServlet extends HttpServlet {
 							paramValue = "";
 						}
 						else {
-							paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("[\\p{Cntrl}]", "");
+							paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("\\s+", " ").replaceAll("[\\p{Cntrl}]", "");
 						}
 						
 						String convertedKeyword = paramValue;
@@ -837,7 +837,7 @@ public class SearchServlet extends HttpServlet {
 			if (isActiveSearchRule(storeId, RuleEntity.RANKING_RULE)) {
 				// set relevancy filters if any was specified
 				String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
-				StoreKeyword sk = getStoreKeywordOverride(RuleEntity.QUERY_CLEANING, storeId, keyword);
+				StoreKeyword sk = getStoreKeywordOverride(RuleEntity.RANKING_RULE, storeId, keyword);
 				Relevancy relevancy = null;
 				if (StringUtils.isNotBlank(relevancyId)) {
 					relevancy = new Relevancy();
@@ -886,8 +886,7 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 			else {
-				
-				Relevancy relevancy = getDefaultRelevancy(storeId);
+				Relevancy relevancy = getDefaultRelevancyRule(new Store(storeId), fromSearchGui);
 				if (relevancy == null) {
 					setDefaultQueryType(request, nameValuePairs, storeId);
 				}

@@ -16,8 +16,10 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
+import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Relevancy;
+import com.search.manager.model.Store;
 import com.search.manager.model.Relevancy.Parameter;
 import com.search.manager.model.StoreKeyword;
 
@@ -116,7 +118,7 @@ public class EnterpriseSearchServlet extends SearchServlet {
 	
 	@Override
 	protected boolean isActiveSearchRule(String storeId, RuleEntity ruleEntity) {
-		return enterpriseSearchConfigManager.isActiveSearchRule(storeId, RuleEntity.QUERY_CLEANING);
+		return enterpriseSearchConfigManager.isActiveSearchRule(storeId, ruleEntity);
 	}
 	
 	@Override
@@ -167,4 +169,11 @@ public class EnterpriseSearchServlet extends SearchServlet {
 		return enterpriseSearchConfigManager.getRelevancy(storeId);
 	}
 	
+	protected Relevancy getDefaultRelevancyRule(Store store, boolean fromSearchGui) throws DaoException {
+		Relevancy relevancy = getRelevancyRule(store, store.getStoreId() + "_default", fromSearchGui);
+		if (relevancy == null) {
+			relevancy = getDefaultRelevancy(store.getStoreId());
+		}
+		return relevancy;
+	}
 }
