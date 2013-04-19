@@ -76,7 +76,7 @@ public class SpellRuleService {
             List<String> duplicates = null;
 
             try {
-                duplicates = checkDuplicatedSearchTerms(store, spellRules, true);
+                duplicates = checkDuplicatedSearchTerms(store, spellRules, false);
             } catch (DaoException e) {
                 response.error("Error occured in during spell rule creation.");
                 errorLevel = 1;
