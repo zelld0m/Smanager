@@ -184,9 +184,11 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
 
             if (xml != null) {
                 String oldStatus = xml.getStatus();
+                List<String> oldSearchTerms = xml.getRuleKeyword().getKeyword();
                 rule.setLastModifiedDate(new Date());
                 xml.update(rule);
                 rules.updateStatusIndex(oldStatus, xml);
+                rules.updateSearchIndex(oldSearchTerms, xml);
                 return 1;
             }
 
@@ -236,6 +238,15 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
         }
 
         return 0;
+    }
+    
+    public SpellRule getSpellRuleById(String storeId, String spellRuleId) {
+        SpellRule rule = null;
+        SpellRuleXml ruleXml = spellIndex.get(storeId).getSpellRule(spellRuleId);
+        if (ruleXml != null) {
+            rule = SpellRuleXml.transformer.apply(ruleXml);
+        }
+        return rule;
     }
 
     public boolean isDuplicateSearchTerm(String storeId, String searchTerm, String ruleId) throws DaoException {

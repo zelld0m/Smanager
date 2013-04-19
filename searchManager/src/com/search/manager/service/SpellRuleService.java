@@ -3,9 +3,12 @@ package com.search.manager.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -16,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
@@ -23,6 +28,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.response.ServiceResponse;
+import com.search.manager.utility.StringUtil;
 
 @Service(value = "spellRuleService")
 @RemoteProxy(name = "SpellRuleServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "spellRuleService"))
@@ -70,7 +76,7 @@ public class SpellRuleService {
             List<String> duplicates = null;
 
             try {
-                duplicates = checkDuplicatedSearchTerms(store, spellRules, true);
+                duplicates = checkDuplicatedSearchTerms(store, spellRules, false);
             } catch (DaoException e) {
                 response.error("Error occured in during spell rule creation.");
                 errorLevel = 1;
@@ -220,6 +226,23 @@ public class SpellRuleService {
         List<String> searchTerms = new ArrayList<String>();
         List<String> duplicates = new ArrayList<String>();
 
+        // Removed search terms from edited rules
+        List<String> deletedSearchTerms = new ArrayList<String>();
+
+        if (isUpdate) {
+            // For update operation, we have to get the list of search terms that were removed.
+            for (SpellRule rule: spellRules) {
+                SpellRule oldRule = daoService.getSpellRuleById(store, rule.getRuleId());
+                List<String> newTerms = Lists.transform(Arrays.asList(rule.getSearchTerms()), StringUtil.lowercaseTransformer);
+                List<String> oldTerms = new ArrayList<String>();
+                
+                oldTerms.addAll(Lists.transform(Arrays.asList(oldRule.getSearchTerms()), StringUtil.lowercaseTransformer));
+                oldTerms.removeAll(newTerms);
+
+                deletedSearchTerms.addAll(oldTerms);
+            }
+        }
+
         // Check for duplicate search terms.
         for (SpellRule rule : spellRules) {
             List<String> curTerms = Arrays.asList(rule.getSearchTerms());
@@ -228,8 +251,11 @@ public class SpellRuleService {
 
             if (inter.size() == 0) {
                 searchTerms.addAll(curTerms);
-                duplicates.addAll(checkDuplicatedSearchTerms(store, isUpdate ? rule.getRuleId() : null,
-                        rule.getSearchTerms()));
+
+                List<String> oldSearchTerms = checkDuplicatedSearchTerms(store, isUpdate ? rule.getRuleId() : null,
+                        rule.getSearchTerms());
+                oldSearchTerms.removeAll(deletedSearchTerms);
+                duplicates.addAll(oldSearchTerms);
             } else {
                 searchTerms.addAll(curTerms);
                 duplicates.addAll(inter);

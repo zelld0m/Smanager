@@ -88,7 +88,7 @@ public class SpellRules extends RuleXml {
 
                 if (!"deleted".equalsIgnoreCase(xml.getStatus())) {
                     for (String term : xml.getRuleKeyword().getKeyword()) {
-                        searchTermMap.put(term, xml);
+                        searchTermMap.put(term.toLowerCase(), xml);
                     }
                 }
 
@@ -102,7 +102,7 @@ public class SpellRules extends RuleXml {
         ruleMap.put(ruleXml.getRuleId(), ruleXml);
 
         for (String term : ruleXml.getRuleKeyword().getKeyword()) {
-            searchTermMap.put(term, ruleXml);
+            searchTermMap.put(term.toLowerCase(), ruleXml);
         }
 
         statusMap.get("new").add(ruleXml);
@@ -110,12 +110,12 @@ public class SpellRules extends RuleXml {
 
     public void deleteFromSearchTermIndex(SpellRuleXml ruleXml) {
         for (String term : ruleXml.getRuleKeyword().getKeyword()) {
-            searchTermMap.remove(term);
+            searchTermMap.remove(term.toLowerCase());
         }
     }
 
     public SpellRuleXml checkSearchTerm(String searchTerm) {
-        return searchTermMap.get(searchTerm);
+        return searchTermMap.get(searchTerm.toLowerCase());
     }
 
     public void updateStatusIndex(String oldStatus, SpellRuleXml xml) {
@@ -145,5 +145,17 @@ public class SpellRules extends RuleXml {
 
     public List<SpellRuleXml> selectRulesByStatus(String status) {
         return statusMap.get(status);
+    }
+
+    public void updateSearchIndex(List<String> oldSearchTerms, SpellRuleXml xml) {
+        for (String oldTerm : oldSearchTerms) {
+            if (searchTermMap.get(oldTerm.toLowerCase()) == xml) {
+                searchTermMap.remove(oldTerm.toLowerCase());
+            }
+        }
+
+        for (String newTerm : xml.getRuleKeyword().getKeyword()) {
+            searchTermMap.put(newTerm.toLowerCase(), xml);
+        }
     }
 }
