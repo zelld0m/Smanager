@@ -135,7 +135,7 @@ public class AuditTrailDAO {
             inputs.put(DAOConstants.PARAM_STORE, auditTrail.getStoreId());
             inputs.put(DAOConstants.PARAM_KEYWORD, auditTrail.getKeyword());
             inputs.put(DAOConstants.PARAM_REFERENCE, auditTrail.getReferenceId());
-            inputs.put(DAOConstants.PARAM_DATE, JodaDateTimeUtil.toSqlDate(auditTrail.getDateTime()));
+            inputs.put(DAOConstants.PARAM_DATE, JodaDateTimeUtil.toSqlDate(auditTrail.getCreatedDate()));
             inputs.put(DAOConstants.PARAM_DETAILS, auditTrail.getDetails());
             			
            	i = DAOUtils.getUpdateCount(addSP.execute(inputs));

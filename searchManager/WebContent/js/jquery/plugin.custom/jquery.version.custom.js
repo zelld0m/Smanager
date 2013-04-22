@@ -599,7 +599,7 @@
 							base.ruleMap[version] = item;
 							$tr.prop("id", "item" + $.formatAsId(version));
 							$tr.find("td#itemId").html(item["version"]);
-							$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
+							$tr.find("td#itemDate").text(item["formattedCreatedDateTime"]);
 							$tr.find("td#itemInfo > p#name").html(item["name"]);
 							$tr.find("td#itemInfo > p#notes").html(item["notes"]);
 							base.addDeleteVersionListener($tr, item);

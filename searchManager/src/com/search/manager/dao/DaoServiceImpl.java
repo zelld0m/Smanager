@@ -1576,7 +1576,7 @@ public class DaoServiceImpl implements DaoService {
 			updateRuleStatus.setExportBy(exportBy);
 			updateRuleStatus.setExportType(exportType);
 			updateRuleStatus.setLastModifiedBy(exportBy);
-			updateRuleStatus.setLastExportDateTime(exportDateTime);
+			updateRuleStatus.setLastExportDate(exportDateTime);
 			updateRuleStatus.setLastModifiedDate(exportDateTime);
 			return updateRuleStatus(updateRuleStatus);
 		}
@@ -1591,7 +1591,7 @@ public class DaoServiceImpl implements DaoService {
 		updateRuleStatus.setPublishedStatus(String.valueOf(requestedPublishStatus));
 		updateRuleStatus.setPublishedBy(requestBy);
 		updateRuleStatus.setLastModifiedBy(requestBy);
-		updateRuleStatus.setLastPublishedDateTime(requestDateTime);
+		updateRuleStatus.setLastPublishedDate(requestDateTime);
 		updateRuleStatus.setLastModifiedDate(requestDateTime);
 		return updateRuleStatus(updateRuleStatus);
 	}
@@ -1608,11 +1608,11 @@ public class DaoServiceImpl implements DaoService {
 				case APPROVED:
 				case REJECTED:
 					updateRuleStatus.setApprovalBy(requestBy);
-					updateRuleStatus.setLastApprovalDateTime(requestDateTime);
+					updateRuleStatus.setLastApprovalDate(requestDateTime);
 					break;
 				case PENDING:
 					updateRuleStatus.setRequestBy(requestBy);
-					updateRuleStatus.setLastRequestDateTime(requestDateTime);
+					updateRuleStatus.setLastRequestDate(requestDateTime);
 					break;
 				default:
 					return result;
@@ -1744,7 +1744,7 @@ public class DaoServiceImpl implements DaoService {
 			exportRuleMap.setExportDateTime(exportDateTime);
 			exportRuleMap.setDeleted(false);
 			if (ruleStatus != null) {
-				exportRuleMap.setPublishedDateTime(ruleStatus.getLastPublishedDateTime());
+				exportRuleMap.setPublishedDateTime(ruleStatus.getLastPublishedDate());
 			}
 			saveExportRuleMap(exportRuleMap);
 			exportedOnce |= exported;
@@ -1759,7 +1759,7 @@ public class DaoServiceImpl implements DaoService {
 					// RULE STATUS
 					updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDateTime);
 					// AUDIT TRAIL
-					auditTrail.setDateTime(exportDateTime);
+					auditTrail.setCreatedDate(exportDateTime);
 					auditTrail.setReferenceId(ruleStatus.getRuleRefId());
 					if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
 						auditTrail.setKeyword(ruleStatus.getRuleRefId());

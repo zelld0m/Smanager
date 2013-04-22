@@ -38,7 +38,7 @@ public class JodaDateTimeUtil {
 		DateTimeZone systemDateTimeZone = DateTimeZone.forID(cm.getSystemTimeZoneId());
 		DateTime dTime = dateTime.withZone(systemDateTimeZone);
 		
-		logger.info(String.format("-DTZ- Joda timezone conversion to %s %s", dTime.getZone().getID(), dTime.toString()));
+		logger.info(String.format("-DTZ- Joda timezone to SQL timezone: %s(%s) -> %s(%s)", dateTime.toString(), dateTime.getZone().getID(), dTime.toString(), dTime.getZone().getID()));
 		logger.info(String.format("-DTZ- DateTime millis conversion from %s to %s", String.valueOf(dateTime.getMillis()), String.valueOf(dTime.getMillis())));
 		return new Timestamp(dTime.getMillis());
 	}

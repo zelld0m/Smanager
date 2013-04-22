@@ -19,7 +19,7 @@ private static final long serialVersionUID = 1L;
 	private String comment;
 	private Integer commentId;
 	private String referenceId;
-	private DateTime createdDateTime;
+	private DateTime createdDate;
 	private Integer ruleTypeId;
 	private Store store;
 	
@@ -31,7 +31,7 @@ private static final long serialVersionUID = 1L;
 		this.referenceId = referenceId;
 		this.comment = comment;
 		this.username = username;
-		this.createdDateTime = createdDateTime;
+		this.createdDate = createdDateTime;
 		this.ruleTypeId = ruleTypeId;
 	}
 	
@@ -91,12 +91,12 @@ private static final long serialVersionUID = 1L;
 		return username;
 	}
 	
-	public DateTime getCreatedDateTime() {
-		return createdDateTime;
+	public DateTime getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setCreatedDateTime(DateTime createdDateTime) {
-		this.createdDateTime = createdDateTime;
+	public void setCreatedDate(DateTime createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	public Integer getRuleTypeId() {
@@ -115,7 +115,11 @@ private static final long serialVersionUID = 1L;
 		this.store = store;
 	}
 
-	public String getFormattedDateTime(){
-		return JodaDateTimeUtil.formatFromStorePattern(createdDateTime, JodaPatternType.DATE_TIME);
+	public String getFormattedCreatedDateTime(){
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedCreatedDate(){
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
 	}
 }

@@ -157,10 +157,10 @@ public class RuleTransferController {
 		
 		if(xml.getRuleStatus() != null){
 			String storeId = UtilityService.getStoreId();
-			subReportHeader.addRow("Published Date: ", xml.getRuleStatus().getLastPublishedDateTime() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId, xml.getRuleStatus().getLastPublishedDateTime(), JodaPatternType.DATE_TIME) : "");
+			subReportHeader.addRow("Published Date: ", xml.getRuleStatus().getLastPublishedDate() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId, xml.getRuleStatus().getLastPublishedDate(), JodaPatternType.DATE_TIME) : "");
 			if(EXPORT.equalsIgnoreCase(transferType)){
 				subReportHeader.addRow("Export Type: ", xml.getRuleStatus().getExportType() != null ? xml.getRuleStatus().getExportType().getDisplayText() : "");
-				subReportHeader.addRow("Export Date: ", xml.getRuleStatus().getLastExportDateTime() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId, xml.getRuleStatus().getLastExportDateTime(), JodaPatternType.DATE_TIME) : "");
+				subReportHeader.addRow("Export Date: ", xml.getRuleStatus().getLastExportDate() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId, xml.getRuleStatus().getLastExportDate(), JodaPatternType.DATE_TIME) : "");
 			}
 		}
 		

@@ -269,7 +269,7 @@
 
 				$li.find('.lastModifiedIcon').off().on({
 					mouseenter: showLastModified 
-				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDate"]});
+				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDateTime"]});
 
 				$li.find('.deleteRuleItemIcon').off().on({
 					click: function(e){

@@ -120,7 +120,7 @@
 						.addClass("txtAL")
 						.attr("width", "363px");
 						
-						$tr.find("#itemValidity").html(list[i]["formattedExpiryDateTime"] + "<br/>" +  list[i]["validityText"]); 
+						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
 
 						if ($.isBlank(list[i]["isExpired"])){
 							$tr.find("#itemValidityDaysExpired").remove();

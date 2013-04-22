@@ -333,7 +333,7 @@
 					if (data.totalSize>0){
 						if (entityName === 'didYouMean'){
 							$(tabSelected).find("label#requestedBy").html(list[0]["requestBy"]);
-							$(tabSelected).find("label#requestedDate").html($.isNotBlank(list[0]["lastRequestDate"])? list[0]["lastRequestDate"].toUTCString(): "");
+							$(tabSelected).find("label#requestedDate").html($.isNotBlank(list[0]["lastRequestDate"])? list[0]["formattedLastRequestDateTime"]: "");
 							// set to number to be displayed + 1, to detect if there is an overflow
 							var displaySize = 50;
 							SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 1, displaySize + 1, {
@@ -407,7 +407,7 @@
 								$table = $(tabSelected).find("table#rule");
 								$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 								var ruleStatus = list[i];
-								var requestedDate = $.isNotBlank(list[i]["lastModifiedDate"])? list[i]["lastModifiedDate"].toUTCString(): "";
+								var requestedDate = $.isNotBlank(list[i]["lastModifiedDate"])? list[i]["formattedLastModifiedDateTime"]: "";
 								//var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
 	
 								$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);

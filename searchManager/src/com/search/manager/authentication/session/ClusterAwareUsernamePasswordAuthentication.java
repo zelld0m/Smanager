@@ -56,7 +56,7 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 				
 		User user = new User();
 		user.setUsername(obtainUsername(request));
-		user.setLastAccessDateTime(DateTime.now());
+		user.setLastAccessDate(DateTime.now());
 		user.setIp(request.getRemoteAddr());
 		user.setSuccessiveFailedLogin(0);
 		user.setAccountNonLocked(true);

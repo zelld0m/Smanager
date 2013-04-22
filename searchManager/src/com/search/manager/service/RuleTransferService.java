@@ -116,8 +116,8 @@ public class RuleTransferService {
 
 							RuleStatus ruleStatus = new RuleStatus();
 
-							ruleStatus.setLastPublishedDateTime(ruleMap.getPublishedDateTime());
-							ruleStatus.setLastExportDateTime(ruleMap.getExportDateTime());
+							ruleStatus.setLastPublishedDate(ruleMap.getPublishedDateTime());
+							ruleStatus.setLastExportDate(ruleMap.getExportDateTime());
 							ruleXml.setRuleStatus(ruleStatus);
 
 							list.add(ruleXml);
@@ -262,7 +262,7 @@ public class RuleTransferService {
 						if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
 							currRuleStatus = rSet.getList().get(0);
 							daoService.addRuleStatusComment(RuleStatusEntity.IMPORTED, store, userName, comment, currRuleStatus.getRuleStatusId());
-							auditTrail.setDateTime(DateTime.now());
+							auditTrail.setCreatedDate(DateTime.now());
 							auditTrail.setReferenceId(ruleStatus.getRuleRefId());
 							if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
 								auditTrail.setKeyword(ruleStatus.getRuleRefId());

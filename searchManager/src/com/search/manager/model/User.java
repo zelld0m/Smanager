@@ -21,7 +21,7 @@ public class User extends ModelBean {
 	private Boolean accountNonLocked;
 	private Boolean credentialsNonExpired;
 	private Boolean accountNonExpired;
-	private DateTime lastAccessDateTime;
+	private DateTime lastAccessDate;
 	private String ip;
 	private DateTime thruDate;
 	private Integer successiveFailedLogin;
@@ -42,7 +42,7 @@ public class User extends ModelBean {
 		this.groupId = groupId;
 		this.accountNonLocked = accountNonLocked;
 		this.credentialsNonExpired = credentialsNonExpired;
-		this.lastAccessDateTime = lastAccessDateTime;
+		this.lastAccessDate = lastAccessDateTime;
 		this.ip = ip;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
@@ -201,15 +201,15 @@ public class User extends ModelBean {
 		this.permissionId = permissionId;
 	}
 	
-	public DateTime getLastAccessDateTime() {
-		return lastAccessDateTime;
+	public DateTime getLastAccessDate() {
+		return lastAccessDate;
 	}
 
-	public void setLastAccessDateTime(DateTime lastAccessDateTime) {
-		this.lastAccessDateTime = lastAccessDateTime;
+	public void setLastAccessDate(DateTime lastAccessDate) {
+		this.lastAccessDate = lastAccessDate;
 	}
 
 	public String getFormattedLastAccessDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastAccessDateTime(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getLastAccessDate(), JodaPatternType.DATE_TIME);
 	}
 }
