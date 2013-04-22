@@ -12,6 +12,7 @@
 						modal: true,
 						draggable: true,
 						resizable: false,
+						stack: false, zIndex:15000,
 						create: function(event, ui){
 							switch(opt){
 							case "alert": 
@@ -33,16 +34,16 @@
 										"buttons", 
 										[ 
 										 {	
-											 text: "Ok", 
+											 text: "Cancel", 
 											 click: function() { 
-												 if(callback) callback(true);
+												 if(callback) callback(false);
 												 $(this).dialog("close"); 
 											 } 
 										 },
 										 {	
-											 text: "Cancel", 
+											 text: "OK", 
 											 click: function() {
-												 if(callback) callback(false);
+												 if(callback) callback(true);
 												 $(this).dialog("close"); 
 											 } 
 										 }

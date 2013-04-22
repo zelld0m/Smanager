@@ -20,6 +20,7 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.groovy.JsonSlurper;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -707,12 +708,12 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             }
         }
 
-        orig.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION, suggestedKeywords);
-        
-        JSONObject obj = new JSONObject();
         Map<String, Object> suggestions = new LinkedHashMap<String, Object>();
-
-        suggestions.put(originalKeyword, orig);
+        if (CollectionUtils.isNotEmpty(suggestedKeywords)) {
+            orig.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION, suggestedKeywords);
+            suggestions.put(originalKeyword, orig);
+        }
+        JSONObject obj = new JSONObject();
         obj.element(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS, suggestions);
         initialJson.element(SolrConstants.TAG_SPELLCHECK, obj);
 
