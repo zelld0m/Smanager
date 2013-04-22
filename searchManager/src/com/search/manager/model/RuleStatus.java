@@ -72,8 +72,8 @@ public class RuleStatus extends ModelBean {
 		this.lastPublishedDateTime = lastPublishedDateTime;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = modifiedBy;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = modifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = modifiedDateTime;
 	}
 
 	public RuleStatus(RuleEntity ruleEntity, String storeId, String ruleId, String ruleName, String createdBy, String modifiedBy, 

@@ -27,8 +27,8 @@ public class DemoteProduct extends Product {
 		super();
 		this.setEdp(e.getEdp());
 		this.setExpiryDateTime(e.getExpiryDateTime());
-		this.setCreatedDateTime(e.getCreatedDateTime());
-		this.setLastModifiedDateTime(e.getLastModifiedDateTime());
+		this.setCreatedDate(e.getCreatedDate());
+		this.setLastModifiedDate(e.getLastModifiedDate());
 		this.setComment(e.getComment());
 		this.setLastModifiedBy(e.getLastModifiedBy());
 		this.setCreatedBy(e.getCreatedBy());

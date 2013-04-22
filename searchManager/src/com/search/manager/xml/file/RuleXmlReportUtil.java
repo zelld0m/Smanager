@@ -53,6 +53,7 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 
 public class RuleXmlReportUtil{
@@ -85,8 +86,19 @@ public class RuleXmlReportUtil{
 		subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
 		subReportHeader.addRow("Name: ", StringUtils.defaultIfBlank(xml.getName(),""));
 		subReportHeader.addRow("Notes: ", StringUtils.defaultIfBlank(xml.getNotes(),""));
-		subReportHeader.addRow("Date Created: ", xml.getCreatedDateTime() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId,  xml.getCreatedDateTime(), JodaPatternType.DATE_TIME) : "");
+		subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId,  xml.getCreatedDate(), JodaPatternType.DATE_TIME) : "");
 		subReportHeader.addRow("Created By: ", xml.getCreatedBy());
+
+		switch (ruleEntity) {
+		    case SPELL:
+		        // for spell rules, one sheet per version will be created,
+		        // hence we need to set version number if subReportHeader to be used in naming sheets
+		        subReportHeader.setVersion(((SpellRules) xml).getVersion());
+		        subReportHeader.addRow("Maximum Suggestion:", String.valueOf(((SpellRules) xml).getMaxSuggest()));
+		        break;
+            default:
+                break;
+		}
 		
 		return subReportHeader;
 	}

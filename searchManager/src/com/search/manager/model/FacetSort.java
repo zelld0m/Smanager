@@ -38,7 +38,7 @@ public class FacetSort extends ModelBean{
 		this.sortType = xml.getSortType();
 		this.ruleType = xml.getRuleType();
 		this.createdBy = xml.getCreatedBy();
-		this.createdDateTime = xml.getCreatedDateTime();
+		this.createdDate = xml.getCreatedDate();
 		
 		items = new HashMap<String, List<String>>();
 		groupSortType = new HashMap<String, SortType>(); 

@@ -127,8 +127,8 @@ public class RedirectRule extends ModelBean {
 		this.condition = condition;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = modifiedBy;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 		this.changeKeyword = changeKeyword;
 		this.redirectUrl = redirectUrl;
 		this.includeKeyword = includeKeyword;
@@ -170,9 +170,9 @@ public class RedirectRule extends ModelBean {
 			this.includeKeyword = xml.getRuleCondition().isIncludeKeyword();
 		this.redirectUrl = xml.getDirectHit();
 		this.createdBy = xml.getCreatedBy();
-		this.createdDateTime = xml.getCreatedDateTime();
+		this.createdDate = xml.getCreatedDate();
 		this.lastModifiedBy = xml.getLastModifiedBy();
-		this.lastModifiedDateTime = xml.getLastModifiedDateTime();
+		this.lastModifiedDate = xml.getLastModifiedDate();
 	}
 	
 	public String getRuleId() {

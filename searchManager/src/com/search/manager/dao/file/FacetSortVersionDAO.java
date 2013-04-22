@@ -46,7 +46,7 @@ public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
 					for(FacetGroup facetGroup: facetGroups.getList()){
 						String mapKey = facetGroup.getName();
 						eItemXmlList.add(new FacetSortGroupXml(mapKey, items.get(mapKey), sortType.get(mapKey), 
-								facetSort.getSortType(), facetGroup.getCreatedBy(), facetGroup.getCreatedDateTime()));
+								facetSort.getSortType(), facetGroup.getCreatedBy(), facetGroup.getCreatedDate()));
 					}
 				}
 				eRuleXmlList.add(new FacetSortRuleXml(store, version, name, notes, username, facetSort.getRuleType(), facetSort.getSortType(), ruleId, facetSort.getRuleName(), eItemXmlList));

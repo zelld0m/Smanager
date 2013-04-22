@@ -37,7 +37,6 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
-import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
@@ -66,19 +65,17 @@ public class SearchServlet extends HttpServlet {
 	@Qualifier("solrService")
 	SearchDaoService solrService;
 	
-	@Autowired private SpellRuleDAO spellRuleDAO;
-	
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
-
+	
 	protected ConfigManager configManager;
 	
 	// these fields should not contain multiple entries
 	protected final static String[] uniqueFields = {
 			SolrConstants.SOLR_PARAM_ROWS,
 			SolrConstants.SOLR_PARAM_KEYWORD,
-			SolrConstants.SOLR_PARAM_WRITER_TYPE ,
+			SolrConstants.SOLR_PARAM_WRITER_TYPE,
 			SolrConstants.SOLR_PARAM_START
 			};
 
@@ -248,12 +245,24 @@ public class SearchServlet extends HttpServlet {
 		return fromSearchGui ? daoService : solrService;
 	}
 	
+	protected Integer getMaxSuggestCount(String storeId, boolean fromSearchGui) throws DaoException {
+		return getDaoService(fromSearchGui).getMaxSuggest(storeId);
+	}
+	
+	protected SpellRule getSpellRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
+		return getDaoService(fromSearchGui).getSpellRuleForSearchTerm(sk.getStoreId(), sk.getKeywordId());
+	}
+	
 	protected RedirectRule getRedirectRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
 		try {
 			return getDaoService(fromSearchGui).getRedirectRule(sk);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getRedirectRule(sk);
+				if (!configManager.isSolrImplOnly()) {
+					return daoCacheService.getRedirectRule(sk);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -264,7 +273,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getRelevancyRule(sk);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getRelevancyRule(sk);
+				if (!configManager.isSolrImplOnly()) {
+					return daoCacheService.getRelevancyRule(sk);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -275,7 +288,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getRelevancyRule(store, relevancyId);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getRelevancyRule(store, relevancyId);
+				if (!configManager.isSolrImplOnly()) {
+					return daoCacheService.getRelevancyRule(store, relevancyId);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -290,7 +307,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getFacetSortRule(storeKeyword);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getFacetSortRule(storeKeyword);
+				if (!configManager.isSolrImplOnly()) {
+					return daoCacheService.getFacetSortRule(storeKeyword);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -301,7 +322,11 @@ public class SearchServlet extends HttpServlet {
 			return getDaoService(fromSearchGui).getFacetSortRule(store, templateName);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				return daoCacheService.getFacetSortRule(store, templateName);
+				if (!configManager.isSolrImplOnly()) {
+					return daoCacheService.getFacetSortRule(store, templateName);
+				} else {
+					return null;
+				}
 			}
 			throw e;
 		}
@@ -325,7 +350,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getElevateRules(storeKeyword);
+			if (!configManager.isSolrImplOnly()) {
+				list = daoCacheService.getElevateRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -339,7 +368,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getExpiredElevateRules(storeKeyword);
+			if (!configManager.isSolrImplOnly()) {
+				list = daoCacheService.getExpiredElevateRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -353,7 +386,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getExcludeRules(storeKeyword);
+			if (!configManager.isSolrImplOnly()) {
+				list = daoCacheService.getExcludeRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -367,7 +404,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getExpiredExcludeRules(storeKeyword);
+			if (!configManager.isSolrImplOnly()) {
+				list = daoCacheService.getExpiredExcludeRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -381,7 +422,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getDemoteRules(storeKeyword);
+			if (!configManager.isSolrImplOnly()) {
+				list = daoCacheService.getDemoteRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -395,7 +440,11 @@ public class SearchServlet extends HttpServlet {
 			if (fromSearchGui) {
 				throw e;
 			}
-			list = daoCacheService.getExpiredDemoteRules(storeKeyword);
+			if (!configManager.isSolrImplOnly()) {
+				list = daoCacheService.getExpiredDemoteRules(storeKeyword);
+			} else {
+				return null;
+			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
@@ -569,7 +618,7 @@ public class SearchServlet extends HttpServlet {
 							paramValue = "";
 						}
 						else {
-							paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("[\\p{Cntrl}]", "");
+							paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("\\s+", " ").replaceAll("[\\p{Cntrl}]", "");
 						}
 						
 						String convertedKeyword = paramValue;
@@ -602,7 +651,9 @@ public class SearchServlet extends HttpServlet {
 						if (paramName.equals(SolrConstants.SOLR_PARAM_SPELLCHECK)) {
 							performSpellCheck = true;
 						}
-						spellcheckParams.add(new BasicNameValuePair(paramName, paramValue));
+						nvp = new BasicNameValuePair(paramName, paramValue);
+						addNameValuePairToMap(paramMap, paramName, nvp);
+						spellcheckParams.add(nvp);
 						continue;
 					}
 					
@@ -640,7 +691,7 @@ public class SearchServlet extends HttpServlet {
 			String originalKeyword = keyword;
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
-				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:")) {
+				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:") || keyword.startsWith("Manufacturer:")) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 					nvp = new BasicNameValuePair("fq", keyword);
 					if (addNameValuePairToMap(paramMap, "fq", nvp)) {
@@ -786,7 +837,7 @@ public class SearchServlet extends HttpServlet {
 			if (isActiveSearchRule(storeId, RuleEntity.RANKING_RULE)) {
 				// set relevancy filters if any was specified
 				String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
-				StoreKeyword sk = getStoreKeywordOverride(RuleEntity.QUERY_CLEANING, storeId, keyword);
+				StoreKeyword sk = getStoreKeywordOverride(RuleEntity.RANKING_RULE, storeId, keyword);
 				Relevancy relevancy = null;
 				if (StringUtils.isNotBlank(relevancyId)) {
 					relevancy = new Relevancy();
@@ -835,8 +886,7 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 			else {
-				
-				Relevancy relevancy = getDefaultRelevancy(storeId);
+				Relevancy relevancy = getDefaultRelevancyRule(new Store(storeId), fromSearchGui);
 				if (relevancy == null) {
 					setDefaultQueryType(request, nameValuePairs, storeId);
 				}
@@ -1142,26 +1192,37 @@ public class SearchServlet extends HttpServlet {
 			// TASK 1B - get spellcheck if requested
 			/* Run spellcheck if needed */
 			if (performSpellCheck) {
-			    final String fStore = storeId;
-			    final String foKeyword = originalKeyword;
-				final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
+			    StoreKeyword sk = getStoreKeywordOverride(RuleEntity.SPELL, storeId, originalKeyword);
+				SpellRule spellRule = getSpellRule(sk, fromSearchGui);
+				if(spellRule != null) {
+					activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DID_YOU_MEAN, spellRule.getRuleId(), originalKeyword, !disableDidYouMean)));
+			    	if(!disableDidYouMean) {
+						solrHelper.setSpellRule(spellRule);
+			    	}
+				}
+				Integer suggestCount = getMaxSuggestCount(storeId, fromSearchGui);
+				if (suggestCount == null) {
+					suggestCount = 3;
+				}
+		    	solrHelper.setMaxSuggestCount(suggestCount);
+			    
+			    final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
+			    getSpellingSuggestionsParams.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
 				getSpellingSuggestionsParams.add(defTypeNVP);
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0"));
 				getSpellingSuggestionsParams.addAll(spellcheckParams);
+				// override spellcheck.count sent from client
+				NameValuePair spellCount = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_SPELLCHECK_COUNT);
+				if (spellCount != null) {
+					getSpellingSuggestionsParams.remove(spellCount);
+				}
+				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_SPELLCHECK_COUNT, String.valueOf(suggestCount)));
 				completionService.submit(new Callable<Integer>() {
 					@Override
 					public Integer call() throws Exception { // TODO here...
-						SpellRule spellRule = spellRuleDAO.getSpellRuleForSearchTerm(fStore, foKeyword);
-						if(spellRule != null) {
-							activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DID_YOU_MEAN, spellRule.getRuleId(), foKeyword, !disableDidYouMean)));
-					    	if(!disableDidYouMean) {
-								solrHelper.setSpellRule(spellRule);
-					    	}
-					    	solrHelper.setMaxSuggestCount(spellRuleDAO.getMaxSuggest(fStore));
-                        	solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
-						}
-						return 0;
+                       	solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+                       	return 0;
 					}
 				});
 				tasks++;

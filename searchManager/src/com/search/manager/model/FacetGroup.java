@@ -68,7 +68,7 @@ public class FacetGroup extends ModelBean {
 		this.sequence = sequence;
 		this.storeId = storeId;
 		setCreatedBy(xml.getCreatedBy());
-		setCreatedDateTime(xml.getCreatedDateTime());
+		setCreatedDate(xml.getCreatedDate());
 		//TODO add groupId
 	}
 

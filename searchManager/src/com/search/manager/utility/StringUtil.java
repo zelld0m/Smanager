@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Function;
+
 public final class StringUtil {
 	
 	public static final String REGEX_NOHTML = "<[\\x20-\\x7E]*?>";
@@ -597,4 +599,14 @@ public final class StringUtil {
 		}
 		return builder.toString();
 	}
+
+	public static Function<String, String> lowercaseTransformer = new Function<String, String>() {
+	    public String apply(String orig) {
+	        if (orig != null) {
+	            return orig.toLowerCase();
+	        }
+	        
+	        return orig;
+	    }
+	};
 }

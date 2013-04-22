@@ -89,6 +89,9 @@
 									ruleType: base.options.ruleType,  
 									rule: base.options.rule,
 									locked: e.data.selectedRuleStatus.locked || $.endsWith(e.data.rule.ruleId, "_default") || !e.data.allowModify,
+									deletePhysically: base.options.deleteVersionsPhysically,
+									enableCompare: base.options.enableCompare,
+									enableSingleVersionDownload: base.options.enableSingleVersionDownload,
 									preRestoreCallback: function(el){
 										base.options.preRestoreCallback(el);
 									},
@@ -247,6 +250,9 @@
 			enableVersion: false,
 			authorizeRuleBackup: false,
 			authorizeSubmitForApproval: false,
+			deleteVersionsPhysically: false,
+			enableCompare: true,
+			enableSingleVersionDownload: false,
 			beforeSubmitForApprovalRequest: function(){}, 
 			afterSubmitForApprovalRequest: function(status){}, 
 			beforeRuleStatusRequest: function(){}, 

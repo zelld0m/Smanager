@@ -20,6 +20,7 @@ public class RuleEntity implements java.io.Serializable {
     public static final java.lang.String _BANNER = "BANNER";
     public static final java.lang.String _QUERY_CLEANING = "QUERY_CLEANING";
     public static final java.lang.String _RANKING_RULE = "RANKING_RULE";
+    public static final java.lang.String _SPELL = "SPELL";
     public static final RuleEntity ELEVATE = new RuleEntity(_ELEVATE);
     public static final RuleEntity EXCLUDE = new RuleEntity(_EXCLUDE);
     public static final RuleEntity DEMOTE = new RuleEntity(_DEMOTE);
@@ -30,6 +31,8 @@ public class RuleEntity implements java.io.Serializable {
     public static final RuleEntity BANNER = new RuleEntity(_BANNER);
     public static final RuleEntity QUERY_CLEANING = new RuleEntity(_QUERY_CLEANING);
     public static final RuleEntity RANKING_RULE = new RuleEntity(_RANKING_RULE);
+    public static final RuleEntity SPELL = new RuleEntity(_SPELL);
+
     public java.lang.String getValue() { return _value_;}
     public static RuleEntity fromValue(java.lang.String value)
           throws java.lang.IllegalArgumentException {

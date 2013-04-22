@@ -26,9 +26,9 @@ public class SearchResult extends ModelBean {
 		this.condition = xml.getRuleCondition();
 		this.memberId = xml.getMemberId();
 		this.lastModifiedBy = xml.getLastModifiedBy();
-		this.lastModifiedDateTime = xml.getLastModifiedDateTime();
+		this.lastModifiedDate = xml.getLastModifiedDate();
 		this.createdBy = xml.getCreatedBy();
-		this.createdDateTime = xml.getCreatedDateTime();
+		this.createdDate = xml.getCreatedDate();
 	}
 	
 	public SearchResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, DateTime expiryDateTime, DateTime createdDateTime, DateTime lastModifiedDateTime, String memberTypeId, String memberId) {
@@ -48,8 +48,8 @@ public class SearchResult extends ModelBean {
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
 		this.expiryDateTime = expiryDateTime;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 		this.memberId = memberId;
 	}
 	

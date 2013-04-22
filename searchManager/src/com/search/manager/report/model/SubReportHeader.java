@@ -22,6 +22,9 @@ public class SubReportHeader extends ReportHeader {
 
 	Map<String, String> rows;
 
+    // created for the case where multiple sheets are to be generated where sheet name will be based on version number
+	private long version;
+
 	public Map<String, String> getRows() {
 		return rows;
 	}
@@ -36,4 +39,12 @@ public class SubReportHeader extends ReportHeader {
 		}
 		rows.put(key, value);
 	}
+    
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
 }

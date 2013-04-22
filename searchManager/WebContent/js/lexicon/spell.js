@@ -5,49 +5,69 @@
 
 		base.options = $.extend({}, options);
 		delete options['term'];
-		base.$container = $("<span class=\"term\">");
-		base.$container.on({
+		base.$container = $("<span class=\"sorter\">");
+
+		base.$term = $("<span class=\"term\">");
+		base.$term.on({
 			keydown : function(e) {
 				switch (e.keyCode) {
 				case 9: // tab
 					e.preventDefault();
+
 					if (e.shiftKey && base.$container.prev().length > 0) {
-						base.$container.prev().click();
+						base.$container.prev().find(":first").click();
 						break;
 					}
 
-					if (!e.shiftKey && base.$container.text().trim()
+					if (!e.shiftKey && base.$term.text().trim()
 							&& base.$container.next().length > 0) {
-						$(base.$container.next()).click();
+						$(base.$container.next()).find(":first").click();
 						break;
 					}
 				case 13: // enter
 					e.preventDefault();
-					if (base.$container.text().trim()
-							&& base.$container.next().length == 0) {
+
+					if (base.$term.text().trim()
+							&& base.$container.find(":first").next().length == 0) {
 						new Term(options);
 					} else {
-						base.$container.blur();
+						base.$term.blur();
 					}
 				}
 			},
 
 			blur : function(e) {
-				var val = base.$container.text();
-				base.$container.removeClass("error");
+				var val = base.$term.text();
+				base.$term.removeClass("error");
+				base.$container.removeClass("edit-mode");
 
-				if (!val) {
+				if ($.isBlank(val)) {
 					base.$container.remove();
+				} else {
+					base.$term.text($.compressWhitespaces($.trim(val)));
+
+					if (base.options.rule.contains(base.$term, base.options.container)) {
+						base.$container.remove();
+					}
 				}
 				base.options.container.trigger("change");
 			}
 		}).editable({editEnabled: function() {
+			if (base.options.rule.editable) {
+				base.$container.addClass("edit-mode");
+			}
+
 			return base.options.rule.editable;
 		}});
 
+		base.$container.append(base.$term);
 		base.options.container.append(base.$container);
-		base.$container.text(base.options.term);
-		base.$container.click();
+		
+		if (!base.options.term) {
+			base.$term.click();
+		} else {
+			base.$term.text(base.options.term);
+		}
 	};
 
 	var SpellRule = function(data) {
@@ -207,8 +227,8 @@
 			$.each(data, function(){
 				var duplicateTerm = this.toString();
 
-				self.$searchTerms.find(".term:contains(" + duplicateTerm + ")").each(function() {
-					if ($(this).text() == duplicateTerm) {
+				self.$searchTerms.find(".term:icontains(" + duplicateTerm + ")").each(function() {
+					if ($(this).text().toLowerCase() == duplicateTerm.toLowerCase()) {
 						$(this).addClass("error");
 					}
 				});
@@ -220,7 +240,7 @@
 			
 			self.$el.attr("sr-editable", editable);
 			self.editable = editable;
-			self.$suggestions.sortable().sortable(editable ? 'enable' : 'disable');
+			self.$suggestions.sortable({cancel: 'span.term'}).sortable(editable ? 'enable' : 'disable');
 			self.resetTooltip();
 		},
 		
@@ -269,7 +289,19 @@
 			}
 
 			return false;
-		}
+		},
+
+		contains : function($term, $container) {
+			var otherTerms = $container.find(".term").not($term).map(function() { return $(this).text(); }).get();
+
+			for (var i = 0; i < otherTerms.length; i++) {
+				if (otherTerms[i].toLowerCase() == $term.text().toLowerCase()) {
+					return true;
+				}
+			}
+
+			return false;
+		},
 	};
 
 	var DidYouMean = {
@@ -294,13 +326,13 @@
 
 		initButtons: function() {
 			var self = this;
-			
+
 			// action buttons
 			self.$addButton = $("#add-button");
 			self.$editButton = $("#edit-button");
 			self.$saveButton = $("#save-button");
 			self.$cancelButton = $("#cancel-button");
-			
+
 			if (!self.ruleStatus.locked) {
 				self.$addButton.on({
 					click : function(e) {
@@ -312,6 +344,8 @@
 						self.$table.append(self.$footer);
 						self.$footer.show();
 						self.$pager.hide();
+						self.$clearButton.off();
+						self.$filterButton.off();
 						self.$maxSuggest.parent().hide();
 					}
 				});
@@ -322,6 +356,9 @@
 						$(".button-group-1").show();
 						self.mode = 'edit';
 						self.$maxSuggest.removeAttr("disabled");
+						self.$pager.hide();
+						self.$clearButton.off();
+						self.$filterButton.off();
 
 						var rows = self.$table.find("tr:not(#header)");
 
@@ -361,6 +398,7 @@
 
 						self.$pager.show();
 						self.mode = 'display';
+						self.addFilterEventHandlers();
 					}
 				});
 
@@ -374,7 +412,9 @@
 								entities.push($(rules[i]).data('spellRule').data());
 							}
 
-							if (self.validate(entities) && entities.length > 0) {
+							var hasChanges = entities.length > 0;
+
+							if (self.validate(entities) && hasChanges) {
 								SpellRuleServiceJS.addSpellRuleBatch(entities,
 									function(response) {
 										// success
@@ -387,6 +427,7 @@
 											$(".button-group-0").show();
 											self.$pager.show();
 											self.$maxSuggest.parent().show();
+											self.addFilterEventHandlers();
 										} else {
 											jAlert(response.errorMessage.message);
 											
@@ -397,6 +438,8 @@
 											}
 										}
 									});
+							} else if (!hasChanges) {
+								self.$cancelButton.click();
 							}
 						} else if (self.mode == 'edit') {
 							var rules = self.$table.find("tr.spell-rule");
@@ -414,7 +457,9 @@
 								deleted.push($(self.deleted[i].el).data('spellRule').data());
 							}
 
-							if (self.validate(entities) && (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0)) {
+							var hasChanges = self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0;
+							
+							if (self.validate(entities) && hasChanges) {
 								SpellRuleServiceJS.updateSpellRuleBatch(self.$maxSuggest.val(), entities, deleted,
 									function(response) {
 										// success
@@ -427,6 +472,7 @@
 											$(".button-group-0").show();
 											self.$maxSuggest.attr("disabled", true);
 											self.$pager.show();
+											self.addFilterEventHandlers();
 										} else {
 											jAlert(response.errorMessage.message);
 											
@@ -437,6 +483,8 @@
 											}
 										}
 									});
+							} else if (!hasChanges){
+								self.$cancelButton.click();
 							}
 						}
 					}
@@ -455,6 +503,17 @@
 				if (entities[i].searchTerms.length == 0 || entities[i].suggestions.length == 0) {
 					jAlert(DidYouMean.messages.requiredFields);
 					return false;
+				} else {
+					for (var j = 0; j < entities[i].searchTerms.length; j++) {
+						if (!validateSearchKeyword("Search Term", entities[i].searchTerms[j])) {
+							return false;
+						}
+					}
+					for (var j = 0; j < entities[i].suggestions.length; j++) {
+						if (!validateSearchKeyword("Suggestion", entities[i].suggestions[j])) {
+							return false;
+						}
+					}
 				}
 			}
 			
@@ -476,6 +535,16 @@
 					new SpellRule().setEditable(true);
 				}
 			});
+
+			SpellRuleServiceJS.getMaxSuggest(function(response) {
+				if (response.status == 0) {
+					self.$maxSuggest.val(response.data);
+					self.maxSuggest = response.data;
+					self.handlePageLink(1);
+				} else {
+					jAlert(response.errorMessage.message);
+				}
+			});
 		},
 		
 		initFilters: function() {
@@ -485,29 +554,41 @@
 			self.$searchTermFilter = $("#searchTerm-filter");
 			self.$suggestionFilter = $("#suggestion-filter");
 			self.$statusFilter = $("#status-filter");
+			self.$filterButton = $("#filter-button");
 			self.$clearButton = $("#clear-button");
 
-			var changeHandler = function(e) {
-				self.searchTerm = self.$searchTermFilter.val();
-				self.suggestion = self.$suggestionFilter.val();
-				self.status = self.$statusFilter.val();
+			self.addFilterEventHandlers();
+		},
 
-				self.handlePageLink(1);
-			};
+		addFilterEventHandlers: function() {
+			var self = this;
 
-			self.$searchTermFilter.on({change: changeHandler});
-			self.$suggestionFilter.on({change: changeHandler});
-			self.$statusFilter.on({change: changeHandler});
-			self.$clearButton.on({click: function(e) {
+			self.$filterButton.off().on({click: function(e) {
+				self.filter();
+			}});
+
+			self.$clearButton.off().on({click: function(e) {
 				self.$searchTermFilter.val("");
 				self.$suggestionFilter.val("");
 				self.$statusFilter.val("");
-				changeHandler(e);
+				self.filter();
 			}});
+		},
+
+		filter:  function(e) {
+			var self = this;
+
+			self.searchTerm = self.$searchTermFilter.val();
+			self.suggestion = self.$suggestionFilter.val();
+			self.status = self.$statusFilter.val();
+
+			self.handlePageLink(1);
 		},
 
 		init : function() {
 			var self = this;
+
+			self.$maxSuggest = $("#max-suggest");
 
 			$("#ruleStatus").rulestatus({
 				moduleName: self.RULE_TYPE,
@@ -516,7 +597,13 @@
 				enableVersion: true,
 				authorizeRuleBackup: true,
 				authorizeSubmitForApproval: true,
+				deleteVersionsPhysically: true,
+				enableCompare: false,
+				enableSingleVersionDownload: true,
 				postRestoreCallback: function(base, rule){
+					jAlert("Did you mean rules restored.", "Version Restored", function() {
+						location.reload();
+					});
 				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
 					self.selectedRuleStatus = ruleStatus;
@@ -530,26 +617,10 @@
 					$("#preloader").hide();
 					self.ruleStatus = ruleStatus;
 					self.initButtons();
+					self.initTable();
+					self.initFilters();
 				}
 			});
-
-			self.$maxSuggest = $("#max-suggest");
-			SpellRuleServiceJS.getMaxSuggest(function(response) {
-				if (response.status == 0) {
-					self.$maxSuggest.val(response.data);
-					self.maxSuggest = response.data;
-				} else {
-					jAlert(response.errorMessage.message);
-				}
-			});
-
-			self.initTable();
-			self.initFilters();
-
-			// rules
-			self.rules = {};
-
-			self.handlePageLink(1);
 		},
 
 		handleSearchResponse : function(response, page) {

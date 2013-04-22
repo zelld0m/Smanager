@@ -46,8 +46,8 @@ public class User extends ModelBean {
 		this.ip = ip;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		super.createdDateTime = createdDateTime;
-		super.lastModifiedDateTime = lastModifiedDateTime;
+		super.createdDate = createdDateTime;
+		super.lastModifiedDate = lastModifiedDateTime;
 		setThruDate(thruDate);
 		this.storeId = storeId;
 		this.timezoneId = timezoneId;

@@ -196,6 +196,12 @@
 				$replacement.find("input#newName").val(rule["ruleName"]);
 				$importAsSelect.prop("disabled", true);
 				break;
+			case "SPELL":
+				$option.attr({value: rule["ruleId"], selected: true});
+				$option.text(rule["ruleName"]);
+				$replacement.find("input#newName").val(rule["ruleName"]);
+				$importAsSelect.prop("disabled", true);
+				break;
 			case "FACET_SORT": 
 				$option.attr({value: rule["ruleId"], selected: true});
 				$option.text(rule["ruleName"]);

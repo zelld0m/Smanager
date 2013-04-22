@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,24 +26,14 @@ public class SpellIndex {
     private static final Logger logger = LoggerFactory.getLogger(SpellIndex.class);
 
     private static final String BASE_RULE_DIR = PropsUtils.getValue("rulepath");
+    private static final String TEMP_RULE_DIR = PropsUtils.getValue("temprulepath");
     private static final String SPELL_FILE = PropsUtils.getValue("spellfile");
     private static final RuleEntity ENTITY = RuleEntity.SPELL;
 
     private Map<String, SpellRules> rules = new HashMap<String, SpellRules>();
     private Map<String, String> xmlPath = new HashMap<String, String>();
     private String dirPath;
-
-    public SpellRules get(String store) {
-        if (rules.get(store) == null) {
-            try {
-                load(store);
-            } catch (Exception e) {
-                logger.error("Unable to load spell rules for " + store, e);
-            }
-        }
-
-        return rules.get(store);
-    }
+    private String tempDirPath;
 
     public void init() throws Exception {
         dirPath = new StringBuilder()
@@ -50,6 +41,15 @@ public class SpellIndex {
                 .append(File.separator)
                 .append(RuleEntity.getValue(ENTITY.getCode()) != null ? RuleEntity.getValue(ENTITY.getCode()) : ENTITY
                         .name()).toString();
+        tempDirPath = new StringBuilder()
+                .append(TEMP_RULE_DIR)
+                .append(File.separator)
+                .append(RuleEntity.getValue(ENTITY.getCode()) != null ? RuleEntity.getValue(ENTITY.getCode()) : ENTITY
+                        .name()).toString();
+
+        if (!FileUtil.isDirectoryExist(tempDirPath)) {
+            FileUtil.createDirectory(tempDirPath);
+        }
         if (!FileUtil.isDirectoryExist(dirPath)) {
             FileUtil.createDirectory(dirPath);
         }
@@ -64,9 +64,13 @@ public class SpellIndex {
 
             if (!FileUtil.isDirectoryExist(storeDir)) {
                 FileUtil.createDirectory(storeDir);
-                rules.put(store, new SpellRules());
-            } else if (!FileUtil.isExist(spellFile)) {
-                rules.put(store, new SpellRules());
+            }
+
+            if (!FileUtil.isExist(spellFile)) {
+                SpellRules storeRules = new SpellRules();
+
+                storeRules.generateSecondaryIndex();
+                rules.put(store, storeRules);
             } else {
                 rules.put(store, read(xmlPath.get(store)));
             }
@@ -76,6 +80,31 @@ public class SpellIndex {
     public void unload(String store) throws Exception {
         xmlPath.remove(store);
         rules.remove(store);
+    }
+
+    public void reload(String store) throws Exception {
+        unload(store);
+        load(store);
+    }
+
+    public SpellRules get(String store) {
+        if (rules.get(store) == null) {
+            try {
+                load(store);
+            } catch (Exception e) {
+                logger.error("Unable to load spell rules for " + store, e);
+            }
+        }
+
+        return rules.get(store);
+    }
+
+    public boolean save(String storeId) {
+        return write(rules.get(storeId), storeId);
+    }
+
+    public void destroy() throws Exception {
+        logger.info("Destroying did you mean index.");
     }
 
     private SpellRules read(String filepath) {
@@ -100,19 +129,22 @@ public class SpellIndex {
         return rules;
     }
 
-    public boolean save(String storeId) {
-        return write(rules.get(storeId), xmlPath.get(storeId));
-    }
-
-    private boolean write(SpellRules rules, String filepath) {
+    private boolean write(SpellRules rules, String storeId) {
         boolean success = false;
         FileWriter writer = null;
 
         try {
+            String filePath = getSpellFilePath(storeId, false);
+
+            // Create backup first.
+            if (FileUtil.isExist(filePath)) {
+                FileUtils.copyFile(new File(filePath), new File(getSpellFilePath(storeId, true)));
+            }
+
             JAXBContext context = JAXBContext.newInstance(SpellRules.class);
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            writer = new FileWriter(filepath);
+            writer = new FileWriter(getSpellFilePath(storeId, false));
             m.marshal(rules, writer);
             success = true;
         } catch (JAXBException e) {
@@ -126,20 +158,23 @@ public class SpellIndex {
         return success;
     }
 
-    public void destroy() throws Exception {
-        logger.info("Destroying spell index.");
-        for (String store : xmlPath.keySet()) {
-            String filepath = xmlPath.get(store);
-            SpellRules rules = this.rules.get(store);
+    private String getSpellFilePath(String store, boolean isTemp) {
+        StringBuilder builder = new StringBuilder();
 
-            logger.info("Writing spell rules for {} to file.", store);
-            write(rules, filepath);
-        }
-        logger.info("Spell index destroyed.");
+        builder.append(getSpellDirPath(store, isTemp));
+        builder.append(File.separator);
+        builder.append(SPELL_FILE);
+
+        return builder.toString();
     }
 
-    public void rollback(String store) throws Exception {
-        unload(store);
-        load(store);
+    private String getSpellDirPath(String store, boolean isTemp) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(isTemp ? tempDirPath : dirPath);
+        builder.append(File.separator);
+        builder.append(store);
+
+        return builder.toString();
     }
 }

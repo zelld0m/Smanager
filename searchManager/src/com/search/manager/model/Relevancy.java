@@ -91,8 +91,8 @@ public class Relevancy extends ModelBean {
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 	}
 	
 	public Relevancy(RankingRuleXml xml) {
@@ -105,8 +105,8 @@ public class Relevancy extends ModelBean {
 //		comment = xml.getNotes();
 		this.createdBy = xml.getCreatedBy();
 		this.lastModifiedBy = xml.getLastModifiedBy();
-		this.createdDateTime = xml.getCreatedDateTime();
-		this.lastModifiedDateTime = xml.getLastModifiedDateTime();
+		this.createdDate = xml.getCreatedDate();
+		this.lastModifiedDate = xml.getLastModifiedDate();
 		
 		Map<String, String> parameter = xml.getParameters();
 		if (parameter != null) {

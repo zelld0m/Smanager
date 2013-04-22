@@ -34,8 +34,8 @@ public class Banner extends ModelBean {
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 	}
 	
 	public String getBannerId() {

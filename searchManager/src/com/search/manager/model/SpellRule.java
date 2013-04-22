@@ -37,8 +37,8 @@ public class SpellRule extends ModelBean {
                 .toArray(new String[ruleXml.getSuggestKeyword().getSuggest().size()]);
         this.createdBy = ruleXml.getCreatedBy();
         this.lastModifiedBy = ruleXml.getLastModifiedBy();
-        this.createdDateTime = ruleXml.getCreatedDateTime();
-        this.lastModifiedDateTime = ruleXml.getLastModifiedDateTime();
+        this.createdDate = ruleXml.getCreatedDate();
+        this.lastModifiedDate = ruleXml.getLastModifiedDate();
     }
 
     public SpellRule(String ruleId, String storeId) {

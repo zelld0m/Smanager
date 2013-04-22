@@ -42,9 +42,9 @@ public class ElevateResult extends SearchResult {
 		this.location = xml.getLocation();
 		this.forceAdd = xml.isForceAdd();
 		this.createdBy = xml.getCreatedBy();
-		this.createdDateTime = xml.getCreatedDateTime();
+		this.createdDate = xml.getCreatedDate();
 		this.lastModifiedBy = xml.getLastModifiedBy();
-		this.lastModifiedDateTime = xml.getLastModifiedDateTime();
+		this.lastModifiedDate = xml.getLastModifiedDate();
 	}
 
 	@Override

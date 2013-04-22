@@ -134,6 +134,8 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 			return "DEMOTE";
 		case 11:
 			return "FACET_SORT";
+		case 12:
+			return "SPELL";
 		default:
 			break;
 		}

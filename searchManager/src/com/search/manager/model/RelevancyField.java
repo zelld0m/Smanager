@@ -23,8 +23,8 @@ public class RelevancyField extends ModelBean {
 		this.fieldValue = fieldValue;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 	}
 	
 	public void setRelevancy(Relevancy relevancy) {

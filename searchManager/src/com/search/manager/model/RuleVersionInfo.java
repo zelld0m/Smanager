@@ -25,7 +25,7 @@ public class RuleVersionInfo extends ModelBean{
 		this.setNotes(xml.getNotes());
 		this.setVersion(xml.getVersion());
 		this.setCreatedBy(xml.getCreatedBy());
-		this.setCreatedDateTime(xml.getCreatedDateTime());
+		this.setCreatedDate(xml.getCreatedDate());
 	}
 	
 	public RuleXml getRule() {
