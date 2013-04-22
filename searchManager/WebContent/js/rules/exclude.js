@@ -130,8 +130,14 @@
 				}
 
 				if(FACET){
-
-					$li.find(".name").html($("<a>").text($item.condition["readableString"]));
+					var maxLength = 120;
+					var condition = $item.condition["readableString"];
+					if(condition != null && condition.length > maxLength) {
+						condition = condition.substring(0, maxLength) + "...";
+					}
+					$li.find(".name").html($("<a>").text(condition)).attr('title', $item.condition["readableString"]);
+					
+					// $li.find(".name").html($("<a>").text($item.condition["readableString"]));
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
