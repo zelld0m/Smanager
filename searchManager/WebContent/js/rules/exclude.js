@@ -144,7 +144,7 @@
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
 								newRecord: false,
-								item: e.data.item,
+								item: $.extend(true, {}, e.data.item),
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ExcludeServiceJS.updateExcludeFacet(self.selectedRule["ruleId"], memberId, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){

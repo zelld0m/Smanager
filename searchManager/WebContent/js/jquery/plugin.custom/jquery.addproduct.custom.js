@@ -611,6 +611,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["Category"])){
 						$select.val($item.condition.IMSFilters["Category"]);
 						$select.change();
+						$item.condition.IMSFilters["Category"] = new Array();
 					}else{
 						base.populateIMSManufacturers();
 					}
@@ -650,6 +651,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["SubCategory"])){
 						$select.val(base.options.item.condition.IMSFilters["SubCategory"]);
 						$select.change();
+						$item.condition.IMSFilters["SubCategory"] = new Array();
 					}else{
 						base.populateIMSManufacturers();
 					}
@@ -689,6 +691,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["Class"])) {
 						$select.val(base.options.item.condition.IMSFilters["Class"]);
 						$select.change();
+						$item.condition.IMSFilters["Class"] = new Array();
 					}else{
 						base.populateIMSManufacturers();
 					}
@@ -727,6 +730,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["SubClass"])){
 						$select.val(base.options.item.condition.IMSFilters["SubClass"]);
 						$select.change();
+						$item.condition.IMSFilters["SubClass"] = new Array();
 					}else{
 						base.populateIMSManufacturers();
 					}
@@ -777,6 +781,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["Manufacturer"])){
 						$select.val(base.options.item.condition.IMSFilters["Manufacturer"]);
 						$select.change();
+						base.options.item.condition.IMSFilters["Manufacturer"] = new Array();
 					}
 				}
 			});
@@ -905,6 +910,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level1Category"])){
 						$select.val($item.condition.CNetFilters["Level1Category"]);
 						$select.change();
+						$item.condition.CNetFilters["Level1Category"] = new Array();
 					}else{
 						base.populateCNETManufacturers();
 					}
@@ -945,6 +951,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level2Category"])){
 						$select.val($item.condition.CNetFilters["Level2Category"]);
 						$select.change();
+						$item.condition.CNetFilters["Level2Category"] = new Array();
 					}else{
 						base.populateCNETManufacturers();
 					}
@@ -985,6 +992,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level3Category"])){
 						$select.val($item.condition.CNetFilters["Level3Category"]);
 						$select.change();
+						$item.condition.CNetFilters["Level3Category"] = new Array();
 					}else{
 						base.populateCNETManufacturers();
 					}
@@ -1024,6 +1032,7 @@
 					if($.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Manufacturer"])){
 						$select.val($item.condition.CNetFilters["Manufacturer"]);
 						$select.change();
+						base.options.item.condition.CNetFilters["Manufacturer"] = new Array();
 					}
 				}
 			});

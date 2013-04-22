@@ -145,7 +145,7 @@
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
 								newRecord: false,
-								item: e.data.item,
+								item: $.extend(true, {}, e.data.item),
 								showPosition: true,
 								maxPosition: self.selectedRuleItemTotal,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
