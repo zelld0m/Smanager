@@ -35,9 +35,9 @@ public class DemoteResult extends SearchResult {
 		this.entity = xml.getMemberType();
 		this.location = xml.getLocation();
 		this.createdBy = xml.getCreatedBy();
-		this.createdDateTime = xml.getCreatedDateTime();
+		this.createdDate = xml.getCreatedDate();
 		this.lastModifiedBy = xml.getLastModifiedBy();
-		this.lastModifiedDateTime = xml.getLastModifiedDateTime();
+		this.lastModifiedDate = xml.getLastModifiedDate();
 	}
 	
 	@Override

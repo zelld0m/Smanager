@@ -60,11 +60,9 @@
 			maxRelatedSearch: 3
 		}));
 		
-		// TODO
 		Manager.addWidget(new AjaxSolr.DidYouMeanWidget({
 			id: '',
-			target: '#didYouMean',
-			maxDidyouMean: 0
+			target: '#didYouMean'
 		}));
 		
 		var sortWidget = new AjaxSolr.SortResultWidget({

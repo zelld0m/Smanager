@@ -549,7 +549,7 @@ div#top-pager-text{ position:relative; top:8px; }
 div#bottom-pager-text{ position:relative; top:10px; }
 
 .clearB{ clear:both; }
-.firerift-style { float:right; }
+.firerift-style { float:left; }
 #rankingRule { margin-top:2px !important; }
 
 .label_condition { display:inline; float:none; }
@@ -577,3 +577,14 @@ ul#versionList li.item:last-child ul#ruleDetails li{
 div.holder table#addDynamicAttributeName tr#dynamicAttributeName td.iepadBT0 div.floatL div.ss-wrapper input.ss-textbox {
 	top: 0px !important;
 }
+
+
+div.w300.security div.marB10 div div.floatL div.ss-wrapper input.ss-textbox {
+	top: 0px !important;
+}
+
+.w75 {	width: 75px;	}
+.w20p {	width: 20%;		}
+.w30p {	width: 30%;		}
+.w50p {	width: 50%;		}
+div.dockFooter div.footerFix div div.floatL.w50p.fsize12 {	text-align: center;	}

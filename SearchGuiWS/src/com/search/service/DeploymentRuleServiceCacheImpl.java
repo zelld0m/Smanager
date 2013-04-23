@@ -692,4 +692,14 @@ public class DeploymentRuleServiceCacheImpl implements DeploymentRuleService {
 		return map;
 	}
 
+	@Override
+	public Map<String, Boolean> publishDidYouMeanRulesMap(String store, List<String> list) {
+		// TODO call SCP here
+		Map<String, Boolean> resultMap = getKLMap(list);
+		for (String id: resultMap.keySet()) {
+			resultMap.put(id, Boolean.TRUE);
+		}
+		return resultMap;
+	}
+
 }

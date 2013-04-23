@@ -30,7 +30,7 @@ public class ExcludeItemXml extends RuleItemXml{
 		this.setExpiryDateTime(er.getExpiryDateTime());
 		this.setCreatedBy(er.getCreatedBy());
 		this.setLastModifiedBy(er.getLastModifiedBy());
-		this.setCreatedDateTime(er.getCreatedDateTime());
-		this.setLastModifiedDateTime(er.getLastModifiedDateTime());
+		this.setCreatedDate(er.getCreatedDate());
+		this.setLastModifiedDate(er.getLastModifiedDate());
 	}
 }

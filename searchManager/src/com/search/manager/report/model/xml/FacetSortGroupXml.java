@@ -40,7 +40,7 @@ public class FacetSortGroupXml extends BaseEntityXml{
 		this.groupItem = items;
 		this.sortType = sortType == null? defaultSortType: sortType;
 		setCreatedBy(createdBy);
-		setCreatedDateTime(createdDateTime);
+		setCreatedDate(createdDateTime);
 	}
 
 	public FacetSortGroupXml(String groupName, FacetGroupType groupType, SortType sortType, 
@@ -52,7 +52,7 @@ public class FacetSortGroupXml extends BaseEntityXml{
 		this.groupItem = groupItem;
 		this.groupId = groupId;
 		setCreatedBy(createdBy);
-		setCreatedDateTime(createdDateTime);
+		setCreatedDate(createdDateTime);
 	}
 
 	@XmlAttribute(name="name")

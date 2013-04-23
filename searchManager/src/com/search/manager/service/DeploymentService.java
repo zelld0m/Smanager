@@ -1,5 +1,10 @@
 package com.search.manager.service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +39,12 @@ import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SpellRule;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRuleXml;
+import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.xml.file.RuleXmlUtil;
+import com.search.ws.ConfigManager;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -91,7 +100,7 @@ public class DeploymentService {
 		daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, UtilityService.getStoreId(), UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 		return result;
 	}
-
+	
 	private List<String> approveRule(String ruleType, List<String> ruleRefIdList) {
 		List<String> result = new ArrayList<String>();
 		try {
@@ -111,6 +120,96 @@ public class DeploymentService {
 		}
 	}
 
+	private boolean generateSpellRuleFile(String storeId) throws DaoException {
+		boolean success = false;
+		Writer fw = null;
+		File tmpFile = null;
+		String fileName = null;
+		
+		try {
+			// TODO: read from new config
+			fileName = ConfigManager.getInstance().getPublishedDidYouMeanPath(storeId);
+			if (StringUtils.isBlank(fileName)) {
+				return false;
+			}
+			tmpFile = new File(fileName + "_tmp");
+			tmpFile.getParentFile().mkdirs();
+			fw = new BufferedWriter(new FileWriter(tmpFile));
+			List<SpellRule> spellRules = daoService.getActiveSpellRules(storeId);
+			for (SpellRule rule: spellRules) {
+				fw.write(rule.getRuleId());
+				if (rule.getSearchTerms()!= null) {
+					for (String searchTerm: rule.getSearchTerms()) {
+						if (StringUtils.isNotEmpty(searchTerm)) {
+							fw.write('\t');
+							fw.write(searchTerm);
+							fw.write('\t');
+						}
+					}
+				}
+				if (rule.getSuggestions()!= null) {
+					for (String suggestion: rule.getSuggestions()) {
+						if (StringUtils.isNotEmpty(suggestion)) {
+							fw.write((char)0x0B);
+							fw.write(suggestion);
+							fw.write((char)0x0B);
+						}
+					}
+				}
+				fw.append("\n");
+			}
+			success = true;
+		} catch (IOException e) {
+			logger.error(String.format("Failed to generate spell rule for Store %s", storeId), e);
+		}
+		finally {
+			if (fw != null) {
+				try { fw.close(); } catch (IOException e) {}
+			}
+		}
+		
+		// rename file to actual file
+		if (StringUtils.isNotBlank(fileName) && success) {
+			File actualFile = new File(fileName);
+			actualFile.delete();
+			success = tmpFile.renameTo(actualFile);
+		}
+		
+		return success;
+	}
+
+	private boolean publishSpellRule(String storeId) throws DaoException {
+		boolean success = false;
+		try {
+			SpellRules rules = daoService.getSpellRules(storeId);
+			List<SpellRuleXml> newRules = new ArrayList<SpellRuleXml>(rules.selectRulesByStatus("new"));
+			List<SpellRuleXml> modifiedRules = new ArrayList<SpellRuleXml>(rules.selectRulesByStatus("modified"));
+			List<SpellRuleXml> deletedRules = new ArrayList<SpellRuleXml>(rules.selectRulesByStatus("deleted"));
+			
+			for (SpellRuleXml rule: newRules) {
+				rule.setStatus("published");
+			}
+			for (SpellRuleXml rule: modifiedRules) {
+				rule.setStatus("published");
+			}
+			for (SpellRuleXml rule: deletedRules) {
+				rules.deletePhysically(rule);
+			}
+			
+			daoService.saveSpellRules(storeId);
+			daoService.reloadSpellRules(storeId);
+			
+			ConfigManager.getInstance().setPublishedStoreLinguisticSetting(storeId, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(storeId)));
+			generateSpellRuleFile(storeId);
+			
+			success = true;
+		} catch (Exception e) {
+			logger.error(String.format("Failed to publish spell rule for Store %s", storeId), e);
+			success = false;
+		}
+		return success;
+	}
+	
 	@RemoteMethod
 	public List<String> unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
@@ -219,7 +318,11 @@ public class DeploymentService {
 				ruleEntity = RuleEntity.find(ruleType);
 				deploymentModel.setPublished(1);
 				publishedRuleStatusIdList.add(ruleStatusIdList[i]);
-				if(daoService.createPublishedVersion(store, ruleEntity, ruleId, username, null, comment)) {
+				String name = null;
+				if (RuleEntity.SPELL.equals(ruleEntity)) {
+					name = "Did You Mean Rules";
+				}
+				if(daoService.createPublishedVersion(store, ruleEntity, ruleId, username, name, comment)) {
 					daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
 					logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));	
 					if (isAutoExport) {
@@ -247,12 +350,14 @@ public class DeploymentService {
 	@RemoteMethod
 	public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
+		String userName = UtilityService.getUsername();
+		String storeName = UtilityService.getStoreName();
 		try {
-			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType));
+			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
 			return publishRuleNoLock(ruleType, ruleRefIdList, comment, ruleStatusIdList);
 		} finally {
 			if (obtainedLock) {
-				UtilityService.releasePublishLock(RuleEntity.find(ruleType));
+				UtilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
 			}
 		}
 	}
@@ -260,6 +365,12 @@ public class DeploymentService {
 	@SuppressWarnings("unchecked")
 	private Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
+			
+			// insert custom handling for linguistics rules here
+			if (RuleEntity.SPELL.equals(RuleEntity.find(ruleType))) {
+				publishSpellRule(UtilityService.getStoreId());
+			}
+			
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
 			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), DateTime.now());
 
@@ -276,8 +387,10 @@ public class DeploymentService {
 	@RemoteMethod
 	public RecordSet<DeploymentModel> unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
+		String userName = UtilityService.getUsername();
+		String storeName = UtilityService.getStoreName();		
 		try {
-			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType));
+			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
 			//clean list, only approved rules should be published
 			List<String> cleanList = null;
 			List<String> publishedRuleIds = new ArrayList<String>();
@@ -308,7 +421,7 @@ public class DeploymentService {
 			return new RecordSet<DeploymentModel>(deployList,deployList.size());
 		} finally {
 			if (obtainedLock) {
-				UtilityService.releasePublishLock(RuleEntity.find(ruleType));
+				UtilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
 			}
 		}
 	}

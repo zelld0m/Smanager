@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
@@ -24,6 +25,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
@@ -63,19 +65,28 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	
 	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
-		if (ruleVersionListXml!=null) {
+		if (ruleVersionListXml != null) {
+
+			// keep versions separate for Did You Mean rules
+			// TODO: create a shells cript that does housekeeping to delete/archive older files
+			List<?> versions = ruleVersionListXml.getVersions();
+			if (CollectionUtils.isNotEmpty(versions)) {
+				RuleEntity ruleEntity = ((RuleXml)versions.get(0)).getRuleEntity();
+				if (ruleEntity != null && ruleEntity.equals(RuleEntity.SPELL)) {
+					RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId + JodaDateTimeUtil.formatDateTimeFromPattern("_yyyyMMdd_hhmmss", DateTime.now()), ruleVersionListXml);
+				}
+				versions.clear();
+			}
+			
 			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
 				return false;
 			}
 			
-			List<?> versions = ruleVersionListXml.getVersions();
-			int index = -1;
-			
+			versions = ruleVersionListXml.getVersions();
 			if(versions!=null){
-				index = versions.size()-1;
-				RuleXml ruleXml = (RuleXml)versions.get(index);
-				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(getRuleEntity().name(), store, ruleId);
-				ruleXml.setRuleStatus(ruleStatus);
+				RuleXml latestRuleXml = (RuleXml)versions.get(versions.size() - 1);
+				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(getRuleEntity().getCode()), store, ruleId);
+				latestRuleXml.setRuleStatus(ruleStatus);
 			}
 		}
 		return RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
@@ -88,9 +99,13 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	public String getRuleVersionFilename(String store, String ruleId) {
 		return RuleVersionUtil.getRuleVersionFilename(store, getRuleEntity(), StringUtil.escapeKeyword(ruleId));
 	}
-	
+
+	public boolean deleteRuleVersion(String store, String ruleId, String username, long version) {
+	    return deleteRuleVersion(store, ruleId, username, version, false);
+	}
+
 	@SuppressWarnings("unchecked")
-	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version){
+	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version, boolean physical){
 
 		FileWriter writer = null;
 		try {
@@ -105,15 +120,24 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 
 			List<RuleXml> versions = (List<RuleXml>) prefsJaxb.getVersions();
 
-			CollectionUtils.forAllDo(versions, new Closure(){
-				public void execute(Object o) {
-					if(((T)o).getVersion() == version){
-						((T)o).setDeleted(true);
-						((T)o).setLastModifiedBy(username);
-						((T)o).setLastModifiedDateTime(new DateTime());
-					}
-				};
-			});
+			if (physical) {
+	            CollectionUtils.filter(versions, new Predicate() {
+	                @Override
+	                public boolean evaluate(Object o) {
+	                    return ((T) o).getVersion() != version;
+	                }
+	            });
+			} else {
+    			CollectionUtils.forAllDo(versions, new Closure(){
+    				public void execute(Object o) {
+    					if(((T)o).getVersion() == version){
+    						((T)o).setDeleted(true);
+    						((T)o).setLastModifiedBy(username);
+    						((T)o).setLastModifiedDate(DateTime.now());
+    					}
+    				};
+    			});
+			}
 
 			prefsJaxb.setVersions(versions);
 			Marshaller m = context.createMarshaller();

@@ -60,7 +60,7 @@ public class ExcludeDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_TYPE_ID, Types.VARCHAR));
 		}
@@ -75,8 +75,8 @@ public class ExcludeDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
@@ -94,7 +94,7 @@ public class ExcludeDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPIRY_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
@@ -141,7 +141,7 @@ public class ExcludeDAO {
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}

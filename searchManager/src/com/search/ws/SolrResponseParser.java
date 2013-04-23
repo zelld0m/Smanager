@@ -422,7 +422,7 @@ public abstract class SolrResponseParser {
 		return StringUtils.replaceOnce(requestPath, "select", "spellCheckCompRH");
 	}
 	
-    public void setMaxSuggestCount(Integer maxSuggestCount) {
+    public void setMaxSuggestCount(int maxSuggestCount) {
         this.maxSuggestCount = maxSuggestCount;
     }
 }

@@ -14,8 +14,8 @@ public class ModelBean implements Serializable {
 	protected String comment;
 	protected String createdBy;
 	protected String lastModifiedBy;
-	protected DateTime createdDateTime;
-	protected DateTime lastModifiedDateTime;
+	protected DateTime createdDate;
+	protected DateTime lastModifiedDate;
 	
 	public String getComment() {
 		return comment;
@@ -40,36 +40,36 @@ public class ModelBean implements Serializable {
 	public void setLastModifiedBy(String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
-	
-	public DateTime getCreatedDateTime() {
-		return createdDateTime;
+
+	public DateTime getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setCreatedDateTime(DateTime createdDateTime) {
-		this.createdDateTime = createdDateTime;
+	public void setCreatedDate(DateTime createdDate) {
+		this.createdDate = createdDate;
 	}
 
-	public DateTime getLastModifiedDateTime() {
-		return lastModifiedDateTime;
+	public DateTime getLastModifiedDate() {
+		return lastModifiedDate;
 	}
 
-	public void setLastModifiedDateTime(DateTime lastModifiedDateTime) {
-		this.lastModifiedDateTime = lastModifiedDateTime;
+	public void setLastModifiedDate(DateTime lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
 	}
-	
+
 	public String getFormattedCreatedDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDateTime(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getFormattedLastModifiedDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDateTime(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getFormattedCreatedDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDateTime(), JodaPatternType.DATE);
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
 	}
 	
 	public String getFormattedLastModifiedDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDateTime(), JodaPatternType.DATE);
+		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE);
 	}
 }

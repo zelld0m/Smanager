@@ -33,6 +33,8 @@ public class ReportModel<T extends ReportBean<?>> {
     private List<ReportField> reportFields = new ArrayList<ReportField>();
     private Object[][] data;
     
+    private Map<ReportField, Method> methodMap = new HashMap<ReportField, Method>();
+    
     private Comparator<ReportField> reportFieldComparator = new Comparator<ReportField>() {
 		@Override
 		public int compare(ReportField field1, ReportField field2) {
@@ -56,31 +58,39 @@ public class ReportModel<T extends ReportBean<?>> {
 	}
 	
 	private void process() {
-		Map<ReportField, Method> methodMap = new HashMap<ReportField, Method>();
 		for (Method method: beanClass.getMethods()) {
 			ReportField field = method.getAnnotation(ReportField.class);
 			if (field != null) {
 				methodMap.put(field, method);
 			}
 		}
-		int recordCount = records == null ? 0 : records.size();
-		int columnCount = methodMap.size();
-		
-		reportFields.addAll(methodMap.keySet());
 
-		Collections.sort(reportFields, reportFieldComparator);
-		
-		List<ReportField> columns = getColumns();
-		data = new Object[recordCount][columnCount];
-		for (int i = 0; i < recordCount; i++) {
-			for (int j = 0; j < columnCount; j++) {
-				try {
-					data[i][j] = methodMap.get(columns.get(j)).invoke(records.get(i));
-				} catch (Exception e) {
-					logger.error("Failed to get value for field", e);
-				}
-			}
-		}
+        reportFields.addAll(methodMap.keySet());
+        Collections.sort(reportFields, reportFieldComparator);
+        collectData();
+	}
+
+    private void collectData() {
+        int recordCount = records == null ? 0 : records.size();
+        int columnCount = methodMap.size();
+
+        List<ReportField> columns = getColumns();
+        data = new Object[recordCount][columnCount];
+        for (int i = 0; i < recordCount; i++) {
+            for (int j = 0; j < columnCount; j++) {
+                try {
+                    data[i][j] = methodMap.get(columns.get(j)).invoke(records.get(i));
+                } catch (Exception e) {
+                    logger.error("Failed to get value for field", e);
+                }
+            }
+        }
+    }
+
+	public final void setData(SubReportHeader subReportHeader, List<T> records) {
+	    this.subReportHeader = subReportHeader;
+	    this.records = records;
+	    collectData();
 	}
 
 	public List<ReportField> getColumns() {

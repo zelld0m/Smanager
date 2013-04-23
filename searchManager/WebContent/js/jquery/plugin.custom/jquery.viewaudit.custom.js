@@ -67,7 +67,7 @@
 			for (var i = 0; i < data.list.length; i++) {
 				var $item = data.list[i];
 				var auditEntryHTML = base.contentHolder.find('div#auditEntryTemplate').html();
-				auditEntryHTML = auditEntryHTML.replace("%%timestamp%%", $.defaultIfBlank($item.formatDateTimeUsingConfig,"Date Not Available"));
+				auditEntryHTML = auditEntryHTML.replace("%%timestamp%%", $.defaultIfBlank($item["formattedCreatedDateTime"],"Date Not Available"));
 				auditEntryHTML = auditEntryHTML.replace("%%commentor%%", $.defaultIfBlank($item.username,"User not available"));
 				auditEntryHTML = auditEntryHTML.replace("%%comment%%", $.defaultIfBlank($item.details, "").replace(new RegExp("&",'g'),"&amp;"));
 				auditItems += auditEntryHTML;
@@ -104,13 +104,13 @@
 					title: { text: base.options.title, button: true }
 				},
 				position: {
-					at: 'right center',
-					my: 'left center',
+					at: 'right top',
+					my: 'left top',
 					target: $(target)
 				},
 				show:{
 					ready: true,
-					solo: true,
+					solo: true
 				},
 				style: {
 					width: 'auto'

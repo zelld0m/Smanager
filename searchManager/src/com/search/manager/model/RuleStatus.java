@@ -26,22 +26,22 @@ public class RuleStatus extends ModelBean {
 	private String 		description;
 
 	/* Rule Submission / Approval Request */
-	private DateTime 	lastRequestDateTime;
+	private DateTime 	lastRequestDate;
 	private String 		requestBy;
 	private String 		updateStatus;
 
 	/* Approval */
-	private DateTime 	lastApprovalDateTime;
+	private DateTime 	lastApprovalDate;
 	private String 		approvalStatus;
 	private String 		approvalBy;
 
 	/* Publishing */
-	private DateTime 	lastPublishedDateTime;
+	private DateTime 	lastPublishedDate;
 	private String 		publishedBy;
 	private String 		publishedStatus;
 
 	/* Export */
-	private DateTime 	lastExportDateTime;
+	private DateTime 	lastExportDate;
 	private String 		exportBy;
 	private ExportType	exportType;
 
@@ -69,11 +69,11 @@ public class RuleStatus extends ModelBean {
 		this.approvalStatus = approvalStatus;
 		this.updateStatus = updateStatus;
 		this.publishedStatus = publishedStatus;
-		this.lastPublishedDateTime = lastPublishedDateTime;
+		this.lastPublishedDate = lastPublishedDateTime;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = modifiedBy;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = modifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = modifiedDateTime;
 	}
 
 	public RuleStatus(RuleEntity ruleEntity, String storeId, String ruleId, String ruleName, String createdBy, String modifiedBy, 
@@ -103,13 +103,13 @@ public class RuleStatus extends ModelBean {
 		this(ruleStatusId, ruleTypeId, ruleRefId, storeId, description, approvalStatus, updateStatus,
 				publishedStatus, lastPublishedDateTime, createdBy, modifiedBy, dateCreated, dateModified);
 		this.requestBy = requestBy;
-		this.lastRequestDateTime = lastRequestDateTime;
+		this.lastRequestDate= lastRequestDateTime;
 		this.approvalBy = approvalBy;
-		this.lastApprovalDateTime = lastApprovalDateTime;
+		this.lastApprovalDate= lastApprovalDateTime;
 		this.publishedBy = publishedBy;
 		this.exportType = exportType;
 		this.exportBy = exportBy;
-		this.lastExportDateTime = lastExportDateTime;
+		this.lastExportDate= lastExportDateTime;
 	}
 
 	public String getRuleStatusId() {
@@ -250,52 +250,68 @@ public class RuleStatus extends ModelBean {
 	public String getRuleName(){
 		return this.description;
 	}
-
-	public DateTime getLastRequestDateTime() {
-		return lastRequestDateTime;
-	}
-
-	public void setLastRequestDateTime(DateTime lastRequestDateTime) {
-		this.lastRequestDateTime = lastRequestDateTime;
-	}
-
-	public DateTime getLastApprovalDateTime() {
-		return lastApprovalDateTime;
-	}
-
-	public void setLastApprovalDateTime(DateTime lastApprovalDateTime) {
-		this.lastApprovalDateTime = lastApprovalDateTime;
-	}
-
-	public DateTime getLastPublishedDateTime() {
-		return lastPublishedDateTime;
-	}
-
-	public void setLastPublishedDateTime(DateTime lastPublishedDateTime) {
-		this.lastPublishedDateTime = lastPublishedDateTime;
-	}
-
-	public DateTime getLastExportDateTime() {
-		return lastExportDateTime;
-	}
-
-	public void setLastExportDateTime(DateTime lastExportDateTime) {
-		this.lastExportDateTime = lastExportDateTime;
-	}
 	
+	public DateTime getLastRequestDate() {
+		return lastRequestDate;
+	}
+
+	public void setLastRequestDate(DateTime lastRequestDate) {
+		this.lastRequestDate = lastRequestDate;
+	}
+
+	public DateTime getLastApprovalDate() {
+		return lastApprovalDate;
+	}
+
+	public void setLastApprovalDate(DateTime lastApprovalDate) {
+		this.lastApprovalDate = lastApprovalDate;
+	}
+
+	public DateTime getLastPublishedDate() {
+		return lastPublishedDate;
+	}
+
+	public void setLastPublishedDate(DateTime lastPublishedDate) {
+		this.lastPublishedDate = lastPublishedDate;
+	}
+
+	public DateTime getLastExportDate() {
+		return lastExportDate;
+	}
+
+	public void setLastExportDate(DateTime lastExportDate) {
+		this.lastExportDate = lastExportDate;
+	}
+
 	public String getFormattedLastRequestDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDateTime(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDate(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getFormattedLastApprovalDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDateTime(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDate(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getFormattedLastPublishedDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDateTime(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDate(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getFormattedLastExportDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDateTime(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDate(), JodaPatternType.DATE_TIME);
+	}
+
+	public String getFormattedLastRequestDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDate(), JodaPatternType.DATE);
+	}
+	
+	public String getFormattedLastApprovalDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDate(), JodaPatternType.DATE);
+	}
+	
+	public String getFormattedLastPublishedDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDate(), JodaPatternType.DATE);
+	}
+	
+	public String getFormattedLastExportDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDate(), JodaPatternType.DATE);
 	}
 }

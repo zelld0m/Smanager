@@ -144,7 +144,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IP, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_TIMEZONE_ID, Types.VARCHAR));
 		}
@@ -204,7 +204,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IP, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_TIMEZONE_ID, Types.VARCHAR));
 		}
@@ -228,7 +228,7 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_HAS_LOGGED_OUT, null);
 			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, BooleanUtils.toString(user.isCredentialsNonExpired(),"0","1", null));
 			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, BooleanUtils.toString(user.isAccountNonLocked(),"1","0", null));
-			inputs.put(DAOConstants.PARAM_LAST_ACCESS_DATE, JodaDateTimeUtil.toSqlDate(user.getLastAccessDateTime()));
+			inputs.put(DAOConstants.PARAM_LAST_ACCESS_DATE, JodaDateTimeUtil.toSqlDate(user.getLastAccessDate()));
 			inputs.put(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, user.getSuccessiveFailedLogin());
 			inputs.put(DAOConstants.PARAM_IP, user.getIp());
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());

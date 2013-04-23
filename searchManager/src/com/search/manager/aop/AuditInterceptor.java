@@ -97,7 +97,7 @@ public class AuditInterceptor {
 		AuditTrail auditTrail = new AuditTrail();
 		auditTrail.setEntity(auditable.entity().toString());
 		auditTrail.setOperation(auditable.operation().toString());
-		auditTrail.setDateTime(new DateTime());
+		auditTrail.setCreatedDate(new DateTime());
 		auditTrail.setUsername(UtilityService.getUsername());
 
 		switch(auditable.entity()) {

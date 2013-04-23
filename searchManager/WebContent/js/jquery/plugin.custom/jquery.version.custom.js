@@ -42,7 +42,10 @@
 						base.api = api;
 						base.contentHolder = $("div", api.elements.content);
 						base.contentHolder.html(base.getTemplate());
-						base.contentHolder.find("#versionWrapper").before(base.getItemListTemplate());
+						
+						if (base.options.enableCompare) {
+							base.contentHolder.find("#versionWrapper").before(base.getItemListTemplate());
+						}
 						base.getAvailableVersion();
 						base.addSaveButtonListener();
 					},
@@ -440,19 +443,36 @@
 				click:function(e){
 					jConfirm("Delete restore point version " + e.data.item["name"] + "?" , "Delete Version", function(result){
 						if(result){
-							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
-								callback:function(data){
-									if(data){
-										jAlert("Rule version "+e.data.item["name"]+" successfully deleted.","Delete Version");
-										$content.find("li#ver_" + e.data.item["version"]).remove();
-										$content.find("div#vHeader_" + e.data.item["version"]).remove();
-										base.getAvailableVersion();
+							if (base.options.deletePhysically) {
+								RuleVersionServiceJS.deleteRuleVersionPhysically(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
+									callback:function(data){
+										if(data){
+											jAlert("Rule version "+e.data.item["name"]+" successfully deleted.","Delete Version");
+											$content.find("li#ver_" + e.data.item["version"]).remove();
+											$content.find("div#vHeader_" + e.data.item["version"]).remove();
+											base.getAvailableVersion();
+										}
+										else{
+											jAlert("Failed to delete rule version "+e.data.item["name"] + ".","Delete Version");
+										}
 									}
-									else{
-										jAlert("Failed to delete rule version "+e.data.item["name"] + ".","Delete Version");
+								});
+								
+							} else {
+								RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
+									callback:function(data){
+										if(data){
+											jAlert("Rule version "+e.data.item["name"]+" successfully deleted.","Delete Version");
+											$content.find("li#ver_" + e.data.item["version"]).remove();
+											$content.find("div#vHeader_" + e.data.item["version"]).remove();
+											base.getAvailableVersion();
+										}
+										else{
+											jAlert("Failed to delete rule version "+e.data.item["name"] + ".","Delete Version");
+										}
 									}
-								}
-							});
+								});
+							}
 						}
 					});
 				}
@@ -491,9 +511,45 @@
 			});
 		};
 
+		base.addDownloadVersionListener = function(tr, item){
+			var $tr = tr;
+
+			$tr.find(".downloadIcon").download({
+				headerText:"Download Version " + item['version'],
+				moduleName: base.options.moduleName,
+				ruleType: base.options.ruleType,  
+				rule: base.options.rule,
+				solo: $(".internal-tooltip"),
+				classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped internal-tooltip',
+				requestCallback:function(e) {
+					base.downloadVersion(e, item);
+				}
+			});
+		};
+
+		base.downloadVersion = function(e, item){
+			var params = new Array();
+			var url = document.location.pathname + "/version/xls/" + item['version'];
+			var urlParams = "";
+			var count = 0;
+
+			params["filename"] = e.data.filename;
+			params["type"] = e.data.type;
+			params["keyword"] = base.options.rule["ruleName"];
+			params["id"] = base.options.rule["ruleId"];
+			params["clientTimezone"] = +new Date();
+
+			for(var key in params){
+				if (count>0) urlParams +='&';
+				urlParams += (key + '=' + encodeURIComponent(params[key]));
+				count++;
+			};
+
+			document.location.href = url + '?' + urlParams;
+		};
+
 		base.getAvailableVersion = function(){
 			var $content = base.contentHolder;
-			var $table = $content.find("table#versionList");
 			base.ruleMap = {};
 
 			$content.find("#preloader").show();
@@ -502,61 +558,78 @@
 			$content.find("textarea#notes").val('');
 			
 			$content.find("#compareSection").hide();
-			RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
-				callback: function(data){
-					if(data!=null){
-						base.ruleMap["current"] = data;
-					}
-				},
-				postHook: function(){
-					$content.find("#preloader").hide();
-					$content.find("#compareSection").show();
-					RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.rule["ruleId"], {
-						callback: function(data){
-							$table.find("tr.itemRow:not(#itemPattern)").remove();
-
-							if(data.length>0){
-								$table.find("tr#empty_row").hide();
-							}else{
-								$table.find("tr#empty_row").show();
-							}
-
-							for (var i in data){
-								var item = data[i];
-								var version = item["version"];
-								var $tr = $table.find("tr#itemPattern").clone();
-
-								if(!item["deleted"]){
-									base.ruleMap[version] = item;
-									$tr.prop("id", "item" + $.formatAsId(version));
-									$tr.find("td#itemId").html(item["version"]);
-									$tr.find("td#itemDate").html(item["formattedCreatedDateTime"]);
-									$tr.find("td#itemInfo > p#name").html(item["name"]);
-									$tr.find("td#itemInfo > p#notes").html(item["notes"]);
-									base.addDeleteVersionListener($tr, item);
-									base.addRestoreVersionListener($tr, item);
-									$tr.show();
-									$table.append($tr);
-								}
-							}
-							$table.find("tr.itemRow:not(#itemPattern):even").addClass("alt");
-						},
-						postHook:function(){
-							$table.find("tr#preloader").remove();
-							base.addCompareButtonListener();
-							$table.find("input.selectOne").off().on({
-								click:function(e){
-									if($(this).is(':checked')==true) {
-										$table.find("input.selectOne").each(function() {
-											$(this).prop('checked',false);
-										});
-
-										$(this).prop('checked',true);
-									};
-								}
-							});
+			
+			if (base.options.enableCompare) {
+				RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
+					callback: function(data){
+						if(data!=null){
+							base.ruleMap["current"] = data;
 						}
-					});
+					},
+					postHook: function(){
+						$content.find("#preloader").hide();
+						$content.find("#compareSection").show();
+						base.getRuleVersions();
+					}
+				});
+			} else {
+				base.getRuleVersions();
+			}
+		};
+
+		base.getRuleVersions = function() {
+			var $content = base.contentHolder;
+			var $table = $content.find("table#versionList");
+			RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.rule["ruleId"], {
+				callback: function(data){
+					$table.find("tr.itemRow:not(#itemPattern)").remove();
+
+					if(data.length>0){
+						$table.find("tr#empty_row").hide();
+					}else{
+						$table.find("tr#empty_row").show();
+					}
+
+					for (var i in data){
+						var item = data[i];
+						var version = item["version"];
+						var $tr = $table.find("tr#itemPattern").clone();
+
+						if(!item["deleted"]){
+							base.ruleMap[version] = item;
+							$tr.prop("id", "item" + $.formatAsId(version));
+
+							$tr.find("td#itemId").html(item["version"]);
+							$tr.find("td#itemDate").text(item["formattedCreatedDateTime"]);
+							$tr.find("td#itemInfo > p#name").html(item["name"]);
+							$tr.find("td#itemInfo > p#notes").html(item["notes"]);
+
+							base.addDeleteVersionListener($tr, item);
+							base.addRestoreVersionListener($tr, item);
+							base.addDownloadVersionListener($tr, item);
+							$tr.show();
+							$table.append($tr);
+						}
+					}
+					$table.find("tr.itemRow:not(#itemPattern):even").addClass("alt");
+				},
+				postHook:function(){
+					$table.find("tr#preloader").remove();
+					
+					if (base.options.enableCompare) {
+						base.addCompareButtonListener();
+						$table.find("input.selectOne").off().on({
+							click:function(e){
+								if($(this).is(':checked')==true) {
+									$table.find("input.selectOne").each(function() {
+										$(this).prop('checked',false);
+									});
+
+									$(this).prop('checked',true);
+								};
+							}
+						});
+					}
 				}
 			});
 		};
@@ -564,7 +637,12 @@
 		base.getTemplate = function(){
 			var template  = '';
 
-			template += '<div style="width:845px">';
+			if (base.options.enableCompare) {
+				template += '<div style="width:845px">';
+			} else {
+				template += '<div>';
+			}
+
 			template += '<div id="versionWrapper" style="floatL w400">';		
 
 			template += '	<div id="version" class="floatL w400">';
@@ -572,11 +650,18 @@
 			template += '			<table class="tblItems w100p marT5">';
 			template += '				<tbody>';
 			template += '					<tr>';
-			template += '						<th class="displayBlock w60">';
-			template += '							<a id="compareBtn" href="javascript:void(0);" class="btnGraph btnCompare clearfix">';
-			template += '								<div class="btnGraph btnCompare"></div>';
-			template += '							</a>';
-			template += '						</th>';
+
+			if (base.options.enableCompare) {
+				template += '						<th class="displayBlock w60">';
+				template += '							<a id="compareBtn" href="javascript:void(0);" class="btnGraph btnCompare clearfix">';
+				template += '								<div class="btnGraph btnCompare"></div>';
+				template += '							</a>';
+				template += '						</th>';
+			} else {
+				template += '						<th width="48px">';
+				template += '						</th>';
+			}
+
 			template += '						<th class="w160">Name</th>';
 			template += '						<th class="w135">Date</th>';
 			template += '						<th class="w55"></th>';
@@ -588,16 +673,28 @@
 			template += '			<table id="versionList" class="tblItems w100p">';
 			template += '				<tbody>';
 			template += '					<tr id="itemPattern" class="itemRow" style="display: none">';
-			template += '						<td width="24px" class="txtAC" id="itemSelect">';
-			template += '	                   	<input id="select" type="radio" class="selectOne"/>';
-			template += '						</td>';
-			template += '						<td width="28px" class="txtAC" id="itemId"></td>';
+
+			if (base.options.enableCompare) {
+				template += '						<td width="24px" class="txtAC" id="itemSelect">';
+				template += '	                   	<input id="select" type="radio" class="selectOne"/>';
+				template += '						</td>';
+				template += '						<td width="28px" class="txtAC" id="itemId"></td>';
+			} else {
+				template += '						<td width="52px" class="txtAC" id="itemId" colspan="2"></td>';
+			}
+
 			template += '						<td width="120px" class="txtAC" id="itemInfo">';
 			template +=	'							<p id="name" class="w120 breakWord fbold"></p>';
 			template +=	'							<p id="notes" class="w120 fsize11 breakWord"></p>';
 			template += '						</td>';
 			template += '						<td width="120px" class="txtAC" id="itemDate"></td>';
-			template += '						<td width="auto" style="min-width:40px" class="txtAC">';
+			if (base.options.enableSingleVersionDownload) {
+				template += '						<td width="auto" style="min-width:60px" class="txtAC">';
+				template += '                           <label class="downloadIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Download" title="Download" src="' + GLOBAL_contextPath + '/images/iconDownload.png" class="top2 posRel"></label>';
+			} else {
+				template += '						<td width="auto" style="min-width:40px" class="txtAC">';
+			}
+			
 			template += '							<label class="restoreIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
 			template += '							<label class="deleteIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			template += '						</td>';
@@ -781,6 +878,9 @@
 			rule: null,
 			limit: 3,
 			locked: true,
+			deletePhysically: false,
+			enableCompare: true,
+			enableSingleVersionDownload: false,
 			beforeRequest: function(){},
 			afterRequest: function(){},
 			preRestoreCallback: function(base){},

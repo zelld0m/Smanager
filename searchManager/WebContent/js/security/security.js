@@ -406,12 +406,12 @@
 											$tr.find("td#userInfo > span#email").text(list[i].email);
 											$tr.find("td#role > span").text(list[i].groupId);
 
-											$tr.find("td#memberSince > span").text(list[i].createdDateTime!=null? list[i]["formattedCreatedDateTime"]: "");
+											$tr.find("td#memberSince > span").text(list[i]["createdDate"]!=null? list[i]["formattedCreatedDateTime"]: "");
 											$tr.find("td#status > span#nonLocked").text(list[i].isAccountNonLocked==true? "Active" : "Locked");
 											$tr.find("td#status > span#nonExpired").text(list[i].isAccountNonExpired==true? "Valid" : "Expired");
 											$tr.find("td#validity > span").text(list[i].thruDate!=null? list[i]["formattedThruDate"]: "");
 
-											$tr.find("td#lastAccess > span#dateAccess").text(list[i].lastAccessDateTime==null? "" : list[i]["formattedLastAccessDateTime"]);
+											$tr.find("td#lastAccess > span#dateAccess").text(list[i]["lastAccessDate"]==null? "" : list[i]["formattedLastAccessDateTime"]);
 											$tr.find("td#lastAccess > span#ipAccess").text(list[i].ip);
 											if (i%2!=0) $tr.addClass("alt"); 
 											$table.append($tr);

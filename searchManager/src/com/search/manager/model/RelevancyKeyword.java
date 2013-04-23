@@ -27,8 +27,8 @@ public class RelevancyKeyword extends ModelBean {
 		this.priority = priority;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 	}
 	
 	public void setKeyword(Keyword keyword) {

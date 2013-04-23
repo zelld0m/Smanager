@@ -37,7 +37,7 @@ public class ExcludeRuleXml extends RuleXml implements ProductDetailsAware{
 		this.setVersion(version);
 		this.keyword = keyword;
 		this.excludeItem = excludeItem;
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 	}
 	
 	public ExcludeRuleXml(String store, String keyword, List<ExcludeItemXml> excludeItem){

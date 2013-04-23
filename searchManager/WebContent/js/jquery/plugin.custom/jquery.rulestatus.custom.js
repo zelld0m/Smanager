@@ -27,14 +27,12 @@
 						}
 
 						base.$el.find("#submitForApprovalTemplate").show();
-						base.$el.find("div#statusHolder").hide();
-
+						
 						if($.isNotBlank(ruleStatus["approvalStatus"])){
 							base.$el.find("div#statusHolder").show();
-							base.$el.find("span#status").html(getRuleNameSubTextStatus(ruleStatus));
+							base.$el.find("span#status").empty().append(getRuleNameSubTextStatus(ruleStatus));
 						}
 
-						base.$el.find("div#publishHolder").hide();
 						if($.isNotBlank(ruleStatus["formattedLastPublishedDateTime"])){
 							base.$el.find("div#publishHolder").show();
 							base.$el.find("span#statusDate").empty().append(ruleStatus["formattedLastPublishedDateTime"]);
@@ -43,10 +41,10 @@
 						base.$el.find("a#submitForApprovalBtn").show();
 						if(ruleStatus["locked"]){
 							base.$el.find("span#statusMode").append("[ Read-Only ]");
-							base.$el.find("a#submitForApprovalBtn").hide();
+							base.$el.find("a#submitForApprovalBtn").parent().remove();
 						}
-						base.$el.find("div#versionHolder").show();
 
+						base.$el.find("div#versionHolder").show();
 						if(base.options.ruleStatus!=null && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
 							base.$el.find("div#commentHolder").show();
 							base.$el.find("div#commentHolder span#commentIcon").off().on({
@@ -89,6 +87,9 @@
 									ruleType: base.options.ruleType,  
 									rule: base.options.rule,
 									locked: e.data.selectedRuleStatus.locked || $.endsWith(e.data.rule.ruleId, "_default") || !e.data.allowModify,
+									deletePhysically: base.options.deleteVersionsPhysically,
+									enableCompare: base.options.enableCompare,
+									enableSingleVersionDownload: base.options.enableSingleVersionDownload,
 									preRestoreCallback: function(el){
 										base.options.preRestoreCallback(el);
 									},
@@ -202,7 +203,7 @@
 			template += '				</label>';
 			template += '			</div>';
 
-			template += '			<div id="statusHolder">';
+			template += '			<div id="statusHolder" style="display:none">';
 			template += '				<label class="floatL wAuto marRL5 fLgray2">|</label>';
 			template += '				<label class="floatL wAuto">Status:</label>';
 			template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
@@ -211,7 +212,7 @@
 			template += '				</label>';
 			template += '			</div>';
 
-			template += '			<div id="publishHolder">';
+			template += '			<div id="publishHolder" style="display:none">';
 			template += '				<label class="floatL wAuto marRL5 fLgray2">|</label>';
 			template += '				<label class="floatL wAuto">Last Published:</label>';
 			template += '				<label class="padL5 fLgray fsize11">';
@@ -247,6 +248,9 @@
 			enableVersion: false,
 			authorizeRuleBackup: false,
 			authorizeSubmitForApproval: false,
+			deleteVersionsPhysically: false,
+			enableCompare: true,
+			enableSingleVersionDownload: false,
 			beforeSubmitForApprovalRequest: function(){}, 
 			afterSubmitForApprovalRequest: function(status){}, 
 			beforeRuleStatusRequest: function(){}, 

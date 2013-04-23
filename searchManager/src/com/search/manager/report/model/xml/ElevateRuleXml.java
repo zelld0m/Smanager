@@ -39,7 +39,7 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 		this.setRuleEntity(RULE_ENTITY);
 		this.setVersion(version);
 		this.keyword = keyword;
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 		setElevateItem(eItemXml);
 	}
 	

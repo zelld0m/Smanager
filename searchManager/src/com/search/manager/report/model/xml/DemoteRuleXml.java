@@ -33,7 +33,7 @@ public class DemoteRuleXml extends RuleXml implements ProductDetailsAware {
 		this.setVersion(version);
 		this.keyword = keyword;
 		this.demoteItem = demoteItem;
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 	}
 	
 	public DemoteRuleXml(String store, String keyword, List<DemoteItemXml> demoteItem){

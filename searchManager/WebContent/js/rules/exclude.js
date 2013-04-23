@@ -130,15 +130,21 @@
 				}
 
 				if(FACET){
-
-					$li.find(".name").html($("<a>").text($item.condition["readableString"]));
+					var maxLength = 120;
+					var condition = $item.condition["readableString"];
+					if(condition != null && condition.length > maxLength) {
+						condition = condition.substring(0, maxLength) + "...";
+					}
+					$li.find(".name").html($("<a>").text(condition)).attr('title', $item.condition["readableString"]);
+					
+					// $li.find(".name").html($("<a>").text($item.condition["readableString"]));
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
 								newRecord: false,
-								item: e.data.item,
+								item: $.extend(true, {}, e.data.item),
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ExcludeServiceJS.updateExcludeFacet(self.selectedRule["ruleId"], memberId, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
@@ -266,7 +272,7 @@
 				
 				$li.find('.lastModifiedIcon').off().on({
 					mouseenter: showLastModified 
-				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDate"]});
+				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDateTime"]});
 
 				$li.find('.deleteRuleItemIcon').off().on({
 					click: function(e){

@@ -40,7 +40,7 @@ public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 		StringBuilder comments = new StringBuilder();
 		if (model.getCommentList() != null && model.getCommentList().size() > 0) {
 			for (Comment comment : model.getCommentList()) {
-				comments.append("\n").append(comment.getUsername()).append(" : ").append(comment.getCreatedDateTime()).append(" : " ).append(comment.getComment());
+				comments.append("\n").append(comment.getUsername()).append(" : ").append(comment.getCreatedDate()).append(" : " ).append(comment.getComment());
 			}
 			comments.deleteCharAt(0);
 		}

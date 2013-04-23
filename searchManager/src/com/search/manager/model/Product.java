@@ -46,8 +46,8 @@ public class Product extends ModelBean {
 		this.description = description;
 		this.imagePath = imagePath;
 		this.expiryDateTime = expiryDateTime;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 		this.comment = comment;
 		this.lastModifiedBy = lastModifiedBy;
 		this.createdBy = createdBy;
@@ -57,8 +57,8 @@ public class Product extends ModelBean {
 		super();
 		this.setEdp(e.getEdp());
 		this.setExpiryDateTime(e.getExpiryDateTime());
-		this.setCreatedDateTime(e.getCreatedDateTime());
-		this.setLastModifiedDateTime(e.getLastModifiedDateTime());
+		this.setCreatedDate(e.getCreatedDate());
+		this.setLastModifiedDate(e.getLastModifiedDate());
 		this.setComment(e.getComment());
 		this.setCondition(e.getCondition());
 		this.setLastModifiedBy(e.getLastModifiedBy());
@@ -130,14 +130,6 @@ public class Product extends ModelBean {
 
 	public void setStore(String store) {
 		this.store = store;
-	}
-	
-	public DateTime getCreatedDateTime() {
-		return createdDateTime;
-	}
-	
-	public void setCreatedDateTime(DateTime createdDateTime) {
-		this.createdDateTime = createdDateTime;
 	}
 	
 	public String getComment() {
@@ -236,6 +228,6 @@ public class Product extends ModelBean {
 	}
 	
 	public String getFormattedExpiryDate(){
-		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDateTime(),JodaPatternType.DATE);
+		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDateTime(), JodaPatternType.DATE);
 	}
 }

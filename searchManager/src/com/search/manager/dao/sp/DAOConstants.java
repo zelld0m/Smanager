@@ -22,7 +22,7 @@ public class DAOConstants {
 	public static final String SP_GET_ELEVATE_ITEM 					= "usp_Get_Elevate_Value";
 	public static final String SP_GET_NO_EXPIRY_ELEVATE 			= "usp_Get_Elevate_NoExpiry";
 	public static final String SP_UPDATE_ELEVATE 					= "usp_Update_Elevate";
-	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date";
+	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date_NEW";
 	public static final String SP_UPDATE_ELEVATE_COMMENT 			= "usp_Update_Elevate_Comment";
 	public static final String SP_APPEND_ELEVATE_COMMENT 			= "usp_Append_Elevate_Comment";
 	public static final String SP_DELETE_ELEVATE 					= "usp_Delete_Elevate";
@@ -34,12 +34,12 @@ public class DAOConstants {
 	public static final String SP_DELETE_EXCLUDE 					= "usp_Delete_Exclude";
 	public static final String SP_UPDATE_EXCLUDE_COMMENT 			= "usp_Update_Exclude_Comment";
 	public static final String SP_APPEND_EXCLUDE_COMMENT 			= "usp_Append_Exclude_Comment";
-	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date";
+	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date_NEW";
 	// DEMOTE
 	public static final String SP_ADD_DEMOTE 						= "usp_Add_Demote";
 	public static final String SP_GET_DEMOTE 						= "usp_Get_Demote";
 	public static final String SP_UPDATE_DEMOTE 					= "usp_Update_Demote";
-	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date";
+	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date_NEW";
 	public static final String SP_DELETE_DEMOTE 					= "usp_Delete_Demote";
 
 	// FACET SORT

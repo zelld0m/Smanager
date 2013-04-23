@@ -68,6 +68,9 @@ public class SearchGuiServiceImpl implements SearchGuiService {
 					case RANKING_RULE:
 						return deploymentRuleService.publishRankingRulesMap(
 								list.getStore(), ruleList);
+					case SPELL:
+						return deploymentRuleService.publishDidYouMeanRulesMap(
+								list.getStore(), ruleList);
 					default:
 						break;
 					}

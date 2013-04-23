@@ -23,6 +23,9 @@ public interface DeploymentRuleService {
 	public Map<String, Boolean> publishRankingRulesMap(String store,
 			List<String> list);
 
+	public Map<String, Boolean> publishDidYouMeanRulesMap(String store,
+			List<String> list);
+
 	public boolean loadElevateRules(String store);
 
 	public boolean loadExcludeRules(String store);

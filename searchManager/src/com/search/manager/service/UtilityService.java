@@ -21,6 +21,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTimeZone;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -59,33 +60,34 @@ public class UtilityService {
 		}
 	}
 	
-	public static boolean obtainPublishLock(RuleEntity ruleType) throws PublishLockException {
-		String username = getUsername();
-		String storeName = getStoreName();
+	public static boolean obtainPublishLock(RuleEntity ruleType, String username, String storeName) throws PublishLockException {
 		if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(storeName)) {
 			String lock = storeName + "^" + username;
 			lock = lock.intern();
+			String lockOwnerName = null;
+			String lockOwnerStore = null;
 			if (!lockService.get(ruleType).compareAndSet(null, lock)) {
 				String info = getPublishLockInfo(ruleType);
-				username = null;
-				String storeLabel = null;
 				if (StringUtils.isNotBlank(info)) {
 					String[] infoArray = info.split("\\^", 2);
 					if (infoArray.length > 0) {
 						// TODO: get store label
-						storeLabel = infoArray[0];
+						lockOwnerStore = infoArray[0];
 						if (infoArray.length > 1) {
-							username = infoArray[1];
+							lockOwnerName = infoArray[1];
 						}
 					}
 				}
+				logger.info(String.format("Unable to obtain %s publish lock for %s of %s. $s of %s is still holding the lock.", 
+						String.valueOf(ruleType), username, storeName, lockOwnerName, lockOwnerStore));
 				throw new PublishLockException(String.format("%s is currently publishing %s rules for %s, please try again in a while.", 
-						username, ruleType.toString(), storeLabel), username, storeLabel);
+						lockOwnerName, String.valueOf(ruleType), lockOwnerStore), lockOwnerName, lockOwnerStore);
 			}
+			logger.info(String.format("Obtained %s publish lock for %s of %s", String.valueOf(ruleType), username, storeName));
 			return true;
 		}
-		throw new PublishLockException(String.format("Another user is currently publishing %s rules. Please try again in a while.", 
-				ruleType != null ? ruleType.toString(): ""), null, null);
+		logger.error(String.format("Missing Info for lock. RuleType = %s, User = %s, Store = %s", String.valueOf(ruleType), username, storeName));
+		throw new PublishLockException("Please re-login and try to publish again.", null, null);
 	}
 
 	public static String getPublishLockInfo(RuleEntity ruleType) {
@@ -95,15 +97,16 @@ public class UtilityService {
 		return "";
 	}
 
-	public static boolean releasePublishLock(RuleEntity ruleType) {
-		String username = getUsername();
-		String storeName = getStoreName();
+	public static boolean releasePublishLock(RuleEntity ruleType, String username, String storeName) {
 		if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(storeName)) {
 			String lock = storeName + "^" + username;
 			lock = lock.intern();
 			boolean released = lockService.get(ruleType).compareAndSet(lock, null);
+			logger.info(String.format("%s %s lock held by %s of %s.", released ? "Released " : "Failed to release ", 
+					String.valueOf(ruleType), username, storeName));
 			return released;
 		}
+		logger.error(String.format("Missing Info for lock. RuleType = %s, User = %s, Store = %s", String.valueOf(ruleType), username, storeName));
 		return false;
 	}
 
@@ -145,9 +148,7 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static String getTimeZoneId(){
-		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-		String timeZoneId= (String)attr.getAttribute("timeZoneId", RequestAttributes.SCOPE_SESSION);
-		return timeZoneId;
+		return DateTimeZone.getDefault().getID();
 	}
 	
 	@RemoteMethod
@@ -183,12 +184,6 @@ public class UtilityService {
 		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
 	}
 	
-	@RemoteMethod
-	public static void setTimeZoneId(String timeZoneId) {
-		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-		attr.setAttribute("timeZoneId", timeZoneId, RequestAttributes.SCOPE_SESSION);
-	}
-
 	@RemoteMethod
 	public static String getSolrConfig(){
 		JSONObject json = new JSONObject();

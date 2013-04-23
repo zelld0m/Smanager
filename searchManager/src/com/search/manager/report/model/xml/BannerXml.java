@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -47,14 +46,14 @@ public class BannerXml extends RuleXml {
 			this.setThumbnailPath(banner.getThumbnailPath());
 			
 			this.setCreatedBy(banner.getCreatedBy());
-			this.setCreatedDateTime(banner.getCreatedDateTime());
+			this.setCreatedDate(banner.getCreatedDate());
 			this.setLastModifiedBy(banner.getLastModifiedBy());
-			this.setLastModifiedDateTime(banner.getLastModifiedDateTime());
+			this.setLastModifiedDate(banner.getLastModifiedDate());
 		}
 
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 	}
 	
 	public BannerXml(String store, long version, String name, String notes, String username, RuleType ruleType, 
@@ -64,7 +63,7 @@ public class BannerXml extends RuleXml {
 		this.setRuleName(ruleName);
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 		this.description = description;
 		this.linkPath = linkPath;
 		this.imagePath = imagePath;
@@ -94,9 +93,9 @@ public class BannerXml extends RuleXml {
 		this.groups = facetSortGroupXmlList;*/
 		
 		this.setCreatedBy(banner.getCreatedBy());
-		this.setCreatedDateTime(banner.getCreatedDateTime());
+		this.setCreatedDate(banner.getCreatedDate());
 		this.setLastModifiedBy(banner.getLastModifiedBy());
-		this.setLastModifiedDateTime(banner.getLastModifiedDateTime());
+		this.setLastModifiedDate(banner.getLastModifiedDate());
 	}
 
 	@XmlElementRef

@@ -55,8 +55,8 @@ public class Banner extends ModelBean {
 		this.description = description;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDateTime = createdDateTime;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 	}
 	
 	public Banner(Store store, String ruleId, String ruleName,

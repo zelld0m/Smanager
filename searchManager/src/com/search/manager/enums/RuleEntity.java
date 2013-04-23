@@ -42,7 +42,7 @@ public enum RuleEntity {
 
 	public static RuleEntity find(String name) {
 	    for (RuleEntity entity : RuleEntity.values()) {
-	        if (containsIgnoreCase(name, entity.getValues())) {
+	        if (containsIgnoreCase(name, entity.getValues()) || StringUtils.equalsIgnoreCase(entity.name(), name)) {
 	            return entity;
 	        }
 	    }

@@ -15,27 +15,16 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.search.manager.dao.SearchDaoService;
+import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Relevancy;
+import com.search.manager.model.Store;
 import com.search.manager.model.Relevancy.Parameter;
 import com.search.manager.model.StoreKeyword;
 
 public class EnterpriseSearchServlet extends SearchServlet {
 
-	@Autowired
-	@Qualifier("daoService")
-	SearchDaoService daoService;
-	@Autowired
-	@Qualifier("daoCacheService")
-	SearchDaoService daoCacheService;
-	@Autowired
-	@Qualifier("solrService")
-	SearchDaoService solrService;
-	
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger(EnterpriseSearchServlet.class);
@@ -50,14 +39,6 @@ public class EnterpriseSearchServlet extends SearchServlet {
 		"pcmallgov",
 		"enterpriseSearch"
 	};
-	
-	public void setDaoCacheService(SearchDaoService daoCacheService) {
-		this.daoCacheService = daoCacheService;
-	}
-	
-	public void setSolrService(SearchDaoService solrService) {
-		this.solrService = solrService;
-	}
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -137,7 +118,7 @@ public class EnterpriseSearchServlet extends SearchServlet {
 	
 	@Override
 	protected boolean isActiveSearchRule(String storeId, RuleEntity ruleEntity) {
-		return enterpriseSearchConfigManager.isActiveSearchRule(storeId, RuleEntity.QUERY_CLEANING);
+		return enterpriseSearchConfigManager.isActiveSearchRule(storeId, ruleEntity);
 	}
 	
 	@Override
@@ -188,4 +169,11 @@ public class EnterpriseSearchServlet extends SearchServlet {
 		return enterpriseSearchConfigManager.getRelevancy(storeId);
 	}
 	
+	protected Relevancy getDefaultRelevancyRule(Store store, boolean fromSearchGui) throws DaoException {
+		Relevancy relevancy = getRelevancyRule(store, store.getStoreId() + "_default", fromSearchGui);
+		if (relevancy == null) {
+			relevancy = getDefaultRelevancy(store.getStoreId());
+		}
+		return relevancy;
+	}
 }

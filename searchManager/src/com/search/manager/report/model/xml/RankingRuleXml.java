@@ -51,14 +51,14 @@ public class RankingRuleXml extends RuleXml {
 			this.setRuleKeyword(new RuleKeywordXml(keywords));
 			this.setParameters(rr.getParameters());
 			this.setCreatedBy(rr.getCreatedBy());
-			this.setCreatedDateTime(rr.getCreatedDateTime());
+			this.setCreatedDate(rr.getCreatedDate());
 			this.setLastModifiedBy(rr.getLastModifiedBy());
-			this.setLastModifiedDateTime(rr.getLastModifiedDateTime());
+			this.setLastModifiedDate(rr.getLastModifiedDate());
 		}
 
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 	}
 	
 	public RankingRuleXml(String store, Relevancy relevancy) {

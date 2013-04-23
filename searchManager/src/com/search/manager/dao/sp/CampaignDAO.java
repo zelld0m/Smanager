@@ -26,9 +26,9 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
-import com.search.manager.model.Store;
 
 @Repository(value="campaignDAO")
 public class CampaignDAO {
@@ -87,9 +87,9 @@ public class CampaignDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
@@ -103,8 +103,8 @@ public class CampaignDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
@@ -118,8 +118,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
 							rs.getString(DAOConstants.COLUMN_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
@@ -139,8 +139,8 @@ public class CampaignDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_NAME, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
@@ -193,8 +193,8 @@ public class CampaignDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_CAMPAIGN, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
@@ -208,8 +208,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_CAMPAIGN_ID),
 							rs.getString(DAOConstants.COLUMN_NAME),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
@@ -229,8 +229,8 @@ public class CampaignDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
@@ -256,8 +256,8 @@ public class CampaignDAO {
 			super(jdbcTemplate, DAOConstants.SP_UPDATE_CAMPAIGN_BANNER);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			compile();
 		}
@@ -375,8 +375,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
 							rs.getString(DAOConstants.COLUMN_LINK_URL));
 					return new CampaignBanner(campaign, banner, (List<Keyword>)null,
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
@@ -390,8 +390,8 @@ public class CampaignDAO {
 			}));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 			compile();
@@ -430,8 +430,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
 							rs.getString(DAOConstants.COLUMN_LINK_URL));
 					return new CampaignBanner(campaign, banner, (List<Keyword>)null,
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
@@ -448,8 +448,8 @@ public class CampaignDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_CAMPAIGN, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_BANNER, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 			compile();
@@ -489,8 +489,8 @@ public class CampaignDAO {
 							rs.getString(DAOConstants.COLUMN_IMAGE_URL),
 							rs.getString(DAOConstants.COLUMN_LINK_URL));
 					return new CampaignBanner(campaign, banner, (List<Keyword>)null,
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
-							JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
@@ -579,8 +579,8 @@ public class CampaignDAO {
 					map.put(DAOConstants.COLUMN_CAMPAIGN_NAME, rs.getString(DAOConstants.COLUMN_CAMPAIGN_NAME));
 					map.put(DAOConstants.COLUMN_BANNER_ID, rs.getString(DAOConstants.COLUMN_BANNER_ID));
 					map.put(DAOConstants.COLUMN_BANNER_NAME, rs.getString(DAOConstants.COLUMN_BANNER_NAME));
-					map.put(DAOConstants.COLUMN_START_DATE, JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)));
-					map.put(DAOConstants.COLUMN_END_DATE, JodaDateTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)));
+					map.put(DAOConstants.COLUMN_START_DATE, JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)));
+					map.put(DAOConstants.COLUMN_END_DATE, JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)));
 					//	            	map.put(DAOConstants.COLUMN_CREATED_BY, rs.getString(DAOConstants.COLUMN_CREATED_BY));
 					//	            	map.put(DAOConstants.COLUMN_CREATED_DATE, rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE));
 					return map;

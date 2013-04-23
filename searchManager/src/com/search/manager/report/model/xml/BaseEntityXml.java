@@ -8,8 +8,8 @@ public class BaseEntityXml implements Serializable{
 	private static final long serialVersionUID = 8767443073742555984L;
 	private String createdBy;
 	private String lastModifiedBy;
-	private DateTime lastModifiedDateTime;
-	private DateTime createdDateTime;
+	private DateTime lastModifiedDate;
+	private DateTime createdDate;
 	
 	public String getCreatedBy() {
 		return createdBy;
@@ -27,19 +27,19 @@ public class BaseEntityXml implements Serializable{
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
-	public DateTime getLastModifiedDateTime() {
-		return lastModifiedDateTime;
+	public DateTime getLastModifiedDate() {
+		return lastModifiedDate;
 	}
 
-	public void setLastModifiedDateTime(DateTime lastModifiedDateTime) {
-		this.lastModifiedDateTime = lastModifiedDateTime;
+	public void setLastModifiedDate(DateTime lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
 	}
 
-	public DateTime getCreatedDateTime() {
-		return createdDateTime;
+	public DateTime getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setCreatedDateTime(DateTime createdDateTime) {
-		this.createdDateTime = createdDateTime;
+	public void setCreatedDate(DateTime createdDate) {
+		this.createdDate = createdDate;
 	}
 }

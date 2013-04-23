@@ -38,7 +38,7 @@ public class CampaignXml extends RuleXml {
 		this.setRuleName(ruleName);
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 		this.description = description;
 	}
 	
@@ -53,14 +53,14 @@ public class CampaignXml extends RuleXml {
 			this.setDescription(campaign.getDescription());
 			
 			this.setCreatedBy(campaign.getCreatedBy());
-			this.setCreatedDateTime(campaign.getCreatedDateTime());
+			this.setCreatedDate(campaign.getCreatedDate());
 			this.setLastModifiedBy(campaign.getLastModifiedBy());
-			this.setLastModifiedDateTime(campaign.getLastModifiedDateTime());
+			this.setLastModifiedDate(campaign.getLastModifiedDate());
 		}
 
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 	}
 
 	public CampaignXml(Campaign campaign){
@@ -89,9 +89,9 @@ public class CampaignXml extends RuleXml {
 		this.groups = facetSortGroupXmlList;*/
 		
 		this.setCreatedBy(campaign.getCreatedBy());
-		this.setCreatedDateTime(campaign.getCreatedDateTime());
+		this.setCreatedDate(campaign.getCreatedDate());
 		this.setLastModifiedBy(campaign.getLastModifiedBy());
-		this.setLastModifiedDateTime(campaign.getLastModifiedDateTime());
+		this.setLastModifiedDate(campaign.getLastModifiedDate());
 	}
 
 	@XmlElementRef

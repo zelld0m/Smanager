@@ -46,7 +46,7 @@ public class FacetSortRuleXml extends RuleXml {
 		this.groups = groups;
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 	}
 
 	public FacetSortRuleXml(String store, long version, String name, String notes, String username, String ruleType, String sortType,
@@ -69,15 +69,15 @@ public class FacetSortRuleXml extends RuleXml {
 			for(FacetGroup facetGroup: facetGroups){
 				String mapKey = facetGroup.getName();
 				facetSortGroupXmlList.add(new FacetSortGroupXml(mapKey, groups.get(mapKey), groupSorts.get(mapKey), 
-						facetSort.getSortType(), facetGroup.getCreatedBy(), facetGroup.getCreatedDateTime()));
+						facetSort.getSortType(), facetGroup.getCreatedBy(), facetGroup.getCreatedDate()));
 			}
 		}
 		
 		this.groups = facetSortGroupXmlList;
 		this.setCreatedBy(facetSort.getCreatedBy());
-		this.setCreatedDateTime(facetSort.getCreatedDateTime());
+		this.setCreatedDate(facetSort.getCreatedDate());
 		this.setLastModifiedBy(facetSort.getLastModifiedBy());
-		this.setLastModifiedDateTime(facetSort.getLastModifiedDateTime());
+		this.setLastModifiedDate(facetSort.getLastModifiedDate());
 	}
 
 	@XmlAttribute(name="default-type")

@@ -32,8 +32,8 @@ public class DemoteItemXml extends RuleItemXml{
 		this.setExpiryDateTime(dr.getExpiryDateTime());
 		this.setCreatedBy(dr.getCreatedBy());
 		this.setLastModifiedBy(dr.getLastModifiedBy());
-		this.setCreatedDateTime(dr.getCreatedDateTime());
-		this.setLastModifiedDateTime(dr.getLastModifiedDateTime());
+		this.setCreatedDate(dr.getCreatedDate());
+		this.setLastModifiedDate(dr.getLastModifiedDate());
 		this.location = dr.getLocation();
 	}
 	

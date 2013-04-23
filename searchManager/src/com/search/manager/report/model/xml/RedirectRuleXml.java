@@ -47,9 +47,9 @@ public class RedirectRuleXml extends RuleXml{
 			this.setRuleKeyword(new RuleKeywordXml(rr.getSearchTerms()));
 			this.setRuleCondition(new RuleConditionXml(rr.getConditions(), BooleanUtils.isTrue(rr.getIncludeKeyword())));
 			this.setCreatedBy(rr.getCreatedBy());
-			this.setCreatedDateTime(rr.getCreatedDateTime());
+			this.setCreatedDate(rr.getCreatedDate());
 			this.setLastModifiedBy(rr.getLastModifiedBy());
-			this.setLastModifiedDateTime(rr.getLastModifiedDateTime());
+			this.setLastModifiedDate(rr.getLastModifiedDate());
 			this.setReplacementKeyword(rr.getChangeKeyword());
 			this.setReplaceKeywordMessageType(rr.getReplaceKeywordMessageType());
 			this.setReplaceKeywordMessageCustomText(rr.getReplaceKeywordMessageCustomText());
@@ -57,7 +57,7 @@ public class RedirectRuleXml extends RuleXml{
 		
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDateTime(DateTime.now());
+		this.setCreatedDate(DateTime.now());
 	}
 	
 	public RedirectRuleXml(String store, RedirectRule queryCleaning) {

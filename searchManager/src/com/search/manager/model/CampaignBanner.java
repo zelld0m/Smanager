@@ -58,9 +58,9 @@ public class CampaignBanner extends ModelBean {
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
 		this.createdBy = createdBy;
-		this.createdDateTime = createdDateTime;
+		this.createdDate = createdDateTime;
 		this.lastModifiedBy = lastModifiedBy;
-		this.lastModifiedDateTime = lastModifiedDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 	}
 	
 	public Store getStore() {

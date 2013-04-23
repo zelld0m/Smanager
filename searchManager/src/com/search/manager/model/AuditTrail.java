@@ -20,7 +20,7 @@ public class AuditTrail extends ModelBean implements Serializable {
 	private String storeId;
 	private String keyword;
 	private String referenceId;
-	private DateTime dateTime;
+	private DateTime createdDate;
 	private String details;
 	
 	public AuditTrail() {
@@ -34,7 +34,7 @@ public class AuditTrail extends ModelBean implements Serializable {
 		this.storeId = storeId;
 		this.keyword = keyword;
 		this.referenceId = referenceId;
-		this.dateTime = dateTime;
+		this.createdDate = dateTime;
 		this.details = details;
 	}
 
@@ -82,12 +82,12 @@ public class AuditTrail extends ModelBean implements Serializable {
 		this.referenceId = referenceId;
 	}
 	
-	public DateTime getDateTime() {
-		return dateTime;
+	public DateTime getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setDateTime(DateTime dateTime) {
-		this.dateTime = dateTime;
+	public void setCreatedDate(DateTime createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	public String getDetails() {
@@ -106,7 +106,11 @@ public class AuditTrail extends ModelBean implements Serializable {
 		return storeId;
 	}
 	
-	public String getFormattedDateTime(){
-		return JodaDateTimeUtil.formatFromStorePattern(getDateTime(), JodaPatternType.DATE_TIME);
+	public String getFormattedCreatedDateTime(){
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedCreatedDate(){
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
 	}
 }

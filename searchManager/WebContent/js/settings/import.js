@@ -88,7 +88,7 @@
 					okmsg = 'No rules were successfully imported and rejected.';
 				}
 
-				jAlert(okmsg, self.entityName);
+				jAlert(okmsg, self.moduleName);
 			},
 
 			populateTabContent: function(){
@@ -818,111 +818,170 @@
 									$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
 
 									if (rule["updateStatus"]!=="DELETE"){
-										$tr.find("img.previewIcon")
-										.xmlpreview({
-											transferType: "import",
-											ruleType: self.entityName,
-											ruleId: ruleId,
-											ruleName: ruleName,
-											ruleXml: rule,
-											rule: rule,
-											ruleStatusList: self.ruleStatusMap==null? null: self.ruleStatusMap[self.entityName],
-													ruleTransferMap: self.ruleTransferMap,
-													enablePreTemplate: true,
-													enablePostTemplate: true,
-													leftPanelSourceData: "xml",
-													enableRightPanel: true,
-													rightPanelSourceData: "database",
-													dbRuleId: dbRuleId,
-													postTemplate: self.getPostTemplate(),
-													preTemplate: self.getPreTemplate(self.entityName, rule["importType"]),
-													rightPanelTemplate: self.getRightPanelTemplate(),
-													postButtonClick: function(){
-														self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
-													},
-													itemImportAsListCallback: function(base, contentHolder, sourceData){
-														DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
-															callback : function(data){
-																base.populateImportAsList(data, contentHolder, sourceData);
+										if (self.entityName === "didYouMean") {
+											$tr.find("img.previewIcon").hide();
+											$tr.find("td#ruleRefId").append('<p class="breakWord">Click <a href="javascript:void(0);" id="downloadCurrent">here</a> to download current list.</p>');
+											$tr.find("td#ruleRefId").append('<p class="breakWord">Click <a href="javascript:void(0);" id="downloadImport">here</a> to download for import list.</p>');
+											
+											$tr.find("td#ruleRefId p #downloadCurrent").download({
+												headerText:"Download Current Did You Mean Rules",
+												moduleName: self.entityName,
+												ruleType: self.entityName,  
+												solo: $(".internal-tooltip"),
+												classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped internal-tooltip',
+												requestCallback:function(e2) {
+													var params = new Array();
+													var url = GLOBAL_contextPath + "/spell/" + GLOBAL_storeId + "/xls";
+													var urlParams = "";
+													var count = 0;
+
+													params["filename"] = e2.data.filename;
+													params["type"] = e2.data.type;
+													params["id"] = "spell_rule";
+													params["clientTimezone"] = +new Date();
+
+													for(var key in params){
+														if (count>0) urlParams +='&';
+														urlParams += (key + '=' + encodeURIComponent(params[key]));
+														count++;
+													};
+													document.location.href = url + '?' + urlParams;
+												}
+											});
+											
+											$tr.find("td#ruleRefId p #downloadImport").download({
+												headerText:"Download Did You Mean Rules for Import",
+												moduleName: self.entityName,
+												ruleType: self.entityName,  
+												solo: $(".internal-tooltip"),
+												classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped internal-tooltip',
+												requestCallback:function(e2) {
+													var params = new Array();
+													var url = GLOBAL_contextPath + "/spell/" + GLOBAL_storeId + "/import/xls";
+													var urlParams = "";
+													var count = 0;
+
+													params["filename"] = e2.data.filename;
+													params["type"] = e2.data.type;
+													params["id"] = "spell_rule";
+													params["clientTimezone"] = +new Date();
+
+													for(var key in params){
+														if (count>0) urlParams +='&';
+														urlParams += (key + '=' + encodeURIComponent(params[key]));
+														count++;
+													};
+													document.location.href = url + '?' + urlParams;
+												}
+											});
+										}
+										else {
+											$tr.find("img.previewIcon")
+											.xmlpreview({
+												transferType: "import",
+												ruleType: self.entityName,
+												ruleId: ruleId,
+												ruleName: ruleName,
+												ruleXml: rule,
+												rule: rule,
+												ruleStatusList: self.ruleStatusMap==null? null: self.ruleStatusMap[self.entityName],
+														ruleTransferMap: self.ruleTransferMap,
+														enablePreTemplate: true,
+														enablePostTemplate: true,
+														leftPanelSourceData: "xml",
+														enableRightPanel: true,
+														rightPanelSourceData: "database",
+														dbRuleId: dbRuleId,
+														postTemplate: self.getPostTemplate(),
+														preTemplate: self.getPreTemplate(self.entityName, rule["importType"]),
+														rightPanelTemplate: self.getRightPanelTemplate(),
+														postButtonClick: function(){
+															self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
+														},
+														itemImportAsListCallback: function(base, contentHolder, sourceData){
+															DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
+																callback : function(data){
+																	base.populateImportAsList(data, contentHolder, sourceData);
+																}
+															});
+														},
+														itemImportTypeListCallback: function(base, contentHolder){
+															base.populateImportTypeList(self.importTypeList, contentHolder);
+														},
+														itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+															if (self.entityName === "elevate"){
+																ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+																	callback:function(data){
+																		base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+																	},
+																	preHook: function(){
+																		base.prepareForceAddStatus(contentHolder);
+																	}
+																});
 															}
-														});
-													},
-													itemImportTypeListCallback: function(base, contentHolder){
-														base.populateImportTypeList(self.importTypeList, contentHolder);
-													},
-													itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
-														if (self.entityName === "elevate"){
-															ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
-																callback:function(data){
-																	base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-																},
-																preHook: function(){
-																	base.prepareForceAddStatus(contentHolder);
-																}
-															});
-														}
-													},
-													itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
-														if (self.entityName === "elevate"){
-															ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
-																callback:function(data){
-																	base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-																},
-																preHook: function(){
-																	base.prepareForceAddStatus(contentHolder);
-																}
-															});
-														}
-													},
+														},
+														itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+															if (self.entityName === "elevate"){
+																ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+																	callback:function(data){
+																		base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+																	},
+																	preHook: function(){
+																		base.prepareForceAddStatus(contentHolder);
+																	}
+																});
+															}
+														},
 
-													checkUncheckCheckboxCallback : function(base, ruleId, pub) {
-														switch(pub) {
-														case 'import':
-															self.toggleImportCheckbox($.formatAsId(ruleId));
-															break;
-														case 'reject':
-															self.toggleRejectCheckbox($.formatAsId(ruleId));
-															break;
-														}
-													},
-													changeImportTypeCallback : function(base, ruleId, opt) {
-														$("#ruleItem"+$.formatAsId(ruleId)+" #type select").val(opt);
-													},
-													changeImportAsCallback : function(base, ruleId, importAs, ruleName, newName) {
-														if(importAs != 0 || newName.length>0) {
-															$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").val(importAs).change();
-															$("#ruleItem"+$.formatAsId(ruleId)+" #importAs #replacement #newName").val(newName);
-														}
-													},
+														checkUncheckCheckboxCallback : function(base, ruleId, pub) {
+															switch(pub) {
+															case 'import':
+																self.toggleImportCheckbox($.formatAsId(ruleId));
+																break;
+															case 'reject':
+																self.toggleRejectCheckbox($.formatAsId(ruleId));
+																break;
+															}
+														},
+														changeImportTypeCallback : function(base, ruleId, opt) {
+															$("#ruleItem"+$.formatAsId(ruleId)+" #type select").val(opt);
+														},
+														changeImportAsCallback : function(base, ruleId, importAs, ruleName, newName) {
+															if(importAs != 0 || newName.length>0) {
+																$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").val(importAs).change();
+																$("#ruleItem"+$.formatAsId(ruleId)+" #importAs #replacement #newName").val(newName);
+															}
+														},
 
-													itemImportTypeListCallback: function(base, contentHolder){
-														base.populateImportTypeList(self.importTypeList, contentHolder);
-													},
-													itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
-														if (self.entityName === "elevate"){
-															ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
-																callback:function(data){
-																	base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-																},
-																preHook: function(){
-																	base.prepareForceAddStatus(contentHolder);
-																}
-															});
+														itemImportTypeListCallback: function(base, contentHolder){
+															base.populateImportTypeList(self.importTypeList, contentHolder);
+														},
+														itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+															if (self.entityName === "elevate"){
+																ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+																	callback:function(data){
+																		base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+																	},
+																	preHook: function(){
+																		base.prepareForceAddStatus(contentHolder);
+																	}
+																});
+															}
+														},
+														itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+															if (self.entityName === "elevate"){
+																ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+																	callback:function(data){
+																		base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+																	},
+																	preHook: function(){
+																		base.prepareForceAddStatus(contentHolder);
+																	}
+																});
+															}
 														}
-													},
-													itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
-														if (self.entityName === "elevate"){
-															ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
-																callback:function(data){
-																	base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-																},
-																preHook: function(){
-																	base.prepareForceAddStatus(contentHolder);
-																}
-															});
-														}
-													}
-										});
+											});
+										}
 									}else{
 										$tr.find("td#ruleOption > img.previewIcon").hide();
 									}

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.configuration.ConfigurationException;
@@ -22,6 +23,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTimeZone;
+
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.utility.PropsUtils;
 
 public class ConfigManager {
 	
@@ -33,6 +38,7 @@ public class ConfigManager {
     
     //TODO: will eventually move out if settings is migrated to DB instead of file
     private Map<String, PropertiesConfiguration> serverSettingsMap = new HashMap<String, PropertiesConfiguration>();
+    private Map<String, PropertiesConfiguration> linguisticSettingsMap = new HashMap<String, PropertiesConfiguration>();
     
     private ConfigManager() {
     	// do nothing...
@@ -65,11 +71,68 @@ public class ConfigManager {
 					serverSettingsMap.put(storeId, propConfig);
 					logger.info("Settings file for " + storeId + ": " + propConfig.getFileName());
 				}
+				
+				// did you mean
+				String fileName = PropsUtils.getValue("publishedfilepath");
+				if (StringUtils.isNotBlank(fileName)) {
+					fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.properties";
+					File spellFile = new File(fileName);
+					if (!spellFile.exists()) {
+						spellFile.getParentFile().mkdirs();
+						try {
+							spellFile.createNewFile();
+						} catch (IOException e) {
+							logger.error("No spell file detected and unable to create spell file", e);
+						}
+					}
+					PropertiesConfiguration propConfig = new PropertiesConfiguration(spellFile.getAbsolutePath());
+					propConfig.setAutoSave(true);
+					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+					linguisticSettingsMap.put(storeId, propConfig);
+				}
 			}
 			
+			initTimezone();
+
 		} catch (ConfigurationException ex) {
 			ex.printStackTrace();
 			logger.error(ex.getLocalizedMessage());
+		} 
+    }
+    
+    private void initTimezone(){
+    	
+    	/* System timezone */
+    	String systemTimeZoneId = xmlConfig.getString("/system-timezone", "America/Los_Angeles");
+    	
+    	if(TimeZone.getDefault().getID().equalsIgnoreCase(systemTimeZoneId)){
+    		logger.info(String.format("-DTZ- System timezone is already set to %s", systemTimeZoneId));
+    	}else{
+    		logger.info(String.format("-DTZ- Pre-Attempt: System timezone is %s",TimeZone.getDefault().getDisplayName()));
+    		logger.info(String.format("-DTZ- Attempted to set System timezone from %s to %s", TimeZone.getDefault().getID(), systemTimeZoneId));
+    		TimeZone.setDefault(TimeZone.getTimeZone(systemTimeZoneId));
+    		logger.info(String.format("-DTZ- Post-Attempt: System timezone is now %s",TimeZone.getDefault().getDisplayName()));
+    	}
+    	
+		/* Joda timezone*/
+		DateTimeZone defaultJodaTimeZone = DateTimeZone.getDefault(); 
+		DateTimeZone jodaTimeZone = DateTimeZone.getDefault();
+		
+		if(defaultJodaTimeZone.getID().equalsIgnoreCase(systemTimeZoneId)){
+			logger.info(String.format("-DTZ- Joda timezone and system timezone are equals: %s", systemTimeZoneId));
+		}else{
+			try {
+				jodaTimeZone = DateTimeZone.forID(systemTimeZoneId);
+				
+				try {
+					DateTimeZone.setDefault(jodaTimeZone);
+				} catch (IllegalArgumentException iae) {
+					DateTimeZone.setDefault(defaultJodaTimeZone);
+					logger.error(String.format("-DTZ- Failed to set Joda Timezone from %s to %s, set default timezone to %s", defaultJodaTimeZone.getID(), systemTimeZoneId, DateTimeZone.getDefault().getID()));
+				}
+			} catch (IllegalArgumentException iae) {
+				logger.error(String.format("-DTZ- Failed to convert System Timezone to Joda Timezone : %s", systemTimeZoneId));
+			}
 		}
     }
     
@@ -106,6 +169,10 @@ public class ConfigManager {
     
     public String getStoreParameter(String storeId, String param) {
     	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
+    }
+    
+    public String getSystemTimeZoneId(){
+    	return StringUtils.defaultIfBlank(getParameter("system-timezone"), "America/Los_Angeles");
     }
     
     @SuppressWarnings("unchecked")
@@ -234,6 +301,30 @@ public class ConfigManager {
 		}
 		return null;
 	}
+
+	public boolean setPublishedStoreLinguisticSetting(String storeId, String field, String value) {
+		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
+		if (config != null) {
+			synchronized(config) {
+				config.setProperty(field, value);
+				return StringUtils.equals(config.getString(field), value);
+			}
+		}
+		return false;
+	}
+	
+	/** 
+	 * For a property that has multiple values, getString() will return the first value of the list
+	 * */
+	public String getPublishedStoreLinguisticSetting(String storeId, String field) {
+		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
+		if (config != null) {
+			synchronized(config) {
+				return config.getString(field);
+			}
+		}
+		return null;
+	}
 	
 	/** 
 	 * For a property that has multiple values, getList() will return the complete list 
@@ -257,6 +348,18 @@ public class ConfigManager {
 		}
 		
 		return false;
+	}
+	
+	public String getPublishedDidYouMeanPath(String storeId) {
+		String fileName = PropsUtils.getValue("publishedfilepath");
+		if (StringUtils.isNotBlank(fileName)) {
+			fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.csv";
+		}
+		return StringUtils.trimToNull(fileName);
+	}
+	
+	public boolean isSolrImplOnly() {
+		return "1".equals(PropsUtils.getValue("solrImplOnly"));
 	}
 	
     public static void main(String[] args) {
@@ -304,5 +407,4 @@ public class ConfigManager {
 //		}
 		
     }
-    
  }
