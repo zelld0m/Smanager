@@ -88,7 +88,7 @@
 					okmsg = 'No rules were successfully imported and rejected.';
 				}
 
-				jAlert(okmsg, self.entityName);
+				jAlert(okmsg, self.moduleName);
 			},
 
 			populateTabContent: function(){

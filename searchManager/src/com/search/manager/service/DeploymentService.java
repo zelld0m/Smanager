@@ -350,12 +350,14 @@ public class DeploymentService {
 	@RemoteMethod
 	public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
+		String userName = UtilityService.getUsername();
+		String storeName = UtilityService.getStoreName();
 		try {
-			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType));
+			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
 			return publishRuleNoLock(ruleType, ruleRefIdList, comment, ruleStatusIdList);
 		} finally {
 			if (obtainedLock) {
-				UtilityService.releasePublishLock(RuleEntity.find(ruleType));
+				UtilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
 			}
 		}
 	}
@@ -385,8 +387,10 @@ public class DeploymentService {
 	@RemoteMethod
 	public RecordSet<DeploymentModel> unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
+		String userName = UtilityService.getUsername();
+		String storeName = UtilityService.getStoreName();		
 		try {
-			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType));
+			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
 			//clean list, only approved rules should be published
 			List<String> cleanList = null;
 			List<String> publishedRuleIds = new ArrayList<String>();
@@ -417,7 +421,7 @@ public class DeploymentService {
 			return new RecordSet<DeploymentModel>(deployList,deployList.size());
 		} finally {
 			if (obtainedLock) {
-				UtilityService.releasePublishLock(RuleEntity.find(ruleType));
+				UtilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
 			}
 		}
 	}

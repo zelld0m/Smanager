@@ -115,7 +115,7 @@
 				var $li = li;
 				var $item = item;
 				var self = this;
-
+				
 				var PART_NUMBER = $item["memberTypeEntity"] === "PART_NUMBER";
 				var FACET = $item["memberTypeEntity"] === "FACET";
 				var id = "item" + $.formatAsId($item["memberId"]);
@@ -133,14 +133,23 @@
 				}
 
 				if(FACET){
-					$li.find(".name").html($("<a>").text($item.condition["readableString"]));
+					var maxLength = 120;
+					var condition = $item.condition["readableString"];
+					
+					if(condition != null && condition.length > maxLength) {
+						condition = condition.substring(0, maxLength) + "...";
+					}
+					
+					$li.find(".name").html($("<a>").text(condition)).attr('title', $item.condition["readableString"]);
+					
+					// $li.find(".name").html($("<a>").text($item.condition["readableString"]));
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
 								newRecord: false,
-								item: e.data.item,
+								item: $.extend(true, {}, e.data.item),
 								showPosition: true,
 								maxPosition: self.selectedRuleItemTotal + 1,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){

@@ -369,6 +369,8 @@ public class RuleTransferService {
 		Integer status = null;
 		boolean autoPublish = false;
 		boolean obtainedLock = false;
+		String userName = UtilityService.getUsername();
+		String storeName = UtilityService.getStoreName();	
 		
 		if (ArrayUtils.isNotEmpty(importTypeList)) {
 			for (String importType: importTypeList) {
@@ -381,7 +383,7 @@ public class RuleTransferService {
 		
 		try {
 			if (autoPublish) {
-				obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType));
+				obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
 			}
 			if (ArrayUtils.isNotEmpty(importRuleRefIdList)) {
 				Map<String, Integer> statusMap = importRules(ruleType, importRuleRefIdList, comment,
@@ -430,7 +432,7 @@ public class RuleTransferService {
 			
 		} finally {
 			if (obtainedLock) {
-				UtilityService.releasePublishLock(RuleEntity.find(ruleType));
+				UtilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
 			}
 		}
 		return successList;
