@@ -598,10 +598,10 @@
 						if(!item["deleted"]){
 							base.ruleMap[version] = item;
 							$tr.prop("id", "item" + $.formatAsId(version));
-							$tr.find("td#itemId").html(item["version"]);
-							$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
-							$tr.find("td#itemInfo > p#name").html(item["name"]);
-							$tr.find("td#itemInfo > p#notes").html(item["notes"]);
+							$tr.find("td#itemId").text(item["version"]);
+							$tr.find("td#itemDate").text(item["createdDate"].toUTCString());
+							$tr.find("td#itemInfo > p#name").text(item["name"]);
+							$tr.find("td#itemInfo > p#notes").text(item["notes"]);
 							base.addDeleteVersionListener($tr, item);
 							base.addRestoreVersionListener($tr, item);
 							base.addDownloadVersionListener($tr, item);
