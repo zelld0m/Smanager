@@ -155,9 +155,19 @@
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
-											var updateMessage = (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
-											showActionResponse(data, "update", updateMessage);
-											self.populateRuleItem(self.selectedRuleItemPage);
+											// 
+											if (!data || e.data.item["memberTypeEntity"] != "FACET") {
+												var updateMessage = "Rule Facet Item: " + e.data.item.condition["readableString"];
+												showActionResponse(data, "update", updateMessage);
+												self.populateRuleItem(self.selectedRuleItemPage);
+											} else {
+												// Retrieve new condition first before displaying action response message.
+												RedirectServiceJS.convertMapToRedirectRuleCondition(selectedFacetFieldValues, function(newCondition) {
+													var updateMessage = "Rule Facet Item: " + newCondition["readableString"];
+													showActionResponse(data, "update", updateMessage);
+													self.populateRuleItem(self.selectedRuleItemPage);
+												});
+											}
 										},
 										preHook: function(){ 
 											self.preShowRuleContent();
