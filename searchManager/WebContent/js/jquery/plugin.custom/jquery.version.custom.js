@@ -35,7 +35,7 @@
 				},
 				show: {
 					ready: true,
-					modal:true
+					modal:{on: true, blur: false}
 				},
 				events: { 
 					show: function(event, api){
