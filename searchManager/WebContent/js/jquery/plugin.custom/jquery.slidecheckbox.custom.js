@@ -44,21 +44,20 @@
 					.off().on({
 						click:function(e){
 							var $slideCheckbox = $(e.currentTarget);
-							var checkboxID = '#' + $slideCheckbox.attr('rel');
 					
-							if(!$(checkboxID).is(":checked")) {
-								$(checkboxID).attr({"checked":true});
+							if(!base.$el.is(":checked")) {
+								base.$el.attr({"checked":true});
 								$slideCheckbox.removeClass('off')
 											  .addClass('on')
 											  .css("background-position", "0% 100%");
 							}else{
-								$(checkboxID).attr({"checked":false});
+								base.$el.attr({"checked":false});
 								$slideCheckbox.removeClass('on')
 								              .addClass('off')
 								              .css("background-position", "100% 0%");
 							}
 		
-							base.options.changeStatusCallback(e.data.base, {id: e.data.base.options.id, item:e.data.base.options.item, status: $(checkboxID).is(":checked"), value: $(checkboxID).val()});
+							base.options.changeStatusCallback(e.data.base, {id: e.data.base.options.id, item:e.data.base.options.item, status: base.$el.is(":checked"), value: base.$el.val()});
 						}
 					},{base: base});
 			
