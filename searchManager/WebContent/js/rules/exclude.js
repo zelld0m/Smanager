@@ -152,9 +152,10 @@
 										ExcludeServiceJS.updateExcludeFacet(self.selectedRule["ruleId"], memberId, comment, expiryDate,  selectedFacetFieldValues, {
 											callback: function(data){
 												api.destroy();
-												self.populateRuleItem(self.selectedRuleItemPage, function() {
-													showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
-												});
+												showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "" +
+														"Rule Facet Item: " + e.data.item.condition["readableString"] : 
+														$.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+												self.populateRuleItem(self.selectedRuleItemPage);
 											},
 										});
 									};
@@ -398,7 +399,7 @@
 				});
 			},
 
-			populateRuleItem: function(page, postProcess){
+			populateRuleItem: function(page){
 				var self = this;
 				self.selectedRuleItemPage = page;
 				self.preShowRuleContent();
@@ -488,9 +489,6 @@
 							},
 							postHook: function(){
 								self.postShowRuleContent();
-								if (postProcess != null) {
-									postProcess();
-								}
 								$("a#addRuleItemIcon").off().on({
 									click:function(e){
 										$(this).addproduct({
@@ -502,10 +500,9 @@
 													ExcludeServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], expiryDate, comment, skus, {
 														callback : function(code){
 															api.destroy();
-															self.populateRuleItem(self.selectedRuleItemPage, function() {
-																showActionResponseFromMap(code, "add", "Multiple Rule Item Add", 
+															showActionResponseFromMap(code, "add", "Multiple Rule Item Add", 
 																"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
-																});
+															self.populateRuleItem(self.selectedRuleItemPage);
 														}
 													});
 												};
@@ -550,9 +547,8 @@
 													ExcludeServiceJS.addFacetRule(self.selectedRule["ruleId"], expiryDate, comment, selectedFacetFieldValues, {
 														callback: function(data){
 															api.destroy();
-															self.populateRuleItem(self.selectedRuleItemPage, function() {
-																showActionResponse(data, "add", "New Rule "+ ruleType +" Item");
-															});
+															showActionResponse(data, "add", "New Rule "+ ruleType +" Item");
+															self.populateRuleItem(self.selectedRuleItemPage);
 														}
 													});
 												};
