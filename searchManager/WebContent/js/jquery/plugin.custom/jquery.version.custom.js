@@ -35,7 +35,7 @@
 				},
 				show: {
 					ready: true,
-					modal:true
+					modal:{on: true, blur: false}
 				},
 				events: { 
 					show: function(event, api){
@@ -598,10 +598,10 @@
 						if(!item["deleted"]){
 							base.ruleMap[version] = item;
 							$tr.prop("id", "item" + $.formatAsId(version));
-							$tr.find("td#itemId").html(item["version"]);
-							$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
-							$tr.find("td#itemInfo > p#name").html(item["name"]);
-							$tr.find("td#itemInfo > p#notes").html(item["notes"]);
+							$tr.find("td#itemId").text(item["version"]);
+							$tr.find("td#itemDate").text(item["createdDate"].toUTCString());
+							$tr.find("td#itemInfo > p#name").text(item["name"]);
+							$tr.find("td#itemInfo > p#notes").text(item["notes"]);
 							base.addDeleteVersionListener($tr, item);
 							base.addRestoreVersionListener($tr, item);
 							base.addDownloadVersionListener($tr, item);
@@ -650,7 +650,7 @@
 			template += '					<tr>';
 
 			if (base.options.enableCompare) {
-				template += '						<th class="displayBlock w60">';
+				template += '						<th class="displayBlock w65">';
 				template += '							<a id="compareBtn" href="javascript:void(0);" class="btnGraph btnCompare clearfix">';
 				template += '								<div class="btnGraph btnCompare"></div>';
 				template += '							</a>';
@@ -660,8 +660,8 @@
 				template += '						</th>';
 			}
 
-			template += '						<th class="w160">Name</th>';
-			template += '						<th class="w135">Date</th>';
+			template += '						<th class="w155">Name</th>';
+			template += '						<th class="w140">Date</th>';
 			template += '						<th class="w55"></th>';
 			template += '					</tr>';
 			template += '				<tbody>';

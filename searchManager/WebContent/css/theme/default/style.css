@@ -184,7 +184,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a.btnBackUp			{ background-position: -3px -540px; height: 16px; width: 83px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnBackUp:hover		{ background-position: -3px -558px;  }
 
-.cssReset a.btnCompare, .qtip a.btnCompare				{ background-position: -3px -619px; height: 16px; width: 67px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
+.cssReset a.btnCompare, .qtip a.btnCompare				{ background-position: -3px -619px; height: 16px; width: 67px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:-1px; position:relative  }
 .cssReset a.btnCompare:hover, .qtip a.btnCompare:hover 	{ background-position: -3px -637px;  }
 .ie9 .qtip .w160	 {padding-left:0;} 
 

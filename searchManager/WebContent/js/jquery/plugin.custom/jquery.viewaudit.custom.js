@@ -104,13 +104,13 @@
 					title: { text: base.options.title, button: true }
 				},
 				position: {
-					at: 'right center',
-					my: 'left center',
+					at: 'right top',
+					my: 'left top',
 					target: $(target)
 				},
 				show:{
 					ready: true,
-					solo: true,
+					solo: true
 				},
 				style: {
 					width: 'auto'

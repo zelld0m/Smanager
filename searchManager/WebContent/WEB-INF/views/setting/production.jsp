@@ -31,7 +31,7 @@
 			<div id="autoExportStatus" class="info notification border fsize14 marB20" style="display:none">
 			Auto-export setting is currently set to <span id="autoExportValue" class="fbold"></span>
 			<br/>
-			<span class="fsize12 fitalic">To modify this setting, got to <label class="fbold">Settings &gt; Export Rule</label></span>
+			<span class="fsize12 fitalic">To modify this setting, go to <label class="fbold">Settings &gt; Export Rule</label></span>
 			</div> 
 		</c:if>
 		<!-- tabs -->

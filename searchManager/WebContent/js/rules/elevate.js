@@ -115,7 +115,7 @@
 				var $li = li;
 				var $item = item;
 				var self = this;
-
+				
 				var PART_NUMBER = $item["memberTypeEntity"] === "PART_NUMBER";
 				var FACET = $item["memberTypeEntity"] === "FACET";
 				var id = "item" + $.formatAsId($item["memberId"]);
@@ -133,22 +133,41 @@
 				}
 
 				if(FACET){
-					$li.find(".name").html($("<a>").text($item.condition["readableString"]));
+					var maxLength = 120;
+					var condition = $item.condition["readableString"];
+					
+					if(condition != null && condition.length > maxLength) {
+						condition = condition.substring(0, maxLength) + "...";
+					}
+					
+					$li.find(".name").html($("<a>").text(condition)).attr('title', $item.condition["readableString"]);
+					
+					// $li.find(".name").html($("<a>").text($item.condition["readableString"]));
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
 								newRecord: false,
-								item: e.data.item,
+								item: $.extend(true, {}, e.data.item),
 								showPosition: true,
 								maxPosition: self.selectedRuleItemTotal + 1,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
-											var updateMessage = (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
-											showActionResponse(data, "update", updateMessage);
-											self.populateRuleItem(self.selectedRuleItemPage);
+											// 
+											if (!data || e.data.item["memberTypeEntity"] != "FACET") {
+												var updateMessage = "Rule Facet Item: " + e.data.item.condition["readableString"];
+												showActionResponse(data, "update", updateMessage);
+												self.populateRuleItem(self.selectedRuleItemPage);
+											} else {
+												// Retrieve new condition first before displaying action response message.
+												RedirectServiceJS.convertMapToRedirectRuleCondition(selectedFacetFieldValues, function(newCondition) {
+													var updateMessage = "Rule Facet Item: " + newCondition["readableString"];
+													showActionResponse(data, "update", updateMessage);
+													self.populateRuleItem(self.selectedRuleItemPage);
+												});
+											}
 										},
 										preHook: function(){ 
 											self.preShowRuleContent();

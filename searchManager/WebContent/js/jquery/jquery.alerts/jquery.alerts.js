@@ -12,6 +12,7 @@
 						modal: true,
 						draggable: true,
 						resizable: false,
+						stack: false, zIndex:15000,
 						create: function(event, ui){
 							switch(opt){
 							case "alert": 

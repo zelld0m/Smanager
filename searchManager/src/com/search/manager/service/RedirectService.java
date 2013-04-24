@@ -316,6 +316,19 @@ public class RedirectService extends RuleService{
 		return updateRuleCondition(ruleId, sequenceNumber, listFilter);
 	}
 	
+
+	@RemoteMethod
+	public RedirectRuleCondition convertMapToRedirectRuleCondition(Map<String, String[]> filter) {
+		Map<String, List<String>> listFilter = new HashMap<String, List<String>>();
+		for(Entry<String, String[]> entry: filter.entrySet()){
+			listFilter.put(entry.getKey(), Arrays.asList(entry.getValue()));
+		}
+		RedirectRuleCondition rr = new RedirectRuleCondition(listFilter);
+		rr.setStoreId(UtilityService.getStoreId());
+		UtilityService.setFacetTemplateValues(rr);
+		return rr;
+	}
+	
 	private RecordSet<RedirectRuleCondition> updateRuleCondition(String ruleId, int sequenceNumber, Map<String, List<String>> filter) {
 		try {
 			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
