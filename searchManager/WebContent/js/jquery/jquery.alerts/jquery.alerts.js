@@ -3,7 +3,7 @@
 
 		$.alerts = {
 				_show: function(opt, title, content, callback){
-
+					var callbackDone = false;
 					$("<div>").prop({
 						id: "jd-custom"
 					}).text(content).dialog({
@@ -12,7 +12,8 @@
 						modal: true,
 						draggable: true,
 						resizable: false,
-						stack: false, zIndex:15000,
+						stack: false, 
+						zIndex: 15000,
 						create: function(event, ui){
 							switch(opt){
 							case "alert": 
@@ -23,6 +24,7 @@
 										 {	
 											 text: "Ok", 
 											 click: function() { 
+												 callbackDone = true;
 												 $( this ).dialog("close"); 
 											 } 
 										 }
@@ -36,6 +38,7 @@
 										 {	
 											 text: "Cancel", 
 											 click: function() { 
+												 callbackDone = true;
 												 if(callback) callback(false);
 												 $(this).dialog("close"); 
 											 } 
@@ -43,6 +46,7 @@
 										 {	
 											 text: "OK", 
 											 click: function() {
+												 callbackDone = true;
 												 if(callback) callback(true);
 												 $(this).dialog("close"); 
 											 } 
@@ -52,6 +56,7 @@
 							}					
 						},
 						close: function(event, ui){
+							if(callback && !callbackDone) callback(false);
 							$(this).dialog("destroy");
 							$(this).remove();
 						}	          
