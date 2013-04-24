@@ -578,6 +578,11 @@ div.holder table#addDynamicAttributeName tr#dynamicAttributeName td.iepadBT0 div
 	top: 0px !important;
 }
 
+.posRelTop30 {
+	position: relative;
+	top: -30px;	
+}
+
 ::-ms-clear {
 	display: none;
 }
