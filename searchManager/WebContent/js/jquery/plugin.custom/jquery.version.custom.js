@@ -650,7 +650,7 @@
 			template += '					<tr>';
 
 			if (base.options.enableCompare) {
-				template += '						<th class="displayBlock w60">';
+				template += '						<th class="displayBlock w65">';
 				template += '							<a id="compareBtn" href="javascript:void(0);" class="btnGraph btnCompare clearfix">';
 				template += '								<div class="btnGraph btnCompare"></div>';
 				template += '							</a>';
@@ -660,8 +660,8 @@
 				template += '						</th>';
 			}
 
-			template += '						<th class="w160">Name</th>';
-			template += '						<th class="w135">Date</th>';
+			template += '						<th class="w155">Name</th>';
+			template += '						<th class="w140">Date</th>';
 			template += '						<th class="w55"></th>';
 			template += '					</tr>';
 			template += '				<tbody>';

@@ -132,6 +132,16 @@ public class SearchServlet extends HttpServlet {
 		return list == null || list.size() == 0 ? null : list.get(0);
 	}
 
+    protected static NameValuePair getNameValuePairFromList(List<NameValuePair> paramList, String parameterName) {
+        for (NameValuePair param : paramList) {
+            if (param.getName().equals(parameterName)) {
+                return param;
+            }
+        }
+
+        return null;
+    }
+
 	protected void setFacetTemplateValues(RedirectRuleCondition condition, Map<String, String> facetMap) {
 		if (condition != null) {
 			condition.setFacetPrefix(facetMap.get(SolrConstants.SOLR_PARAM_FACET_NAME));
@@ -1207,7 +1217,7 @@ public class SearchServlet extends HttpServlet {
 		    	solrHelper.setMaxSuggestCount(suggestCount);
 			    
 			    final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
-			    getSpellingSuggestionsParams.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+			    getSpellingSuggestionsParams.remove(getNameValuePairFromList(getSpellingSuggestionsParams, SolrConstants.SOLR_PARAM_KEYWORD));
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
 				getSpellingSuggestionsParams.add(defTypeNVP);
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0"));
