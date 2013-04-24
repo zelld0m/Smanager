@@ -27,14 +27,12 @@
 						}
 
 						base.$el.find("#submitForApprovalTemplate").show();
-						base.$el.find("div#statusHolder").hide();
-
+						
 						if($.isNotBlank(ruleStatus["approvalStatus"])){
 							base.$el.find("div#statusHolder").show();
 							base.$el.find("span#status").html(getRuleNameSubTextStatus(ruleStatus));
 						}
-
-						base.$el.find("div#publishHolder").hide();
+						
 						if($.isNotBlank(ruleStatus["lastPublishedDate"])){
 							base.$el.find("div#publishHolder").show();
 							base.$el.find("span#statusDate").html(ruleStatus["lastPublishedDate"].toUTCString());
@@ -43,8 +41,9 @@
 						base.$el.find("a#submitForApprovalBtn").show();
 						if(ruleStatus["locked"]){
 							base.$el.find("span#statusMode").append("[ Read-Only ]");
-							base.$el.find("a#submitForApprovalBtn").hide();
+							base.$el.find("a#submitForApprovalBtn").parent().remove();
 						}
+						
 						base.$el.find("div#versionHolder").show();
 
 						if(base.options.ruleStatus!=null && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
@@ -205,7 +204,7 @@
 			template += '				</label>';
 			template += '			</div>';
 
-			template += '			<div id="statusHolder">';
+			template += '			<div id="statusHolder" style="display:none">';
 			template += '				<label class="floatL wAuto marRL5 fLgray2">|</label>';
 			template += '				<label class="floatL wAuto">Status:</label>';
 			template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
@@ -214,7 +213,7 @@
 			template += '				</label>';
 			template += '			</div>';
 
-			template += '			<div id="publishHolder">';
+			template += '			<div id="publishHolder" style="display:none">';
 			template += '				<label class="floatL wAuto marRL5 fLgray2">|</label>';
 			template += '				<label class="floatL wAuto">Last Published:</label>';
 			template += '				<label class="padL5 fLgray fsize11">';
