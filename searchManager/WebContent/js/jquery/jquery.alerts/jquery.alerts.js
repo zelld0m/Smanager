@@ -6,7 +6,7 @@
 					var callbackDone = false;
 					$("<div>").prop({
 						id: "jd-custom"
-					}).text(content).dialog({
+					}).html(content).dialog({
 						title: title,
 						height: "auto",
 						modal: true,
