@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -29,7 +30,6 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -569,11 +569,8 @@ public class SearchServlet extends HttpServlet {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: 
-		// remove the exclude list from the result header, update fl to not include EDP if it's not originally part of the request
-		// fix if EDP not part of fl
 		// support for json if json.nl != map
 
 		ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
@@ -633,8 +630,8 @@ public class SearchServlet extends HttpServlet {
 						
 						String convertedKeyword = paramValue;
 						logger.info(String.format("CLEANUP %s keyword: %s[%s] %s[%s]", storeName,
-								origKeyword, HexUtils.convert(origKeyword.getBytes()),
-								convertedKeyword, HexUtils.convert(convertedKeyword.getBytes())));
+								origKeyword, Hex.encodeHexString(origKeyword.getBytes()),
+								convertedKeyword, Hex.encodeHexString(convertedKeyword.getBytes())));
 					}
 					else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FACET_FIELD)) {
 						if (paramValue.endsWith("_FacetTemplate")) {
