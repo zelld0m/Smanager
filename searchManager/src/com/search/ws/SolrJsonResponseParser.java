@@ -670,10 +670,10 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             count = spellRule.getSuggestions().length;
         }
 
-        JSONObject suggestionsJson = spellcheckObject != null ? spellcheckObject
+        JSONObject suggestionsJson = spellcheckObject != null && !spellcheckObject.isNullObject() ? spellcheckObject
                 .getJSONObject(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS) : null;
 
-        if (count < maxSuggestCount && suggestionsJson != null) {
+        if (count < maxSuggestCount && suggestionsJson != null && !suggestionsJson.isNullObject()) {
             if (suggestionsJson.has(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION)) {
                 String collation = StringUtils.trim(suggestionsJson.getString(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION));
                 if (!suggestedKeywords.contains(collation)) {
