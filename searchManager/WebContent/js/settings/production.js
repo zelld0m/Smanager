@@ -94,7 +94,7 @@
 					
 					if(getSelectedRefId().length==0){
 						jAlert("Please select rule","Push to Prod");
-					}else if (!validateComment("Push to Prod", comment, 1)){
+					}else if (!validateComment("Push to Prod", comment, 1, 300)){
 						//error alert in validateComment
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
@@ -184,7 +184,7 @@
 				click: function(evt){
 					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
 					
-					if (!validateComment("Push to Prod", comment, 1)){
+					if (!validateComment("Push to Prod", comment, 1, 300)){
 						//error alert in validateComment
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();

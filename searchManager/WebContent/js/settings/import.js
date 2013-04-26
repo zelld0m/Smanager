@@ -502,10 +502,8 @@
 
 						if(self.getSelectedRefId('all').length==0){
 							jAlert("Please select Import/Reject on a rule.", self.moduleName);
-						}else if($.isBlank(comment)){
-							jAlert("Please add comment.", self.moduleName);
-						}else if(!isXSSSafe(comment)){
-							jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
+						}else if (!validateComment(self.moduleName, comment, 1, 300)){
+							//error alert in function validateComment
 						}else{
 							var importedItems = self.getSelectedRefId('import');
 							var validImport = true;

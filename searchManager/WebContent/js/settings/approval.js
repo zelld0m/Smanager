@@ -85,10 +85,8 @@
 
 					if (getSelectedRefId().length==0){
 						jAlert("Please select rule","Approval");
-					}else if ($.isBlank(comment)){
-						jAlert("Please add comment.","Approval");
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.","Approval");
+					}else if (!validateComment("Approval", comment, 1, 300)){
+						// error alert in function validateComment
 					}else{
 						var a = [];
 						var arrSelectedKeys = Object.keys(getSelectedItems());
@@ -154,10 +152,13 @@
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
 					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
-					if ($.isBlank(comment)){
-						jAlert("Please add comment.","Approval");
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.","Approval");
+//					if ($.isBlank(comment)){
+//						jAlert("Please add comment.","Approval");
+//					}else if(!isXSSSafe(comment)){
+//						jAlert("Invalid comment. HTML/XSS is not allowed.","Approval");
+					
+					if (!validateComment("Approval", comment, 1, 300)){
+						// error alert in function validateComment
 					}else{
 						// TODO: only spell rule supported at the moment
 						switch($(evt.currentTarget).attr("id")){
@@ -436,7 +437,7 @@
 												click: function(evt){
 													var comment = $.defaultIfBlank($content.find("#approvalComment").val(),"");
 	
-													if (validateComment("Approval",comment,1)){
+													if (validateComment("Approval", comment, 1, 300)){
 														comment = comment.replace(/\n\r?/g, '<br/>');
 														
 														switch($(evt.currentTarget).attr("id")){

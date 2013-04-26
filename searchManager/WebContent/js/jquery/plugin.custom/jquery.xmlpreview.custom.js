@@ -1192,7 +1192,7 @@
 						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
 							click: function(evt){
 								var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#comment").val()), "");
-								if(!validateComment(base.options.transferType, comment, 1)){
+								if(!validateComment(base.options.transferType, comment, 1, 300)){
 									//error message in validateComment
 								}else{
 									comment = comment.replace(/\n\r?/g, '<br/>');

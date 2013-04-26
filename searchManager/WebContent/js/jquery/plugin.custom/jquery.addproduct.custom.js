@@ -1495,7 +1495,7 @@
 						}
 
 						if ($.isNotBlank(comment)){
-							if(validateComment("Comment",comment,1)){
+							if(validateComment("Comment", comment, 1, 300)){
 								comment = comment.replace(/\n\r?/g, '<br/>');
 							}else{
 								valid = false;
@@ -1606,7 +1606,7 @@
 					}
 					else if(today.getTime() > new Date(expDate).getTime())
 						jAlert("Start date cannot be earlier than today", "Invalid Input");
-					else if ($.isNotBlank(comment) && !validateComment("Invalid Input",comment,1)){
+					else if ($.isNotBlank(comment) && !validateComment("Invalid Input", comment, 1, 300)){
 						//error alert in function validateComment
 					}
 					else {
