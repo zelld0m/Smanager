@@ -44,7 +44,7 @@
 											 } 
 										 },
 										 {	
-											 text: "OK", 
+											 text: "Ok", 
 											 click: function() {
 												 callbackDone = true;
 												 if(callback) callback(true);

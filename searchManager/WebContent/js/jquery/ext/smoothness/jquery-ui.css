@@ -364,7 +364,7 @@
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { padding: 0; color:#fff !important }
 .ui-dialog .ui-dialog-content { border: 0; padding: .5em 1em; background: none; overflow: auto; }
 .ui-dialog .ui-dialog-buttonpane { text-align: right; border-width: 1px 0 0 0; background-image: none; margin: .5em 0 0 0;  }
-.ui-dialog .ui-dialog-buttonpane button { float: right; margin: .5em .4em .5em 0; cursor: pointer; padding: 2px 5px 4px 5px; font-size:14px; width:auto; overflow:visible; background: url(images/bgButtonBlue.png) repeat-x; font-family:Arial, Helvetica, sans-serif !important; color:#fff; font-size:12px; font-weight:bold; border:0  }
+.ui-dialog .ui-dialog-buttonpane button { float: right; margin: .5em .4em .5em 0; cursor: pointer; padding: 2px 5px 4px 5px; font-size:14px; width:auto; overflow:visible; background: url(images/bgButtonBlue.png) repeat-x; font-family:Arial, Helvetica, sans-serif !important; color:#fff; font-size:12px; font-weight:bold; border:0;  text-transform:capitalize !important;}
 .ui-dialog .ui-resizable-se { width: 14px; height: 14px; right: 3px; bottom: 3px; }
 .ui-draggable .ui-dialog-titlebar { cursor: move; }
 /* Progressbar
