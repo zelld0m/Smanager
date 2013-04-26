@@ -78,7 +78,7 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
                     Predicate<String> icontains = StringUtil.createIContainsPredicate(rule.getSearchTerms()[0]);
 
                     for (SpellRuleXml xml : retList) {
-                        if (Collections2.filter(xml.getRuleKeyword().getKeyword(), icontains).size() > 0) {
+                        if (!Collections2.filter(xml.getRuleKeyword().getKeyword(), icontains).isEmpty()) {
                             rules.add(xml);
                         }
                     }
@@ -90,7 +90,7 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
                     Predicate<String> icontains = StringUtil.createIContainsPredicate(rule.getSuggestions()[0]);
 
                     for (SpellRuleXml xml : retList) {
-                        if (Collections2.filter(xml.getSuggestKeyword().getSuggest(), icontains).size() > 0) {
+                        if (!Collections2.filter(xml.getSuggestKeyword().getSuggest(), icontains).isEmpty()) {
                             rules.add(xml);
                         }
                     }
