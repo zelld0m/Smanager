@@ -1490,11 +1490,11 @@
 							jAlert("Date 'Valid Until' cannot be earlier than today", "Invalid Input");
 						}
 						
-						if (!validateGeneric("Validity Date", expiryDate)){
+						if (valid && !validateGeneric("Validity Date", expiryDate)){
 							valid = false;
 						}
 
-						if ($.isNotBlank(comment)){
+						if (valid && $.isNotBlank(comment)){
 							if(validateComment("Comment", comment, 1, 300)){
 								comment = comment.replace(/\n\r?/g, '<br/>');
 							}else{
@@ -1504,16 +1504,16 @@
 
 						var condMap = base.getSelectedFacetFieldValues();
 
-						if ($.isEmptyObject(condMap)){
+						if (valid && $.isEmptyObject(condMap)){
 							valid = false;
 							jAlert('Please specify at least one filter condition');
 						}
-						else if(base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
+						else if(valid && base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
 							valid = false;
 							jAlert("Position value should be from 1 - " + base.options.maxPosition + ".", "Max Value Exceeded");
 						}
 
-						if (!$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"])){
+						if (valid && !$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"])){
 							valid = false;
 						}
 
@@ -1523,7 +1523,7 @@
 							$.each(condMap, function(idx, el){
 								$.each(el, function(i,elem){
 									if($.inArray(idx, inputFields) !== -1){
-										if(!validateGeneric("Input", elem)) {
+										if(valid && !validateGeneric(idx, elem)) {
 											valid = false;
 										}
 									}
