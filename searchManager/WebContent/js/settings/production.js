@@ -156,7 +156,7 @@
 										},
 										postHook:function(){ 
 											if (!exception) {
-												cleanUpTabContent()
+												cleanUpTabContent();
 											}
 											else {
 												$("div.circlePreloader").hide();
@@ -204,7 +204,7 @@
 										},
 										postHook:function(){ 
 											if (!exception) {
-												cleanUpTabContent()
+												cleanUpTabContent();
 											}
 											else {
 												$(tabSelected).find("div#requestDetails").hide();
@@ -360,6 +360,25 @@
 							$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
 							$(tabSelected).find('div#actionBtn').hide();
 							$(tabSelected).find('th#selectAll > input[type="checkbox"]').hide();
+						}
+						// what publishing guidelines
+						if (entityName === "didYouMean") {
+							$(tabSelected).find('div#pgDidYouMean').show();
+						} else {
+							switch(filterBy) {
+							case "approved":
+								$(tabSelected).find('div#pgApprovedForPublishing').show();
+								break;
+							case "published":
+								$(tabSelected).find('div#pgPublished').show();
+								break;
+							case "delete":
+								$(tabSelected).find('div#pgApprovedForDeletion').show();
+								break;
+							case undefined:
+							default:
+								$(tabSelected).find('div.publishingGuidelines').hide();		
+							}
 						}
 						
 						// What button to display
