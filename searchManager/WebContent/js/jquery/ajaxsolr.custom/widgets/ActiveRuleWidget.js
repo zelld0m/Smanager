@@ -42,7 +42,16 @@
 				var rules = self.manager.response.responseHeader["search_rules"];
 				var $ul = $(self.target).find("ul#itemListing");
 				$ul.find("li.items:not(#itemPattern)").remove();
-				$(self.target).find('#switcherText').text(rules.length + ' Active ' + (rules.length > 1 ? 'Rules': 'Rule'));
+				var activeCount = 0;
+				
+				for(var i=0; i<rules.length; i++) {
+					var rule = rules[i]['rule'];
+					if(rule['active'] === 'true') {
+						activeCount++;
+					}
+				}
+				
+				$(self.target).find('#switcherText').text(activeCount + ' Active ' + (activeCount > 1 ? 'Rules': 'Rule'));
 				
 				for(var i=0; i<rules.length; i++){
 					var rule = rules[i]["rule"];
