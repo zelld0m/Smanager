@@ -67,22 +67,23 @@ showActionResponseFromMap = function(code, action, title, additionalFailMessage)
 	var message = "";
 
 	if (code["PASSED"] && code["PASSED"].length > 0) {
-		if ($.isNotBlank(message)) message += "\n\n";
-		message += "Successful " + action + " request for:";
+		message += "Successful " + action + " request for:<ul class='mar0 padL30'>";
 		for(var i=0; i< code["PASSED"].length; i++){	
-			message += '\n-'+ code["PASSED"][i];	
+			message += '<li>'+ code["PASSED"][i] + "</li>";
 		}
+		message += "</ul>";
 	}
 
 	if (code["FAILED"] && code["FAILED"].length > 0) {
-		if ($.isNotBlank(message)) message += "\n\n";
-		message += "Failed " + action + " request for:";
+		if ($.isNotBlank(message)) message += "<br>";
+		message += "Failed " + action + " request for:<ul class='mar0 padL30'>";
 		for(var i=0; i< code["FAILED"].length; i++){	
-			message += '\n-'+ code["FAILED"][i];	
+			message += "<li>"+ code["FAILED"][i] + "</li>";
 		}
+		message += "</ul>"
 
 		if (additionalFailMessage) {
-			message += "\n\n" + additionalFailMessage;
+			message += "<br>" + additionalFailMessage;
 		}
 	}
 

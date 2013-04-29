@@ -178,6 +178,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .padL13, .padL13		{padding-left:13px}
 .cssReset .padL15, .padL15		{padding-left:15px !important}
 .cssReset .padL25				{padding-left:25px}
+.cssReset .padL30, .padL30      {padding-left:30px !important}
 .cssReset .padL55				{padding-left:55px}
 .cssReset .padL100, .padL100	{padding-left:100px !important}
 .cssReset .padL212, .padL212	{padding-left:212px !important}

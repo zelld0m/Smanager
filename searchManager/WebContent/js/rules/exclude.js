@@ -501,7 +501,7 @@
 														callback : function(code){
 															api.destroy();
 															showActionResponseFromMap(code, "add", "Multiple Rule Item Add", 
-																"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+																"Please check for the following:<ol type='a' class='mar0 padL30'><li>SKU(s) are already present in the list</li><li>SKU(s) are actually searchable using the specified keyword.</li></ol>");
 															self.populateRuleItem(self.selectedRuleItemPage);
 														}
 													});
