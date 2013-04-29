@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
@@ -24,6 +26,7 @@ import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
+import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.SpellIndex;
 
 @Component("spellRuleDAO")
@@ -62,14 +65,7 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
                     total = 1;
                 }
             } else {
-
-                boolean hasSearchTerm = rule.getSearchTerms() != null
-                        && StringUtils.isNotEmpty(rule.getSearchTerms()[0]);
-                boolean hasSuggestTerm = rule.getSuggestions() != null
-                        && StringUtils.isNotEmpty(rule.getSuggestions()[0]);
-                boolean hasStatus = CollectionUtils.isNotEmpty(statusList);
-
-                if (hasStatus) {
+                if (CollectionUtils.isNotEmpty(statusList)) {
                 	for (String status: statusList) {
                 		retList.addAll(spellRules.selectRulesByStatus(status));
                 	}
@@ -77,33 +73,30 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
                 	retList = spellRules.selectActiveRules();
                 }
 
-                if (hasSearchTerm) {
+                if (rule.getSearchTerms() != null && StringUtils.isNotEmpty(rule.getSearchTerms()[0])) {
                     List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
-                    for (SpellRuleXml xml : retList) {
-                        for (String kw : xml.getRuleKeyword().getKeyword()) {
-                            if (kw.contains(rule.getSearchTerms()[0])) {
-                                rules.add(xml);
-                                break;
-                            }
-                        }
-                    }
+                    Predicate<String> icontains = StringUtil.createIContainsPredicate(rule.getSearchTerms()[0]);
 
-                    retList = rules;
-                }
-
-                if (hasSuggestTerm) {
-                    List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
                     for (SpellRuleXml xml : retList) {
-                        for (String kw : xml.getSuggestKeyword().getSuggest()) {
-                            if (kw.contains(rule.getSuggestions()[0])) {
-                                rules.add(xml);
-                                break;
-                            }
+                        if (!Collections2.filter(xml.getRuleKeyword().getKeyword(), icontains).isEmpty()) {
+                            rules.add(xml);
                         }
                     }
                     retList = rules;
                 }
-                
+
+                if (rule.getSuggestions() != null && StringUtils.isNotEmpty(rule.getSuggestions()[0])) {
+                    List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
+                    Predicate<String> icontains = StringUtil.createIContainsPredicate(rule.getSuggestions()[0]);
+
+                    for (SpellRuleXml xml : retList) {
+                        if (!Collections2.filter(xml.getSuggestKeyword().getSuggest(), icontains).isEmpty()) {
+                            rules.add(xml);
+                        }
+                    }
+                    retList = rules;
+                }
+
                 total = retList.size();
             }
 
