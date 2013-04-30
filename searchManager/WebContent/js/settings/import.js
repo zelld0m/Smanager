@@ -920,7 +920,7 @@
 														},
 														itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
 															if (self.entityName === "elevate"){
-																ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+																ElevateServiceJS.isItemInNaturalResult(ruleName, memberIds, memberConditions, {
 																	callback:function(data){
 																		base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
 																	},
@@ -968,7 +968,7 @@
 														},
 														itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
 															if (self.entityName === "elevate"){
-																ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+																ElevateServiceJS.isItemInNaturalResult(ruleName, memberIds, memberConditions, {
 																	callback:function(data){
 																		base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
 																	},

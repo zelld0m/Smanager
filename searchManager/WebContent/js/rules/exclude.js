@@ -165,9 +165,9 @@
 										},
 										callback: function(data) {
 											var readableString = data.readableString;
-											ElevateServiceJS.isItemRequireForceAdd(self.selectedRule["ruleId"], $.makeArray("0"), $.makeArray(data.conditionForSolr), {
+											ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], $.makeArray("0"), $.makeArray(data.conditionForSolr), {
 												callback: function(data) {
-													if (data) {
+													if (data["0"] === false) {
 														var ruleType = $("#selectRuleItemType option:selected").text();
 														jConfirm("The " + ruleType + " " + readableString + self.addForceAddItem, "Add " + ruleType, function(result){
 															if (result) {
@@ -512,7 +512,7 @@
 													conditionForSolr[i] = "DPNo:" + skus[i];
 												}
 												
-												ElevateServiceJS.isItemRequireForceAdd(self.selectedRule["ruleId"], skus, conditionForSolr, {
+												ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], skus, conditionForSolr, {
 													preHook: function(){
 														self.preShowRuleContent();
 													},
@@ -558,9 +558,9 @@
 													},
 													callback: function(data) {
 														var readableString = data.readableString;
-														ElevateServiceJS.isItemRequireForceAdd(self.selectedRule["ruleId"], $.makeArray("0"), $.makeArray(data.conditionForSolr), {
+														ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], $.makeArray("0"), $.makeArray(data.conditionForSolr), {
 															callback: function(data) {
-																if (data) {
+																if (data["0"] === false) {
 																	jConfirm("The " + ruleType + " " + readableString + self.addForceAddItem, "Add " + ruleType, function(result){
 																		if (result) {
 																			addFacetItem();
