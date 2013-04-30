@@ -100,6 +100,7 @@
 					},
 					show: function(event, ui){
 						if(ui.panel){
+							$(".qtip:visible").qtip('hide');
 							self.tabSelected = ui.panel.id;
 							self.entityName = self.tabSelected.substring(0, self.tabSelected.length-3);
 							self.initVariables();
