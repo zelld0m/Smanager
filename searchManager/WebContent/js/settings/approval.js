@@ -216,7 +216,7 @@
 
 			template  = '<div id="actionBtn" class="floatR fsize12 border w600 marT5 marB8" style="background: #f3f3f3;">';
 			template += '	<h3 class="padL15" style="border:none">Approval Guidelines</h3>';
-			template += '	<div class="fgray padL15 padR12 padB15 fsize11">';
+			template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
 			template += '		<p align="justify">';
 			template += '			Before approving any rule, it is advisable to review rule details.<br/><br/>';
 			template += '			If the rule is ready to be pushed to production, click on <strong>Approve</strong>.';
