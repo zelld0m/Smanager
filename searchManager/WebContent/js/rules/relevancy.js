@@ -1185,7 +1185,7 @@
 		getRelevancyRuleKeywordList(1);
 
 		if(selectedRule==null){
-			$("#preloader").hide();
+			$("#preloader, #relevancy").hide();
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
 			$("#titleHeader").html("");
