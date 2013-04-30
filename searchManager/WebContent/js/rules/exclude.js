@@ -602,12 +602,14 @@
 					$.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"]), 'tileView', {path:GLOBAL_contextPath});
 					$("#listViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
+					$(".qtip:visible").qtip('reposition');
 				}});
 
 				$("#listViewIcon").off().on({click:function(e) {
 					$.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"]), 'listView', {path:GLOBAL_contextPath});
 					$("#tileViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
+					$(".qtip:visible").qtip('reposition');
 				}});
 
 				$("#addRuleItemIcon").off().on({
