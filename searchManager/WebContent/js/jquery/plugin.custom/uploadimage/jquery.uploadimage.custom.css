@@ -1,0 +1,21 @@
+.plugin-uploadimage #buttonset {
+	width: 98%
+}
+
+.plugin-uploadimage .fieldLabel > label {
+     float: left;
+     margin-top: 5px;
+     width: 100px;
+}
+
+.plugin-uploadimage input[type="text"] {
+     width: 300px
+}
+
+.plugin-uploadimage #switcher {
+     margin-right: 100px
+}
+
+.plugin-uploadimage #buttonset {
+     float: right
+}

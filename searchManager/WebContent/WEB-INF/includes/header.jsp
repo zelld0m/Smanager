@@ -128,6 +128,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/SpellRuleServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
+  
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-array-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-date-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-string-functions.js" />" ></script>
@@ -136,7 +137,6 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.viewaudit.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.comment.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.sidepanel.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.selectbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.viewfacetvalues.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.auditpanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.download.custom.js" />" ></script>
@@ -151,6 +151,13 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.importas.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.rk-message-type-1.0.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.editable.custom.js" />" ></script>
+  
+  
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/uploadimage/jquery.uploadimage.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/uploadimage/jquery.uploadimage.custom.js" />" ></script>
+  
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.js" />" ></script>
   
   <script type="text/javascript"  src="<spring:url value="/js/jquery/searchabledropdown-1.0.8/jquery.searchabledropdown-1.0.8-modified.src.js" />"></script>  
  

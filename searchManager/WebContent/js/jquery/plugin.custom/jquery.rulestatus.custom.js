@@ -15,6 +15,9 @@
 		base.getRuleStatus = function(){
 
 			DeploymentServiceJS.getRuleStatus(base.options.moduleName, base.options.rule["ruleId"], {
+				preHook: function(){
+					base.options.beforeRuleStatusRequest();
+				},
 				callback:function(ruleStatus){
 					base.options.ruleStatus=ruleStatus;
 					base.$el.html(base.getTemplate());
@@ -146,7 +149,6 @@
 		base.init = function(){
 			base.options = $.extend({},$.rulestatus.defaultOptions, options);
 			base.$el.empty();
-			base.options.beforeRuleStatusRequest();
 			base.getRuleStatus();
 		};
 

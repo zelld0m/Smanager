@@ -28,20 +28,20 @@ import com.search.manager.model.Store;
 @Service(value = "bannerService")
 @RemoteProxy(
 		name = "BannerServiceJS",
-	    creator = SpringCreator.class,
-	    creatorParams = @Param(name = "beanName", value = "bannerService")
-	)
+		creator = SpringCreator.class,
+		creatorParams = @Param(name = "beanName", value = "bannerService")
+)
 
-	public class BannerService {
+public class BannerService {
 	private static final Logger logger = Logger.getLogger(BannerService.class);
-	
+
 	@Autowired private DaoService daoService;
-	
+
 	@RemoteMethod
 	public Banner addKeywordsToBanner(String ruleId, String[] keywordList){
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<CampaignBanner> searchCampaignUsingThisBanner(String bannerId, String campaignNameFilter, int page, int pageSize){
 		Store store = new Store(UtilityService.getStoreId());
@@ -58,7 +58,7 @@ import com.search.manager.model.Store;
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<CampaignBanner> getAllCampaignUsingThisBanner(String bannerId, int page, int pageSize){
 		Store store = new Store(UtilityService.getStoreId());
@@ -74,20 +74,20 @@ import com.search.manager.model.Store;
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public Banner getRuleById(String ruleId){
 		try {
 			String store = UtilityService.getStoreId();
 			Banner rule = new Banner(ruleId, new Store(store));
 			return daoService.getBanner(rule);
-			
+
 		} catch (DaoException e) {
 			logger.error("Failed during getRuleById()",e);
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public Banner getRuleByName(String ruleName){
 		try {
@@ -95,26 +95,26 @@ import com.search.manager.model.Store;
 			Banner rule = new Banner(new Store(store), ruleName);
 			SearchCriteria<Banner> criteria = new SearchCriteria<Banner>(rule, 1, 1);
 			RecordSet<Banner> bannerList = daoService.getBannerListWithNameMatching(criteria);
-			
+
 			if(bannerList != null && bannerList.getTotalSize() > 0){
 				return bannerList.getList().get(0);
 			}
-			
-			
-			
+
+
+
 		} catch (DaoException e) {
 			logger.error("Failed during getRuleByName()",e);
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<Banner> getRules(String filter, int page, int itemsPerPage){
 		try{
 			String storeId = UtilityService.getStoreId();
 			Banner banner = new Banner("", filter, new Store(storeId));
 			banner.setRuleName(filter);
-			
+
 			SearchCriteria<Banner> criteria = new SearchCriteria<Banner>(banner, page, itemsPerPage);
 			return daoService.getBannerListWithNameLike(criteria);
 		}catch(DaoException e){
@@ -122,7 +122,7 @@ import com.search.manager.model.Store;
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public List<String> checkForRuleNameDuplicates(String[] ruleIds, String[] ruleNames) throws DaoException {
 		List<String> duplicateRuleNames = new ArrayList<String>();
@@ -138,7 +138,7 @@ import com.search.manager.model.Store;
 	@RemoteMethod
 	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
 		Banner rule = new Banner(ruleId, ruleName, new Store(UtilityService.getStoreId()));
-		
+
 		SearchCriteria<Banner> criteria = new SearchCriteria<Banner>(rule, null, null, 0, 0);
 		RecordSet<Banner> set = daoService.getBannerListWithNameMatching(criteria);
 		if (set.getTotalSize() > 0) {
@@ -152,7 +152,7 @@ import com.search.manager.model.Store;
 		}
 		return false;
 	}
-	
+
 	@RemoteMethod
 	public Banner addRule(String bannerName, String linkPath, String imagePath, String imageAlt, String description) {
 		String ruleId = "";
@@ -167,12 +167,12 @@ import com.search.manager.model.Store;
 			try {
 				if(StringUtils.isNotEmpty(ruleId)){
 					daoService.addRuleStatus(new RuleStatus(RuleEntity.BANNER, storeId, ruleId, bannerName, 
-						username, username, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+							username, username, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
 				}
 			} catch (DaoException de) {
 				logger.error("Failed to create rule status for search banner: " + bannerName);
 			}
-			
+
 			if (StringUtils.isNotBlank(ruleId)){
 				return getRuleById(ruleId);
 			}
@@ -184,7 +184,7 @@ import com.search.manager.model.Store;
 
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public int updateRule(String ruleId, String linkPath, String imagePath, String imageAlt, String ruleName, String description) {
 		int result = -1;
@@ -201,11 +201,11 @@ import com.search.manager.model.Store;
 		}
 		return result;
 	}
-	
+
 	@RemoteMethod
 	public int deleteRule(String ruleId) {
 		int result = -1;
-		
+
 		try {
 			String store = UtilityService.getStoreId();
 			String username = UtilityService.getUsername();
@@ -224,16 +224,16 @@ import com.search.manager.model.Store;
 		} catch (Exception e) {
 			logger.error("Failed during deleteRule()",e);
 		}
-		
+
 		return result;
 	}
-	
+
 	@RemoteMethod
 	public int addFeature(String storeId, String keyword, String productId) {
 		logger.info(String.format("%s %s %s", storeId, keyword, productId));
 		return 0;
 	}
-	
+
 	@RemoteMethod
 	public int removeFeature(String storeId, String keyword, String productId) {
 		logger.info(String.format("%s %s %s", storeId, keyword, productId));

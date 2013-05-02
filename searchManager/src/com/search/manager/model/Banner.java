@@ -21,8 +21,7 @@ public class Banner extends ModelBean {
 	private String imageAlt;
 	private List<Keyword> keywordList;
 	
-	public Banner() {
-	}
+	public Banner() {}
 	
 	public Banner(Store store, String ruleId, String ruleName, String description){
 		this.store = store;
