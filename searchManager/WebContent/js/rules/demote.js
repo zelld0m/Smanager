@@ -256,7 +256,7 @@
 							itemAddComment: function(base, comment){
 								DemoteServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
 											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
 												callback: function(data){
@@ -312,7 +312,7 @@
 							if(result){
 								DemoteServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {	
 									callback: function(code){
-										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
+										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
 										self.showRuleContent();
 									},
 									preHook: function(){
@@ -405,7 +405,7 @@
 				var $item = item;
 				DemoteServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
+						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel($item) + " Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
 						if(code==1) self.populateRuleItem(self.selectedRuleItemPage);
 					}
 				});
