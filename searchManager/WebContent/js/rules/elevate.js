@@ -152,10 +152,12 @@
 								item: $.extend(true, {}, e.data.item),
 								showPosition: true,
 								maxPosition: self.selectedRuleItemTotal + 1,
-								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
+								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues, api){
+									api.hide();
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
 											// 
+											api.destroy();
 											if (!data || e.data.item["memberTypeEntity"] != "FACET") {
 												var updateMessage = "Rule Facet Item: " + e.data.item.condition["readableString"];
 												showActionResponse(data, "update", updateMessage);
@@ -588,9 +590,11 @@
 							locked: self.selectedRuleStatus["locked"] || !allowModify,
 							showPosition: true,
 							maxPosition: self.selectedRuleItemTotal + 1,
-							addProductItemCallback:function(position, expiryDate, comment, skus){
+							addProductItemCallback:function(position, expiryDate, comment, skus, api){
+								api.hide();
 								ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 									callback : function(code){
+										api.destroy();
 										showActionResponseFromMap(code, "add", "Multiple Rule Item Add",
 										"Please check for the following:<ol type='a' class='mar0 padL30'><li>SKU(s) are already present in the list</li><li>SKU(s) are actually searchable using the specified keyword.</li></ol>");
 										self.populateRuleItem(self.selectedRuleItemPage);
@@ -600,9 +604,11 @@
 									}
 								});		
 							},
-							addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType){
+							addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType, api){
+								api.hide();
 								ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
 									callback: function(data){
+										api.destroy();
 										showActionResponse(data, "add", "New Rule "+ ruleType +" Item");
 										self.populateRuleItem();
 									},
