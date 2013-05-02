@@ -158,14 +158,15 @@
 										callback: function(data){
 											// 
 											api.destroy();
+											var facetRuleTypeLabel = self.getFacetRuleTypeLabel(item);
 											if (!data || e.data.item["memberTypeEntity"] != "FACET") {
-												var updateMessage = "Rule Facet Item: " + e.data.item.condition["readableString"];
+												var updateMessage = "Rule " + facetRuleTypeLabel + " Item: " + e.data.item.condition["readableString"];
 												showActionResponse(data, "update", updateMessage);
 												self.populateRuleItem(self.selectedRuleItemPage);
 											} else {
 												// Retrieve new condition first before displaying action response message.
 												RedirectServiceJS.convertMapToRedirectRuleCondition(selectedFacetFieldValues, function(newCondition) {
-													var updateMessage = "Rule Facet Item: " + newCondition["readableString"];
+													var updateMessage = "Rule " + facetRuleTypeLabel + " Item: " + newCondition["readableString"];
 													showActionResponse(data, "update", updateMessage);
 													self.populateRuleItem(self.selectedRuleItemPage);
 												});
@@ -759,6 +760,16 @@
 						self.preShowRuleContent();
 					}
 				});
+			},
+
+			getFacetRuleTypeLabel: function (item) {
+				if (item.condition.IMSFilter) {
+					return "IMS Categories";
+				} else if (item.condition.CNetFilter) {
+					return 'Product Site Taxonomy';
+				} else {
+					return "Facet";
+				}
 			},
 
 			getRuleItemFilter: function(){

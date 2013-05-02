@@ -156,7 +156,7 @@
 											callback: function(data){
 												api.destroy();
 												showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? 
-														"Rule Facet Item: " + e.data.item.condition["readableString"] : 
+														"Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + e.data.item.condition["readableString"] : 
 														$.isBlank(e.data.item["dpNo"]) ? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 												self.populateRuleItem(self.selectedRuleItemPage);
 											},
@@ -171,8 +171,7 @@
 											ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], $.makeArray("0"), $.makeArray(data.conditionForSolr), {
 												callback: function(data) {
 													if (data["0"] === false) {
-														var ruleType = $("#selectRuleItemType option:selected").text();
-														jConfirm("The " + ruleType + " " + readableString + self.addForceAddItem, "Add " + ruleType, function(result){
+														jConfirm("The " + self.getFacetRuleTypeLabel(item) + " " + readableString + self.addForceAddItem, "Update " + self.getFacetRuleTypeLabel(item), function(result){
 															if (result) {
 																updateFacetItem();
 															} else {
@@ -772,6 +771,16 @@
 						self.preShowRuleContent();
 					}
 				});
+			},
+
+			getFacetRuleTypeLabel: function (item) {
+				if (item.condition.IMSFilter) {
+					return "IMS Categories";
+				} else if (item.condition.CNetFilter) {
+					return 'Product Site Taxonomy';
+				} else {
+					return "Facet";
+				}
 			},
 
 			getRuleItemFilter: function(){
