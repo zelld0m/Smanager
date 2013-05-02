@@ -587,3 +587,7 @@ div.holder table#addDynamicAttributeName tr#dynamicAttributeName td.iepadBT0 div
 ::-ms-clear {
 	display: none;
 }
+
+ul#ruleDetails li#products ul#prodList li {
+	height: 180px;	
+}
