@@ -158,14 +158,15 @@
 										callback: function(data){
 											// 
 											api.destroy();
+											var facetRuleTypeLabel = self.getFacetRuleTypeLabel(item);
 											if (!data || e.data.item["memberTypeEntity"] != "FACET") {
-												var updateMessage = "Rule Facet Item: " + e.data.item.condition["readableString"];
+												var updateMessage = "Rule " + facetRuleTypeLabel + " Item: " + e.data.item.condition["readableString"];
 												showActionResponse(data, "update", updateMessage);
 												self.populateRuleItem(self.selectedRuleItemPage);
 											} else {
 												// Retrieve new condition first before displaying action response message.
 												RedirectServiceJS.convertMapToRedirectRuleCondition(selectedFacetFieldValues, function(newCondition) {
-													var updateMessage = "Rule Facet Item: " + newCondition["readableString"];
+													var updateMessage = "Rule " + facetRuleTypeLabel + " Item: " + newCondition["readableString"];
 													showActionResponse(data, "update", updateMessage);
 													self.populateRuleItem(self.selectedRuleItemPage);
 												});
@@ -452,7 +453,7 @@
 									changeStatusCallback: function(base, dt){
 										ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], dt.id, dt.status, {
 											callback:function(data){
-												showActionResponse(data, "update force add", (dt.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + dt.item.condition["readableString"] : $.isBlank(dt.item["dpNo"])? "Product Id#: " + dt.item["edp"] : "SKU#: " + dt.item["dpNo"]));
+												showActionResponse(data, "update force add", (dt.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + dt.item.condition["readableString"] : $.isBlank(dt.item["dpNo"])? "Product Id#: " + dt.item["edp"] : "SKU#: " + dt.item["dpNo"]));
 												self.populateRuleItem(self.selectedRuleItemPage);
 											},
 											preHook:function(){
@@ -751,7 +752,7 @@
 
 				ElevateServiceJS.updateElevate(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
-						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
 						showActionResponse(code, "update position", updateMessage);
 						self.populateRuleItem();
 					},
@@ -759,6 +760,16 @@
 						self.preShowRuleContent();
 					}
 				});
+			},
+
+			getFacetRuleTypeLabel: function (item) {
+				if (item.condition.IMSFilter) {
+					return "IMS Categories";
+				} else if (item.condition.CNetFilter) {
+					return 'Product Site Taxonomy';
+				} else {
+					return "Facet";
+				}
 			},
 
 			getRuleItemFilter: function(){
