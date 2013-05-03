@@ -29,60 +29,73 @@
 				var okmsg = '';
 
 				if(!$.isEmptyObject(data)) {
-					var importFail = '';
-					var importSuccessSubmitForApprovalFail = '';
-					var importSuccessPublishFail ='';
-					var importSuccess = '';
-					var rejectFail = '';
-					var rejectSuccess = '';
+					var importFail = '<ul class="mar0 padL30">';
+					var importSuccessSubmitForApprovalFail = '<ul class="mar0 padL30">';
+					var importSuccessPublishFail = '<ul class="mar0 padL30">';
+					var importSuccess = '<ul class="mar0 padL30">';
+					var rejectFail = '<ul class="mar0 padL30">';
+					var rejectSuccess = '<ul class="mar0 padL30">';
+
+					var importFailCount = 0;
+					var importSuccessSubmitForApprovalFailCount = 0;
+					var importSuccessPublishFailCount = 0;
+					var importSuccessCount = 0;
+					var rejectFailCount = 0;
+					var rejectSuccessCount = 0;
 
 					for(key in data) {
 						switch(data[key]) {
 						case 'import_fail':
-							importFail += '\n-' + key;
+							importFail += '<li>' + key + "</li>";
+							importFailCount++;
 							break;
 						case 'import_success_submit_for_approval_fail':
-							importSuccessSubmitForApprovalFail += '\n-' + key;
+							importSuccessSubmitForApprovalFail += '<li>' + key + '</li>';
+							importSuccessSubmitForApprovalFailCount++;
 							break;
 						case 'import_success_publish_fail':
-							importSuccessPublishFail += '\n-' + key;
+							importSuccessPublishFail += '<li>' + key + "</li>";
+							importSuccessPublishFailCount++;
 							break;
 						case 'import_success':
-							importSuccess += '\n-' + key;
+							importSuccess += '<li>' + key + "</li>";
+							importSuccessCount++;
 							break;
 						case 'reject_fail':
-							rejectFail += '\n-' + key;
+							rejectFail += '<li>' + key + "</li>";
+							rejectFailCount++;
 							break;
 						case 'reject_success':
-							rejectSuccess += '\n-' + key;
+							rejectSuccess += '<li>' + key + "</li>";
+							rejectSuccessCount++;
 							break;
 						}
 
 					}
 
-					if(importFail.length > 0) {
+					if(importFailCount) {
 						okmsg += 'Failed to import the following rules:';	
-						okmsg += importFail + '\n';
+						okmsg += importFail + '</ul>';
 					}
-					if(importSuccessSubmitForApprovalFail.length > 0) {
+					if(importSuccessSubmitForApprovalFailCount) {
 						okmsg += 'Failed to submit for approval the following imported rules:';	
-						okmsg += importSuccessSubmitForApprovalFail + '\n';
+						okmsg += importSuccessSubmitForApprovalFail + '</ul>';
 					}
-					if(importSuccessPublishFail.length > 0) {
+					if(importSuccessPublishFailCount) {
 						okmsg += 'Failed to auto-publish the following imported rules:';
-						okmsg += importSuccessPublishFail + '\n';
+						okmsg += importSuccessPublishFail + '</ul>';
 					}
-					if(importSuccess.length > 0) {
+					if(importSuccessCount) {
 						okmsg += 'Following rules were successfully imported:';	
-						okmsg += importSuccess + '\n';
+						okmsg += importSuccess + '</ul>';
 					}
-					if(rejectFail.length > 0) {
+					if(rejectFailCount) {
 						okmsg += 'Following rules were fail to import:';	
-						okmsg += rejectFail + '\n';
+						okmsg += rejectFail + '</ul>';
 					}
-					if(rejectSuccess.length > 0) {
+					if(rejectSuccessCount) {
 						okmsg += 'Following rules were successfully rejected:';	
-						okmsg += rejectSuccess + '\n';
+						okmsg += rejectSuccess + '</ul>';
 					}
 				} else {
 					okmsg = 'No rules were successfully imported and rejected.';
@@ -535,7 +548,7 @@
 												self.importRejectRules();
 											} else {
 												self.showData();
-												jAlert("The following Query Cleaning Rule names already exist:\n" + data.join("\n"), self.moduleName);
+												jAlert("The following Query Cleaning Rule names already exist:<ul class='mar0 padL30'><li>" + data.join("</li><li>") + "</li></ul>", self.moduleName);
 											}
 										}
 									});
@@ -550,7 +563,7 @@
 												self.importRejectRules();
 											} else {
 												self.showData();
-												jAlert("The following Ranking Rule names already exist:\n " + data.join("\n"), self.moduleName);
+												jAlert("The following Ranking Rule names already exist:<ul class='mar0 padL30'><li> " + data.join("</li><li>") + "</li></ul>", self.moduleName);
 											}
 										}
 									});
@@ -601,7 +614,13 @@
 				var iAs = "";
 				
 				if(arrImportIds.length>0){
-					confirmationMessage += "Rules to be imported:\n";
+					confirmationMessage += "Rules to be imported:";
+
+					if (arrImportIds.length > 1) {
+						confirmationMessage += "<ol type='1' class='mar0 padL30'>";
+					} else {
+						confirmationMessage += "<ul type='none' class='mar0 padL30'>";
+					}
 				}
 
 				var $selectedTab = $("#"+self.tabSelected);
@@ -610,19 +629,35 @@
 					rName = $row.find("#ruleName").text();
 					iType = $row.find("#importTypeList option:selected:eq(0)").text();
 					iAs = $row.find("#newName").val();
-					confirmationMessage += arrImportIds.length >1 ? (i+1) + ". ": "";
-					confirmationMessage += iType + ": " + rName + " -> " + iAs + "\n";
+					confirmationMessage += "<li>" + iType + ": " + rName + " &rarr; " + iAs + "</li>";
 				}
-				
+
+				if (arrImportIds.length > 1) {
+					confirmationMessage += "</ol>";
+				} else if (arrImportIds.length > 0) {
+					confirmationMessage += "</ul>";
+				}
+
 				if(arrRejectIds.length>0){
-					confirmationMessage += "\nRules to be rejected:\n";
+					confirmationMessage += (arrImportIds.length > 0 ? "<br>" : "") + "Rules to be rejected:";
+
+					if (arrRejectIds.length > 1) {
+						confirmationMessage += "<ol type='1' class='mar0 padL30'>";
+					} else {
+						confirmationMessage += "<ul type='none' class='mar0 padL30'>";
+					}
 				}
 				for(var i=0; i < arrRejectIds.length; i++){
 					$row = $("tr#ruleItem" + $.formatAsId(arrRejectIds[i]));
-					confirmationMessage += arrRejectIds.length >1 ? (i+1) + ". ": "";
-					confirmationMessage += $row.find("#ruleName").text() + "\n";
+					confirmationMessage += "<li>" + $row.find("#ruleName").text() + "</li>";
 				}
-				
+
+				if (arrRejectIds.length > 1) {
+					confirmationMessage += "</ol>";
+				} else if (arrRejectIds.length > 0) {
+					confirmationMessage += "</ul>";
+				}
+
 				return confirmationMessage;
 			},
 			

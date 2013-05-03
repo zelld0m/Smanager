@@ -153,7 +153,7 @@
 											callback: function(data){
 												api.destroy();
 												showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "" +
-														"Rule Facet Item: " + e.data.item.condition["readableString"] : 
+														"Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + e.data.item.condition["readableString"] : 
 														$.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 												self.populateRuleItem(self.selectedRuleItemPage);
 											},
@@ -168,8 +168,7 @@
 											ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], $.makeArray("0"), $.makeArray(data.conditionForSolr), {
 												callback: function(data) {
 													if (data["0"] === false) {
-														var ruleType = $("#selectRuleItemType option:selected").text();
-														jConfirm("The " + ruleType + " " + readableString + self.addForceAddItem, "Add " + ruleType, function(result){
+														jConfirm("The " + self.getFacetRuleTypeLabel(item) + " " + readableString + self.addForceAddItem, "Update " + self.getFacetRuleTypeLabel(item), function(result){
 															if (result) {
 																updateFacetItem();
 															} else {
@@ -254,7 +253,7 @@
 							itemAddComment: function(base, comment){
 								ExcludeServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
 											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
 												callback: function(data){
@@ -310,7 +309,7 @@
 							if(result){
 								ExcludeServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
 									callback: function(code){
-										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : 
+										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : 
 											$.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
 										self.showRuleContent();
 									},
@@ -367,7 +366,7 @@
 				var $item = item;
 				ExcludeServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
+						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel($item) + " Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
 						if(code==1) self.populateRuleItem(self.selectedRuleItemPage);
 					}
 				});
@@ -714,6 +713,16 @@
 				}
 
 				self.populateRuleItem();
+			},
+
+			getFacetRuleTypeLabel: function (item) {
+				if (item.condition.IMSFilter) {
+					return "IMS Categories";
+				} else if (item.condition.CNetFilter) {
+					return 'Product Site Taxonomy';
+				} else {
+					return "Facet";
+				}
 			},
 
 			getRuleItemFilter: function(){

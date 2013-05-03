@@ -139,7 +139,7 @@
 				
 				
 				if(index !== "current"){
-					$li.find("label.restoreIcon, a#restoreBtn").off().on({
+					$li.find("label.restoreIcon").off().on({
 						click:function(e){
 							if (!e.data.locked) {
 								jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){

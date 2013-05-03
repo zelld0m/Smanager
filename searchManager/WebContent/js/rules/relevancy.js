@@ -1164,7 +1164,10 @@
 						if (code > 0) {
 							jAlert(selectedRule.ruleName + " was successfully deleted.","Ranking Rule");
 						}
-						if(code==1) setRelevancy(null);
+						if(code==1) {
+							setRelevancy(null);
+							showRelevancy();
+						}
 					}
 				});
 			}

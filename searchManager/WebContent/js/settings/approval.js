@@ -58,12 +58,13 @@
 		var postMsg = function(data,pub){
 			var msg_ = pub ? 'approved:' : 'rejected:';
 
-			var okmsg = 'Following rules were successfully ' + msg_;	
+			var okmsg = 'Following rules were successfully ' + msg_ + '<ul class="mar0 padL30">';	
 
 			for(var i=0; i<data.length; i++){	
-				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").text();	
+				okmsg += '<li>'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").text() + '</li>';
 			}
 
+			okmsg += '</ul>'
 			jAlert(okmsg,"Approval");
 		};
 
@@ -98,7 +99,7 @@
 
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
-							var confirmMsg = "Continue approval of the following rules:\n" + a.join('\n');
+							var confirmMsg = "Continue approval of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
 							jConfirm(confirmMsg, "Confirm Approval", function(status){
 								if(status){
 									DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -122,7 +123,7 @@
 								return;
 							}
 
-							var confirmMsg = "Continue reject of the following rules:\n" + a.join('\n');
+							var confirmMsg = "Continue reject of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
 							jConfirm(confirmMsg, "Confirm Reject", function(status){
 								if(status){
 									DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{

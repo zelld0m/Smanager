@@ -55,8 +55,8 @@
 			var msg_ = pub?'published:':'unpublished:';
 
 			if (data.totalSize>0){			
-				var okmsg = 'Following rules were successfully ' + msg_;	
-				var flmsg = 'Following rules were unsuccessfully ' + msg_;
+				var okmsg = 'Following rules were successfully ' + msg_ + "<ul class='mar0 padL30'>";	
+				var flmsg = 'Following rules were unsuccessfully ' + msg_ + "<ul class='mar0 padL30'>";
 				var okcnt = 0;
 				var flcnt = 0;
 				
@@ -64,11 +64,11 @@
 					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").text();
 					if(list[i].published == '1'){
 						okcnt++;
-						okmsg += '\n-' + rName;	
+						okmsg += '<li>' + rName + "</li>";
 					}
 					else{
 						flcnt++;
-						flmsg += '\n-' + rName;
+						flmsg += '<li>' + rName + "</li>";
 					}
 				}
 			
@@ -77,7 +77,7 @@
 					cmpltmsg += okmsg;
 				}
 				if (flcnt>0){
-					cmpltmsg += (okcnt>0? "\n\n":"");
+					cmpltmsg += (okcnt>0? "<br>":"");
 					cmpltmsg += flmsg;
 				}
 				
@@ -108,7 +108,7 @@
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
-							var confirmMsg = "Continue publishing of the following rules:\n" + a.join('\n');
+							var confirmMsg = "Continue publishing of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
 
 							jConfirm(confirmMsg, "Confirm Publish", function(status){
 								if(status){
@@ -142,7 +142,7 @@
 							break;
 							
 						case "unpublishBtn": 
-							var confirmMsg = "Continue unpublishing of the following rules:\n" + a.join('\n');
+							var confirmMsg = "Continue unpublishing of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
 							jConfirm(confirmMsg, "Confirm Unpublish", function(status){
 								if(status){
 									var exception = false;

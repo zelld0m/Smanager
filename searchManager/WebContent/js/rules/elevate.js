@@ -152,18 +152,21 @@
 								item: $.extend(true, {}, e.data.item),
 								showPosition: true,
 								maxPosition: self.selectedRuleItemTotal + 1,
-								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
+								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues, api){
+									api.hide();
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
 											// 
+											api.destroy();
+											var facetRuleTypeLabel = self.getFacetRuleTypeLabel(item);
 											if (!data || e.data.item["memberTypeEntity"] != "FACET") {
-												var updateMessage = "Rule Facet Item: " + e.data.item.condition["readableString"];
+												var updateMessage = "Rule " + facetRuleTypeLabel + " Item: " + e.data.item.condition["readableString"];
 												showActionResponse(data, "update", updateMessage);
 												self.populateRuleItem(self.selectedRuleItemPage);
 											} else {
 												// Retrieve new condition first before displaying action response message.
 												RedirectServiceJS.convertMapToRedirectRuleCondition(selectedFacetFieldValues, function(newCondition) {
-													var updateMessage = "Rule Facet Item: " + newCondition["readableString"];
+													var updateMessage = "Rule " + facetRuleTypeLabel + " Item: " + newCondition["readableString"];
 													showActionResponse(data, "update", updateMessage);
 													self.populateRuleItem(self.selectedRuleItemPage);
 												});
@@ -242,7 +245,7 @@
 							itemAddComment: function(base, comment){
 								ElevateServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
 											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
 												callback: function(data){
@@ -297,7 +300,7 @@
 							if(result){
 								ElevateServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {	
 									callback: function(code){
-										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
+										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
 										self.showRuleContent();
 									},
 									preHook: function(){
@@ -390,7 +393,7 @@
 				var $item = item;
 				ElevateServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
+						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
 						if(code==1) self.populateRuleItem(self.selectedRuleItemPage);
 					}
 				});
@@ -450,7 +453,7 @@
 									changeStatusCallback: function(base, dt){
 										ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], dt.id, dt.status, {
 											callback:function(data){
-												showActionResponse(data, "update force add", (dt.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + dt.item.condition["readableString"] : $.isBlank(dt.item["dpNo"])? "Product Id#: " + dt.item["edp"] : "SKU#: " + dt.item["dpNo"]));
+												showActionResponse(data, "update force add", (dt.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(dt.item) + " Item: " + dt.item.condition["readableString"] : $.isBlank(dt.item["dpNo"])? "Product Id#: " + dt.item["edp"] : "SKU#: " + dt.item["dpNo"]));
 												self.populateRuleItem(self.selectedRuleItemPage);
 											},
 											preHook:function(){
@@ -588,9 +591,11 @@
 							locked: self.selectedRuleStatus["locked"] || !allowModify,
 							showPosition: true,
 							maxPosition: self.selectedRuleItemTotal + 1,
-							addProductItemCallback:function(position, expiryDate, comment, skus){
+							addProductItemCallback:function(position, expiryDate, comment, skus, api){
+								api.hide();
 								ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 									callback : function(code){
+										api.destroy();
 										showActionResponseFromMap(code, "add", "Multiple Rule Item Add",
 										"Please check for the following:<ol type='a' class='mar0 padL30'><li>SKU(s) are already present in the list</li><li>SKU(s) are actually searchable using the specified keyword.</li></ol>");
 										self.populateRuleItem(self.selectedRuleItemPage);
@@ -600,9 +605,11 @@
 									}
 								});		
 							},
-							addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType){
+							addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType, api){
+								api.hide();
 								ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
 									callback: function(data){
+										api.destroy();
 										showActionResponse(data, "add", "New Rule "+ ruleType +" Item");
 										self.populateRuleItem();
 									},
@@ -745,7 +752,7 @@
 
 				ElevateServiceJS.updateElevate(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
-						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
 						showActionResponse(code, "update position", updateMessage);
 						self.populateRuleItem();
 					},
@@ -753,6 +760,16 @@
 						self.preShowRuleContent();
 					}
 				});
+			},
+
+			getFacetRuleTypeLabel: function (item) {
+				if (item.condition.IMSFilter) {
+					return "IMS Categories";
+				} else if (item.condition.CNetFilter) {
+					return 'Product Site Taxonomy';
+				} else {
+					return "Facet";
+				}
 			},
 
 			getRuleItemFilter: function(){

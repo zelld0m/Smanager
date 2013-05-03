@@ -144,24 +144,24 @@ validateGeneric = function(fieldName, fieldValue, minLength, maxLength) {
 	fieldName = $.capitalize(fieldName);
 	if(minLength != undefined && minLength > 0) {
 		if ($.isBlank(fieldValue)) {
-			jAlert(fieldName+" cannot be empty.");
+			jAlert(fieldName+" cannot be empty.", fieldName);
 			return false;
 		}
 		if (fieldValue.length < minLength){
-			jAlert(fieldName + " should be at least " + minLength + " characters.");
+			jAlert(fieldName + " should be at least " + minLength + " characters.", fieldName);
 			return false;
 		}
 	}
 	if (maxLength != undefined && $.isNotBlank(fieldValue) && fieldValue.length > maxLength){
-		jAlert(fieldName + " cannot exceed " + maxLength + " characters.");
+		jAlert(fieldName + " cannot exceed " + maxLength + " characters.", fieldName);
 		return false;
 	}
 	if(!isAscii(fieldValue)) {
-		jAlert(fieldName+" contains non-ASCII characters.");		
+		jAlert(fieldName+" contains non-ASCII characters.", fieldName);		
 		return false;
 	}
 	if(!isXSSSafe(fieldValue)){
-		jAlert(fieldName+" contains XSS.");
+		jAlert(fieldName+" contains XSS.", fieldName);
 		return false;
 	}
 	return true;

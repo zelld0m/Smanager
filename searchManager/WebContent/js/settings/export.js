@@ -142,7 +142,7 @@
 							a.push($selectedTab.find("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
 						
-						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
+						var confirmMsg = "Continue export of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
  
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						jConfirm(confirmMsg, "Confirm Export", function(status){
