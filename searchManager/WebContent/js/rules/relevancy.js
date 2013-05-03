@@ -994,7 +994,7 @@
 					$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
 					$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
-					var popDates = $contentHolder.find("#popStartDate, #popEndDate").prop({readonly: true}).datepicker({			
+					var popDates = $contentHolder.find("#popStartDate, #popEndDate").prop({readonly: false}).datepicker({			
 						minDate: 0,
 						maxDate: '+1Y',			
 						showOn: "both",
@@ -1238,13 +1238,13 @@
 				$("#endDate").val(selectedRule.formattedEndDate);
 				$("#startDate, #endDate").datepicker("destroy");
 
-				var dates = $("#startDate, #endDate").prop({readonly: true}).datepicker({
+				var dates = $("#startDate, #endDate").prop({readonly: false}).datepicker({
 					minDate: 0,
 					maxDate: '+1Y',
 					showOn: "both",
 					buttonImage: "../images/icon_calendar.png",
 					buttonImageOnly: true,
-					disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+					//disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 					onSelect: function(selectedDate) {
 						var option = this.id == "startDate" ? "minDate" : "maxDate",
 								instance = $(this).data("datepicker"),
@@ -1360,7 +1360,7 @@
 							$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
 							$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
-							var popDates = $contentHolder.find("#popStartDate, #popEndDate").prop({readonly: true}).datepicker({
+							var popDates = $contentHolder.find("#popStartDate, #popEndDate").prop({readonly: false}).datepicker({
 								minDate: 0,
 								maxDate: '+1Y',	
 								showOn: "both",
