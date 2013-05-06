@@ -149,24 +149,17 @@
 			});
 		};
 
-		var approvalHandlerLinguistics = function(){
+		var approvalHandlerLinguistics = function(ruleStatusId){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
 					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
-//					if ($.isBlank(comment)){
-//						jAlert("Please add comment.","Approval");
-//					}else if(!isXSSSafe(comment)){
-//						jAlert("Invalid comment. HTML/XSS is not allowed.","Approval");
-					
-					if (!validateComment("Approval", comment, 1, 300)){
-						// error alert in function validateComment
-					}else{
+					if (validateComment("Approval", comment, 1, 300)){
 						// TODO: only spell rule supported at the moment
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
 							jConfirm("Continue approval for Did You Mean List?", "Confirm Approval", function(status){
 								if(status){
-									DeploymentServiceJS.approveRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
+									DeploymentServiceJS.approveRule(entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){
 											jAlert("Did You Mean List was successfully approved.", "Approval");
 											getApprovalList();
@@ -189,7 +182,7 @@
 
 							jConfirm("Continue reject for Did You Mean List?", "Confirm Reject", function(status){
 								if(status){
-									DeploymentServiceJS.unapproveRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
+									DeploymentServiceJS.unapproveRule(entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){
 											jAlert("Did You Mean List was successfully rejected.", "Approval");
 											getApprovalList();
@@ -336,6 +329,7 @@
 							$(tabSelected).find("label#requestedBy").html(list[0]["requestBy"]);
 							$(tabSelected).find("label#requestedDate").html($.isNotBlank(list[0]["lastRequestDate"])? list[0]["lastRequestDate"].toUTCString(): "");
 							// set to number to be displayed + 1, to detect if there is an overflow
+							var ruleStatusId = list[0]["ruleStatusId"];
 							var displaySize = 50;
 							SpellRuleServiceJS.getModifiedSpellRules(null, null, null, 1, displaySize + 1, {
 								callback: function(response) {
@@ -398,7 +392,7 @@
 										}
 									});
 									
-									approvalHandlerLinguistics();
+									approvalHandlerLinguistics(ruleStatusId);
 								}
 							});
 						}

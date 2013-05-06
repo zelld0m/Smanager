@@ -179,22 +179,18 @@
 			});
 		};
 		
-		var publishHandlerLinguistics = function(){
+		var publishHandlerLinguistics = function(ruleStatusId){
 			$(tabSelected).find("a#publishBtn").on({
 				click: function(evt){
 					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
-					
-					if (!validateComment("Push to Prod", comment, 1, 300)){
-						//error alert in validateComment
-					}else{
-						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
+					if (validateComment("Push to Prod", comment, 1, 300)){
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
 							jConfirm("Continue publishing of Did You Mean List?", "Confirm Publish", function(status){
 								if(status){
 									var exception = false;
-									DeploymentServiceJS.publishRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
+									DeploymentServiceJS.publishRule(entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){	
 											jAlert("Did You Mean List was successfully published.", "Publish Rule");
 											getForProductionList("approved");	
@@ -254,6 +250,7 @@
 										// Populate table row
 										var responseData = response.data;
 										var responseList = responseData.spellRule;
+										var ruleStatusId = list[0]["ruleStatusId"];
 										$(tabSelected).find("label#numSuggestions").append(responseData.maxSuggest);
 										$(tabSelected).find("label#productionStatus").html(list[0]["publishedStatus"]);
 										$(tabSelected).find("label#productionDate").html($.isNotBlank(list[0]["lastPublishedDate"])? list[0]["lastPublishedDate"].toUTCString(): "");
@@ -309,7 +306,7 @@
 											}
 										});
 										
-										publishHandlerLinguistics();
+										publishHandlerLinguistics(ruleStatusId);
 									}
 								});
 							}
