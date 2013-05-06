@@ -1,9 +1,11 @@
 package com.search.manager.report.model.xml;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.directwebremoting.annotations.DataTransferObject;
@@ -18,28 +20,32 @@ import com.search.manager.model.SpellRule;
 public class SpellRuleXml extends ModelBean {
 
     private static final long serialVersionUID = 1L;
-    
+
     public static final Function<SpellRuleXml, SpellRule> transformer = new Function<SpellRuleXml, SpellRule>() {
         public SpellRule apply(SpellRuleXml xml) {
             return new SpellRule(xml);
         }
     };
 
-    private String ruleId;
-    
-    private RuleKeywordXml ruleKeyword;
+    private byte[] ruleId;
 
-    private SuggestKeywordXml suggestKeyword;
+    private byte[][] ruleKeyword;
 
-    private String status;
+    private byte[][] suggestKeyword;
+
+    private byte[] status;
+
+    private List<String> ruleKeywordList;
+
+    private List<String> suggestKeywordList;
 
     public SpellRuleXml() {
     }
 
     public SpellRuleXml(SpellRule rule) {
         this.setRuleId(rule.getRuleId());
-        this.setRuleKeyword(new RuleKeywordXml(Arrays.asList(rule.getSearchTerms())));
-        this.setSuggestKeyword(new SuggestKeywordXml(Arrays.asList(rule.getSuggestions())));
+        this.setRuleKeyword(Arrays.asList(rule.getSearchTerms()));
+        this.setSuggestKeyword(Arrays.asList(rule.getSuggestions()));
         this.setCreatedBy(rule.getCreatedBy());
         this.setCreatedDate(rule.getCreatedDate());
         this.setLastModifiedBy(rule.getCreatedBy());
@@ -47,49 +53,97 @@ public class SpellRuleXml extends ModelBean {
         this.setStatus(rule.getStatus());
     }
 
-    @XmlElementRef(type = RuleKeywordXml.class)
-    public RuleKeywordXml getRuleKeyword() {
-        return ruleKeyword;
+    @XmlElement(name = "keyword")
+    public List<String> getRuleKeyword() {
+        if (ruleKeywordList != null) {
+            setRuleKeyword(ruleKeywordList);
+            ruleKeywordList.clear();
+            ruleKeywordList = null;
+        }
+
+        if (ruleKeyword != null) {
+            List<String> keywords = new ArrayList<String>();
+            for (int i = 0; i < ruleKeyword.length; i++) {
+                keywords.add(new String(ruleKeyword[i]));
+            }
+            return keywords;
+        } else {
+            ruleKeywordList = new ArrayList<String>();
+            return ruleKeywordList;
+        }
     }
 
-    public void setRuleKeyword(RuleKeywordXml ruleKeyword) {
-        this.ruleKeyword = ruleKeyword;
+    public void setRuleKeyword(List<String> ruleKeyword) {
+        if (ruleKeyword != null) {
+            this.ruleKeyword = new byte[ruleKeyword.size()][];
+            int i = 0;
+            for (String kw : ruleKeyword) {
+                this.ruleKeyword[i] = kw.getBytes();
+                i++;
+            }
+        }
     }
 
-    @XmlElementRef(type = SuggestKeywordXml.class)
-    public SuggestKeywordXml getSuggestKeyword() {
-        return suggestKeyword;
+    @XmlElement(name = "suggest")
+    public List<String> getSuggestKeyword() {
+        if (suggestKeywordList != null) {
+            setSuggestKeyword(suggestKeywordList);
+            suggestKeywordList.clear();
+            suggestKeywordList = null;
+        }
+
+        if (suggestKeyword != null) {
+            List<String> keywords = new ArrayList<String>();
+
+            for (int i = 0; i < suggestKeyword.length; i++) {
+                keywords.add(new String(suggestKeyword[i]));
+            }
+
+            return keywords;
+        } else {
+            suggestKeywordList = new ArrayList<String>();
+            return suggestKeywordList;
+        }
     }
 
-    public void setSuggestKeyword(SuggestKeywordXml suggestKeyword) {
-        this.suggestKeyword = suggestKeyword;
+    public void setSuggestKeyword(List<String> suggestKeyword) {
+        if (suggestKeyword != null) {
+            this.suggestKeyword = new byte[suggestKeyword.size()][];
+            int i = 0;
+            for (String kw : suggestKeyword) {
+                this.suggestKeyword[i] = kw.getBytes();
+                i++;
+            }
+        }
     }
 
     @XmlAttribute(name = "status")
     public String getStatus() {
-        return status;
+        return status != null ? new String(status) : null;
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        if (status != null)
+            this.status = status.getBytes();
     }
 
     public void update(SpellRule rule) {
-        this.getRuleKeyword().setKeyword(Arrays.asList(rule.getSearchTerms()));
-        this.getSuggestKeyword().setSuggest(Arrays.asList(rule.getSuggestions()));
+        this.setRuleKeyword(Arrays.asList(rule.getSearchTerms()));
+        this.setSuggestKeyword(Arrays.asList(rule.getSuggestions()));
         this.setLastModifiedBy(rule.getLastModifiedBy());
         this.setLastModifiedDate(rule.getLastModifiedDate());
 
-        if ("published".equalsIgnoreCase(this.status)) {
+        if (status != null && "published".equalsIgnoreCase(new String(this.status))) {
             this.setStatus("modified");
         }
     }
 
     public String getRuleId() {
-        return ruleId;
+        return ruleId != null ? new String(ruleId) : null;
     }
 
     public void setRuleId(String ruleId) {
-        this.ruleId = ruleId;
+        if (ruleId != null)
+            this.ruleId = ruleId.getBytes();
     }
 }
