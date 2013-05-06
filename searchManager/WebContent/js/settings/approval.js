@@ -345,7 +345,7 @@
 									$table = $(tabSelected).find("table#rule");
 									$(tabSelected).find("label#numSuggestions").append(responseData.maxSuggest);
 									if (responseList.length == 0) {
-										$table.append('<tr><td class="txtAC" colspan="3">No new/modified entries found. Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</td></tr>');
+										$table.append('<tr><td class="txtAC" colspan="3"><div>No new/modified entries found. Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</div></td></tr>');
 									}
 									else {
 										if (displaySize > responseList.length) {
