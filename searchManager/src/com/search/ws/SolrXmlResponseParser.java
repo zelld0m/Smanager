@@ -573,13 +573,12 @@ public class SolrXmlResponseParser extends SolrResponseParser {
             Element origEndOffset = createElement(doc, SolrConstants.TAG_INT,
                     SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, String.valueOf(originalKeyword.length()));
 
-            for (int i = 0; count < maxSuggestCount && i < ruleSuggestions.length; i++) {
-                if (!suggestedKeywords.contains(ruleSuggestions[i])) {
-                    Element sug = createUnnamedElement(doc, SolrConstants.TAG_STR, ruleSuggestions[i]);
-                    suggestionArray.appendChild(sug);
-                    suggestedKeywords.add(ruleSuggestions[i]);
-                    count++;
-                }
+            for (String suggestion: ruleSuggestions) {
+                suggestionArray.appendChild(createUnnamedElement(doc, SolrConstants.TAG_STR, suggestion));
+                suggestedKeywords.add(suggestion);
+            	if (++count >= maxSuggestCount) {
+            		break;
+            	}
             }
 
             if (count < maxSuggestCount && spellcheckNode != null) {
