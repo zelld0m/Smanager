@@ -130,9 +130,7 @@
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
-					}else if (!validateComment(self.moduleName, comment, 1, 300)){
-						//error message in validateComment
-					}else{
+					}else if (validateComment(self.moduleName, comment, 1, 300)){
 						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
 						var a = [];
 						var arrSelectedKeys = Object.keys(self.getSelectedItems());
@@ -153,12 +151,6 @@
 										"Unable to find published data for this rule. Please contact Search Manager Team.");
 										self.getExportList();	
 									},
-									preHook:function(){ 
-										self.prepareTabContent(); 
-									},
-									postHook:function(){ 
-										self.cleanUpTabContent(); 
-									}	
 								});
 							}
 						});
