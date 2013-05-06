@@ -90,7 +90,9 @@ public class SpellIndex {
     public SpellRules get(String store) {
         if (rules.get(store) == null) {
             try {
+                logger.debug("LOAD START TIME: {}", System.currentTimeMillis());
                 load(store);
+                logger.debug("LOAD END TIME: {}", System.currentTimeMillis());
             } catch (Exception e) {
                 logger.error("Unable to load spell rules for " + store, e);
             }
