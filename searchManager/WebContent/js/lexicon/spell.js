@@ -536,13 +536,19 @@
 				}
 			});
 
+			self.loadInitialData();
+		},
+
+		loadInitialData: function() {
+			var self = this;
+
 			SpellRuleServiceJS.getMaxSuggest(function(response) {
 				if (response.status == 0) {
 					self.$maxSuggest.val(response.data);
 					self.maxSuggest = response.data;
 					self.handlePageLink(1);
 				} else {
-					jAlert(response.errorMessage.message);
+					jAlert(response.errorMessage.message, "Error");
 				}
 			});
 		},
@@ -600,10 +606,24 @@
 				deleteVersionsPhysically: true,
 				enableCompare: false,
 				enableSingleVersionDownload: true,
+				preRestoreCallback: function(base) {
+					$(document).focus();
+					base.api.elements.tooltip.block({message:"Restoring...", css: { 
+			            border: 'none', 
+			            padding: '15px', 
+			            backgroundColor: '#000', 
+			            '-webkit-border-radius': '10px', 
+			            '-moz-border-radius': '10px',
+			            opacity: 0.5,
+			            color: '#fff'},
+			            baseZ: 16000,
+			            blockMsgClass: 'fsize14 fbold'});
+				},
 				postRestoreCallback: function(base, rule){
-					jAlert("Did you mean rules restored.", "Version Restored", function() {
-						location.reload();
-					});
+					self.loadInitialData();
+					base.api.elements.tooltip.unblock({onUnblock: function() {
+						jAlert("Did you mean rules restored.", "Version Restored");
+					}});
 				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
 					self.selectedRuleStatus = ruleStatus;
