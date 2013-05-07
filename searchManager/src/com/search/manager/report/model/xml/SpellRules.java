@@ -128,13 +128,33 @@ public class SpellRules extends RuleXml {
     }
 
     public SpellRuleXml checkSearchTerm(String searchTerm) {
-        String sterm = "\013" + searchTerm.toLowerCase();
-        int idx = searchTerms.indexOf(sterm);
-        int pos = StringUtils.countMatches(searchTerms.substring(0, idx + 1), "\013");
-        int ruleIdx = StringUtils.ordinalIndexOf(ruleIds, "\013", pos);
-        int ruleIdx2 = StringUtils.ordinalIndexOf(ruleIds, "\013", pos + 1);
+        int idx = findSearchTermIndex(searchTerm);
 
-        return ruleMap.get(ruleIds.substring(ruleIdx + 1, ruleIdx2 > 0 ? ruleIdx2 : ruleIds.length()));
+        if (idx >= 0) {
+            int pos = StringUtils.countMatches(searchTerms.substring(0, idx + 1), "\013");
+            int ruleIdx = StringUtils.ordinalIndexOf(ruleIds, "\013", pos);
+            int ruleIdx2 = StringUtils.ordinalIndexOf(ruleIds, "\013", pos + 1);
+
+            return ruleMap.get(ruleIds.substring(ruleIdx + 1, ruleIdx2 > 0 ? ruleIdx2 : ruleIds.length()));
+        }
+
+        return null;
+    }
+
+    private int findSearchTermIndex(String searchTerm) {
+        String sterm = "\013" + searchTerm.toLowerCase() + "\013";
+        int idx = searchTerms.indexOf(sterm);
+
+        if (idx < 0) {
+            sterm = "\013" + searchTerm.toLowerCase();
+            idx = searchTerms.indexOf(sterm);
+
+            if (idx >= 0 && idx + sterm.length() < searchTerms.length()) {
+                idx = -1;
+            }
+        }
+
+        return idx;
     }
 
     public void updateStatusIndex(String oldStatus, SpellRuleXml xml) {
@@ -167,14 +187,14 @@ public class SpellRules extends RuleXml {
     }
 
     private void removeSearchTerm(String term) {
-        String sterm = "\013" + term.toLowerCase();
-        int idx = searchTerms.indexOf(sterm);
-        int pos = StringUtils.countMatches(searchTerms.substring(0, idx + 1), "\013");
-        int ruleIdx = StringUtils.ordinalIndexOf(ruleIds, "\013", pos);
-        int ruleIdx2 = StringUtils.ordinalIndexOf(ruleIds, "\013", pos + 1);
+        int idx = findSearchTermIndex(term);
 
-        if (idx > -1) {
-            searchTerms = searchTerms.substring(0, idx) + searchTerms.substring(idx + sterm.length());
+        if (idx >= 0) {
+            int pos = StringUtils.countMatches(searchTerms.substring(0, idx + 1), "\013");
+            int ruleIdx = StringUtils.ordinalIndexOf(ruleIds, "\013", pos);
+            int ruleIdx2 = StringUtils.ordinalIndexOf(ruleIds, "\013", pos + 1);
+
+            searchTerms = searchTerms.substring(0, idx) + searchTerms.substring(idx + term.length() + 1);
             ruleIds = ruleIds.substring(0, ruleIdx) + (ruleIdx2 > 0 ? ruleIds.substring(ruleIdx2) : "");
         }
     }
