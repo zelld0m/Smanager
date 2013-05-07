@@ -43,7 +43,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 
 	protected abstract RuleEntity getRuleEntity();
 	
-	protected abstract boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes);
+	protected abstract boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion);
 
 	protected RuleVersionListXml<?> getRuleVersionList(String store, String ruleId) {
 		return RuleVersionUtil.getRuleVersionList(store, getRuleEntity(), ruleId);
@@ -56,7 +56,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
 		if (ruleVersionListXml!=null) {
-			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
+			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, true)) {
 				return false;
 			}
 		}
@@ -78,7 +78,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 				versions.clear();
 			}
 			
-			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
+			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, false)) {
 				return false;
 			}
 			

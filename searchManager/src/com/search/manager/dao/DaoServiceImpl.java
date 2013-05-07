@@ -83,12 +83,14 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.xml.file.RuleTransferUtil;
+import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -1529,6 +1531,9 @@ public class DaoServiceImpl implements DaoService {
 	
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
+	    if (xml instanceof RuleFileXml) {
+	        xml = RuleXmlUtil.loadVersion((RuleFileXml) xml);
+	    }
 		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
 		if (dao != null) {
 			return dao.restoreRuleVersion(xml);

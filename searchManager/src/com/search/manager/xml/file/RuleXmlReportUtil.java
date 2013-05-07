@@ -90,7 +90,7 @@ public class RuleXmlReportUtil{
 		    case SPELL:
 		        // for spell rules, one sheet per version will be created,
 		        // hence we need to set version number if subReportHeader to be used in naming sheets
-		        subReportHeader.setVersion(((SpellRules) xml).getVersion());
+		        subReportHeader.setVersion(xml.getVersion());
 		        subReportHeader.addRow("Maximum Suggestion:", String.valueOf(((SpellRules) xml).getMaxSuggest()));
 		        break;
             default:

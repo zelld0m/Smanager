@@ -58,6 +58,7 @@ import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
@@ -268,6 +269,26 @@ public class RuleXmlUtil{
 
 		return productList;
 	}
+
+    private static RuleXml xmlFileToRuleXml(String path){
+        FileReader reader = null;
+
+        try {
+            JAXBContext context = JAXBContext.newInstance(RuleXml.class);
+            Unmarshaller m = context.createUnmarshaller();
+            reader = new FileReader(path);
+            return (RuleXml) m.unmarshal(reader);
+        } catch (JAXBException e) {
+            logger.error("Unable to create marshaller", e);
+            return null;
+        } catch (Exception e) {
+            logger.error("Unknown error", e);
+            return null;
+        }
+        finally {
+            try { if (reader != null) { reader.close(); } } catch (IOException e) { }
+        }
+    }
 
 	private static RuleXml xmlFileToRuleXml(String store, String path, RuleEntity ruleEntity, String ruleId){
 		String dir = RuleXmlUtil.getRuleFileDirectory(path, store, ruleEntity);
@@ -892,12 +913,39 @@ public class RuleXmlUtil{
 		return restoreRule(xml, isVersion, true);
 	}
 
+    public static boolean saveRuleXml(RuleXml xml, String location, long version){
+        FileWriter writer = null;
+
+        try {
+            JAXBContext context = JAXBContext.newInstance(RuleXml.class);
+            Marshaller m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            writer = new FileWriter(location);
+            m.marshal(xml, writer);
+            return true;
+        } catch (JAXBException e) {
+            logger.error("Unable to create marshaller", e);
+            return false;
+        } catch (Exception e) {
+            logger.error("Unknown error", e);
+            return false;
+        } finally {
+            try { if (writer != null) writer.close(); } catch (Exception e) {}
+        }
+    }
+
+    public static RuleXml loadVersion(RuleFileXml xml) {
+        return xmlFileToRuleXml(xml.getPath());
+    }
+
 	private static boolean restoreRule(RuleXml xml, boolean isVersion, boolean createPreRestore) {
 		String path = isVersion ? PRERESTOREPATH : PREIMPORTPATH;
 		boolean isRestored = false;
 
 		if(xml  == null){
 			return isRestored; 
+		} else if (xml instanceof RuleFileXml) {
+		    xml = loadVersion((RuleFileXml) xml);
 		}
 
 		if (xml instanceof ElevateRuleXml){

@@ -25,6 +25,7 @@ import com.search.manager.report.model.ReportModel;
 import com.search.manager.report.model.SpellReportBean;
 import com.search.manager.report.model.SpellReportModel;
 import com.search.manager.report.model.SubReportHeader;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.DownloadService;
@@ -33,6 +34,7 @@ import com.search.manager.service.RuleVersionService;
 import com.search.manager.service.SpellRuleService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
+import com.search.manager.xml.file.RuleXmlUtil;
 
 @Controller
 @RequestMapping("/spell")
@@ -142,11 +144,12 @@ public class SpellController {
 
         if (rules != null) {
             for (RuleXml xml : rules) {
-                if (xml != null) {
+                SpellRules rulesXml = (SpellRules) RuleXmlUtil.loadVersion((RuleFileXml) xml);
+                if (rulesXml != null) {
                     SubReportHeader subReportHeader = RuleXmlReportUtil
-                            .getVersionSubReportHeader(xml, RuleEntity.SPELL);
+                            .getVersionSubReportHeader(rulesXml, RuleEntity.SPELL);
                     subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
-                            ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
+                            rulesXml.getSpellRule(), SpellReportBean.transformer)));
                 }
             }
         }
@@ -170,11 +173,12 @@ public class SpellController {
 
         if (rules != null) {
             for (RuleXml xml : rules) {
-                if (xml != null && xml.getVersion() == versionNo) {
+                SpellRules rulesXml = (SpellRules) RuleXmlUtil.loadVersion((RuleFileXml) xml);
+                if (rulesXml != null && xml.getVersion() == versionNo) {
                     SubReportHeader subReportHeader = RuleXmlReportUtil
-                            .getVersionSubReportHeader(xml, RuleEntity.SPELL);
+                            .getVersionSubReportHeader(rulesXml, RuleEntity.SPELL);
                     subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
-                            ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
+                            rulesXml.getSpellRule(), SpellReportBean.transformer)));
                 }
             }
         }

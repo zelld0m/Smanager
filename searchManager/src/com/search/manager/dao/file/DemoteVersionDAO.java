@@ -27,7 +27,7 @@ public class DemoteVersionDAO extends RuleVersionDAO<DemoteRuleXml>{
 	}
 
 	@Override
-	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion) {
 		if (ruleVersionListXml != null) {
 			@SuppressWarnings("unchecked")
 			List<DemoteRuleXml> eRuleXmlList = ((RuleVersionListXml<DemoteRuleXml>)ruleVersionListXml).getVersions();

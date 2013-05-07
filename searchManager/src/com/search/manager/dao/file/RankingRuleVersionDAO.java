@@ -23,7 +23,7 @@ public class RankingRuleVersionDAO extends RuleVersionDAO<RankingRuleXml>{
 	}
 
 	@Override
-	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion) {
 		if (ruleVersionListXml != null) {
 			@SuppressWarnings("unchecked")
 			List<RankingRuleXml> eRuleXmlList = ((RuleVersionListXml<RankingRuleXml>)ruleVersionListXml).getVersions();

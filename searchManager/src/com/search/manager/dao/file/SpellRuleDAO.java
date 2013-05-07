@@ -23,7 +23,9 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.utility.StringUtil;
@@ -269,17 +271,26 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId,
-            String username, String name, String notes) {
+            String username, String name, String notes, boolean isVersion) {
         if (ruleVersionListXml != null) {
-            @SuppressWarnings("unchecked")
-            List<SpellRules> xmlList = ((RuleVersionListXml<SpellRules>) ruleVersionListXml).getVersions();
+            List<RuleXml> xmlList = ((RuleVersionListXml<RuleXml>) ruleVersionListXml).getVersions();
+            long nextVersion = ruleVersionListXml.getNextVersion();
             SpellRules rules = spellIndex.get(store);
+            Date now = new Date();
 
             if (rules != null) {
                 // create version for current rule
-                xmlList.add(new SpellRules(store, ruleVersionListXml.getNextVersion(), name, notes, username,
-                        new Date(), ruleId, rules.getMaxSuggest(), rules.selectActiveRules()));
+                SpellRules version = new SpellRules(store, nextVersion, name, notes, username, now, ruleId,
+                        rules.getMaxSuggest(), rules.selectActiveRules());
+
+                if (isVersion) {
+                    xmlList.add(new RuleFileXml(store, nextVersion, name, notes, username, now, ruleId,
+                            RuleEntity.SPELL, version));
+                } else {
+                    xmlList.add(version);
+                }
 
                 return true;
             }
