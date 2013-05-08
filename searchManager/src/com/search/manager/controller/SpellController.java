@@ -49,9 +49,9 @@ public class SpellController {
     private RuleVersionService ruleVersionService;
     @Autowired
     private DownloadService downloadService;
-    @Autowired 
+    @Autowired
     private SpellRuleService spellRuleService;
-    @Autowired 
+    @Autowired
     private RuleTransferService ruleTransferService;
 
     @RequestMapping(value = "/{store}")
@@ -79,8 +79,7 @@ public class SpellController {
         ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
         RuleXml xml = spellRuleService.getSpellRules();
         if (xml != null) {
-            SubReportHeader subReportHeader = RuleXmlReportUtil
-                    .getVersionSubReportHeader(xml, RuleEntity.SPELL);
+            SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.SPELL);
             subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                     ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
         }
@@ -98,16 +97,20 @@ public class SpellController {
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
         ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
-        RuleXml xml = ruleTransferService.getRuleToExport(RuleEntity.getValue(RuleEntity.SPELL.getCode()), "spell_rule");
+        RuleXml xml = ruleTransferService
+                .getRuleToExport(RuleEntity.getValue(RuleEntity.SPELL.getCode()), "spell_rule");
         if (xml != null) {
-            SubReportHeader subReportHeader = RuleXmlReportUtil
-                    .getVersionSubReportHeader(xml, RuleEntity.SPELL);
-            subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
-                    ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
+            SpellRules content = (SpellRules) RuleXmlUtil.loadVersion((RuleFileXml) xml);
+
+            if (content != null) {
+                SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(content, RuleEntity.SPELL);
+                subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
+                        content.getSpellRule(), SpellReportBean.transformer)));
+            }
         }
         download(response, reportModel, subModels, type);
     }
-    
+
     @RequestMapping(value = "/{store}/import/xls")
     public void getImportVersion(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String store, @RequestParam("filename") String filename,
@@ -119,16 +122,16 @@ public class SpellController {
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
         ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
-        RuleXml xml = ruleTransferService.getRuleToImport(RuleEntity.getValue(RuleEntity.SPELL.getCode()), "spell_rule");
+        RuleXml xml = ruleTransferService
+                .getRuleToImport(RuleEntity.getValue(RuleEntity.SPELL.getCode()), "spell_rule");
         if (xml != null) {
-            SubReportHeader subReportHeader = RuleXmlReportUtil
-                    .getVersionSubReportHeader(xml, RuleEntity.SPELL);
+            SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.SPELL);
             subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                     ((SpellRules) xml).getSpellRule(), SpellReportBean.transformer)));
         }
         download(response, reportModel, subModels, type);
     }
-    
+
     @RequestMapping(value = "/{store}/version/xls")
     public void getRuleVersion(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String store, @RequestParam("filename") String filename, @RequestParam("id") String ruleId,
@@ -146,8 +149,8 @@ public class SpellController {
             for (RuleXml xml : rules) {
                 SpellRules rulesXml = (SpellRules) RuleXmlUtil.loadVersion((RuleFileXml) xml);
                 if (rulesXml != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil
-                            .getVersionSubReportHeader(rulesXml, RuleEntity.SPELL);
+                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(rulesXml,
+                            RuleEntity.SPELL);
                     subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                             rulesXml.getSpellRule(), SpellReportBean.transformer)));
                 }
@@ -175,8 +178,8 @@ public class SpellController {
             for (RuleXml xml : rules) {
                 SpellRules rulesXml = (SpellRules) RuleXmlUtil.loadVersion((RuleFileXml) xml);
                 if (rulesXml != null && xml.getVersion() == versionNo) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil
-                            .getVersionSubReportHeader(rulesXml, RuleEntity.SPELL);
+                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(rulesXml,
+                            RuleEntity.SPELL);
                     subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                             rulesXml.getSpellRule(), SpellReportBean.transformer)));
                 }
