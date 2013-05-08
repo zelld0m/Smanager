@@ -457,33 +457,34 @@
 								deleted.push($(self.deleted[i].el).data('spellRule').data());
 							}
 
-							var hasChanges = self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0;
-							
-							if (self.validate(entities) && hasChanges) {
-								SpellRuleServiceJS.updateSpellRuleBatch(self.$maxSuggest.val(), entities, deleted,
-									function(response) {
-										// success
-										if (response.status == 0) {
-											self.$table.find("tr:not(#header)").remove();
-											self.mode = 'display';
-											self.handlePageLink();
-											self.maxSuggest = self.$maxSuggest.val();
-											$(".button-group-1").hide();
-											$(".button-group-0").show();
-											self.$maxSuggest.attr("disabled", true);
-											self.$pager.show();
-											self.addFilterEventHandlers();
-										} else {
-											jAlert(response.errorMessage.message);
-											
-											if (response.errorMessage.data) {
-												for ( var i = 0; i < rules.length; i++) {
-													$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
+							if (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0) {
+								if (validateInteger("Maximum suggestions", self.$maxSuggest.val(), 1, 100) && self.validate(entities)) {
+									SpellRuleServiceJS.updateSpellRuleBatch(parseInt(self.$maxSuggest.val()), entities, deleted,
+										function(response) {
+											// success
+											if (response.status == 0) {
+												self.$table.find("tr:not(#header)").remove();
+												self.mode = 'display';
+												self.handlePageLink();
+												self.maxSuggest = self.$maxSuggest.val();
+												$(".button-group-1").hide();
+												$(".button-group-0").show();
+												self.$maxSuggest.val(parseInt(self.$maxSuggest.val()));
+												self.$maxSuggest.attr("disabled", true);
+												self.$pager.show();
+												self.addFilterEventHandlers();
+											} else {
+												jAlert(response.errorMessage.message);
+												
+												if (response.errorMessage.data) {
+													for ( var i = 0; i < rules.length; i++) {
+														$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
+													}
 												}
 											}
-										}
-									});
-							} else if (!hasChanges){
+										});
+								}
+							} else {
 								self.$cancelButton.click();
 							}
 						}

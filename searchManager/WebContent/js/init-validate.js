@@ -201,3 +201,22 @@ validateSearchKeyword = function(fieldName, fieldValue, required) {
 	}
 	return true;
 };
+
+validateInteger = function(fieldName, fieldValue, min, max) {
+	var regex = /^[\-\+]{0,1}[0-9]{1,}[\.]{0,1}[0]{0,}$/;
+	var valid = regex.test(fieldValue) && $.isNotBlank(fieldValue);
+	
+	if (valid && (min || min === 0)) {
+		valid = min <= fieldValue;
+	}
+	
+	if (valid && (max || max === 0)) {
+		valid = max >= fieldValue;
+	}
+
+	if (!valid) {
+		jAlert(fieldName + " is not a valid value.", fieldName);
+	}
+	
+	return valid;
+};
