@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.impl.cookie.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -284,13 +285,16 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
                 // create version for current rule
                 SpellRules version = new SpellRules(store, nextVersion, name, notes, username, now, ruleId,
                         rules.getMaxSuggest(), rules.selectActiveRules());
+                RuleFileXml fileXml = new RuleFileXml(store, nextVersion, name, notes, username, now, ruleId,
+                        RuleEntity.SPELL, version);
 
                 if (isVersion) {
-                    xmlList.add(new RuleFileXml(store, nextVersion, name, notes, username, now, ruleId,
-                            RuleEntity.SPELL, version));
+                    fileXml.setContentFileName(ruleId + "-" + nextVersion);
                 } else {
-                    xmlList.add(version);
+                    fileXml.setContentFileName(ruleId + DateUtils.formatDate(new Date(), "_yyyyMMdd_hhmmss"));
                 }
+
+                xmlList.add(fileXml);
 
                 return true;
             }

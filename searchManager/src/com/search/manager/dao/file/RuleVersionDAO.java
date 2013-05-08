@@ -31,6 +31,7 @@ import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
@@ -66,7 +67,6 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
         RuleEntity entity = getRuleEntity();
-        String ruleFile;
 
 		if (ruleVersionListXml != null) {
 			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, false)) {
@@ -78,22 +78,16 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			if(versions!=null){
 				RuleXml latestRuleXml = (RuleXml)versions.get(versions.size() - 1);
 				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
-				latestRuleXml.setRuleStatus(ruleStatus);
+
+				if (latestRuleXml instanceof RuleFileXml) {
+				    ((RuleFileXml) latestRuleXml).getContent().setRuleStatus(ruleStatus);
+				} else {
+				    latestRuleXml.setRuleStatus(ruleStatus);
+				}
 			}
 		}
 
-		switch (entity) {
-            // keep versions separate for Did You Mean rules
-            // TODO: create a shells script that does housekeeping to delete/archive older files
-		    case SPELL:
-		        ruleFile = ruleId + DateUtils.formatDate(new Date(), "_yyyyMMdd_hhmmss");
-		        break;
-		    default:
-		        ruleFile = ruleId;
-		        break;
-		}
-
-		return RuleVersionUtil.addPublishedVersion(store, entity, ruleFile, ruleVersionListXml);
+		return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersionListXml);
 	}
 	
 	public boolean restoreRuleVersion(RuleXml xml){
