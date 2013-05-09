@@ -208,11 +208,11 @@ validateInteger = function(fieldName, fieldValue, min, max) {
 	var valid = regex.test(value) && $.isNotBlank(value);
 	
 	if (valid && (min || min === 0)) {
-		valid = min <= fieldValue;
+		valid = min <= parseInt(value);
 	}
 	
 	if (valid && (max || max === 0)) {
-		valid = max >= fieldValue;
+		valid = max >= parseInt(value);
 	}
 
 	if (!valid) {
