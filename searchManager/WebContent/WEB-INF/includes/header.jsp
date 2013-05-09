@@ -184,6 +184,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/microgallery/jquery.microgallery.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.blockUI.js" />" ></script>
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
 

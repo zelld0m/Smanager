@@ -31,6 +31,7 @@ import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
@@ -65,31 +66,28 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	
 	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
-		if (ruleVersionListXml != null) {
+        RuleEntity entity = getRuleEntity();
 
-			// keep versions separate for Did You Mean rules
-			// TODO: create a shells cript that does housekeeping to delete/archive older files
-			List<?> versions = ruleVersionListXml.getVersions();
-			if (CollectionUtils.isNotEmpty(versions)) {
-				RuleEntity ruleEntity = ((RuleXml)versions.get(0)).getRuleEntity();
-				if (ruleEntity != null && ruleEntity.equals(RuleEntity.SPELL)) {
-					RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId + DateUtils.formatDate(new Date(), "_yyyyMMdd_hhmmss"), ruleVersionListXml);
-				}
-				versions.clear();
-			}
-			
+		if (ruleVersionListXml != null) {
 			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, false)) {
 				return false;
 			}
-			
-			versions = ruleVersionListXml.getVersions();
+
+			List<?> versions = ruleVersionListXml.getVersions();
+
 			if(versions!=null){
 				RuleXml latestRuleXml = (RuleXml)versions.get(versions.size() - 1);
-				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(getRuleEntity().getCode()), store, ruleId);
-				latestRuleXml.setRuleStatus(ruleStatus);
+				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+
+				if (latestRuleXml instanceof RuleFileXml) {
+				    ((RuleFileXml) latestRuleXml).getContent().setRuleStatus(ruleStatus);
+				} else {
+				    latestRuleXml.setRuleStatus(ruleStatus);
+				}
 			}
 		}
-		return RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
+
+		return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersionListXml);
 	}
 	
 	public boolean restoreRuleVersion(RuleXml xml){

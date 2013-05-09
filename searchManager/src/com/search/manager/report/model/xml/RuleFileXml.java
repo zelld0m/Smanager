@@ -16,6 +16,8 @@ public class RuleFileXml extends RuleXml {
 
     private String entityType;
     
+    private String contentFileName;
+    
     private RuleXml content;
 
     public RuleFileXml() {
@@ -64,5 +66,14 @@ public class RuleFileXml extends RuleXml {
 
     public void setEntityType(String entityType) {
         this.entityType = entityType;
+    }
+
+    @XmlTransient
+    public String getContentFileName() {
+        return contentFileName;
+    }
+
+    public void setContentFileName(String contentFileName) {
+        this.contentFileName = contentFileName;
     }
 }

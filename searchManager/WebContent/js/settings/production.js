@@ -266,11 +266,11 @@
 												var termHTML = "";
 												var suggestionHTML = "";
 												$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(responseList[i]["ruleId"])).show();
-												responseList[i].ruleKeyword["keyword"].forEach(function (item) {
+												responseList[i].ruleKeyword.forEach(function (item) {
 													termHTML += "<span class=\"term\">" + item + "</span>";
 												});
 												$tr.find("td#searchTerms").html(termHTML);
-												responseList[i].suggestKeyword["suggest"].forEach(function (item) {
+												responseList[i].suggestKeyword.forEach(function (item) {
 													suggestionHTML += "<span class=\"term\">" + item + "</span>";
 												});
 												$tr.find("td#suggestions").html(suggestionHTML);

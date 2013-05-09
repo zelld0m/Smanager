@@ -457,33 +457,34 @@
 								deleted.push($(self.deleted[i].el).data('spellRule').data());
 							}
 
-							var hasChanges = self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0;
-							
-							if (self.validate(entities) && hasChanges) {
-								SpellRuleServiceJS.updateSpellRuleBatch(self.$maxSuggest.val(), entities, deleted,
-									function(response) {
-										// success
-										if (response.status == 0) {
-											self.$table.find("tr:not(#header)").remove();
-											self.mode = 'display';
-											self.handlePageLink();
-											self.maxSuggest = self.$maxSuggest.val();
-											$(".button-group-1").hide();
-											$(".button-group-0").show();
-											self.$maxSuggest.attr("disabled", true);
-											self.$pager.show();
-											self.addFilterEventHandlers();
-										} else {
-											jAlert(response.errorMessage.message);
-											
-											if (response.errorMessage.data) {
-												for ( var i = 0; i < rules.length; i++) {
-													$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
+							if (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0) {
+								if (validateInteger("Maximum suggestions", self.$maxSuggest.val(), 1, 100) && self.validate(entities)) {
+									SpellRuleServiceJS.updateSpellRuleBatch(parseInt(self.$maxSuggest.val()), entities, deleted,
+										function(response) {
+											// success
+											if (response.status == 0) {
+												self.$table.find("tr:not(#header)").remove();
+												self.mode = 'display';
+												self.handlePageLink();
+												self.maxSuggest = self.$maxSuggest.val();
+												$(".button-group-1").hide();
+												$(".button-group-0").show();
+												self.$maxSuggest.val(parseInt(self.$maxSuggest.val()));
+												self.$maxSuggest.attr("disabled", true);
+												self.$pager.show();
+												self.addFilterEventHandlers();
+											} else {
+												jAlert(response.errorMessage.message);
+												
+												if (response.errorMessage.data) {
+													for ( var i = 0; i < rules.length; i++) {
+														$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
+													}
 												}
 											}
-										}
-									});
-							} else if (!hasChanges){
+										});
+								}
+							} else {
 								self.$cancelButton.click();
 							}
 						}
@@ -536,13 +537,19 @@
 				}
 			});
 
+			self.loadInitialData();
+		},
+
+		loadInitialData: function() {
+			var self = this;
+
 			SpellRuleServiceJS.getMaxSuggest(function(response) {
 				if (response.status == 0) {
 					self.$maxSuggest.val(response.data);
 					self.maxSuggest = response.data;
 					self.handlePageLink(1);
 				} else {
-					jAlert(response.errorMessage.message);
+					jAlert(response.errorMessage.message, "Error");
 				}
 			});
 		},
@@ -600,10 +607,24 @@
 				deleteVersionsPhysically: true,
 				enableCompare: false,
 				enableSingleVersionDownload: true,
+				preRestoreCallback: function(base) {
+					$(document).focus();
+					base.api.elements.tooltip.block({message:"Restoring...", css: { 
+			            border: 'none', 
+			            padding: '15px', 
+			            backgroundColor: '#000', 
+			            '-webkit-border-radius': '10px', 
+			            '-moz-border-radius': '10px',
+			            opacity: 0.5,
+			            color: '#fff'},
+			            baseZ: 16000,
+			            blockMsgClass: 'fsize14 fbold'});
+				},
 				postRestoreCallback: function(base, rule){
-					jAlert("Did you mean rules restored.", "Version Restored", function() {
-						location.reload();
-					});
+					self.loadInitialData();
+					base.api.elements.tooltip.unblock({onUnblock: function() {
+						jAlert("Did you mean rules restored.", "Version Restored");
+					}});
 				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
 					self.selectedRuleStatus = ruleStatus;
