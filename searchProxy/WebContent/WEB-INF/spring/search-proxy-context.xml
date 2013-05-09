@@ -9,7 +9,7 @@
 	
 	<!-- Scans within the base package of the application for @Components to configure as beans,
 		 @Controller, @Service, @Configuration, etc. -->
-	<context:component-scan base-package="com.search.manager.dao" />
+	<context:component-scan base-package="com.search.manager.dao, com.search.manager.xml, com.search.manager.cache, com.search.manager.authentication.dao, com.search.service" />
 	
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
          <property name="locations">
@@ -19,7 +19,7 @@
          	</list>
          </property>
     </bean>
-    
+	
     <bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
        <property name="driverClassName" value="${driverClassName.prod}" />
        <property name="url" value="${url.prod}" />
@@ -36,9 +36,9 @@
 	
 	<bean id="localSolrServerRunner" class="com.search.manager.solr.util.LocalSolrServerRunner">
 		<!-- solr local server -->
-		<!--property name="solrUrl" value="http://localhost:8983/solr41/" /-->
+		<property name="solrUrl" value="http://localhost:8983/solr41/" />
 		<!-- solr prod server -->
-		<property name="solrUrl" value="http://10.17.12.123:8983/solr41/" />
+		<!-- property name="solrUrl" value="http://10.17.12.123:8983/solr41/" /-->
 		<!-- solr proxy server -->
 		<!--property name="solrUrl" value="http://10.17.12.122:8983/solr41/" /-->
 		<!-- solr production server -->
@@ -70,6 +70,9 @@
 	<bean id="relevancySolrServer" parent="localSolrServerRunner" scope="singleton">
 		<property name="coreName" value="${solr.core.relevancy}" />
 	</bean>
+	<bean id="spellSolrServer" parent="localSolrServerRunner" scope="singleton">
+		<property name="coreName" value="${solr.core.spell}" />
+	</bean>
 	
 	<bean id="solrServerFactory" class="com.search.manager.solr.util.SolrServerFactory" scope="singleton">
 		<constructor-arg>
@@ -80,8 +83,12 @@
 				<ref bean="facetsortSolrServer" />
 				<ref bean="redirectSolrServer" />
 				<ref bean="relevancySolrServer" />
+				<ref bean="spellSolrServer" />
 			</list>
 		</constructor-arg>
 	</bean>
+	
+	<bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil"/>
+	<bean id="spellIndex" class="com.search.manager.xml.file.SpellIndex" init-method="init" destroy-method="destroy" scope="singleton" />
 	
 </beans>
