@@ -204,7 +204,8 @@ validateSearchKeyword = function(fieldName, fieldValue, required) {
 
 validateInteger = function(fieldName, fieldValue, min, max) {
 	var regex = /^[\-\+]{0,1}[0-9]{1,}[\.]{0,1}[0]{0,}$/;
-	var valid = regex.test(fieldValue) && $.isNotBlank(fieldValue);
+	var value = $.trim(fieldValue);
+	var valid = regex.test(value) && $.isNotBlank(value);
 	
 	if (valid && (min || min === 0)) {
 		valid = min <= fieldValue;
