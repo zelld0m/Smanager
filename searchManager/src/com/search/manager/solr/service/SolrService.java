@@ -12,6 +12,7 @@ import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
@@ -197,5 +198,35 @@ public interface SolrService extends SearchDaoService {
 	boolean updateRelevancyRule(Relevancy relevancy) throws DaoException;
 
 	boolean commitRelevancyRule() throws DaoException;
+
+	/* Spell */
+
+	SpellRule getSpellRuleForSearchTerm(String storeId, String searchTerm)
+			throws DaoException;
+
+	boolean loadSpellRules(Store store) throws DaoException;
+
+	boolean loadSpellRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean loadSpellRuleById(Store store, String ruleId) throws DaoException;
+
+	boolean loadSpellRules(Store store, String dirPath, String fileName)
+			throws DaoException;
+
+	boolean resetSpellRules(Store store) throws DaoException;
+
+	boolean resetSpellRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean resetSpellRuleById(Store store, String ruleId) throws DaoException;
+
+	boolean deleteSpellRules(Store store) throws DaoException;
+
+	boolean deleteSpellRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean deleteSpellRuleById(Store store, String ruleId) throws DaoException;
+
+	boolean updateSpellRule(SpellRule spellRule) throws DaoException;
+
+	boolean commitSpellRule() throws DaoException;
 
 }
