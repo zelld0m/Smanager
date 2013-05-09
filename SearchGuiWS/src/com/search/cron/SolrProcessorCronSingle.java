@@ -1,6 +1,13 @@
 package com.search.cron;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,16 +32,23 @@ public class SolrProcessorCronSingle implements Runnable {
 	private static final String XML_FILE_TYPE = ".xml";
 	private static final String DID_YOU_MEAN = "Did You Mean";
 	private static final String FILE_PREFIX = "spell_rule";
+	private static final String DATA_INDEX = "data_index.txt";
 
 	private SolrService solrService;
 	private Map<String, String> storeSpellRule = new HashMap<String, String>();
 	private List<String> stores = new ArrayList<String>();
 	private boolean running = false;
 	private boolean indexing = false;
+	private long lastIndexedFile;
 
 	public SolrProcessorCronSingle(SolrService solrService, List<String> stores) {
 		this.solrService = solrService;
 		this.stores = stores;
+
+		for (String store : stores) {
+			init(store);
+		}
+
 		new Thread(this).start();
 	}
 
@@ -48,8 +62,9 @@ public class SolrProcessorCronSingle implements Runnable {
 		if (listOfFiles != null) {
 			for (File file : listOfFiles) {
 				if (file.getName().startsWith(FILE_PREFIX)
-						&& file.getName().endsWith(XML_FILE_TYPE)) {
-					fileNames.add(file.getName());
+						&& file.getName().endsWith(XML_FILE_TYPE)
+						&& file.lastModified() > lastIndexedFile) {
+					fileNames.add(file.getName() + " - " + file.lastModified());
 				}
 			}
 			if (fileNames.size() > 0) {
@@ -91,15 +106,35 @@ public class SolrProcessorCronSingle implements Runnable {
 			logger.debug("Checking new doc for: " + store);
 			List<String> fileNames = checkFiles(store);
 			if (fileNames != null && fileNames.size() > 0) {
+				String[] temp = fileNames.get(0).split(" - ");
+				String newFile = "";
+				long newFileLastModified = 0;
+
+				if (temp != null && temp.length > 1) {
+					newFile = temp[0];
+					newFileLastModified = Long.parseLong(temp[1]);
+				}
+
 				if (storeSpellRule.containsKey(store)) {
-					if (!storeSpellRule.get(store).equals(fileNames.get(0))) {
+					String[] temp1 = storeSpellRule.get(store).split(" - ");
+					String oldFile = "";
+					long oldFileLastModified = 0;
+
+					if (temp1 != null && temp1.length > 1) {
+						oldFile = temp1[0];
+						oldFileLastModified = Long.parseLong(temp1[1]);
+					}
+
+					if (!oldFile.equals(newFile)
+							&& newFileLastModified > oldFileLastModified) {
 						logger.info("Old Doc: " + storeSpellRule.get(store));
 						logger.info("New Doc: " + fileNames.get(0));
 						logger.info("Start indexing spell rules for " + store
 								+ ": " + fileNames.get(0));
 						indexing = true;
-						if (resetIndexData(store, fileNames.get(0))) {
+						if (resetIndexData(store, newFile)) {
 							storeSpellRule.put(store, fileNames.get(0));
+							write(store, fileNames.get(0));
 							logger.info("Done indexing spell rules for "
 									+ store + ": " + fileNames.get(0));
 						}
@@ -109,12 +144,79 @@ public class SolrProcessorCronSingle implements Runnable {
 					logger.info("Initial spell rules for " + store + ": "
 							+ fileNames.get(0));
 					indexing = true;
-					if (resetIndexData(store, fileNames.get(0))) {
+					if (resetIndexData(store, newFile)) {
 						storeSpellRule.put(store, fileNames.get(0));
+						write(store, fileNames.get(0));
 						logger.info("Done indexing spell rules for " + store
 								+ ": " + fileNames.get(0));
 					}
 					indexing = false;
+				}
+			}
+		}
+	}
+
+	public void write(String store, String indexData) {
+		BufferedWriter bufferWritter = null;
+		FileWriter fileWriter = null;
+		try {
+			File file = new File(new StringBuilder().append(BASE_RULE_DIR)
+					.append(File.separator).append(store)
+					.append(File.separator).append(DID_YOU_MEAN)
+					.append(File.separator).append(DATA_INDEX).toString());
+
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			fileWriter = new FileWriter(file);
+			bufferWritter = new BufferedWriter(fileWriter);
+			bufferWritter.write(indexData);
+			bufferWritter.flush();
+
+		} catch (IOException e) {
+			logger.error("Error in write(String store, String indexData) : "
+					+ e.getMessage(), e);
+		} finally {
+			if (bufferWritter != null) {
+				try {
+					bufferWritter.close();
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
+		}
+	}
+
+	public void init(String store) {
+		BufferedReader bufferedReader = null;
+
+		try {
+			FileInputStream fileInputStream = new FileInputStream(
+					new StringBuilder().append(BASE_RULE_DIR)
+							.append(File.separator).append(store)
+							.append(File.separator).append(DID_YOU_MEAN)
+							.append(File.separator).append(DATA_INDEX)
+							.toString());
+
+			if (fileInputStream != null) {
+				bufferedReader = new BufferedReader(new InputStreamReader(
+						new DataInputStream(fileInputStream)));
+				String str = "";
+
+				while ((str = bufferedReader.readLine()) != null) {
+					if (!str.trim().equals("")) {
+						storeSpellRule.put(store, str.trim());
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error in init(String store) : " + e.getMessage(), e);
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException e) {
+					logger.error(e);
 				}
 			}
 		}
