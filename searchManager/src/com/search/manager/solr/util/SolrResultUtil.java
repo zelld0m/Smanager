@@ -19,12 +19,14 @@ import com.search.manager.model.RedirectRule.RedirectType;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.model.FacetSortRuleSolr;
 import com.search.manager.solr.model.RedirectRuleSolr;
 import com.search.manager.solr.model.RelevancyRuleSolr;
 import com.search.manager.solr.model.RuleSolrResult;
+import com.search.manager.solr.model.SpellRuleSolr;
 
 public class SolrResultUtil {
 
@@ -41,7 +43,7 @@ public class SolrResultUtil {
 			demoteResult.setStoreKeyword(storeKeyword);
 			demoteResult.setMemberId(ruleSolrResult.getMemberId());
 			demoteResult.setExpiryDate(ruleSolrResult.getExpiryDate());
-			
+
 			if (ruleSolrResult.getEntity().equals(
 					MemberTypeEntity.PART_NUMBER.toString())) {
 				demoteResult.setEntity(MemberTypeEntity.PART_NUMBER);
@@ -103,7 +105,7 @@ public class SolrResultUtil {
 			excludeResult.setStoreKeyword(storeKeyword);
 			excludeResult.setMemberId(ruleSolrResult.getMemberId());
 			excludeResult.setExpiryDate(ruleSolrResult.getExpiryDate());
-			
+
 			if (ruleSolrResult.getEntity().equals(
 					MemberTypeEntity.PART_NUMBER.toString())) {
 				excludeResult.setEntity(MemberTypeEntity.PART_NUMBER);
@@ -150,10 +152,13 @@ public class SolrResultUtil {
 			redirectRule
 					.setIncludeKeyword(redirectRuleSolr.getIncludeKeyword());
 			redirectRule.setRedirectUrl(redirectRuleSolr.getRedirectUrl());
-			redirectRule.setReplaceKeywordMessageCustomText(redirectRuleSolr.getCustomText());
-			
+			redirectRule.setReplaceKeywordMessageCustomText(redirectRuleSolr
+					.getCustomText());
+
 			if (redirectRuleSolr.getMessageType() != null) {
-				redirectRule.setReplaceKeywordMessageType(ReplaceKeywordMessageType.get(redirectRuleSolr.getMessageType()));
+				redirectRule
+						.setReplaceKeywordMessageType(ReplaceKeywordMessageType
+								.get(redirectRuleSolr.getMessageType()));
 			}
 
 			redirectRules.add(redirectRule);
@@ -246,5 +251,20 @@ public class SolrResultUtil {
 		}
 
 		return facetSorts;
+	}
+
+	public static List<SpellRule> toSpellRule(List<SpellRuleSolr> spellRulesSolr) {
+		List<SpellRule> spellRules = new ArrayList<SpellRule>();
+
+		for (SpellRuleSolr spellRuleSolr : spellRulesSolr) {
+			SpellRule spellRule = new SpellRule();
+			spellRule.setRuleId(spellRuleSolr.getRuleId());
+			spellRule.setStoreId(spellRuleSolr.getStore());
+			spellRule.setSearchTerms(spellRuleSolr.getKeywords());
+			spellRule.setSuggestions(spellRuleSolr.getSuggests());
+			spellRules.add(spellRule);
+		}
+
+		return spellRules;
 	}
 }
