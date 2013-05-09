@@ -62,7 +62,7 @@
 				<value>pcmall</value>
 				<value>pcmallcap</value>
 				<value>macmallbd</value>
-				<value>pcmgbd</value>
+				<value>pcmallgov</value>
 			</list>
 		</constructor-arg>
 		<constructor-arg>
