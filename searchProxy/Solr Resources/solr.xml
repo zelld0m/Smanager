@@ -24,12 +24,13 @@
 -->
 
 <solr persistent="true" sharedLib="lib">
-  <cores adminPath="/admin/cores" host="${host:}" hostPort="8181" hostContext="${hostContext:}">
+  <cores adminPath="/admin/cores" host="${host:}" hostPort="8983" hostContext="solr41">
 	<core name="demoterule" instanceDir="demoterule" />
 	<core name="elevaterule" instanceDir="elevaterule" />
 	<core name="excluderule" instanceDir="excluderule" />
 	<core name="facetsortrule" instanceDir="facetsortrule" />
 	<core name="redirectrule" instanceDir="redirectrule" />
 	<core name="relevancyrule" instanceDir="relevancyrule" />
+	<core name="spellrule" instanceDir="spellrule" />
   </cores>
 </solr>
