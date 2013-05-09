@@ -31,7 +31,7 @@ public class SolrProcessorCronSingle implements Runnable {
 			.getValue("publishedfilepath");
 	private static final String XML_FILE_TYPE = ".xml";
 	private static final String DID_YOU_MEAN = "Did You Mean";
-	private static final String FILE_PREFIX = "spell_rule";
+	private static final String FILE_PREFIX = "spell_rule_";
 	private static final String DATA_INDEX = "data_index.txt";
 
 	private SolrService solrService;
