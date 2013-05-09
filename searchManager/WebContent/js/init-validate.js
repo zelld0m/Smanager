@@ -206,18 +206,21 @@ validateInteger = function(fieldName, fieldValue, min, max) {
 	var regex = /^[\-\+]{0,1}[0-9]{1,}[\.]{0,1}[0]{0,}$/;
 	var value = $.trim(fieldValue);
 	var valid = regex.test(value) && $.isNotBlank(value);
-	
-	if (valid && (min || min === 0)) {
-		valid = min <= parseInt(value);
-	}
-	
-	if (valid && (max || max === 0)) {
-		valid = max >= parseInt(value);
-	}
 
 	if (!valid) {
 		jAlert(fieldName + " is not a valid value.", fieldName);
+		return false;
 	}
 	
-	return valid;
+	if ((min || min === 0) && min > parseInt(value)) {
+		jAlert("Minimum value allowed for " + fieldName + " is " + min + ".", fieldName);
+		return false;
+	}
+	
+	if ((max || max === 0) && max < parseInt(value)) {
+		jAlert("Maximum value allowed for " + fieldName + " is " + max + ".", fieldName);
+		return false;
+	}
+	
+	return true;
 };
