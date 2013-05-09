@@ -36,6 +36,9 @@
 	<bean id="relevancySolrServer" parent="localSolrServerRunner" scope="singleton">
 		<property name="coreName" value="${solr.core.relevancy}" />
 	</bean>
+	<bean id="spellSolrServer" parent="localSolrServerRunner" scope="singleton">
+		<property name="coreName" value="${solr.core.spell}" />
+	</bean>
 	
 	<bean id="solrServerFactory" class="com.search.manager.solr.util.SolrServerFactory" scope="singleton">
 		<constructor-arg>
@@ -46,6 +49,7 @@
 				<ref bean="facetsortSolrServer" />
 				<ref bean="redirectSolrServer" />
 				<ref bean="relevancySolrServer" />
+				<ref bean="spellSolrServer" />
 			</list>
 		</constructor-arg>
 	</bean>
