@@ -370,6 +370,12 @@
 
 				self.$cancelButton.on({
 					click : function(e) {
+						if (self.busy) {
+							return;
+						}
+
+						self.busy = true;
+
 						$(".button-group-1").hide();
 						$(".button-group-0").show();
 
@@ -399,11 +405,18 @@
 						self.$pager.show();
 						self.mode = 'display';
 						self.addFilterEventHandlers();
+						self.busy = false;
 					}
 				});
 
 				self.$saveButton.on({
 					click : function(e) {
+						if (self.busy) {
+							return;
+						}
+						
+						self.busy = true;
+						
 						if (self.mode == 'add') {
 							var rules = self.$table.find("tr.spell-rule");
 							var entities = [];
@@ -417,6 +430,7 @@
 							if (self.validate(entities) && hasChanges) {
 								SpellRuleServiceJS.addSpellRuleBatch(entities,
 									function(response) {
+										self.busy = false;
 										// success
 										if (response.status == 0) {
 											self.$footer.detach();
@@ -439,7 +453,10 @@
 										}
 									});
 							} else if (!hasChanges) {
+								self.busy = false;
 								self.$cancelButton.click();
+							} else {
+								self.busy = false;
 							}
 						} else if (self.mode == 'edit') {
 							var rules = self.$table.find("tr.spell-rule");
@@ -461,6 +478,7 @@
 								if (validateInteger("Maximum suggestions", self.$maxSuggest.val(), 1, 10) && self.validate(entities)) {
 									SpellRuleServiceJS.updateSpellRuleBatch(parseInt(self.$maxSuggest.val()), entities, deleted,
 										function(response) {
+											self.busy = false;
 											// success
 											if (response.status == 0) {
 												self.$table.find("tr:not(#header)").remove();
@@ -483,8 +501,11 @@
 												}
 											}
 										});
+								} else {
+									self.busy = false;
 								}
 							} else {
+								self.busy = false;
 								self.$cancelButton.click();
 							}
 						}
