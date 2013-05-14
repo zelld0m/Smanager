@@ -36,6 +36,7 @@ public class ExcludeDAO {
 	public ExcludeDAO(JdbcTemplate jdbcTemplate) {
     	addSP = new AddExcludeStoredProcedure(jdbcTemplate);
     	getSP = new GetExcludeStoredProcedure(jdbcTemplate);
+    	getSPNew = new GetExcludeNewStoredProcedure(jdbcTemplate);
     	updateSP = new UpdateExcludeStoredProcedure(jdbcTemplate);
     	deleteSP = new DeleteExcludeStoredProcedure(jdbcTemplate);
     	updateExpiryDateSP = new UpdateExcludeExpiryDateStoredProcedure(jdbcTemplate);
@@ -43,6 +44,7 @@ public class ExcludeDAO {
 	
 	private AddExcludeStoredProcedure addSP;
 	private GetExcludeStoredProcedure getSP;
+	private GetExcludeNewStoredProcedure getSPNew;
 	private UpdateExcludeStoredProcedure updateSP;
 	private DeleteExcludeStoredProcedure deleteSP;
 	private UpdateExcludeExpiryDateStoredProcedure updateExpiryDateSP;
@@ -103,6 +105,45 @@ public class ExcludeDAO {
 	    }
 	}
 
+	// TODO using dbo.usp_Get_Exclude_New
+	private class GetExcludeNewStoredProcedure extends GetStoredProcedure {
+	    public GetExcludeNewStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_GET_EXCLUDE_NEW);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ExcludeResult>() {
+	            public ExcludeResult mapRow(ResultSet rs, int rowNum) throws SQLException
+	            {
+	                return new ExcludeResult(
+	                		new StoreKeyword(new Store(rs.getString(DAOConstants.COLUMN_STORE_NAME)),
+	                						 new Keyword(rs.getString(DAOConstants.COLUMN_KEYWORD))),
+	                		rs.getString(DAOConstants.COLUMN_VALUE),
+	                		rs.getString(DAOConstants.COLUMN_COMMENT),
+	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
+	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
+	                		rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE),
+	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
+                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
+                			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
+	            }
+	        }));
+	    }
+	}
+	
 	private class UpdateExcludeStoredProcedure extends CUDStoredProcedure {
 	    public UpdateExcludeStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_EXCLUDE);
@@ -195,6 +236,24 @@ public class ExcludeDAO {
 	        return DAOUtils.getRecordSet(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getExclude()", e);
+    	}
+    }
+    
+    // TODO using dbo.usp_Get_Exclude_New
+    public RecordSet<ExcludeResult> getExcludeNew(SearchCriteria<ExcludeResult> criteria) throws DaoException {
+		try {
+			ExcludeResult exclude = criteria.getModel();
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
+	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
+	        return DAOUtils.getRecordSet(getSPNew.execute(inputs));
+		} catch (Exception e) {
+    		throw new DaoException("Failed during getExcludeNew()", e);
     	}
     }
     
