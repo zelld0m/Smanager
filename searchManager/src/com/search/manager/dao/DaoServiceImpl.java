@@ -584,6 +584,14 @@ public class DaoServiceImpl implements DaoService {
 		return list;
 	}
 
+	// Using dbo.usp_Get_Elevate_New
+	@Override
+	public RecordSet<ElevateResult> getElevateResultListNew(
+			SearchCriteria<ElevateResult> criteria) throws DaoException {
+		RecordSet<ElevateResult> list = elevateDAO.getElevateNew(criteria);
+		return list;
+	}
+	
 	@Override
 	public RecordSet<ElevateResult> getNoExpireElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException {
 		return elevateDAO.getElevateNoExpiry(criteria);
@@ -654,6 +662,13 @@ public class DaoServiceImpl implements DaoService {
 		return list;
 	}
 
+	// using dbo.usp_Get_Demote_New
+	@Override
+	public RecordSet<DemoteResult> getDemoteResultListNew(SearchCriteria<DemoteResult> criteria) throws DaoException {
+		RecordSet<DemoteResult> list = demoteDAO.getResultListNew(criteria);
+		return list;
+	}
+	
 	@Override
 	public RecordSet<DemoteResult> getNoExpireDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
 		return demoteDAO.getNoExpiry(criteria);
@@ -725,6 +740,12 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public RecordSet<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria) throws DaoException {
 		return excludeDAO.getExclude(criteria);
+	}
+	
+	// using dbo.usp_Get_Exclude_New
+	@Override
+	public RecordSet<ExcludeResult> getExcludeResultListNew(SearchCriteria<ExcludeResult> criteria) throws DaoException {
+		return excludeDAO.getExcludeNew(criteria);
 	}
 	
 	@Override
