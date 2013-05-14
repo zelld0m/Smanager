@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.solr.common.SolrInputDocument;
@@ -46,6 +48,7 @@ public class RelevancyRuleBuilder implements Runnable {
 	private String logErrorIndex;
 	private String mailNotification;
 
+	private final int MAX_IMPORT_DOC = 1000;
 	private int dbCount;
 	private int relevancyRuleCount;
 	private int relevancyRuleCountDefault;
@@ -85,32 +88,42 @@ public class RelevancyRuleBuilder implements Runnable {
 		try {
 			Store store = new Store(storeId);
 			long timeStart = System.currentTimeMillis();
-			List<Relevancy> relevancies = null;
 
 			Relevancy relevancyFilter = new Relevancy();
 			relevancyFilter.setStore(store);
 			relevancyFilter.setRelevancyName(""); // ALL
-			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
-					relevancyFilter, null, null, 0, 0);
-			RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
-					criteria, MatchType.LIKE_NAME);
-
-			if (recordSet != null) {
-				relevancies = new ArrayList<Relevancy>();
-				for (Relevancy relevancy : recordSet.getList()) {
-					relevancy = daoService.getRelevancyDetails(relevancy);
-					// setRelKeyword
-					relevancy.setRelKeyword(daoService.getRelevancyKeywords(
-							relevancy).getList());
-					relevancies.add(relevancy);
-				}
-			}
 
 			long indexTime = System.currentTimeMillis();
 
-			if (relevancies != null) {
-				dbCount = relevancies.size();
-				solrImport(relevancies);
+			int page = 1;
+
+			while (true) {
+				SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
+						relevancyFilter, null, null, page, MAX_IMPORT_DOC);
+
+				RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
+						criteria, MatchType.LIKE_NAME);
+
+				if (recordSet != null) {
+					List<Relevancy> relevancies = new ArrayList<Relevancy>();
+					for (Relevancy relevancy : recordSet.getList()) {
+						relevancy = daoService.getRelevancyDetails(relevancy);
+						// setRelKeyword
+						relevancy.setRelKeyword(daoService
+								.getRelevancyKeywords(relevancy).getList());
+						relevancies.add(relevancy);
+					}
+					dbCount += relevancies.size();
+					solrImport(relevancies);
+
+					if (relevancies.size() < MAX_IMPORT_DOC) {
+						solrServer.commit();
+						break;
+					}
+					page++;
+				} else {
+					break;
+				}
 			}
 
 			// import default Relevancy
@@ -121,20 +134,17 @@ public class RelevancyRuleBuilder implements Runnable {
 			StringBuffer info = new StringBuffer();
 			info.append(" Indexing completed!");
 			info.append("\n Time Completed (Sec): "
-					+ (elapsedTimeMillis / (1000F)) + " secs.");
-			info.append("\n Time Completed (Min): "
-					+ (elapsedTimeMillis / (60 * 1000F)) + " mins.");
+					+ (elapsedTimeMillis / (1000F)) + " secs./");
+			info.append((elapsedTimeMillis / (60 * 1000F)) + " mins.");
 			info.append("\n Index Time (Sec): " + (elapsedIndexTime / (1000F))
-					+ " secs.");
-			info.append("\n Index Time (Min): "
-					+ (elapsedIndexTime / (60 * 1000F)) + " mins.");
-			info.append("\n Total Relevancy fetched from database : " + dbCount);
-			info.append("\n Total Relevancy rule indexed : "
-					+ relevancyRuleCount);
-			info.append("\n Total RelevancyDefault rule indexed : "
-					+ relevancyRuleCountDefault);
-			info.append("\n Total Files indexed : "
-					+ (relevancyRuleCount + relevancyRuleCountDefault));
+					+ " secs./");
+			info.append((elapsedIndexTime / (60 * 1000F)) + " mins.");
+			info.append("\n Total Relevancy rule indexed : ");
+			info.append(relevancyRuleCount);
+			info.append("\n Total Relevancy fetched from database : ");
+			info.append(dbCount);
+			info.append("\n Total Default Relevancy rule indexed : ");
+			info.append(relevancyRuleCountDefault);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
@@ -158,11 +168,10 @@ public class RelevancyRuleBuilder implements Runnable {
 					.composeSolrDocsRelevancy(relevancies);
 
 			if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
-				dbCount += solrInputDocuments.size();
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();
-				relevancyRuleCount = solrInputDocuments.size();
+				relevancyRuleCount += solrInputDocuments.size();
 			}
 
 		} catch (Exception e) {
@@ -201,7 +210,8 @@ public class RelevancyRuleBuilder implements Runnable {
 			relevancyDefault.setRelevancyId(store.getStoreId() + "_default");
 			relevancyDefault = daoService.getRelevancyDetails(relevancyDefault);
 
-			if (relevancyDefault != null && relevancyDefault.getRelevancyId() != null) {
+			if (relevancyDefault != null
+					&& relevancyDefault.getRelevancyId() != null) {
 				solrInputDocuments.add(SolrDocUtil
 						.composeSolrDoc(relevancyDefault));
 			}
@@ -210,7 +220,7 @@ public class RelevancyRuleBuilder implements Runnable {
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();
-				relevancyRuleCountDefault = solrInputDocuments.size();
+				relevancyRuleCountDefault += solrInputDocuments.size();
 			}
 
 		} catch (Exception e) {
@@ -272,6 +282,26 @@ public class RelevancyRuleBuilder implements Runnable {
 		}
 
 		try {
+			System.out.println("----------------------------------------");
+			System.out.println("Store	  : " + storeId);
+			System.out.println("Solr Url  : "
+					+ ((LocalSolrServerRunner) context
+							.getBean("localSolrServerRunner")).getSolrUrl());
+			System.out.println("Database  : "
+					+ ((BasicDataSource) context.getBean("dataSource_solr"))
+							.getUrl());
+			System.out.println("----------------------------------------");
+			String response = "";
+			Scanner input = new Scanner(System.in);
+
+			System.out.print("Are you sure you want to continue? (Y/N) : ");
+			response = input.next();
+
+			if (!response.toUpperCase().startsWith("Y")) {
+				solrServerFactory.shutdown();
+				return;
+			}
+
 			solrServer = solrServerFactory
 					.getCoreInstance(Constants.Core.RELEVANCY_RULE_CORE
 							.getCoreName());

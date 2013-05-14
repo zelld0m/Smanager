@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.solr.common.SolrInputDocument;
@@ -45,6 +47,7 @@ public class FacetSortRuleBuilder implements Runnable {
 	private String logErrorIndex;
 	private String mailNotification;
 
+	private final int MAX_IMPORT_DOC = 1000;
 	private int count;
 	private int facetSortCount;
 
@@ -84,24 +87,31 @@ public class FacetSortRuleBuilder implements Runnable {
 			Store store = new Store(storeId);
 			long timeStart = System.currentTimeMillis();
 
-			List<FacetSort> facetSorts = null;
-
 			FacetSort facetSortFilter = new FacetSort();
 			facetSortFilter.setStore(store);
-			SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(
-					facetSortFilter, null, null, 0, 0);
 
-			RecordSet<FacetSort> recordSet = daoService.searchFacetSort(
-					criteria, MatchType.LIKE_NAME);
-
-			if (recordSet != null) {
-				facetSorts = recordSet.getList();
-			}
 			long indexTime = System.currentTimeMillis();
 
-			if (facetSorts != null) {
-				count = facetSorts.size();
-				solrImport(facetSorts);
+			int page = 1;
+
+			while (true) {
+				SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(
+						facetSortFilter, null, null, page, MAX_IMPORT_DOC);
+				RecordSet<FacetSort> recordSet = daoService.searchFacetSort(
+						criteria, MatchType.LIKE_NAME);
+				if (recordSet != null) {
+					List<FacetSort> facetSorts = recordSet.getList();
+					count += facetSorts.size();
+					solrImport(facetSorts);
+
+					if (facetSorts.size() < MAX_IMPORT_DOC) {
+						solrServer.commit();
+						break;
+					}
+					page++;
+				} else {
+					break;
+				}
 			}
 
 			long elapsedTimeMillis = System.currentTimeMillis() - timeStart;
@@ -110,15 +120,13 @@ public class FacetSortRuleBuilder implements Runnable {
 			StringBuffer info = new StringBuffer();
 			info.append(" Indexing completed!");
 			info.append("\n Time Completed (Sec): "
-					+ (elapsedTimeMillis / (1000F)) + " secs.");
-			info.append("\n Time Completed (Min): "
-					+ (elapsedTimeMillis / (60 * 1000F)) + " mins.");
+					+ (elapsedTimeMillis / (1000F)) + " secs./");
+			info.append((elapsedTimeMillis / (60 * 1000F)) + " mins.");
 			info.append("\n Index Time (Sec): " + (elapsedIndexTime / (1000F))
-					+ " secs.");
-			info.append("\n Index Time (Min): "
-					+ (elapsedIndexTime / (60 * 1000F)) + " mins.");
-			info.append("\n Total FacetSort fetched from database : " + count);
-			info.append("\n Total FacetSort Rule indexed : " + facetSortCount);
+					+ " secs./");
+			info.append((elapsedIndexTime / (60 * 1000F)) + " mins.");
+			info.append("\n Total Facet Sort Rule indexed : " + facetSortCount);
+			info.append("\n Total Facet Sort fetched from database : " + count);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
@@ -143,7 +151,7 @@ public class FacetSortRuleBuilder implements Runnable {
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();
-				facetSortCount = solrInputDocuments.size();
+				facetSortCount += solrInputDocuments.size();
 			}
 		} catch (Exception e) {
 			hasError = true;
@@ -204,6 +212,26 @@ public class FacetSortRuleBuilder implements Runnable {
 		}
 
 		try {
+			System.out.println("----------------------------------------");
+			System.out.println("Store	  : " + storeId);
+			System.out.println("Solr Url  : "
+					+ ((LocalSolrServerRunner) context
+							.getBean("localSolrServerRunner")).getSolrUrl());
+			System.out.println("Database  : "
+					+ ((BasicDataSource) context.getBean("dataSource_solr"))
+							.getUrl());
+			System.out.println("----------------------------------------");
+			String response = "";
+			Scanner input = new Scanner(System.in);
+
+			System.out.print("Are you sure you want to continue? (Y/N) : ");
+			response = input.next();
+
+			if (!response.toUpperCase().startsWith("Y")) {
+				solrServerFactory.shutdown();
+				return;
+			}
+
 			solrServer = solrServerFactory
 					.getCoreInstance(Constants.Core.FACET_SORT_RULE_CORE
 							.getCoreName());
