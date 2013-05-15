@@ -117,6 +117,14 @@ jQuery.extend(
 
 					return text;
 				},
+				
+				toLowerCase: function(text) {
+					return text && text.toLowerCase();
+				},
+				
+				iequals: function(text1, text2) {
+					return $.toLowerCase(text1) === $.toLowerCase(text2);
+				}
 			};  
 		}(jQuery))  
 );  
