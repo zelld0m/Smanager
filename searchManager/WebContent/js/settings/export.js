@@ -130,7 +130,7 @@
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
-					}else if (validateComment(self.moduleName, comment, 1, 300)){
+					}else if (validateComment(self.moduleName, comment, 1, 250)){
 						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
 						var a = [];
 						var arrSelectedKeys = Object.keys(self.getSelectedItems());

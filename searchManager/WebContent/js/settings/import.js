@@ -519,7 +519,7 @@
 
 						if(self.getSelectedRefId('all').length==0){
 							jAlert("Please select Import/Reject on a rule.", self.moduleName);
-						}else if (!validateComment(self.moduleName, comment, 1, 300)){
+						}else if (!validateComment(self.moduleName, comment, 1, 250)){
 							//error alert in function validateComment
 						}else{
 							var importedItems = self.getSelectedRefId('import');

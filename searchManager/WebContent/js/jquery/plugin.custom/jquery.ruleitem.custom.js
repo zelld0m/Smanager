@@ -466,7 +466,7 @@
 						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
 					}else if(origPostion!=null && origPostion.length>0 && !$.isNumeric(origPostion)) {
 						jAlert("Invalid position value.", "Search Simulator");
-					}else if(!validateComment("Search Simulator", comment, 0, 300)){
+					}else if(!validateComment("Search Simulator", comment, 0, 250)){
 						//alert is inside validateComment
 					}else if(today.getTime() > new Date(validityDate).getTime()){
 						jAlert("Expiry date cannot be earlier than today", "Search Simulator");

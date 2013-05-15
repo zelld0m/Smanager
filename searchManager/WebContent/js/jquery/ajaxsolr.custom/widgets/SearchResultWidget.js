@@ -179,7 +179,7 @@
 										return
 									}
 									
-									if(!validateComment("Comment", comment, 1, 300)){
+									if(!validateComment("Comment", comment, 1, 250)){
 										//error alert in function validateComment
 										return
 									}
@@ -406,7 +406,7 @@
 							},
 							preHook: function() { 
 								base.prepareList();
-								if ($.isNotBlank(comment) && validateComment("Comment", comment, 1, 300)){
+								if ($.isNotBlank(comment) && validateComment("Comment", comment, 1, 250)){
 									ExcludeServiceJS.addRuleComment(keyword, memberId, comment, {
 										callback : function(data){
 											if (data>0) base.hasChanges++;

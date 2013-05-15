@@ -140,7 +140,7 @@
 						base.contentHolder.find("#addCommentBtn").off().on({
 							click: function(e){
 								var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#comment").val()), "");
-								if (validateComment("Comment", comment, 1, 300)){
+								if (validateComment("Comment", comment, 1, 250)){
 									var nl2br = comment.replace(/\n\r?/g, '<br/>');
 									base.options.itemAddComment(base, nl2br);
 								}
