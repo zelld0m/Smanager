@@ -339,7 +339,10 @@
 					$selectedTab.find("#downloadIcon").hide();
 				}else{
 					$selectedTab.find("div.searchBoxHolder, a#searchBtn").show();
-					$selectedTab.find("#downloadIcon").show();
+					
+					if (self.tabSelected != 'didYouMeanTab') {
+						$selectedTab.find("a#downloadIcon").show();
+					}
 					$selectedTab.find("div#ruleFilterDiv").show();
 					$selectedTab.find("#resultsTopPaging, #resultsBottomPaging").paginate({
 						currentPage: curPage, 
@@ -599,7 +602,10 @@
 				$selectedTab.find("div#ruleCount").show();
 				$selectedTab.find("div.searchBoxHolder, a#searchBtn").show();
 				$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").show();
-				$selectedTab.find("a#downloadIcon").show();
+				
+				if (self.tabSelected != 'didYouMeanTab') {
+					$selectedTab.find("a#downloadIcon").show();
+				}
 				$selectedTab.find("div#ruleFilterDiv").show();
 			},
 			
