@@ -40,6 +40,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
@@ -329,6 +330,10 @@ public class DeploymentService {
 						RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
 						if (ruleXml != null) {
 							try {
+				                if (ruleXml instanceof RuleFileXml) {
+				                    ruleXml = RuleXmlUtil.loadVersion((RuleFileXml) ruleXml);
+				                }
+
 								daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.AUTOMATIC, username, "Automatic Export on Publish");
 							} catch (DaoException e) {
 								// TODO: make more detailed

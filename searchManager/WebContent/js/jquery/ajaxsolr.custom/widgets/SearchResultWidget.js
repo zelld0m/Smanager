@@ -179,7 +179,7 @@
 										return
 									}
 									
-									if(!validateComment("Comment", comment, 1, 250)){
+									if(comment && !validateComment("Comment", comment, 1, 250)){
 										//error alert in function validateComment
 										return
 									}
