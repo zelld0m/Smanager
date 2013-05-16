@@ -29,7 +29,6 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -622,9 +621,10 @@ public class SearchServlet extends HttpServlet {
 						}
 						
 						String convertedKeyword = paramValue;
+						
 						logger.info(String.format("CLEANUP %s keyword: %s[%s] %s[%s]", storeName,
-								origKeyword, HexUtils.convert(origKeyword.getBytes()),
-								convertedKeyword, HexUtils.convert(convertedKeyword.getBytes())));
+								origKeyword, new String(origKeyword.getBytes()),
+								convertedKeyword, new String(convertedKeyword.getBytes())));
 					}
 					else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FACET_FIELD)) {
 						if (paramValue.endsWith("_FacetTemplate")) {
