@@ -62,7 +62,7 @@
 			base.selectedVersion = [];
 			base.selectedVersion.push("current");
 
-			$content.find("a#compareBtn").on({
+			$content.find("a#compareBtn").off().on({
 				click: function(e){
 					base.selectedVersion = [];
 					base.selectedVersion.push("current");
@@ -392,7 +392,7 @@
 		base.addSaveButtonListener = function(){
 			var $content = base.contentHolder;
 
-			$content.find("a#cancelBtn, a#saveBtn").on({
+			$content.find("a#cancelBtn, a#saveBtn").off().on({
 				click: function(e){
 
 					var name = $content.find("input#name").val();
