@@ -11,9 +11,7 @@ import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
-import com.search.manager.model.Banner;
-import com.search.manager.model.Campaign;
-import com.search.manager.model.CampaignBanner;
+import com.search.manager.model.BannerRule;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
@@ -83,39 +81,13 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException;
 	public RecordSet<RedirectRule> searchRedirectRuleKeyword(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType,
 			ExactMatch keywordExactMatch) throws DaoException;
-
-	/* Campaigns */
-	public int addCampaign(Campaign campaign) throws DaoException;
-	public String addCampaignAndGetId(Campaign rule) throws DaoException;
-	public int updateCampaign(Campaign campaign) throws DaoException;
-	public int deleteCampaign(Campaign campaign) throws DaoException;
-	public int updateCampaignComment(Campaign campaign) throws DaoException;
-	public int appendCampaignComment(Campaign campaign) throws DaoException;
-	public Campaign getCampaign(Campaign campaign) throws DaoException;
-	public RecordSet<Campaign> getCampaigns(SearchCriteria<Campaign> criteria) throws DaoException;
-	public RecordSet<Campaign> getCampaignsContainingName(SearchCriteria<Campaign> criteria) throws DaoException;
-	public RecordSet<Campaign> getCampaignsWithName(SearchCriteria<Campaign> criteria) throws DaoException;
 	
 	/* Banners */
-	public int addBanner(Banner banner) throws DaoException;
-	public String addBannerAndGetId(Banner rule) throws DaoException;
-	public int updateBanner(Banner banner) throws DaoException;
-	public int deleteBanner(Banner banner) throws DaoException;
-	public int updateBannerComment(Banner banner) throws DaoException;
-	public int appendBannerComment(Banner banner) throws DaoException;
-	public Banner getBanner(Banner banner) throws DaoException;
-	public RecordSet<Banner> getBannerList(SearchCriteria<Banner> criteria) throws DaoException;
-	public RecordSet<Banner> getBannerListWithNameLike(SearchCriteria<Banner> criteria) throws DaoException;
-	public RecordSet<Banner> getBannerListWithNameMatching(SearchCriteria<Banner> criteria) throws DaoException;
-	
-	/* Banner Campaign Mapping */
-	public int addCampaignBanner(CampaignBanner campaignBanner) throws DaoException;
-	public Banner updateCampaignBanner(CampaignBanner campaignBanner) throws DaoException;
-	public RecordSet<CampaignBanner> getBannersInCampaign(SearchCriteria<CampaignBanner> criteria) throws DaoException;
-	public RecordSet<CampaignBanner> getCampaignsUsingThisBanner(SearchCriteria<CampaignBanner> criteria) throws DaoException;
-	public int deleteCampaignBanner(CampaignBanner campaignBanner) throws DaoException;
-	public RecordSet<CampaignBanner> searchCampaignBanner(SearchCriteria<CampaignBanner> criteria, MatchType campaignMatchType, MatchType bannerMatchType) throws DaoException;
-	
+	public int addBannerRule(BannerRule rule) throws DaoException;
+	public int deleteBannerRule(BannerRule rule) throws DaoException;
+	public BannerRule getBannerRule(BannerRule rule) throws DaoException;
+	public RecordSet<BannerRule> getBannerRuleList(SearchCriteria<BannerRule> criteria) throws DaoException;
+		
 	/* Elevate */
 	public int addElevateResult(ElevateResult elevate) throws DaoException;
 	public int updateElevateResult(ElevateResult elevate) throws DaoException;

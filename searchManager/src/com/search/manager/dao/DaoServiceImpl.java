@@ -24,7 +24,6 @@ import com.search.manager.dao.file.RuleVersionDAO;
 import com.search.manager.dao.file.SpellRuleDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
-import com.search.manager.dao.sp.CampaignDAO;
 import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.DemoteDAO;
@@ -47,9 +46,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.model.AuditTrail;
-import com.search.manager.model.Banner;
-import com.search.manager.model.Campaign;
-import com.search.manager.model.CampaignBanner;
+import com.search.manager.model.BannerRule;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
@@ -101,7 +98,6 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private DemoteDAO 		demoteDAO;
 	@Autowired private AuditTrailDAO 	auditTrailDAO;
 	@Autowired private BannerDAO 		bannerDAO;
-	@Autowired private CampaignDAO 		campaignDAO;
 	@Autowired private RelevancyDAO		relevancyDAO;
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
@@ -116,18 +112,18 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private RedirectRuleVersionDAO queryCleaningVersionDAO;
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
 	@Autowired private ExportRuleMapDAO	exportRuleMapDAO;
-    @Autowired private SpellRuleDAO spellRuleDAO;
+	@Autowired private SpellRuleDAO spellRuleDAO;
 
 	private DaoServiceImpl instance;
 	private final static Logger logger = Logger.getLogger(DaoServiceImpl.class);
 	public DaoServiceImpl() {
 		instance = this;
 	}
-	
+
 	public DaoServiceImpl getInstance() {
 		return instance;
 	}
-	
+
 	public void setElevateDAO(ElevateDAO elevateDAO) {
 		this.elevateDAO = elevateDAO;
 	}
@@ -143,7 +139,7 @@ public class DaoServiceImpl implements DaoService {
 	public void setExcludeDAO(ExcludeDAO excludeDAO) {
 		this.excludeDAO = excludeDAO;
 	}
-	
+
 	public void setDemoteDAO(DemoteDAO demoteDAO) {
 		this.demoteDAO = demoteDAO;
 	}
@@ -158,10 +154,6 @@ public class DaoServiceImpl implements DaoService {
 
 	public void setBannerDAO(BannerDAO bannerDAO) {
 		this.bannerDAO = bannerDAO;
-	}
-
-	public void setCampaignDAO(CampaignDAO campaignDAO) {
-		this.campaignDAO = campaignDAO;
 	}
 
 	public void setRelevancyDAO(RelevancyDAO relevancyDAO) {
@@ -187,39 +179,39 @@ public class DaoServiceImpl implements DaoService {
 	public void setGroupsDAO(GroupsDAO groupsDAO) {
 		this.groupsDAO = groupsDAO;
 	}
-	
+
 	public void setSpellRuleDAO(SpellRuleDAO spellRuleDAO) {
-	    this.spellRuleDAO = spellRuleDAO;
+		this.spellRuleDAO = spellRuleDAO;
 	}
 
 	/* Audit Trail */
-    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) {
-    	return auditTrailDAO.getAuditTrail(auditDetail, adminFlag);
-    }
-    
-    public int addAuditTrail(AuditTrail auditTrail) {
-    	return auditTrailDAO.addAuditTrail(auditTrail);
-    }
-    
+	public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) {
+		return auditTrailDAO.getAuditTrail(auditDetail, adminFlag);
+	}
+
+	public int addAuditTrail(AuditTrail auditTrail) {
+		return auditTrailDAO.addAuditTrail(auditTrail);
+	}
+
 	@Override
 	public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) throws DaoException {
 		return auditTrailDAO.getDropdownValues(type, storeId, adminFlag);
 	}
-	
+
 	public List<String> getRefIDs(String ent, String opt, String storeId) {
 		return auditTrailDAO.getRefIDs(ent, opt, storeId);
 	}
-	
+
 	/* Big Bets */
 	/* retrieve data from both Solr and DB */
 	public RecordSet<ElevateProduct> getElevatedProducts(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException{
 		RecordSet<ElevateResult> set = getElevateResultList(criteria);
 		LinkedHashMap<String, ElevateProduct> map = new LinkedHashMap<String, ElevateProduct>();
 		StoreKeyword sk = criteria.getModel().getStoreKeyword();
-		
+
 		String storeId = DAOUtils.getStoreId(sk);
 		String keyword = DAOUtils.getKeywordId(sk);
-		
+
 		for (ElevateResult e: set.getList()) {
 			ElevateProduct ep = new ElevateProduct(e);
 			ep.setStore(storeId);
@@ -232,7 +224,7 @@ public class DaoServiceImpl implements DaoService {
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
 	}
-	
+
 	/* retrieve data from both Solr and DB */
 	public RecordSet<ElevateProduct> getElevatedProductsIgnoreKeyword(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException{
 		RecordSet<ElevateResult> set = getElevateResultList(criteria);
@@ -264,8 +256,8 @@ public class DaoServiceImpl implements DaoService {
 		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
 	}
-	
-	
+
+
 	@Override
 	public ElevateProduct getElevatedProduct(String serverName, ElevateResult elevate) throws DaoException {
 		ElevateResult e = getElevateItem(elevate);
@@ -325,7 +317,7 @@ public class DaoServiceImpl implements DaoService {
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
 	}
-	
+
 	public RecordSet<DemoteProduct> getDemotedProducts(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException{
 		RecordSet<DemoteResult> set = getDemoteResultList(criteria);
 		LinkedHashMap<String, DemoteProduct> map = new LinkedHashMap<String, DemoteProduct>();
@@ -355,7 +347,7 @@ public class DaoServiceImpl implements DaoService {
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()),set.getTotalSize());
 	}
-	
+
 	/* retrieve data from both Solr and DB */
 	public RecordSet<DemoteProduct> getDemotedProductsIgnoreKeyword(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException{
 		RecordSet<DemoteResult> set = getDemoteResultList(criteria);
@@ -386,8 +378,8 @@ public class DaoServiceImpl implements DaoService {
 		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
 		return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()),set.getTotalSize());
 	}
-	
-	
+
+
 	@Override
 	public DemoteProduct getDemotedProduct(String serverName, DemoteResult demote) throws DaoException {
 		DemoteResult e = getDemoteItem(demote);
@@ -445,7 +437,7 @@ public class DaoServiceImpl implements DaoService {
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()),set.getTotalSize());
 	}
-	
+
 	@Override
 	public RecordSet<Product> getExcludedProducts(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException {
 		RecordSet<ExcludeResult> set = getExcludeResultList(criteria);
@@ -475,7 +467,7 @@ public class DaoServiceImpl implements DaoService {
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<Product>(new ArrayList<Product>(map.values()),set.getTotalSize());
 	}
-	
+
 	@Override
 	public RecordSet<Product> getExcludedProductsIgnoreKeyword(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException {
 		RecordSet<ExcludeResult> set = getExcludeResultList(criteria);
@@ -505,7 +497,7 @@ public class DaoServiceImpl implements DaoService {
 		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
 		return new RecordSet<Product>(new ArrayList<Product>(map.values()),set.getTotalSize());
 	}
-	
+
 	@Override
 	public String getEdpByPartNumber(String serverName, String storeId, String keyword, String partNumber) {
 		return SearchHelper.getEdpByPartNumber(serverName, storeId, partNumber);
@@ -519,21 +511,21 @@ public class DaoServiceImpl implements DaoService {
 			if (k == null) {
 				keywordDAO.addKeyword(storeKeyword.getKeyword());
 			}
-		    return storeKeywordDAO.addStoreKeyword(storeKeyword);
+			return storeKeywordDAO.addStoreKeyword(storeKeyword);
 		}
 		return -1;
 	}
-	
+
 	@Override
 	public StoreKeyword updateKeyword(String storeId, String oldKeyword, String newKeyword) throws DaoException {
 		throw new DaoException("Unsupported operation", new RuntimeException("Unsupported operation"));
 	}
-	
+
 	@Override
 	public int deleteKeyword(String storeId, String keyword) throws DaoException {
 		throw new DaoException("Unsupported operation", new RuntimeException("Unsupported operation"));
 	}
-	
+
 	@Override
 	public StoreKeyword getKeyword(String storeId, String keyword) throws DaoException {
 		return storeKeywordDAO.getStoreKeyword(storeId, keyword);
@@ -545,12 +537,12 @@ public class DaoServiceImpl implements DaoService {
 		return storeKeywordDAO.getStoreKeywords(sc);
 	}
 
-	
+
 	@Override
 	public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) throws DaoException {
-	    return storeKeywordDAO.getAllKeywords(storeId, ruleEntity);
+		return storeKeywordDAO.getAllKeywords(storeId, ruleEntity);
 	}
-	
+
 	@Override
 	public RecordSet<StoreKeyword> getAllKeywords(String storeId, Integer page, Integer itemsPerPage) throws DaoException {
 		SearchCriteria<StoreKeyword> sc = new SearchCriteria<StoreKeyword>(new StoreKeyword(storeId, ""), null, null, page, itemsPerPage);
@@ -568,14 +560,14 @@ public class DaoServiceImpl implements DaoService {
 		SearchCriteria<StoreKeyword> sc = new SearchCriteria<StoreKeyword>(new StoreKeyword(storeId, keyword), null, null, page, itemsPerPage);
 		return storeKeywordDAO.getStoreKeywords(sc);
 	}
-	
+
 	/* Elevate */
 	@Override
 	public int addElevateResult(ElevateResult elevate) throws DaoException {
 		return elevateDAO.addElevate(elevate);
 	}
 
-	
+
 	@Override
 	public RecordSet<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException {
 		RecordSet<ElevateResult> list = elevateDAO.getElevate(criteria);
@@ -611,12 +603,12 @@ public class DaoServiceImpl implements DaoService {
 	public int clearElevateResult(StoreKeyword keyword) throws DaoException {
 		return elevateDAO.clearElevate(keyword);
 	}
-	
+
 	@Override
 	public int updateElevateResult(ElevateResult elevate) throws DaoException {
 		return elevateDAO.updateElevate(elevate);
 	}
-	
+
 	@Override
 	public int updateElevateResultExpiryDate(ElevateResult elevate) throws DaoException {
 		return elevateDAO.updateElevateExpiryDate(elevate);
@@ -638,14 +630,14 @@ public class DaoServiceImpl implements DaoService {
 		RecordSet<ElevateResult> set = getElevateResultList(sc);
 		return set.getTotalSize();
 	}
-	
+
 	/* Demote */
 	@Override
 	public int addDemoteResult(DemoteResult demote) throws DaoException {
 		return demoteDAO.add(demote);
 	}
 
-	
+
 	@Override
 	public RecordSet<DemoteResult> getDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
 		RecordSet<DemoteResult> list = demoteDAO.getResultList(criteria);
@@ -681,12 +673,12 @@ public class DaoServiceImpl implements DaoService {
 	public int clearDemoteResult(StoreKeyword keyword) throws DaoException {
 		return demoteDAO.clear(keyword);
 	}
-	
+
 	@Override
 	public int updateDemoteResult(DemoteResult demote) throws DaoException {
 		return demoteDAO.update(demote);
 	}
-	
+
 	@Override
 	public int updateDemoteResultExpiryDate(DemoteResult demote) throws DaoException {
 		return demoteDAO.updateExpiryDate(demote);
@@ -701,7 +693,7 @@ public class DaoServiceImpl implements DaoService {
 	public int appendDemoteResultComment(DemoteResult demote) throws DaoException {
 		return demoteDAO.appendComment(demote);
 	}
-	
+
 	@Override
 	public int getDemoteResultCount(SearchCriteria<DemoteResult> criteria) throws DaoException {
 		SearchCriteria<DemoteResult> sc = new SearchCriteria<DemoteResult>(criteria.getModel(), criteria.getStartDate(), criteria.getEndDate(), null, null);
@@ -714,17 +706,17 @@ public class DaoServiceImpl implements DaoService {
 	public int addExcludeResult(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.addExclude(exclude);
 	}
-	
+
 	@Override
 	public int updateExcludeResult(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.updateExclude(exclude);
 	}
-	
+
 	@Override
 	public RecordSet<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria) throws DaoException {
 		return excludeDAO.getExclude(criteria);
 	}
-	
+
 	@Override
 	public int deleteExcludeResult(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.removeExclude(exclude);
@@ -734,7 +726,7 @@ public class DaoServiceImpl implements DaoService {
 	public int clearExcludeResult(StoreKeyword keyword) throws DaoException {
 		return excludeDAO.clearExclude(keyword);
 	}
-	
+
 	@Override
 	public ExcludeResult getExcludeItem(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.getExcludeItem(exclude);
@@ -765,154 +757,18 @@ public class DaoServiceImpl implements DaoService {
 		ep.setStore(exclude.getStoreKeyword().getStoreId());
 		map.put(e.getEdp(), ep);
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
-		return map.get(e.getEdp());	}
+		return map.get(e.getEdp());	
+	}
 
 	@Override
 	public int appendExcludeResultComment(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.appendExcludeComment(exclude);
 	}
-	
+
 	@Override
 	public int updateExcludeResultComment(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.updateExcludeComment(exclude);
 	}
-	
-	@Override
-	public int updateExcludeResultExpiryDate(ExcludeResult exclude) throws DaoException {
-		return excludeDAO.updateExcludeExpiryDate(exclude);
-	}
-	
-	@Override
-	public int addBanner(Banner banner) throws DaoException {
-		return bannerDAO.addBanner(banner);
-	}
-	
-	@Override
-	public String addBannerAndGetId(Banner banner) throws DaoException {
-		return bannerDAO.addBannerAndGetId(banner);
-	}
-	
-	@Override
-	public int updateBanner(Banner banner) throws DaoException {
-		return bannerDAO.updateBanner(banner);
-	}
-	
-	@Override
-	public int deleteBanner(Banner banner) throws DaoException {
-		return bannerDAO.deleteBanner(banner);
-	}
-	
-	@Override
-	public int updateBannerComment(Banner banner) throws DaoException {
-		return bannerDAO.updateBannerComment(banner);
-	}
-	
-	@Override
-	public int appendBannerComment(Banner banner) throws DaoException {
-		return bannerDAO.appendBannerComment(banner);
-	}
-	
-	@Override
-	public Banner getBanner(Banner banner) throws DaoException {
-		return bannerDAO.getBanner(banner);
-	}
-	
-	@Override
-	public RecordSet<Banner> getBannerList(SearchCriteria<Banner> criteria) throws DaoException {
-		return bannerDAO.getBanners(criteria);
-	}
-	
-	@Override
-	public RecordSet<Banner> getBannerListWithNameLike(SearchCriteria<Banner> criteria) throws DaoException {
-		return bannerDAO.searchBanner(criteria, MatchType.LIKE_NAME);
-	}
-	
-	@Override
-	public RecordSet<Banner> getBannerListWithNameMatching(SearchCriteria<Banner> criteria) throws DaoException {
-		return bannerDAO.searchBanner(criteria, MatchType.MATCH_NAME);
-	}
-
-	@Override
-	public int addCampaign(Campaign campaign) throws DaoException {
-		return campaignDAO.addCampaign(campaign);
-	}
-	
-	@Override
-	public String addCampaignAndGetId(Campaign campaign) throws DaoException {
-		return campaignDAO.addCampaignAndGetId(campaign);
-	}
-
-	@Override
-	public int updateCampaign(Campaign campaign) throws DaoException {
-		return campaignDAO.updateCampaign(campaign);
-	}
-
-	@Override
-	public int deleteCampaign(Campaign campaign) throws DaoException {
-		return campaignDAO.deleteCampaign(campaign);
-	}
-
-	@Override
-	public int updateCampaignComment(Campaign campaign) throws DaoException {
-		return campaignDAO.updateCampaignComment(campaign);
-	}
-
-	@Override
-	public int appendCampaignComment(Campaign campaign) throws DaoException {
-		return campaignDAO.appendCampaignComment(campaign);
-	}
-
-	@Override
-	public Campaign getCampaign(Campaign campaign) throws DaoException {
-		return campaignDAO.getCampaign(campaign);
-	}
-
-	@Override
-	public RecordSet<Campaign> getCampaigns(SearchCriteria<Campaign> criteria) throws DaoException {
-		return campaignDAO.getCampaigns(criteria);
-	}
-
-	@Override
-	public RecordSet<Campaign> getCampaignsContainingName(SearchCriteria<Campaign> criteria) throws DaoException {
-		return campaignDAO.searchCampaign(criteria, MatchType.LIKE_NAME);
-	}
-
-	@Override
-	public RecordSet<Campaign> getCampaignsWithName(SearchCriteria<Campaign> criteria) throws DaoException {
-		return campaignDAO.searchCampaign(criteria, MatchType.MATCH_NAME);
-	}
-	
-	
-	@Override
-	public int addCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
-		return campaignDAO.addCampaignBanner(campaignBanner);
-	}
-
-	@Override
-	public int deleteCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
-		return campaignDAO.deleteCampaignBanner(campaignBanner);
-	}
-
-	@Override
-	public Banner updateCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public RecordSet<CampaignBanner> getBannersInCampaign(SearchCriteria<CampaignBanner> criteria) throws DaoException {
-		return campaignDAO.getCampaignBanners(criteria);
-	}
-	
-	@Override
-	public RecordSet<CampaignBanner> getCampaignsUsingThisBanner(SearchCriteria<CampaignBanner> criteria) throws DaoException {
-		return campaignDAO.getCampaignBanners(criteria);
-	}
-	
-	@Override
-	public RecordSet<CampaignBanner> searchCampaignBanner(SearchCriteria<CampaignBanner> criteria, MatchType campaignMatchType, MatchType bannerMatchType) throws DaoException {
-		return campaignDAO.searchCampaignBanners(criteria, campaignMatchType, bannerMatchType);
-	};
 
 	/* Relevancy */
 	@Override
@@ -924,7 +780,7 @@ public class DaoServiceImpl implements DaoService {
 	public String addRelevancyAndGetId(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.addRelevancyAndGetId(relevancy);
 	}
-	
+
 	@Override
 	public int updateRelevancy(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.updateRelevancy(relevancy);
@@ -934,17 +790,17 @@ public class DaoServiceImpl implements DaoService {
 	public int deleteRelevancy(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.deleteRelevancy(relevancy);
 	}
-	
+
 	@Override
 	public int appendRelevancyComment(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.appendRelevancyComment(relevancy);
 	}
-	
+
 	@Override
 	public int updateRelevancyComment(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.updateRelevancyComment(relevancy);
 	}
-	
+
 	@Override
 	public Relevancy getRelevancy(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.getRelevancy(relevancy);
@@ -954,18 +810,18 @@ public class DaoServiceImpl implements DaoService {
 	public Relevancy getRelevancyDetails(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.getRelevancyDetails(relevancy);
 	}
-	
+
 	@Override
 	public RecordSet<Relevancy> searchRelevancy(SearchCriteria<Relevancy> criteria, MatchType relevancyMatchType) throws DaoException {
 		return relevancyDAO.searchRelevancy(criteria, relevancyMatchType);
 	}
-	
+
 	/* Relevancy Field */
 	@Override
 	public int addOrUpdateRelevancyField(RelevancyField relevancyField) throws DaoException {
 		return relevancyDAO.saveRelevancyField(relevancyField);
 	}
-	
+
 	@Override
 	public int addRelevancyField(RelevancyField relevancyField) throws DaoException {
 		return relevancyDAO.addRelevancyField(relevancyField);
@@ -975,17 +831,17 @@ public class DaoServiceImpl implements DaoService {
 	public int updateRelevancyField(RelevancyField relevancyField) throws DaoException {
 		return relevancyDAO.updateRelevancyField(relevancyField);
 	}
-	
+
 	@Override
 	public int deleteRelevancyField(RelevancyField relevancyField) throws DaoException {
 		return relevancyDAO.deleteRelevancyField(relevancyField);
 	}
-	
+
 	@Override
 	public RelevancyField getRelevancyField(RelevancyField relevancyField) throws DaoException {
 		return relevancyDAO.getRelevancyField(relevancyField);
 	}
-	
+
 	/* Relevancy Keyword */
 	@Override
 	public int addRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
@@ -996,7 +852,7 @@ public class DaoServiceImpl implements DaoService {
 	public int updateRelevancyKeyword(RelevancyKeyword relevancyKeyword)throws DaoException {
 		return relevancyDAO.updateRelevancyKeyword(relevancyKeyword);
 	}
-	
+
 	@Override
 	public int deleteRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
 		return relevancyDAO.deleteRelevancyKeyword(relevancyKeyword);
@@ -1011,7 +867,7 @@ public class DaoServiceImpl implements DaoService {
 	public RecordSet<RelevancyKeyword> getRelevancyKeywords(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.getRelevancyKeywords(relevancy);
 	}
-	
+
 	@Override
 	public int getRelevancyKeywordCount(Relevancy relevancy) throws DaoException {
 		if (relevancy == null || relevancy.getRelevancyId() == null) {
@@ -1033,7 +889,7 @@ public class DaoServiceImpl implements DaoService {
 				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), null, null, null, null),
 				MatchType.LIKE_NAME, ExactMatch.MATCH).getTotalSize();
 	}
-	
+
 	@Override
 	public RecordSet<RelevancyKeyword> searchRelevancyKeywords(SearchCriteria<RelevancyKeyword> criteria,
 			MatchType relevancyMatchType, ExactMatch keywordExactMatch) throws DaoException {
@@ -1058,7 +914,7 @@ public class DaoServiceImpl implements DaoService {
 		// TODO Auto-generated method stub
 		throw new DaoException("Unsupported operation");
 	}
-	
+
 	@Override
 	public void deleteStore(String storeId) throws DaoException {
 		// TODO Auto-generated method stub
@@ -1074,7 +930,7 @@ public class DaoServiceImpl implements DaoService {
 	public String addRedirectRuleAndGetId(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.addRedirectRuleAndGetId(rule);
 	}
-	
+
 	@Override
 	public int updateRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.updateRedirectRule(rule);
@@ -1114,7 +970,7 @@ public class DaoServiceImpl implements DaoService {
 	public int updateRedirectCondition(RedirectRuleCondition rule) throws DaoException {
 		return redirectRuleDAO.updateRedirectCondition(rule);
 	}
-	
+
 	@Override
 	public int deleteRedirectCondition(RedirectRuleCondition rule) throws DaoException {
 		return redirectRuleDAO.removeRedirectCondition(rule);
@@ -1129,23 +985,23 @@ public class DaoServiceImpl implements DaoService {
 	public RecordSet<RedirectRuleCondition> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException {
 		return redirectRuleDAO.getRedirectConditions(criteria);
 	}
-	
+
 	@Override
 	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException {
 		return redirectRuleDAO.getRedirectForKeywords(criteria);
 	}
-	
+
 	@Override
 	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException {
 		return redirectRuleDAO.searchRedirectRules(criteria, redirectMatchType);
 	}
-	
+
 	@Override
 	public RecordSet<RedirectRule> searchRedirectRuleKeyword(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType,
 			ExactMatch keywordExactMatch) throws DaoException {
 		return redirectRuleDAO.searchRedirectRuleKeywords(criteria, redirectMatchType, keywordExactMatch);
 	}
-	
+
 	public KeywordDAO getKeywordDAO() {
 		return keywordDAO;
 	}
@@ -1165,17 +1021,13 @@ public class DaoServiceImpl implements DaoService {
 	public DemoteDAO getDemoteDAO() {
 		return demoteDAO;
 	}
-	
+
 	public AuditTrailDAO getAuditTrailDAO() {
 		return auditTrailDAO;
 	}
 
 	public BannerDAO getBannerDAO() {
 		return bannerDAO;
-	}
-
-	public CampaignDAO getCampaignDAO() {
-		return campaignDAO;
 	}
 
 	public RelevancyDAO getRelevancyDAO() {
@@ -1206,7 +1058,7 @@ public class DaoServiceImpl implements DaoService {
 	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
 		return ruleStatusDAO.getRuleStatus(searchCriteria, null);
 	}
-	
+
 	@Override
 	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException {
 		return ruleStatusDAO.getRuleStatus(searchCriteria, sortOrder);
@@ -1229,7 +1081,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	private Map<String,Boolean> approveRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) 
-			throws DaoException {	
+	throws DaoException {	
 		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
 		for (RuleStatus ruleStatus : ruleStatusList) {
 			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusApprovalInfo(ruleStatus, status, requestBy, requestDateTime) > 0 ? true : false);
@@ -1238,7 +1090,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	private Map<String,Boolean> publishRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) 
-			throws DaoException {	
+	throws DaoException {	
 		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
 		for (RuleStatus ruleStatus : ruleStatusList) {
 			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusPublishInfo(ruleStatus, status, requestBy, requestDateTime) > 0 ? true : false);
@@ -1248,14 +1100,14 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public Map<String,Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) 
-			throws DaoException {	
+	throws DaoException {	
 		switch (status) {
-			case PUBLISHED:
-			case UNPUBLISHED:
-				return publishRuleStatusList(status, ruleStatusList, requestBy, requestDateTime);
-			case APPROVED:
-			case REJECTED:
-				return approveRuleStatusList(status, ruleStatusList, requestBy, requestDateTime);
+		case PUBLISHED:
+		case UNPUBLISHED:
+			return publishRuleStatusList(status, ruleStatusList, requestBy, requestDateTime);
+		case APPROVED:
+		case REJECTED:
+			return approveRuleStatusList(status, ruleStatusList, requestBy, requestDateTime);
 		}
 		return new HashMap<String,Boolean>();
 	}
@@ -1318,12 +1170,12 @@ public class DaoServiceImpl implements DaoService {
 	public int resetPassword(User user) throws DaoException {
 		return usersDAO.resetPassword(user);
 	}
-	
+
 	public int login(User user) throws DaoException {
 		return usersDAO.login(user);
 	}
-	
-	
+
+
 	@Override
 	public int removeUser(User user) throws DaoException {
 		return usersDAO.deleteUser(user);
@@ -1364,7 +1216,7 @@ public class DaoServiceImpl implements DaoService {
 	public FacetSort getFacetSort(FacetSort facetSort) throws DaoException {
 		return facetSortDAO.searchFacetSort(facetSort);
 	}
-	
+
 	@Override
 	public RecordSet<FacetSort> searchFacetSort(
 			SearchCriteria<FacetSort> criteria, MatchType matchType)
@@ -1396,25 +1248,25 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int addFacetGroupItem(FacetGroupItem facetGroupItem)
-			throws DaoException {
+	throws DaoException {
 		return facetSortDAO.addFacetGroupItem(facetGroupItem);
 	}
 
 	@Override
 	public int deleteFacetGroupItem(FacetGroupItem facetGroupItem)
-			throws DaoException {
+	throws DaoException {
 		return facetSortDAO.deleteFacetGroupItem(facetGroupItem);
 	}
 
 	@Override
 	public int updateFacetGroupItem(FacetGroupItem facetGroupItem)
-			throws DaoException {
+	throws DaoException {
 		return facetSortDAO.updateFacetGroupItem(facetGroupItem);
 	}
 
 	@Override
 	public int clearFacetGroupItem(FacetGroup facetGroup)
-			throws DaoException {
+	throws DaoException {
 		return facetSortDAO.clearFacetGroupItem(facetGroup);
 	}
 
@@ -1450,11 +1302,11 @@ public class DaoServiceImpl implements DaoService {
 		case RANKING_RULE:
 			return rankingRuleVersionDAO;
 		case SPELL:
-		    return spellRuleDAO;
+			return spellRuleDAO;
 		}
 		return null;
 	}
-	
+
 	private RuleVersionDAO<?> getRuleVersionDAO(RuleXml xml) {
 		// TODO: convert to map
 		if (xml instanceof ElevateRuleXml) {
@@ -1476,11 +1328,11 @@ public class DaoServiceImpl implements DaoService {
 			return rankingRuleVersionDAO;
 		}
 		else if (xml instanceof SpellRules) {
-		    return spellRuleDAO;
+			return spellRuleDAO;
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes) {
 		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
@@ -1498,7 +1350,7 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return new ArrayList<RuleXml>();
 	}
-	
+
 	@Override
 	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason){
 		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
@@ -1517,14 +1369,14 @@ public class DaoServiceImpl implements DaoService {
 		return false;
 	}
 
-    @Override
-    public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version, boolean physical){
-        RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
-        if (dao != null) {
-            return dao.deleteRuleVersion(store, ruleId, username, version, physical);
-        }
-        return false;
-    }
+	@Override
+	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version, boolean physical){
+		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		if (dao != null) {
+			return dao.deleteRuleVersion(store, ruleId, username, version, physical);
+		}
+		return false;
+	}
 
 	@Override
 	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId) {
@@ -1543,7 +1395,7 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
 		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
@@ -1569,7 +1421,7 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return exportRuleMapDAO.updateExportRuleMap(exportRuleMap);
 	}
-	
+
 	@Override
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
 		return exportRuleMapDAO.deleteExportRuleMap(exportRuleMap);
@@ -1586,7 +1438,7 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return updateRuleStatus;
 	}
-	
+
 	@Override
 	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, DateTime exportDateTime) throws DaoException {
 		if (ruleStatus != null) {
@@ -1623,19 +1475,19 @@ public class DaoServiceImpl implements DaoService {
 			updateRuleStatus.setApprovalStatus(String.valueOf(requestedApprovalStatus));
 			updateRuleStatus.setLastModifiedDate(requestDateTime);
 			switch(requestedApprovalStatus) {
-				case APPROVED:
-				case REJECTED:
-					updateRuleStatus.setApprovalBy(requestBy);
-					updateRuleStatus.setLastApprovalDate(requestDateTime);
-					break;
-				case PENDING:
-					updateRuleStatus.setRequestBy(requestBy);
-					updateRuleStatus.setLastRequestDate(requestDateTime);
-					break;
-				default:
-					return result;
+			case APPROVED:
+			case REJECTED:
+				updateRuleStatus.setApprovalBy(requestBy);
+				updateRuleStatus.setLastApprovalDate(requestDateTime);
+				break;
+			case PENDING:
+				updateRuleStatus.setRequestBy(requestBy);
+				updateRuleStatus.setLastRequestDate(requestDateTime);
+				break;
+			default:
+				return result;
 			}
-			
+
 			RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(
 					new RuleStatus(ruleStatus.getRuleTypeId(), ruleStatus.getStoreId(), ruleStatus.getRuleRefId()), null, null, 1, 1));
 			if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
@@ -1644,7 +1496,7 @@ public class DaoServiceImpl implements DaoService {
 				// if rule is not for deletion do not change update status.
 				if (!StringUtils.equalsIgnoreCase(existingRuleStatus.getUpdateStatus(), String.valueOf(RuleStatusEntity.DELETE)) && 
 						(StringUtils.isBlank(existingRuleStatus.getUpdateStatus()) || 
-						 StringUtils.equalsIgnoreCase(existingRuleStatus.getPublishedStatus(), String.valueOf(RuleStatusEntity.PUBLISHED)))) {
+								StringUtils.equalsIgnoreCase(existingRuleStatus.getPublishedStatus(), String.valueOf(RuleStatusEntity.PUBLISHED)))) {
 					updateRuleStatus.setUpdateStatus(String.valueOf(RuleStatusEntity.UPDATE));
 				}
 				updateRuleStatus.setLastModifiedBy(requestBy);
@@ -1684,32 +1536,32 @@ public class DaoServiceImpl implements DaoService {
 		String formatString = "%s";
 		if (ruleStatus != null) {
 			switch (ruleStatus) {
-				case APPROVED:
-					formatString = "[APPROVED] %s";
-					break;
-				case REJECTED:
-					formatString = "[REJECTED] %s";
-					break;
-				case PUBLISHED:
-					formatString = "[PUBLISHED] %s";
-					break;
-				case UNPUBLISHED:
-					formatString = "[UNPUBLISHED] %s";
-					break;
-				case PENDING:
-					formatString = "[REQUEST] %s";
-					break;
-				case IMPORTED:
-					formatString = "[IMPORTED] %s";
-					break;
-				case EXPORTED:
-					formatString = "[EXPORTED] %s";
-					break;
-				default:
-					break;
+			case APPROVED:
+				formatString = "[APPROVED] %s";
+				break;
+			case REJECTED:
+				formatString = "[REJECTED] %s";
+				break;
+			case PUBLISHED:
+				formatString = "[PUBLISHED] %s";
+				break;
+			case UNPUBLISHED:
+				formatString = "[UNPUBLISHED] %s";
+				break;
+			case PENDING:
+				formatString = "[REQUEST] %s";
+				break;
+			case IMPORTED:
+				formatString = "[IMPORTED] %s";
+				break;
+			case EXPORTED:
+				formatString = "[EXPORTED] %s";
+				break;
+			default:
+				break;
 			}
 		}
-		
+
 		Comment comment = new Comment();
 		comment.setRuleTypeId(RuleEntity.RULE_STATUS.getCode());
 		comment.setUsername(username);
@@ -1732,14 +1584,14 @@ public class DaoServiceImpl implements DaoService {
 		// TODO: change return type to Map
 		boolean exported = false;
 		boolean exportedOnce = false;
-		
+
 		AuditTrail auditTrail = new AuditTrail();
 		auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
 		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
 		auditTrail.setUsername(username);
 		auditTrail.setStoreId(store);
 		DateTime exportDateTime = DateTime.now();
-		
+
 		RuleStatus ruleStatus = null;
 		try {
 			SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(
@@ -1754,7 +1606,7 @@ public class DaoServiceImpl implements DaoService {
 		} catch (DaoException e) {
 			logger.error("Failed to retrieve rule status for " + ruleEntity + " : "  + ruleId, e);
 		}
-		
+
 		for(String targetStore: UtilityService.getStoresToExport(store)) {
 			exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
 			ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),  
@@ -1770,7 +1622,7 @@ public class DaoServiceImpl implements DaoService {
 				logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
 			}
 		}
-		
+
 		if (exportedOnce) {
 			try {
 				if (ruleStatus != null) {
@@ -1799,7 +1651,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	/* Used by SearchServlet */
-	
+
 	@Override
 	public RedirectRule getRedirectRule(StoreKeyword storeKeyword) throws DaoException {
 		return getRedirectRule(new RedirectRule(storeKeyword.getStoreId(), storeKeyword.getKeywordId()));
@@ -1866,87 +1718,113 @@ public class DaoServiceImpl implements DaoService {
 		return getDemoteResultList(new SearchCriteria<DemoteResult>(
 				new DemoteResult(storeKeyword), null, DateTime.now().minusDays(1), 0, 0)).getList();
 	}
+
+	@Override
+	public int updateExcludeResultExpiryDate(ExcludeResult exclude) throws DaoException {
+		return excludeDAO.updateExcludeExpiryDate(exclude);
+	}
 	
-    @Override
-    public SpellRules getSpellRules(String store) {
-        return spellRuleDAO.getSpellRule(store);
-    }
+	@Override
+	public SpellRules getSpellRules(String store) {
+		return spellRuleDAO.getSpellRule(store);
+	}
 
-    @Override
-    public boolean replaceSpellRules(SpellRules rules) throws DaoException {
-        SpellRules crules = spellRuleDAO.getSpellRule(rules.getStore());
+	@Override
+	public boolean replaceSpellRules(SpellRules rules) throws DaoException {
+		SpellRules crules = spellRuleDAO.getSpellRule(rules.getStore());
 
-        crules.setSpellRule(rules.getSpellRule());
-        crules.setMaxSuggest(rules.getMaxSuggest());
+		crules.setSpellRule(rules.getSpellRule());
+		crules.setMaxSuggest(rules.getMaxSuggest());
 
-        spellRuleDAO.save(rules.getStore());
-        spellRuleDAO.reload(rules.getStore());
+		spellRuleDAO.save(rules.getStore());
+		spellRuleDAO.reload(rules.getStore());
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> searchCriteria) throws DaoException {
-        return spellRuleDAO.getSpellRule(searchCriteria);
-    }
+	@Override
+	public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> searchCriteria) throws DaoException {
+		return spellRuleDAO.getSpellRule(searchCriteria);
+	}
 
-    @Override
-    public void saveSpellRules(String store) throws DaoException {
-        spellRuleDAO.save(store);
-    }
+	@Override
+	public void saveSpellRules(String store) throws DaoException {
+		spellRuleDAO.save(store);
+	}
 
-    @Override
-    public void reloadSpellRules(String store) throws DaoException {
-        spellRuleDAO.reload(store);
-    }
+	@Override
+	public void reloadSpellRules(String store) throws DaoException {
+		spellRuleDAO.reload(store);
+	}
 
-    @Override
-    public Integer getMaxSuggest(String storeId) throws DaoException {
-        return spellRuleDAO.getMaxSuggest(storeId);
-    }
+	@Override
+	public Integer getMaxSuggest(String storeId) throws DaoException {
+		return spellRuleDAO.getMaxSuggest(storeId);
+	}
 
-    @Override
-    public int addSpellRule(SpellRule rule) throws DaoException {
-        return spellRuleDAO.addSpellRule(rule);
-    }
+	@Override
+	public int addSpellRule(SpellRule rule) throws DaoException {
+		return spellRuleDAO.addSpellRule(rule);
+	}
 
-    @Override
-    public int updateSpellRule(SpellRule rule) throws DaoException {
-        return spellRuleDAO.updateSpellRule(rule);
-    }
+	@Override
+	public int updateSpellRule(SpellRule rule) throws DaoException {
+		return spellRuleDAO.updateSpellRule(rule);
+	}
 
-    @Override
-    public void deleteSpellRule(SpellRule rule) throws DaoException {
-        spellRuleDAO.deleteSpellRule(rule);
-    }
+	@Override
+	public void deleteSpellRule(SpellRule rule) throws DaoException {
+		spellRuleDAO.deleteSpellRule(rule);
+	}
 
-    @Override
-    public boolean isDuplicateSearchTerm(String store, String searchTerm, String ruleId) throws DaoException {
-        return spellRuleDAO.isDuplicateSearchTerm(store, searchTerm, ruleId);
-    }
+	@Override
+	public boolean isDuplicateSearchTerm(String store, String searchTerm, String ruleId) throws DaoException {
+		return spellRuleDAO.isDuplicateSearchTerm(store, searchTerm, ruleId);
+	}
 
 	@Override
 	public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm) {
-    	return spellRuleDAO.getSpellRuleForSearchTerm(store, searchTerm);
-    }
-	
+		return spellRuleDAO.getSpellRuleForSearchTerm(store, searchTerm);
+	}
+
 	@Override
 	public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
-    	return spellRuleDAO.getSpellRule(criteria, statusList);
-    }
+		return spellRuleDAO.getSpellRule(criteria, statusList);
+	}
 
 	@Override 
-    public List<SpellRule> getActiveSpellRules(String storeId) {
+	public List<SpellRule> getActiveSpellRules(String storeId) {
 		return spellRuleDAO.getActiveRules(storeId);
-    }
+	}
 
 	@Override
 	public RecordSet<SpellRuleXml> getSpellRuleXml(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
 		return spellRuleDAO.getSpellRuleXml(criteria, statusList); 
 	}
 
-    @Override
-    public SpellRule getSpellRuleById(String store, String ruleId) {
-        return spellRuleDAO.getSpellRuleById(store, ruleId);
-    }   
+	@Override
+	public SpellRule getSpellRuleById(String store, String ruleId) {
+		return spellRuleDAO.getSpellRuleById(store, ruleId);
+	}
+
+	@Override
+	public int addBannerRule(BannerRule rule) throws DaoException {
+		return bannerDAO.addRule(rule);
+	}
+
+	@Override
+	public int deleteBannerRule(BannerRule rule) throws DaoException {
+		return bannerDAO.deleteRule(rule);
+	}
+
+	@Override
+	public BannerRule getBannerRule(BannerRule rule) throws DaoException {
+		return getBannerRuleList(new SearchCriteria<BannerRule>(rule)).getList().get(0);
+	}
+
+	@Override
+	public RecordSet<BannerRule> getBannerRuleList(
+			SearchCriteria<BannerRule> criteria) throws DaoException {
+		return bannerDAO.searchRule(criteria);
+	}
 }

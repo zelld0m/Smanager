@@ -24,8 +24,7 @@ import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.AuditTrail;
-import com.search.manager.model.Banner;
-import com.search.manager.model.Campaign;
+import com.search.manager.model.BannerRule;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -104,17 +103,6 @@ public class AuditInterceptor {
 			case banner:
 				if (ArrayUtils.contains(AuditTrailConstants.bannerOperations, auditable.operation())) {
 					logBanner(jp, auditable, auditTrail);
-				}else if(ArrayUtils.contains(AuditTrailConstants.bannerToCampaignOperations, auditable.operation())){
-					logBannerToCampaign(jp, auditable, auditTrail);
-				}
-				break;
-			case campaign:
-				if (ArrayUtils.contains(AuditTrailConstants.campaignOperations, auditable.operation())) {
-					logCampaign(jp, auditable, auditTrail);
-				}else if(ArrayUtils.contains(AuditTrailConstants.campaignBannerOperations, auditable.operation())){
-					logCampaignBanner(jp, auditable, auditTrail);
-				}else if(ArrayUtils.contains(AuditTrailConstants.campaignKeywordOperations, auditable.operation())){
-					logCampaignKeyword(jp, auditable, auditTrail);
 				}
 				break;
 			case elevate:
@@ -404,10 +392,10 @@ public class AuditInterceptor {
 	}
 	
 	private void logBanner(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
-		Banner e = null;
-		e = (Banner)jp.getArgs()[0];
+		BannerRule e = null;
+		e = (BannerRule)jp.getArgs()[0];
 		auditTrail.setReferenceId(e.getRuleId());
-		auditTrail.setStoreId(e.getStore()!=null ? e.getStore().getStoreId() : "");
+		auditTrail.setStoreId(e.getStoreId());
 				
 		StringBuilder message = null;
 		
@@ -417,19 +405,11 @@ public class AuditInterceptor {
 				if(StringUtils.isNotBlank(e.getRuleName())){
 					message.append(" Banner Name [%2$s]");
 				}
-				
-				if(StringUtils.isNotBlank(e.getDescription())){
-					message.append(" Description [%3$s]");
-				}
 				break;
 			case update:
 				message = new StringBuilder("Updating ID[%1$s]");
 				if(StringUtils.isNotBlank(e.getRuleName())){
 					message.append(" Banner Name [%2$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getDescription())){
-					message.append(" Description [%3$s]");
 				}
 				break;
 			case delete:
@@ -443,96 +423,13 @@ public class AuditInterceptor {
 		auditTrail.setDetails(
 				String.format(message.toString(),
 						auditTrail.getReferenceId(), 
-						e.getRuleName(),
-						e.getDescription()
+						e.getRuleName()
 				)
 		);
 				
 		logAuditTrail(auditTrail);
 	}
-	
-	private void logCampaign(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
-		Campaign e = null;
-		e = (Campaign)jp.getArgs()[0];
-		auditTrail.setReferenceId(e.getRuleId());
-		auditTrail.setStoreId(e.getStore()!=null ? e.getStore().getStoreId() : "");
-				
-		StringBuilder message = null;
 		
-		switch (auditable.operation()) {
-			case add:
-				message = new StringBuilder("Adding ID[%1$s]");	
-				if(StringUtils.isNotBlank(e.getRuleName())){
-					message.append(" Campaign Name [%2$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getDescription())){
-					message.append(" Description [%3$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getRuleName())){
-					message.append(" Start Date [%4$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getDescription())){
-					message.append(" End Date [%5$s]");
-				}
-				break;
-			case update:
-				message = new StringBuilder("Updating ID[%1$s]");
-				if(StringUtils.isNotBlank(e.getRuleName())){
-					message.append(" Campaign Name [%2$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getDescription())){
-					message.append(" Description [%3$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getRuleName())){
-					message.append(" Start Date [%4$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getDescription())){
-					message.append(" End Date [%5$s]");
-				}
-				break;
-			case delete:
-				message = new StringBuilder("Removing ID[%1$s]");
-				break;
-			default:
-				message = new StringBuilder();
-				return;
-		}
-		
-		auditTrail.setDetails(
-				String.format(message.toString(),
-						auditTrail.getReferenceId(), 
-						e.getRuleName(),
-						e.getDescription(),
-						e.getFormattedStartDateTime(),
-						e.getFormattedEndDateTime()
-				)
-		);
-				
-		logAuditTrail(auditTrail);
-	}
-	
-	private void logCampaignBanner(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
-		
-	}
-	
-	private void logCampaignKeyword(JoinPoint jp, Audit auditable,
-			AuditTrail auditTrail) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void logBannerToCampaign(JoinPoint jp, Audit auditable,
-			AuditTrail auditTrail) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	private void logDidYouMean(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		SpellRule e = null;
 		e = (SpellRule)jp.getArgs()[0];
