@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -130,6 +131,16 @@ public class SearchServlet extends HttpServlet {
 		List<NameValuePair> list = paramMap.get(paramterName);
 		return list == null || list.size() == 0 ? null : list.get(0);
 	}
+
+    protected static NameValuePair getNameValuePairFromList(List<NameValuePair> paramList, String parameterName) {
+        for (NameValuePair param : paramList) {
+            if (param.getName().equals(parameterName)) {
+                return param;
+            }
+        }
+
+        return null;
+    }
 
 	protected void setFacetTemplateValues(RedirectRuleCondition condition, Map<String, String> facetMap) {
 		if (condition != null) {
@@ -558,11 +569,8 @@ public class SearchServlet extends HttpServlet {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: 
-		// remove the exclude list from the result header, update fl to not include EDP if it's not originally part of the request
-		// fix if EDP not part of fl
 		// support for json if json.nl != map
 
 		ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
@@ -623,8 +631,8 @@ public class SearchServlet extends HttpServlet {
 						String convertedKeyword = paramValue;
 						
 						logger.info(String.format("CLEANUP %s keyword: %s[%s] %s[%s]", storeName,
-								origKeyword, new String(origKeyword.getBytes()),
-								convertedKeyword, new String(convertedKeyword.getBytes())));
+								origKeyword, Hex.encodeHexString(origKeyword.getBytes()),
+								convertedKeyword, Hex.encodeHexString(convertedKeyword.getBytes())));
 					}
 					else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FACET_FIELD)) {
 						if (paramValue.endsWith("_FacetTemplate")) {
@@ -1207,7 +1215,7 @@ public class SearchServlet extends HttpServlet {
 		    	solrHelper.setMaxSuggestCount(suggestCount);
 			    
 			    final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
-			    getSpellingSuggestionsParams.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+			    getSpellingSuggestionsParams.remove(getNameValuePairFromList(getSpellingSuggestionsParams, SolrConstants.SOLR_PARAM_KEYWORD));
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
 				getSpellingSuggestionsParams.add(defTypeNVP);
 				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0"));
@@ -1410,5 +1418,4 @@ public class SearchServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
-
 }

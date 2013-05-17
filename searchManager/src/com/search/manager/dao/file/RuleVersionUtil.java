@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
@@ -142,6 +143,20 @@ public class RuleVersionUtil {
 			logger.error("Unable to create rollback file");
 			return false;
 		};
+
+        List versions = ruleVersionList.getVersions();
+        Object latest = versions.get(versions.size() - 1);
+
+        if (latest instanceof RuleFileXml) {
+            RuleFileXml latestVersion = (RuleFileXml) latest;
+            String contentFileName =  RuleXmlUtil.getFilenameByDir(
+                    RuleXmlUtil.getRuleFileDirectory(location, store, ruleEntity), latestVersion.getContentFileName());
+            latestVersion.setPath(contentFileName);
+
+            if (!RuleXmlUtil.saveRuleXml(latestVersion.getContent(), contentFileName, nextVersion)) {
+                return false;
+            }
+        }
 
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);

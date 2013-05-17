@@ -31,7 +31,7 @@ public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
 	}
 
 	@Override
-	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion) {
 		if (ruleVersionListXml != null) {
 			@SuppressWarnings("unchecked")
 			List<FacetSortRuleXml> eRuleXmlList = ((RuleVersionListXml<FacetSortRuleXml>)ruleVersionListXml).getVersions();

@@ -4,9 +4,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.solr.common.SolrInputDocument;
@@ -44,6 +46,7 @@ public class RedirectRuleBuilder implements Runnable {
 	private String logErrorIndex;
 	private String mailNotification;
 
+	private final int MAX_IMPORT_DOC = 1000;
 	private int count;
 	private int redirectRuleCount;
 
@@ -83,26 +86,33 @@ public class RedirectRuleBuilder implements Runnable {
 
 		try {
 			long timeStart = System.currentTimeMillis();
-			List<RedirectRule> redirectRules = null;
 
 			RedirectRule redirectRuleFilter = new RedirectRule();
 			redirectRuleFilter.setStoreId(storeId);
 			redirectRuleFilter.setRuleName(""); // ALL
-			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(
-					redirectRuleFilter, null, null, 0, 0);
-
-			RecordSet<RedirectRule> recordSet = daoService.searchRedirectRule(
-					criteria, MatchType.LIKE_NAME);
-
-			if (recordSet != null) {
-				redirectRules = recordSet.getList();
-			}
 
 			long indexTime = System.currentTimeMillis();
 
-			if (redirectRules != null) {
-				count = redirectRules.size();
-				solrImport(redirectRules);
+			int page = 1;
+
+			while (true) {
+				SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(
+						redirectRuleFilter, null, null, page, MAX_IMPORT_DOC);
+				RecordSet<RedirectRule> recordSet = daoService
+						.searchRedirectRule(criteria, MatchType.LIKE_NAME);
+				if (recordSet != null) {
+					List<RedirectRule> redirectRules = recordSet.getList();
+					count += redirectRules.size();
+					solrImport(redirectRules);
+
+					if (redirectRules.size() < MAX_IMPORT_DOC) {
+						solrServer.commit();
+						break;
+					}
+					page++;
+				} else {
+					break;
+				}
 			}
 
 			long elapsedTimeMillis = System.currentTimeMillis() - timeStart;
@@ -111,15 +121,14 @@ public class RedirectRuleBuilder implements Runnable {
 			StringBuffer info = new StringBuffer();
 			info.append(" Indexing completed!");
 			info.append("\n Time Completed (Sec): "
-					+ (elapsedTimeMillis / (1000F)) + " secs.");
-			info.append("\n Time Completed (Min): "
-					+ (elapsedTimeMillis / (60 * 1000F)) + " mins.");
+					+ (elapsedTimeMillis / (1000F)) + " secs./");
+			info.append((elapsedTimeMillis / (60 * 1000F)) + " mins.");
 			info.append("\n Index Time (Sec): " + (elapsedIndexTime / (1000F))
-					+ " secs.");
-			info.append("\n Index Time (Min): "
-					+ (elapsedIndexTime / (60 * 1000F)) + " mins.");
+					+ " secs./");
+			info.append((elapsedIndexTime / (60 * 1000F)) + " mins.");
 			info.append("\n Total Redirect rule indexed : " + redirectRuleCount);
-			info.append("\n Total file fetched from database : " + count);
+			info.append("\n Total Redirect rule fetched from database : "
+					+ count);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
@@ -144,7 +153,7 @@ public class RedirectRuleBuilder implements Runnable {
 						.composeSolrDocsRedirectRule(redirectRules);
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
-				redirectRuleCount = solrInputDocuments.size();
+				redirectRuleCount += solrInputDocuments.size();
 				solrServer.optimize();
 			}
 		} catch (Exception e) {
@@ -205,6 +214,26 @@ public class RedirectRuleBuilder implements Runnable {
 		}
 
 		try {
+			System.out.println("----------------------------------------");
+			System.out.println("Store	  : " + storeId);
+			System.out.println("Solr Url  : "
+					+ ((LocalSolrServerRunner) context
+							.getBean("localSolrServerRunner")).getSolrUrl());
+			System.out.println("Database  : "
+					+ ((BasicDataSource) context.getBean("dataSource_solr"))
+							.getUrl());
+			System.out.println("----------------------------------------");
+			String response = "";
+			Scanner input = new Scanner(System.in);
+
+			System.out.print("Are you sure you want to continue? (Y/N) : ");
+			response = input.next();
+
+			if (!response.toUpperCase().startsWith("Y")) {
+				solrServerFactory.shutdown();
+				return;
+			}
+
 			solrServer = solrServerFactory
 					.getCoreInstance(Constants.Core.REDIRECT_RULE_CORE
 							.getCoreName());

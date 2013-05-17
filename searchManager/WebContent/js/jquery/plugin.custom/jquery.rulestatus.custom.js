@@ -37,6 +37,7 @@
 						}
 
 						if($.isNotBlank(ruleStatus["formattedLastPublishedDateTime"])){
+
 							base.$el.find("div#publishHolder").show();
 							base.$el.find("span#statusDate").empty().append(ruleStatus["formattedLastPublishedDateTime"]);
 						}
@@ -46,6 +47,8 @@
 							base.$el.find("span#statusMode").append("[ Read-Only ]");
 							base.$el.find("a#submitForApprovalBtn").parent().remove();
 						}
+						
+						base.$el.find("div#versionHolder").show();
 
 						base.$el.find("div#versionHolder").show();
 						if(base.options.ruleStatus!=null && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
@@ -176,7 +179,7 @@
 
 			template += '<div id="ruleStatusTemplate" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine">'; 
 			template += '	<div class="txtAL w730 minHeight36" style="background: #e8e8e8">';       	
-			template += '		<div class="floatL padT10 padL10" style="width:70%">';
+			template += '		<div class="floatL padT10 padL10" style="width:88%">';
 
 			if(base.options.enableVersion){
 				if(base.options.authorizeRuleBackup){
@@ -222,7 +225,7 @@
 			template += '				</label>';
 			template += '			</div>';
 			template += '		</div>';  			  	
-			template += '		<div class="floatR marL8 marR3 padT5">'; 	        	
+			template += '		<div class="floatR marL8 marR3 padT5 posRelTop30">'; 	        	
 
 			if(base.options.authorizeSubmitForApproval){
 				template += '		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';

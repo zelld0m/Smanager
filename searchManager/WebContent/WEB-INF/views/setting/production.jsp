@@ -108,14 +108,22 @@
 				class="floatR marT10 fsize12 border pad10 w650 marB20"
 				style="background: #f3f3f3;">
 				<h3 style="border: none">Publishing Guidelines</h3>
-				<div class="fgray padL10 padR10 padB15 fsize11">Suspendisse
-					ultricies faucibus ultricies. Etiam sit amet nibh id lorem
-					malesuada congue at et lacus. Curabitur eget ligula quis libero
-					porta lacinia. Morbi accumsan suscipit diam, id placerat ante
-					euismod et. Pellentesque convallis lectus eget nibh condimentum nec
-					suscipit nisi euismod. Vivamus accumsan, dolor non porttitor
-					convallis, velit nulla vehicula sapien, quis mattis sapien urna ac
-					massa.</div>
+				<div class="fgray padL10 padR10 padB15 fsize11">
+					<div id="pgApprovedForPublishing" class="publishingGuidelines" style="display:none">To push previously approved rules to production:<br>
+					<p align="justify" class="padL10">In the <strong>Show</strong> dropdown box, select <span class="fitalic">Approved Rules for Publishing.</span><br>
+					When the list has refreshed, tick all applicable rules.<br>
+					Provide notes in the <strong>Comment</strong> box and click the <strong>Publish</strong> button.</p></div>
+					                                                                                                                                                                                   
+					<div id="pgApprovedForDeletion" class="publishingGuidelines" style="display:none">To unpublish rules that have been approved for deletion:<br>
+					<p align="justify" class="padL10">In the <strong>Show</strong> dropdown box, select <span class="fitalic">Approved Rules for Deletion.</span><br>
+					When the list has refreshed, tick all applicable rules.<br>
+					Provide notes in the <strong>Comment</strong> box and click the <strong>Unpublish</strong> button.</p></div>
+						
+					<div id="pgPublished" class="publishingGuidelines" style="display:none">To unpublish previously published rules:<br>
+					<p align="justify" class="padL10">In the <strong>Show</strong> combo box, select <span class="fitalic">Published Rules.</span><br>
+					When the list has refreshed, tick all applicable rules.<br>
+					Provide notes in the <strong>Comment</strong> box and click the <strong>Unpublish</strong> button.</p></div>
+				</div>
 				<label class="floatL w100 padL13"><span class="fred">*</span>
 					Comment: </label> <label class="floatL w510"><textarea
 						id="approvalComment" rows="5" class="w510" style="height: 32px"></textarea>
@@ -167,14 +175,26 @@
 				class="floatR marT10 fsize12 border pad10 w650 marB20"
 				style="background: #f3f3f3;">
 				<h3 style="border: none">Publishing Guidelines</h3>
-				<div class="fgray padL10 padR10 padB15 fsize11">Suspendisse
-					ultricies faucibus ultricies. Etiam sit amet nibh id lorem
-					malesuada congue at et lacus. Curabitur eget ligula quis libero
-					porta lacinia. Morbi accumsan suscipit diam, id placerat ante
-					euismod et. Pellentesque convallis lectus eget nibh condimentum nec
-					suscipit nisi euismod. Vivamus accumsan, dolor non porttitor
-					convallis, velit nulla vehicula sapien, quis mattis sapien urna ac
-					massa.</div>
+				<div class="fgray padL10 padR10 padB15 fsize11">
+					<div id="pgApprovedForPublishing" class="publishingGuidelines" style="display:none">To push previously approved rules to production:<br>
+					<p align="justify" class="padL10">In the <strong>Show</strong> dropdown box, select <span class="fitalic">Approved Rules for Publishing.</span><br>
+					When the list has refreshed, tick all applicable rules.<br>
+					Provide notes in the <strong>Comment</strong> box and click the <strong>Publish</strong> button.</p></div>
+					                                                                                                                                                                                   
+					<div id="pgApprovedForDeletion" class="publishingGuidelines" style="display:none">To unpublish rules that have been approved for deletion:<br>
+					<p align="justify" class="padL10">In the <strong>Show</strong> dropdown box, select <span class="fitalic">Approved Rules for Deletion.</span><br>
+					When the list has refreshed, tick all applicable rules.<br>
+					Provide notes in the <strong>Comment</strong> box and click the <strong>Unpublish</strong> button.</p></div>
+						
+					<div id="pgPublished" class="publishingGuidelines" style="display:none">To unpublish previously published rules:<br>
+					<p align="justify" class="padL10">In the <strong>Show</strong> combo box, select <span class="fitalic">Published Rules.</span><br>
+					When the list has refreshed, tick all applicable rules.<br>
+					Provide notes in the <strong>Comment</strong> box and click the <strong>Unpublish</strong> button.</p></div>
+					
+					<div id="pgDidYouMean" class="publishingGuidelines" style="display:none">
+					<p align="justify">To push new 'Did You Mean' entries to production, provide notes in the <strong>Comment</strong> box and click the <strong>Publish</strong> button.<br>
+					Please wait for a few minutes for the updated dictionary to take effect in production.</p></div>
+				</div>
 				<label class="floatL w100 padL13"><span class="fred">*</span>
 					Comment: </label> <label class="floatL w510"><textarea
 						id="approvalComment" rows="5" class="w510" style="height: 32px"></textarea>

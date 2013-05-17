@@ -31,6 +31,7 @@ import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
@@ -38,60 +39,68 @@ import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 
 public abstract class RuleVersionDAO<T extends RuleXml>{
-	
+
 	private Logger logger = Logger.getLogger(RuleVersionDAO.class);
 
 	protected abstract RuleEntity getRuleEntity();
-	
-	protected abstract boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes);
+
+	protected abstract boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion);
 
 	protected RuleVersionListXml<?> getRuleVersionList(String store, String ruleId) {
 		return RuleVersionUtil.getRuleVersionList(store, getRuleEntity(), ruleId);
 	}
-	
+
 	protected RuleVersionListXml<?> getPublishedList(String store, String ruleId) {
 		return RuleVersionUtil.getPublishedList(store, getRuleEntity(), ruleId);
 	}
-	
+
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
 		if (ruleVersionListXml!=null) {
-			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
+			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, true)) {
 				return false;
 			}
 		}
 		return RuleVersionUtil.addRuleVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
 	}
-	
+
 	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
-		if (ruleVersionListXml != null) {
+		RuleEntity entity = getRuleEntity();
 
-			// keep versions separate for Did You Mean rules
-			// TODO: create a shells cript that does housekeeping to delete/archive older files
-			List<?> versions = ruleVersionListXml.getVersions();
-			if (CollectionUtils.isNotEmpty(versions)) {
-				RuleEntity ruleEntity = ((RuleXml)versions.get(0)).getRuleEntity();
-				if (ruleEntity != null && ruleEntity.equals(RuleEntity.SPELL)) {
-					RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId + JodaDateTimeUtil.formatDateTimeFromPattern("_yyyyMMdd_hhmmss", DateTime.now()), ruleVersionListXml);
-				}
-				versions.clear();
+		// keep versions separate for Did You Mean rules
+		// TODO: create a shells cript that does housekeeping to delete/archive older files
+		List<?> versions = ruleVersionListXml.getVersions();
+		if (CollectionUtils.isNotEmpty(versions)) {
+			RuleEntity ruleEntity = ((RuleXml)versions.get(0)).getRuleEntity();
+			if (ruleEntity != null && ruleEntity.equals(RuleEntity.SPELL)) {
+				RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId + JodaDateTimeUtil.formatDateTimeFromPattern("_yyyyMMdd_hhmmss", DateTime.now()), ruleVersionListXml);
 			}
-			
-			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
+			versions.clear();
+		}
+
+		if (ruleVersionListXml != null) {
+			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, false)) {
 				return false;
 			}
-			
-			versions = ruleVersionListXml.getVersions();
+
+			List<?> versions = ruleVersionListXml.getVersions();
+
 			if(versions!=null){
 				RuleXml latestRuleXml = (RuleXml)versions.get(versions.size() - 1);
-				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(getRuleEntity().getCode()), store, ruleId);
-				latestRuleXml.setRuleStatus(ruleStatus);
+				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+
+				if (latestRuleXml instanceof RuleFileXml) {
+					((RuleFileXml) latestRuleXml).getContent().setRuleStatus(ruleStatus);
+				} else {
+					latestRuleXml.setRuleStatus(ruleStatus);
+				}
 			}
 		}
-		return RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
+
+		return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersionListXml);
 	}
-	
+
 	public boolean restoreRuleVersion(RuleXml xml){
 		return RuleXmlUtil.restoreRule(xml);
 	};
@@ -101,7 +110,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	}
 
 	public boolean deleteRuleVersion(String store, String ruleId, String username, long version) {
-	    return deleteRuleVersion(store, ruleId, username, version, false);
+		return deleteRuleVersion(store, ruleId, username, version, false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -121,22 +130,22 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			List<RuleXml> versions = (List<RuleXml>) prefsJaxb.getVersions();
 
 			if (physical) {
-	            CollectionUtils.filter(versions, new Predicate() {
-	                @Override
-	                public boolean evaluate(Object o) {
-	                    return ((T) o).getVersion() != version;
-	                }
-	            });
+				CollectionUtils.filter(versions, new Predicate() {
+					@Override
+					public boolean evaluate(Object o) {
+						return ((T) o).getVersion() != version;
+					}
+				});
 			} else {
-    			CollectionUtils.forAllDo(versions, new Closure(){
-    				public void execute(Object o) {
-    					if(((T)o).getVersion() == version){
-    						((T)o).setDeleted(true);
-    						((T)o).setLastModifiedBy(username);
-    						((T)o).setLastModifiedDate(DateTime.now());
-    					}
-    				};
-    			});
+				CollectionUtils.forAllDo(versions, new Closure(){
+					public void execute(Object o) {
+						if(((T)o).getVersion() == version){
+							((T)o).setDeleted(true);
+							((T)o).setLastModifiedBy(username);
+							((T)o).setLastModifiedDate(DateTime.now());
+						}
+					};
+				});
 			}
 
 			prefsJaxb.setVersions(versions);
@@ -178,7 +187,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 						}
 					}
 				}
-				
+
 				Collections.sort(ruleVersionInfoList, new Comparator<RuleXml>() {
 					@Override
 					public int compare(RuleXml r1, RuleXml r2) {
@@ -189,8 +198,8 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		}
 		return ruleVersionInfoList;
 	}	
-	
-	
+
+
 	public List<RuleXml> getPublishedRuleVersions(String store, String ruleId) {
 		return getRuleVersions(getPublishedList(store, ruleId));
 	}	
@@ -203,7 +212,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	public int getRuleVersionsCount(String store, String ruleId) {
 		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
 		int count = 0;
-		
+
 		List<?> ruleXmlList =  ruleVersionListXml.getVersions();
 		if(ruleVersionListXml != null && CollectionUtils.isNotEmpty(ruleXmlList)){
 			for(RuleXml ruleVersion: (List<RuleXml>)ruleXmlList){
@@ -212,7 +221,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 				}
 			}
 		}
-		
+
 		return count;
 	}	
 }

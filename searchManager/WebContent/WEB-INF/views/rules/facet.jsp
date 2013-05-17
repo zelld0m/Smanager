@@ -32,6 +32,8 @@
 	
 	<div class="clearB"></div>
 	<div id="preloader" class="circlePreloader" style="display:none"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>
+	<div id="noSelected"><img id="no-items-img" src="../images/facetSortRuleGuidelines.jpg"></div>
+	
 	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs" style="display:none">
 		<!--  start horizontal tab -->
 		<div>

@@ -22,7 +22,7 @@ public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
 	}
 
 	@Override
-	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion) {
 		if (ruleVersionListXml != null) {
 			@SuppressWarnings("unchecked")
 			List<RedirectRuleXml> eRuleXmlList = ((RuleVersionListXml<RedirectRuleXml>)ruleVersionListXml).getVersions();

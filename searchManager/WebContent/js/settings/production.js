@@ -55,8 +55,8 @@
 			var msg_ = pub?'published:':'unpublished:';
 
 			if (data.totalSize>0){			
-				var okmsg = 'Following rules were successfully ' + msg_;	
-				var flmsg = 'Following rules were unsuccessfully ' + msg_;
+				var okmsg = 'Following rules were successfully ' + msg_ + "<ul class='mar0 padL30'>";	
+				var flmsg = 'Following rules were unsuccessfully ' + msg_ + "<ul class='mar0 padL30'>";
 				var okcnt = 0;
 				var flcnt = 0;
 				
@@ -64,11 +64,11 @@
 					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").text();
 					if(list[i].published == '1'){
 						okcnt++;
-						okmsg += '\n-' + rName;	
+						okmsg += '<li>' + rName + "</li>";
 					}
 					else{
 						flcnt++;
-						flmsg += '\n-' + rName;
+						flmsg += '<li>' + rName + "</li>";
 					}
 				}
 			
@@ -77,7 +77,7 @@
 					cmpltmsg += okmsg;
 				}
 				if (flcnt>0){
-					cmpltmsg += (okcnt>0? "\n\n":"");
+					cmpltmsg += (okcnt>0? "<br>":"");
 					cmpltmsg += flmsg;
 				}
 				
@@ -94,7 +94,7 @@
 					
 					if(getSelectedRefId().length==0){
 						jAlert("Please select rule","Push to Prod");
-					}else if (!validateComment("Push to Prod", comment, 1)){
+					}else if (!validateComment("Push to Prod", comment, 1, 300)){
 						//error alert in validateComment
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
@@ -108,7 +108,7 @@
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
-							var confirmMsg = "Continue publishing of the following rules:\n" + a.join('\n');
+							var confirmMsg = "Continue publishing of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
 
 							jConfirm(confirmMsg, "Confirm Publish", function(status){
 								if(status){
@@ -142,7 +142,7 @@
 							break;
 							
 						case "unpublishBtn": 
-							var confirmMsg = "Continue unpublishing of the following rules:\n" + a.join('\n');
+							var confirmMsg = "Continue unpublishing of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
 							jConfirm(confirmMsg, "Confirm Unpublish", function(status){
 								if(status){
 									var exception = false;
@@ -156,7 +156,7 @@
 										},
 										postHook:function(){ 
 											if (!exception) {
-												cleanUpTabContent()
+												cleanUpTabContent();
 											}
 											else {
 												$("div.circlePreloader").hide();
@@ -179,22 +179,18 @@
 			});
 		};
 		
-		var publishHandlerLinguistics = function(){
+		var publishHandlerLinguistics = function(ruleStatusId){
 			$(tabSelected).find("a#publishBtn").on({
 				click: function(evt){
 					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
-					
-					if (!validateComment("Push to Prod", comment, 1)){
-						//error alert in validateComment
-					}else{
-						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
+					if (validateComment("Push to Prod", comment, 1, 300)){
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
 							jConfirm("Continue publishing of Did You Mean List?", "Confirm Publish", function(status){
 								if(status){
 									var exception = false;
-									DeploymentServiceJS.publishRule(entityName, ["spell_rule"], comment, ["spell_rule"],{
+									DeploymentServiceJS.publishRule(entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){	
 											jAlert("Did You Mean List was successfully published.", "Publish Rule");
 											getForProductionList("approved");	
@@ -204,7 +200,7 @@
 										},
 										postHook:function(){ 
 											if (!exception) {
-												cleanUpTabContent()
+												cleanUpTabContent();
 											}
 											else {
 												$(tabSelected).find("div#requestDetails").hide();
@@ -254,12 +250,13 @@
 										// Populate table row
 										var responseData = response.data;
 										var responseList = responseData.spellRule;
+										var ruleStatusId = list[0]["ruleStatusId"];
 										$(tabSelected).find("label#numSuggestions").append(responseData.maxSuggest);
 										$(tabSelected).find("label#productionStatus").html(list[0]["publishedStatus"]);
 										$(tabSelected).find("label#productionDate").html($.isNotBlank(list[0]["lastPublishedDate"])? list[0]["formattedLastPublishedDateTime"]: "");
 										$table = $(tabSelected).find("table#rule");
 										if (responseList.length == 0) {
-											$table.append('<tr><td class="txtAC" colspan="3">No new/modified entries found. Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</td></tr>');
+											$table.append('<tr><td class="txtAC" colspan="3"><div>No new/modified entries found. Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</div></td></tr>');
 										}
 										else {
 											if (displaySize > responseList.length) {
@@ -269,11 +266,11 @@
 												var termHTML = "";
 												var suggestionHTML = "";
 												$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(responseList[i]["ruleId"])).show();
-												responseList[i].ruleKeyword["keyword"].forEach(function (item) {
+												responseList[i].ruleKeyword.forEach(function (item) {
 													termHTML += "<span class=\"term\">" + item + "</span>";
 												});
 												$tr.find("td#searchTerms").html(termHTML);
-												responseList[i].suggestKeyword["suggest"].forEach(function (item) {
+												responseList[i].suggestKeyword.forEach(function (item) {
 													suggestionHTML += "<span class=\"term\">" + item + "</span>";
 												});
 												$tr.find("td#suggestions").html(suggestionHTML);
@@ -309,7 +306,7 @@
 											}
 										});
 										
-										publishHandlerLinguistics();
+										publishHandlerLinguistics(ruleStatusId);
 									}
 								});
 							}
@@ -360,6 +357,25 @@
 							$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
 							$(tabSelected).find('div#actionBtn').hide();
 							$(tabSelected).find('th#selectAll > input[type="checkbox"]').hide();
+						}
+						// what publishing guidelines
+						if (entityName === "didYouMean") {
+							$(tabSelected).find('div#pgDidYouMean').show();
+						} else {
+							switch(filterBy) {
+							case "approved":
+								$(tabSelected).find('div#pgApprovedForPublishing').show();
+								break;
+							case "published":
+								$(tabSelected).find('div#pgPublished').show();
+								break;
+							case "delete":
+								$(tabSelected).find('div#pgApprovedForDeletion').show();
+								break;
+							case undefined:
+							default:
+								$(tabSelected).find('div.publishingGuidelines').hide();		
+							}
 						}
 						
 						// What button to display

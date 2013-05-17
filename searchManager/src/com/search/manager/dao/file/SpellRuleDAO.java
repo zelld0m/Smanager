@@ -6,11 +6,14 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.impl.cookie.DateUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
@@ -21,9 +24,12 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
+import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.SpellIndex;
 
 @Component("spellRuleDAO")
@@ -33,21 +39,22 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
     private SpellIndex spellIndex;
 
     private static Logger logger = Logger.getLogger(SpellRuleDAO.class);
-    
+
     public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException {
-    	List<String> statusList = new ArrayList<String>();
-    	String status = criteria.getModel().getStatus();
-    	if (StringUtils.isNotBlank(status)) {
-        	statusList.add(status);
-    	}
-    	return getSpellRule(criteria, statusList);
+        List<String> statusList = new ArrayList<String>();
+        String status = criteria.getModel().getStatus();
+        if (StringUtils.isNotBlank(status)) {
+            statusList.add(status);
+        }
+        return getSpellRule(criteria, statusList);
     }
 
     public SpellRules getSpellRules(String storeId) throws DaoException {
-    	return spellIndex.get(storeId);
+        return spellIndex.get(storeId);
     }
-    
-    public RecordSet<SpellRuleXml> getSpellRuleXml(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
+
+    public RecordSet<SpellRuleXml> getSpellRuleXml(SearchCriteria<SpellRule> criteria, List<String> statusList)
+            throws DaoException {
         try {
             SpellRule rule = criteria.getModel();
             SpellRules spellRules = spellIndex.get(rule.getStoreId());
@@ -62,48 +69,38 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
                     total = 1;
                 }
             } else {
-
-                boolean hasSearchTerm = rule.getSearchTerms() != null
-                        && StringUtils.isNotEmpty(rule.getSearchTerms()[0]);
-                boolean hasSuggestTerm = rule.getSuggestions() != null
-                        && StringUtils.isNotEmpty(rule.getSuggestions()[0]);
-                boolean hasStatus = CollectionUtils.isNotEmpty(statusList);
-
-                if (hasStatus) {
-                	for (String status: statusList) {
-                		retList.addAll(spellRules.selectRulesByStatus(status));
-                	}
+                if (CollectionUtils.isNotEmpty(statusList)) {
+                    for (String status : statusList) {
+                        retList.addAll(spellRules.selectRulesByStatus(status));
+                    }
                 } else {
-                	retList = spellRules.selectActiveRules();
+                    retList = spellRules.selectActiveRules();
                 }
 
-                if (hasSearchTerm) {
+                if (rule.getSearchTerms() != null && StringUtils.isNotEmpty(rule.getSearchTerms()[0])) {
                     List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
-                    for (SpellRuleXml xml : retList) {
-                        for (String kw : xml.getRuleKeyword().getKeyword()) {
-                            if (kw.contains(rule.getSearchTerms()[0])) {
-                                rules.add(xml);
-                                break;
-                            }
-                        }
-                    }
+                    Predicate<String> icontains = StringUtil.createIContainsPredicate(rule.getSearchTerms()[0]);
 
-                    retList = rules;
-                }
-
-                if (hasSuggestTerm) {
-                    List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
                     for (SpellRuleXml xml : retList) {
-                        for (String kw : xml.getSuggestKeyword().getSuggest()) {
-                            if (kw.contains(rule.getSuggestions()[0])) {
-                                rules.add(xml);
-                                break;
-                            }
+                        if (!Collections2.filter(xml.getRuleKeyword(), icontains).isEmpty()) {
+                            rules.add(xml);
                         }
                     }
                     retList = rules;
                 }
-                
+
+                if (rule.getSuggestions() != null && StringUtils.isNotEmpty(rule.getSuggestions()[0])) {
+                    List<SpellRuleXml> rules = new ArrayList<SpellRuleXml>();
+                    Predicate<String> icontains = StringUtil.createIContainsPredicate(rule.getSuggestions()[0]);
+
+                    for (SpellRuleXml xml : retList) {
+                        if (!Collections2.filter(xml.getSuggestKeyword(), icontains).isEmpty()) {
+                            rules.add(xml);
+                        }
+                    }
+                    retList = rules;
+                }
+
                 total = retList.size();
             }
 
@@ -114,21 +111,22 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
             logger.debug("end row: " + criteria.getEndRow());
 
             if (startRow == 0 || endRow == 0) {
-            	return new RecordSet<SpellRuleXml>(retList, total);
+                return new RecordSet<SpellRuleXml>(retList, total);
             }
             return new RecordSet<SpellRuleXml>(retList.subList(Math.max(0, criteria.getStartRow() - 1),
                     Math.min(retList.size(), criteria.getEndRow())), total);
-            
+
         } catch (Exception e) {
             throw new DaoException("Failed during getSpellRuleXml()", e);
         }
     }
-    
-    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
+
+    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList)
+            throws DaoException {
         try {
-        	RecordSet<SpellRuleXml> resultSet = getSpellRuleXml(criteria, statusList);
+            RecordSet<SpellRuleXml> resultSet = getSpellRuleXml(criteria, statusList);
             List<SpellRule> retList = Lists.transform(resultSet.getList(), SpellRuleXml.transformer);
-        	return new RecordSet<SpellRule>(retList, resultSet.getTotalSize());	
+            return new RecordSet<SpellRule>(retList, resultSet.getTotalSize());
         } catch (Exception e) {
             throw new DaoException("Failed during getSpellRule()", e);
         }
@@ -184,8 +182,10 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
 
             if (xml != null) {
                 String oldStatus = xml.getStatus();
-                List<String> oldSearchTerms = xml.getRuleKeyword().getKeyword();
+                
+                List<String> oldSearchTerms = xml.getRuleKeyword();
                 rule.setLastModifiedDate(DateTime.now());
+
                 xml.update(rule);
                 rules.updateStatusIndex(oldStatus, xml);
                 rules.updateSearchIndex(oldSearchTerms, xml);
@@ -239,7 +239,7 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
 
         return 0;
     }
-    
+
     public SpellRule getSpellRuleById(String storeId, String spellRuleId) {
         SpellRule rule = null;
         SpellRuleXml ruleXml = spellIndex.get(storeId).getSpellRule(spellRuleId);
@@ -274,17 +274,29 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId,
-            String username, String name, String notes) {
+            String username, String name, String notes, boolean isVersion) {
         if (ruleVersionListXml != null) {
-            @SuppressWarnings("unchecked")
-            List<SpellRules> xmlList = ((RuleVersionListXml<SpellRules>) ruleVersionListXml).getVersions();
+            List<RuleXml> xmlList = ((RuleVersionListXml<RuleXml>) ruleVersionListXml).getVersions();
+            long nextVersion = ruleVersionListXml.getNextVersion();
             SpellRules rules = spellIndex.get(store);
+            Date now = new Date();
 
             if (rules != null) {
                 // create version for current rule
-                xmlList.add(new SpellRules(store, ruleVersionListXml.getNextVersion(), name, notes, username,
-                        DateTime.now(), ruleId, rules.getMaxSuggest(), rules.selectActiveRules()));
+                SpellRules version = new SpellRules(store, nextVersion, name, notes, username, now, ruleId,
+                        rules.getMaxSuggest(), rules.selectActiveRules());
+                RuleFileXml fileXml = new RuleFileXml(store, nextVersion, name, notes, username, now, ruleId,
+                        RuleEntity.SPELL, version);
+
+                if (isVersion) {
+                    fileXml.setContentFileName(ruleId + "-" + nextVersion);
+                } else {
+                    fileXml.setContentFileName(ruleId + DateUtils.formatDate(new Date(), "_yyyyMMdd_hhmmss"));
+                }
+
+                xmlList.add(fileXml);
 
                 return true;
             }

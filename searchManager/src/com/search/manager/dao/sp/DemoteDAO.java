@@ -37,16 +37,18 @@ public class DemoteDAO {
 
 	@Autowired
 	public DemoteDAO(JdbcTemplate jdbcTemplate) {
-		addSP = new AddStoredProcedure(jdbcTemplate);
-		getSP = new GetDemoteStoredProcedure(jdbcTemplate);
-		getNoExpirySP = new GetNoExpiryStoredProcedure(jdbcTemplate);
-		updateSP = new UpdateStoredProcedure(jdbcTemplate);
-		updateExpiryDateSP = new UpdateExpiryDateStoredProcedure(jdbcTemplate);
-		deleteSP = new DeleteStoredProcedure(jdbcTemplate);
-	}
+    	addSP = new AddStoredProcedure(jdbcTemplate);
+    	getSP = new GetDemoteStoredProcedure(jdbcTemplate);
+    	getSPNew = new GetDemoteNewStoredProcedure(jdbcTemplate);
+    	getNoExpirySP = new GetNoExpiryStoredProcedure(jdbcTemplate);
+    	updateSP = new UpdateStoredProcedure(jdbcTemplate);
+    	updateExpiryDateSP = new UpdateExpiryDateStoredProcedure(jdbcTemplate);
+    	deleteSP = new DeleteStoredProcedure(jdbcTemplate);
+    }
 
 	private AddStoredProcedure addSP;
 	private GetDemoteStoredProcedure getSP;
+	private GetDemoteNewStoredProcedure getSPNew;
 	private GetNoExpiryStoredProcedure getNoExpirySP;
 	private UpdateStoredProcedure updateSP;
 	private UpdateExpiryDateStoredProcedure updateExpiryDateSP;
@@ -110,6 +112,46 @@ public class DemoteDAO {
 		}
 	}
 
+	// TODO dbo.usp_Get_Demote_New
+	private class GetDemoteNewStoredProcedure extends GetStoredProcedure {
+	    public GetDemoteNewStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_GET_DEMOTE_NEW);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<DemoteResult>() {
+	            public DemoteResult mapRow(ResultSet rs, int rowNum) throws SQLException
+	            {
+	                return new DemoteResult(
+	                		new StoreKeyword(new Store(rs.getString(DAOConstants.COLUMN_STORE_NAME)),
+	                						 new Keyword(rs.getString(DAOConstants.COLUMN_KEYWORD))),
+	                		rs.getString(DAOConstants.COLUMN_VALUE),
+	                		rs.getInt(DAOConstants.COLUMN_SEQUENCE_NUM),
+	                		rs.getString(DAOConstants.COLUMN_COMMENT),
+	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
+	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
+	                		rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE),
+	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
+	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
+                			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
+	            }
+	        }));
+		}
+	}
+	
 	@SuppressWarnings("unused")
 	private class GetItemStoredProcedure extends StoredProcedure {
 		public GetItemStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -263,6 +305,41 @@ public class DemoteDAO {
 	public RecordSet<DemoteResult> getResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
 		try {
 			DemoteResult demote = criteria.getModel();
+
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(demote.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(demote.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
+	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());
+	        return DAOUtils.getRecordSet(getSP.execute(inputs));
+		} catch (Exception e) {
+    		throw new DaoException("Failed during getDemote()", e);
+    	}
+    }
+
+	// TODO using dbo.usp_Get_Demote_New
+	public RecordSet<DemoteResult> getResultListNew(SearchCriteria<DemoteResult> criteria) throws DaoException {
+		try {
+			DemoteResult demote = criteria.getModel();
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(demote.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(demote.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
+	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());
+	        return DAOUtils.getRecordSet(getSPNew.execute(inputs));
+		} catch (Exception e) {
+    		throw new DaoException("Failed during getResultListNew()", e);
+    	}
+    }
+	
+    public DemoteResult getItem(DemoteResult demote) throws DaoException {
+    	try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(demote.getStoreKeyword()));
 			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(demote.getStoreKeyword()));

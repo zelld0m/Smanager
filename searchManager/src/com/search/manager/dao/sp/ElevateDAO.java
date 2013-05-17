@@ -39,6 +39,7 @@ public class ElevateDAO {
 	public ElevateDAO(JdbcTemplate jdbcTemplate) {
 		addSP = new AddElevateStoredProcedure(jdbcTemplate);
 		getSP = new GetElevateStoredProcedure(jdbcTemplate);
+		getSPNew = new GetElevateNewStoredProcedure(jdbcTemplate);
 		getItemSP = new GetElevateItemStoredProcedure(jdbcTemplate);
 		getNoExpirySP = new GetNoExpiryElevateStoredProcedure(jdbcTemplate);
 		updateSP = new UpdateElevateStoredProcedure(jdbcTemplate);
@@ -48,6 +49,7 @@ public class ElevateDAO {
 
 	private AddElevateStoredProcedure addSP;
 	private GetElevateStoredProcedure getSP;
+	private GetElevateNewStoredProcedure getSPNew;
 	private GetElevateItemStoredProcedure getItemSP;
 	private GetNoExpiryElevateStoredProcedure getNoExpirySP;
 	private UpdateElevateStoredProcedure updateSP;
@@ -107,6 +109,48 @@ public class ElevateDAO {
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPIRY_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
 									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
+									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
+									rs.getString(DAOConstants.COLUMN_MEMBER_ID),
+									rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
+				}
+			}));
+		}
+	}
+
+	// TODO using dbo.usp_Get_Elevate_New, if @Keyword=null return all rules
+	private class GetElevateNewStoredProcedure extends GetStoredProcedure {
+		public GetElevateNewStoredProcedure(JdbcTemplate jdbcTemplate) {
+			super(jdbcTemplate, DAOConstants.SP_GET_ELEVATE_NEW);
+		}
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FORCE_ADD, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ElevateResult>() {
+				public ElevateResult mapRow(ResultSet rs, int rowNum) throws SQLException
+				{
+					return new ElevateResult(
+							new StoreKeyword(new Store(rs.getString(DAOConstants.COLUMN_STORE_NAME)),
+									new Keyword(rs.getString(DAOConstants.COLUMN_KEYWORD))),
+									rs.getString(DAOConstants.COLUMN_VALUE),
+									rs.getInt(DAOConstants.COLUMN_SEQUENCE_NUM),
+									rs.getString(DAOConstants.COLUMN_COMMENT),
+									rs.getString(DAOConstants.COLUMN_CREATED_BY),
+									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
+									rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE),
+									rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
+									rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
 									rs.getString(DAOConstants.COLUMN_MEMBER_ID),
 									rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
@@ -270,6 +314,42 @@ public class ElevateDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
+			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
+			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+			inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());
+			inputs.put(DAOConstants.PARAM_FORCE_ADD, criteria.getModel().isForceAdd());
+			return DAOUtils.getRecordSet(getSP.execute(inputs));
+		} catch (Exception e) {
+			throw new DaoException("Failed during getElevate()", e);
+		}
+	}
+
+	// TODO using dbo.usp_Get_Elevate_New
+	public RecordSet<ElevateResult> getElevateNew(SearchCriteria<ElevateResult> criteria) throws DaoException {
+		try {
+			ElevateResult elevate = criteria.getModel();
+			Map<String, Object> inputs = new HashMap<String, Object>();
+			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
+			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
+			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
+			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+			inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());
+			inputs.put(DAOConstants.PARAM_FORCE_ADD, criteria.getModel().isForceAdd());
+			return DAOUtils.getRecordSet(getSPNew.execute(inputs));
+		} catch (Exception e) {
+			throw new DaoException("Failed during getElevateNew()", e);
+		}
+	}
+
+	public ElevateResult getElevateItem(ElevateResult elevate) throws DaoException {
+		try {
+			Map<String, Object> inputs = new HashMap<String, Object>();
+			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
+			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
@@ -384,5 +464,4 @@ public class ElevateDAO {
 			throw new DaoException("Failed during clearElevate()", e);
 		}
 	}
-
 }

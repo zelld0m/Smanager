@@ -38,6 +38,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleTransferUtil;
@@ -160,6 +161,11 @@ public class RuleTransferService {
 			for (String ruleId: ruleRefIdList){
 				boolean success = false;
 				RuleXml ruleXml = getRuleToExport(ruleType, ruleId); //get latest version
+				
+				if (ruleXml instanceof RuleFileXml) {
+				    ruleXml = RuleXmlUtil.loadVersion((RuleFileXml) ruleXml);
+				}
+
 				if(ruleXml != null && StringUtils.isNotBlank(ruleXml.getRuleId())){
 					try {
 						if(daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.MANUAL, UtilityService.getUsername(), comment)) {

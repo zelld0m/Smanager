@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -666,14 +665,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
         orig.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET, 0);
         orig.put(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, originalKeyword.length());
         if (spellRule != null) {
-        	suggestedKeywords.addAll(Arrays.asList(spellRule.getSuggestions()));
-            count = spellRule.getSuggestions().length;
+        	for (String suggestion: spellRule.getSuggestions()) {
+    			suggestedKeywords.add(suggestion);
+        		if (++count >= maxSuggestCount) {
+        			break;
+        		}
+        	}
         }
 
-        JSONObject suggestionsJson = spellcheckObject != null ? spellcheckObject
+        JSONObject suggestionsJson = spellcheckObject != null && !spellcheckObject.isNullObject() ? spellcheckObject
                 .getJSONObject(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS) : null;
 
-        if (count < maxSuggestCount && suggestionsJson != null) {
+        if (count < maxSuggestCount && suggestionsJson != null && !suggestionsJson.isNullObject()) {
             if (suggestionsJson.has(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION)) {
                 String collation = StringUtils.trim(suggestionsJson.getString(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION));
                 if (!suggestedKeywords.contains(collation)) {

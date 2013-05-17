@@ -3,7 +3,9 @@ package com.mall.migrator;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -74,6 +76,26 @@ public class RuleIndexMigrator {
 		LocalSolrServerRunner excludeSolrServer;
 
 		try {
+			System.out.println("----------------------------------------");
+			System.out.println("Store	  : " + storeId);
+			System.out.println("Solr Url  : "
+					+ ((LocalSolrServerRunner) context
+							.getBean("localSolrServerRunner")).getSolrUrl());
+			System.out.println("Database  : "
+					+ ((BasicDataSource) context.getBean("dataSource_solr"))
+							.getUrl());
+			System.out.println("----------------------------------------");
+			String response = "";
+			Scanner input = new Scanner(System.in);
+
+			System.out.print("Are you sure you want to continue? (Y/N) : ");
+			response = input.next();
+
+			if (!response.toUpperCase().startsWith("Y")) {
+				solrServerFactory.shutdown();
+				return;
+			}
+
 			redirectSolrServer = solrServerFactory
 					.getCoreInstance(Constants.Core.REDIRECT_RULE_CORE
 							.getCoreName());

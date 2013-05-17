@@ -17,6 +17,7 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.solr.constants.Constants;
 
 public class SolrDocUtil {
@@ -184,10 +185,13 @@ public class SolrDocUtil {
 				redirectRule.getIncludeKeyword());
 		solrInputDocument
 				.addField("redirectUrl", redirectRule.getRedirectUrl());
-		
-		solrInputDocument.addField("messageType", redirectRule.getReplaceKeywordMessageType() != null ? redirectRule.getReplaceKeywordMessageType().getIntValue() : 1);
-		solrInputDocument.addField("customText", StringUtils.defaultIfBlank(redirectRule.getReplaceKeywordMessageCustomText(), ""));
-		
+		solrInputDocument.addField("messageType", redirectRule
+				.getReplaceKeywordMessageType() != null ? redirectRule
+				.getReplaceKeywordMessageType().getIntValue() : 1);
+		solrInputDocument.addField(
+				"customText",
+				StringUtils.defaultIfBlank(
+						redirectRule.getReplaceKeywordMessageCustomText(), ""));
 
 		// Value of 'id' is <storeId>_<searchTerm>_<ruleId>
 		String id = redirectRule.getStoreId() + "_"
@@ -314,6 +318,45 @@ public class SolrDocUtil {
 		// Value of 'id' is <storeId>_<facetSortName>_<facetSortId>
 		String id = facetSort.getStore().getStoreId() + "_"
 				+ facetSort.getName() + "_" + facetSort.getId();
+
+		solrInputDocument.addField("id", id);
+
+		return solrInputDocument;
+	}
+
+	/* For Spell Rule */
+
+	public static List<SolrInputDocument> composeSolrDocsSpell(
+			List<SpellRuleXml> spellRulesXml, String storeId) throws Exception {
+		if (spellRulesXml == null) {
+			logger.error("'SpellRules' is null or empty.");
+			throw new Exception("'SpellRules' is null or empty.");
+		}
+		List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
+
+		for (SpellRuleXml spellRuleXml : spellRulesXml) {
+			solrInputDocuments.add(composeSolrDoc(spellRuleXml, storeId));
+		}
+
+		return solrInputDocuments;
+	}
+
+	public static SolrInputDocument composeSolrDoc(SpellRuleXml spellRuleXml,
+			String storeId) throws Exception {
+		if (spellRuleXml == null) {
+			throw new Exception("'SpellRuleXml' is null or empty.");
+		}
+
+		SolrInputDocument solrInputDocument = new SolrInputDocument();
+
+		solrInputDocument.addField("ruleId", spellRuleXml.getRuleId());
+		solrInputDocument.addField("store", storeId);
+		solrInputDocument.addField("keywords", spellRuleXml.getRuleKeyword());
+		solrInputDocument
+				.addField("suggests", spellRuleXml.getSuggestKeyword());
+
+		// Value of 'id' is <storeId>_<ruleId>
+		String id = storeId + "_" + spellRuleXml.getRuleId();
 
 		solrInputDocument.addField("id", id);
 

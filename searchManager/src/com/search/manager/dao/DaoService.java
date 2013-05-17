@@ -98,6 +98,7 @@ public interface DaoService extends SearchDaoService {
 	public int clearElevateResult(StoreKeyword keyword) throws DaoException;
 	public int getElevateResultCount(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public RecordSet<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException;
+	public RecordSet<ElevateResult> getElevateResultListNew(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public RecordSet<ElevateResult> getNoExpireElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public Map<String, ElevateResult> getElevateResultMap(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public ElevateResult getElevateItem(ElevateResult elevate) throws DaoException;
@@ -112,6 +113,7 @@ public interface DaoService extends SearchDaoService {
 	public int clearExcludeResult(StoreKeyword keyword) throws DaoException;
 	public int getExcludeResultCount(SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public RecordSet<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria) throws DaoException;
+	public RecordSet<ExcludeResult> getExcludeResultListNew(SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public ExcludeResult getExcludeItem(ExcludeResult exclude) throws DaoException;
 	
 	/* Demote */
@@ -124,6 +126,7 @@ public interface DaoService extends SearchDaoService {
 	public int clearDemoteResult(StoreKeyword keyword) throws DaoException;
 	public int getDemoteResultCount(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public RecordSet<DemoteResult> getDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public RecordSet<DemoteResult> getDemoteResultListNew(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public RecordSet<DemoteResult> getNoExpireDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public Map<String, DemoteResult> getDemoteResultMap(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public DemoteResult getDemoteItem(DemoteResult demote) throws DaoException;

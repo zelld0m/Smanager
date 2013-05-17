@@ -4,6 +4,7 @@
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
+		var destroy = true;
 
 		// Access to jQuery and DOM add products of element
 		base.$el = $(el);
@@ -1450,23 +1451,13 @@
 			base.contentHolder.find("#facetItem").tabs("destroy").tabs({
 				show: function(event, ui){
 					if(ui.panel){
-//						if (ui.panel.id === "dynamicAttribute") {
-//							base.contentHolder.find("#templateNameList").focus();
-//						} 
-//						else if (ui.panel.id === "cnet") {
-//							base.contentHolder.find("#hideCursor").focus();
-//						}  else if (ui.panel.id === "facet") {
-//							base.contentHolder.find("#hideCursor").focus();
-//						}
 						base.contentHolder.find("#hideCursor").focus();
 					}
 				}
 			});
 
-			base.contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
-
-			base.contentHolder.find("#addItemDate_1").datepicker({
-				showOn: "both",
+			base.contentHolder.find("#addItemDate").datepicker({
+				showOn: "button",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
 				changeMonth: true,
@@ -1490,7 +1481,7 @@
 
 						position = $.isBlank(position) || isNaN(position)? 1 : position;
 						
-						var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
+						var expiryDate = $.trim(base.contentHolder.find("#addItemDate").val());
 						var comment = $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "");
 
 						if ($.isNotBlank(expiryDate) && !$.isDate(expiryDate)){
@@ -1501,12 +1492,12 @@
 							jAlert("Date 'Valid Until' cannot be earlier than today", "Invalid Input");
 						}
 						
-						if (!validateGeneric("Validity Date", expiryDate)){
+						if (valid && !validateGeneric("Validity Date", expiryDate)){
 							valid = false;
 						}
 
-						if ($.isNotBlank(comment)){
-							if(validateComment("Comment",comment,1)){
+						if (valid && $.isNotBlank(comment)){
+							if(validateComment("Comment", comment, 1, 300)){
 								comment = comment.replace(/\n\r?/g, '<br/>');
 							}else{
 								valid = false;
@@ -1515,16 +1506,16 @@
 
 						var condMap = base.getSelectedFacetFieldValues();
 
-						if ($.isEmptyObject(condMap)){
+						if (valid && $.isEmptyObject(condMap)){
 							valid = false;
 							jAlert('Please specify at least one filter condition');
 						}
-						else if(base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
+						else if(valid && base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
 							valid = false;
 							jAlert("Position value should be from 1 - " + base.options.maxPosition + ".", "Max Value Exceeded");
 						}
 
-						if (!$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"])){
+						if (valid && !$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"])){
 							valid = false;
 						}
 
@@ -1534,7 +1525,7 @@
 							$.each(condMap, function(idx, el){
 								$.each(el, function(i,elem){
 									if($.inArray(idx, inputFields) !== -1){
-										if(!validateGeneric("Input", elem)) {
+										if(valid && !validateGeneric(idx, elem)) {
 											valid = false;
 										}
 									}
@@ -1544,11 +1535,11 @@
 
 						if (valid){
 							if (base.options.newRecord){
-								base.api.destroy();
-								base.options.addFacetItemCallback(position, expiryDate, comment, condMap, base.getTypeLabel(type));
+								destroy = false;
+								base.options.addFacetItemCallback(position, expiryDate, comment, condMap, base.getTypeLabel(type), base.api);
 							}else{
 								base.api.destroy();
-								base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+								base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap, base.api);
 							}
 						}
 					}, 500);
@@ -1559,11 +1550,8 @@
 
 		base.promptAddProductItem = function(){
 			base.contentHolder.html(base.getAddProductItemTemplate());
-
-			base.contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
-
-			base.contentHolder.find("#addItemDate_1").datepicker({
-				showOn: "both",
+			base.contentHolder.find("#addItemDate").datepicker({
+				showOn: "button",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
 				changeMonth: true,
@@ -1598,16 +1586,15 @@
 
 					var skus = $.trim(base.contentHolder.find("#addItemDPNo").val());
 					var sequence = $.trim(base.contentHolder.find("#addItemPosition").val());
-					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
+					var expDate = $.trim(base.contentHolder.find("#addItemDate").val());
 					var comment = $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "");
 					var today = new Date();
-					var position = 1;
 					var valid = false;
 
 					sequence = $.isBlank(sequence) || isNaN(sequence)? 1 : sequence;
 					
 					today.setHours(0,0,0,0); //ignore time of current date 
-					base.contentHolder.find("#addItemDate_1").datepicker('disable');
+					base.contentHolder.find("#addItemDate").datepicker('disable');
 
 					if ($.isBlank(skus)) {
 						jAlert("There are no SKUs specified in the list.", "Invalid Input");
@@ -1623,7 +1610,7 @@
 					}
 					else if(today.getTime() > new Date(expDate).getTime())
 						jAlert("Start date cannot be earlier than today", "Invalid Input");
-					else if ($.isNotBlank(comment) && !validateComment("Invalid Input",comment,1)){
+					else if ($.isNotBlank(comment) && !validateComment("Invalid Input", comment, 1, 300)){
 						//error alert in function validateComment
 					}
 					else {
@@ -1632,13 +1619,12 @@
 						if($.isNotBlank(comment)){
 							comment = comment.replace(/\n\r?/g, '<br/>');
 						}
-						
-						base.api.destroy();
-						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
+						destroy = false;
+						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/), base.api);						
 					}
 
 					if(!valid)
-						base.contentHolder.find("#addItemDate_1").datepicker('enable');
+						base.contentHolder.find("#addItemDate").datepicker('enable');
 
 				}
 			});
@@ -1681,7 +1667,7 @@
 					width: 'auto'
 				},
 				events: { 
-					show: function(event, api){
+					render: function(event, api) {
 						base.api = api;
 						base.contentHolder = $("div", api.elements.content);
 
@@ -1691,13 +1677,17 @@
 						case "cnet": base.promptAddFacetItem(type); break;
 						case "facet": base.promptAddFacetItem(type); break;
 						};	
-						
 						base.addClearButtonListener(type);
-
 					},
-					hide: function(event, api){
-						base.contentHolder.find("#addItemDate_1").datepicker('hide');
-						api.destroy();
+					show: function(event, api){
+						destroy = true;
+						base.contentHolder.find("#addItemDate").datepicker('enable');
+						base.addClearButtonListener(type);
+					},
+					hide: function(event, api) {
+						if (destroy === true) {
+							base.api.destroy();
+						}
 					}
 				}
 			});
@@ -1737,9 +1727,9 @@
 			dateMaxDate: "+1Y",
 			defaultIMSType: "CatCode",
 			showPosition:false,
-			addProductItemCallback: function(position, expiryDate, comment, skus){},
-			addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType){},
-			updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){}
+			addProductItemCallback: function(position, expiryDate, comment, skus, api){},
+			addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType, api){},
+			updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues, api){}
 	};
 
 	$.fn.addproduct = function(options){

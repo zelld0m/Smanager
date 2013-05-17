@@ -19,6 +19,7 @@
 			removeExpiryDateConfirmText: "Expiry date for this item will be removed. Continue?",
 			removeRuleItemConfirmText: "Item will be removed from this rule. Continue?",
 			clearRuleItemConfirmText: "All items associated to this rule will be removed. Continue?",
+			addForceAddItem: " is not part of natural search results. Continue?",
 
 			getRuleList: function(){
 				var self = this;
@@ -145,14 +146,42 @@
 								locked: e.data.locked,
 								newRecord: false,
 								item: $.extend(true, {}, e.data.item),
-								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
-									ExcludeServiceJS.updateExcludeFacet(self.selectedRule["ruleId"], memberId, comment, expiryDate,  selectedFacetFieldValues, {
-										callback: function(data){
-											showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
-											self.populateRuleItem(self.selectedRuleItemPage);
-										},
+								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues, api){
+									api.hide();
+									var updateFacetItem = function() {
+										ExcludeServiceJS.updateExcludeFacet(self.selectedRule["ruleId"], memberId, comment, expiryDate,  selectedFacetFieldValues, {
+											callback: function(data){
+												api.destroy();
+												showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "" +
+														"Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + e.data.item.condition["readableString"] : 
+														$.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+												self.populateRuleItem(self.selectedRuleItemPage);
+											},
+										});
+									};
+									RedirectServiceJS.convertMapToRedirectRuleCondition(selectedFacetFieldValues, {
 										preHook: function(){ 
 											self.preShowRuleContent();
+										},
+										callback: function(data) {
+											var readableString = data.readableString;
+											ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], $.makeArray("0"), $.makeArray(data.conditionForSolr), {
+												callback: function(data) {
+													if (data["0"] === false) {
+														jConfirm("The " + self.getFacetRuleTypeLabel(item) + " " + readableString + self.addForceAddItem, "Update " + self.getFacetRuleTypeLabel(item), function(result){
+															if (result) {
+																updateFacetItem();
+															} else {
+																self.postShowRuleContent();
+																api.show();
+															}
+														});
+													}
+													else {
+														updateFacetItem();
+													}
+												}
+											});
 										}
 									});
 								}
@@ -226,7 +255,7 @@
 							itemAddComment: function(base, comment){
 								ExcludeServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
 											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
 												callback: function(data){
@@ -282,7 +311,7 @@
 							if(result){
 								ExcludeServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
 									callback: function(code){
-										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : 
+										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : 
 											$.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
 										self.showRuleContent();
 									},
@@ -339,7 +368,7 @@
 				var $item = item;
 				ExcludeServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
+						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel($item) + " Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
 						if(code==1) self.populateRuleItem(self.selectedRuleItemPage);
 					}
 				});
@@ -466,26 +495,87 @@
 										$(this).addproduct({
 											type: $('select#selectRuleItemType').val(),
 											locked: self.selectedRuleStatus["locked"] || !allowModify,
-											addProductItemCallback:function(position, expiryDate, comment, skus){
-												ExcludeServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], expiryDate, comment, skus, {
-													callback : function(code){
-														showActionResponseFromMap(code, "add", "Multiple Rule Item Add",
-																"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
-														self.populateRuleItem(self.selectedRuleItemPage);
-													},
-													preHook: function(){ 
+											addProductItemCallback:function(position, expiryDate, comment, skus, api){
+												api.hide();
+												var addEdps = function() {
+													ExcludeServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], expiryDate, comment, skus, {
+														callback : function(code){
+															api.destroy();
+															showActionResponseFromMap(code, "add", "Multiple Rule Item Add", 
+																"Please check for the following:<ol type='a' class='mar0 padL30'><li>SKU(s) are already present in the list</li><li>SKU(s) are actually searchable using the specified keyword.</li></ol>");
+															self.populateRuleItem(self.selectedRuleItemPage);
+														}
+													});
+												};
+												
+												var conditionForSolr = new Array();
+												for (var i = 0; i < skus.length; i++) {
+													conditionForSolr[i] = "DPNo:" + skus[i];
+												}
+												
+												ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], skus, conditionForSolr, {
+													preHook: function(){
 														self.preShowRuleContent();
+													},
+													callback: function(data) {
+														var forceAddEdps = new Array();
+														for (var edp in data){
+															if (data[edp] === false) {
+																forceAddEdps.push(edp);
+															}
+														}
+														if (forceAddEdps.length > 0) {
+															var confirmMessage = "The following SKUs are not part of the natural search results: " + forceAddEdps.join() + ". Continue?";
+															jConfirm(confirmMessage, "Multiple Rule Item Add", function(result){
+																if (result) {
+																	addEdps();
+																} else {
+																	api.show();
+																	self.postShowRuleContent();
+																}
+															});
+														}
+														else {
+															addEdps();
+														}
 													}
-												});		
+												});
 											},
-											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType){
-												ExcludeServiceJS.addFacetRule(self.selectedRule["ruleId"], expiryDate, comment, selectedFacetFieldValues, {
-													callback: function(data){
-														showActionResponse(data, "add", "New Rule "+ ruleType +" Item");
-														self.populateRuleItem();
-													},
+											
+											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType, api){
+												api.hide();
+												var addFacetItem = function() {
+													ExcludeServiceJS.addFacetRule(self.selectedRule["ruleId"], expiryDate, comment, selectedFacetFieldValues, {
+														callback: function(data){
+															api.destroy();
+															showActionResponse(data, "add", "New Rule "+ ruleType +" Item");
+															self.populateRuleItem(self.selectedRuleItemPage);
+														}
+													});
+												};
+												RedirectServiceJS.convertMapToRedirectRuleCondition(selectedFacetFieldValues, {
 													preHook: function(){ 
 														self.preShowRuleContent();
+													},
+													callback: function(data) {
+														var readableString = data.readableString;
+														ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], $.makeArray("0"), $.makeArray(data.conditionForSolr), {
+															callback: function(data) {
+																if (data["0"] === false) {
+																	jConfirm("The " + ruleType + " " + readableString + self.addForceAddItem, "Add " + ruleType, function(result){
+																		if (result) {
+																			addFacetItem();
+																		} else {
+																			self.postShowRuleContent();
+																			api.show();
+																		}
+																	});
+																}
+																else {
+																	addFacetItem();
+																}
+															}
+														});
 													}
 												});
 											}
@@ -513,12 +603,14 @@
 					$.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"]), 'tileView', {path:GLOBAL_contextPath});
 					$("#listViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
+					$(".qtip:visible").qtip('reposition');
 				}});
 
 				$("#listViewIcon").off().on({click:function(e) {
 					$.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"]), 'listView', {path:GLOBAL_contextPath});
 					$("#tileViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
+					$(".qtip:visible").qtip('reposition');
 				}});
 
 				$("#addRuleItemIcon").off().on({
@@ -623,6 +715,16 @@
 				}
 
 				self.populateRuleItem();
+			},
+
+			getFacetRuleTypeLabel: function (item) {
+				if (item.condition.IMSFilter) {
+					return "IMS Categories";
+				} else if (item.condition.CNetFilter) {
+					return 'Product Site Taxonomy';
+				} else {
+					return "Facet";
+				}
 			},
 
 			getRuleItemFilter: function(){

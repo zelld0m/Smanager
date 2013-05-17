@@ -144,24 +144,24 @@ validateGeneric = function(fieldName, fieldValue, minLength, maxLength) {
 	fieldName = $.capitalize(fieldName);
 	if(minLength != undefined && minLength > 0) {
 		if ($.isBlank(fieldValue)) {
-			jAlert(fieldName+" cannot be empty.");
+			jAlert(fieldName+" cannot be empty.", fieldName);
 			return false;
 		}
 		if (fieldValue.length < minLength){
-			jAlert(fieldName + " should be at least " + minLength + " characters.");
+			jAlert(fieldName + " should be at least " + minLength + " characters.", fieldName);
 			return false;
 		}
 	}
 	if (maxLength != undefined && $.isNotBlank(fieldValue) && fieldValue.length > maxLength){
-		jAlert(fieldName + " cannot exceed " + maxLength + " characters.");
+		jAlert(fieldName + " cannot exceed " + maxLength + " characters.", fieldName);
 		return false;
 	}
 	if(!isAscii(fieldValue)) {
-		jAlert(fieldName+" contains non-ASCII characters.");		
+		jAlert(fieldName+" contains non-ASCII characters.", fieldName);		
 		return false;
 	}
 	if(!isXSSSafe(fieldValue)){
-		jAlert(fieldName+" contains XSS.");
+		jAlert(fieldName+" contains XSS.", fieldName);
 		return false;
 	}
 	return true;
@@ -200,4 +200,23 @@ validateSearchKeyword = function(fieldName, fieldValue, required) {
 		}
 	}
 	return true;
+};
+
+validateInteger = function(fieldName, fieldValue, min, max) {
+	var regex = /^[\-\+]{0,1}[0-9]{1,}[\.]{0,1}[0]{0,}$/;
+	var valid = regex.test(fieldValue) && $.isNotBlank(fieldValue);
+	
+	if (valid && (min || min === 0)) {
+		valid = min <= fieldValue;
+	}
+	
+	if (valid && (max || max === 0)) {
+		valid = max >= fieldValue;
+	}
+
+	if (!valid) {
+		jAlert(fieldName + " is not a valid value.", fieldName);
+	}
+	
+	return valid;
 };

@@ -130,9 +130,7 @@
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
-					}else if (!validateComment(self.moduleName,comment,1)){
-						//error message in validateComment
-					}else{
+					}else if (validateComment(self.moduleName, comment, 1, 300)){
 						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
 						var a = [];
 						var arrSelectedKeys = Object.keys(self.getSelectedItems());
@@ -142,7 +140,7 @@
 							a.push($selectedTab.find("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
 						
-						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
+						var confirmMsg = "Continue export of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
  
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						jConfirm(confirmMsg, "Confirm Export", function(status){
@@ -153,12 +151,6 @@
 										"Unable to find published data for this rule. Please contact Search Manager Team.");
 										self.getExportList();	
 									},
-									preHook:function(){ 
-										self.prepareTabContent(); 
-									},
-									postHook:function(){ 
-										self.cleanUpTabContent(); 
-									}	
 								});
 							}
 						});
@@ -310,7 +302,7 @@
 										},
 										itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
 											if (self.entityName.toLowerCase() === "elevate"){
-												ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+												ElevateServiceJS.isItemInNaturalResult(ruleName, memberIds, memberConditions, {
 													callback:function(data){
 														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
 													},

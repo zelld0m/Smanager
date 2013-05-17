@@ -31,6 +31,7 @@ import com.search.manager.solr.dao.ExcludeDao;
 import com.search.manager.solr.dao.FacetSortDao;
 import com.search.manager.solr.dao.RedirectDao;
 import com.search.manager.solr.dao.RelevancyDao;
+import com.search.manager.solr.dao.SpellRuleDao;
 import com.search.ws.ConfigManager;
 
 @Service("solrService")
@@ -60,7 +61,12 @@ public class SolrServiceImpl implements SolrService {
 	@Qualifier("facetSortDaoSolr")
 	private FacetSortDao facetSortDao;
 
-	private final static Logger logger = Logger.getLogger(SolrServiceImpl.class);
+	@Autowired
+	@Qualifier("spellRuleDaoSolr")
+	private SpellRuleDao spellRuleDao;
+
+	private final static Logger logger = Logger
+			.getLogger(SolrServiceImpl.class);
 
 	@Override
 	public List<ElevateResult> getElevateRules(Store store) throws DaoException {
@@ -555,12 +561,14 @@ public class SolrServiceImpl implements SolrService {
 		return getRelevancyRuleById(store, relevancyId);
 	}
 
-	@Override
-	public SpellRule getSpellRuleForSearchTerm(String storeId, String searchTerm) throws DaoException {
+	// @Override
+	public SpellRule getSpellRuleForSearchTermx(String storeId,
+			String searchTerm) throws DaoException {
 		// TODO: place in utility. check DaoCacheServiceImpl
 		SpellRule spellRule = null;
 		String os = System.getProperty("os.name");
-		String fileName = ConfigManager.getInstance().getPublishedDidYouMeanPath(storeId);
+		String fileName = ConfigManager.getInstance()
+				.getPublishedDidYouMeanPath(storeId);
 		String rule = null;
 		if (StringUtils.containsIgnoreCase(os, "window")) {
 			// assume this is dev workstation
@@ -568,43 +576,57 @@ public class SolrServiceImpl implements SolrService {
 			try {
 				reader = new BufferedReader(new FileReader(fileName));
 				while ((rule = reader.readLine()) != null) {
-					if (StringUtils.containsIgnoreCase(rule, "\t" + searchTerm + "\t")) {
+					if (StringUtils.containsIgnoreCase(rule, "\t" + searchTerm
+							+ "\t")) {
 						// found a match
 						break;
 					}
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				logger.error("Error occured while readig file " + fileName, e);
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (Exception e) {
+					}
+				}
+				;
 			}
-			finally {
-				if (reader != null) { try { reader.close(); } catch (Exception e) {} };
-			}
-		}
-		else {
+		} else {
 			try {
 				String[] shellCommand = {
-						"/bin/sh", "-c", String.format("grep -Pi \"\\\t%s\\\t\" \"%s\"", searchTerm, fileName)
-				};
+						"/bin/sh",
+						"-c",
+						String.format("grep -Pi \"\\\t%s\\\t\" \"%s\"",
+								searchTerm, fileName) };
 				Process p = Runtime.getRuntime().exec(shellCommand);
 				try {
 					p.waitFor();
 					if (logger.isDebugEnabled()) {
 						StringBuilder command = new StringBuilder();
-						for (String arg: shellCommand) {
+						for (String arg : shellCommand) {
 							command.append(arg).append(" ");
 						}
 						logger.debug("Shell command: " + command.toString());
 					}
 					BufferedReader reader = null;
 					try {
-						reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+						reader = new BufferedReader(new InputStreamReader(
+								p.getInputStream()));
 						rule = reader.readLine();
 					} finally {
-						if (reader != null) { try { reader.close(); } catch (Exception e) {} };
+						if (reader != null) {
+							try {
+								reader.close();
+							} catch (Exception e) {
+							}
+						}
+						;
 					}
 				} catch (InterruptedException e) {
-					logger.error("Error occured while readig file " + fileName, e);
+					logger.error("Error occured while readig file " + fileName,
+							e);
 				}
 			} catch (IOException e) {
 				logger.error("Error occured while readig file " + fileName, e);
@@ -612,14 +634,16 @@ public class SolrServiceImpl implements SolrService {
 		}
 		if (StringUtils.isEmpty(rule)) {
 			logger.debug("No matching rule found.");
-		}
-		else {
+		} else {
 			int keywordPos = rule.indexOf('\t');
-			int spellingPos = rule.indexOf((char)0x0B);
+			int spellingPos = rule.indexOf((char) 0x0B);
 			String ruleId = rule.substring(0, keywordPos);
-			String[] searchTerms = StringUtils.split(rule.substring(keywordPos, spellingPos), "\t");
-			String[] suggestions = StringUtils.split(rule.substring(spellingPos), (char)0x0B);
-			spellRule = new SpellRule(ruleId, storeId, null, searchTerms, suggestions);
+			String[] searchTerms = StringUtils.split(
+					rule.substring(keywordPos, spellingPos), "\t");
+			String[] suggestions = StringUtils.split(
+					rule.substring(spellingPos), (char) 0x0B);
+			spellRule = new SpellRule(ruleId, storeId, null, searchTerms,
+					suggestions);
 		}
 		return spellRule;
 	}
@@ -628,10 +652,86 @@ public class SolrServiceImpl implements SolrService {
 	public Integer getMaxSuggest(String storeId) throws DaoException {
 		Integer value = null;
 		try {
-			String val = ConfigManager.getInstance().getPublishedStoreLinguisticSetting(storeId, "maxSpellSuggestions");
+			String val = ConfigManager.getInstance()
+					.getPublishedStoreLinguisticSetting(storeId,
+							"maxSpellSuggestions");
 			value = Integer.parseInt(val);
-		} catch (Exception e){ 
+		} catch (Exception e) {
 		}
 		return value;
 	}
+
+	@Override
+	public SpellRule getSpellRuleForSearchTerm(String storeId, String searchTerm)
+			throws DaoException {
+		return spellRuleDao.getSpellRuleForSearchTerm(storeId, searchTerm);
+	}
+
+	@Override
+	public boolean loadSpellRules(Store store) throws DaoException {
+		return spellRuleDao.loadSpellRules(store);
+	}
+
+	@Override
+	public boolean loadSpellRules(StoreKeyword storeKeyword)
+			throws DaoException {
+		return spellRuleDao.loadSpellRules(storeKeyword);
+	}
+
+	@Override
+	public boolean loadSpellRuleById(Store store, String ruleId)
+			throws DaoException {
+		return spellRuleDao.loadSpellRuleById(store, ruleId);
+	}
+
+	@Override
+	public boolean loadSpellRules(Store store, String dirPath, String fileName)
+			throws DaoException {
+		return spellRuleDao.loadSpellRules(store, dirPath, fileName);
+	}
+
+	@Override
+	public boolean resetSpellRules(Store store) throws DaoException {
+		return spellRuleDao.resetSpellRules(store);
+	}
+
+	@Override
+	public boolean resetSpellRules(StoreKeyword storeKeyword)
+			throws DaoException {
+		return spellRuleDao.resetSpellRules(storeKeyword);
+	}
+
+	@Override
+	public boolean resetSpellRuleById(Store store, String ruleId)
+			throws DaoException {
+		return spellRuleDao.resetSpellRuleById(store, ruleId);
+	}
+
+	@Override
+	public boolean deleteSpellRules(Store store) throws DaoException {
+		return spellRuleDao.deleteSpellRules(store);
+	}
+
+	@Override
+	public boolean deleteSpellRules(StoreKeyword storeKeyword)
+			throws DaoException {
+		return spellRuleDao.deleteSpellRules(storeKeyword);
+	}
+
+	@Override
+	public boolean deleteSpellRuleById(Store store, String ruleId)
+			throws DaoException {
+		return spellRuleDao.deleteSpellRuleById(store, ruleId);
+	}
+
+	@Override
+	public boolean updateSpellRule(SpellRule spellRule) throws DaoException {
+		return spellRuleDao.updateSpellRule(spellRule);
+	}
+
+	@Override
+	public boolean commitSpellRule() throws DaoException {
+		return spellRuleDao.commitSpellRule();
+	}
+
 }

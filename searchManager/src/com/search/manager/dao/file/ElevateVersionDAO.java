@@ -25,7 +25,7 @@ public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 		return RuleEntity.ELEVATE;
 	}
 	
-	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes){
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion){
 		if (ruleVersionListXml != null) {
 			@SuppressWarnings("unchecked")
 			List<ElevateRuleXml> eRuleXmlList = ((RuleVersionListXml<ElevateRuleXml>) ruleVersionListXml).getVersions();

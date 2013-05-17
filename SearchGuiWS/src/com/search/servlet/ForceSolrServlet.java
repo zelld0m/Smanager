@@ -240,6 +240,12 @@ public class ForceSolrServlet extends HttpServlet {
 			} catch (Exception e) {
 				status = "error";
 			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.loadSpellRules(store);
+			} catch (Exception e) {
+				status = "error";
+			}
 		}
 
 		if (status.equals("error")) {
@@ -293,6 +299,12 @@ public class ForceSolrServlet extends HttpServlet {
 		} else if (rule.equalsIgnoreCase("relevancy")) {
 			try {
 				status = "unimplemented";
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.loadSpellRules(storeKeyword);
 			} catch (Exception e) {
 				status = "error";
 			}
@@ -428,6 +440,12 @@ public class ForceSolrServlet extends HttpServlet {
 			} catch (Exception e) {
 				status = "error";
 			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.loadSpellRuleById(store, id);
+			} catch (Exception e) {
+				status = "error";
+			}
 		}
 
 		if (status.equals("error")) {
@@ -487,6 +505,12 @@ public class ForceSolrServlet extends HttpServlet {
 			} catch (Exception e) {
 				status = "error";
 			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.resetSpellRules(store);
+			} catch (Exception e) {
+				status = "error";
+			}
 		}
 
 		if (status.equals("error")) {
@@ -539,7 +563,13 @@ public class ForceSolrServlet extends HttpServlet {
 			}
 		} else if (rule.equalsIgnoreCase("relevancy")) {
 			try {
-				status = "";
+				status = "unimplemented";
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.resetSpellRules(storeKeyword);
 			} catch (Exception e) {
 				status = "error";
 			}
@@ -675,6 +705,12 @@ public class ForceSolrServlet extends HttpServlet {
 			} catch (Exception e) {
 				status = "error";
 			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.resetSpellRuleById(store, id);
+			} catch (Exception e) {
+				status = "error";
+			}
 		}
 
 		if (status.equals("error")) {
@@ -734,6 +770,12 @@ public class ForceSolrServlet extends HttpServlet {
 			} catch (Exception e) {
 				status = "error";
 			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.deleteSpellRules(store);
+			} catch (Exception e) {
+				status = "error";
+			}
 		}
 
 		if (status.equals("error")) {
@@ -787,6 +829,12 @@ public class ForceSolrServlet extends HttpServlet {
 		} else if (rule.equalsIgnoreCase("relevancy")) {
 			try {
 				status = "";
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.deleteSpellRules(storeKeyword);
 			} catch (Exception e) {
 				status = "error";
 			}
@@ -848,6 +896,12 @@ public class ForceSolrServlet extends HttpServlet {
 		} else if (rule.equalsIgnoreCase("relevancy")) {
 			try {
 				status = "" + solrService.deleteRelevancyRuleById(store, id);
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.deleteSpellRuleById(store, id);
 			} catch (Exception e) {
 				status = "error";
 			}
@@ -979,6 +1033,12 @@ public class ForceSolrServlet extends HttpServlet {
 		} else if (rule.equalsIgnoreCase("relevancy")) {
 			try {
 				status = "" + solrService.commitRelevancyRule();
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("spell")) {
+			try {
+				status = "" + solrService.commitSpellRule();
 			} catch (Exception e) {
 				status = "error";
 			}

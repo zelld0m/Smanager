@@ -27,7 +27,7 @@
 			prepareFacetSort : function(){
 				clearAllQtip();
 				$("#preloader").show();
-				$("#submitForApproval").hide();
+				$("#submitForApproval, #noSelected").hide();
 				$("#facetsorting").hide();
 				$("#titleHeader").empty();
 				$("#ruleTypeIcon").html("");
@@ -41,6 +41,7 @@
 
 				if(self.selectedRule==null){
 					$("#preloader").hide();
+					$("#noSelected").show();
 					$("#titleText").html(self.moduleName);
 					return;
 				}

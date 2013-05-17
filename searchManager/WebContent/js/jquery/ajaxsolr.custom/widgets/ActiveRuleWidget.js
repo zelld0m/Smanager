@@ -42,7 +42,16 @@
 				var rules = self.manager.response.responseHeader["search_rules"];
 				var $ul = $(self.target).find("ul#itemListing");
 				$ul.find("li.items:not(#itemPattern)").remove();
-				$(self.target).find('#switcherText').text(rules.length + ' Active ' + (rules.length > 1 ? 'Rules': 'Rule'));
+				var activeCount = 0;
+				
+				for(var i=0; i<rules.length; i++) {
+					var rule = rules[i]['rule'];
+					if(rule['active'] === 'true') {
+						activeCount++;
+					}
+				}
+				
+				$(self.target).find('#switcherText').text(activeCount + ' Active ' + (activeCount > 1 ? 'Rules': 'Rule'));
 				
 				for(var i=0; i<rules.length; i++){
 					var rule = rules[i]["rule"];
@@ -210,7 +219,7 @@
 			output  +='</div>';
 			
 			output  +='<a id="switcher" href="javascript:void(0);">';
-			output  +='	<div class="minW140 floatR borderB borderR borderL height23 posRel topn1 fbold fsize11 padT8 marL5" style="display:block; background: #fff; z-index:500; color:#329eea;">';
+			output  +='	<div class="minW140 floatR borderB borderR borderL height23 posRel topn1 fbold fsize11 padT8 marL5" style="display:block; background: #fff; color:#329eea;">';
 			output  +='		<img id="switcherIcon" src="' + GLOBAL_contextPath + '/images/icon_expand.png" class="posRel marL20 marR3 marTn2 floatL">';
 			output  +='		<span id="switcherText" class="posRel marB6 floatL"></span>';
 			output  +='	</div>';

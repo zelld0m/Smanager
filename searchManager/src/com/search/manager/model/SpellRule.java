@@ -10,7 +10,7 @@ import com.search.manager.report.model.xml.SpellRuleXml;
 public class SpellRule extends ModelBean {
 
     private static final long serialVersionUID = 4743020520448226037L;
-    
+
     public static final Function<SpellRule, SpellRuleXml> transformer = new Function<SpellRule, SpellRuleXml>() {
         public SpellRuleXml apply(SpellRule rule) {
             return new SpellRuleXml(rule);
@@ -31,10 +31,8 @@ public class SpellRule extends ModelBean {
     public SpellRule(SpellRuleXml ruleXml) {
         this.ruleId = ruleXml.getRuleId();
         this.status = ruleXml.getStatus();
-        this.searchTerms = ruleXml.getRuleKeyword().getKeyword()
-                .toArray(new String[ruleXml.getRuleKeyword().getKeyword().size()]);
-        this.suggestions = ruleXml.getSuggestKeyword().getSuggest()
-                .toArray(new String[ruleXml.getSuggestKeyword().getSuggest().size()]);
+        this.searchTerms = ruleXml.getRuleKeyword().toArray(new String[ruleXml.getRuleKeyword().size()]);
+        this.suggestions = ruleXml.getSuggestKeyword().toArray(new String[ruleXml.getSuggestKeyword().size()]);
         this.createdBy = ruleXml.getCreatedBy();
         this.lastModifiedBy = ruleXml.getLastModifiedBy();
         this.createdDate = ruleXml.getCreatedDate();

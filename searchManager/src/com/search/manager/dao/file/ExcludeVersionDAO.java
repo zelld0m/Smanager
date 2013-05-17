@@ -27,7 +27,7 @@ public class ExcludeVersionDAO extends RuleVersionDAO<ExcludeRuleXml>{
 	}
 	
 	@Override
-	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion) {
 		if (ruleVersionListXml != null) {
 			@SuppressWarnings("unchecked")
 			List<ExcludeRuleXml> eRuleXmlList = ((RuleVersionListXml<ExcludeRuleXml>)ruleVersionListXml).getVersions();

@@ -38,7 +38,7 @@
 				shortPaging += base.options.callbackText(itemStart, itemEnd, base.options.totalItem);
 				shortPaging += '</div>';
 
-				shortPaging += '<div class="pagingArrow styleB floatR w160 txtAR padTB5 marT0">';
+				shortPaging += '<div class="pagingArrow styleB floatR w170 txtAR padTB5 marT0">';
 				shortPaging += '<a id="firstPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBlueFirst marT3"></div></a>';
 				shortPaging += '<a id="prevPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBluePrev mar3"></div></a>';
 				shortPaging += '<span class="padLR3 fsize11 floatL marT3">Page </span>';

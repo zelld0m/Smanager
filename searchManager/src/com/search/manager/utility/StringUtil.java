@@ -16,6 +16,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public final class StringUtil {
 	
@@ -600,6 +601,10 @@ public final class StringUtil {
 		return builder.toString();
 	}
 
+	public static Predicate<String> createIContainsPredicate(String target) {
+	    return new IContainsPredicate(target);
+	}
+
 	public static Function<String, String> lowercaseTransformer = new Function<String, String>() {
 	    public String apply(String orig) {
 	        if (orig != null) {
@@ -609,4 +614,14 @@ public final class StringUtil {
 	        return orig;
 	    }
 	};
+
+    private static class IContainsPredicate implements Predicate<String> {
+        private String target;
+        private IContainsPredicate(String target) {
+            this.target = lowercaseTransformer.apply(target);
+        }
+        public boolean apply(String str) {
+            return lowercaseTransformer.apply(str).contains(target);
+        }
+    }
 }

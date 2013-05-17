@@ -81,11 +81,13 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
+import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleTransferUtil;
+import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -574,6 +576,14 @@ public class DaoServiceImpl implements DaoService {
 		return list;
 	}
 
+	// Using dbo.usp_Get_Elevate_New
+	@Override
+	public RecordSet<ElevateResult> getElevateResultListNew(
+			SearchCriteria<ElevateResult> criteria) throws DaoException {
+		RecordSet<ElevateResult> list = elevateDAO.getElevateNew(criteria);
+		return list;
+	}
+	
 	@Override
 	public RecordSet<ElevateResult> getNoExpireElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException {
 		return elevateDAO.getElevateNoExpiry(criteria);
@@ -644,6 +654,13 @@ public class DaoServiceImpl implements DaoService {
 		return list;
 	}
 
+	// using dbo.usp_Get_Demote_New
+	@Override
+	public RecordSet<DemoteResult> getDemoteResultListNew(SearchCriteria<DemoteResult> criteria) throws DaoException {
+		RecordSet<DemoteResult> list = demoteDAO.getResultListNew(criteria);
+		return list;
+	}
+	
 	@Override
 	public RecordSet<DemoteResult> getNoExpireDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
 		return demoteDAO.getNoExpiry(criteria);
@@ -715,6 +732,12 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public RecordSet<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria) throws DaoException {
 		return excludeDAO.getExclude(criteria);
+	}
+	
+	// using dbo.usp_Get_Exclude_New
+	@Override
+	public RecordSet<ExcludeResult> getExcludeResultListNew(SearchCriteria<ExcludeResult> criteria) throws DaoException {
+		return excludeDAO.getExcludeNew(criteria);
 	}
 
 	@Override
@@ -1398,6 +1421,9 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
+	    if (xml instanceof RuleFileXml) {
+	        xml = RuleXmlUtil.loadVersion((RuleFileXml) xml);
+	    }
 		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
 		if (dao != null) {
 			return dao.restoreRuleVersion(xml);

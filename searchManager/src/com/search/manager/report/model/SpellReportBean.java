@@ -25,15 +25,15 @@ public class SpellReportBean extends ReportBean<SpellRuleXml> {
 		return model.getRuleId();
 	}
 
-	@ReportField(label = "Search Terms", size = 20, sortOrder = 2)
-	public String getSearchTerms() {
-		return StringUtils.join(model.getRuleKeyword().getKeyword(), ',');
-	}
+    @ReportField(label = "Search Terms", size = 20, sortOrder = 2)
+    public String getSearchTerms() {
+        return StringUtils.join(model.getRuleKeyword(), ',');
+    }
 
-	@ReportField(label = "Suggestions", size = 20, sortOrder = 3)
-	public String getSuggestions() {
-		return StringUtils.join(model.getSuggestKeyword().getSuggest(), ',');
-	}
+    @ReportField(label = "Suggestions", size = 20, sortOrder = 3)
+    public String getSuggestions() {
+        return StringUtils.join(model.getSuggestKeyword(), ',');
+    }
 
 	@ReportField(label = "Status", size = 20, sortOrder = 4)
 	public String getStatus() {

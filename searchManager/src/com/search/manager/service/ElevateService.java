@@ -624,17 +624,16 @@ public class ElevateService extends RuleService{
 					});
 					tasks++;
 				}
-				
-				while (tasks > 0) {
-					try {
-						completionService.take();
-					} catch (InterruptedException e) {
-						logger.error("Failed to get if force add required for condition", e);
-					}
-					tasks--;
-				}
-				
 			}
+
+            while (tasks > 0) {
+                try {
+                    completionService.take();
+                } catch (InterruptedException e) {
+                    logger.error("Failed to get if force add required for condition", e);
+                }
+                tasks--;
+            }
 		} catch (DaoException e) {
 			logger.error("Failed during isRequireForceAdd()",e);
 		} finally {
@@ -646,7 +645,7 @@ public class ElevateService extends RuleService{
 	}
 	
 	@RemoteMethod
-	public Map<String, Boolean> isItemRequireForceAdd(final String keyword, String[] memberIds, String[] conditions) {
+	public Map<String, Boolean> isItemInNaturalResult(final String keyword, String[] memberIds, String[] conditions) {
 		
 		ExecutorService execService = Executors.newFixedThreadPool(10);
 		final String storeName = UtilityService.getStoreId();

@@ -140,7 +140,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w38p, .w38p			{ width:38% }
 .cssReset .w32p, .w32p			{ width:32% }
 .cssReset .w10p, .w10p 			{ width:10% }
-
+.cssReset .w194, .w194			{width: 194px; }
 
 .cssReset .pad0, .pad0			{ padding:0px !important }
 .cssReset .pad2, .pad2			{ padding:2px }
@@ -178,6 +178,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .padL13, .padL13		{padding-left:13px}
 .cssReset .padL15, .padL15		{padding-left:15px !important}
 .cssReset .padL25				{padding-left:25px}
+.cssReset .padL30, .padL30      {padding-left:30px !important}
 .cssReset .padL55				{padding-left:55px}
 .cssReset .padL100, .padL100	{padding-left:100px !important}
 .cssReset .padL212, .padL212	{padding-left:212px !important}
@@ -578,6 +579,18 @@ div.holder table#addDynamicAttributeName tr#dynamicAttributeName td.iepadBT0 div
 	top: 0px !important;
 }
 
+.posRelTop30 {
+	position: relative;
+	top: -30px;	
+}
+
+::-ms-clear {
+	display: none;
+}
+
+ul#ruleDetails li#products ul#prodList li {
+	height: 180px;	
+}
 
 div.w300.security div.marB10 div div.floatL div.ss-wrapper input.ss-textbox {
 	top: 0px !important;
@@ -587,4 +600,5 @@ div.w300.security div.marB10 div div.floatL div.ss-wrapper input.ss-textbox {
 .w20p {	width: 20%;		}
 .w30p {	width: 30%;		}
 .w50p {	width: 50%;		}
+
 div.dockFooter div.footerFix div div.floatL.w50p.fsize12 {	text-align: center;	}

@@ -1,28 +1,23 @@
 package com.mall.migrator;
 
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.xml.sax.SAXException;
 
 import com.mall.mail.MailNotifier;
 import com.search.manager.dao.DaoService;
-import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
-import com.search.manager.model.Keyword;
+import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.constants.Constants;
@@ -50,6 +45,7 @@ public class RuleIndexBuilder implements Runnable {
 	private String logErrorIndex;
 	private String mailNotification;
 
+	private final int MAX_IMPORT_DOC = 1000;
 	private int dbCount;
 	private int docCount;
 
@@ -95,46 +91,83 @@ public class RuleIndexBuilder implements Runnable {
 
 		try {
 			long timeStart = System.currentTimeMillis();
-
-			List<String> keywords = new ArrayList<String>();
-			List<Keyword> keywordList = null;
+			StoreKeyword storeKeyword = new StoreKeyword(storeId, null);
+			int page = 1;
 
 			if (rule.equals(Constants.Rule.DEMOTE.getRuleName())) {
-				keywordList = (List<Keyword>) daoService.getAllKeywords(
-						storeId, RuleEntity.DEMOTE);
+				DemoteResult demoteFilter = new DemoteResult();
+				demoteFilter.setStoreKeyword(storeKeyword);
+				while (true) {
+					SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(
+							demoteFilter, null, null, page, MAX_IMPORT_DOC);
+					RecordSet<DemoteResult> recordSet = daoService
+							.getDemoteResultListNew(criteria);
+					if (recordSet != null && recordSet.getTotalSize() > 0) {
+						List<DemoteResult> demoteResults = recordSet.getList();
+
+						solrImportDemote(demoteResults);
+						if (demoteResults.size() < MAX_IMPORT_DOC) {
+							solrServer.optimize();
+							break;
+						}
+						page++;
+					} else {
+						break;
+					}
+				}
 			} else if (rule.equals(Constants.Rule.ELEVATE.getRuleName())) {
-				keywordList = (List<Keyword>) daoService.getAllKeywords(
-						storeId, RuleEntity.ELEVATE);
+				ElevateResult elevateFilter = new ElevateResult();
+				elevateFilter.setStoreKeyword(storeKeyword);
+				while (true) {
+					SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(
+							elevateFilter, null, null, page, MAX_IMPORT_DOC);
+					RecordSet<ElevateResult> recordSet = daoService
+							.getElevateResultListNew(criteria);
+					if (recordSet != null && recordSet.getTotalSize() > 0) {
+						List<ElevateResult> elevateResults = recordSet
+								.getList();
+						solrImportElevate(elevateResults);
+						if (elevateResults.size() < MAX_IMPORT_DOC) {
+							solrServer.optimize();
+							break;
+						}
+						page++;
+					} else {
+						break;
+					}
+				}
 			} else if (rule.equals(Constants.Rule.EXCLUDE.getRuleName())) {
-				keywordList = (List<Keyword>) daoService.getAllKeywords(
-						storeId, RuleEntity.EXCLUDE);
-			}
-
-			if (CollectionUtils.isNotEmpty(keywordList)) {
-				for (Keyword key : keywordList) {
-					keywords.add(key.getKeywordId());
+				ExcludeResult excludeFilter = new ExcludeResult();
+				excludeFilter.setStoreKeyword(storeKeyword);
+				while (true) {
+					SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(
+							excludeFilter, null, null, 0, 0);
+					RecordSet<ExcludeResult> recordSet = daoService
+							.getExcludeResultListNew(criteria);
+					if (recordSet != null && recordSet.getTotalSize() > 0) {
+						List<ExcludeResult> excludeResults = recordSet
+								.getList();
+						solrImportExclude(excludeResults);
+						if (excludeResults.size() < MAX_IMPORT_DOC) {
+							solrServer.optimize();
+							break;
+						}
+						page++;
+					} else {
+						break;
+					}
 				}
 			}
-
-			if (keywords != null) {
-				logger.info("Keyword size : " + keywords.size());
-
-				for (String keyword : keywords) {
-					solrImport(storeId, keyword, rule);
-				}
-			}
-
-			solrServer.optimize();
 
 			long elapsedTimeMillis = System.currentTimeMillis() - timeStart;
 			StringBuffer info = new StringBuffer();
 			info.append(" Indexing completed!");
 			info.append("\n Time Completed : " + (elapsedTimeMillis / (1000F))
-					+ " secs.");
-			info.append("\n Time Completed : "
-					+ (elapsedTimeMillis / (60 * 1000F)) + " mins.");
+					+ " secs./");
+			info.append((elapsedTimeMillis / (60 * 1000F)) + " mins.");
 			info.append("\n Total " + rule + " rule indexed : " + docCount);
-			info.append("\n Total file fetched from database : " + dbCount);
+			info.append("\n Total " + rule + " rule fetched from database : "
+					+ dbCount);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
@@ -148,71 +181,16 @@ public class RuleIndexBuilder implements Runnable {
 		}
 	}
 
-	private void solrImport(String store, String keyword, String rule)
-			throws ParserConfigurationException, IOException, SAXException {
+	private void solrImportDemote(List<DemoteResult> demoteResults) {
 		List<SolrInputDocument> solrInputDocuments = null;
-		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
 		boolean hasError = false;
 
-		logger.debug(rule + " = store [" + store + "] " + "keyword[" + keyword
-				+ "]");
-
 		try {
-			if (rule.equals(Constants.Rule.DEMOTE.getRuleName())) {
-				// Get demote rules from database.
-				DemoteResult demoteFilter = new DemoteResult();
-				demoteFilter.setStoreKeyword(storeKeyword);
-
-				SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(
-						demoteFilter, null, null, 0, 0);
-				List<DemoteResult> demoteResults = daoService.getDemoteResultList(criteria)
-						.getList();
-
-				if (demoteResults != null && demoteResults.size() > 0) {
-					dbCount += demoteResults.size();
-					solrInputDocuments = SolrDocUtil
-							.composeSolrDocs(demoteResults);
-					solrServer.addDocs(solrInputDocuments);
-					solrServer.softCommit();
-					docCount += solrInputDocuments.size();
-				}
-			} else if (rule.equals(Constants.Rule.ELEVATE.getRuleName())) {
-				// Get elevate rules from database.
-				ElevateResult elevateFilter = new ElevateResult();
-				elevateFilter.setStoreKeyword(storeKeyword);
-
-				SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(
-						elevateFilter, null, null, 0, 0);
-				List<ElevateResult> elevateResults = daoService.getElevateResultList(criteria)
-						.getList();
-
-				if (elevateResults != null && elevateResults.size() > 0) {
-					dbCount += elevateResults.size();
-					solrInputDocuments = SolrDocUtil
-							.composeSolrDocs(elevateResults);
-					solrServer.addDocs(solrInputDocuments);
-					solrServer.softCommit();
-					docCount += solrInputDocuments.size();
-				}
-			} else if (rule.equals(Constants.Rule.EXCLUDE.getRuleName())) {
-				// Get exclude rules from database.
-				ExcludeResult excludeFilter = new ExcludeResult();
-				excludeFilter.setStoreKeyword(storeKeyword);
-
-				SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(
-						excludeFilter, null, null, 0, 0);
-				List<ExcludeResult> excludeResults = daoService.getExcludeResultList(criteria)
-						.getList();
-
-				if (excludeResults != null && excludeResults.size() > 0) {
-					dbCount += excludeResults.size();
-					solrInputDocuments = SolrDocUtil
-							.composeSolrDocs(excludeResults);
-					solrServer.addDocs(solrInputDocuments);
-					solrServer.softCommit();
-					docCount += solrInputDocuments.size();
-				}
-			}
+			dbCount += demoteResults.size();
+			solrInputDocuments = SolrDocUtil.composeSolrDocs(demoteResults);
+			solrServer.addDocs(solrInputDocuments);
+			solrServer.softCommit();
+			docCount += solrInputDocuments.size();
 		} catch (Exception e) {
 			hasError = true;
 			e.printStackTrace();
@@ -226,7 +204,68 @@ public class RuleIndexBuilder implements Runnable {
 							rule + "_");
 				}
 			} else {
-				// Log error indexed data.
+				if (logErrorIndex.equals("true")) {
+					IndexBuilderUtil.saveIndexData(logPath + "error\\",
+							solrInputDocuments, rule + "_");
+				}
+			}
+		}
+	}
+
+	private void solrImportElevate(List<ElevateResult> elevateResults) {
+		List<SolrInputDocument> solrInputDocuments = null;
+		boolean hasError = false;
+
+		try {
+			dbCount += elevateResults.size();
+			solrInputDocuments = SolrDocUtil.composeSolrDocs(elevateResults);
+			solrServer.addDocs(solrInputDocuments);
+			solrServer.softCommit();
+			docCount += solrInputDocuments.size();
+		} catch (Exception e) {
+			hasError = true;
+			e.printStackTrace();
+			logger.error(e);
+		}
+
+		if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+			if (!hasError) {
+				if (logIndex.equals("true")) {
+					IndexBuilderUtil.saveIndexData(logPath, solrInputDocuments,
+							rule + "_");
+				}
+			} else {
+				if (logErrorIndex.equals("true")) {
+					IndexBuilderUtil.saveIndexData(logPath + "error\\",
+							solrInputDocuments, rule + "_");
+				}
+			}
+		}
+	}
+
+	private void solrImportExclude(List<ExcludeResult> excludeResults) {
+		List<SolrInputDocument> solrInputDocuments = null;
+		boolean hasError = false;
+
+		try {
+			dbCount += excludeResults.size();
+			solrInputDocuments = SolrDocUtil.composeSolrDocs(excludeResults);
+			solrServer.addDocs(solrInputDocuments);
+			solrServer.softCommit();
+			docCount += solrInputDocuments.size();
+		} catch (Exception e) {
+			hasError = true;
+			e.printStackTrace();
+			logger.error(e);
+		}
+
+		if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+			if (!hasError) {
+				if (logIndex.equals("true")) {
+					IndexBuilderUtil.saveIndexData(logPath, solrInputDocuments,
+							rule + "_");
+				}
+			} else {
 				if (logErrorIndex.equals("true")) {
 					IndexBuilderUtil.saveIndexData(logPath + "error\\",
 							solrInputDocuments, rule + "_");
@@ -279,6 +318,27 @@ public class RuleIndexBuilder implements Runnable {
 		}
 
 		try {
+			System.out.println("----------------------------------------");
+			System.out.println("Store	  : " + storeId);
+			System.out.println("Rule type : " + ruleType);
+			System.out.println("Solr Url  : "
+					+ ((LocalSolrServerRunner) context
+							.getBean("localSolrServerRunner")).getSolrUrl());
+			System.out.println("Database  : "
+					+ ((BasicDataSource) context.getBean("dataSource_solr"))
+							.getUrl());
+			System.out.println("----------------------------------------");
+			String response = "";
+			Scanner input = new Scanner(System.in);
+
+			System.out.print("Are you sure you want to continue? (Y/N) : ");
+			response = input.next();
+
+			if (!response.toUpperCase().startsWith("Y")) {
+				solrServerFactory.shutdown();
+				return;
+			}
+
 			if (ruleType.equals(Constants.Rule.DEMOTE.getRuleName())) {
 				solrServer = solrServerFactory
 						.getCoreInstance(Constants.Core.DEMOTE_RULE_CORE
