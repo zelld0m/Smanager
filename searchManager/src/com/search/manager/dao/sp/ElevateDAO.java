@@ -148,9 +148,9 @@ public class ElevateDAO {
 									rs.getString(DAOConstants.COLUMN_COMMENT),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
 									rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-									rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE),
-									rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-									rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPIRY_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 									rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
 									rs.getString(DAOConstants.COLUMN_MEMBER_ID),
 									rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
@@ -342,23 +342,6 @@ public class ElevateDAO {
 			return DAOUtils.getRecordSet(getSPNew.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getElevateNew()", e);
-		}
-	}
-
-	public ElevateResult getElevateItem(ElevateResult elevate) throws DaoException {
-		try {
-			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
-			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
-			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
-			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
-			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
-			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
-			inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());
-			inputs.put(DAOConstants.PARAM_FORCE_ADD, criteria.getModel().isForceAdd());
-			return DAOUtils.getRecordSet(getSP.execute(inputs));
-		} catch (Exception e) {
-			throw new DaoException("Failed during getElevate()", e);
 		}
 	}
 

@@ -24,6 +24,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RuleStatus;
@@ -67,17 +68,6 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
 		RuleEntity entity = getRuleEntity();
-
-		// keep versions separate for Did You Mean rules
-		// TODO: create a shells cript that does housekeeping to delete/archive older files
-		List<?> versions = ruleVersionListXml.getVersions();
-		if (CollectionUtils.isNotEmpty(versions)) {
-			RuleEntity ruleEntity = ((RuleXml)versions.get(0)).getRuleEntity();
-			if (ruleEntity != null && ruleEntity.equals(RuleEntity.SPELL)) {
-				RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId + JodaDateTimeUtil.formatDateTimeFromPattern("_yyyyMMdd_hhmmss", DateTime.now()), ruleVersionListXml);
-			}
-			versions.clear();
-		}
 
 		if (ruleVersionListXml != null) {
 			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, false)) {

@@ -1,9 +1,9 @@
 package com.search.manager.report.model.xml;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
 
@@ -27,7 +27,7 @@ public class RuleFileXml extends RuleXml {
         this.path = path;
     }
 
-    public RuleFileXml(String store, long version, String name, String notes, String username, Date date,
+    public RuleFileXml(String store, long version, String name, String notes, String username, DateTime dateTime,
             String ruleId, RuleEntity type, RuleXml content) {
         this();
         this.setRuleId(ruleId);
@@ -35,7 +35,7 @@ public class RuleFileXml extends RuleXml {
         this.setName(name);
         this.setNotes(notes);
         this.setCreatedBy(username);
-        this.setCreatedDate(date);
+        this.setCreatedDate(dateTime);
         this.setStore(store);
         this.setVersion(version);
         this.setEntityType(type.getValues().get(0));

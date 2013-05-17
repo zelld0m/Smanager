@@ -34,7 +34,7 @@ public class SpellRules extends RuleXml {
         setRuleEntity(RULE_ENTITY);
     }
 
-    public SpellRules(String store, long version, String name, String notes, String username, Date date, String ruleId,
+    public SpellRules(String store, long version, String name, String notes, String username, DateTime date, String ruleId,
             int maxSuggest, List<SpellRuleXml> spellRule) {
         this();
         this.setSpellRule(spellRule);

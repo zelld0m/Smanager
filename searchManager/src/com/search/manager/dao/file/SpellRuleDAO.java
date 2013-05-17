@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.impl.cookie.DateUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -281,19 +281,18 @@ public class SpellRuleDAO extends RuleVersionDAO<SpellRules> {
             List<RuleXml> xmlList = ((RuleVersionListXml<RuleXml>) ruleVersionListXml).getVersions();
             long nextVersion = ruleVersionListXml.getNextVersion();
             SpellRules rules = spellIndex.get(store);
-            Date now = new Date();
-
+          
             if (rules != null) {
                 // create version for current rule
-                SpellRules version = new SpellRules(store, nextVersion, name, notes, username, now, ruleId,
+                SpellRules version = new SpellRules(store, nextVersion, name, notes, username, DateTime.now(), ruleId,
                         rules.getMaxSuggest(), rules.selectActiveRules());
-                RuleFileXml fileXml = new RuleFileXml(store, nextVersion, name, notes, username, now, ruleId,
+                RuleFileXml fileXml = new RuleFileXml(store, nextVersion, name, notes, username, DateTime.now(), ruleId,
                         RuleEntity.SPELL, version);
 
                 if (isVersion) {
                     fileXml.setContentFileName(ruleId + "-" + nextVersion);
                 } else {
-                    fileXml.setContentFileName(ruleId + DateUtils.formatDate(new Date(), "_yyyyMMdd_hhmmss"));
+                	fileXml.setContentFileName(ruleId + DateTimeFormat.forPattern("_yyyyMMdd_hhmmss").print(DateTime.now()));
                 }
 
                 xmlList.add(fileXml);
