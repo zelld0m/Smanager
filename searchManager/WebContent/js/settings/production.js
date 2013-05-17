@@ -94,7 +94,7 @@
 					
 					if(getSelectedRefId().length==0){
 						jAlert("Please select rule","Push to Prod");
-					}else if (!validateComment("Push to Prod", comment, 1, 300)){
+					}else if (!validateComment("Push to Prod", comment, 1, 250)){
 						//error alert in validateComment
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
@@ -183,7 +183,7 @@
 			$(tabSelected).find("a#publishBtn").on({
 				click: function(evt){
 					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
-					if (validateComment("Push to Prod", comment, 1, 300)){
+					if (validateComment("Push to Prod", comment, 1, 250)){
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 

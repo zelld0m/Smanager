@@ -86,7 +86,7 @@
 
 					if (getSelectedRefId().length==0){
 						jAlert("Please select rule","Approval");
-					}else if (!validateComment("Approval", comment, 1, 300)){
+					}else if (!validateComment("Approval", comment, 1, 250)){
 						// error alert in function validateComment
 					}else{
 						var a = [];
@@ -153,7 +153,7 @@
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
 					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
-					if (validateComment("Approval", comment, 1, 300)){
+					if (validateComment("Approval", comment, 1, 250)){
 						// TODO: only spell rule supported at the moment
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
@@ -433,7 +433,7 @@
 												click: function(evt){
 													var comment = $.defaultIfBlank($content.find("#approvalComment").val(),"");
 	
-													if (validateComment("Approval", comment, 1, 300)){
+													if (validateComment("Approval", comment, 1, 250)){
 														comment = comment.replace(/\n\r?/g, '<br/>');
 														
 														switch($(evt.currentTarget).attr("id")){

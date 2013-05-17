@@ -51,9 +51,10 @@
 				}else if (!customTextRegExpression.test(customText)) {
 					jAlert('Custom text contains invalid character/s');
 				}else{
-					if($.isNotBlank(customText) && 
-							customText.toLowerCase() !== base.options.customText.toLowerCase() && 
-							($.isNotBlank(e.data.rule["replaceKeywordMessageCustomText"]) && customText.toLowerCase() !== e.data.rule["replaceKeywordMessageCustomText"].toLowerCase())){
+					if ($.isBlank(customText)) {
+						customText = base.options.customText;
+					}
+					if(!$.iequals(customText, e.data.rule["replaceKeywordMessageCustomText"])) {
 						
 						RedirectServiceJS.updateRKMessageType(e.data.rule["ruleId"], 3, customText, {
 							callback: function(data){

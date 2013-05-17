@@ -534,7 +534,8 @@
 
 								if(self.getRuleItemFilter()==="all"){
 									var totalText = self.selectedRuleItemTotal==0? self.zeroCountHTMLCode:  "(" + self.selectedRuleItemTotal + ")";
-									$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemLink a').html(totalText);
+									// $('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemLink a').html(totalText);
+									$("#itemListing").find("tr div.itemText a").filter(function() {return $(this).text() == self.selectedRule['ruleId']}).closest('.itemHolder').find('.itemLink a').html(totalText);
 								}
 
 								if(self.selectedRuleItemTotal == 0 && self.getRuleItemFilter()==="all"){

@@ -70,7 +70,7 @@
 			<div class="clearB"></div>
 			<!-- Pagination-->     
 		    <div class="floatR padT10">
-		    	<a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload"></div></a>
+		    	<a href="javascript:void(0);" id="downloadIcon" style="display:none;"><div class="btnGraph btnDownload"></div></a>
 			</div>
 			<div id="resultsTopPaging" class="marTn2"></div>
 		    <div class="clearB"></div>
