@@ -5,8 +5,8 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <!-- page specific dependencies -->
-<script src="<spring:url value="/js/campaign/banner.js" />" type="text/javascript"></script>  
-<link href="<spring:url value="/css/campaign/banner.css" />" rel="stylesheet" type="text/css">
+<script src="<spring:url value="/js/ads/banner.js" />" type="text/javascript"></script>  
+<link href="<spring:url value="/css/ads/banner.css" />" rel="stylesheet" type="text/css">
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
