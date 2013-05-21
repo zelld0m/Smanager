@@ -253,6 +253,7 @@ public class DAOConstants {
 	public static final String PARAM_LINK_PATH				 		= "link_path";
 	public static final String PARAM_NEW_WINDOW		 				= "open_new_window";
 	public static final String PARAM_DISABLED		 				= "disabled";
+	public static final String PARAM_SEARCH_TEXT		 			= "search_text";
 
 	// additional rule status parameters
 	public static final String PARAM_REQUEST_BY						= "request_by";
@@ -347,6 +348,7 @@ public class DAOConstants {
 	public static final String COLUMN_LAST_PUBLISHED_DATE			= "last_published_date";
 	public static final String COLUMN_CREATED_STAMP					= "created_stamp";
 	public static final String COLUMN_LAST_UPDATED_STAMP			= "last_updated_stamp";
+	public static final String COLUMN_LAST_UPDATED_BY				= "last_updated_by";
 
 	public static final String COLUMN_GROUP_ID				 		= "group_id";
 	public static final String COLUMN_PERMISSION_ID		 			= "permission_id";

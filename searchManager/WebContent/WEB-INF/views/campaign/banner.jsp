@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="advertise"/>
+<c:set var="topmenu" value="ads"/>
 <c:set var="submenu" value="banner"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 

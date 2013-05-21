@@ -86,7 +86,7 @@ public interface DaoService extends SearchDaoService {
 	public int addBannerRule(BannerRule rule) throws DaoException;
 	public int deleteBannerRule(BannerRule rule) throws DaoException;
 	public BannerRule getBannerRule(BannerRule rule) throws DaoException;
-	public RecordSet<BannerRule> getBannerRuleList(SearchCriteria<BannerRule> criteria) throws DaoException;
+	public RecordSet<BannerRule> searchBannerRule(SearchCriteria<BannerRule> criteria) throws DaoException;
 		
 	/* Elevate */
 	public int addElevateResult(ElevateResult elevate) throws DaoException;

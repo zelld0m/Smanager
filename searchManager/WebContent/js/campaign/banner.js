@@ -28,7 +28,7 @@
 
 				$("#rulePanel").sidepanel({
 					moduleName: self.moduleName,
-					headerText : self.moduleName,
+					headerText : "Keyword",
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
@@ -38,8 +38,9 @@
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
 
-						BannerServiceJS.getRules(ruleName, page, base.options.pageSize, {
-							callback: function(data){
+						BannerServiceJS.getAllRules(ruleName, page, base.options.pageSize, {
+							callback: function(sr){
+								var data = sr["data"]; 
 								base.populateList(data, ruleName);
 								base.addPaging(ruleName, page, data.totalSize);
 							},
@@ -60,7 +61,18 @@
 					itemNameCallback: function(base, item){
 						self._setRule(item.model);
 					},
-
+					
+					itemAddCallback: function(base, ruleName){
+						BannerServiceJS.addRule(ruleName, {
+							callback: function(sr){
+								showActionResponse(sr["status"], "add", ruleName);
+								self._showRuleList();
+							},
+							postHook: function(e){
+								base.prepareList();
+							}
+						});
+					}
 				});
 			},
 
@@ -73,7 +85,7 @@
 					ruleType: "Banner",
 					enableVersion: true,
 					authorizeRuleBackup: allowModify,
-					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
+					authorizeSubmitForApproval: allowModify,
 					
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
@@ -159,29 +171,6 @@
 			_showRule: function(){
 				var self = this;
 				self._showRuleStatus();
-			},
-			
-			_showRuleToCampaign: function(){
-				var self = this;
-				var $bannerRelations = $("#bannerRelations");
-				var $preloader = $bannerRelations.find("#preloader");
-				var $bannerToCampaign = $bannerRelations.find("#bannerToCampaign");
-				
-				BannerServiceJS.searchCampaignUsingThisBanner(self.selectedRule["ruleId"], "", 0, 0, {
-					callback: function(data){
-						$preloader.hide();
-						
-						$bannerToCampaign.selectbox({
-							maxSelectionList: 4,
-							selectedItems: data.list
-						});
-
-					},
-					preHook: function(){ 
-						$preloader.show();
-					}
-				});
-				
 			},
 			
 			_afterShowRuleStatus: function(){
@@ -286,4 +275,5 @@
 	$(document).ready(function() {
 		$.BannerPage._init();
 	});	
+	
 })(jQuery);

@@ -1845,12 +1845,12 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public BannerRule getBannerRule(BannerRule rule) throws DaoException {
-		return getBannerRuleList(new SearchCriteria<BannerRule>(rule)).getList().get(0);
+		return searchBannerRule(new SearchCriteria<BannerRule>(rule)).getList().get(0);
 	}
 
 	@Override
-	public RecordSet<BannerRule> getBannerRuleList(
+	public RecordSet<BannerRule> searchBannerRule(
 			SearchCriteria<BannerRule> criteria) throws DaoException {
-		return bannerDAO.searchRule(criteria);
+		return bannerDAO.searchRule(criteria, null, MatchType.LIKE_NAME);
 	}
 }

@@ -24,7 +24,6 @@
     	<security:intercept-url pattern="/exclude/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/demote/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/facet/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/campaign/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/banner/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/redirect/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/catalog/**" access="isAuthenticated()" />

@@ -92,10 +92,10 @@ public class BannerDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TEXT, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
 
@@ -106,7 +106,9 @@ public class BannerDAO {
 					return new BannerRule(
 							rs.getString(DAOConstants.COLUMN_STORE_ID),
 							rs.getString(DAOConstants.COLUMN_RULE_ID),
-							rs.getString(DAOConstants.COLUMN_RULE_NAME)
+							rs.getString(DAOConstants.COLUMN_RULE_NAME),
+							rs.getString(DAOConstants.COLUMN_CREATED_BY),
+							rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY)
 					);
 				}
 			}));			
@@ -275,7 +277,7 @@ public class BannerDAO {
 			
 			String ruleId = rule.getRuleId();
 			
-			if (StringUtils.isNotBlank(ruleId)) {
+			if (StringUtils.isBlank(ruleId)) {
 				ruleId = DAOUtils.generateUniqueId();
 			}
 			
@@ -310,19 +312,19 @@ public class BannerDAO {
 		return searchRule(criteria, null, null);
 	}
 	
-	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria, int imagePathId) throws DaoException {
+	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria, String imagePathId) throws DaoException {
 		return searchRule(criteria, imagePathId, null);
 	}
 	
-	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria, Integer imagePathId, MatchType matchType) throws DaoException {
+	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria, String imagePathId, MatchType matchType) throws DaoException {
 		try {
 			BannerRule model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
-			inputs.put(DAOConstants.PARAM_SEARCH_TERM, model.getRuleName());
-			inputs.put(DAOConstants.PARAM_MATCH_TYPE, matchType);
+			inputs.put(DAOConstants.PARAM_SEARCH_TEXT, model.getRuleName());
+			inputs.put(DAOConstants.PARAM_MATCH_TYPE, matchType.getIntValue());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId);
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());

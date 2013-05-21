@@ -164,6 +164,10 @@
 	<servlet>
 		<servlet-name>dwr</servlet-name>
 		<servlet-class>org.directwebremoting.spring.DwrSpringServlet</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>
 	</servlet>
 	
 	<servlet-mapping>

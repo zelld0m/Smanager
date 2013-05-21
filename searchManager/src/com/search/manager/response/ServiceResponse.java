@@ -48,4 +48,9 @@ public class ServiceResponse<T> implements Serializable {
         status = SUCCESS;
         this.data = data;
     }
+    
+    public void success(T data, int status) {
+        status = SUCCESS;
+        this.data = data;
+    }
 }
