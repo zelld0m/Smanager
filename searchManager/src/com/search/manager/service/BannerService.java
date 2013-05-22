@@ -40,7 +40,7 @@ public class BannerService {
 	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerRule>> getAllRules(String searchText, int page, int pageSize){
 		String storeId = UtilityService.getStoreId();
-		BannerRule model = new BannerRule(storeId, null, searchText);
+		BannerRule model = new BannerRule(storeId, searchText);
 		SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(model, page, pageSize);
 
 		ServiceResponse<RecordSet<BannerRule>> serviceResponse = new ServiceResponse<RecordSet<BannerRule>>();
@@ -85,11 +85,11 @@ public class BannerService {
 	}
 	
 	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItem(String ruleId, int page, int pageSize){
-		return getAllRuleItem(ruleId, null, null, page, pageSize);
+	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItem(String ruleId, int page, int pageSize){
+		return getAllRuleItems(ruleId, null, null, page, pageSize);
 	}
 	
-	public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItem(String ruleId, String startDate, String endDate, int page, int pageSize){
+	public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItems(String ruleId, String startDate, String endDate, int page, int pageSize){
 		String storeId = UtilityService.getStoreId();
 		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
 		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);

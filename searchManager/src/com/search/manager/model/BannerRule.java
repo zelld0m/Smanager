@@ -25,12 +25,16 @@ public class BannerRule extends ModelBean {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 	
-	public BannerRule(String storeId, String ruleName) {
-		this(storeId, null, ruleName, null, null);
+	public BannerRule(String storeId, String ruleId, String ruleName, String createdBy) {
+		this(storeId, ruleId, ruleName, createdBy, null);
 	}
 	
 	public BannerRule(String storeId, String ruleName, String createdBy) {
-		this(storeId, null, ruleName, createdBy, null);
+		this(storeId, null, ruleName, createdBy);
+	}
+
+	public BannerRule(String storeId, String ruleName) {
+		this(storeId, null, ruleName, null, null);
 	}
 
 	public String getStoreId() {

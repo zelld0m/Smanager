@@ -409,7 +409,8 @@ public class DAOConstants {
 	public static final String COLUMN_IMAGE_PATH_ID					= "image_path_id";
 	public static final String COLUMN_IMAGE_PATH					= "image_path";
 	public static final String COLUMN_IMAGE_PATH_TYPE				= "image_path_type";
-	public static final String COLUMN_IMAGE_PATH_ALIAS				= "image_path_alias";
+	public static final String COLUMN_IMAGE_PATH_ALIAS				= "alias";
+	public static final String COLUMN_DISABLED						= "disabled";
 
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";

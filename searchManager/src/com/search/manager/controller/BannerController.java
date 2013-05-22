@@ -26,6 +26,6 @@ public class BannerController {
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model,@PathVariable String store){
 		model.addAttribute("store", store);
 	
-		return "campaign/banner";
+		return "ads/banner";
 	}
 }

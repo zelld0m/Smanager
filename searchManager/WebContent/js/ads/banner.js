@@ -17,6 +17,7 @@
 			
 			init: function(){
 				var self = this;
+				$("#addBannerBtn").show();
 				$("#titleText").text(self.moduleName);
 				self.showRuleList(1);
 			},
@@ -24,6 +25,7 @@
 			setRule: function(rule){
 				var self = this;
 				self.selectedRule = rule;
+				$("#addBannerBtn").show();
 				self.showRuleStatus();
 			},
 
@@ -33,6 +35,7 @@
 				$("#rulePanel").sidepanel({
 					moduleName: self.moduleName,
 					headerText : "Keyword",
+					fieldId: "ruleId",
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
@@ -115,14 +118,55 @@
 					afterRuleStatusRequest: function(ruleStatus){
 						self.afterShowRuleStatus();
 						self.selectedRuleStatus = ruleStatus;
-						self.showBanner();
-						self.showRuleToCampaign();
-						self.deleteRule();
-						self.updateRule();
+						self.getRuleItemList();
 					}
 				});
 			},
-
+			
+			getRuleItemList: function(){
+				var self = this;
+				var rule = self.selectedRule;
+				BannerServiceJS.getRuleItem(rule["ruleId"], 0, 0, {
+					callback: function(sr){
+						var recordSet = sr["data"];
+						self.populateRuleItem(recordSet);
+					},
+					preHook: function(e){
+						
+					},
+					preHook: function(e){
+						
+					}
+				});
+			},
+			
+			populateRuleItem: function(rs){
+				var self = this;
+				var $iHolder = $("#ruleItemHolder");
+				var $iPattern = $iHolder.find("#ruleItemPattern").hide();
+				$iHolder.children().remove(":not(#ruleItemPattern)");
+				
+				for(var i=0; i < rs["totalSize"]; i++){
+					var $ui = $iPattern.clone();
+					var $ruleItem = rs["list"][i]; 
+					self.populateRuleItemFields($ui, $ruleItem);
+					$ui.show();
+					$iHolder.append($ui);
+				}
+			},
+			
+			populateRuleItemFields: function(ui, item){
+				var self = this;
+				ui.prop({
+					id: item["id"]
+				}).find("#imagePath").val(item["imagePath"]["path"]).end()
+				  .find("#alias").val(item["imagePath"]["alias"]).end()
+				  .find("#imageAlt").val(item["imageAlt"]).end()
+				  .find("#linkPath").val(item["linkPath"]).end()
+				  .find("#description").val(item["description"]);
+				//TODO: Event Listener
+			},
+			
 			showBanner: function(){
 				var self = this;
 				var rule = self.selectedRule;
@@ -170,11 +214,6 @@
 				$("#infographic, #ruleStatus, #ruleContent").hide();
 				$("#titleText").text(self.moduleName);
 				$("#titleHeader").empty();
-			},
-			
-			showRule: function(){
-				var self = this;
-				self.showRuleStatus();
 			},
 			
 			afterShowRuleStatus: function(){

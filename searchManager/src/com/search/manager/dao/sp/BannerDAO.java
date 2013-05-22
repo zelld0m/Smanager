@@ -181,6 +181,12 @@ public class BannerDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
 
 		@Override
@@ -192,7 +198,8 @@ public class BannerDAO {
 							new BannerRule(
 									rs.getString(DAOConstants.COLUMN_STORE_ID),
 									rs.getString(DAOConstants.COLUMN_RULE_ID),
-									rs.getString(DAOConstants.COLUMN_RULE_NAME)
+									null,
+									null
 							),
 							rs.getString(DAOConstants.COLUMN_MEMBER_ID),
 							rs.getInt(DAOConstants.COLUMN_PRIORITY),
@@ -207,7 +214,8 @@ public class BannerDAO {
 									rs.getString(DAOConstants.COLUMN_IMAGE_PATH),
 									ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)),
 									rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS)
-							)
+							),
+							rs.getBoolean(DAOConstants.COLUMN_DISABLED)
 					);
 				}
 			}));			
