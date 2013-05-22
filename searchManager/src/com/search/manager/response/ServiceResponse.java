@@ -14,8 +14,6 @@ public class ServiceResponse<T> implements Serializable {
 
     public static final int ERROR = -1;
 
-    public static final int TX_SUCCESS = 1;
-
     private T data;
 
     private int status;
@@ -45,11 +43,6 @@ public class ServiceResponse<T> implements Serializable {
     }
 
     public void success(T data) {
-        status = SUCCESS;
-        this.data = data;
-    }
-    
-    public void success(T data, int status) {
         status = SUCCESS;
         this.data = data;
     }

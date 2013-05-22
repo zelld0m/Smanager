@@ -202,6 +202,7 @@ public class BannerDAO {
 							rs.getString(DAOConstants.COLUMN_LINK_PATH),
 							rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 							new ImagePath(
+									rs.getString(DAOConstants.COLUMN_STORE_ID),
 									rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID),
 									rs.getString(DAOConstants.COLUMN_IMAGE_PATH),
 									ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)),
@@ -261,16 +262,19 @@ public class BannerDAO {
 				public ImagePath mapRow(ResultSet rs, int rowNum) throws SQLException
 				{
 					return new ImagePath(
+							rs.getString(DAOConstants.COLUMN_STORE_ID),
 							rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID),
 							rs.getString(DAOConstants.COLUMN_IMAGE_PATH),
 							ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)),
-							rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS)
+							rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS),
+							rs.getString(DAOConstants.COLUMN_CREATED_BY),
+							rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY)
 					);
 				}
 			}));			
 		}
 	}	
-
+	
 	public int addRule(BannerRule rule) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -278,14 +282,13 @@ public class BannerDAO {
 			String ruleId = rule.getRuleId();
 			
 			if (StringUtils.isBlank(ruleId)) {
-				ruleId = DAOUtils.generateUniqueId();
+				rule.setRuleId(DAOUtils.generateUniqueId());
 			}
 			
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
-			inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
+			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, rule.getCreatedBy());
-			
 			return DAOUtils.getUpdateCount(addRuleSP.execute(inputs));
 		}
 		catch (Exception e) {
@@ -435,7 +438,7 @@ public class BannerDAO {
 		}
 	}
 	
-	public RecordSet<ImagePath> searchRuleItemImagePath(SearchCriteria<ImagePath> criteria) throws DaoException {
+	public RecordSet<ImagePath> searchImagePath(SearchCriteria<ImagePath> criteria) throws DaoException {
 		try {
 			ImagePath model = criteria.getModel();
 			
@@ -454,7 +457,7 @@ public class BannerDAO {
 		}
 	}
 	
-	public int addRuleItemImagePath(ImagePath imagePath) throws DaoException {
+	public int addImagePath(ImagePath imagePath) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			
@@ -477,7 +480,7 @@ public class BannerDAO {
 		}
 	}
 	
-	public int updateRuleItemImagePath(ImagePath imagePath) throws DaoException {
+	public int updateImagePath(ImagePath imagePath) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			

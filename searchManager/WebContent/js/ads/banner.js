@@ -1,6 +1,6 @@
 (function ($) {
 
-	$.BannerPage = {
+	BannerPage = {
 			moduleName: "Banner",
 			rulePage: 1,
 			rulePageSize: 10,
@@ -11,19 +11,23 @@
 			ruleFilterText: "",
 			bannerInfo: null,
 
-			_init: function(){
+			messages: {
+				
+			},
+			
+			init: function(){
 				var self = this;
 				$("#titleText").text(self.moduleName);
-				self._showRuleList(1);
+				self.showRuleList(1);
 			},
 
-			_setRule: function(rule){
+			setRule: function(rule){
 				var self = this;
 				self.selectedRule = rule;
-				self._showRuleStatus();
+				self.showRuleStatus();
 			},
 
-			_showRuleList: function(page){
+			showRuleList: function(page){
 				var self = this;
 
 				$("#rulePanel").sidepanel({
@@ -53,20 +57,20 @@
 					itemOptionCallback: function(base, item){
 						item.ui.find("#itemLinkValue").on({
 							click: function(e){
-								self._setRule(item.model);
+								self.setRule(item.model);
 							}
 						});
 					},
 					
 					itemNameCallback: function(base, item){
-						self._setRule(item.model);
+						self.setRule(item.model);
 					},
 					
 					itemAddCallback: function(base, ruleName){
 						BannerServiceJS.addRule(ruleName, {
 							callback: function(sr){
 								showActionResponse(sr["status"], "add", ruleName);
-								self._showRuleList();
+								self.showRuleList();
 							},
 							postHook: function(e){
 								base.prepareList();
@@ -76,7 +80,7 @@
 				});
 			},
 
-			_showRuleStatus: function(){
+			showRuleStatus: function(){
 				var self = this;
 				
 				$("#ruleStatus").rulestatus({
@@ -91,39 +95,39 @@
 						base.api.destroy();
 						BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
 							callback: function(data){
-								self._setRule(data);
+								self.setRule(data);
 							},
 							preHook: function(){
-								self._beforeShowRuleStatus();	
+								self.beforeShowRuleStatus();	
 							}
 						});
 					},
 					
 					afterSubmitForApprovalRequest:function(ruleStatus){
-						self._showRuleStatus();
+						self.showRuleStatus();
 					},
 					
 					beforeRuleStatusRequest: function(){
-						self._showRuleList();
-						self._beforeShowRuleStatus();	
+						self.showRuleList();
+						self.beforeShowRuleStatus();	
 					},
 					
 					afterRuleStatusRequest: function(ruleStatus){
-						self._afterShowRuleStatus();
+						self.afterShowRuleStatus();
 						self.selectedRuleStatus = ruleStatus;
-						self._showBanner();
-						self._showRuleToCampaign();
-						self._deleteRule();
-						self._updateRule();
+						self.showBanner();
+						self.showRuleToCampaign();
+						self.deleteRule();
+						self.updateRule();
 					}
 				});
 			},
 
-			_showBanner: function(){
+			showBanner: function(){
 				var self = this;
 				var rule = self.selectedRule;
 				
-				self._showImagePreview();
+				self.showImagePreview();
 				
 				$("#editImageLink").uploadimage({
 					isPopup: true,
@@ -133,12 +137,12 @@
 						self.selectedRule["imagePath"] = e.data["imagePath"];
 						self.selectedRule["imageAlt"] = e.data["imageAlt"];
 						self.selectedRule["linkPath"] = e.data["linkPath"];
-						self._showImagePreview();
+						self.showImagePreview();
 					}
 				});
 			},
 			
-			_showImagePreview: function(){
+			showImagePreview: function(){
 				var self = this;
 				var imagePath = self.selectedRule["imagePath"];
 				var $previewHolder = $("div#bannerImage");
@@ -160,7 +164,7 @@
 				$previewHolder.find("span.preloader").hide();
 			},
 			
-			_beforeShowRuleStatus: function(){
+			beforeShowRuleStatus: function(){
 				var self = this;
 				$("#preloader").show();
 				$("#infographic, #ruleStatus, #ruleContent").hide();
@@ -168,12 +172,12 @@
 				$("#titleHeader").empty();
 			},
 			
-			_showRule: function(){
+			showRule: function(){
 				var self = this;
-				self._showRuleStatus();
+				self.showRuleStatus();
 			},
 			
-			_afterShowRuleStatus: function(){
+			afterShowRuleStatus: function(){
 				var self = this;
 				$("#preloader, #infographic").hide();
 				$("#ruleStatus, #ruleContent").show();
@@ -181,7 +185,7 @@
 				$("#titleHeader").text(self.selectedRule["ruleName"]);
 			},
 
-			_deleteRule: function(){
+			deleteRule: function(){
 				var self = this;
 				$("#deleteBtn").off().on({
 					click: function(e){
@@ -204,7 +208,7 @@
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
-			_updateRule: function(){
+			updateRule: function(){
 				var self = this;
 				$("#updateBtn").off().on({
 					click: function(e){
@@ -244,7 +248,7 @@
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
 			
-			_downloadRule: function(){
+			downloadRule: function(){
 				var self = this;
 				
 				$("a#downloadIcon").download({
@@ -273,7 +277,7 @@
 	};
 
 	$(document).ready(function() {
-		$.BannerPage._init();
+		BannerPage.init();
 	});	
 	
 })(jQuery);

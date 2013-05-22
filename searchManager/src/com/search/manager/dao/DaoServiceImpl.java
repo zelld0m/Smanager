@@ -47,6 +47,7 @@ import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.BannerRule;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
@@ -58,6 +59,7 @@ import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.Group;
+import com.search.manager.model.ImagePath;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -1845,12 +1847,58 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public BannerRule getBannerRule(BannerRule rule) throws DaoException {
-		return searchBannerRule(new SearchCriteria<BannerRule>(rule)).getList().get(0);
+		return (BannerRule) CollectionUtils.get(searchBannerRule(new SearchCriteria<BannerRule>(rule)).getList(), 0);
 	}
 
 	@Override
 	public RecordSet<BannerRule> searchBannerRule(
 			SearchCriteria<BannerRule> criteria) throws DaoException {
 		return bannerDAO.searchRule(criteria, null, MatchType.LIKE_NAME);
+	}
+
+	@Override
+	public int addBannerImagePath(ImagePath imagePath)
+			throws DaoException {
+		return bannerDAO.addImagePath(imagePath);
+	}
+
+	@Override
+	public int updateBannerImagePathAlias(ImagePath imagePath)
+			throws DaoException {
+		return bannerDAO.updateImagePath(imagePath);
+	}
+
+	@Override
+	public RecordSet<ImagePath> searchBannerImagePath(SearchCriteria<ImagePath> criteria)
+			throws DaoException {
+		return bannerDAO.searchImagePath(criteria);
+	}
+
+	@Override
+	public ImagePath getBannerImagePath(ImagePath imagePath)
+			throws DaoException {
+		return (ImagePath) CollectionUtils.get(searchBannerImagePath(new SearchCriteria<ImagePath>(imagePath)).getList(), 0);
+	}
+
+	@Override
+	public int addBannerRuleItem(BannerRuleItem ruleItem) throws DaoException {
+		return bannerDAO.addRuleItem(ruleItem);
+	}
+
+	@Override
+	public int updateBannerRuleItem(BannerRuleItem ruleItem) throws DaoException {
+		return bannerDAO.updateRuleItem(ruleItem);
+	}
+
+	@Override
+	public BannerRuleItem getBannerRuleItem(BannerRuleItem ruleItem)
+			throws DaoException {
+		return (BannerRuleItem) CollectionUtils.get(searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(ruleItem)).getList(), 0);
+	}
+
+	@Override
+	public RecordSet<BannerRuleItem> searchBannerRuleItem(
+			SearchCriteria<BannerRuleItem> criteria) throws DaoException {
+		return bannerDAO.searchRuleItem(criteria);
 	}
 }
