@@ -1,0 +1,21 @@
+.plugin-addbanner label.txtLabel {
+     float: left;
+     font-size: 12px;
+     margin-top: 5px;
+     width: 100px;
+}
+
+.plugin-addbanner input[type="text"],
+.plugin-addbanner textarea {
+	margin-top: 5px;
+	width: 240px;
+}
+
+.plugin-addbanner #buttonset {
+     float: right;
+}
+
+.plugin-addbanner input#startDate,
+.plugin-addbanner input#endDate {
+	width: 65px;
+}
