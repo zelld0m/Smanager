@@ -79,6 +79,31 @@ validateComment = function(moduleName, comment, minLength, maxLength){
 	return true;
 };
 
+validateDescription = function(moduleName, desc, minLength, maxLength){
+	if(minLength != undefined && minLength > 0) {
+		if ($.isBlank(desc)) {
+			jAlert("Please add a description.",moduleName);
+			return false;
+		}
+		else if (desc.length < minLength){
+			jAlert("Description should be at least " + minLength + " characters.",moduleName);
+			return false;
+		}
+	}
+	
+	if (maxLength != undefined && $.isNotBlank(desc) && desc.length > maxLength){
+		jAlert("Description cannot exceed " + maxLength + " characters.",moduleName);
+		return false;
+	}
+	
+	if(!isXSSSafe(desc)){
+		jAlert("Invalid description. HTML/XSS is not allowed.",moduleName);
+		return false;
+	}
+	
+	return true;
+};
+
 validateDate = function(fieldName, fieldValue, length, minDate) {
 	if (!validateGeneric(fieldName, fieldValue, length)) {
 		return false;
