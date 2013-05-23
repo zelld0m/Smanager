@@ -247,7 +247,7 @@
 			template += '		<div class="clearB"></div>';
 			template += '		<div class="floatL">';
 			template += '			<label class="txtLabel">Image Alias: </label> ';
-			template += '			<label><input id="imageAlias" type="text" disabled></label>';
+			template += '			<label><input id="imageAlias" type="text"></label>';
 			template += '			<a id="updateButton" class="buttons btnGray clearfix" href="javascript:void(0);" style="display:none">';
 			template += '				<div class="buttons fontBold">Update Alias</div>';
 			template += '			</a>';
