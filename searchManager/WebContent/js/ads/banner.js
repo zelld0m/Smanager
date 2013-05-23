@@ -1,6 +1,6 @@
 (function ($) {
 
-	$.BannerPage = {
+	BannerPage = {
 			moduleName: "Banner",
 			rulePage: 1,
 			rulePageSize: 10,
@@ -11,24 +11,31 @@
 			ruleFilterText: "",
 			bannerInfo: null,
 
-			_init: function(){
+			messages: {
+				
+			},
+			
+			init: function(){
 				var self = this;
+				$("#addBannerBtn").show();
 				$("#titleText").text(self.moduleName);
-				self._showRuleList(1);
+				self.showRuleList(1);
 			},
 
-			_setRule: function(rule){
+			setRule: function(rule){
 				var self = this;
 				self.selectedRule = rule;
-				self._showRuleStatus();
+				$("#addBannerBtn").show();
+				self.showRuleStatus();
 			},
 
-			_showRuleList: function(page){
+			showRuleList: function(page){
 				var self = this;
 
 				$("#rulePanel").sidepanel({
 					moduleName: self.moduleName,
-					headerText : self.moduleName,
+					headerText : "Keyword",
+					fieldId: "ruleId",
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
@@ -38,8 +45,9 @@
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
 
-						BannerServiceJS.getRules(ruleName, page, base.options.pageSize, {
-							callback: function(data){
+						BannerServiceJS.getAllRules(ruleName, page, base.options.pageSize, {
+							callback: function(sr){
+								var data = sr["data"]; 
 								base.populateList(data, ruleName);
 								base.addPaging(ruleName, page, data.totalSize);
 							},
@@ -52,19 +60,30 @@
 					itemOptionCallback: function(base, item){
 						item.ui.find("#itemLinkValue").on({
 							click: function(e){
-								self._setRule(item.model);
+								self.setRule(item.model);
 							}
 						});
 					},
 					
 					itemNameCallback: function(base, item){
-						self._setRule(item.model);
+						self.setRule(item.model);
 					},
-
+					
+					itemAddCallback: function(base, ruleName){
+						BannerServiceJS.addRule(ruleName, {
+							callback: function(sr){
+								showActionResponse(sr["status"], "add", ruleName);
+								self.showRuleList();
+							},
+							postHook: function(e){
+								base.prepareList();
+							}
+						});
+					}
 				});
 			},
 
-			_showRuleStatus: function(){
+			showRuleStatus: function(){
 				var self = this;
 				
 				$("#ruleStatus").rulestatus({
@@ -73,45 +92,86 @@
 					ruleType: "Banner",
 					enableVersion: true,
 					authorizeRuleBackup: allowModify,
-					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
+					authorizeSubmitForApproval: allowModify,
 					
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
 						BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
 							callback: function(data){
-								self._setRule(data);
+								self.setRule(data);
 							},
 							preHook: function(){
-								self._beforeShowRuleStatus();	
+								self.beforeShowRuleStatus();	
 							}
 						});
 					},
 					
 					afterSubmitForApprovalRequest:function(ruleStatus){
-						self._showRuleStatus();
+						self.showRuleStatus();
 					},
 					
 					beforeRuleStatusRequest: function(){
-						self._showRuleList();
-						self._beforeShowRuleStatus();	
+						self.showRuleList();
+						self.beforeShowRuleStatus();	
 					},
 					
 					afterRuleStatusRequest: function(ruleStatus){
-						self._afterShowRuleStatus();
+						self.afterShowRuleStatus();
 						self.selectedRuleStatus = ruleStatus;
-						self._showBanner();
-						self._showRuleToCampaign();
-						self._deleteRule();
-						self._updateRule();
+						self.getRuleItemList();
 					}
 				});
 			},
-
-			_showBanner: function(){
+			
+			getRuleItemList: function(){
+				var self = this;
+				var rule = self.selectedRule;
+				BannerServiceJS.getRuleItem(rule["ruleId"], 0, 0, {
+					callback: function(sr){
+						var recordSet = sr["data"];
+						self.populateRuleItem(recordSet);
+					},
+					preHook: function(e){
+						
+					},
+					preHook: function(e){
+						
+					}
+				});
+			},
+			
+			populateRuleItem: function(rs){
+				var self = this;
+				var $iHolder = $("#ruleItemHolder");
+				var $iPattern = $iHolder.find("#ruleItemPattern").hide();
+				$iHolder.children().remove(":not(#ruleItemPattern)");
+				
+				for(var i=0; i < rs["totalSize"]; i++){
+					var $ui = $iPattern.clone();
+					var $ruleItem = rs["list"][i]; 
+					self.populateRuleItemFields($ui, $ruleItem);
+					$ui.show();
+					$iHolder.append($ui);
+				}
+			},
+			
+			populateRuleItemFields: function(ui, item){
+				var self = this;
+				ui.prop({
+					id: item["id"]
+				}).find("#imagePath").val(item["imagePath"]["path"]).end()
+				  .find("#alias").val(item["imagePath"]["alias"]).end()
+				  .find("#imageAlt").val(item["imageAlt"]).end()
+				  .find("#linkPath").val(item["linkPath"]).end()
+				  .find("#description").val(item["description"]);
+				//TODO: Event Listener
+			},
+			
+			showBanner: function(){
 				var self = this;
 				var rule = self.selectedRule;
 				
-				self._showImagePreview();
+				self.showImagePreview();
 				
 				$("#editImageLink").uploadimage({
 					isPopup: true,
@@ -121,12 +181,12 @@
 						self.selectedRule["imagePath"] = e.data["imagePath"];
 						self.selectedRule["imageAlt"] = e.data["imageAlt"];
 						self.selectedRule["linkPath"] = e.data["linkPath"];
-						self._showImagePreview();
+						self.showImagePreview();
 					}
 				});
 			},
 			
-			_showImagePreview: function(){
+			showImagePreview: function(){
 				var self = this;
 				var imagePath = self.selectedRule["imagePath"];
 				var $previewHolder = $("div#bannerImage");
@@ -148,7 +208,7 @@
 				$previewHolder.find("span.preloader").hide();
 			},
 			
-			_beforeShowRuleStatus: function(){
+			beforeShowRuleStatus: function(){
 				var self = this;
 				$("#preloader").show();
 				$("#infographic, #ruleStatus, #ruleContent").hide();
@@ -156,35 +216,7 @@
 				$("#titleHeader").empty();
 			},
 			
-			_showRule: function(){
-				var self = this;
-				self._showRuleStatus();
-			},
-			
-			_showRuleToCampaign: function(){
-				var self = this;
-				var $bannerRelations = $("#bannerRelations");
-				var $preloader = $bannerRelations.find("#preloader");
-				var $bannerToCampaign = $bannerRelations.find("#bannerToCampaign");
-				
-				BannerServiceJS.searchCampaignUsingThisBanner(self.selectedRule["ruleId"], "", 0, 0, {
-					callback: function(data){
-						$preloader.hide();
-						
-						$bannerToCampaign.selectbox({
-							maxSelectionList: 4,
-							selectedItems: data.list
-						});
-
-					},
-					preHook: function(){ 
-						$preloader.show();
-					}
-				});
-				
-			},
-			
-			_afterShowRuleStatus: function(){
+			afterShowRuleStatus: function(){
 				var self = this;
 				$("#preloader, #infographic").hide();
 				$("#ruleStatus, #ruleContent").show();
@@ -192,7 +224,7 @@
 				$("#titleHeader").text(self.selectedRule["ruleName"]);
 			},
 
-			_deleteRule: function(){
+			deleteRule: function(){
 				var self = this;
 				$("#deleteBtn").off().on({
 					click: function(e){
@@ -215,7 +247,7 @@
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
-			_updateRule: function(){
+			updateRule: function(){
 				var self = this;
 				$("#updateBtn").off().on({
 					click: function(e){
@@ -255,7 +287,7 @@
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
 			
-			_downloadRule: function(){
+			downloadRule: function(){
 				var self = this;
 				
 				$("a#downloadIcon").download({
@@ -284,6 +316,7 @@
 	};
 
 	$(document).ready(function() {
-		$.BannerPage._init();
+		BannerPage.init();
 	});	
+	
 })(jQuery);

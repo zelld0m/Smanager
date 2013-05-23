@@ -16,11 +16,25 @@ public class BannerRule extends ModelBean {
 		super();
 	}
 	
-	public BannerRule(String storeId, String ruleId, String ruleName) {
+	public BannerRule(String storeId, String ruleId, String ruleName, String createdBy, String lastModifiedBy) {
 		super();
 		this.storeId = storeId;
 		this.ruleId = ruleId;
 		this.ruleName = ruleName;
+		this.createdBy = createdBy;
+		this.lastModifiedBy = lastModifiedBy;
+	}
+	
+	public BannerRule(String storeId, String ruleId, String ruleName, String createdBy) {
+		this(storeId, ruleId, ruleName, createdBy, null);
+	}
+	
+	public BannerRule(String storeId, String ruleName, String createdBy) {
+		this(storeId, null, ruleName, createdBy);
+	}
+
+	public BannerRule(String storeId, String ruleName) {
+		this(storeId, null, ruleName, null, null);
 	}
 
 	public String getStoreId() {

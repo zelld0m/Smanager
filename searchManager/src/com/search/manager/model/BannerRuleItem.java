@@ -17,6 +17,7 @@ public class BannerRuleItem extends ModelBean{
 	private String linkPath;
 	private String openNewWindow;
 	private String description;
+	private Boolean disabled;
 	private ImagePath imagePath;
 	
 	public BannerRuleItem() {
@@ -26,7 +27,7 @@ public class BannerRuleItem extends ModelBean{
 	public BannerRuleItem(BannerRule rule, String memberId,
 			int priority, DateTime startDate, DateTime endDate,
 			String imageAlt, String linkPath, String description,
-			ImagePath imagePath) {
+			ImagePath imagePath, Boolean disabled) {
 		super();
 		this.rule = rule;
 		this.memberId = memberId;
@@ -37,13 +38,18 @@ public class BannerRuleItem extends ModelBean{
 		this.linkPath = linkPath;
 		this.description = description;
 		this.imagePath = imagePath;
+		this.disabled = disabled;
 	}
 	
 	public BannerRuleItem(String ruleId, String storeId, String ruleName, String memberId,
 			int priority, DateTime startDate, DateTime endDate,
 			String imageAlt, String linkPath, String description,
-			ImagePath imagePath) {
-		this(new BannerRule(storeId, ruleId, ruleName), memberId, priority, startDate, endDate, imageAlt, linkPath, description, imagePath);
+			ImagePath imagePath, Boolean disabled) {
+		this(new BannerRule(storeId, ruleId, ruleName), memberId, priority, startDate, endDate, imageAlt, linkPath, description, imagePath, disabled);
+	}
+	
+	public BannerRuleItem(String ruleId, String storeId,  DateTime startDate, DateTime endDate){
+		this(ruleId,storeId, null, null, 0, startDate, endDate, null, null, null, null, null);
 	}
 	
 	public BannerRule getRule() {
@@ -124,5 +130,13 @@ public class BannerRuleItem extends ModelBean{
 
 	public void setOpenNewWindow(String openNewWindow) {
 		this.openNewWindow = openNewWindow;
+	}
+
+	public Boolean getDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
 	}
 }
