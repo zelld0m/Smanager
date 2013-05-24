@@ -39,6 +39,10 @@ public class ImagePath extends ModelBean{
 		this(storeId, id, path, pathType, alias, null, null);
 	}
 	
+	public ImagePath(String storeId, String id, String path) {
+		this(storeId, id, path, null, null, null, null);
+	}
+	
 	public ImagePath(String storeId, String path) {
 		this(storeId, null, path, null, null, null, null);
 	}

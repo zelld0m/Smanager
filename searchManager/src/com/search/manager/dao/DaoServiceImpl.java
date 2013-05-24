@@ -1847,7 +1847,13 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public BannerRule getBannerRule(BannerRule rule) throws DaoException {
-		return (BannerRule) CollectionUtils.get(searchBannerRule(new SearchCriteria<BannerRule>(rule)).getList(), 0);
+		List<BannerRule> bannerRuleList = searchBannerRule(new SearchCriteria<BannerRule>(rule)).getList();
+
+		if (CollectionUtils.isNotEmpty(bannerRuleList)){
+			return bannerRuleList.get(0);
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -1877,7 +1883,13 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public ImagePath getBannerImagePath(ImagePath imagePath)
 			throws DaoException {
-		return (ImagePath) CollectionUtils.get(searchBannerImagePath(new SearchCriteria<ImagePath>(imagePath)).getList(), 0);
+		List<ImagePath> imagePathList = searchBannerImagePath(new SearchCriteria<ImagePath>(imagePath)).getList();
+
+		if (CollectionUtils.isNotEmpty(imagePathList)){
+			return imagePathList.get(0);
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -1893,7 +1905,14 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public BannerRuleItem getBannerRuleItem(BannerRuleItem ruleItem)
 			throws DaoException {
-		return (BannerRuleItem) CollectionUtils.get(searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(ruleItem)).getList(), 0);
+		
+		List<BannerRuleItem> bannerRuleItemList = searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(ruleItem)).getList();
+
+		if (CollectionUtils.isNotEmpty(bannerRuleItemList)){
+			return bannerRuleItemList.get(0);
+		}
+		
+		return null;
 	}
 
 	@Override

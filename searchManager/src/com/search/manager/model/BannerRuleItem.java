@@ -4,6 +4,9 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class BannerRuleItem extends ModelBean{
 	private static final long serialVersionUID = -2552014783905379956L;
@@ -45,11 +48,11 @@ public class BannerRuleItem extends ModelBean{
 			int priority, DateTime startDate, DateTime endDate,
 			String imageAlt, String linkPath, String description,
 			ImagePath imagePath, Boolean disabled) {
-		this(new BannerRule(storeId, ruleId, ruleName), memberId, priority, startDate, endDate, imageAlt, linkPath, description, imagePath, disabled);
+		this(new BannerRule(storeId, ruleId, ruleName, null), memberId, priority, startDate, endDate, imageAlt, linkPath, description, imagePath, disabled);
 	}
 	
 	public BannerRuleItem(String ruleId, String storeId,  DateTime startDate, DateTime endDate){
-		this(ruleId,storeId, null, null, 0, startDate, endDate, null, null, null, null, null);
+		this(ruleId, storeId, null, null, 0, startDate, endDate, null, null, null, null, null);
 	}
 	
 	public BannerRule getRule() {
@@ -138,5 +141,21 @@ public class BannerRuleItem extends ModelBean{
 
 	public void setDisabled(Boolean disabled) {
 		this.disabled = disabled;
+	}
+	
+	public String getFormattedStartDate(){
+		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
+	}
+	
+	public String getFormattedStartDateTime(){
+		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedEndDate(){
+		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
+	}
+	
+	public String getFormattedEndDateTime(){
+		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE_TIME);
 	}
 }

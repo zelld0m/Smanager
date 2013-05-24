@@ -1,5 +1,6 @@
 package com.search.manager.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -31,6 +32,7 @@ public class BannerService {
 	private static final Logger logger = Logger.getLogger(BannerService.class);
 
 	private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
+	private static final String MSG_FAILED_ADD_RULE_ITEM = "Failed to add banner rule item %s";
 	private static final String MSG_FAILED_GET_IMAGE = "Failed to retrieve record for %s";
 	private static final String MSG_FAILED_ADD_IMAGE = "Failed to add image link %s : %s";
 	private static final String MSG_FAILED_UPDATE_IMAGE_ALIAS = "Failed to update image alias to %s";
@@ -83,6 +85,47 @@ public class BannerService {
 
 		return serviceResponse;
 	}
+	
+	@RemoteMethod
+	public ServiceResponse<Void> addRuleItem(String ruleId, int priority, String startDate, String endDate, String imageAlt, String linkPath, String description, String imagePathId, String imagePath, String imageAlias){
+		String storeId = UtilityService.getStoreId();
+		String username = UtilityService.getUsername();
+		
+		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
+		BannerRule rule = new BannerRule(storeId, ruleId, null, null);
+		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
+		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
+		
+		ImagePath newImagePath = new ImagePath(storeId, imagePathId, imagePath, null, imageAlias); 
+		
+		if(StringUtils.isBlank(imagePathId)){
+			ServiceResponse<Void> srAddImagePath = addImagePathLink(imagePath, imageAlias);
+			if (srAddImagePath.getStatus() == ServiceResponse.SUCCESS){
+				ServiceResponse<ImagePath> srGetImagePath =  getImagePath(imagePath);
+				newImagePath = srGetImagePath.getData();
+			}
+		}
+		
+		BannerRuleItem ruleItem = new BannerRuleItem(rule, null, priority, startDT, endDT, imageAlt, linkPath, description, newImagePath, false);
+		ruleItem.setCreatedBy(username);
+
+		try {
+			if (daoService.addBannerRuleItem(ruleItem) > 0){
+				serviceResponse.success(null);
+			}else{
+				serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM));
+			}
+		} catch (DaoException e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM), e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM), e);
+		}
+
+		return serviceResponse;
+	}
+	
 	
 	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItem(String ruleId, int page, int pageSize){
@@ -154,7 +197,7 @@ public class BannerService {
 			serviceResponse.error(String.format(MSG_FAILED_GET_IMAGE, imageUrl), e);
 		}
 		
-		return null;
+		return serviceResponse;
 	}
 	
 	@RemoteMethod
