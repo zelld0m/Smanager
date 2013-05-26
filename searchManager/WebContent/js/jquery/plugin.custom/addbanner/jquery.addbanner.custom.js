@@ -146,8 +146,27 @@
 		};
 
 		base.registerEventListener = function(){
-			base.previewImagePathListener();
+			base.addInputFieldListener(base.$el.find("input#imagePath"), base.getImagePath);
+			base.addInputFieldListener(base.$el.find("input#linkPath"), base.validateLinkPath);
 			base.buttonListener();
+		};
+
+		base.validateLinkPath = function(ui, linkPath){
+			//Validate if valid url
+			
+			
+			//Check for 200 response
+			$.ajax({ 
+				type: "GET", 
+				url: linkPath, 
+				async: false,
+				crossDomain: true,
+				statusCode: {
+					200: function() {
+						alert("Valid URL");
+					}
+				}
+			});
 		};
 
 		base.buttonListener = function() {	
@@ -173,7 +192,7 @@
 						} else if($.isBlank(linkPath)) {
 							jAlert("Link path is required.", "Banner");
 						} 
-						
+
 						/*
 						else if($.isBlank(keyword)) {
 							jAlert("Keyword is required.", "Banner");
@@ -213,9 +232,8 @@
 			}, {base: base});
 		};
 
-		base.previewImagePathListener = function() {
-			var $input = base.$el.find("input#imagePath");
-			$input.off().on({
+		base.addInputFieldListener = function(input, callback) {
+			input.off().on({
 				mouseenter: function(e) {
 					if(e.data.locked) {
 						showHoverInfo;
@@ -233,23 +251,25 @@
 				mouseleave: function(e) {
 					if (e.data.locked) return;
 
-					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-						base.getImagePath(e.data.ui, $(e.currentTarget).val());
+					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.sendRequest!=="true") {
+						e.data.sendRequest = "true";
+						callback(e.data.ui, $(e.currentTarget).val());
 					}
 				},
 				focusout: function(e) {
 					if (e.data.locked) return;
 
-					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-						base.getImagePath(e.data.ui, $(e.currentTarget).val());
+					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.sendRequest!=="true") {
+						e.data.sendRequest = "true";
+						callback(e.data.ui, $(e.currentTarget).val());
 					}
 				}
-			}, {ui: base.$el , locked: base.options.isLocked, input: ""});
+			}, {ui: base.$el , locked: base.options.isLocked, input: "", sendRequest: ""});
 		};
 
 		base.getImagePath = function(ui, imagePath) {
 			var $previewHolder = ui.find("#preview");
-			
+
 			BannerServiceJS.getImagePath(imagePath, {
 				callback: function(sr){
 					if (sr!=null && sr["data"]!=null){
@@ -278,15 +298,15 @@
 				}
 			});
 		};
-			
-		
+
+
 		base.previewImage = function(ui, imagePath) {
 			var $previewHolder = ui.find("#preview");
 
 			if($.isBlank(imagePath)) {
 				imagePath = base.options.noPreviewImage;
 			}
-			
+
 			$previewHolder.find("img#imagePreview").attr("src",imagePath).off().on({
 				error:function(){ 
 					$(this).unbind("error").attr("src", base.options.noPreviewImage); 
@@ -385,11 +405,6 @@
 			default:
 				return;
 			}
-		};
-
-		base.validateLinkPath = function() {
-			// TODO
-			return true;
 		};
 
 		// Run initializer
