@@ -85,7 +85,7 @@
 			showRuleStatus: function(){
 				var self = this;
 
-				$("#ruleStatus").rulestatus({
+				$("#ruleStatus").rulestatusbar({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
 					ruleType: "Banner",
@@ -278,7 +278,7 @@
 			
 			showImagePreview: function(ui, item, imagePath){
 				var self = this;
-				var $previewHolder = $("div#bannerImage");
+				var $previewHolder = $("div#preview");
 
 				if($.isBlank(imagePath)){
 					imagePath = self.noPreviewImage;
@@ -305,13 +305,12 @@
 								  .find(".setAliasLink > div").text("Save Alias");
 							}
 							
-							setTimeout(function(){
-								$previewHolder.find("img#imagePreview").prop("src",imagePath).off().on({
-									error:function(){ 
-										$(this).unbind("error").prop("src", self.noPreviewImage); 
-									}
-								});
-							},10);
+							$previewHolder.find("img#imagePreview").prop("src",imagePath).off().on({
+								error:function(){ 
+									$(this).unbind("error").prop("src", self.noPreviewImage); 
+								}
+							});
+							
 						},
 						preHook: function(e){
 							$previewHolder.find("span.preloader").show();

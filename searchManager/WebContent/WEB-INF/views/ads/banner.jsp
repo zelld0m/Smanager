@@ -77,20 +77,20 @@
 						</li>
 					</ul>
 				
-					<div class="preview_container">
+					<div id="preview" class="preview_container">
 						<img id="imagePreview" src="<spring:url value="/images/nopreview.png" />" onerror="this.onerror=null;this.src='<spring:url value="/images/nopreview.png" />';"/>
 					</div>
 				
 					<ul class="banner_info clearfix">
 						<li ><span class="ico_minus ico fLeft"></span><a href="#" class="show_what">Show Less</a></li>
 						<li>
-							<div class="btn_copy_to round_btn fLeft">
-								<span class="btn_wrap"><a href="#">COPY TO</a></span>
+							<div id="copyToBtn" class="btn_copy_to round_btn fLeft">
+								<span class="btn_wrap"><a href="javascript:void();">COPY TO</a></span>
 							</div>							
 						</li>
 						<li class="bRight">
 							<div class="btn_keywords round_btn fLeft">
-								<span class="btn_wrap"><a href="#">KEYWORDS (4)</a></span>
+								<span class="btn_wrap"><a href="javascript:void();">KEYWORDS (4)</a></span>
 							</div>							
 						</li>	
 						<li class="bRight"><div class="ico_history ico"></div></li>
@@ -107,7 +107,7 @@
 						<input type="text" class="w218px" name="imageAlias" id="imageAlias" />
 						
 						<div class="btn_update_alias round_btn fLeft">
-							<span class="btn_wrap"><a href="#">UPDATE ALIAS</a></span>
+							<span class="btn_wrap"><a href="javascript:void();">UPDATE ALIAS</a></span>
 						</div>
 							
 						<label for="imageAlt" class="lbl_imgAlt">Image Alt:</label>
@@ -127,10 +127,10 @@
 							
 							<div class="fRight">
 							<div class="btn_update round_btn fLeft">
-								<span class="btn_wrap"><a href="#">UPDATE</a></span>
+								<span class="btn_wrap"><a href="javascript:void();">UPDATE</a></span>
 							</div>	
 							<div class="btn_delete round_btn fLeft">
-								<span class="btn_wrap"><a href="#">DELETE</a></span>
+								<span class="btn_wrap"><a href="javascript:void();">DELETE</a></span>
 							</div>	
 							</div>
 						</div>
