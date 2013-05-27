@@ -9,10 +9,14 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
+import com.search.manager.model.BannerRule;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetSort;
+import com.search.manager.model.ImagePath;
+import com.search.manager.model.ImagePathType;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRule.RedirectType;
@@ -22,6 +26,7 @@ import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.solr.model.BannerRuleItemSolr;
 import com.search.manager.solr.model.FacetSortRuleSolr;
 import com.search.manager.solr.model.RedirectRuleSolr;
 import com.search.manager.solr.model.RelevancyRuleSolr;
@@ -267,4 +272,49 @@ public class SolrResultUtil {
 
 		return spellRules;
 	}
+
+	public static List<BannerRuleItem> toBannerRuleItem(
+			List<BannerRuleItemSolr> bannerRuleItemsSolr) {
+		List<BannerRuleItem> bannerRuleItems = new ArrayList<BannerRuleItem>();
+
+		for (BannerRuleItemSolr bannerRuleItemSolr : bannerRuleItemsSolr) {
+			BannerRuleItem bannerRuleItem = new BannerRuleItem();
+			BannerRule bannerRule = new BannerRule();
+			ImagePath imagePath = new ImagePath();
+
+			bannerRule.setStoreId(bannerRuleItemSolr.getStore());
+			bannerRule.setRuleId(bannerRuleItemSolr.getRuleId());
+			bannerRule.setRuleName(bannerRuleItemSolr.getRuleName());
+			bannerRuleItem.setRule(bannerRule);
+
+			bannerRuleItemSolr.setMemberId(bannerRuleItemSolr.getMemberId());
+			bannerRuleItemSolr.setPriority(bannerRuleItemSolr.getPriority());
+			bannerRuleItemSolr.setStartDate(bannerRuleItemSolr.getStartDate());
+			bannerRuleItemSolr.setEndDate(bannerRuleItemSolr.getEndDate());
+			bannerRuleItemSolr.setImageAlt(bannerRuleItemSolr.getImageAlt());
+			bannerRuleItemSolr.setLinkPath(bannerRuleItemSolr.getLinkPath());
+			bannerRuleItemSolr.setOpenNewWindow(bannerRuleItemSolr
+					.getOpenNewWindow());
+			bannerRuleItemSolr.setDescription(bannerRuleItemSolr
+					.getDescription());
+			bannerRuleItemSolr.setDisabled(bannerRuleItemSolr.isDisabled());
+
+			imagePath.setId(bannerRuleItemSolr.getImagePathId());
+			imagePath.setPath(bannerRuleItemSolr.getPath());
+			if (bannerRuleItemSolr.getPathType().equals(
+					ImagePathType.IMAGE_LINK.toString())) {
+				imagePath.setPathType(ImagePathType.IMAGE_LINK);
+			} else if (bannerRuleItemSolr.getPathType().equals(
+					ImagePathType.UPLOAD_LINK.toString())) {
+				imagePath.setPathType(ImagePathType.UPLOAD_LINK);
+			}
+			imagePath.setAlias(bannerRuleItemSolr.getAlias());
+			bannerRuleItem.setImagePath(imagePath);
+
+			bannerRuleItems.add(bannerRuleItem);
+		}
+
+		return bannerRuleItems;
+	}
+
 }
