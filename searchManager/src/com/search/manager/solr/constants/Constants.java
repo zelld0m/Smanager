@@ -13,7 +13,7 @@ public class Constants {
 	public enum Rule {
 		DEMOTE("demote"), ELEVATE("elevate"), EXCLUDE("exclude"), FACET_SORT(
 				"facetSort"), REDIRECT("redirect"), RELEVANCY("relevancy"), SPELL(
-				"spell");
+				"spell"), BANNER("banner");
 		private String ruleName;
 
 		Rule(String ruleName) {
@@ -29,7 +29,7 @@ public class Constants {
 		DEMOTE_RULE_CORE("demoterule"), ELEVATE_RULE_CORE("elevaterule"), EXCLUDE_RULE_CORE(
 				"excluderule"), FACET_SORT_RULE_CORE("facetsortrule"), REDIRECT_RULE_CORE(
 				"redirectrule"), RELEVANCY_RULE_CORE("relevancyrule"), SPELL_RULE_CORE(
-				"spellrule");
+				"spellrule"), BANNER_RULE_CORE("bannerrule");
 		private String coreName;
 
 		Core(String coreName) {
