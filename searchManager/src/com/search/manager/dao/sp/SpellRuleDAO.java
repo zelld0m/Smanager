@@ -24,11 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
@@ -110,6 +113,7 @@ public class SpellRuleDAO {
     }
 
     @Transactional
+    @Audit(entity = Entity.spell, operation = Operation.add)
     public int addSpellRules(List<SpellRule> spellRules) throws DaoException {
         int count = 0;
         String username = UtilityService.getUsername();
@@ -144,6 +148,7 @@ public class SpellRuleDAO {
     }
 
     @Transactional
+    @Audit(entity = Entity.spell, operation = Operation.update)
     public int updateSpellRules(List<SpellRule> spellRules, List<SpellRule> deleted) throws DaoException {
         int count = 0;
         String username = UtilityService.getUsername();
@@ -211,6 +216,7 @@ public class SpellRuleDAO {
                 .getStoreSetting(store, "maxSpellSuggestions"), "3"));
     }
 
+    @Audit(entity = Entity.spell, operation = Operation.updateSetting)
     public boolean setMaxSuggest(String store, Integer maxSuggest) {
         return ConfigManager.getInstance().setStoreSetting(store, "maxSpellSuggestions",
                 String.valueOf(maxSuggest));
