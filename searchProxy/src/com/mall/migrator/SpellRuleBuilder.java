@@ -1,18 +1,16 @@
 package com.mall.migrator;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.xml.sax.SAXException;
 
 import com.mall.mail.MailNotifier;
@@ -23,65 +21,33 @@ import com.search.manager.solr.constants.Constants;
 import com.search.manager.solr.util.IndexBuilderUtil;
 import com.search.manager.solr.util.LocalSolrServerRunner;
 import com.search.manager.solr.util.SolrDocUtil;
-import com.search.manager.solr.util.SolrServerFactory;
 import com.search.manager.xml.file.RuleXmlUtil;
 
-public class SpellRuleBuilder implements Runnable {
+public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 
 	private static final Logger logger = Logger
 			.getLogger(SpellRuleBuilder.class);
 
 	private static final String BASE_RULE_DIR = "C:\\home\\solr\\utilities\\rules\\Did You Mean\\";
 	private static final String SPELL_FILE = "spell.xml";
-
-	private static SolrServerFactory solrServerFactory;
-
-	private ApplicationContext context;
-	private LocalSolrServerRunner solrServer;
-	private Properties properties;
 	private RuleXmlUtil ruleXmlUtil;
-	private String storeId;
+	private int fileCount;
+	private int indexCount;
 
-	private String logPath;
-	private String logIndex;
-	private String logErrorIndex;
-	private String mailNotification;
+	@SuppressWarnings("unused")
+	private SpellRuleBuilder() {
+		// do nothing...
+	}
 
-	private int count;
-	private int spellCount;
-
-	SpellRuleBuilder(String storeId, LocalSolrServerRunner solrServer,
-			Properties properties, ApplicationContext context) {
+	public SpellRuleBuilder(String storeId, String core)
+			throws SolrServerException {
 		this.storeId = storeId;
-		this.solrServer = solrServer;
-		this.properties = properties;
-		this.context = context;
+		solrServer = solrServerFactory.getCoreInstance(core);
+		ruleXmlUtil = (RuleXmlUtil) context.getBean("ruleXmlUtil");
 	}
 
 	@Override
 	public void run() {
-		try {
-			logPath = properties.getProperty("logPath");
-			logIndex = properties.getProperty("logIndex");
-			logErrorIndex = properties.getProperty("logErrorIndex");
-			mailNotification = properties.getProperty("mail.notification");
-			PropertyConfigurator.configure("config/log4j.properties");
-			ruleXmlUtil = (RuleXmlUtil) context.getBean("ruleXmlUtil");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-
-		if (storeId == null) {
-			logger.debug("storeId is null");
-			return;
-		}
-
-		if (solrServer == null) {
-			logger.debug("SolrServer is null.");
-			return;
-		}
-
 		try {
 			long timeStart = System.currentTimeMillis();
 
@@ -97,7 +63,7 @@ public class SpellRuleBuilder implements Runnable {
 			if (spellRules != null) {
 				spellRulesXml = spellRules.getSpellRule();
 				if (spellRulesXml != null && spellRulesXml.size() > 0) {
-					count = spellRulesXml.size();
+					fileCount = spellRulesXml.size();
 					solrImport(spellRulesXml, spellRules.getStore());
 				}
 			}
@@ -116,8 +82,8 @@ public class SpellRuleBuilder implements Runnable {
 			info.append("\n Index Time (Min): "
 					+ (elapsedIndexTime / (60 * 1000F)) + " mins.");
 			info.append("\n Total Spell Rule fetched from database/file : "
-					+ count);
-			info.append("\n Total Spell Rule indexed : " + spellCount);
+					+ fileCount);
+			info.append("\n Total Spell Rule indexed : " + indexCount);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
@@ -142,7 +108,7 @@ public class SpellRuleBuilder implements Runnable {
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();
-				spellCount = solrInputDocuments.size();
+				indexCount = solrInputDocuments.size();
 			}
 		} catch (Exception e) {
 			hasError = true;
@@ -168,52 +134,46 @@ public class SpellRuleBuilder implements Runnable {
 
 	public static void main(String[] args) {
 		String storeId;
-		LocalSolrServerRunner solrServer;
-		Properties properties;
-		ApplicationContext context;
-
-		try {
-			FileInputStream inStream = new FileInputStream(
-					"./config/dataImport.properties");
-			properties = new Properties(System.getProperties());
-			properties.load(inStream);
-			PropertyConfigurator.configure("config/log4j.properties");
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e);
-			return;
-		}
 
 		if (args.length > 0) {
 			storeId = args[0];
 		} else {
-			logger.debug("Store is null.");
-			return;
-		}
-
-		context = new FileSystemXmlApplicationContext(
-				"/WebContent/WEB-INF/spring/search-proxy-context.xml");
-
-		solrServerFactory = (SolrServerFactory) context
-				.getBean("solrServerFactory");
-
-		if (solrServerFactory == null) {
-			logger.debug("SolrServerFactory is null.");
+			System.out.println("Store is null.");
 			return;
 		}
 
 		try {
-			solrServer = solrServerFactory
-					.getCoreInstance(Constants.Core.SPELL_RULE_CORE
-							.getCoreName());
 			SpellRuleBuilder spellRuleBuilder = new SpellRuleBuilder(storeId,
-					solrServer, properties, context);
+					Constants.Rule.SPELL.getRuleName());
+
+			System.out.println("----------------------------------------");
+			System.out.println("Store	  : " + storeId);
+			System.out.println("Solr Url  : "
+					+ ((LocalSolrServerRunner) context
+							.getBean("localSolrServerRunner")).getSolrUrl());
+			System.out.println("Database  : "
+					+ ((BasicDataSource) context.getBean("dataSource_solr"))
+							.getUrl());
+			System.out.println("----------------------------------------");
+			String response = "";
+			Scanner input = new Scanner(System.in);
+
+			System.out.print("Are you sure you want to continue? (Y/N) : ");
+			response = input.next();
+
+			if (!response.toUpperCase().startsWith("Y")) {
+				solrServerFactory.shutdown();
+				return;
+			}
+
 			spellRuleBuilder.run();
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
-			solrServerFactory.shutdown();
+			if (solrServerFactory != null) {
+				solrServerFactory.shutdown();
+			}
 		}
 	}
-	
+
 }

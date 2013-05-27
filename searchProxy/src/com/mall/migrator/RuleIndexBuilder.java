@@ -1,19 +1,16 @@
 package com.mall.migrator;
 
-import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import com.mall.mail.MailNotifier;
-import com.search.manager.dao.DaoService;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -26,72 +23,46 @@ import com.search.manager.solr.util.LocalSolrServerRunner;
 import com.search.manager.solr.util.SolrDocUtil;
 import com.search.manager.solr.util.SolrServerFactory;
 
-public class RuleIndexBuilder implements Runnable {
+public class RuleIndexBuilder extends BaseRuleBuilder implements Runnable {
 
 	private static final Logger logger = Logger
 			.getLogger(RuleIndexBuilder.class);
 
-	private static SolrServerFactory solrServerFactory;
-
-	private ApplicationContext context;
-	private LocalSolrServerRunner solrServer;
-	private Properties properties;
-	private DaoService daoService;
-	private String storeId;
 	private String rule;
-
-	private String logPath;
-	private String logIndex;
-	private String logErrorIndex;
-	private String mailNotification;
-
-	private final int MAX_IMPORT_DOC = 1000;
 	private int dbCount;
 	private int docCount;
 
-	RuleIndexBuilder(String storeId, LocalSolrServerRunner solrServer,
-			Properties properties, ApplicationContext context, String rule) {
+	@SuppressWarnings("unused")
+	private RuleIndexBuilder() {
+		// do nothing...
+	}
+
+	public RuleIndexBuilder(String storeId, String core, String rule)
+			throws SolrServerException {
 		this.storeId = storeId;
-		this.solrServer = solrServer;
-		this.properties = properties;
-		this.context = context;
 		this.rule = rule;
+		solrServer = solrServerFactory.getCoreInstance(core);
+	}
+
+	public RuleIndexBuilder(ApplicationContext context,
+			SolrServerFactory solrServerFactory, Properties properties,
+			String store, String core) {
+		super(context, solrServerFactory, properties, store, core);
+
+		if (core.equals(Constants.Core.DEMOTE_RULE_CORE.getCoreName())) {
+			this.rule = Constants.Rule.DEMOTE.getRuleName();
+		} else if (core.equals(Constants.Core.ELEVATE_RULE_CORE.getCoreName())) {
+			this.rule = Constants.Rule.ELEVATE.getRuleName();
+		} else if (core.equals(Constants.Core.EXCLUDE_RULE_CORE.getCoreName())) {
+			this.rule = Constants.Rule.EXCLUDE.getRuleName();
+		}
 	}
 
 	@Override
 	public void run() {
 		try {
-			dbCount = 0;
-			docCount = 0;
-			logPath = properties.getProperty("logPath");
-			logIndex = properties.getProperty("logIndex");
-			logErrorIndex = properties.getProperty("logErrorIndex");
-			mailNotification = properties.getProperty("mail.notification");
-			PropertyConfigurator.configure("config/log4j.properties");
-			daoService = (DaoService) context.getBean("daoService");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-
-		if (storeId == null) {
-			logger.debug("storeId is null.");
-			return;
-		}
-
-		if (daoService == null) {
-			logger.debug("daoService is null.");
-			return;
-		}
-
-		if (solrServer == null) {
-			logger.debug("SolrServer is null.");
-			return;
-		}
-
-		try {
-			long timeStart = System.currentTimeMillis();
 			StoreKeyword storeKeyword = new StoreKeyword(storeId, null);
+			long timeStart = System.currentTimeMillis();
 			int page = 1;
 
 			if (rule.equals(Constants.Rule.DEMOTE.getRuleName())) {
@@ -99,12 +70,11 @@ public class RuleIndexBuilder implements Runnable {
 				demoteFilter.setStoreKeyword(storeKeyword);
 				while (true) {
 					SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(
-							demoteFilter, null, null, page, MAX_IMPORT_DOC);
+							demoteFilter, page, MAX_IMPORT_DOC);
 					RecordSet<DemoteResult> recordSet = daoService
 							.getDemoteResultListNew(criteria);
 					if (recordSet != null && recordSet.getTotalSize() > 0) {
 						List<DemoteResult> demoteResults = recordSet.getList();
-
 						solrImportDemote(demoteResults);
 						if (demoteResults.size() < MAX_IMPORT_DOC) {
 							solrServer.optimize();
@@ -112,6 +82,9 @@ public class RuleIndexBuilder implements Runnable {
 						}
 						page++;
 					} else {
+						if (page != 1) {
+							solrServer.optimize();
+						}
 						break;
 					}
 				}
@@ -133,6 +106,9 @@ public class RuleIndexBuilder implements Runnable {
 						}
 						page++;
 					} else {
+						if (page != 1) {
+							solrServer.optimize();
+						}
 						break;
 					}
 				}
@@ -154,6 +130,9 @@ public class RuleIndexBuilder implements Runnable {
 						}
 						page++;
 					} else {
+						if (page != 1) {
+							solrServer.optimize();
+						}
 						break;
 					}
 				}
@@ -255,8 +234,7 @@ public class RuleIndexBuilder implements Runnable {
 			docCount += solrInputDocuments.size();
 		} catch (Exception e) {
 			hasError = true;
-			e.printStackTrace();
-			logger.error(e);
+			logger.error("Error in solrImportExclude() : " + e, e);
 		}
 
 		if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
@@ -277,47 +255,36 @@ public class RuleIndexBuilder implements Runnable {
 	public static void main(String[] args) {
 		String storeId;
 		String ruleType;
-		LocalSolrServerRunner solrServer;
-		Properties properties;
-		ApplicationContext context;
-
-		try {
-			FileInputStream inStream = new FileInputStream(
-					"./config/dataImport.properties");
-			properties = new Properties(System.getProperties());
-			properties.load(inStream);
-			PropertyConfigurator.configure("config/log4j.properties");
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e);
-			return;
-		}
 
 		if (args.length > 0) {
 			storeId = args[0];
 		} else {
-			logger.debug("Store is null.");
+			System.out.println("Store is null.");
 			return;
 		}
 		if (args.length > 1) {
 			ruleType = args[1];
 		} else {
-			logger.debug("Rule Type not specified.");
-			return;
-		}
-
-		context = new FileSystemXmlApplicationContext(
-				"/WebContent/WEB-INF/spring/search-proxy-context.xml");
-
-		solrServerFactory = (SolrServerFactory) context
-				.getBean("solrServerFactory");
-
-		if (solrServerFactory == null) {
-			logger.debug("SolrServerFactory is null.");
+			System.out.println("Rule Type not specified.");
 			return;
 		}
 
 		try {
+			RuleIndexBuilder indexBuilder = null;
+			if (ruleType.equals(Constants.Rule.DEMOTE.getRuleName())) {
+				indexBuilder = new RuleIndexBuilder(storeId,
+						Constants.Core.DEMOTE_RULE_CORE.getCoreName(),
+						Constants.Rule.DEMOTE.getRuleName());
+			} else if (ruleType.equals(Constants.Rule.ELEVATE.getRuleName())) {
+				indexBuilder = new RuleIndexBuilder(storeId,
+						Constants.Core.ELEVATE_RULE_CORE.getCoreName(),
+						Constants.Rule.ELEVATE.getRuleName());
+			} else if (ruleType.equals(Constants.Rule.EXCLUDE.getRuleName())) {
+				indexBuilder = new RuleIndexBuilder(storeId,
+						Constants.Core.EXCLUDE_RULE_CORE.getCoreName(),
+						Constants.Rule.EXCLUDE.getRuleName());
+			}
+
 			System.out.println("----------------------------------------");
 			System.out.println("Store	  : " + storeId);
 			System.out.println("Rule type : " + ruleType);
@@ -339,35 +306,15 @@ public class RuleIndexBuilder implements Runnable {
 				return;
 			}
 
-			if (ruleType.equals(Constants.Rule.DEMOTE.getRuleName())) {
-				solrServer = solrServerFactory
-						.getCoreInstance(Constants.Core.DEMOTE_RULE_CORE
-								.getCoreName());
-				RuleIndexBuilder demoteIndexBuilder = new RuleIndexBuilder(
-						storeId, solrServer, properties, context,
-						Constants.Rule.DEMOTE.getRuleName());
-				demoteIndexBuilder.run();
-			} else if (ruleType.equals(Constants.Rule.ELEVATE.getRuleName())) {
-				solrServer = solrServerFactory
-						.getCoreInstance(Constants.Core.ELEVATE_RULE_CORE
-								.getCoreName());
-				RuleIndexBuilder elevateIndexBuilder = new RuleIndexBuilder(
-						storeId, solrServer, properties, context,
-						Constants.Rule.ELEVATE.getRuleName());
-				elevateIndexBuilder.run();
-			} else if (ruleType.equals(Constants.Rule.EXCLUDE.getRuleName())) {
-				solrServer = solrServerFactory
-						.getCoreInstance(Constants.Core.EXCLUDE_RULE_CORE
-								.getCoreName());
-				RuleIndexBuilder excludeIndexBuilder = new RuleIndexBuilder(
-						storeId, solrServer, properties, context,
-						Constants.Rule.EXCLUDE.getRuleName());
-				excludeIndexBuilder.run();
+			if (indexBuilder != null) {
+				indexBuilder.run();
 			}
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
-			solrServerFactory.shutdown();
+			if (solrServerFactory != null) {
+				solrServerFactory.shutdown();
+			}
 		}
 	}
 

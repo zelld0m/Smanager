@@ -50,34 +50,36 @@ public class BannerRuleBuilder extends BaseRuleBuilder implements Runnable {
 	@Override
 	public void run() {
 		try {
-			long timeStart = System.currentTimeMillis();
-
 			BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
 			BannerRule bannerRule = new BannerRule();
 			bannerRule.setStoreId(storeId);
 			bannerRuleItemFilter.setRule(bannerRule);
-
-			long indexTime = System.currentTimeMillis();
+			long timeStart = System.currentTimeMillis();
+			long indexTime = 0;
 			int page = 1;
 
 			while (true) {
 				SearchCriteria<BannerRuleItem> searchCriteria = new SearchCriteria<BannerRuleItem>(
 						bannerRuleItemFilter, page, MAX_IMPORT_DOC);
-
 				RecordSet<BannerRuleItem> recordSet = daoService
 						.searchBannerRuleItem(searchCriteria);
-				if (recordSet != null) {
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
 					List<BannerRuleItem> bannerRuleItems = recordSet.getList();
 					logger.info("Indexing Page: [" + page + "] Size: ["
 							+ bannerRuleItems.size() + "]");
 					dbCount += bannerRuleItems.size();
 					solrImport(bannerRuleItems);
 					if (bannerRuleItems.size() < MAX_IMPORT_DOC) {
+						indexTime = System.currentTimeMillis();
 						solrServer.optimize();
 						break;
 					}
 					page++;
 				} else {
+					if (page != 1) {
+						indexTime = System.currentTimeMillis();
+						solrServer.optimize();
+					}
 					break;
 				}
 			}
