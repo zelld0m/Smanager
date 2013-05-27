@@ -18,46 +18,31 @@
 				preHook: function(){
 					base.options.beforeRuleStatusRequest();
 				},
+
 				callback:function(ruleStatus){
-					base.options.ruleStatus=ruleStatus;
+					base.options.ruleStatus = ruleStatus;
 					base.$el.html(base.getTemplate());
-					base.$el.find("span#status,span#statusMode,span#statusDate").empty();
 
 					if(ruleStatus!=null){
-						ruleId = ruleStatus["ruleStatusId"];
-						if (ruleId == null) {
-							ruleId = "";
-						}
-
-						base.$el.find("#submitForApprovalTemplate").show();
-						
 						if($.isNotBlank(ruleStatus["approvalStatus"])){
-							base.$el.find("div#statusHolder").show();
-							base.$el.find("span#status").empty().append(getRuleNameSubTextStatus(ruleStatus));
+							base.$el.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
 						}
 
 						if($.isNotBlank(ruleStatus["formattedLastPublishedDateTime"])){
-
-							base.$el.find("div#publishHolder").show();
-							base.$el.find("span#statusDate").empty().append(ruleStatus["formattedLastPublishedDateTime"]);
+							base.$el.find("#publishedDate").text(ruleStatus["formattedLastPublishedDateTime"]);
 						}
 
-						base.$el.find("a#submitForApprovalBtn").show();
 						if(ruleStatus["locked"]){
-							base.$el.find("span#statusMode").append("[ Read-Only ]");
-							base.$el.find("a#submitForApprovalBtn").parent().remove();
+							base.$el.find("#statusMode").text("[ Read-Only ]");
+							base.$el.find("#submitForApprovalBtn").parent().remove();
 						}
-						
-						base.$el.find("div#versionHolder").show();
 
-						base.$el.find("div#versionHolder").show();
-						if(base.options.ruleStatus!=null && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
-							base.$el.find("div#commentHolder").show();
-							base.$el.find("div#commentHolder span#commentIcon").off().on({
-								click:function(e){
-									$(this).comment({
-										title: "Rule Comment",
-										itemDataCallback: function(plugin, page){
+						base.$el.find("#commentBtn").off().on({
+							click:function(e){
+								$(this).comment({
+									title: "Rule Comment",
+									itemDataCallback: function(plugin, page){
+										if(base.options.ruleStatus && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
 											CommentServiceJS.getComment("Rule Status", base.options.ruleStatus["ruleStatusId"], plugin.options.page, plugin.options.pageSize, {
 												callback: function(data){
 													var total = data.totalSize;
@@ -69,12 +54,10 @@
 												}
 											});
 										}
-									});
-								}
-							});
-						}else{
-							base.$el.find("div#commentHolder").hide();
-						}
+									}
+								});
+							}
+						});
 					}
 
 					base.addSubmitForApprovalListener();
@@ -141,7 +124,7 @@
 										}
 									}
 								});
-								
+
 							}
 						});
 					}
@@ -179,30 +162,42 @@
 
 			template += '<div class="plugin-rulestatusbar">';
 			template += '	<ul class="page_info clearfix">';
-			template += '		<li class="fLeft fBold">Status: <span class="cRed">Action Required</span></li>';
-			
+			template += '		<li class="fLeft fBold">';
+			template += '			<span id="status" class="cRed">Action Required</span>';
+			template += '			<span id="statusMode" class="cOrange"></span>';
+			template += '		</li>';
+
 			if(base.options.authorizeSubmitForApproval){
 				template += '		<li class="fLeft bRight">';
-				template += '			<a id="submitForApproval" class="btn_submit_approval btn" href="#">Submit for Approval</a>';
+				template += '			<div id="submitForApprovalBtn" class="btn_submit_approval btn">';
+				template += '				<span class="btn_wrap"><a href="javascript:void(0);">Submit for Approval</a></span>';
+				template += '			<div/>';
 				template += '		</li>';
 			}
 
 			if(base.options.enableVersion){
 				if(base.options.authorizeRuleBackup){
 					template += '		<li class="fLeft bRight">';
-					template += '			<a id="backupBtn" class="btn_backup_now btn" href="#">Backup now</a>';
+					template += '			<div id="backupBtn" class="btn_backup_now btn">';
+					template += '				<span class="btn_wrap"><a href="javascript:void(0);">Backup now</a></span>';
+					template += '			<div/>';
 					template += '		</li>';
 					template += '		<li  class="fLeft bRight">';
 					template += '			<div id="downloadVersionIcon" class="ico_download ico"></div>';
 					template += '		</li>';	
 				}
 			}	
-			
-			template += '		<li  class="fLeft bRight"><div class="ico_comments ico"></div></li>';	
-			template += '		<li  class="fRight"><span class="fbold">Published</span>: Mon, Mar 28, 2013 8:30 AM</li>';		
+
+			template += '		<li class="fLeft bRight">';
+			template += '			<div id="commentBtn" class="ico_comments ico"></div>';
+			template += '		</li>';	
+			template += '		<li class="fRight">';
+			template += '			<span class="fbold">Published</span>:';
+			template += '			<span id="publishedDate">No Published Date Yet</span>';
+			template += '		</li>';		
 			template += '	</ul>';
 			template += '</div>';
-			
+
 			return $(template);
 		};
 
