@@ -69,8 +69,8 @@
 			if(base.options.ruleItem != null) {
 				var ruleItem = base.options.ruleItem;
 
-				base.$el.find('input#startDate').val(ruleItem['startDate']).end()
-				.find('input#endDate').val(ruleItem['endDate']).end()
+				base.$el.find('input#startDate').val(ruleItem['formattedStartDate']).end()
+				.find('input#endDate').val(ruleItem['formattedEndDate']).end()
 				.find('input#imagePath').val(ruleItem['imagePath']['path']).end()
 				.find('input#imageAlias').val(ruleItem['imagePath']['alias']).end()
 				.find('input#imageAlt').val(ruleItem['imageAlt']).end()
@@ -87,54 +87,36 @@
 							readonly: true,
 							disabled: true
 						});
-
-						//TODO:
-						if(ruleItem['startDate'] && new Date(ruleItem['startDate']).getTime() < new Date().getTime() ) {
-							var date = new Date();
-							var day = date.getDate();
-							var month = date.getMonth()+1;
-							var year = date.getFullYear();
-							if(day<10){day='0'+day;}
-							if(month<10){month='0'+month;}
-							base.$el.find('input#startDate').val(month+'/'+day+'/'+year);
-						}
-						if(ruleItem['endDate'] && new Date(ruleItem['endDate']).getTime() < new Date().getTime() ) {
-							var date = new Date();
-							var day = date.getDate();
-							var month = date.getMonth()+1;
-							var year = date.getFullYear();
-							if(day<10) {day='0'+day;}
-							if(month<10){month='0'+month;}
-							base.$el.find('input#endDate').val(month+'/'+day+'/'+year);
-						}
 						break;
 					case 'add': 
 						break;
 					};
 				}
 			}
-
-			// Select a date range
+			
+			// Select a date range , TODO: must be timezone aware
 			base.$el
-			.find("#startDate").prop({ id: "startDate" + base.options.rule["ruleId"]}).datepicker({
-				defaultDate: "+1w",
+			.find("#startDate").prop({ id: "startDate_" + base.options.rule["ruleId"]}).datepicker({
+				minDate: currentDate,
+				defaultDate: currentDate,
 				changeMonth: true,
 				changeYear: true,
 				showOn: "both",
 				buttonImage: "../images/icon_calendar.png",
 				onClose: function(selectedDate) {
-					base.$el.find("#endDate" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
+					base.$el.find("#endDate_" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
 				}
 			}).end()
 
-			.find("#endDate").prop({ id: "endDate" + base.options.rule["ruleId"]}).datepicker({
-				defaultDate: "+1w",
+			.find("#endDate").prop({ id: "endDate_" + base.options.rule["ruleId"]}).datepicker({
+				minDate: currentDate,
+				defaultDate: currentDate,
 				changeMonth: true,
 				changeYear: true,
 				showOn: "both",
 				buttonImage: "../images/icon_calendar.png",
 				onClose: function(selectedDate) {
-					base.$el.find("#startDate" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
+					base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
 				}
 			});
 
@@ -361,11 +343,14 @@
 			template += '			<label><textarea id="description"></textarea></label>';
 			template += '		</div>';
 			template += '		<div class="clearB"></div>';
-//			template += '		<div class="floatL">';
-//			template += '			<label class="txtLabel">Keyword: </label> ';
-//			template += '			<label><textarea id="keyword"></textarea></label>';
-//			template += '		</div>';
-//			template += '		<div class="clearB"></div>';
+			
+			if(base.options.mode && base.options.mode.toLowerCase() == 'copy') {
+				template += '		<div class="floatL">';
+				template += '			<label class="txtLabel">Keyword: </label> ';
+				template += '			<label><textarea id="keyword"></textarea></label>';
+				template += '		</div>';
+				template += '		<div class="clearB"></div>';
+			}
 
 			if (!base.options.isLocked) {
 				var type = 'Add';

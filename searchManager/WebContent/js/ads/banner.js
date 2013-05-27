@@ -25,7 +25,6 @@
 			setRule: function(rule){
 				var self = this;
 				self.selectedRule = rule;
-				$("#addBannerBtn").show();
 				self.showRuleStatus();
 			},
 
@@ -118,11 +117,16 @@
 					afterRuleStatusRequest: function(ruleStatus){
 						self.afterShowRuleStatus();
 						self.selectedRuleStatus = ruleStatus;
+						if(self.selectedRuleStatus["locked"] || !allowModify){
+							$("#addBannerBtn").hide();
+						}else{
+							$("#addBannerBtn").show();
+						}
 						self.getRuleItemList();
 					}
 				});
 			},
-
+			
 			getRuleItemList: function(){
 				var self = this;
 				var rule = self.selectedRule;
@@ -138,9 +142,28 @@
 						
 					},
 					postHook: function(e){
-						self.addRuleItemHandler();
+						self.adjustPageToRuleStatus(self.selectedRuleStatus["locked"] || !allowModify);
 					}
 				});
+			},
+			
+			adjustPageToRuleStatus: function(locked){
+				var self = this;
+				
+				if(locked){
+					$("#addBannerBtn").hide();
+					$("input, textarea").prop({
+						readonly: true,
+						disabled: true
+					});
+				}else{
+					$("#addBannerBtn").show();
+					$("input, textarea").prop({
+						readonly: false,
+						disabled: false
+					});
+					self.addRuleItemHandler();
+				}
 			},
 
 			populateRuleItem: function(rs){
@@ -176,28 +199,31 @@
 				.find("#description").val(item["description"]).end()
 
 				// Select a date range, datepicker issue on multiple id even with scoping
-				.find("#startDate").prop({id: "startDate" + item["memberId"]}).datepicker({
+				.find("#startDate").prop({id: "startDate_" + item["memberId"]}).datepicker({
 					defaultDate: "+1w",
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
 					buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 					onClose: function(selectedDate) {
-						ui.find("#endDate" + item["memberId"]).datepicker("option", "minDate", selectedDate);
+						ui.find("#endDate_" + item["memberId"]).datepicker("option", "minDate", selectedDate);
 					}
 				}).end()
 
-				.find("#endDate").prop({id: "endDate" + item["memberId"]}).datepicker({
+				.find("#endDate").prop({id: "endDate_" + item["memberId"]}).datepicker({
 					defaultDate: "+1w",
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
 					buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 					onClose: function(selectedDate) {
-						ui.find("#startDate" + item["memberId"]).datepicker("option", "maxDate", selectedDate);
+						ui.find("#startDate_" + item["memberId"]).datepicker("option", "maxDate", selectedDate);
 					}
 				});
-			   
+				
+				// Disable when rule is locked
+				ui.find(".startDate, .endDate").datepicker(self.selectedRuleStatus["locked"] || !allowModify ? 'disable' : 'enable');
+				
 				self.registerEventListener(ui, item);
 			},
 
@@ -245,7 +271,7 @@
 							self.showImagePreview(e.data.ui, e.data.item, $(e.currentTarget).val());
 						}
 					}
-				}, {ui: ui , item: item, locked: self.selectedRuleStatus["isLocked"] || !allowModify, input: ""});
+				}, {ui: ui , item: item, locked: self.selectedRuleStatus["locked"] || !allowModify, input: ""});
 				
 			},
 			
