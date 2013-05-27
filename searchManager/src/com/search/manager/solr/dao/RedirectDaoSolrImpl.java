@@ -189,34 +189,45 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 	public boolean loadRedirectRules(Store store) throws DaoException {
 
 		try {
-			List<RedirectRule> redirectRules = null;
 			RedirectRule redirectRuleFilter = new RedirectRule();
 			redirectRuleFilter.setStoreId(store.getStoreId());
 			redirectRuleFilter.setRuleName(""); // ALL
-			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(
-					redirectRuleFilter, null, null, 0, 0);
+			int page = 1;
 
-			RecordSet<RedirectRule> recordSet = daoService.searchRedirectRule(
-					criteria, MatchType.LIKE_NAME);
+			while (true) {
+				SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(
+						redirectRuleFilter, page, MAX_ROWS);
+				RecordSet<RedirectRule> recordSet = daoService
+						.searchRedirectRule(criteria, MatchType.LIKE_NAME);
 
-			if (recordSet != null && recordSet.getTotalSize() > 0) {
-				redirectRules = recordSet.getList();
-
-				List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-						.composeSolrDocsRedirectRule(redirectRules);
-
-				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<RedirectRule> redirectRules = recordSet.getList();
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocsRedirectRule(redirectRules);
 					solrServers.getCoreInstance(
 							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-					solrServers.getCoreInstance(
-							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
-							.softCommit();
-					return true;
+					if (redirectRules.size() < MAX_ROWS) {
+						solrServers
+								.getCoreInstance(
+										Constants.Core.REDIRECT_RULE_CORE
+												.getCoreName()).softCommit();
+						return true;
+					}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers
+								.getCoreInstance(
+										Constants.Core.REDIRECT_RULE_CORE
+												.getCoreName()).softCommit();
+						return true;
+					}
+					break;
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Failed to load redirect rules by store", e);
+			logger.error("Failed to load redirect rules by store." + e, e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -524,7 +535,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error("Failed to delete redirect rules by ruleIds", e);
+			logger.error("Failed to update redirect rule. " + e.getMessage(), e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -538,7 +549,8 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					.getCoreInstance(Constants.Core.REDIRECT_RULE_CORE
 							.getCoreName()));
 		} catch (SolrServerException e) {
-			logger.error("Failed to commit redirect rules", e);
+			logger.error("Failed to commit redirect rules. " + e.getMessage(),
+					e);
 			return false;
 		}
 	}
