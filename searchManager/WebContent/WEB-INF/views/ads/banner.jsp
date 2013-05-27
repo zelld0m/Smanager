@@ -52,18 +52,22 @@
 				<div id="ruleItemPattern" class="ruleItem" style="display:none">
 					 <div id="bannerHeader">	
 					 	<div class="floatL">
-					 		<span>
-					 			<label>Priority</label>
-					 			<input type="text">
-					 		</span>
-							<span>Banner Alias Here</span>
+					 		<span id="itemName">Banner Alias Here</span>
 					 	</div>
 					 	<div class="floatL">
 					 		<span>
-					 			<label>Schedule</label>
-					 			<input class="startDate" type="text">
-					 			<input class="endDate" type="text">
+					 			<label>Priority</label>
+					 			<input id="priority" type="text">
 					 		</span>
+					 	</div>
+					 	<div class="floatL">
+							<span>
+								<label>Duration</label>
+								<label id="duration"></label>
+							</span>
+					 		<label>Schedule</label>
+					 		<label><input id="startDate" class="startDate" type="text"/></label>
+					 		<label><input id="endDate" class="endDate" type="text"/></label>
 					 	</div>
 					 </div>
 					 
@@ -76,7 +80,16 @@
 					 
 					 <div id="bannerInfo" class="marB10 floatL txtAC" style="width:98%">
 					 	<div id="bannerInfoHeader" class="marB10 floatL txtAC" style="width:98%">
-					 
+							<div id="showKeywordBtn" class="floatR padT10 padL10">	        	
+								<a id="showKeywordLink" href="javascript:void(0);" class="buttons btnGray clearfix">
+									<div class="buttons fontBold">Keyword</div>
+								</a>
+							</div>
+					 		<div id="copyToBtn" class="floatR padT10 padL10">	        	
+								<a id="copyToLink" href="javascript:void(0);" class="buttons btnGray clearfix">
+									<div class="buttons fontBold">Copy To</div>
+								</a>
+							</div>
 					 	</div>	
 					  	<div id="bannerInfoContent" class="marB10 floatL txtAC" style="width:98%">
 					 		<div>
@@ -86,11 +99,16 @@
 					 		<div>
 						 		<div class="clearfix">
 						 			<span><label for="alias">Image Alias:</label></span>
-						 			<span><input id="alias" type="text" readonly="readonly" disabled="disabled"></span>
+						 			<span><input id="alias" class="alias" type="text" readonly="readonly" disabled="disabled"></span>
 						 			<span>
-							 			<div id="updateAliasBtn" class="floatR padT10 padL10">	        	
-											<a id="updateAlias" href="javascript:void(0);" class="buttons btnGray clearfix">
-												<div class="buttons fontBold">Update Alias</div>
+										<div id="cancelAliasBtn" class="floatR padT10 padL10" style="display: none">	        	
+											<a id="cancelAliasLink" href="javascript:void(0);" class="buttons btnGray clearfix">
+												<div class="buttons fontBold">Cancel</div>
+											</a>
+										</div>
+							 			<div id="setAliasBtn" class="floatR padT10 padL10">	        	
+											<a id="setAliasLink" href="javascript:void(0);" class="buttons btnGray clearfix">
+												<div class="buttons fontBold">Set Alias</div>
 											</a>
 										</div>
 						 			</span>

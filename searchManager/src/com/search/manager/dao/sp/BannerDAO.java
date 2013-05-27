@@ -198,7 +198,7 @@ public class BannerDAO {
 							new BannerRule(
 									rs.getString(DAOConstants.COLUMN_STORE_ID),
 									rs.getString(DAOConstants.COLUMN_RULE_ID),
-									null,
+									rs.getString(DAOConstants.COLUMN_RULE_NAME),
 									null
 							),
 							rs.getString(DAOConstants.COLUMN_MEMBER_ID),
@@ -232,7 +232,9 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_TYPE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
 
@@ -258,7 +260,8 @@ public class BannerDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_TYPE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
@@ -353,13 +356,13 @@ public class BannerDAO {
 			BannerRule rule = ruleItem.getRule();
 			String memberId = ruleItem.getMemberId();
 			
-			if (StringUtils.isNotBlank(memberId)) {
-				memberId = DAOUtils.generateUniqueId();
+			if (StringUtils.isBlank(memberId)) {
+				ruleItem.setMemberId(DAOUtils.generateUniqueId());
 			}
 			
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
-			inputs.put(DAOConstants.PARAM_MEMBER_ID, memberId);
+			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
 			inputs.put(DAOConstants.PARAM_PRIORITY, ruleItem.getPriority());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
@@ -455,6 +458,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, model.getId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH, model.getPath());
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_TYPE, model.getPathType());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, model.getAlias());
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getStartRow());
@@ -471,7 +475,7 @@ public class BannerDAO {
 			
 			String imagePathId = imagePath.getId();
 			
-			if (StringUtils.isNotBlank(imagePathId)) {
+			if (StringUtils.isBlank(imagePathId)) {
 				imagePathId = DAOUtils.generateUniqueId();
 			}
 			
@@ -480,6 +484,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH, imagePath.getPath());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_TYPE, imagePath.getPathType());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, imagePath.getAlias());
+			inputs.put(DAOConstants.PARAM_CREATED_BY, imagePath.getCreatedBy());
 			
 			return DAOUtils.getUpdateCount(addRuleItemImagePathSP.execute(inputs));
 		}
