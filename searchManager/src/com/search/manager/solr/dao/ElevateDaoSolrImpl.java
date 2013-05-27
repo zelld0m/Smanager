@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -17,9 +16,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
-import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.ElevateResult;
-import com.search.manager.model.Keyword;
+import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -52,8 +50,8 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
-					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-					.query(solrQuery);
+					Constants.Core.ELEVATE_RULE_CORE.getCoreName()).query(
+					solrQuery);
 
 			if (queryResponse != null) {
 				elevateResults = SolrResultUtil.toElevateResult(queryResponse
@@ -83,7 +81,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			strQuery.append(" AND keyword1:"
 					+ ClientUtils.escapeQueryChars(keyword));
 			strQuery.append(" AND (expiryDate:[NOW/DAY+1DAY TO *] OR (*:* AND -expiryDate:[* TO *]))");
-			
+
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
@@ -91,8 +89,8 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
-					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-					.query(solrQuery);
+					Constants.Core.ELEVATE_RULE_CORE.getCoreName()).query(
+					solrQuery);
 
 			if (queryResponse != null) {
 				elevateResults = SolrResultUtil.toElevateResult(queryResponse
@@ -107,8 +105,8 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 	}
 
 	@Override
-	public List<ElevateResult> getExpiredElevateRules(
-			StoreKeyword storeKeyword) throws DaoException {
+	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword)
+			throws DaoException {
 		List<ElevateResult> elevateResults = new ArrayList<ElevateResult>();
 
 		try {
@@ -122,7 +120,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			strQuery.append(" AND keyword1:"
 					+ ClientUtils.escapeQueryChars(keyword));
 			strQuery.append(" AND expiryDate:[* TO NOW/DAY]");
-			
+
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
@@ -130,8 +128,8 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
-					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-					.query(solrQuery);
+					Constants.Core.ELEVATE_RULE_CORE.getCoreName()).query(
+					solrQuery);
 
 			if (queryResponse != null) {
 				elevateResults = SolrResultUtil.toElevateResult(queryResponse
@@ -144,62 +142,50 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 
 		return elevateResults;
 	}
-	
+
 	@Override
 	public boolean loadElevateRules(Store store) throws DaoException {
-		List<String> keywords = null;
-		List<Keyword> keywordList = (List<Keyword>) daoService.getAllKeywords(
-				store.getStoreId(), RuleEntity.ELEVATE);
-
-		if (CollectionUtils.isNotEmpty(keywordList)) {
-			keywords = new ArrayList<String>();
-			for (Keyword key : keywordList) {
-				keywords.add(key.getKeywordId());
-			}
-		}
-
-		if (keywords != null) {
-			for (String keyword : keywords) {
-				StoreKeyword storeKeyword = new StoreKeyword(
-						store.getStoreId(), keyword);
-				ElevateResult elevateFilter = new ElevateResult();
-				elevateFilter.setStoreKeyword(storeKeyword);
-
+		try {
+			StoreKeyword storeKeyword = new StoreKeyword(store, null);
+			ElevateResult elevateFilter = new ElevateResult();
+			elevateFilter.setStoreKeyword(storeKeyword);
+			int page = 1;
+			
+			while (true) {
 				SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(
-						elevateFilter, null, null, 0, 0);
-				List<ElevateResult> elevateResults = daoService
-						.getElevateResultList(criteria).getList();
+						elevateFilter, page, MAX_ROWS);
+				RecordSet<ElevateResult> recordSet = daoService
+						.getElevateResultListNew(criteria);
 
-				if (elevateResults != null && elevateResults.size() > 0) {
-					List<SolrInputDocument> solrInputDocuments = null;
-					boolean hasError = false;
-
-					try {
-						solrInputDocuments = SolrDocUtil
-								.composeSolrDocs(elevateResults);
-					} catch (Exception e) {
-						logger.error("Failed to load elevate rules by store", e);
-						hasError = true;
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<ElevateResult> elevateResults = recordSet.getList();
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocs(elevateResults);
+					solrServers.getCoreInstance(
+							Constants.Core.ELEVATE_RULE_CORE.getCoreName())
+							.addDocs(solrInputDocuments);
+					if (elevateResults.size() < MAX_ROWS) {
+						solrServers.getCoreInstance(
+								Constants.Core.ELEVATE_RULE_CORE.getCoreName())
+								.softCommit();
+						return true;
 					}
-
-					if (!hasError && solrInputDocuments != null
-							&& solrInputDocuments.size() > 0) {
-						try {
-							solrServers.getCoreInstance(
-									Constants.Core.ELEVATE_RULE_CORE
-											.getCoreName()).addDocs(
-									solrInputDocuments);
-							solrServers.getCoreInstance(
-									Constants.Core.ELEVATE_RULE_CORE
-											.getCoreName()).commit();
-						} catch (Exception e) {
-							logger.error("Failed to load elevate rules by store", e);
-							throw new DaoException(e.getMessage(), e);
-						}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers.getCoreInstance(
+								Constants.Core.ELEVATE_RULE_CORE.getCoreName())
+								.softCommit();
+						return true;
 					}
+					break;
 				}
 			}
-			return true;
+		} catch (Exception e) {
+			logger.error(
+					"Failed to load elevate rules by store." + e.getMessage(),
+					e);
+			throw new DaoException(e.getMessage(), e);
 		}
 
 		return false;
@@ -208,47 +194,45 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 	@Override
 	public boolean loadElevateRules(StoreKeyword storeKeyword)
 			throws DaoException {
-
 		try {
 			ElevateResult elevateFilter = new ElevateResult();
 			elevateFilter.setStoreKeyword(storeKeyword);
+			int page = 1;
+			
+			while (true) {
+				SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(
+						elevateFilter, page, MAX_ROWS);
+				RecordSet<ElevateResult> recordSet = daoService
+						.getElevateResultListNew(criteria);
 
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(
-					elevateFilter, null, null, 0, 0);
-			List<ElevateResult> elevateResults = daoService
-					.getElevateResultList(criteria).getList();
-
-			if (elevateResults != null && elevateResults.size() > 0) {
-				List<SolrInputDocument> solrInputDocuments = null;
-				boolean hasError = false;
-
-				try {
-					solrInputDocuments = SolrDocUtil
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<ElevateResult> elevateResults = recordSet.getList();
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(elevateResults);
-				} catch (Exception e) {
-					logger.error("Failed to load elevate rules by storeKeyword", e);
-					hasError = true;
-				}
-
-				if (!hasError && solrInputDocuments != null
-						&& solrInputDocuments.size() > 0) {
-					try {
+					solrServers.getCoreInstance(
+							Constants.Core.ELEVATE_RULE_CORE.getCoreName())
+							.addDocs(solrInputDocuments);
+					if (elevateResults.size() < MAX_ROWS) {
 						solrServers.getCoreInstance(
 								Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-								.addDocs(solrInputDocuments);
-						// solrServers.getCoreInstance(
-						// Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-						// .softCommit();
-					} catch (Exception e) {
-						logger.error("Failed to load elevate rules by storeKeyword", e);
-						hasError = true;
+								.softCommit();
+						return true;
 					}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers.getCoreInstance(
+								Constants.Core.ELEVATE_RULE_CORE.getCoreName())
+								.softCommit();
+						return true;
+					}
+					break;
 				}
-
-				return !hasError;
 			}
 		} catch (Exception e) {
-			logger.error("Failed to load elevate rules by storeKeyword", e);
+			logger.error(
+					"Failed to load elevate rules by storeKeyword." + e.getMessage(),
+					e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -325,7 +309,9 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 								.composeSolrDocs(elevateResults);
 					} catch (Exception e) {
 						hasError = true;
-						logger.error("Failed to reset elevate rules by storeKeyword", e);
+						logger.error(
+								"Failed to reset elevate rules by storeKeyword",
+								e);
 					}
 
 					if (!hasError && solrInputDocuments != null
@@ -336,7 +322,9 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 											.getCoreName()).addDocs(
 									solrInputDocuments);
 						} catch (Exception e) {
-							logger.error("Failed to reset elevate rules by storeKeyword", e);
+							logger.error(
+									"Failed to reset elevate rules by storeKeyword",
+									e);
 							hasError = true;
 						}
 					}
