@@ -39,6 +39,9 @@
 	<bean id="spellSolrServer" parent="localSolrServerRunner" scope="singleton">
 		<property name="coreName" value="${solr.core.spell}" />
 	</bean>
+	<bean id="bannerSolrServer" parent="localSolrServerRunner" scope="singleton">
+		<property name="coreName" value="${solr.core.banner}" />
+	</bean>
 	
 	<!-- Solr Server Factory -->
 	<bean id="solrServerFactory" class="com.search.manager.solr.util.SolrServerFactory" scope="singleton">
@@ -51,6 +54,7 @@
 				<ref bean="redirectSolrServer" />
 				<ref bean="relevancySolrServer" />
 				<ref bean="spellSolrServer" />
+				<ref bean="bannerSolrServer" />
 			</list>
 		</constructor-arg>
 	</bean>
