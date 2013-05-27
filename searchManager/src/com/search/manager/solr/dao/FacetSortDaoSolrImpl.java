@@ -155,33 +155,43 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 	public boolean loadFacetSortRules(Store store) throws DaoException {
 
 		try {
-			List<FacetSort> facetSorts = null;
-
 			FacetSort facetSortFilter = new FacetSort();
 			facetSortFilter.setStore(store);
-			SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(
-					facetSortFilter, null, null, 0, 0);
+			int page = 1;
 
-			RecordSet<FacetSort> recordSet = daoService.searchFacetSort(
-					criteria, null);
+			while (true) {
+				SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(
+						facetSortFilter, page, MAX_ROWS);
+				RecordSet<FacetSort> recordSet = daoService.searchFacetSort(
+						criteria, null);
 
-			if (recordSet != null && recordSet.getTotalSize() > 0) {
-				facetSorts = recordSet.getList();
-				List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
-				solrInputDocuments.addAll(SolrDocUtil
-						.composeSolrDocsFacetSort(facetSorts));
-				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<FacetSort> facetSorts = recordSet.getList();
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocsFacetSort(facetSorts);
 					solrServers.getCoreInstance(
 							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-					solrServers.getCoreInstance(
-							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
-							.commit();
-					return true;
+
+					if (facetSorts.size() < MAX_ROWS) {
+						solrServers.getCoreInstance(
+								Constants.Core.FACET_SORT_RULE_CORE
+										.getCoreName()).commit();
+						return true;
+					}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers.getCoreInstance(
+								Constants.Core.FACET_SORT_RULE_CORE
+										.getCoreName()).commit();
+						return true;
+					}
+					break;
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Failed to load facet sort rules by store", e);
+			logger.error("Failed to load facet sort rules by store. " + e, e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
