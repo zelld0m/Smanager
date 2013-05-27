@@ -45,12 +45,16 @@ public class SpellController {
 
     @Autowired
     private DaoCacheService daoCacheService;
+
     @Autowired
     private RuleVersionService ruleVersionService;
+
     @Autowired
     private DownloadService downloadService;
+
     @Autowired
     private SpellRuleService spellRuleService;
+
     @Autowired
     private RuleTransferService ruleTransferService;
 
@@ -103,7 +107,8 @@ public class SpellController {
             SpellRules content = (SpellRules) RuleXmlUtil.loadVersion((RuleFileXml) xml);
 
             if (content != null) {
-                SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(content, RuleEntity.SPELL);
+                SubReportHeader subReportHeader = RuleXmlReportUtil
+                        .getVersionSubReportHeader(content, RuleEntity.SPELL);
                 subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                         content.getSpellRule(), SpellReportBean.transformer)));
             }

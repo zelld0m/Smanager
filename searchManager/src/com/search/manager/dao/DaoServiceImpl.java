@@ -21,7 +21,7 @@ import com.search.manager.dao.file.FacetSortVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RedirectRuleVersionDAO;
 import com.search.manager.dao.file.RuleVersionDAO;
-import com.search.manager.dao.file.SpellRuleDAO;
+import com.search.manager.dao.file.SpellRuleVersionDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
@@ -38,6 +38,7 @@ import com.search.manager.dao.sp.RedirectRuleDAO;
 import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
+import com.search.manager.dao.sp.SpellRuleDAO;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
 import com.search.manager.enums.ExportRuleMapSortType;
@@ -85,7 +86,6 @@ import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
@@ -106,6 +106,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private CampaignDAO 		campaignDAO;
 	@Autowired private RelevancyDAO		relevancyDAO;
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
+	@Autowired private SpellRuleDAO  spellRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
 	@Autowired private CommentDAO		commentDAO;
 	@Autowired private UsersDAO			usersDAO;
@@ -118,7 +119,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private RedirectRuleVersionDAO queryCleaningVersionDAO;
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
 	@Autowired private ExportRuleMapDAO	exportRuleMapDAO;
-    @Autowired private SpellRuleDAO spellRuleDAO;
+    @Autowired private SpellRuleVersionDAO spellRuleVersionDAO;
 
 	private DaoServiceImpl instance;
 	private final static Logger logger = Logger.getLogger(DaoServiceImpl.class);
@@ -193,6 +194,10 @@ public class DaoServiceImpl implements DaoService {
 	public void setSpellRuleDAO(SpellRuleDAO spellRuleDAO) {
 	    this.spellRuleDAO = spellRuleDAO;
 	}
+    
+    public void setSpellRuleVersionDAO(SpellRuleVersionDAO spellRuleVersionDAO) {
+        this.spellRuleVersionDAO = spellRuleVersionDAO;
+    }
 
 	/* Audit Trail */
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) {
@@ -1435,7 +1440,7 @@ public class DaoServiceImpl implements DaoService {
 		case RANKING_RULE:
 			return rankingRuleVersionDAO;
 		case SPELL:
-		    return spellRuleDAO;
+		    return spellRuleVersionDAO;
 		}
 		return null;
 	}
@@ -1461,7 +1466,7 @@ public class DaoServiceImpl implements DaoService {
 			return rankingRuleVersionDAO;
 		}
 		else if (xml instanceof SpellRules) {
-		    return spellRuleDAO;
+		    return spellRuleVersionDAO;
 		}
 		return null;
 	}
@@ -1854,38 +1859,20 @@ public class DaoServiceImpl implements DaoService {
 		return getDemoteResultList(new SearchCriteria<DemoteResult>(
 				new DemoteResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
 	}
-	
+
+	@Override
+	public List<SpellRule> getSpellRules(String store, String status) throws DaoException {
+	    return spellRuleDAO.getSpellRules(store, status).getList();
+	}
+
     @Override
-    public SpellRules getSpellRules(String store) {
-        return spellRuleDAO.getSpellRule(store);
+    public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm) throws DaoException {
+        return spellRuleDAO.getSpellRuleForSearchTerm(store, searchTerm);
     }
 
     @Override
-    public boolean replaceSpellRules(SpellRules rules) throws DaoException {
-        SpellRules crules = spellRuleDAO.getSpellRule(rules.getStore());
-
-        crules.setSpellRule(rules.getSpellRule());
-        crules.setMaxSuggest(rules.getMaxSuggest());
-
-        spellRuleDAO.save(rules.getStore());
-        spellRuleDAO.reload(rules.getStore());
-
-        return true;
-    }
-
-    @Override
-    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> searchCriteria) throws DaoException {
-        return spellRuleDAO.getSpellRule(searchCriteria);
-    }
-
-    @Override
-    public void saveSpellRules(String store) throws DaoException {
-        spellRuleDAO.save(store);
-    }
-
-    @Override
-    public void reloadSpellRules(String store) throws DaoException {
-        spellRuleDAO.reload(store);
+    public boolean publishSpellRules(String store) throws DaoException {
+        return spellRuleDAO.publishSpellRules(store);
     }
 
     @Override
@@ -1894,48 +1881,32 @@ public class DaoServiceImpl implements DaoService {
     }
 
     @Override
-    public int addSpellRule(SpellRule rule) throws DaoException {
-        return spellRuleDAO.addSpellRule(rule);
+    public boolean restoreSpellRules(String store, List<SpellRule> rules, int maxSuggest) throws DaoException {
+        return spellRuleDAO.restoreSpellRules(store, rules, maxSuggest);
     }
 
     @Override
-    public int updateSpellRule(SpellRule rule) throws DaoException {
-        return spellRuleDAO.updateSpellRule(rule);
+    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException {
+        return spellRuleDAO.getSpellRule(criteria);
     }
 
     @Override
-    public void deleteSpellRule(SpellRule rule) throws DaoException {
-        spellRuleDAO.deleteSpellRule(rule);
+    public SpellRule getSpellRule(String ruleId, String store) throws DaoException {
+        return spellRuleDAO.getSpellRule(ruleId, store);
     }
 
     @Override
-    public boolean isDuplicateSearchTerm(String store, String searchTerm, String ruleId) throws DaoException {
-        return spellRuleDAO.isDuplicateSearchTerm(store, searchTerm, ruleId);
+    public int addSpellRules(List<SpellRule> rules) throws DaoException {
+        return spellRuleDAO.addSpellRules(rules);
     }
-
-	@Override
-	public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm) {
-    	return spellRuleDAO.getSpellRuleForSearchTerm(store, searchTerm);
-    }
-	
-	@Override
-	public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
-    	return spellRuleDAO.getSpellRule(criteria, statusList);
-    }
-
-	@Override 
-    public List<SpellRule> getActiveSpellRules(String storeId) {
-		return spellRuleDAO.getActiveRules(storeId);
-    }
-
-	@Override
-	public RecordSet<SpellRuleXml> getSpellRuleXml(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException {
-		return spellRuleDAO.getSpellRuleXml(criteria, statusList); 
-	}
 
     @Override
-    public SpellRule getSpellRuleById(String store, String ruleId) {
-        return spellRuleDAO.getSpellRuleById(store, ruleId);
+    public int updateSpellRules(List<SpellRule> rules, List<SpellRule> deleted) throws DaoException {
+        return spellRuleDAO.updateSpellRules(rules, deleted);
     }
-    
+
+    @Override
+    public void setMaxSuggest(String store, Integer maxSuggest) {
+        spellRuleDAO.setMaxSuggest(store, maxSuggest);
+    }
 }

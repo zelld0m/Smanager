@@ -3,12 +3,13 @@ package com.search.manager.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -35,6 +35,8 @@ import com.search.manager.utility.StringUtil;
 public class SpellRuleService {
 
     private static final Logger logger = LoggerFactory.getLogger(SpellRuleService.class);
+
+    private final static String modifiedStatusList = "new\tmodified\tdeleted";
 
     @Autowired
     private DaoService daoService;
@@ -67,50 +69,26 @@ public class SpellRuleService {
 
     @RemoteMethod
     public ServiceResponse<Void> addSpellRuleBatch(SpellRule[] spellRules) {
-        int errorLevel = 0;
         String store = UtilityService.getStoreId();
         ServiceResponse<Void> response = new ServiceResponse<Void>();
 
         try {
             // Check for duplicate search terms.
-            List<String> duplicates = null;
+            List<String> duplicates = checkDuplicatedSearchTerms(store, spellRules, null, false);
 
-            try {
-                duplicates = checkDuplicatedSearchTerms(store, spellRules, false);
-            } catch (DaoException e) {
-                response.error("Error occured in during spell rule creation.");
-                errorLevel = 1;
-            }
-
-            if (errorLevel == 0 && duplicates.size() > 0) {
+            if (duplicates.size() > 0) {
                 response.error("Duplicate search terms exist.", duplicates);
-                errorLevel = 1;
-            } else if (errorLevel == 0) {
+            } else {
                 for (SpellRule rule : spellRules) {
-                    if (!addSpellRule(rule.getSearchTerms(), rule.getSuggestions())) {
-                        response.error("Error occured in during spell rule creation.");
-                        errorLevel = 2;
-                        break;
-                    }
+                    rule.setStatus("new");
                 }
 
-                if (errorLevel == 0) {
-                    daoService.saveSpellRules(store);
-                    response.success(null);
-                }
+                daoService.addSpellRules(Arrays.asList(spellRules));
+                response.success(null);
             }
         } catch (DaoException ex) {
             logger.error("Error occured in addSpellRuleBatch()", ex);
-            errorLevel = 2;
             response.error("Error occured in during spell rule creation.");
-        }
-
-        if (errorLevel == 2) {
-            try {
-                daoService.reloadSpellRules(store);
-            } catch (Exception e) {
-                logger.error("Unable to rollback spell index for " + store, e);
-            }
         }
 
         return response;
@@ -120,55 +98,25 @@ public class SpellRuleService {
     public ServiceResponse<Void> updateSpellRuleBatch(Integer maxSuggest, SpellRule[] spellRules, SpellRule[] deleted) {
         String store = UtilityService.getStoreId();
         ServiceResponse<Void> response = new ServiceResponse<Void>();
-        int errorLevel = 0;
 
         try {
-            deleteSpellRules(store, deleted);
+            List<String> duplicates = checkDuplicatedSearchTerms(store, spellRules, deleted, true);
 
-            List<String> duplicates = null;
-
-            try {
-                duplicates = checkDuplicatedSearchTerms(store, spellRules, true);
-            } catch (DaoException e) {
-                response.error("Error occured in during spell rule creation.");
-                errorLevel = 1;
-            }
-
-            if (errorLevel == 0 && duplicates.size() > 0) {
+            if (duplicates.size() > 0) {
                 response.error("Duplicate search terms exist.", duplicates);
-                errorLevel = 1;
-            } else if (errorLevel == 0) {
+            } else {
                 for (SpellRule rule : spellRules) {
-                    if (!updateSpellRule(rule.getRuleId(), rule.getSearchTerms(), rule.getSuggestions())) {
-                        response.error("Error occured in during spell rule update.");
-                        errorLevel = 2;
-                        break;
+                    if ("published".equals(rule.getStatus())) {
+                        rule.setStatus("modified");
                     }
                 }
-
-                if (errorLevel == 0) {
-                    SpellRules rules = daoService.getSpellRules(store);
-
-                    if (rules != null) {
-                        rules.setMaxSuggest(maxSuggest);
-                    }
-
-                    daoService.saveSpellRules(UtilityService.getStoreId());
-                    response.success(null);
-                }
+                daoService.updateSpellRules(Arrays.asList(spellRules), Arrays.asList(deleted));
+                daoService.setMaxSuggest(store, maxSuggest);
+                response.success(null);
             }
         } catch (DaoException e) {
             logger.error("Error occured in updateSpellRuleBatch()", e);
             response.error("Error occured in during spell rule update.");
-            errorLevel = 2;
-        }
-
-        if (errorLevel == 2) {
-            try {
-                daoService.reloadSpellRules(store);
-            } catch (Exception e) {
-                logger.error("Unable to rollback spell index for " + store, e);
-            }
         }
 
         return response;
@@ -177,100 +125,124 @@ public class SpellRuleService {
     @RemoteMethod
     public ServiceResponse<Integer> getMaxSuggest() {
         ServiceResponse<Integer> response = new ServiceResponse<Integer>();
+        String store = UtilityService.getStoreId();
 
         try {
-            response.success(daoService.getMaxSuggest(UtilityService.getStoreId()));
+            response.success(daoService.getMaxSuggest(store));
         } catch (DaoException e) {
+            logger.error("Error occured in getMaxSuggest.", e);
             response.error("Unable to retrieve maximum suggestions count.");
         }
 
         return response;
     }
 
-    private boolean addSpellRule(String[] searchTerms, String[] suggestions) throws DaoException {
-        String username = UtilityService.getUsername();
-        String storeId = UtilityService.getStoreId();
-        SpellRule rule = new SpellRule();
+    @RemoteMethod
+    public ServiceResponse<SpellRule> getRuleById(String ruleId) {
+        ServiceResponse<SpellRule> response = new ServiceResponse<SpellRule>();
 
-        rule.setStoreId(storeId);
-        rule.setCreatedBy(username);
-        rule.setLastModifiedBy(username);
-        rule.setSearchTerms(searchTerms);
-        rule.setSuggestions(suggestions);
-        rule.setStatus("new");
+        try {
+            SpellRule spellRule = daoService.getSpellRule(ruleId, UtilityService.getStoreId());
 
-        return daoService.addSpellRule(rule) > 0;
-    }
-
-    private boolean updateSpellRule(String ruleId, String[] searchTerms, String[] suggestions) throws DaoException {
-        SpellRule rule = new SpellRule();
-
-        rule.setRuleId(ruleId);
-        rule.setStoreId(UtilityService.getStoreId());
-        rule.setLastModifiedBy(UtilityService.getUsername());
-        rule.setSearchTerms(searchTerms);
-        rule.setSuggestions(suggestions);
-
-        return daoService.updateSpellRule(rule) > 0;
-    }
-
-    private void deleteSpellRules(String storeId, SpellRule[] rules) throws DaoException {
-        for (SpellRule rule : rules) {
-            rule.setStoreId(storeId);
-            daoService.deleteSpellRule(rule);
+            if (spellRule != null) {
+                response.success(spellRule);
+            } else {
+                response.error("Unable to find Did You Mean rule by id.");
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during getRuleById()", e);
+            response.error("Failed to retrieve Did You Mean rules by id.");
         }
+
+        return response;
     }
 
-    private List<String> checkDuplicatedSearchTerms(String store, SpellRule[] spellRules, boolean isUpdate)
-            throws DaoException {
+    @RemoteMethod
+    public ServiceResponse<Map<String, Object>> getModifiedSpellRules(int pageNumber, int itemsPerPage) {
+        ServiceResponse<Map<String, Object>> response = new ServiceResponse<Map<String, Object>>();
+        try {
+            SpellRule rule = new SpellRule();
+
+            rule.setStoreId(UtilityService.getStoreId());
+            rule.setStatus(modifiedStatusList);
+
+            Map<String, Object> data = new HashMap<String, Object>();
+
+            data.put("maxSuggest", getMaxSuggest().getData());
+            data.put("spellRule", daoService
+                    .getSpellRule(new SearchCriteria<SpellRule>(rule, pageNumber, itemsPerPage)).getList());
+
+            response.success(data);
+        } catch (DaoException e) {
+            logger.error("Failed during getSpellRule()", e);
+            response.error("Failed to retrieve Did You Mean rules.");
+        }
+        return response;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> checkDuplicatedSearchTerms(String store, SpellRule[] spellRules, SpellRule[] deleted,
+            boolean isUpdate) throws DaoException {
         List<String> searchTerms = new ArrayList<String>();
         List<String> duplicates = new ArrayList<String>();
 
         // Removed search terms from edited rules
-        List<String> deletedSearchTerms = new ArrayList<String>();
+        Set<String> deletedSearchTerms = new HashSet<String>();
 
+        // On update, collect first the list of deleted keywords. This includes
+        // keywords in deleted rules and keywords removed from updated rules.
         if (isUpdate) {
-            // For update operation, we have to get the list of search terms that were removed.
-            for (SpellRule rule: spellRules) {
-                SpellRule oldRule = daoService.getSpellRuleById(store, rule.getRuleId());
-                List<String> newTerms = Lists.transform(Arrays.asList(rule.getSearchTerms()), StringUtil.lowercaseTransformer);
-                List<String> oldTerms = new ArrayList<String>();
-                
-                oldTerms.addAll(Lists.transform(Arrays.asList(oldRule.getSearchTerms()), StringUtil.lowercaseTransformer));
-                oldTerms.removeAll(newTerms);
+            for (SpellRule rule : deleted) {
+                SpellRule old = daoService.getSpellRule(rule.getRuleId(), store);
 
-                deletedSearchTerms.addAll(oldTerms);
+                if (old != null) {
+                    deletedSearchTerms.addAll(Arrays.asList(old.getSearchTerms()));
+                }
+            }
+
+            for (SpellRule rule : spellRules) {
+                SpellRule old = daoService.getSpellRule(rule.getRuleId(), store);
+                List<String> newTerms = Lists.transform(Arrays.asList(rule.getSearchTerms()),
+                        StringUtil.lowercaseTransformer);
+                List<String> oldTerms = Arrays.asList(old.getSearchTerms());
+
+                deletedSearchTerms.addAll(CollectionUtils.subtract(oldTerms, newTerms));
             }
         }
 
         // Check for duplicate search terms.
         for (SpellRule rule : spellRules) {
-            List<String> curTerms = Lists.transform(Arrays.asList(rule.getSearchTerms()), StringUtil.lowercaseTransformer);
-            @SuppressWarnings("unchecked")
-            Collection<String> inter = CollectionUtils.intersection(searchTerms, curTerms);
+            List<String> curTerms = Lists.transform(Arrays.asList(rule.getSearchTerms()),
+                    StringUtil.lowercaseTransformer);
+            Collection<String> common = CollectionUtils.intersection(searchTerms, curTerms);
 
-            if (inter.size() == 0) {
+            if (common.size() == 0) {
                 searchTerms.addAll(curTerms);
 
-                List<String> oldSearchTerms = checkDuplicatedSearchTerms(store, isUpdate ? rule.getRuleId() : null,
+                List<String> dbSearchTerms = getDuplicatedSearchTerms(store, isUpdate ? rule.getRuleId() : null,
                         rule.getSearchTerms());
-                oldSearchTerms.removeAll(deletedSearchTerms);
-                duplicates.addAll(oldSearchTerms);
+
+                dbSearchTerms.removeAll(deletedSearchTerms);
+                duplicates.addAll(dbSearchTerms);
             } else {
                 searchTerms.addAll(curTerms);
-                duplicates.addAll(inter);
+                duplicates.addAll(common);
             }
         }
 
         return duplicates;
     }
 
-    private List<String> checkDuplicatedSearchTerms(String store, String ruleId, final String[] searchTerms)
+    // Duplicated search terms are those that exist in the database but for a
+    // different rule.
+    private List<String> getDuplicatedSearchTerms(String store, String ruleId, String[] searchTerms)
             throws DaoException {
         List<String> duplicates = new ArrayList<String>();
 
         for (String searchTerm : searchTerms) {
-            if (daoService.isDuplicateSearchTerm(store, searchTerm, ruleId)) {
+            SpellRule rule = daoService.getSpellRuleForSearchTerm(store, searchTerm);
+
+            if (rule != null && (StringUtils.isBlank(ruleId) || !ruleId.equals(rule.getRuleId()))) {
                 duplicates.add(searchTerm);
             }
         }
@@ -278,56 +250,22 @@ public class SpellRuleService {
         return duplicates;
     }
 
-    @RemoteMethod
-    public SpellRule getRuleById(String ruleId) {
-    	ServiceResponse<RecordSet<SpellRule>> response = new ServiceResponse<RecordSet<SpellRule>>();
-    	
+    public SpellRules getSpellRules() {
+        SpellRules rules = null;
+
         try {
-            SpellRule spellRuleFilter = new SpellRule(ruleId, UtilityService.getStoreId());
-            RecordSet<SpellRule> spellRules = daoService.getSpellRule(new SearchCriteria<SpellRule>(spellRuleFilter, 1, 1));
-            if(spellRules != null && spellRules.getTotalSize() > 0) {
-            	return spellRules.getList().get(0);
-            }
+            String store = UtilityService.getStoreId();
+            List<SpellRule> spellRule = daoService.getSpellRules(store, null);
+            Integer maxSuggest = daoService.getMaxSuggest(store);
+
+            rules = new SpellRules();
+            rules.setStore(store);
+            rules.setMaxSuggest(maxSuggest);
+            rules.setSpellRule(Lists.transform(spellRule, SpellRule.transformer));
         } catch (DaoException e) {
-            logger.error("Failed during getRuleById()", e);
-            response.error("Failed to retrieve Did You Mean rules by id.");
+            logger.error("Error occurred on getSpellRules.", e);
         }
 
-        return null;
+        return rules;
     }
-    
-    static List<String> modifiedStatusList;
-    
-    static {
-    	modifiedStatusList = new ArrayList<String>();
-    	modifiedStatusList.add("new");
-    	modifiedStatusList.add("modified");
-    	modifiedStatusList.add("deleted");
-    }
-    
-    @RemoteMethod
-    public ServiceResponse<SpellRules> getModifiedSpellRules(String ruleId, String searchTerm, String suggestion,
-            int pageNumber, int itemsPerPage) {
-        ServiceResponse<SpellRules> response = new ServiceResponse<SpellRules>();
-        try {
-            SpellRule rule = new SpellRule(ruleId, UtilityService.getStoreId());
-            if (StringUtils.isNotEmpty(searchTerm))
-                rule.setSearchTerms(new String[] { searchTerm });
-            if (StringUtils.isNotEmpty(suggestion))
-                rule.setSuggestions(new String[] { suggestion });
-            SpellRules spellRule = new SpellRules();
-            spellRule.setMaxSuggest(daoService.getMaxSuggest(UtilityService.getStoreId()));
-            spellRule.setSpellRule(daoService.getSpellRuleXml(new SearchCriteria<SpellRule>(rule, pageNumber, itemsPerPage), modifiedStatusList).getList());
-            response.success(spellRule);
-        } catch (DaoException e) {
-            logger.error("Failed during getSpellRule()", e);
-            response.error("Failed to retrieve Did You Mean rules.");
-        }
-        return response;
-    }
-    
-    public SpellRules getSpellRules() {
-    	return daoService.getSpellRules(UtilityService.getStoreId());
-    }
-    
 }

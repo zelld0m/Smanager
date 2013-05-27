@@ -144,6 +144,13 @@ public class DAOConstants {
 	public static final String SP_UPDATE_EXPORT_RULE_MAP			= "usp_Update_Export_Rule_Map";
 	public static final String SP_DELETE_EXPORT_RULE_MAP			= "usp_Delete_Export_Rule_Map";
 	
+	//SPELL_RULE
+    public static final String SP_GET_SPELL_RULE = "usp_Get_Spell_Rule";
+    public static final String SP_GET_SPELL_RULE_FOR_SEARCH_TERM = "usp_Get_Spell_Rule_For_Search_Term";
+    public static final String SP_ADD_SPELL_RULE = "usp_Add_Spell_Rule";
+    public static final String SP_UPDATE_SPELL_RULE = "usp_Update_Spell_Rule";
+    public static final String SP_DELETE_SPELL_RULE = "usp_Delete_Spell_Rule";
+	
 	/* Stored Procedure Parameter Names */
 	public static final String PARAM_STORE_ID 						= "store_id";
 	public static final String PARAM_KEYWORD_ID						= "keyword_id";
@@ -254,6 +261,11 @@ public class DAOConstants {
 	public static final String PARAM_SORT_TYPE			 			= "sort_type";
 	public static final String PARAM_MATCH_TYPE			 			= "match_type";
 	public static final String PARAM_RETURN_OPTION			 		= "return_option";
+
+    public static final String PARAM_SUGGEST_LIKE                   = "suggest_like";
+    public static final String PARAM_STATUS                         = "status";
+    public static final String PARAM_SUGGEST                        = "suggest";
+    public static final String PARAM_PHYSICAL                       = "physical";
 
 	// additional rule status parameters
 	public static final String PARAM_REQUEST_BY						= "request_by";
@@ -376,6 +388,9 @@ public class DAOConstants {
 	public static final String COLUMN_RULE_TYPE 					= "rule_type";
 	public static final String COLUMN_FACET_GROUP_ITEM_NAME 		= "facet_group_item_name";
 	public static final String COLUMN_FACET_GROUP_ITEM_SEQUENCE		= "facet_group_item_seq";
+
+    public static final String COLUMN_STATUS                        = "status";
+    public static final String COLUMN_SUGGEST                       = "suggestion";
 
 	// additional rule status columns
 	public static final String COLUMN_REQUEST_BY					= "requested_by";

@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOUtils;
@@ -45,6 +46,7 @@ import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SearchResult;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.DemoteItemXml;
@@ -875,9 +877,15 @@ public class RuleXmlUtil{
         String store = rules.getStore();
 
         try {
-            SpellRules crules = daoService.getSpellRules(store);
+            List<SpellRule> ruleList = daoService.getSpellRules(store, null);
+            Integer maxSuggest = daoService.getMaxSuggest(store);
+            SpellRules crules = new SpellRules();
+            
+            crules.setRuleId(rules.getRuleId());
+            crules.setSpellRule(Lists.transform(ruleList, SpellRule.transformer));
+            crules.setMaxSuggest(maxSuggest);
 
-            if (crules != null) {
+            if (ruleList != null) {
                 // create backup of current spell rules.
                 if (createPreRestore) {
                     if (!RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, rules.getRuleId(), crules, path)) {
@@ -888,7 +896,7 @@ public class RuleXmlUtil{
             }
 
             // replace current spell rules with rules to restore
-            if (daoService.replaceSpellRules(rules)) {
+            if (daoService.restoreSpellRules(rules.getStore(), Lists.transform(rules.getSpellRule(), SpellRuleXml.transformer), rules.getMaxSuggest())) {
                 logger.info("Rollback spell rules succeeded");
                 return true;
             } else {

@@ -40,8 +40,6 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
-import com.search.manager.report.model.xml.SpellRules;
 
 public interface DaoService extends SearchDaoService {
 	
@@ -282,20 +280,17 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
-	
-	/* Did you mean */
-    public SpellRules getSpellRules(String store);
-    public SpellRule getSpellRuleById(String store, String ruleId);
-    public boolean replaceSpellRules(SpellRules rules) throws DaoException;
-    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> searchCriteria) throws DaoException;
-    public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException;
-    public RecordSet<SpellRuleXml> getSpellRuleXml(SearchCriteria<SpellRule> criteria, List<String> statusList) throws DaoException; 
-    public List<SpellRule> getActiveSpellRules(String storeId) throws DaoException;
-    public void saveSpellRules(String store) throws DaoException;
-    public void reloadSpellRules(String store) throws DaoException;
-    public Integer getMaxSuggest(String storeId) throws DaoException;
-    public int addSpellRule(SpellRule rule) throws DaoException;
-    public int updateSpellRule(SpellRule rule) throws DaoException;
-    public void deleteSpellRule(SpellRule rule) throws DaoException;
-    public boolean isDuplicateSearchTerm(String store, String searchTerm, String ruleId) throws DaoException;
+
+	/* Did You Mean */
+	public Integer getMaxSuggest(String store) throws DaoException;
+    public void setMaxSuggest(String store, Integer maxSuggest);
+	public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException;
+	public SpellRule getSpellRule(String ruleId, String store) throws DaoException;
+	public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm) throws DaoException;
+	public int addSpellRules(List<SpellRule> rules) throws DaoException;
+	public int updateSpellRules(List<SpellRule> rules, List<SpellRule> deleted) throws DaoException;
+
+	public List<SpellRule> getSpellRules(String store, String status) throws DaoException;
+    public boolean restoreSpellRules(String store, List<SpellRule> transform, int maxSuggest) throws DaoException;
+    public boolean publishSpellRules(String store) throws DaoException;
 }
