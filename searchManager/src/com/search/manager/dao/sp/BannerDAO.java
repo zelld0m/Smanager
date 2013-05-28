@@ -6,7 +6,6 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -441,7 +440,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, model.getMemberId());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(model.getStartDate()));
-			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(model.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(model.getEndDate()));
 			inputs.put(DAOConstants.PARAM_DISABLED, disabledOnly);
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
