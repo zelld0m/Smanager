@@ -116,8 +116,8 @@ public class ExcludeDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
@@ -230,8 +230,8 @@ public class ExcludeDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
@@ -248,8 +248,8 @@ public class ExcludeDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 			inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-			inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-			inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
