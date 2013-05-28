@@ -5,10 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTimeZone;
+
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.BannerRule;
 import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
@@ -47,7 +50,8 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			demoteResult.setStoreKeyword(storeKeyword);
 			demoteResult.setMemberId(ruleSolrResult.getMemberId());
-			demoteResult.setExpiryDateTime(ruleSolrResult.getExpiryDateTime());
+			demoteResult.setExpiryDateTime(JodaDateTimeUtil.toDateTime(
+					ruleSolrResult.getExpiryDateTime(), DateTimeZone.UTC));
 
 			if (ruleSolrResult.getEntity().equals(
 					MemberTypeEntity.PART_NUMBER.toString())) {
@@ -78,7 +82,8 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			elevateResult.setStoreKeyword(storeKeyword);
 			elevateResult.setMemberId(ruleSolrResult.getMemberId());
-			elevateResult.setExpiryDateTime(ruleSolrResult.getExpiryDateTime());
+			elevateResult.setExpiryDateTime(JodaDateTimeUtil.toDateTime(
+					ruleSolrResult.getExpiryDateTime(), DateTimeZone.UTC));
 			elevateResult.setForceAdd(ruleSolrResult.getForceAdd());
 
 			if (ruleSolrResult.getEntity().equals(
@@ -109,7 +114,8 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			excludeResult.setStoreKeyword(storeKeyword);
 			excludeResult.setMemberId(ruleSolrResult.getMemberId());
-			excludeResult.setExpiryDateTime(ruleSolrResult.getExpiryDateTime());
+			excludeResult.setExpiryDateTime(JodaDateTimeUtil.toDateTime(
+					ruleSolrResult.getExpiryDateTime(), DateTimeZone.UTC));
 
 			if (ruleSolrResult.getEntity().equals(
 					MemberTypeEntity.PART_NUMBER.toString())) {
@@ -287,17 +293,18 @@ public class SolrResultUtil {
 			bannerRule.setRuleName(bannerRuleItemSolr.getRuleName());
 			bannerRuleItem.setRule(bannerRule);
 
-			bannerRuleItemSolr.setMemberId(bannerRuleItemSolr.getMemberId());
-			bannerRuleItemSolr.setPriority(bannerRuleItemSolr.getPriority());
-			bannerRuleItemSolr.setStartDate(bannerRuleItemSolr.getStartDate());
-			bannerRuleItemSolr.setEndDate(bannerRuleItemSolr.getEndDate());
-			bannerRuleItemSolr.setImageAlt(bannerRuleItemSolr.getImageAlt());
-			bannerRuleItemSolr.setLinkPath(bannerRuleItemSolr.getLinkPath());
-			bannerRuleItemSolr.setOpenNewWindow(bannerRuleItemSolr
+			bannerRuleItem.setMemberId(bannerRuleItemSolr.getMemberId());
+			bannerRuleItem.setPriority(bannerRuleItemSolr.getPriority());
+			bannerRuleItem.setStartDate(JodaDateTimeUtil.toDateTime(
+					bannerRuleItemSolr.getStartDate(), DateTimeZone.UTC));
+			bannerRuleItem.setEndDate(JodaDateTimeUtil.toDateTime(
+					bannerRuleItemSolr.getEndDate(), DateTimeZone.UTC));
+			bannerRuleItem.setImageAlt(bannerRuleItemSolr.getImageAlt());
+			bannerRuleItem.setLinkPath(bannerRuleItemSolr.getLinkPath());
+			bannerRuleItem.setOpenNewWindow(bannerRuleItemSolr
 					.getOpenNewWindow());
-			bannerRuleItemSolr.setDescription(bannerRuleItemSolr
-					.getDescription());
-			bannerRuleItemSolr.setDisabled(bannerRuleItemSolr.isDisabled());
+			bannerRuleItem.setDescription(bannerRuleItemSolr.getDescription());
+			bannerRuleItem.setDisabled(bannerRuleItemSolr.isDisabled());
 
 			imagePath.setId(bannerRuleItemSolr.getImagePathId());
 			imagePath.setPath(bannerRuleItemSolr.getPath());
