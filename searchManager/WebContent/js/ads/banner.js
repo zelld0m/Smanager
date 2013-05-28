@@ -234,6 +234,7 @@
 				self.addCopyToHandler(ui, item);
 				self.addShowKeywordHandler(ui, item);
 				self.addSetAliasHandler(ui, item);
+				self.addDeleteRuleHandler(ui, item);
 			},
 
 			addImagePathHandler: function(ui, item){
@@ -430,19 +431,21 @@
 				$("#titleHeader").text(self.selectedRule["ruleName"]);
 			},
 
-			deleteRule: function(){
+			addDeleteRuleHandler: function(ui, item){
 				var self = this;
-				$("#deleteBtn").off().on({
+				
+				ui.find("#deleteBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
 
-						jConfirm("Delete " + self.selectedRule["ruleName"] + "'s rule?", self.moduleName, function(result){
+						jConfirm("Delete banner " + item["imagePath"]["alias"] + " from " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
-								BannerServiceJS.deleteRule(self.selectedRule["ruleId"],{
-									callback: function(code){
-										showActionResponse(code, "delete", self.selectedRule["ruleName"]);
-										if(code==1) {
-											self.setRule(null);
+								BannerServiceJS.deleteRuleItem(self.selectedRule["ruleId"], item["memberId"], item["imagePath"]["alias"],{
+									callback: function(sr){
+										if (sr & sr["status"]==0){
+											self.setRule(self.selectedRule);
+										}else if(sr & sr["status"]!=0){
+											jAlert(sr["errorMessage"]);
 										}
 									}
 								});
@@ -453,9 +456,10 @@
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
-			updateRule: function(){
+			addUpdateRuleHandler: function(ui, item){
 				var self = this;
-				$("#updateBtn").off().on({
+				
+				ui.find("#updateBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
 

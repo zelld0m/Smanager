@@ -55,6 +55,10 @@ public class BannerRuleItem extends ModelBean{
 		this(ruleId, storeId, null, null, 0, startDate, endDate, null, null, null, null, null);
 	}
 	
+	public BannerRuleItem(String ruleId, String storeId, String memberId){
+		this(ruleId, storeId, null, memberId, 0, null, null, null, null, null, null, null);
+	}
+	
 	public BannerRule getRule() {
 		return rule;
 	}

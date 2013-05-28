@@ -136,7 +136,6 @@
 		base.validateLinkPath = function(ui, linkPath){
 			//Validate if valid url
 			
-			
 			//Check for 200 response
 			$.ajax({ 
 				type: "GET", 
@@ -152,7 +151,7 @@
 		};
 
 		base.buttonListener = function() {	
-			base.$el.find("a.buttons").off().on({
+			base.$el.find(".buttons").off().on({
 				click: function(e){
 					switch($(e.currentTarget).prop("id")){
 					case "okButton":
@@ -171,9 +170,11 @@
 							jAlert("Image alias is required.", "Banner");
 						} else if($.isBlank(imageAlt)) {
 							jAlert("Image alt is required.", "Banner");
-						} else if($.isBlank(linkPath)) {
-							jAlert("Link path is required.", "Banner");
 						} 
+						//TODO: verify link
+//						else if($.isBlank(linkPath)) {
+//							jAlert("Link path is required.", "Banner");
+//						} 
 
 						/*
 						else if($.isBlank(keyword)) {
@@ -307,70 +308,49 @@
 			template += '		<img id="imagePreview" src="' + GLOBAL_contextPath + '/images/nopreview.png" onError="this.onerror=null;this.src=\'' + GLOBAL_contextPath + '/images/nopreview.png\';" />';
 			template += '	</div>';
 			template += '	<div id="addItemTemplate" class="mar0">';
+			template += '		<label class="txtLabel">Image Path: </label> ';
+			template += '		<input id="imagePath" class="w565px" type="text">';
+			template += '		<label class="txtLabel">Image Alias: </label> ';
+			template += '		<input id="imageAlias" class="w218px" type="text">';
+			template += '		<label class="txtLabel lblImageAlt">Image Alt: </label> ';
+			template += '		<input id="imageAlt" class="w218px" type="text">';
+			template += '		<label class="txtLabel">Link Path: </label> ';
+			template += '		<input id="linkPath" class="w565px" type="text">';
+			template += '		<label class="txtLabel">Schedule:</label> ';
+			template += '		<input id="startDate" class="startDate" type="text">';
+			template += '		<input id="endDate" class="endDate"  type="text">';
+			template += '		<label class="txtLabel">Description: </label> ';
+			template += '		<textarea id="description" class="w565px"></textarea>';
 			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Image Path: </label> ';
-			template += '			<label><input id="imagePath" type="text"></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Image Alias: </label> ';
-			template += '			<label><input id="imageAlias" type="text"></label>';
-			template += '			<a id="updateButton" class="buttons btnGray clearfix" href="javascript:void(0);" style="display:none">';
-			template += '				<div class="buttons fontBold">Update Alias</div>';
-			template += '			</a>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Image Alt: </label> ';
-			template += '			<label><input id="imageAlt" type="text"></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Link Path: </label> ';
-			template += '			<label><input id="linkPath" type="text"></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Schedule:</label> ';
-			template += '			<label><input id="startDate" class="startDate" type="text"></label>';
-			template += ' 			<label> - </label>';
-			template += '			<label><input id="endDate" class="endDate"  type="text"></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Description: </label> ';
-			template += '			<label><textarea id="description"></textarea></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			
-			if(base.options.mode && base.options.mode.toLowerCase() == 'copy') {
-				template += '		<div class="floatL">';
-				template += '			<label class="txtLabel">Keyword: </label> ';
-				template += '			<label><textarea id="keyword"></textarea></label>';
-				template += '		</div>';
-				template += '		<div class="clearB"></div>';
+
+			if (base.options.mode
+					&& base.options.mode.toLowerCase() == 'copy') {
+				template += '	<label class="txtLabel">Keyword: </label> ';
+				template += '	<textarea id="keyword" class="w565px"></textarea>';
+				template += '	<div class="clearB"></div>';
 			}
 
 			if (!base.options.isLocked) {
 				var type = 'Add';
 
-				if(base.options.ruleItem) {
-					if(base.options.mode && base.options.mode.toLowerCase() == 'update') {
+				if (base.options.ruleItem) {
+					if (base.options.mode
+							&& base.options.mode.toLowerCase() == 'update') {
 						type = 'Update';
-					} else if(base.options.mode && base.options.mode.toLowerCase() == 'copy') {
+					} else if (base.options.mode
+							&& base.options.mode.toLowerCase() == 'copy') {
 						type = 'Copy';
 					}
 				}
-
-				template += '		<div id="buttonset">';
-				template += '			<a id="okButton" class="buttons btnGray clearfix" href="javascript:void(0);">';
-				template += '				<div class="buttons fontBold">' + type + '</div>';
-				template += '			</a>';
-				template += '			<a id="cancelButton" class="buttons btnGray clearfix" href="javascript:void(0);">';
-				template += '				<div class="buttons fontBold">Cancel</div>';
-				template += '			</a>';
-				template += '		</div>';
+				
+				template += '<div id="buttonset">';
+				template += '	<div id="okButton" class="btn_ok round_btn fLeft buttons">';
+				template += '		<span class="btn_wrap"><a href="javascript:void(0);">' + type + '</a></span>';
+				template += '	</div>';
+				template += '	<div id="cancelButton" class="btn_cancel round_btn fLeft buttons">';
+				template += '		<span class="btn_wrap"><a href="javascript:void(0);">Cancel</a></span>';
+				template += '	</div>';	
+				template += '</div>';
 			}
 
 			template += '	</div>';

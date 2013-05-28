@@ -85,12 +85,12 @@
 						<li ><span class="ico_minus ico fLeft"></span><a href="#" class="show_what">Show Less</a></li>
 						<li>
 							<div id="copyToBtn" class="btn_copy_to round_btn fLeft">
-								<span class="btn_wrap"><a href="javascript:void();">COPY TO</a></span>
+								<span class="btn_wrap"><a href="javascript:void(0);">COPY TO</a></span>
 							</div>							
 						</li>
 						<li class="bRight">
 							<div class="btn_keywords round_btn fLeft">
-								<span class="btn_wrap"><a href="javascript:void();">KEYWORDS (4)</a></span>
+								<span class="btn_wrap"><a href="javascript:void(0);">KEYWORDS (4)</a></span>
 							</div>							
 						</li>	
 						<li class="bRight"><div class="ico_history ico"></div></li>
@@ -126,11 +126,11 @@
 							<label for="temporaryDisable" class="cRed fBold fLeft lbl_temporaryDisable">Temporary Disable</label>
 							
 							<div class="fRight">
-							<div class="btn_update round_btn fLeft">
-								<span class="btn_wrap"><a href="javascript:void();">UPDATE</a></span>
+							<div id="updateBtn" class="btn_update round_btn fLeft">
+								<span class="btn_wrap"><a href="javascript:void(0);">Update</a></span>
 							</div>	
-							<div class="btn_delete round_btn fLeft">
-								<span class="btn_wrap"><a href="javascript:void();">DELETE</a></span>
+							<div id="deleteBtn" class="btn_delete round_btn fLeft">
+								<span class="btn_wrap"><a href="javascript:void(0);">Delete</a></span>
 							</div>	
 							</div>
 						</div>

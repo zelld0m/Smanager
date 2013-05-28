@@ -1,0 +1,116 @@
+.plugin-addbanner label.txtLabel {
+	float: left;
+	font-size: 12px;
+	margin-top: 5px;
+	width: 100px;
+}
+
+.plugin-addbanner input[type="text"],.plugin-addbanner textarea {
+	margin-top: 5px;
+}
+
+.plugin-addbanner #buttonset {
+	float: right;
+}
+
+.plugin-addbanner input#startDate,.plugin-addbanner input#endDate {
+	width: 65px;
+}
+
+.plugin-addbanner input,.plugin-addbanner textarea,
+.plugin-addbanner .input[type="checkbox"],
+.plugin-addbanner select
+	{
+	border: 1px solid #c6c6c6;
+	outline: none;
+	float: left;
+	font-family: Arial, sans-serif;
+}
+
+.plugin-addbanner button {
+	float: left;
+}
+
+.plugin-addbanner #preview img {
+	width: 100%;
+}
+
+.plugin-addbanner label {
+	width: 76px;
+	line-height: 26px;
+	clear: both;
+}
+
+.plugin-addbanner .lblImageAlt {
+	clear: none;
+	width: 70px !important;
+	margin-left: 42px;
+}
+
+.plugin-addbanner .w565px {
+	width: 492px;
+}
+
+.plugin-addbanner .w218px {
+	width: 187px;
+}
+
+.plugin-addbanner .w533px {
+	width: 462px;
+}
+
+/* buttons start */
+.plugin-addbanner #buttonset {
+	margin-top: 10px;
+}
+
+.plugin-addbanner .round_btn {
+	display: block;
+}
+
+.plugin-addbanner .round_btn a {
+	color: #fff !important;
+	text-decoration: none;
+	height: 100%;
+	display: inline-block;
+	font-size: 11px;
+	vertical-align: middle;
+	padding: 0 7px;
+}
+
+.plugin-addbanner .round_btn .btn_wrap {
+	display: inline-block;
+	height: 100%;
+}
+
+.plugin-addbanner .btn_ok {
+	height: 23px;
+	padding-left: 5px;
+	background: transparent url('image/green_rounded_big_left.png') no-repeat left;
+}
+
+.plugin-addbanner .btn_ok a {
+	background: #39b54a;
+	line-height: 23px;
+}
+
+.plugin-addbanner .btn_ok .btn_wrap {
+	background: transparent url('image/green_rounded_big_right.png') no-repeat right;
+	padding-right: 5px;
+}
+
+.plugin-addbanner .btn_cancel {
+	height: 23px;
+	padding-left: 5px;
+	background: transparent url('image/red_rounded_big_left.png') no-repeat left;
+}
+
+.plugin-addbanner .btn_cancel a {
+	background: #ed1c24;
+	line-height: 23px;
+}
+
+.plugin-addbanner .btn_cancel .btn_wrap {
+	background: transparent url('image/red_rounded_big_right.png') no-repeat right;
+	padding-right: 5px;
+}
