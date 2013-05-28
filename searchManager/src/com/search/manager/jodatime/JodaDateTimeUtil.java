@@ -1,6 +1,7 @@
 package com.search.manager.jodatime;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -70,6 +71,10 @@ public class JodaDateTimeUtil {
 		ConfigManager cm = ConfigManager.getInstance();
 		DateTimeZone systemDateTimeZone = DateTimeZone.forID(cm.getSystemTimeZoneId());
 		return (timestamp==null? null: new DateTime(timestamp, systemDateTimeZone).withZone(DateTimeZone.getDefault()));
+	}
+	
+	public static DateTime toDateTime(Date date, DateTimeZone tz) {
+		return (date==null? null: new DateTime(date, tz).withZone(DateTimeZone.getDefault()));
 	}
 	
 	private static DateTime toDateTime(String storeId, String pattern, String dateTimeText, String xmlTag){
