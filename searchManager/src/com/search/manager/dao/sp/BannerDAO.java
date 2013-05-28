@@ -181,6 +181,7 @@ public class BannerDAO {
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
@@ -437,10 +438,11 @@ public class BannerDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
+			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, model.getMemberId());
-			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(model.getStartDate()));
-			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(model.getEndDate()));
+			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_DISABLED, disabledOnly);
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
