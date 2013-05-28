@@ -226,59 +226,68 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 	@Override
 	public boolean loadRelevancyRules(Store store) throws DaoException {
 		try {
+			boolean hasRelevancy = false;
 			// load default relevancy
 			Relevancy defaultRelevancy = new Relevancy();
 			defaultRelevancy
 					.setRelevancyId(StringUtils.trim(store.getStoreId())
 							+ "_default");
 			defaultRelevancy = daoService.getRelevancyDetails(defaultRelevancy);
-			SolrInputDocument solrInputDocument = null;
 
 			if (defaultRelevancy != null) {
 				try {
-					solrInputDocument = SolrDocUtil
+					SolrInputDocument solrInputDocument = SolrDocUtil
 							.composeSolrDoc(defaultRelevancy);
+					solrServers.getCoreInstance(
+							Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
+							.addDoc(solrInputDocument);
+					hasRelevancy = true;
 				} catch (Exception e) {
-					logger.error("Failed to load relevancy rules by store", e);
+					logger.error("Failed to load relevancy rules by store. " + e.getMessage(), e);
 				}
 			}
 
-			List<Relevancy> relevancies = null;
 			Relevancy relevancyFilter = new Relevancy();
 			relevancyFilter.setStore(store);
 			relevancyFilter.setRelevancyName(""); // ALL
+			int page = 1;
 
-			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
-					relevancyFilter, null, null, 0, 0);
-			RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
-					criteria, MatchType.LIKE_NAME);
+			while (true) {
+				SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
+						relevancyFilter, page, MAX_ROWS);
+				RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
+						criteria, MatchType.LIKE_NAME);
 
-			if (recordSet != null && recordSet.getTotalSize() > 0) {
-				relevancies = new ArrayList<Relevancy>();
-				// setRelKeyword
-				for (Relevancy relevancy : recordSet.getList()) {
-					relevancy = daoService.getRelevancyDetails(relevancy);
-					relevancy.setRelKeyword(daoService.getRelevancyKeywords(
-							relevancy).getList());
-					relevancies.add(relevancy);
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					hasRelevancy = true;
+					List<Relevancy> relevancies = new ArrayList<Relevancy>();
+					// setRelKeyword
+					for (Relevancy relevancy : recordSet.getList()) {
+						relevancy = daoService.getRelevancyDetails(relevancy);
+						relevancy.setRelKeyword(daoService
+								.getRelevancyKeywords(relevancy).getList());
+						relevancies.add(relevancy);
+					}
+
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocsRelevancy(relevancies);
+					solrServers.getCoreInstance(
+							Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
+							.addDocs(solrInputDocuments);
+
+					if (relevancies.size() < MAX_ROWS) {
+						break;
+					}
+					page++;
+				} else {
+					break;
 				}
 			}
 
-			List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-					.composeSolrDocsRelevancy(relevancies);
-
-			if (solrInputDocument != null) {
-				solrInputDocuments.add(solrInputDocument);
-			}
-
-			if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+			if (hasRelevancy) {
 				solrServers.getCoreInstance(
 						Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-						.addDocs(solrInputDocuments);
-				solrServers.getCoreInstance(
-						Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-						.softCommit();
-
+						.commit();
 				return true;
 			}
 		} catch (Exception e) {
@@ -294,38 +303,48 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			throws DaoException {
 		try {
 			name = StringUtils.trim(name);
-			List<Relevancy> relevancies = null;
 			Relevancy relevancyFilter = new Relevancy();
 			relevancyFilter.setStore(store);
 			relevancyFilter.setRelevancyName(name);
+			int page = 1;
 
-			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
-					relevancyFilter, null, null, 0, 0);
-			RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
-					criteria, MatchType.LIKE_NAME);
+			while (true) {
+				SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
+						relevancyFilter, page, MAX_ROWS);
+				RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
+						criteria, MatchType.LIKE_NAME);
 
-			if (recordSet != null && recordSet.getTotalSize() > 0) {
-				relevancies = new ArrayList<Relevancy>();
-				// setRelKeyword
-				for (Relevancy relevancy : recordSet.getList()) {
-					relevancy = daoService.getRelevancyDetails(relevancy);
-					relevancy.setRelKeyword(daoService.getRelevancyKeywords(
-							relevancy).getList());
-					relevancies.add(relevancy);
-				}
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<Relevancy> relevancies = new ArrayList<Relevancy>();
 
-				List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-						.composeSolrDocsRelevancy(relevancies);
+					for (Relevancy relevancy : recordSet.getList()) {
+						relevancy = daoService.getRelevancyDetails(relevancy);
+						relevancy.setRelKeyword(daoService
+								.getRelevancyKeywords(relevancy).getList());
+						relevancies.add(relevancy);
+					}
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocsRelevancy(relevancies);
 
-				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 					solrServers.getCoreInstance(
 							Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-					solrServers.getCoreInstance(
-							Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-							.commit();
 
-					return true;
+					if (relevancies.size() < MAX_ROWS) {
+						solrServers.getCoreInstance(
+								Constants.Core.RELEVANCY_RULE_CORE
+										.getCoreName()).commit();
+						return true;
+					}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers.getCoreInstance(
+								Constants.Core.RELEVANCY_RULE_CORE
+										.getCoreName()).commit();
+						return true;
+					}
+					break;
 				}
 			}
 		} catch (Exception e) {

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.model.BannerRule;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -103,10 +105,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					}
 
 					try {
-						if (!solrService.resetElevateRules(storeKeyword)) {
-							errorMsg.append(" - " + key + "\n");
-							hasError = true;
-						}
+						solrService.resetElevateRules(storeKeyword);
 					} catch (Exception e) {
 						errorMsg.append(" - " + key + "\n");
 						hasError = true;
@@ -174,10 +173,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					}
 
 					try {
-						if (!solrService.resetExcludeRules(storeKeyword)) {
-							errorMsg.append(" - " + key + "\n");
-							hasError = true;
-						}
+						solrService.resetExcludeRules(storeKeyword);
 					} catch (Exception e) {
 						errorMsg.append(" - " + key + "\n");
 						hasError = true;
@@ -245,10 +241,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					}
 
 					try {
-						if (!solrService.resetDemoteRules(storeKeyword)) {
-							errorMsg.append(" - " + key + "\n");
-							hasError = true;
-						}
+						solrService.resetDemoteRules(storeKeyword);
 					} catch (Exception e) {
 						errorMsg.append(" - " + key + "\n");
 						hasError = true;
@@ -572,6 +565,89 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 			if (!solrService.commitRelevancyRule()) {
 				StringBuffer msg = new StringBuffer(
 						"Failed to commit the following imported relevancy rules: \n");
+				for (String key : keywordStatus.keySet()) {
+					boolean status = keywordStatus.get(key);
+					if (status) {
+						msg.append(" - " + key + "\n");
+					}
+				}
+				sendIndexStatus(msg.toString(), store);
+			}
+		} catch (Exception e) {
+			logger.error(e, e);
+		}
+
+		return keywordStatus;
+	}
+
+	@Override
+	public Map<String, Boolean> publishDidYouMeanRulesMap(String store,
+			List<String> list) {
+		// copying of updated spell files will be handled by rsync cron job
+		Map<String, Boolean> resultMap = getKeywordStatusMap(list);
+		for (String id : resultMap.keySet()) {
+			resultMap.put(id, Boolean.TRUE);
+		}
+		return resultMap;
+	}
+
+	// TODO
+	@Override
+	public Map<String, Boolean> publishBannerRulesMap(String store,
+			List<String> ruleNames) {
+		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleNames);
+
+		try {
+			boolean hasError = false;
+			StringBuffer errorMsg = new StringBuffer();
+
+			for (String key : ruleNames) {
+				try {
+					BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
+					BannerRule bannerRule = new BannerRule();
+					bannerRule.setStoreId(store);
+					bannerRule.setRuleName(key);
+					bannerRuleItemFilter.setRule(bannerRule);
+
+					daoService.deleteBannerRule(bannerRule); // prod
+
+					// retrieve staging data then push to prod
+					SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
+							bannerRuleItemFilter, 0, 0);
+					List<BannerRuleItem> bannerRuleItems = daoServiceStg
+							.searchBannerRuleItem(criteria).getList();
+
+					if (bannerRuleItems != null && bannerRuleItems.size() > 0) {
+						for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
+							daoService.addBannerRuleItem(bannerRuleItem);
+						}
+					}
+
+					try {
+						solrService.resetBannerRuleItemsByRuleName(new Store(
+								store), key);
+					} catch (Exception e) {
+						errorMsg.append(" - " + key + "\n");
+						hasError = true;
+					}
+
+					keywordStatus.put(key, true);
+				} catch (Exception e) {
+					logger.error("Failed to publish banner rule item: " + key,
+							e);
+					keywordStatus.put(key, false);
+				}
+			}
+
+			if (hasError) {
+				sendIndexStatus(
+						"Failed to index the following banner rule items: \n"
+								+ errorMsg.toString(), store);
+			}
+
+			if (!solrService.commitBannerRuleItem()) {
+				StringBuffer msg = new StringBuffer(
+						"Failed to commit the following imported banner rule items: \n");
 				for (String key : keywordStatus.keySet()) {
 					boolean status = keywordStatus.get(key);
 					if (status) {
@@ -928,8 +1004,8 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 						keywordStatus.put(id, true);
 					} catch (Exception e) {
-						logger.error("Failed to unpublish redirect rule: "
-								+ id, e);
+						logger.error(
+								"Failed to unpublish redirect rule: " + id, e);
 						keywordStatus.put(id, false);
 					}
 				}
@@ -1030,6 +1106,71 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		return keywordStatus;
 	}
 
+	// TODO
+	@Override
+	public Map<String, Boolean> unpublishBannerRulesMap(String store,
+			List<String> ruleNames) {
+		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleNames);
+
+		try {
+			if (CollectionUtils.isNotEmpty(ruleNames)) {
+				boolean hasError = false;
+				StringBuffer errorMsg = new StringBuffer();
+
+				for (String key : ruleNames) {
+					try {
+						BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
+						BannerRule bannerRule = new BannerRule();
+						bannerRule.setStoreId(store);
+						bannerRule.setRuleName(key);
+						bannerRuleItemFilter.setRule(bannerRule);
+
+						daoService.deleteBannerRule(bannerRule); // prod
+
+						try {
+							if (!solrService.deleteBannerRuleItemsByRuleName(
+									new Store(store), key)) {
+								errorMsg.append(" - " + key + "\n");
+								hasError = true;
+							}
+						} catch (Exception e) {
+							errorMsg.append(" - " + key + "\n");
+							hasError = true;
+						}
+
+						keywordStatus.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to unpublish banner rule: " + key,
+								e);
+						keywordStatus.put(key, false);
+					}
+				}
+
+				if (hasError) {
+					sendIndexStatus(
+							"Failed to unpublish the following banner rules: \n"
+									+ errorMsg.toString(), store);
+				}
+
+				if (!solrService.commitBannerRuleItem()) {
+					StringBuffer msg = new StringBuffer(
+							"Failed to commit the following unpublish banner rules: \n");
+					for (String key : keywordStatus.keySet()) {
+						boolean status = keywordStatus.get(key);
+						if (status) {
+							msg.append(" - " + key + "\n");
+						}
+					}
+					sendIndexStatus(msg.toString(), store);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e, e);
+		}
+
+		return keywordStatus;
+	}
+
 	private Map<String, Boolean> getKeywordStatusMap(List<String> keywords) {
 		Map<String, Boolean> keywordStatus = new HashMap<String, Boolean>();
 
@@ -1059,16 +1200,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		message.setText(msg);
 
 		mailSender.send(message);
-	}
-
-	@Override
-	public Map<String, Boolean> publishDidYouMeanRulesMap(String store, List<String> list) {
-		// copying of updated spell files will be handled by rsync cron job
-		Map<String, Boolean> resultMap = getKeywordStatusMap(list);
-		for (String id: resultMap.keySet()) {
-			resultMap.put(id, Boolean.TRUE);
-		}
-		return resultMap;
 	}
 
 }

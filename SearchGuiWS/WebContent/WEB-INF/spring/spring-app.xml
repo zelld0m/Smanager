@@ -29,10 +29,10 @@
 	
     <import resource="./mail-app.xml"/>
 	<import resource="./db-app.xml"/>
-	<import resource="./cache-app.xml"/>
 	<import resource="./solr-app.xml"/>
 	<import resource="./service-app.xml"/>
-	<import resource="file:/home/solr/bin/ws/config/cron-app.xml"/>
+	<!-- import resource="./cache-app.xml"/ -->
+	<!-- import resource="file:/home/solr/bin/ws/config/cron-app.xml"/ -->
 	
 	<bean id="spellIndex" class="com.search.manager.xml.file.SpellIndex" init-method="init" destroy-method="destroy" scope="singleton" />
 	<bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil" scope="singleton" />

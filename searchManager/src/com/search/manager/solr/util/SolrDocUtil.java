@@ -7,9 +7,11 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.common.SolrInputDocument;
+import org.joda.time.DateTimeZone;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.SortType;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -45,8 +47,12 @@ public class SolrDocUtil {
 						.getStoreId());
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
-				solrInputDocument
-						.addField("expiryDate", result.getExpiryDateTime());
+
+				if (result.getExpiryDateTime() != null) {
+					solrInputDocument.addField("expiryDate", result
+							.getExpiryDateTime().withZone(DateTimeZone.UTC));
+				}
+
 				solrInputDocument.addField("entity", result.getEntity());
 				solrInputDocument.addField("memberId", result.getMemberId());
 				solrInputDocument.addField("ruleType",
@@ -80,8 +86,10 @@ public class SolrDocUtil {
 						.getStoreId());
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
-				solrInputDocument
-						.addField("expiryDate", result.getExpiryDateTime());
+				if (result.getExpiryDateTime() != null) {
+					solrInputDocument.addField("expiryDate", result
+							.getExpiryDateTime().withZone(DateTimeZone.UTC));
+				}
 				solrInputDocument.addField("entity", result.getEntity());
 				solrInputDocument.addField("memberId", result.getMemberId());
 				solrInputDocument.addField("ruleType",
@@ -112,8 +120,12 @@ public class SolrDocUtil {
 						.getStoreId());
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
-				solrInputDocument
-						.addField("expiryDate", result.getExpiryDateTime());
+
+				if (result.getExpiryDateTime() != null) {
+					solrInputDocument.addField("expiryDate", result
+							.getExpiryDateTime().withZone(DateTimeZone.UTC));
+				}
+
 				solrInputDocument.addField("entity", result.getEntity());
 				solrInputDocument.addField("memberId", result.getMemberId());
 				solrInputDocument.addField("ruleType",
@@ -363,4 +375,76 @@ public class SolrDocUtil {
 		return solrInputDocument;
 	}
 
+	/* For Banner Rule */
+	public static List<SolrInputDocument> composeSolrDocsBannerRuleItem(
+			List<BannerRuleItem> bannerRuleItems) throws Exception {
+		if (bannerRuleItems == null) {
+			throw new Exception("'BannerRuleItems' is null or empty.");
+		}
+
+		List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
+
+		for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
+			solrInputDocuments.add(composeSolrDoc(bannerRuleItem));
+		}
+
+		return solrInputDocuments;
+	}
+
+	public static SolrInputDocument composeSolrDoc(BannerRuleItem bannerRuleItem)
+			throws Exception {
+		if (bannerRuleItem == null) {
+			throw new Exception("'BannerRuleItem' is null or empty");
+		}
+
+		SolrInputDocument solrInputDocument = new SolrInputDocument();
+
+		if (bannerRuleItem.getRule() != null) {
+			solrInputDocument.setField("store", bannerRuleItem.getRule()
+					.getStoreId());
+			solrInputDocument.setField("ruleId", bannerRuleItem.getRule()
+					.getRuleId());
+			solrInputDocument.setField("ruleName", bannerRuleItem.getRule()
+					.getRuleName());
+		}
+
+		solrInputDocument.setField("memberId", bannerRuleItem.getMemberId());
+		solrInputDocument.setField("priority", bannerRuleItem.getPriority());
+		if (bannerRuleItem.getStartDate() != null) {
+			solrInputDocument.setField("startDate", bannerRuleItem
+					.getStartDate().withZone(DateTimeZone.UTC));
+		}
+		if (bannerRuleItem.getEndDate() != null) {
+			solrInputDocument.setField("endDate", bannerRuleItem.getEndDate()
+					.withZone(DateTimeZone.UTC));
+		}
+		solrInputDocument.setField("imageAlt", bannerRuleItem.getImageAlt());
+		solrInputDocument.setField("linkPath", bannerRuleItem.getLinkPath());
+		solrInputDocument.setField("openNewWindow",
+				bannerRuleItem.getOpenNewWindow());
+		solrInputDocument.setField("description",
+				bannerRuleItem.getDescription());
+		solrInputDocument.setField("disabled", bannerRuleItem.getDisabled());
+
+		if (bannerRuleItem.getImagePath() != null) {
+			solrInputDocument.setField("imagePathId", bannerRuleItem
+					.getImagePath().getId());
+			solrInputDocument.setField("path", bannerRuleItem.getImagePath()
+					.getPath());
+			solrInputDocument.setField("pathType", bannerRuleItem
+					.getImagePath().getPathType());
+			solrInputDocument.setField("alias", bannerRuleItem.getImagePath()
+					.getAlias());
+		}
+
+		// store + "_" + ruleId + "_" + ruleName + "_" + memberId
+		String id = bannerRuleItem.getRule().getStoreId() + "_"
+				+ bannerRuleItem.getRule().getRuleId() + "_"
+				+ bannerRuleItem.getRule().getRuleName()
+				+ bannerRuleItem.getMemberId();
+
+		solrInputDocument.setField("id", id);
+
+		return solrInputDocument;
+	}
 }

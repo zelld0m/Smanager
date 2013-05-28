@@ -1,70 +1,86 @@
 package com.mall.migrator;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
-import org.xml.sax.SAXException;
+import org.springframework.context.ApplicationContext;
 
 import com.mall.mail.MailNotifier;
-import com.search.manager.report.model.xml.RuleFileXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
-import com.search.manager.report.model.xml.SpellRules;
+import com.search.manager.model.BannerRule;
+import com.search.manager.model.BannerRuleItem;
+import com.search.manager.model.RecordSet;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.solr.constants.Constants;
 import com.search.manager.solr.util.IndexBuilderUtil;
 import com.search.manager.solr.util.LocalSolrServerRunner;
 import com.search.manager.solr.util.SolrDocUtil;
-import com.search.manager.xml.file.RuleXmlUtil;
+import com.search.manager.solr.util.SolrServerFactory;
 
-public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
+public class BannerRuleBuilder extends BaseRuleBuilder implements Runnable {
 
 	private static final Logger logger = Logger
-			.getLogger(SpellRuleBuilder.class);
+			.getLogger(BannerRuleBuilder.class);
 
-	private static final String BASE_RULE_DIR = "C:\\home\\solr\\utilities\\rules\\Did You Mean\\";
-	private static final String SPELL_FILE = "spell.xml";
-	private RuleXmlUtil ruleXmlUtil;
-	private int fileCount;
+	private String storeId;
+	private int dbCount;
 	private int indexCount;
 
 	@SuppressWarnings("unused")
-	private SpellRuleBuilder() {
+	private BannerRuleBuilder() {
 		// do nothing...
 	}
 
-	public SpellRuleBuilder(String storeId, String core)
+	public BannerRuleBuilder(String storeId, String core)
 			throws SolrServerException {
 		this.storeId = storeId;
 		solrServer = solrServerFactory.getCoreInstance(core);
-		ruleXmlUtil = (RuleXmlUtil) context.getBean("ruleXmlUtil");
+	}
+
+	public BannerRuleBuilder(ApplicationContext context,
+			SolrServerFactory solrServerFactory, Properties properties,
+			String storeId, String core) {
+		super(context, solrServerFactory, properties, storeId, core);
 	}
 
 	@Override
 	public void run() {
 		try {
+			BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
+			BannerRule bannerRule = new BannerRule();
+			bannerRule.setStoreId(storeId);
+			bannerRuleItemFilter.setRule(bannerRule);
 			long timeStart = System.currentTimeMillis();
+			long indexTime = 0;
+			int page = 1;
 
-			RuleFileXml xml = new RuleFileXml();
-			xml.setPath(BASE_RULE_DIR + storeId + "\\" + SPELL_FILE);
-
-			@SuppressWarnings("static-access")
-			SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(xml);
-
-			List<SpellRuleXml> spellRulesXml = null;
-
-			long indexTime = System.currentTimeMillis();
-			if (spellRules != null) {
-				spellRulesXml = spellRules.getSpellRule();
-				if (spellRulesXml != null && spellRulesXml.size() > 0) {
-					fileCount = spellRulesXml.size();
-					solrImport(spellRulesXml, spellRules.getStore());
+			while (true) {
+				SearchCriteria<BannerRuleItem> searchCriteria = new SearchCriteria<BannerRuleItem>(
+						bannerRuleItemFilter, page, MAX_IMPORT_DOC);
+				RecordSet<BannerRuleItem> recordSet = daoService
+						.searchBannerRuleItem(searchCriteria);
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<BannerRuleItem> bannerRuleItems = recordSet.getList();
+					logger.info("Indexing Page: [" + page + "] Size: ["
+							+ bannerRuleItems.size() + "]");
+					dbCount += bannerRuleItems.size();
+					solrImport(bannerRuleItems);
+					if (bannerRuleItems.size() < MAX_IMPORT_DOC) {
+						indexTime = System.currentTimeMillis();
+						solrServer.optimize();
+						break;
+					}
+					page++;
+				} else {
+					if (page != 1) {
+						indexTime = System.currentTimeMillis();
+						solrServer.optimize();
+					}
+					break;
 				}
 			}
 
@@ -72,61 +88,57 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 			long elapsedIndexTime = System.currentTimeMillis() - indexTime;
 
 			StringBuffer info = new StringBuffer();
-			info.append(" Indexing completed!");
+			info.append("Indexing completed!");
 			info.append("\n Time Completed (Sec): "
-					+ (elapsedTimeMillis / (1000F)) + " secs.");
-			info.append("\n Time Completed (Min): "
-					+ (elapsedTimeMillis / (60 * 1000F)) + " mins.");
+					+ (elapsedTimeMillis / (1000F)) + " secs./");
+			info.append((elapsedTimeMillis / (60 * 1000F)) + " mins.");
 			info.append("\n Index Time (Sec): " + (elapsedIndexTime / (1000F))
-					+ " secs.");
-			info.append("\n Index Time (Min): "
-					+ (elapsedIndexTime / (60 * 1000F)) + " mins.");
-			info.append("\n Total Spell Rule fetched from database/file : "
-					+ fileCount);
-			info.append("\n Total Spell Rule indexed : " + indexCount);
+					+ " secs./");
+			info.append((elapsedIndexTime / (60 * 1000F)) + " mins.");
+			info.append("\n Total Banner Rule Item rule indexed : "
+					+ indexCount);
+			info.append("\n Total Banner Rule Item fetched from database : "
+					+ dbCount);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
-						"Spell Rule Builder", info.toString(), properties);
+						"Redirect Rule Builder -[" + storeId + "]",
+						info.toString(), properties);
 				mailNotifier.send();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
 		}
 	}
 
-	private void solrImport(List<SpellRuleXml> spellRulesXml, String storeId)
-			throws ParserConfigurationException, IOException, SAXException {
-		List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
+	private void solrImport(List<BannerRuleItem> bannerRuleItems) {
+		List<SolrInputDocument> solrInputDocuments = null;
 		boolean hasError = false;
 
 		try {
-			if (spellRulesXml != null && spellRulesXml.size() > 0) {
-				solrInputDocuments.addAll(SolrDocUtil.composeSolrDocsSpell(
-						spellRulesXml, storeId));
+			if (bannerRuleItems != null && bannerRuleItems.size() > 0) {
+				solrInputDocuments = SolrDocUtil
+						.composeSolrDocsBannerRuleItem(bannerRuleItems);
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
-				solrServer.optimize();
-				indexCount = solrInputDocuments.size();
+				solrServer.commit();
+				indexCount += solrInputDocuments.size();
 			}
 		} catch (Exception e) {
 			hasError = true;
-			e.printStackTrace();
-			logger.error(e);
 		}
 
 		if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 			if (!hasError) {
 				if (logIndex.equals("true")) {
 					IndexBuilderUtil.saveIndexData(logPath, solrInputDocuments,
-							"spellRule");
+							"banner_");
 				}
 			} else {
 				// Log error indexed data.
 				if (logErrorIndex.equals("true")) {
 					IndexBuilderUtil.saveIndexData(logPath + "error\\",
-							solrInputDocuments, "spellRule");
+							solrInputDocuments, "banner_");
 				}
 			}
 		}
@@ -143,9 +155,8 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 		}
 
 		try {
-			SpellRuleBuilder spellRuleBuilder = new SpellRuleBuilder(storeId,
-					Constants.Rule.SPELL.getRuleName());
-
+			BannerRuleBuilder bannerRuleBuilder = new BannerRuleBuilder(
+					storeId, Constants.Core.BANNER_RULE_CORE.getCoreName());
 			System.out.println("----------------------------------------");
 			System.out.println("Store	  : " + storeId);
 			System.out.println("Solr Url  : "
@@ -166,8 +177,9 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 				return;
 			}
 
-			spellRuleBuilder.run();
+			bannerRuleBuilder.run();
 		} catch (Exception e) {
+			System.out.println(e);
 			logger.error(e);
 		} finally {
 			if (solrServerFactory != null) {

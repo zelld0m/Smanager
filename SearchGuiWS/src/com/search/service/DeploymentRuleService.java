@@ -26,6 +26,9 @@ public interface DeploymentRuleService {
 	public Map<String, Boolean> publishDidYouMeanRulesMap(String store,
 			List<String> list);
 
+	public Map<String, Boolean> publishBannerRulesMap(String store,
+			List<String> list);
+	
 	public boolean loadElevateRules(String store);
 
 	public boolean loadExcludeRules(String store);
@@ -54,6 +57,9 @@ public interface DeploymentRuleService {
 			List<String> list);
 
 	public Map<String, Boolean> unpublishRankingRulesMap(String store,
+			List<String> list);
+	
+	public Map<String, Boolean> unpublishBannerRulesMap(String store,
 			List<String> list);
 	
 }

@@ -74,6 +74,7 @@ public class RuleIndexMigrator {
 		LocalSolrServerRunner demoteSolrServer;
 		LocalSolrServerRunner elevateSolrServer;
 		LocalSolrServerRunner excludeSolrServer;
+		LocalSolrServerRunner bannerSolrServer;
 
 		try {
 			System.out.println("----------------------------------------");
@@ -114,6 +115,9 @@ public class RuleIndexMigrator {
 			excludeSolrServer = solrServerFactory
 					.getCoreInstance(Constants.Core.EXCLUDE_RULE_CORE
 							.getCoreName());
+			bannerSolrServer = solrServerFactory
+					.getCoreInstance(Constants.Core.BANNER_RULE_CORE
+							.getCoreName());
 		} catch (SolrServerException e) {
 			logger.error(e);
 			return;
@@ -146,6 +150,10 @@ public class RuleIndexMigrator {
 				logger.debug("excludeSolrServer is not pingable.");
 				pingable = false;
 			}
+			if (bannerSolrServer.ping() == 1) {
+				logger.debug("bannerSolrServer is not pingable.");
+				pingable = false;
+			}
 			if (!pingable) {
 				return;
 			}
@@ -154,21 +162,40 @@ public class RuleIndexMigrator {
 			return;
 		}
 
-		RedirectRuleBuilder redirectRuleBuilder = new RedirectRuleBuilder(
-				storeId, redirectSolrServer, properties, context);
-		RelevancyRuleBuilder relevancyRuleBuilder = new RelevancyRuleBuilder(
-				storeId, relevancySolrServer, properties, context);
-		FacetSortRuleBuilder facetSortRuleBuilder = new FacetSortRuleBuilder(
-				storeId, facetSortSolrServer, properties, context);
-		RuleIndexBuilder demoteRuleIndexBuilder = new RuleIndexBuilder(storeId,
-				demoteSolrServer, properties, context,
-				Constants.Rule.DEMOTE.getRuleName());
-		RuleIndexBuilder elevateRuleIndexBuilder = new RuleIndexBuilder(
-				storeId, elevateSolrServer, properties, context,
-				Constants.Rule.ELEVATE.getRuleName());
-		RuleIndexBuilder excludeRuleIndexBuilder = new RuleIndexBuilder(
-				storeId, excludeSolrServer, properties, context,
-				Constants.Rule.EXCLUDE.getRuleName());
+		RedirectRuleBuilder redirectRuleBuilder;
+		FacetSortRuleBuilder facetSortRuleBuilder;
+		RuleIndexBuilder demoteRuleIndexBuilder;
+		RuleIndexBuilder elevateRuleIndexBuilder;
+		RuleIndexBuilder excludeRuleIndexBuilder;
+		RelevancyRuleBuilder relevancyRuleBuilder;
+		BannerRuleBuilder bannerRuleBuilder;
+
+		try {
+			redirectRuleBuilder = new RedirectRuleBuilder(context,
+					solrServerFactory, properties, storeId,
+					Constants.Core.REDIRECT_RULE_CORE.getCoreName());
+			facetSortRuleBuilder = new FacetSortRuleBuilder(context,
+					solrServerFactory, properties, storeId,
+					Constants.Core.FACET_SORT_RULE_CORE.getCoreName());
+			relevancyRuleBuilder = new RelevancyRuleBuilder(context,
+					solrServerFactory, properties, storeId,
+					Constants.Core.RELEVANCY_RULE_CORE.getCoreName());
+			demoteRuleIndexBuilder = new RuleIndexBuilder(context,
+					solrServerFactory, properties, storeId,
+					Constants.Core.DEMOTE_RULE_CORE.getCoreName());
+			elevateRuleIndexBuilder = new RuleIndexBuilder(context,
+					solrServerFactory, properties, storeId,
+					Constants.Core.ELEVATE_RULE_CORE.getCoreName());
+			excludeRuleIndexBuilder = new RuleIndexBuilder(context,
+					solrServerFactory, properties, storeId,
+					Constants.Core.EXCLUDE_RULE_CORE.getCoreName());
+			bannerRuleBuilder = new BannerRuleBuilder(context,
+					solrServerFactory, properties, storeId,
+					Constants.Core.BANNER_RULE_CORE.getCoreName());
+		} catch (Exception e) {
+			logger.error(e);
+			return;
+		}
 
 		Thread redirectRuleBuilderThread = new Thread(redirectRuleBuilder);
 		Thread relevancyRuleBuilderThread = new Thread(relevancyRuleBuilder);
@@ -176,6 +203,7 @@ public class RuleIndexMigrator {
 		Thread demoteRuleBuilderThread = new Thread(demoteRuleIndexBuilder);
 		Thread elevateRuleBuilderThread = new Thread(elevateRuleIndexBuilder);
 		Thread excludeRuleBuilderThread = new Thread(excludeRuleIndexBuilder);
+		Thread bannerRuleBuilderThread = new Thread(bannerRuleBuilder);
 
 		long timeStart = System.currentTimeMillis();
 		try {
@@ -185,6 +213,7 @@ public class RuleIndexMigrator {
 			demoteRuleBuilderThread.start();
 			elevateRuleBuilderThread.start();
 			excludeRuleBuilderThread.start();
+			bannerRuleBuilderThread.start();
 
 			redirectRuleBuilderThread.join();
 			relevancyRuleBuilderThread.join();
@@ -192,6 +221,7 @@ public class RuleIndexMigrator {
 			demoteRuleBuilderThread.join();
 			elevateRuleBuilderThread.join();
 			excludeRuleBuilderThread.join();
+			bannerRuleBuilderThread.join();
 		} catch (InterruptedException e) {
 			logger.error(e);
 		} finally {

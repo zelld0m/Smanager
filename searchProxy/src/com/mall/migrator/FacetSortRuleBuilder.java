@@ -1,6 +1,5 @@
 package com.mall.migrator;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +10,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.xml.sax.SAXException;
 
 import com.mall.mail.MailNotifier;
-import com.search.manager.dao.DaoService;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -30,86 +27,62 @@ import com.search.manager.solr.util.LocalSolrServerRunner;
 import com.search.manager.solr.util.SolrDocUtil;
 import com.search.manager.solr.util.SolrServerFactory;
 
-public class FacetSortRuleBuilder implements Runnable {
+public class FacetSortRuleBuilder extends BaseRuleBuilder implements Runnable {
 	private static final Logger logger = Logger
 			.getLogger(FacetSortRuleBuilder.class);
 
-	private static SolrServerFactory solrServerFactory;
+	private int dbCount;
+	private int indexCount;
 
-	private ApplicationContext context;
-	private LocalSolrServerRunner solrServer;
-	private Properties properties;
-	private DaoService daoService;
-	private String storeId;
+	@SuppressWarnings("unused")
+	private FacetSortRuleBuilder() {
+		// do nothing...
+	}
 
-	private String logPath;
-	private String logIndex;
-	private String logErrorIndex;
-	private String mailNotification;
-
-	private final int MAX_IMPORT_DOC = 1000;
-	private int count;
-	private int facetSortCount;
-
-	FacetSortRuleBuilder(String storeId, LocalSolrServerRunner solrServer,
-			Properties properties, ApplicationContext context) {
+	public FacetSortRuleBuilder(String storeId, String core)
+			throws SolrServerException {
 		this.storeId = storeId;
-		this.solrServer = solrServer;
-		this.properties = properties;
-		this.context = context;
+		solrServer = solrServerFactory.getCoreInstance(core);
+	}
+
+	public FacetSortRuleBuilder(ApplicationContext context,
+			SolrServerFactory solrServerFactory, Properties properties,
+			String storeId, String core) {
+		super(context, solrServerFactory, properties, storeId, core);
 	}
 
 	@Override
 	public void run() {
 		try {
-			logPath = properties.getProperty("logPath");
-			logIndex = properties.getProperty("logIndex");
-			logErrorIndex = properties.getProperty("logErrorIndex");
-			mailNotification = properties.getProperty("mail.notification");
-			PropertyConfigurator.configure("config/log4j.properties");
-			daoService = (DaoService) context.getBean("daoService");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-
-		if (storeId == null) {
-			logger.debug("storeId is null");
-			return;
-		}
-
-		if (solrServer == null) {
-			logger.debug("SolrServer is null.");
-			return;
-		}
-
-		try {
 			Store store = new Store(storeId);
-			long timeStart = System.currentTimeMillis();
-
 			FacetSort facetSortFilter = new FacetSort();
 			facetSortFilter.setStore(store);
-
-			long indexTime = System.currentTimeMillis();
-
+			long timeStart = System.currentTimeMillis();
+			long indexTime = 0;
 			int page = 1;
 
 			while (true) {
 				SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(
-						facetSortFilter, null, null, page, MAX_IMPORT_DOC);
+						facetSortFilter, page, MAX_IMPORT_DOC);
 				RecordSet<FacetSort> recordSet = daoService.searchFacetSort(
 						criteria, MatchType.LIKE_NAME);
-				if (recordSet != null) {
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
 					List<FacetSort> facetSorts = recordSet.getList();
-					count += facetSorts.size();
+					logger.info("Indexing Page: [" + page + "] Size: ["
+							+ facetSorts.size() + "]");
+					dbCount += facetSorts.size();
 					solrImport(facetSorts);
-
 					if (facetSorts.size() < MAX_IMPORT_DOC) {
+						indexTime = System.currentTimeMillis();
 						solrServer.commit();
 						break;
 					}
 					page++;
 				} else {
+					if (page != 1) {
+						indexTime = System.currentTimeMillis();
+						solrServer.commit();
+					}
 					break;
 				}
 			}
@@ -125,8 +98,9 @@ public class FacetSortRuleBuilder implements Runnable {
 			info.append("\n Index Time (Sec): " + (elapsedIndexTime / (1000F))
 					+ " secs./");
 			info.append((elapsedIndexTime / (60 * 1000F)) + " mins.");
-			info.append("\n Total Facet Sort Rule indexed : " + facetSortCount);
-			info.append("\n Total Facet Sort fetched from database : " + count);
+			info.append("\n Total Facet Sort Rule indexed : " + indexCount);
+			info.append("\n Total Facet Sort fetched from database : "
+					+ dbCount);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
@@ -151,7 +125,7 @@ public class FacetSortRuleBuilder implements Runnable {
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();
-				facetSortCount += solrInputDocuments.size();
+				indexCount += solrInputDocuments.size();
 			}
 		} catch (Exception e) {
 			hasError = true;
@@ -177,41 +151,17 @@ public class FacetSortRuleBuilder implements Runnable {
 
 	public static void main(String[] args) {
 		String storeId;
-		LocalSolrServerRunner solrServer;
-		Properties properties;
-		ApplicationContext context;
-
-		try {
-			FileInputStream inStream = new FileInputStream(
-					"./config/dataImport.properties");
-			properties = new Properties(System.getProperties());
-			properties.load(inStream);
-			PropertyConfigurator.configure("config/log4j.properties");
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e);
-			return;
-		}
 
 		if (args.length > 0) {
 			storeId = args[0];
 		} else {
-			logger.debug("Store is null.");
-			return;
-		}
-
-		context = new FileSystemXmlApplicationContext(
-				"/WebContent/WEB-INF/spring/search-proxy-context.xml");
-
-		solrServerFactory = (SolrServerFactory) context
-				.getBean("solrServerFactory");
-
-		if (solrServerFactory == null) {
-			logger.debug("SolrServerFactory is null.");
+			System.out.println("Store is null.");
 			return;
 		}
 
 		try {
+			FacetSortRuleBuilder facetSortRuleBuilder = new FacetSortRuleBuilder(
+					storeId, Constants.Core.FACET_SORT_RULE_CORE.getCoreName());
 			System.out.println("----------------------------------------");
 			System.out.println("Store	  : " + storeId);
 			System.out.println("Solr Url  : "
@@ -232,16 +182,13 @@ public class FacetSortRuleBuilder implements Runnable {
 				return;
 			}
 
-			solrServer = solrServerFactory
-					.getCoreInstance(Constants.Core.FACET_SORT_RULE_CORE
-							.getCoreName());
-			FacetSortRuleBuilder facetSortRuleBuilder = new FacetSortRuleBuilder(
-					storeId, solrServer, properties, context);
 			facetSortRuleBuilder.run();
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
-			solrServerFactory.shutdown();
+			if (solrServerFactory != null) {
+				solrServerFactory.shutdown();
+			}
 		}
 	}
 

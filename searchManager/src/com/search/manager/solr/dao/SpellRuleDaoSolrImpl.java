@@ -30,10 +30,10 @@ import com.search.manager.utility.PropsUtils;
 import com.search.manager.xml.file.RuleXmlUtil;
 
 @Repository("spellRuleDaoSolr")
-public class SpellRuleDaoImpl extends BaseDaoSolr implements SpellRuleDao {
+public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 
 	private static final Logger logger = Logger
-			.getLogger(SpellRuleDaoImpl.class);
+			.getLogger(SpellRuleDaoSolrImpl.class);
 
 	@Autowired
 	private RuleXmlUtil ruleXmlUtil;

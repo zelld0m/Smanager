@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleType;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -25,6 +26,7 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.solr.dao.BannerRuleItemDao;
 import com.search.manager.solr.dao.DemoteDao;
 import com.search.manager.solr.dao.ElevateDao;
 import com.search.manager.solr.dao.ExcludeDao;
@@ -64,6 +66,10 @@ public class SolrServiceImpl implements SolrService {
 	@Autowired
 	@Qualifier("spellRuleDaoSolr")
 	private SpellRuleDao spellRuleDao;
+
+	@Autowired
+	@Qualifier("bannerRuleItemDaoSolr")
+	private BannerRuleItemDao bannerRuleItemDao;
 
 	private final static Logger logger = Logger
 			.getLogger(SolrServiceImpl.class);
@@ -732,6 +738,91 @@ public class SolrServiceImpl implements SolrService {
 	@Override
 	public boolean commitSpellRule() throws DaoException {
 		return spellRuleDao.commitSpellRule();
+	}
+
+	@Override
+	public List<BannerRuleItem> getBannerRuleItems(Store store)
+			throws DaoException {
+		return (List<BannerRuleItem>) bannerRuleItemDao
+				.getBannerRuleItems(store);
+	}
+
+	@Override
+	public List<BannerRuleItem> getBannerRuleItemsByRuleName(Store store,
+			String ruleName) throws DaoException {
+		return (List<BannerRuleItem>) bannerRuleItemDao
+				.getBannerRuleItemsByRuleName(store, ruleName);
+	}
+
+	@Override
+	public BannerRuleItem getBannerRuleItemByMemberId(Store store,
+			String memberId) throws DaoException {
+		return bannerRuleItemDao.getBannerRuleItemByMemberId(store, memberId);
+	}
+
+	@Override
+	public boolean loadBannerRuleItems(Store store) throws DaoException {
+		return bannerRuleItemDao.loadBannerRuleItems(store);
+	}
+
+	@Override
+	public boolean loadBannerRuleItemsByRuleName(Store store, String ruleName)
+			throws DaoException {
+		return bannerRuleItemDao.loadBannerRuleItemsByRuleName(store, ruleName);
+	}
+
+	@Override
+	public boolean loadBannerRuleItemByMemberId(Store store, String memberId)
+			throws DaoException {
+		return bannerRuleItemDao.loadBannerRuleItemByMemberId(store, memberId);
+	}
+
+	@Override
+	public boolean resetBannerRuleItems(Store store) throws DaoException {
+		return bannerRuleItemDao.resetBannerRuleItems(store);
+	}
+
+	@Override
+	public boolean resetBannerRuleItemsByRuleName(Store store, String ruleName)
+			throws DaoException {
+		return bannerRuleItemDao
+				.resetBannerRuleItemsByRuleName(store, ruleName);
+	}
+
+	@Override
+	public boolean resetBannerRuleItemByMemberId(Store store, String memberId)
+			throws DaoException {
+		return bannerRuleItemDao.resetBannerRuleItemByMemberId(store, memberId);
+	}
+
+	@Override
+	public boolean deleteBannerRuleItems(Store store) throws DaoException {
+		return bannerRuleItemDao.deleteBannerRuleItems(store);
+	}
+
+	@Override
+	public boolean deleteBannerRuleItemsByRuleName(Store store, String ruleName)
+			throws DaoException {
+		return bannerRuleItemDao.deleteBannerRuleItemsByRuleName(store,
+				ruleName);
+	}
+
+	@Override
+	public boolean deleteBannerRuleItemByMemberId(Store store, String memberId)
+			throws DaoException {
+		return bannerRuleItemDao
+				.deleteBannerRuleItemByMemberId(store, memberId);
+	}
+
+	@Override
+	public boolean updateBannerRuleItem(BannerRuleItem bannerRuleItem)
+			throws DaoException {
+		return bannerRuleItemDao.updateBannerRuleItem(bannerRuleItem);
+	}
+
+	@Override
+	public boolean commitBannerRuleItem() throws DaoException {
+		return bannerRuleItemDao.commitBannerRuleItem();
 	}
 
 }
