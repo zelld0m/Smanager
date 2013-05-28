@@ -1920,4 +1920,10 @@ public class DaoServiceImpl implements DaoService {
 			SearchCriteria<BannerRuleItem> criteria) throws DaoException {
 		return bannerDAO.searchRuleItem(criteria);
 	}
+
+	@Override
+	public int deleteBannerRuleItem(BannerRuleItem ruleItem)
+			throws DaoException {
+		return bannerDAO.deleteRuleItem(ruleItem);
+	}
 }

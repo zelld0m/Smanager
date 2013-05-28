@@ -69,7 +69,7 @@
 
 					if (base.options.enableVersion){
 						//base.$el.find("#versionIcon, #backupBtn")
-						base.$el.find("#backupBtn").on({
+						base.$el.find("#backupBtn").off().on({
 							click: function(e){
 								$(e.currentTarget).version({
 									moduleName: base.options.moduleName,
@@ -143,9 +143,9 @@
 				click: function(e){
 					jConfirm(base.options.moduleName + " " + base.options.rule["ruleName"] + " will be locked for approval. Continue?", "Submit For Approval", function(result){
 						if(result){
-							DeploymentServiceJS.processrulestatusbar(base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
-								callback: function(rulestatusbar){
-									base.options.afterSubmitForApprovalRequest(rulestatusbar);
+							DeploymentServiceJS.processRuleStatus(base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
+								callback: function(ruleStatus){
+									base.options.afterSubmitForApprovalRequest(ruleStatus);
 								},
 								preHook:function(){
 									base.options.beforeSubmitForApprovalRequest();
@@ -163,26 +163,23 @@
 			template += '<div class="plugin-rulestatusbar">';
 			template += '	<ul class="page_info clearfix">';
 			template += '		<li class="fLeft fBold">';
+			template += '			<span class="cRed">Status:</span>';
 			template += '			<span id="status" class="cRed">Action Required</span>';
 			template += '			<span id="statusMode" class="cOrange"></span>';
 			template += '		</li>';
 
 			if(base.options.authorizeSubmitForApproval){
 				template += '		<li class="fLeft bRight">';
-				template += '			<div id="submitForApprovalBtn" class="btn_submit_approval btn">';
-				template += '				<span class="btn_wrap"><a href="javascript:void(0);">Submit for Approval</a></span>';
-				template += '			<div/>';
+				template += '			<div id="submitForApprovalBtn" class="btn_submit_approval btn" href="javascript:void(0);">Submit for Approval</div>';
 				template += '		</li>';
 			}
 
 			if(base.options.enableVersion){
 				if(base.options.authorizeRuleBackup){
 					template += '		<li class="fLeft bRight">';
-					template += '			<div id="backupBtn" class="btn_backup_now btn">';
-					template += '				<span class="btn_wrap"><a href="javascript:void(0);">Backup now</a></span>';
-					template += '			<div/>';
+					template += '			<div id="backupBtn" class="btn_backup_now btn" href="javascript:void(0);">Backup now</div>';
 					template += '		</li>';
-					template += '		<li  class="fLeft bRight">';
+					template += '		<li class="fLeft bRight">';
 					template += '			<div id="downloadVersionIcon" class="ico_download ico"></div>';
 					template += '		</li>';	
 				}

@@ -178,8 +178,8 @@
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/uploadimage/jquery.uploadimage.custom.css" />">
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/uploadimage/jquery.uploadimage.custom.js" />" ></script>
   
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/addbanner/jquery.addbanner.custom.css" />">
-  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/addbanner/jquery.addbanner.custom.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/addbanner/1.0/jquery.addbanner.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/addbanner/1.0/jquery.addbanner.custom.js" />" ></script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.css" />">
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.js" />" ></script>
