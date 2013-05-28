@@ -33,7 +33,7 @@ public class BannerService {
 
 	private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
 	private static final String MSG_FAILED_ADD_RULE_ITEM = "Failed to add banner rule item %s";
-	private static final String MSG_FAILED_DELETE_RULE_ITEM = "Failed to delete banner rule item %";
+	private static final String MSG_FAILED_DELETE_RULE_ITEM = "Failed to delete banner rule item %s";
 	private static final String MSG_FAILED_GET_IMAGE = "Failed to retrieve record for %s";
 	private static final String MSG_FAILED_ADD_IMAGE = "Failed to add image link %s : %s";
 	private static final String MSG_FAILED_UPDATE_IMAGE_ALIAS = "Failed to update image alias to %s";
@@ -127,13 +127,12 @@ public class BannerService {
 		return serviceResponse;
 	}
 	
-	
 	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItem(String ruleId, int page, int pageSize){
-		return getAllRuleItems(ruleId, null, null, page, pageSize);
+	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String ruleId, int page, int pageSize){
+		return getItems(ruleId, null, null, page, pageSize);
 	}
 	
-	public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItems(String ruleId, String startDate, String endDate, int page, int pageSize){
+	public ServiceResponse<RecordSet<BannerRuleItem>> getItems(String ruleId, String startDate, String endDate, int page, int pageSize){
 		String storeId = UtilityService.getStoreId();
 		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
 		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);

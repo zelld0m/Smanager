@@ -129,7 +129,7 @@
 				var $iHolder = $("#ruleItemHolder");
 				$iHolder.find(".ruleItem:not(#ruleItemPattern)").remove();
 
-				BannerServiceJS.getRuleItem(rule["ruleId"], page, self.ruleItemPageSize, {
+				BannerServiceJS.getRuleItems(rule["ruleId"], page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
 
@@ -201,13 +201,13 @@
 				self.previewImage(ui, item["imagePath"]["path"]);
 
 				ui
-				.find("#itemName").val(item["imagePath"]["alias"]).end()
+				.find("#imageTitle").text(item["imagePath"]["alias"]).end()
 				.find("#priority").val(item["priority"]).end()
 				.find("#startDate").val(item["formattedStartDate"]).end()
 				.find("#endDate").val(item["formattedEndDate"]).end()
 
 				.find("#imagePath").val(item["imagePath"]["path"]).end()
-				.find("#alias").val(item["imagePath"]["alias"]).prop({id: item["imagePath"]["id"]}).end()
+				.find("#imageAlias").val(item["imagePath"]["alias"]).prop({id: item["imagePath"]["id"]}).end()
 				.find("#imageAlt").val(item["imageAlt"]).end()
 				.find("#linkPath").val(item["linkPath"]).end()
 				.find("#description").val(item["description"]).end()
@@ -235,8 +235,10 @@
 					}
 				});
 
-				// Disable when rule is locked
-				ui.find(".startDate, .endDate").datepicker(self.selectedRuleStatus["locked"] || !allowModify ? 'disable' : 'enable');
+				// Days left
+				if($.isNotBlank(item["daysLeft"])){
+					ui.find("daysLeft").text(item["daysLeft"]);
+				}
 
 				self.registerEventListener(ui, item);
 			},
@@ -244,12 +246,22 @@
 			registerEventListener: function(ui, item){
 				var self = this;
 
+				self.addScheduleRestriction(ui, item);
 				self.addInputFieldListener(ui, item, ui.find("input#imagePath"), self.previewImage);
 				self.addInputFieldListener(ui, item, ui.find("input#linkPath"), self.validateLinkPath);
 				self.addCopyToHandler(ui, item);
 				self.addShowKeywordHandler(ui, item);
+				self.addItemCommentHandler(ui, item);
 				self.addSetAliasHandler(ui, item);
 				self.addDeleteRuleHandler(ui, item);
+			},
+
+			addScheduleRestriction: function(ui, item){
+				// Disable when rule item has started
+				ui.find(".startDate").datepicker(item["started"]? 'disable' : 'enable').end()
+				
+				// Disable when rule is locked, rule item has expired, and user has no permission
+				.find(".startDate, .endDate").datepicker(item["expired"] || self.selectedRuleStatus["locked"] || !allowModify ? 'disable' : 'enable');
 			},
 			
 			addInputFieldListener: function(ui, item, input, callback){
@@ -284,7 +296,7 @@
 						if (e.data.locked) return;
 
 						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-							if(callback) self.showImagePreview(e.data.ui, e.data.item, $(e.currentTarget).val());
+							if(callback) callback(e.data.ui, $(e.currentTarget).val());
 						}
 					}
 				}, {ui: ui , item: item, locked: self.selectedRuleStatus["locked"] || !allowModify, input: ""});
@@ -513,6 +525,42 @@
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+			},
+			
+			addItemCommentHandler: function(ui, item){
+				var self = this;
+				ui.find("#commentIcon").off().on({
+					click: function(e){
+						$(e.currentTarget).comment({
+							showAddComment: true,
+							locked: e.data.locked,
+							itemDataCallback: function(base, page){
+								if(e.data){
+									CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
+										callback: function(data){
+											var total = data.totalSize;
+											base.populateList(data);
+											base.addPaging(base.options.page, total);
+										},
+										preHook: function(){
+											base.prepareList();
+										}
+									});
+								}
+							},
+							itemAddComment: function(base, comment){
+								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
+									callback: function(data){
+										this.itemDataCallback(base, 1);
+									},
+									preHook: function(){
+										base.prepareList();
+									}
+								});
+							}
+						});
+					}
+				}, { item: item, locked: self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
 			downloadRule: function(){

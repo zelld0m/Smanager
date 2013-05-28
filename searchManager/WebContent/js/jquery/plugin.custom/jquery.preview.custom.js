@@ -378,6 +378,16 @@
 					}
 				});
 				break;
+			case "banner": 
+				BannerServiceJS.getRuleItems(base.options.ruleId , 0, 0,{
+					callback: function(sr){
+						base.populateBannerItem(sr["data"]);
+					},
+					postHook:function(){
+						base.options.templateEvent(base);
+					}
+				});
+				break;
 			}
 		};
 
@@ -412,6 +422,10 @@
 			$table.find("tr:even").addClass("alt");
 		};
 
+		base.populateBannerItem = function(data){
+			//TODO: 
+		};
+		
 		base.getPreTemplate = function(){
 			if (base.options.enablePreTemplate){
 				return base.options.preTemplate(base);
@@ -687,6 +701,45 @@
 				template += '		</table>';
 				template += '	</div>';
 				break;
+			case "banner":
+				template += '<div id="forceAdd" class="loadingWrapper" style="display:none"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ16x16.gif"><span class="fsize12 posRel topn3 padL5">Retrieving Force Add Status</span></div>';
+				template += '	<div class="w600 mar0 pad0">';
+				template += '		<table class="tblItems w100p marT5">';
+				template += '			<tbody>';
+				template += '				<tr>';
+				template += '					<th width="20px">#</th>';
+				template += '					<th width="60px" id="selectAll">Image</th>';
+				template += '					<th width="94px">Manufacturer</th>';
+				template += '					<th width="70px">SKU #</th>';
+				template += '					<th width="160px">Name</th>';
+				template += '					<th width="90px">Validity</th>';
+				template += '				</tr>';
+				template += '			<tbody>';
+				template += '		</table>';
+				template += '	</div>';
+				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '		<table id="item" class="tblItems w100p">';
+				template += '			<tbody>';
+				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
+				template += '					<td width="20px" class="txtAC" id="itemPosition"></td>';
+				template += '					<td width="60px" class="txtAC" id="itemImage"><img src="" width="50"/></td>';
+				template += '					<td width="94px" class="txtAC" id="itemMan"></td>';
+				template += '					<td width="70px" class="txtAC" id="itemDPNo"></td>';
+				template += '					<td width="160px" class="txtAC" id="itemName"></td>';
+				template += '					<td width="auto" class="txtAC">';
+				template += '						<div id="itemValidity" class="w74 wordwrap"></div>';
+				template += '						<div id="itemValidityDaysExpired"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div>';
+				template +='					</td>';
+				template += '				</tr>';
+				template += '				<tr>';
+				template += '					<td colspan="6" class="txtAC">';
+				template += '						<img id="preloader" alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
+				template += '					</td>';
+				template += '				</tr>';
+				template += '			</tbody>';
+				template += '		</table>';
+				template += '</div>';
+				break;	
 			}
 
 			return template;

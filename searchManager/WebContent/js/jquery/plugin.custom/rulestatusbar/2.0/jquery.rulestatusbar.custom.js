@@ -163,21 +163,21 @@
 			template += '<div class="plugin-rulestatusbar">';
 			template += '	<ul class="page_info clearfix">';
 			template += '		<li class="fLeft fBold">';
-			template += '			<span class="cRed">Status:</span>';
+			template += '			<span>Status:</span>';
 			template += '			<span id="status" class="cRed">Action Required</span>';
 			template += '			<span id="statusMode" class="cOrange"></span>';
 			template += '		</li>';
 
 			if(base.options.authorizeSubmitForApproval){
 				template += '		<li class="fLeft bRight">';
-				template += '			<div id="submitForApprovalBtn" class="btn_submit_approval btn" href="javascript:void(0);">Submit for Approval</div>';
+				template += '			<a id="submitForApprovalBtn" class="btn_submit_approval btn" href="javascript:void(0);">Submit for Approval</a>';
 				template += '		</li>';
 			}
 
 			if(base.options.enableVersion){
 				if(base.options.authorizeRuleBackup){
 					template += '		<li class="fLeft bRight">';
-					template += '			<div id="backupBtn" class="btn_backup_now btn" href="javascript:void(0);">Backup now</div>';
+					template += '			<a id="backupBtn" class="btn_backup_now btn" href="javascript:void(0);">Backup now</a>';
 					template += '		</li>';
 					template += '		<li class="fLeft bRight">';
 					template += '			<div id="downloadVersionIcon" class="ico_download ico"></div>';

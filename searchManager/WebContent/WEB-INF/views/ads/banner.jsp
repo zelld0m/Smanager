@@ -61,13 +61,14 @@
 			</div>		
 			<div id="ruleItemHolder" class="ban_container">
 				<div id="ruleItemPattern" class="ruleItem ban_group">
-					<span class="banner_title fLeft fBold cBlue">HP Elitepad and T-Mobile</span>
+					<span id="imageTitle" class="banner_title fLeft fBold cBlue"></span>
 					<ul class="display_settings fRight clearfix">
-						<li >Priority <input type="text" name="priority" id="priority" value=""/></li>
-						<li class="bLeft duration">Duration <span class="cGreen">22 days left</span></li>
+						<li >Priority <input type="text" name="priority" id="priority"/></li>
+						<li class="bLeft duration">
+							Duration <span id="daysLeft" class="cGreen"></span>
+						</li>
 						<li class="schedule">
-							Schedule 
-							<input type="text" id="startDate" class="startDate"/>
+							Schedule <input type="text" id="startDate" class="startDate"/>
 						</li>	
 						<li class="schedule">
 							<input type="text" id="endDate" class="endDate"/>
@@ -93,7 +94,7 @@
 						<li class="bRight"><div class="ico_history ico"></div></li>
 						<li class="bRight"><div class="ico_graph ico"></div></li>
 						<li class="bRight"><div class="ico_user ico"></div></li>		
-						<li><div class="ico_comments ico"></div></li>								
+						<li><div id="commentIcon" class="ico_comments ico"></div></li>								
 					</ul>
 				
 					<div class="banner_info_more clearfix">
@@ -104,7 +105,7 @@
 						<input type="text" class="w218px" name="imageAlias" id="imageAlias" />
 						
 						<div class="btn_update_alias round_btn fLeft">
-							<span class="btn_wrap"><a href="javascript:void();">UPDATE ALIAS</a></span>
+							<span class="btn_wrap"><a href="javascript:void(0);">Set Alias</a></span>
 						</div>
 							
 						<label for="imageAlt" class="lbl_imgAlt">Image Alt:</label>

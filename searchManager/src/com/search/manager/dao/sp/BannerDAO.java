@@ -6,6 +6,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -417,7 +418,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath.getId());
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null? imagePath.getId() : imagePath);
 			
 			return DAOUtils.getUpdateCount(deleteRuleItemSP.execute(inputs));
 		}
