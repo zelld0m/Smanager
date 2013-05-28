@@ -702,4 +702,18 @@ public class DeploymentRuleServiceCacheImpl implements DeploymentRuleService {
 		return resultMap;
 	}
 
+	@Override
+	public Map<String, Boolean> publishBannerRulesMap(String store,
+			List<String> list) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Boolean> unpublishBannerRulesMap(String store,
+			List<String> list) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
