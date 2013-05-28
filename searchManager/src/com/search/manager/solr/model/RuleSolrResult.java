@@ -1,7 +1,8 @@
 package com.search.manager.solr.model;
 
+import java.util.Date;
+
 import org.apache.solr.client.solrj.beans.Field;
-import org.joda.time.DateTime;
 
 public class RuleSolrResult {
 
@@ -16,7 +17,7 @@ public class RuleSolrResult {
 	@Field
 	private String keyword;
 	@Field
-	private DateTime expiryDateTime;
+	private Date expiryDate;
 	@Field
 	private String entity;
 	@Field
@@ -66,12 +67,12 @@ public class RuleSolrResult {
 		this.keyword = keyword;
 	}
 
-	public DateTime getExpiryDateTime() {
-		return expiryDateTime;
+	public Date getExpiryDateTime() {
+		return expiryDate;
 	}
 
-	public void setExpiryDateTime(DateTime expiryDateTime) {
-		this.expiryDateTime = expiryDateTime;
+	public void setExpiryDateTime(Date expiryDate) {
+		this.expiryDate = expiryDate;
 	}
 
 	public String getEntity() {
