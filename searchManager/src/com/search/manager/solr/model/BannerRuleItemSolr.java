@@ -1,7 +1,8 @@
 package com.search.manager.solr.model;
 
+import java.util.Date;
+
 import org.apache.solr.client.solrj.beans.Field;
-import org.joda.time.DateTime;
 
 public class BannerRuleItemSolr {
 
@@ -16,9 +17,9 @@ public class BannerRuleItemSolr {
 	@Field
 	private Integer priority;
 	@Field
-	private DateTime startDate;
+	private Date startDate;
 	@Field
-	private DateTime endDate;
+	private Date endDate;
 	@Field
 	private String imageAlt;
 	@Field
@@ -78,19 +79,19 @@ public class BannerRuleItemSolr {
 		this.priority = priority;
 	}
 
-	public DateTime getStartDate() {
+	public Date getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(DateTime startDate) {
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
-	public DateTime getEndDate() {
+	public Date getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(DateTime endDate) {
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 
