@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <% pageContext.setAttribute("now", org.joda.time.DateTime.now()); %>
+<% pageContext.setAttribute("year", org.joda.time.DateTime.now().toDateMidnight().getYear()); %>
+<% pageContext.setAttribute("month", org.joda.time.DateTime.now().toDateMidnight().getMonthOfYear()); %>
+<% pageContext.setAttribute("day", org.joda.time.DateTime.now().toDateMidnight().getDayOfMonth()); %>
+<% pageContext.setAttribute("hour", org.joda.time.DateTime.now().getHourOfDay()); %>
+<% pageContext.setAttribute("min", org.joda.time.DateTime.now().getMinuteOfHour()); %>
+<% pageContext.setAttribute("sec", org.joda.time.DateTime.now().getSecondOfMinute()); %>
+<% pageContext.setAttribute("stringOfDate", org.joda.time.DateTime.now().toString()); %>
 
 <!DOCTYPE html>
 <html>
@@ -7,6 +14,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=100" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Search Manager</title>
+
   <!-- jQuery dependencies -->
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-ui-1.8.16.custom.min.js" />" ></script>
@@ -20,6 +28,8 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.tabs.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.widget.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.effects.slide.min.js" />" ></script>
+  
+  <script type="text/javascript" src="<spring:url value="/js/jquery/timezone-js/0.4.4/date.js" />" ></script>
 
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreParameters()" var="storeParameters" />
@@ -30,7 +40,7 @@
   
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
-    
+	
 	// Request server details
 	var GLOBAL_scheme = "<%=request.getScheme()%>";  
     var GLOBAL_serverName = "<%=request.getServerName()%>";  
@@ -39,6 +49,16 @@
 	var GLOBAL_requestURL = "<%=request.getRequestURL()%>";	
 	var GLOBAL_requestURI = "<%=request.getRequestURI()%>";	
 	
+	timezoneJS.timezone.zoneFileBasePath = GLOBAL_contextPath + '/tz';
+	timezoneJS.timezone.init();
+	console.log('${year}');
+	console.log('${month}');
+	console.log('${day}');
+	console.log('${hour}');
+	console.log('${min}');
+	var currentDate = new timezoneJS.Date('${year}', '${month-1}', '${day}', '${hour}', '${min}', 'America/Los_Angeles');
+	
+	console.log(currentDate);
 	//store schema indexed fields
 	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
 	var GLOBAL_indexedFields = GLOBAL_schemaFields["indexedFields"];
@@ -152,11 +172,14 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.editable.custom.js" />" ></script>
   
   
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/2.0/jquery.rulestatusbar.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/2.0/jquery.rulestatusbar.custom.js" />" ></script>
+
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/uploadimage/jquery.uploadimage.custom.css" />">
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/uploadimage/jquery.uploadimage.custom.js" />" ></script>
   
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/addbanner/jquery.addbanner.custom.css" />">
-  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/addbanner/jquery.addbanner.custom.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/addbanner/1.0/jquery.addbanner.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/addbanner/1.0/jquery.addbanner.custom.js" />" ></script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.css" />">
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.js" />" ></script>

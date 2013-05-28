@@ -33,6 +33,7 @@ public class BannerService {
 
 	private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
 	private static final String MSG_FAILED_ADD_RULE_ITEM = "Failed to add banner rule item %s";
+	private static final String MSG_FAILED_DELETE_RULE_ITEM = "Failed to delete banner rule item %";
 	private static final String MSG_FAILED_GET_IMAGE = "Failed to retrieve record for %s";
 	private static final String MSG_FAILED_ADD_IMAGE = "Failed to add image link %s : %s";
 	private static final String MSG_FAILED_UPDATE_IMAGE_ALIAS = "Failed to update image alias to %s";
@@ -222,6 +223,30 @@ public class BannerService {
 			serviceResponse.error(String.format(MSG_FAILED_UPDATE_IMAGE_ALIAS, alias), e);
 		}
 
+		return serviceResponse;
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<Void> deleteRuleItem(String ruleId, String memberId, String alias){
+		String storeId = UtilityService.getStoreId();
+		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
+		
+		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId, memberId);
+		
+		try {
+			if (daoService.deleteBannerRuleItem(bannerRuleItem) > 0){
+				serviceResponse.success(null);
+			}else{
+				serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias));
+			}
+		} catch (DaoException e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
+		}
+		
 		return serviceResponse;
 	}
 }

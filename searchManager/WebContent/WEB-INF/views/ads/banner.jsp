@@ -18,25 +18,22 @@
 <!-- End Left Side -->
 
 <!-- Start Right Side -->
-<div class="contentArea floatL w730 marL10 marT27">
+<div class="contentArea ban_edit floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
     	<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
 			<span id="ruleTypeIcon" class="ruleTypeIcon marR5 posRel top3"></span>
 			<span id="titleText"></span>
 			<span id="titleHeader" class="fLblue fnormal"></span>
 		</div>
-		<div id="addBannerBtn" class="floatR padT10 padL10">	        	
-			<a id="addRuleItem" href="javascript:void(0);" class="buttons btnGray clearfix">
-				<div class="buttons fontBold">Add Banner</div>
-			</a>
+		<div id="addBannerBtn" class="btn_add_banner round_btn fRight">
+			<span class="btn_wrap"><a href="javascript:void(0)">Add Banner</a></span>
 		</div>
 	</div>
 	<div class="clearB"></div>
-	
 	<div id="ruleStatus"></div>
 	<div class="clearB"></div>
 	
-	<div id="ruleContent" style="width:95%" class="marT20 mar0">
+	<div id="ruleContent" class="">
 
 		<div id="preloader" class="circlePreloader" style="display:none">
 			<img src="<spring:url value="/images/ajax-loader-circ.gif" />">
@@ -47,114 +44,99 @@
 		</div>
 	
 		<div id="ruleContent" class="ruleContent fsize12" style="display:none">
-		
-			<div id="ruleItemHolder">
-				<div id="ruleItemPattern" class="ruleItem" style="display:none">
-					 <div id="bannerHeader">	
-					 	<div class="floatL">
-					 		<span id="itemName">Banner Alias Here</span>
-					 	</div>
-					 	<div class="floatL">
-					 		<span>
-					 			<label>Priority</label>
-					 			<input id="priority" type="text">
-					 		</span>
-					 	</div>
-					 	<div class="floatL">
-							<span>
-								<label>Duration</label>
-								<label id="duration"></label>
-							</span>
-					 		<label>Schedule</label>
-					 		<label><input id="startDate" class="startDate" type="text"/></label>
-					 		<label><input id="endDate" class="endDate" type="text"/></label>
-					 	</div>
-					 </div>
-					 
-					 <div id="bannerImage" class="marB10 floatL txtAC" style="width:98%">	
-						<div id="preview" class="imagePreview minHeight185 floatL w650 marL10 marT5">
-							<span class="preloader" style="display:none"><img src="../images/ajax-loader-rect.gif"></span>
-							<img id="imagePreview" src="<spring:url value="/images/nopreview.png" />" onerror="this.onerror=null;this.src='<spring:url value="/images/nopreview.png" />';"/>
+			<div class="page_nav_group clearfix">
+				<ul class="page_nav fRight">
+					<li>	
+						<select id="filterDisplay">
+							<option value="all">All</option>
+							<option value="active">Active</option>
+							<option value="expired">Expired</option>
+						</select>
+					</li>
+					<li><div class="ico_graph ico"></div></li>
+					<li><div class="ico_download2 ico"></div></li>
+					<li><div class="ico_delete ico"></div></li>
+				</ul>
+				<div id="ruleItemPagingTop"></div>
+			</div>		
+			<div id="ruleItemHolder" class="ban_container">
+				<div id="ruleItemPattern" class="ruleItem ban_group">
+					<span class="banner_title fLeft fBold cBlue">HP Elitepad and T-Mobile</span>
+					<ul class="display_settings fRight clearfix">
+						<li >Priority <input type="text" name="priority" id="priority" value=""/></li>
+						<li class="bLeft duration">Duration <span class="cGreen">22 days left</span></li>
+						<li class="schedule">
+							Schedule 
+							<input type="text" id="startDate" class="startDate"/>
+						</li>	
+						<li class="schedule">
+							<input type="text" id="endDate" class="endDate"/>
+						</li>
+					</ul>
+				
+					<div id="preview" class="preview_container">
+						<img id="imagePreview" src="<spring:url value="/images/nopreview.png" />" onerror="this.onerror=null;this.src='<spring:url value="/images/nopreview.png" />';"/>
+					</div>
+				
+					<ul class="banner_info clearfix">
+						<li ><span id="toggleIcon" class="ico_minus ico fLeft"></span><a href="javascript:void(0);" class="show_what">Show Less</a></li>
+						<li>
+							<div id="copyToBtn" class="btn_copy_to round_btn fLeft">
+								<span class="btn_wrap"><a href="javascript:void(0);">Copy To</a></span>
+							</div>							
+						</li>
+						<li class="bRight">
+							<div class="btn_keywords round_btn fLeft">
+								<span class="btn_wrap"><a href="javascript:void(0);">Keywords (4)</a></span>
+							</div>							
+						</li>	
+						<li class="bRight"><div class="ico_history ico"></div></li>
+						<li class="bRight"><div class="ico_graph ico"></div></li>
+						<li class="bRight"><div class="ico_user ico"></div></li>		
+						<li><div class="ico_comments ico"></div></li>								
+					</ul>
+				
+					<div class="banner_info_more clearfix">
+						<label for="imagePath">Image Path</label>
+						<input type="text" class="w565px" name="imagePath" id="imagePath" />
+						
+						<label for="imageAlias">Image Alias</label>
+						<input type="text" class="w218px" name="imageAlias" id="imageAlias" />
+						
+						<div class="btn_update_alias round_btn fLeft">
+							<span class="btn_wrap"><a href="javascript:void();">UPDATE ALIAS</a></span>
 						</div>
-					 </div>
-					 
-					 <div id="bannerInfo" class="marB10 floatL txtAC" style="width:98%">
-					 	<div id="bannerInfoHeader" class="marB10 floatL txtAC" style="width:98%">
-							<div id="showKeywordBtn" class="floatR padT10 padL10">	        	
-								<a id="showKeywordLink" href="javascript:void(0);" class="buttons btnGray clearfix">
-									<div class="buttons fontBold">Keyword</div>
-								</a>
+							
+						<label for="imageAlt" class="lbl_imgAlt">Image Alt:</label>
+						<input type="text" class="w218px" name="imageAlt" id="imageAlt" />
+						
+						<label for="linkPath">Link Path</label>
+						<input type="text" class="w533px" name="linkPath" id="linkPath" />
+						
+						<div class="ico_check ico fLeft"></div>
+						
+						<label for="description">Description</label>
+						<textarea class="w565px" name="description" id="description" ></textarea>
+						
+						<div class="button_group clearfix">
+							<input type="checkbox" name="temporaryDisable" id="temporaryDisable" />
+							<label for="temporaryDisable" class="cRed fBold fLeft lbl_temporaryDisable">Temporary Disable</label>
+							
+							<div class="fRight">
+							<div id="updateBtn" class="btn_update round_btn fLeft">
+								<span class="btn_wrap"><a href="javascript:void(0);">Update</a></span>
+							</div>	
+							<div id="deleteBtn" class="btn_delete round_btn fLeft">
+								<span class="btn_wrap"><a href="javascript:void(0);">Delete</a></span>
+							</div>	
 							</div>
-					 		<div id="copyToBtn" class="floatR padT10 padL10">	        	
-								<a id="copyToLink" href="javascript:void(0);" class="buttons btnGray clearfix">
-									<div class="buttons fontBold">Copy To</div>
-								</a>
-							</div>
-					 	</div>	
-					  	<div id="bannerInfoContent" class="marB10 floatL txtAC" style="width:98%">
-					 		<div>
-					 			<span><label for="imagePath">Image Path:</label></span>
-					 			<span><input id="imagePath" type="text"></span>
-					 		</div>
-					 		<div>
-						 		<div class="clearfix">
-						 			<span><label for="alias">Image Alias:</label></span>
-						 			<span><input id="alias" class="alias" type="text" readonly="readonly" disabled="disabled"></span>
-						 			<span>
-										<div id="cancelAliasBtn" class="floatR padT10 padL10" style="display: none">	        	
-											<a id="cancelAliasLink" href="javascript:void(0);" class="buttons btnGray clearfix">
-												<div class="buttons fontBold">Cancel</div>
-											</a>
-										</div>
-							 			<div id="setAliasBtn" class="floatR padT10 padL10">	        	
-											<a id="setAliasLink" href="javascript:void(0);" class="buttons btnGray clearfix">
-												<div class="buttons fontBold">Set Alias</div>
-											</a>
-										</div>
-						 			</span>
-						 		</div>
-						 		<div class="clearfix">
-						 			<span><label for="imageAlt">Image Alt:</label></span>
-						 			<span><input id="imageAlt" type="text"></span>
-						 		</div>
-					 		</div>
-					 		<div>
-					 			<span><label for="linkPath">Link Path:</label></span>
-					 			<span><input id="linkPath" type="text"></span>
-					 		</div>
-					 		<div>
-					 			<span><label for="description">Description:</label></span>
-					 			<span><textarea id="description"></textarea></span>
-					 		</div>
-					 		<div>
-						 		<div>
-						 			<span></span>
-						 			<span><input id="disabled" type="checkbox"><label for="disabled">Temporarily Disable</label></span>
-						 		</div>
-						 		<div>
-							 		<div id="deleteBannerBtn" class="floatR padT10 padL10">	        	
-										<a id="deleteRuleItem" href="javascript:void(0);" class="buttons btnGray clearfix">
-											<div class="buttons fontBold">Delete</div>
-										</a>
-									</div>
-									<div id="updateBannerBtn" class="floatR padT10 padL10">	        	
-										<a id="updateRuleItem" href="javascript:void(0);" class="buttons btnGray clearfix">
-											<div class="buttons fontBold">Update</div>
-										</a>
-									</div>
-						 		</div>
-					 		</div>
-					 	</div>	
-					 </div>	
-					 <div class="clearB"></div>
+						</div>
+					</div>				
 				</div>
+				<div class="clearB"></div>
 			</div>
-			
 		</div>
-		
-		<div class="clearB"></div>
 	</div>
-	
 </div>
 <!--  end right side -->
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

@@ -168,6 +168,7 @@ public class BannerDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
 		}
 	}
@@ -415,6 +416,7 @@ public class BannerDAO {
 			
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
+			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath.getId());
 			
 			return DAOUtils.getUpdateCount(deleteRuleItemSP.execute(inputs));

@@ -1,0 +1,7 @@
+.plugin-rulestatusbar .btn_submit_approval {
+	background: transparent url('image/orange_gradient.png') repeat-x;
+}
+
+.plugin-rulestatusbar .btn_submit_approval {
+	background: transparent url('image/red_gradient.png') repeat-x;
+}

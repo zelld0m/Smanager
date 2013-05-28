@@ -69,8 +69,8 @@
 			if(base.options.ruleItem != null) {
 				var ruleItem = base.options.ruleItem;
 
-				base.$el.find('input#startDate').val(ruleItem['startDate']).end()
-				.find('input#endDate').val(ruleItem['endDate']).end()
+				base.$el.find('input#startDate').val(ruleItem['formattedStartDate']).end()
+				.find('input#endDate').val(ruleItem['formattedEndDate']).end()
 				.find('input#imagePath').val(ruleItem['imagePath']['path']).end()
 				.find('input#imageAlias').val(ruleItem['imagePath']['alias']).end()
 				.find('input#imageAlt').val(ruleItem['imageAlt']).end()
@@ -87,54 +87,36 @@
 							readonly: true,
 							disabled: true
 						});
-
-						//TODO:
-						if(ruleItem['startDate'] && new Date(ruleItem['startDate']).getTime() < new Date().getTime() ) {
-							var date = new Date();
-							var day = date.getDate();
-							var month = date.getMonth()+1;
-							var year = date.getFullYear();
-							if(day<10){day='0'+day;}
-							if(month<10){month='0'+month;}
-							base.$el.find('input#startDate').val(month+'/'+day+'/'+year);
-						}
-						if(ruleItem['endDate'] && new Date(ruleItem['endDate']).getTime() < new Date().getTime() ) {
-							var date = new Date();
-							var day = date.getDate();
-							var month = date.getMonth()+1;
-							var year = date.getFullYear();
-							if(day<10) {day='0'+day;}
-							if(month<10){month='0'+month;}
-							base.$el.find('input#endDate').val(month+'/'+day+'/'+year);
-						}
 						break;
 					case 'add': 
 						break;
 					};
 				}
 			}
-
-			// Select a date range
+			
+			// Select a date range , TODO: must be timezone aware
 			base.$el
-			.find("#startDate").prop({ id: "startDate" + base.options.rule["ruleId"]}).datepicker({
-				defaultDate: "+1w",
+			.find("#startDate").prop({ id: "startDate_" + base.options.rule["ruleId"]}).datepicker({
+				minDate: currentDate,
+				defaultDate: currentDate,
 				changeMonth: true,
 				changeYear: true,
 				showOn: "both",
 				buttonImage: "../images/icon_calendar.png",
 				onClose: function(selectedDate) {
-					base.$el.find("#endDate" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
+					base.$el.find("#endDate_" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
 				}
 			}).end()
 
-			.find("#endDate").prop({ id: "endDate" + base.options.rule["ruleId"]}).datepicker({
-				defaultDate: "+1w",
+			.find("#endDate").prop({ id: "endDate_" + base.options.rule["ruleId"]}).datepicker({
+				minDate: currentDate,
+				defaultDate: currentDate,
 				changeMonth: true,
 				changeYear: true,
 				showOn: "both",
 				buttonImage: "../images/icon_calendar.png",
 				onClose: function(selectedDate) {
-					base.$el.find("#startDate" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
+					base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
 				}
 			});
 
@@ -146,12 +128,30 @@
 		};
 
 		base.registerEventListener = function(){
-			base.previewImagePathListener();
+			base.addInputFieldListener(base.$el.find("input#imagePath"), base.getImagePath);
+			base.addInputFieldListener(base.$el.find("input#linkPath"), base.validateLinkPath);
 			base.buttonListener();
 		};
 
+		base.validateLinkPath = function(ui, linkPath){
+			//Validate if valid url
+			
+			//Check for 200 response
+			$.ajax({ 
+				type: "GET", 
+				url: linkPath, 
+				async: false,
+				crossDomain: true,
+				statusCode: {
+					200: function() {
+						alert("Valid URL");
+					}
+				}
+			});
+		};
+
 		base.buttonListener = function() {	
-			base.$el.find("a.buttons").off().on({
+			base.$el.find(".buttons").off().on({
 				click: function(e){
 					switch($(e.currentTarget).prop("id")){
 					case "okButton":
@@ -170,10 +170,12 @@
 							jAlert("Image alias is required.", "Banner");
 						} else if($.isBlank(imageAlt)) {
 							jAlert("Image alt is required.", "Banner");
-						} else if($.isBlank(linkPath)) {
-							jAlert("Link path is required.", "Banner");
 						} 
-						
+						//TODO: verify link
+//						else if($.isBlank(linkPath)) {
+//							jAlert("Link path is required.", "Banner");
+//						} 
+
 						/*
 						else if($.isBlank(keyword)) {
 							jAlert("Keyword is required.", "Banner");
@@ -213,9 +215,8 @@
 			}, {base: base});
 		};
 
-		base.previewImagePathListener = function() {
-			var $input = base.$el.find("input#imagePath");
-			$input.off().on({
+		base.addInputFieldListener = function(input, callback) {
+			input.off().on({
 				mouseenter: function(e) {
 					if(e.data.locked) {
 						showHoverInfo;
@@ -233,23 +234,25 @@
 				mouseleave: function(e) {
 					if (e.data.locked) return;
 
-					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-						base.getImagePath(e.data.ui, $(e.currentTarget).val());
+					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.sendRequest!=="true") {
+						e.data.sendRequest = "true";
+						if(callback) callback(e.data.ui, $(e.currentTarget).val());
 					}
 				},
 				focusout: function(e) {
 					if (e.data.locked) return;
 
-					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-						base.getImagePath(e.data.ui, $(e.currentTarget).val());
+					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.sendRequest!=="true") {
+						e.data.sendRequest = "true";
+						if(callback) callback(e.data.ui, $(e.currentTarget).val());
 					}
 				}
-			}, {ui: base.$el , locked: base.options.isLocked, input: ""});
+			}, {ui: base.$el , locked: base.options.isLocked, input: "", sendRequest: ""});
 		};
 
 		base.getImagePath = function(ui, imagePath) {
 			var $previewHolder = ui.find("#preview");
-			
+
 			BannerServiceJS.getImagePath(imagePath, {
 				callback: function(sr){
 					if (sr!=null && sr["data"]!=null){
@@ -278,15 +281,15 @@
 				}
 			});
 		};
-			
-		
+
+
 		base.previewImage = function(ui, imagePath) {
 			var $previewHolder = ui.find("#preview");
 
 			if($.isBlank(imagePath)) {
 				imagePath = base.options.noPreviewImage;
 			}
-			
+
 			$previewHolder.find("img#imagePreview").attr("src",imagePath).off().on({
 				error:function(){ 
 					$(this).unbind("error").attr("src", base.options.noPreviewImage); 
@@ -305,67 +308,49 @@
 			template += '		<img id="imagePreview" src="' + GLOBAL_contextPath + '/images/nopreview.png" onError="this.onerror=null;this.src=\'' + GLOBAL_contextPath + '/images/nopreview.png\';" />';
 			template += '	</div>';
 			template += '	<div id="addItemTemplate" class="mar0">';
+			template += '		<label class="txtLabel">Image Path: </label> ';
+			template += '		<input id="imagePath" class="w565px" type="text">';
+			template += '		<label class="txtLabel">Image Alias: </label> ';
+			template += '		<input id="imageAlias" class="w218px" type="text">';
+			template += '		<label class="txtLabel lblImageAlt">Image Alt: </label> ';
+			template += '		<input id="imageAlt" class="w218px" type="text">';
+			template += '		<label class="txtLabel">Link Path: </label> ';
+			template += '		<input id="linkPath" class="w565px" type="text">';
+			template += '		<label class="txtLabel">Schedule:</label> ';
+			template += '		<input id="startDate" class="startDate" type="text">';
+			template += '		<input id="endDate" class="endDate"  type="text">';
+			template += '		<label class="txtLabel">Description: </label> ';
+			template += '		<textarea id="description" class="w565px"></textarea>';
 			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Image Path: </label> ';
-			template += '			<label><input id="imagePath" type="text"></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Image Alias: </label> ';
-			template += '			<label><input id="imageAlias" type="text"></label>';
-			template += '			<a id="updateButton" class="buttons btnGray clearfix" href="javascript:void(0);" style="display:none">';
-			template += '				<div class="buttons fontBold">Update Alias</div>';
-			template += '			</a>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Image Alt: </label> ';
-			template += '			<label><input id="imageAlt" type="text"></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Link Path: </label> ';
-			template += '			<label><input id="linkPath" type="text"></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Schedule:</label> ';
-			template += '			<label><input id="startDate" class="startDate" type="text"></label>';
-			template += ' 			<label> - </label>';
-			template += '			<label><input id="endDate" class="endDate"  type="text"></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-			template += '		<div class="floatL">';
-			template += '			<label class="txtLabel">Description: </label> ';
-			template += '			<label><textarea id="description"></textarea></label>';
-			template += '		</div>';
-			template += '		<div class="clearB"></div>';
-//			template += '		<div class="floatL">';
-//			template += '			<label class="txtLabel">Keyword: </label> ';
-//			template += '			<label><textarea id="keyword"></textarea></label>';
-//			template += '		</div>';
-//			template += '		<div class="clearB"></div>';
+
+			if (base.options.mode
+					&& base.options.mode.toLowerCase() == 'copy') {
+				template += '	<label class="txtLabel">Keyword: </label> ';
+				template += '	<textarea id="keyword" class="w565px"></textarea>';
+				template += '	<div class="clearB"></div>';
+			}
 
 			if (!base.options.isLocked) {
 				var type = 'Add';
 
-				if(base.options.ruleItem) {
-					if(base.options.mode && base.options.mode.toLowerCase() == 'update') {
+				if (base.options.ruleItem) {
+					if (base.options.mode
+							&& base.options.mode.toLowerCase() == 'update') {
 						type = 'Update';
-					} else if(base.options.mode && base.options.mode.toLowerCase() == 'copy') {
+					} else if (base.options.mode
+							&& base.options.mode.toLowerCase() == 'copy') {
 						type = 'Copy';
 					}
 				}
-
-				template += '		<div id="buttonset">';
-				template += '			<a id="okButton" class="buttons btnGray clearfix" href="javascript:void(0);">';
-				template += '				<div class="buttons fontBold">' + type + '</div>';
-				template += '			</a>';
-				template += '			<a id="cancelButton" class="buttons btnGray clearfix" href="javascript:void(0);">';
-				template += '				<div class="buttons fontBold">Cancel</div>';
-				template += '			</a>';
-				template += '		</div>';
+				
+				template += '<div id="buttonset">';
+				template += '	<div id="okButton" class="btn_ok round_btn fLeft buttons">';
+				template += '		<span class="btn_wrap"><a href="javascript:void(0);">' + type + '</a></span>';
+				template += '	</div>';
+				template += '	<div id="cancelButton" class="btn_cancel round_btn fLeft buttons">';
+				template += '		<span class="btn_wrap"><a href="javascript:void(0);">Cancel</a></span>';
+				template += '	</div>';	
+				template += '</div>';
 			}
 
 			template += '	</div>';
@@ -385,11 +370,6 @@
 			default:
 				return;
 			}
-		};
-
-		base.validateLinkPath = function() {
-			// TODO
-			return true;
 		};
 
 		// Run initializer
