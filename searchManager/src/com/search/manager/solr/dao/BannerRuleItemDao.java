@@ -11,25 +11,37 @@ public interface BannerRuleItemDao {
 	Collection<BannerRuleItem> getBannerRuleItems(Store store)
 			throws DaoException;
 
-	BannerRuleItem getBannerRuleItemMemberId(Store store, String memberId)
-			throws DaoException;
+	Collection<BannerRuleItem> getBannerRuleItemsByRuleName(Store store,
+			String ruleName) throws DaoException;
 
-	BannerRuleItem getBannerRuleItemRuleName(Store store, String ruleName)
+	Collection<BannerRuleItem> getExpiredBannerRuleItems(Store store,
+			String ruleName) throws DaoException;
+	
+	BannerRuleItem getBannerRuleItemByMemberId(Store store, String memberId)
 			throws DaoException;
 
 	boolean loadBannerRuleItems(Store store) throws DaoException;
 
-	boolean loadBannerRuleItem(Store store, String memberId)
+	boolean loadBannerRuleItemsByRuleName(Store store, String ruleName)
+			throws DaoException;
+
+	boolean loadBannerRuleItemByMemberId(Store store, String memberId)
 			throws DaoException;
 
 	boolean resetBannerRuleItems(Store store) throws DaoException;
 
-	boolean resetBannerRuleItem(Store store, String memberId)
+	boolean resetBannerRuleItemsByRuleName(Store store, String ruleName)
+			throws DaoException;
+
+	boolean resetBannerRuleItemByMemberId(Store store, String memberId)
 			throws DaoException;
 
 	boolean deleteBannerRuleItems(Store store) throws DaoException;
 
-	boolean deleteBannerRuleItem(Store store, String memberId)
+	boolean deleteBannerRuleItemsByRuleName(Store store, String ruleName)
+			throws DaoException;
+
+	boolean deleteBannerRuleItemByMemberId(Store store, String memberId)
 			throws DaoException;
 
 	boolean updateBannerRuleItem(BannerRuleItem bannerRuleItem)
