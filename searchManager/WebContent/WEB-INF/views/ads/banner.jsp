@@ -45,22 +45,19 @@
 	
 		<div id="ruleContent" class="ruleContent fsize12" style="display:none">
 			<div class="page_nav_group clearfix">
-				<span class="cBlueGray fLeft page_nav_text">Displaying 1 and 2 of 7 items</span>
 				<ul class="page_nav fRight">
-					<li><div class="ico_first ico ico_page_nav"></div></li>
-					<li><div class="ico_previous ico ico_page_nav"></div></li>
-					<li>Page <input type="text" name="pageNum" id="pageNum" value="1"/> of 4</li>
-					<li><div class="ico_next ico ico_page_nav"></div></li>
-					<li><div class="ico_last ico ico_page_nav"></div></li>
 					<li>	
-						<select name="displayLimit" id="displayLimit">
-							<option >All</option>
+						<select id="filterDisplay">
+							<option value="all">All</option>
+							<option value="active">Active</option>
+							<option value="expired">Expired</option>
 						</select>
 					</li>
 					<li><div class="ico_graph ico"></div></li>
 					<li><div class="ico_download2 ico"></div></li>
 					<li><div class="ico_delete ico"></div></li>
 				</ul>
+				<div id="ruleItemPagingTop"></div>
 			</div>		
 			<div id="ruleItemHolder" class="ban_container">
 				<div id="ruleItemPattern" class="ruleItem ban_group">
@@ -82,15 +79,15 @@
 					</div>
 				
 					<ul class="banner_info clearfix">
-						<li ><span class="ico_minus ico fLeft"></span><a href="#" class="show_what">Show Less</a></li>
+						<li ><span id="toggleIcon" class="ico_minus ico fLeft"></span><a href="javascript:void(0);" class="show_what">Show Less</a></li>
 						<li>
 							<div id="copyToBtn" class="btn_copy_to round_btn fLeft">
-								<span class="btn_wrap"><a href="javascript:void(0);">COPY TO</a></span>
+								<span class="btn_wrap"><a href="javascript:void(0);">Copy To</a></span>
 							</div>							
 						</li>
 						<li class="bRight">
 							<div class="btn_keywords round_btn fLeft">
-								<span class="btn_wrap"><a href="javascript:void(0);">KEYWORDS (4)</a></span>
+								<span class="btn_wrap"><a href="javascript:void(0);">Keywords (4)</a></span>
 							</div>							
 						</li>	
 						<li class="bRight"><div class="ico_history ico"></div></li>
