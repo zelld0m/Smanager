@@ -236,7 +236,7 @@
 
 					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.sendRequest!=="true") {
 						e.data.sendRequest = "true";
-						callback(e.data.ui, $(e.currentTarget).val());
+						if(callback) callback(e.data.ui, $(e.currentTarget).val());
 					}
 				},
 				focusout: function(e) {
@@ -244,7 +244,7 @@
 
 					if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.sendRequest!=="true") {
 						e.data.sendRequest = "true";
-						callback(e.data.ui, $(e.currentTarget).val());
+						if(callback) callback(e.data.ui, $(e.currentTarget).val());
 					}
 				}
 			}, {ui: base.$el , locked: base.options.isLocked, input: "", sendRequest: ""});
