@@ -551,7 +551,7 @@
 							itemAddComment: function(base, comment){
 								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
 									callback: function(data){
-										this.itemDataCallback(base, 1);
+										base.getList(base.options.page);
 									},
 									preHook: function(){
 										base.prepareList();
