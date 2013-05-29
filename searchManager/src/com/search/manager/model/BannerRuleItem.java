@@ -28,7 +28,7 @@ public class BannerRuleItem extends ModelBean{
 	}
 	
 	public BannerRuleItem(BannerRule rule, String memberId,
-			int priority, DateTime startDate, DateTime endDate,
+			Integer priority, DateTime startDate, DateTime endDate,
 			String imageAlt, String linkPath, String description,
 			ImagePath imagePath, Boolean disabled) {
 		super();
@@ -57,6 +57,10 @@ public class BannerRuleItem extends ModelBean{
 	
 	public BannerRuleItem(String ruleId, String storeId, String memberId){
 		this(ruleId, storeId, null, memberId, 0, null, null, null, null, null, null, null);
+	}
+	
+	public BannerRuleItem(String ruleId, String storeId){
+		this(ruleId, storeId, null);
 	}
 	
 	public BannerRule getRule() {

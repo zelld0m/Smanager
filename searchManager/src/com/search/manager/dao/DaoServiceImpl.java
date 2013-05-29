@@ -1926,4 +1926,11 @@ public class DaoServiceImpl implements DaoService {
 			throws DaoException {
 		return bannerDAO.deleteRuleItem(ruleItem);
 	}
+
+	@Override
+	public RecordSet<BannerRule> getBannerRuleWithImage(
+			SearchCriteria<BannerRule> criteria, String imagePathId)
+			throws DaoException {
+		return bannerDAO.searchRule(criteria, imagePathId);
+	}
 }

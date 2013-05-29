@@ -340,7 +340,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_SEARCH_TEXT, model.getRuleName());
-			inputs.put(DAOConstants.PARAM_MATCH_TYPE, matchType.getIntValue());
+			inputs.put(DAOConstants.PARAM_MATCH_TYPE, matchType!=null? matchType.getIntValue(): matchType);
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId);
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());

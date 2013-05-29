@@ -151,7 +151,7 @@ public class AuditService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<AuditTrail> getBannerTrail(String ruleId, int page,int itemsPerPage) {
+	public RecordSet<AuditTrail> getBannerItemTrail(String ruleId, String memberId, int page,int itemsPerPage) {
 		try {
 			String store = UtilityService.getStoreId();
 			
