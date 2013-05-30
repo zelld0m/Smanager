@@ -30,7 +30,7 @@
 		var base = this;
 
 		if(base.options.isPopup) {
-			base.qtip = base.$el.qtip({
+			base.$el.qtip({
 				id: "plugin-listbox-qtip",
 				content: {
 					text: $('<div/>'),
@@ -99,6 +99,11 @@
 		base.$el.find("div#preloader").show();
 	};
 
+	$.listbox.prototype.reposition = function() {
+		var base = this;
+		base.api && base.api.reposition();
+	};
+
 	$.listbox.prototype.populateList = function(data){
 		var base = this;
 
@@ -126,8 +131,6 @@
 			base.$el.find('div#emptyText').show();
 			return;
 		}
-
-		base.qtip.qtip('reposition');
 	};
 
 	$.listbox.prototype.populateItemFields = function(ui, item){
