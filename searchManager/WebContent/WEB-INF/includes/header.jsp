@@ -166,8 +166,8 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.editable.custom.js" />" ></script>
   
   
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/2.0/jquery.rulestatusbar.custom.css" />">
-  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/2.0/jquery.rulestatusbar.custom.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/1.0/jquery.rulestatusbar.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/1.0/jquery.rulestatusbar.custom.js" />" ></script>
 
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/uploadimage/jquery.uploadimage.custom.css" />">
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/uploadimage/jquery.uploadimage.custom.js" />" ></script>
