@@ -591,7 +591,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		return resultMap;
 	}
 
-	// TODO
 	@Override
 	public Map<String, Boolean> publishBannerRulesMap(String store,
 			List<String> ruleIds) {
@@ -609,6 +608,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					bannerRule.setRuleId(id);
 					bannerRuleItemFilter.setRule(bannerRule);
 
+					daoService.deleteBannerRuleItem(bannerRuleItemFilter); // prod
 					daoService.deleteBannerRule(bannerRule); // prod
 
 					// retrieve staging data then push to prod
@@ -1109,7 +1109,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		return keywordStatus;
 	}
 
-	// TODO
 	@Override
 	public Map<String, Boolean> unpublishBannerRulesMap(String store,
 			List<String> ruleIds) {
