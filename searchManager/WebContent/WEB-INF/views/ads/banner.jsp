@@ -44,7 +44,7 @@
 		</div>
 	
 		<div id="ruleContent" class="ruleContent fsize12" style="display:none">
-			<div class="page_nav_group clearfix">
+			<div id="ruleItemOptions" class="page_nav_group clearfix" style="display:none">
 				<ul class="page_nav fRight">
 					<li>	
 						<select id="filterDisplay">
@@ -54,12 +54,20 @@
 						</select>
 					</li>
 					<li><div class="ico_graph ico"></div></li>
-					<li><div class="ico_download2 ico"></div></li>
-					<li><div class="ico_delete ico"></div></li>
+					<li>
+						<a id="downloadRuleIcon" href="javascript:void(0);" alt="Delete All Item" title="Delete All Item">
+							<div class="ico_download2 ico"></div>
+						</a>
+					</li>
+					<li>
+						<a id="deleteAllItemIcon" href="javascript:void(0);" alt="Delete All Item" title="Delete All Item">
+							<div class="ico_delete ico"></div>
+						</a>
+					</li>
 				</ul>
 				<div id="ruleItemPagingTop"></div>
 			</div>		
-			<div id="ruleItemHolder" class="ban_container">
+			<div id="ruleItemHolder" class="ban_container" style="display:none">
 				<div id="ruleItemPattern" class="ruleItem ban_group">
 					<span id="imageTitle" class="banner_title fLeft fBold cBlue"></span>
 					<ul class="display_settings fRight clearfix">
@@ -87,13 +95,13 @@
 							</div>							
 						</li>
 						<li class="bRight">
-							<div class="btn_keywords round_btn fLeft">
-								<span class="btn_wrap"><a href="javascript:void(0);">Keywords (4)</a></span>
+							<div id="keywordBtn" class="btn_keywords round_btn fLeft">
+								<span class="btn_wrap"><a href="javascript:void(0);">Keyword (<span id="keywordCount">4</span>)</a></span>
 							</div>							
 						</li>	
-						<li class="bRight"><div class="ico_history ico"></div></li>
-						<li class="bRight"><div class="ico_graph ico"></div></li>
-						<li class="bRight"><div class="ico_user ico"></div></li>		
+						<li class="bRight"><div id="auditIcon" class="ico_history ico"></div></li>
+						<li class="bRight"><div id="itemStatIcon" class="ico_graph ico"></div></li>
+						<li class="bRight"><div id="lastModifiedIcon" class="ico_user ico"></div></li>		
 						<li><div id="commentIcon" class="ico_comments ico"></div></li>								
 					</ul>
 				

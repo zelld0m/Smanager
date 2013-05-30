@@ -1,5 +1,7 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -33,10 +35,11 @@ public class BannerService {
 
 	private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
 	private static final String MSG_FAILED_ADD_RULE_ITEM = "Failed to add banner rule item %s";
-	private static final String MSG_FAILED_DELETE_RULE_ITEM = "Failed to delete banner rule item %s";
+	private static final String MSG_FAILED_DELETE_RULE_ITEM = "Failed to delete banner item %s";
 	private static final String MSG_FAILED_GET_IMAGE = "Failed to retrieve record for %s";
 	private static final String MSG_FAILED_ADD_IMAGE = "Failed to add image link %s : %s";
 	private static final String MSG_FAILED_UPDATE_IMAGE_ALIAS = "Failed to update image alias to %s";
+	private static final String MSG_FAILED_GET_RULE_WITH_IMAGE = "Failed to retrieve banner rule using %s";
 	
 	@Autowired private DaoService daoService;
 
@@ -128,16 +131,66 @@ public class BannerService {
 	}
 	
 	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String ruleId, int page, int pageSize){
-		return getItems(ruleId, null, null, page, pageSize);
+	public ServiceResponse<Integer> getTotalRuleItems(String ruleId){
+		ServiceResponse<RecordSet<BannerRuleItem>> items = getRuleItems(ruleId, 1, 1);
+		ServiceResponse<Integer> serviceResponse = new ServiceResponse<Integer>();
+		serviceResponse.success((Integer) items.getData().getTotalSize());
+		return serviceResponse;
 	}
 	
+	@RemoteMethod
+	public ServiceResponse<Integer> getTotalRuleWithImage(String imagePathId, String imageAlias){
+		ServiceResponse<RecordSet<BannerRule>> srAllRule = getAllRuleWithImage(imagePathId, imageAlias, 0, 0);
+		RecordSet<BannerRule> rsAllRule = srAllRule.getData();
+		
+		ServiceResponse<Integer> serviceResponse = new ServiceResponse<Integer>();
+		serviceResponse.success(rsAllRule.getTotalSize());
+		
+		return serviceResponse;
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerRule>> getAllRuleWithImage(String imagePathId, String imageAlias, int page, int pageSize){
+		String storeId = UtilityService.getStoreId();
+		BannerRule bannerRule = new BannerRule(storeId, null);
+		SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(bannerRule, page, pageSize);
+		ServiceResponse<RecordSet<BannerRule>> serviceResponse = new ServiceResponse<RecordSet<BannerRule>>();
+		RecordSet<BannerRule> rules = new RecordSet<BannerRule>(new ArrayList<BannerRule>(), 0);
+		
+		try {
+			rules = daoService.getBannerRuleWithImage(criteria, imagePathId);
+			serviceResponse.success(rules);
+		} catch (DaoException e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error(String.format(MSG_FAILED_GET_RULE_WITH_IMAGE, imageAlias), e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error(String.format(MSG_FAILED_GET_RULE_WITH_IMAGE, imageAlias), e);
+		}
+		
+		return serviceResponse;
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String ruleId, int page, int pageSize){
+		return getItems(ruleId, null, null, null, page, pageSize);
+	}
+
+    @RemoteMethod
+    public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItems(String ruleId){
+        return getItems(ruleId, null, null, 1, Integer.MAX_VALUE);
+    }
+	
 	public ServiceResponse<RecordSet<BannerRuleItem>> getItems(String ruleId, String startDate, String endDate, int page, int pageSize){
+		return getItems(ruleId, startDate, endDate, null, page, pageSize);
+	}
+	
+	public ServiceResponse<RecordSet<BannerRuleItem>> getItems(String ruleId, String startDate, String endDate, String imagePathId, int page, int pageSize){
 		String storeId = UtilityService.getStoreId();
 		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
 		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
-		BannerRuleItem model = new BannerRuleItem(ruleId, storeId, startDT, endDT);
-		SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(model, page, pageSize);
+		BannerRuleItem model = new BannerRuleItem(ruleId, storeId);
+		SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(model, startDT, endDT, page, pageSize);
 
 		ServiceResponse<RecordSet<BannerRuleItem>> serviceResponse = new ServiceResponse<RecordSet<BannerRuleItem>>();
 		RecordSet<BannerRuleItem> recordSet = new RecordSet<BannerRuleItem>(null, 0);
@@ -224,9 +277,23 @@ public class BannerService {
 
 		return serviceResponse;
 	}
+
+	@RemoteMethod
+	public ServiceResponse<Void> deleteAllRuleItem(String ruleId){
+		return deleteItem(ruleId, null, null, ""); 
+	}
 	
 	@RemoteMethod
 	public ServiceResponse<Void> deleteRuleItem(String ruleId, String memberId, String alias){
+		return deleteItem(ruleId, memberId, null, alias); 
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<Void> deleteRuleItemWithImage(String ruleId, String imagePathId, String alias){
+		return deleteItem(ruleId, null, imagePathId, alias); 
+	}
+	
+	public ServiceResponse<Void> deleteItem(String ruleId, String memberId, String imagePathId, String alias){
 		String storeId = UtilityService.getStoreId();
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 		

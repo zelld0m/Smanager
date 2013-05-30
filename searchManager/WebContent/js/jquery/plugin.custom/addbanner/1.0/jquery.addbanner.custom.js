@@ -41,9 +41,11 @@
 						width: 'auto'
 					},
 					events: {
-						show: function(event, api) {
+						render: function(event, api) {
 							base.api = api;
 							base.$el = $("div", api.elements.content);
+						},
+						show: function(event, api){
 							base.$el.empty().append(base.getTemplate());
 							base.setId(base.$el);
 							base.populateContents();
@@ -87,6 +89,9 @@
 							readonly: true,
 							disabled: true
 						});
+						
+						BannerServiceJS.getRuleItems()
+						
 						break;
 					case 'add': 
 						break;
@@ -170,11 +175,9 @@
 							jAlert("Image alias is required.", "Banner");
 						} else if($.isBlank(imageAlt)) {
 							jAlert("Image alt is required.", "Banner");
+						}else if($.isBlank(linkPath)) {
+							jAlert("Link path is required.", "Banner");
 						} 
-						//TODO: verify link
-//						else if($.isBlank(linkPath)) {
-//							jAlert("Link path is required.", "Banner");
-//						} 
 
 						/*
 						else if($.isBlank(keyword)) {
@@ -190,9 +193,14 @@
 
 						else if ($.isNotBlank(description) && !validateDescription("Description", description, 1, 150)) {
 							// error alert in function validateComment
-						} else if(!base.validateLinkPath()) {
-							jAlert("Link path is invalid.", "Banner");
-						} else {
+						} 
+						
+						//TODO:
+//						else if(!base.validateLinkPath()) {
+//							jAlert("Link path is invalid.", "Banner");
+//						} 
+						
+						else {
 							e.data['ruleId'] = base.options.rule["ruleId"];
 							e.data['startDate'] = startDate;
 							e.data['endDate'] = endDate;
@@ -282,7 +290,6 @@
 			});
 		};
 
-
 		base.previewImage = function(ui, imagePath) {
 			var $previewHolder = ui.find("#preview");
 
@@ -317,8 +324,8 @@
 			template += '		<label class="txtLabel">Link Path: </label> ';
 			template += '		<input id="linkPath" class="w565px" type="text">';
 			template += '		<label class="txtLabel">Schedule:</label> ';
-			template += '		<input id="startDate" class="startDate" type="text">';
-			template += '		<input id="endDate" class="endDate"  type="text">';
+			template += '		<input id="startDate" class="startDate schedule" type="text">';
+			template += '		<input id="endDate" class="endDate schedule"  type="text">';
 			template += '		<label class="txtLabel">Description: </label> ';
 			template += '		<textarea id="description" class="w565px"></textarea>';
 			template += '		<div class="clearB"></div>';
@@ -327,6 +334,8 @@
 					&& base.options.mode.toLowerCase() == 'copy') {
 				template += '	<label class="txtLabel">Keyword: </label> ';
 				template += '	<textarea id="keyword" class="w565px"></textarea>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label>One keyword per line</label>';
 				template += '	<div class="clearB"></div>';
 			}
 

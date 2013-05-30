@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <% pageContext.setAttribute("now", org.joda.time.DateTime.now()); %>
 <% pageContext.setAttribute("year", org.joda.time.DateTime.now().toDateMidnight().getYear()); %>
@@ -6,7 +7,6 @@
 <% pageContext.setAttribute("hour", org.joda.time.DateTime.now().getHourOfDay()); %>
 <% pageContext.setAttribute("min", org.joda.time.DateTime.now().getMinuteOfHour()); %>
 <% pageContext.setAttribute("sec", org.joda.time.DateTime.now().getSecondOfMinute()); %>
-<% pageContext.setAttribute("stringOfDate", org.joda.time.DateTime.now().toString()); %>
 
 <!DOCTYPE html>
 <html>
@@ -51,14 +51,8 @@
 	
 	timezoneJS.timezone.zoneFileBasePath = GLOBAL_contextPath + '/tz';
 	timezoneJS.timezone.init();
-	console.log('${year}');
-	console.log('${month}');
-	console.log('${day}');
-	console.log('${hour}');
-	console.log('${min}');
 	var currentDate = new timezoneJS.Date('${year}', '${month-1}', '${day}', '${hour}', '${min}', 'America/Los_Angeles');
 	
-	console.log(currentDate);
 	//store schema indexed fields
 	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
 	var GLOBAL_indexedFields = GLOBAL_schemaFields["indexedFields"];
@@ -183,6 +177,9 @@
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.css" />">
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.js" />" ></script>
+  
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/listbox/1.0/jquery.listbox.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/listbox/1.0/jquery.listbox.custom.js" />" ></script>
   
   <script type="text/javascript"  src="<spring:url value="/js/jquery/searchabledropdown-1.0.8/jquery.searchabledropdown-1.0.8-modified.src.js" />"></script>  
  
