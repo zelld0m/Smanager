@@ -55,7 +55,6 @@
 					}
 				}
 			});
-			base.qtip = base.$el.data('qtip');
 		} else {
 			base.$el.html(base.getTemplate());
 			base.setId(base.$el);
@@ -99,10 +98,10 @@
 		base.$el.find("div#emptyText").hide();
 		base.$el.find("div#preloader").show();
 	};
-	
+
 	$.listbox.prototype.reposition = function() {
 		var base = this;
-		base.qtip &&  base.qtip.reposition();
+		base.api && base.api.reposition();
 	};
 
 	$.listbox.prototype.populateList = function(data){
