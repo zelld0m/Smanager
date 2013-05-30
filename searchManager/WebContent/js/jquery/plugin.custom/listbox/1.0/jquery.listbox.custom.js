@@ -30,7 +30,7 @@
 		var base = this;
 
 		if(base.options.isPopup) {
-			base.qtip = base.$el.qtip({
+			base.$el.qtip({
 				id: "plugin-listbox-qtip",
 				content: {
 					text: $('<div/>'),
@@ -55,6 +55,7 @@
 					}
 				}
 			});
+			base.qtip = base.$el.data('qtip');
 		} else {
 			base.$el.html(base.getTemplate());
 			base.setId(base.$el);
@@ -98,6 +99,11 @@
 		base.$el.find("div#emptyText").hide();
 		base.$el.find("div#preloader").show();
 	};
+	
+	$.listbox.prototype.reposition = function() {
+		var base = this;
+		base.qtip &&  base.qtip.reposition();
+	};
 
 	$.listbox.prototype.populateList = function(data){
 		var base = this;
@@ -126,8 +132,6 @@
 			base.$el.find('div#emptyText').show();
 			return;
 		}
-
-		base.qtip.qtip('reposition');
 	};
 
 	$.listbox.prototype.populateItemFields = function(ui, item){

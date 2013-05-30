@@ -514,6 +514,9 @@
 							},
 							preHook: function(e){
 								base.prepareList();
+							},
+							postHook: function(e){
+								base.reposition();
 							}
 						});
 					},
