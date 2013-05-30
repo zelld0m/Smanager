@@ -118,7 +118,7 @@ public class BannerRuleBuilder extends BaseRuleBuilder implements Runnable {
 		try {
 			if (bannerRuleItems != null && bannerRuleItems.size() > 0) {
 				solrInputDocuments = SolrDocUtil
-						.composeSolrDocsBannerRuleItem(bannerRuleItems);
+						.composeSolrDocs(bannerRuleItems);
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.commit();

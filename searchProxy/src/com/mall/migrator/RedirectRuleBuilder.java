@@ -119,8 +119,7 @@ public class RedirectRuleBuilder extends BaseRuleBuilder implements Runnable {
 
 		try {
 			if (redirectRules != null && redirectRules.size() > 0) {
-				solrInputDocuments = SolrDocUtil
-						.composeSolrDocsRedirectRule(redirectRules);
+				solrInputDocuments = SolrDocUtil.composeSolrDocs(redirectRules);
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.commit();
