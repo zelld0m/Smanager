@@ -748,6 +748,13 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	@Override
+	public List<BannerRuleItem> getBannerRuleItemsByRuleId(Store store,
+			String ruleId) throws DaoException {
+		return (List<BannerRuleItem>) bannerRuleItemDao
+				.getBannerRuleItemsByRuleId(store, ruleId);
+	}
+
+	@Override
 	public List<BannerRuleItem> getBannerRuleItemsByRuleName(Store store,
 			String ruleName) throws DaoException {
 		return (List<BannerRuleItem>) bannerRuleItemDao
@@ -763,6 +770,12 @@ public class SolrServiceImpl implements SolrService {
 	@Override
 	public boolean loadBannerRuleItems(Store store) throws DaoException {
 		return bannerRuleItemDao.loadBannerRuleItems(store);
+	}
+
+	@Override
+	public boolean loadBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException {
+		return bannerRuleItemDao.loadBannerRuleItemsByRuleId(store, ruleId);
 	}
 
 	@Override
@@ -783,6 +796,12 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	@Override
+	public boolean resetBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException {
+		return bannerRuleItemDao.resetBannerRuleItemsByRuleId(store, ruleId);
+	}
+
+	@Override
 	public boolean resetBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException {
 		return bannerRuleItemDao
@@ -798,6 +817,12 @@ public class SolrServiceImpl implements SolrService {
 	@Override
 	public boolean deleteBannerRuleItems(Store store) throws DaoException {
 		return bannerRuleItemDao.deleteBannerRuleItems(store);
+	}
+
+	@Override
+	public boolean deleteBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException {
+		return bannerRuleItemDao.deleteBannerRuleItemsByRuleId(store, ruleId);
 	}
 
 	@Override
