@@ -48,9 +48,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -87,9 +85,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -168,7 +164,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				if (recordSet != null && recordSet.getTotalSize() > 0) {
 					List<FacetSort> facetSorts = recordSet.getList();
 					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-							.composeSolrDocsFacetSort(facetSorts);
+							.composeSolrDocs(facetSorts);
 					solrServers.getCoreInstance(
 							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
@@ -220,7 +216,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				facetSorts = recordSet.getList();
 				List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
 				solrInputDocuments.addAll(SolrDocUtil
-						.composeSolrDocsFacetSort(facetSorts));
+						.composeSolrDocs(facetSorts));
 				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 					solrServers.getCoreInstance(
 							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
@@ -260,7 +256,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				facetSorts = recordSet.getList();
 				List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
 				solrInputDocuments.addAll(SolrDocUtil
-						.composeSolrDocsFacetSort(facetSorts));
+						.composeSolrDocs(facetSorts));
 				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 					solrServers.getCoreInstance(
 							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
@@ -362,7 +358,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					facetSorts = recordSet.getList();
 					List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
 					solrInputDocuments.addAll(SolrDocUtil
-							.composeSolrDocsFacetSort(facetSorts));
+							.composeSolrDocs(facetSorts));
 					if (solrInputDocuments != null
 							&& solrInputDocuments.size() > 0) {
 						solrServers.getCoreInstance(

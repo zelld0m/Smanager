@@ -203,7 +203,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				if (recordSet != null && recordSet.getTotalSize() > 0) {
 					List<RedirectRule> redirectRules = recordSet.getList();
 					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-							.composeSolrDocsRedirectRule(redirectRules);
+							.composeSolrDocs(redirectRules);
 					solrServers.getCoreInstance(
 							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
@@ -252,7 +252,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				redirectRules = recordSet.getList();
 
 				List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-						.composeSolrDocsRedirectRule(redirectRules);
+						.composeSolrDocs(redirectRules);
 
 				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 					solrServers.getCoreInstance(
@@ -290,7 +290,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				redirectRules = recordSet.getList();
 
 				List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-						.composeSolrDocsRedirectRule(redirectRules);
+						.composeSolrDocs(redirectRules);
 
 				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 					solrServers.getCoreInstance(
@@ -393,7 +393,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					redirectRules = recordSet.getList();
 
 					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-							.composeSolrDocsRedirectRule(redirectRules);
+							.composeSolrDocs(redirectRules);
 
 					if (solrInputDocuments != null
 							&& solrInputDocuments.size() > 0) {
