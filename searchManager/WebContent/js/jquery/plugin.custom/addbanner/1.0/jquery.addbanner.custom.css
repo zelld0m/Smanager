@@ -11,10 +11,16 @@
 
 .plugin-addbanner #buttonset {
 	float: right;
+	margin-bottom:10px;
 }
 
 .plugin-addbanner input#startDate,.plugin-addbanner input#endDate {
 	width: 65px;
+}
+
+.plugin-addbanner #buttonset div {
+	float:left;
+	margin-left:10px;
 }
 
 .plugin-addbanner input,.plugin-addbanner textarea,
@@ -25,6 +31,12 @@
 	outline: none;
 	float: left;
 	font-family: Arial, sans-serif;
+}
+
+.plugin-addbanner input.schedule  {
+	width: 79px;
+	font-size: 12px;
+	text-align: center;
 }
 
 .plugin-addbanner button {
