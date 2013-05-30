@@ -159,6 +159,11 @@ height: 24px;
 .ban_edit .ui-datepicker-trigger {
 border:none;
 } 
+.ban_edit img.ui-datepicker-trigger {
+    padding: 3px;
+    vertical-align: middle;
+    width: 18px;
+} 
 .ban_edit .preview_container {
 	width: 100%;
 	display: block;

@@ -18,6 +18,12 @@
 	width: 65px;
 }
 
+.plugin-addbanner img.ui-datepicker-trigger {
+	float: left;
+	padding: 6px 10px 0px 3px;
+	width: 18px;
+}
+
 .plugin-addbanner #buttonset div {
 	float:left;
 	margin-left:10px;

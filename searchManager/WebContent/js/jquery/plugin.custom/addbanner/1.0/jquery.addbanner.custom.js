@@ -108,6 +108,7 @@
 				changeYear: true,
 				showOn: "both",
 				buttonImage: "../images/icon_calendar.png",
+				buttonImageOnly: true,
 				onClose: function(selectedDate) {
 					base.$el.find("#endDate_" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
 				}
@@ -120,6 +121,7 @@
 				changeYear: true,
 				showOn: "both",
 				buttonImage: "../images/icon_calendar.png",
+				buttonImageOnly: true,
 				onClose: function(selectedDate) {
 					base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
 				}
