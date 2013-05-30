@@ -175,6 +175,11 @@ public class BannerService {
 	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String ruleId, int page, int pageSize){
 		return getItems(ruleId, null, null, null, page, pageSize);
 	}
+
+    @RemoteMethod
+    public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItems(String ruleId){
+        return getItems(ruleId, null, null, 1, Integer.MAX_VALUE);
+    }
 	
 	public ServiceResponse<RecordSet<BannerRuleItem>> getItems(String ruleId, String startDate, String endDate, int page, int pageSize){
 		return getItems(ruleId, startDate, endDate, null, page, pageSize);

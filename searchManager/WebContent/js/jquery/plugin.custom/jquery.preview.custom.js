@@ -379,11 +379,17 @@
 				});
 				break;
 			case "banner": 
-				BannerServiceJS.getRuleItems(base.options.ruleId , 0, 0,{
+				var $table = $content.find("table#item");
+				BannerServiceJS.getAllRuleItems(base.options.ruleId, {
 					callback: function(sr){
-						base.populateBannerItem(sr["data"]);
+						if (sr.status == 0) {
+							base.populateBannerItem(sr["data"]);
+						} else {
+							jAlert(sr.errorMessage.message);
+						}
 					},
 					postHook:function(){
+						$table.find("tr#preloader").hide();
 						base.options.templateEvent(base);
 					}
 				});
@@ -423,7 +429,42 @@
 		};
 
 		base.populateBannerItem = function(data){
-			//TODO: 
+			var $table = $("div#bannerItems table#item");
+
+			if (data.list && data.list.length > 0) {
+				var $pattern = $table.find("tr#itemPattern");
+				
+				$.each(data.list, function() {
+					var $item = $pattern.clone();
+					var item = this;
+	
+					$item.attr("id", item.memberId);
+					$item.find("#itemPriority").text(item.priority);
+					$item.find("#itemImage img").attr("src", item.imagePath.path);
+					$item.find("#itemLink a").attr("href", "javascript:void(0);").text(item.linkPath);
+					$item.find("#itemAlt").text(item.imageAlt);
+					$item.find("#itemAlias").text(item.imagePath.alias);
+					$item.find("#itemValidity").text(item.formattedStartDate + " - " + item.formattedEndDate);
+					
+					if (!item.expired) {
+						$item.find("#itemValidityDaysExpired").hide();
+						item.started && $item.find("#itemDaysLeft").text("(" + item.daysLeft + " left)");
+					} else {
+						$item.find("#itemDaysLeft").hide();
+					}
+					
+					if (item.disabled) {
+						$item.addClass("forceAddErrorClass");
+					}
+					
+					$("tr#preloader").before($item);
+					$item.show();
+				});
+			} else {
+				$table.find("tr#nonFound").show();
+			}
+			
+			base.$el.qtip('reposition');
 		};
 		
 		base.getPreTemplate = function(){
@@ -702,38 +743,51 @@
 				template += '	</div>';
 				break;
 			case "banner":
-				template += '<div id="forceAdd" class="loadingWrapper" style="display:none"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ16x16.gif"><span class="fsize12 posRel topn3 padL5">Retrieving Force Add Status</span></div>';
 				template += '	<div class="w600 mar0 pad0">';
 				template += '		<table class="tblItems w100p marT5">';
 				template += '			<tbody>';
 				template += '				<tr>';
 				template += '					<th width="20px">#</th>';
-				template += '					<th width="60px" id="selectAll">Image</th>';
-				template += '					<th width="94px">Manufacturer</th>';
-				template += '					<th width="70px">SKU #</th>';
-				template += '					<th width="160px">Name</th>';
+				template += '					<th width="324px" id="selectAll">Banner</th>';
+				template += '					<th width="60px">Alias</th>';
 				template += '					<th width="90px">Validity</th>';
 				template += '				</tr>';
 				template += '			<tbody>';
 				template += '		</table>';
 				template += '	</div>';
-				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '	<div id="bannerItems" class="w600 mar0 pad0" style="max-height:225px; overflow-y:auto;">';
 				template += '		<table id="item" class="tblItems w100p">';
 				template += '			<tbody>';
 				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
-				template += '					<td width="20px" class="txtAC" id="itemPosition"></td>';
-				template += '					<td width="60px" class="txtAC" id="itemImage"><img src="" width="50"/></td>';
-				template += '					<td width="94px" class="txtAC" id="itemMan"></td>';
-				template += '					<td width="70px" class="txtAC" id="itemDPNo"></td>';
-				template += '					<td width="160px" class="txtAC" id="itemName"></td>';
+				template += '					<td width="20px" class="txtAC" id="itemPriority"></td>';
+				template += '					<td width="348px" class="txtAL">';
+				template += '						<div id="itemImage">';
+				template += '							<img src="" width="324"/></div>';
+				template += '						</div>';
+				template += '						<div>';
+				template += '							<span>Link Path:</span>';
+				template += '							<span id="itemLink"><a href="" target="BLANK"></a></span>';
+				template += '						</div>';
+				template += '						<div>';
+				template += '							<span>Image Alt:</span>';
+				template += '							<span id="itemAlt"></span>';
+				template += '						</div>';
+				template += '					</td>';
+				template += '					<td width="60px" class="txtAC" id="itemAlias"></td>';
 				template += '					<td width="auto" class="txtAC">';
 				template += '						<div id="itemValidity" class="w74 wordwrap"></div>';
+				template += '						<div id="itemDaysLeft" class="fgreen"></div>';
 				template += '						<div id="itemValidityDaysExpired"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div>';
 				template +='					</td>';
 				template += '				</tr>';
-				template += '				<tr>';
+				template += '				<tr id="preloader">';
 				template += '					<td colspan="6" class="txtAC">';
-				template += '						<img id="preloader" alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
+				template += '						<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
+				template += '					</td>';
+				template += '				</tr>';
+				template += '				<tr id="nonFound" style="display:none;">';
+				template += '					<td colspan="6" class="txtAL">';
+				template += '						No items found.';	
 				template += '					</td>';
 				template += '				</tr>';
 				template += '			</tbody>';
