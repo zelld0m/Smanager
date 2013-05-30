@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <% pageContext.setAttribute("now", org.joda.time.DateTime.now()); %>
 <% pageContext.setAttribute("year", org.joda.time.DateTime.now().toDateMidnight().getYear()); %>

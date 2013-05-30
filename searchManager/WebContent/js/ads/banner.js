@@ -500,6 +500,7 @@
 					title: "Linked Keywords",
 					emptyText: "No linked keywords",
 					page: 1,
+					rule: self.selectedRule,
 					ruleItem: item, 
 					pageSize: 5,
 					parentNameText: item["imagePath"]["alias"],
