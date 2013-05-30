@@ -66,16 +66,17 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 	}
 
 	@Override
-	public List<BannerRuleItem> getBannerRuleItemsByRuleName(Store store,
-			String ruleName) throws DaoException {
+	public List<BannerRuleItem> getBannerRuleItemsByRuleId(Store store,
+			String ruleId) throws DaoException {
 		try {
 			String storeId = StringUtils.lowerCase(StringUtils.trim(store
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleName1:"
-							+ ClientUtils.escapeQueryChars(ruleName));
+					.append(" AND ruleId:"
+							+ ClientUtils.escapeQueryChars(StringUtils
+									.trim(ruleId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -103,7 +104,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 	}
 
 	@Override
-	public List<BannerRuleItem> getExpiredBannerRuleItems(Store store,
+	public List<BannerRuleItem> getBannerRuleItemsByRuleName(Store store,
 			String ruleName) throws DaoException {
 		try {
 			String storeId = StringUtils.lowerCase(StringUtils.trim(store
@@ -112,8 +113,8 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
 					.append(" AND ruleName1:"
-							+ ClientUtils.escapeQueryChars(ruleName))
-					.append(" AND endDate:[* TO NOW/DAY]");
+							+ ClientUtils.escapeQueryChars(StringUtils
+									.trim(ruleName)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -150,7 +151,8 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
 					.append(" AND memberId:"
-							+ ClientUtils.escapeQueryChars(memberId));
+							+ ClientUtils.escapeQueryChars(StringUtils
+									.trim(memberId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -223,6 +225,58 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 		} catch (Exception e) {
 			logger.error(
 					"Failed to load banner rule item by store. "
+							+ e.getMessage(), e);
+			throw new DaoException(e.getMessage(), e);
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean loadBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException {
+		try {
+			BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
+			BannerRule bannerRule = new BannerRule();
+			bannerRule.setStoreId(store.getStoreId());
+			bannerRule.setRuleId(ruleId);
+			bannerRuleItemFilter.setRule(bannerRule);
+			int page = 1;
+
+			while (true) {
+				SearchCriteria<BannerRuleItem> searchCriteria = new SearchCriteria<BannerRuleItem>(
+						bannerRuleItemFilter, page, MAX_ROWS);
+
+				RecordSet<BannerRuleItem> recordSet = daoService
+						.searchBannerRuleItem(searchCriteria);
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<BannerRuleItem> bannerRuleItems = recordSet.getList();
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocs(bannerRuleItems);
+					solrServers.getCoreInstance(
+							Constants.Core.BANNER_RULE_CORE.getCoreName())
+							.addDocs(solrInputDocuments);
+
+					if (bannerRuleItems.size() < MAX_ROWS) {
+						solrServers.getCoreInstance(
+								Constants.Core.BANNER_RULE_CORE.getCoreName())
+								.softCommit();
+						return true;
+					}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers.getCoreInstance(
+								Constants.Core.BANNER_RULE_CORE.getCoreName())
+								.softCommit();
+						return true;
+					}
+					break;
+				}
+			}
+		} catch (Exception e) {
+			logger.error(
+					"Failed to load banner rule item by store and ruleId. "
 							+ e.getMessage(), e);
 			throw new DaoException(e.getMessage(), e);
 		}
@@ -352,6 +406,23 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 	}
 
 	@Override
+	public boolean resetBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException {
+		try {
+			if (deleteBannerRuleItemsByRuleId(store, ruleId)) {
+				return loadBannerRuleItemsByRuleId(store, ruleId);
+			}
+		} catch (Exception e) {
+			logger.error(
+					"Failed to reset banner rule items by store and ruleId. "
+							+ e.getMessage(), e);
+			throw new DaoException(e.getMessage(), e);
+		}
+
+		return false;
+	}
+
+	@Override
 	public boolean resetBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException {
 		try {
@@ -393,7 +464,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId);
+			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName())
@@ -415,6 +486,39 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 	}
 
 	@Override
+	public boolean deleteBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException {
+		try {
+			String storeId = StringUtils.lowerCase(StringUtils.trim(store
+					.getStoreId()));
+			ruleId = StringUtils.trim(ruleId);
+
+			StringBuffer strQuery = new StringBuffer();
+			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
+					.append(" AND ruleId:"
+							+ ClientUtils.escapeQueryChars(StringUtils
+									.trim(ruleId)));
+
+			UpdateResponse updateResponse = solrServers.getCoreInstance(
+					Constants.Core.BANNER_RULE_CORE.getCoreName())
+					.deleteByQuery(strQuery.toString());
+			solrServers.getCoreInstance(
+					Constants.Core.BANNER_RULE_CORE.getCoreName()).softCommit();
+
+			if (updateResponse.getStatus() == 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error(
+					"Failed to delete banner rule items by store and ruleId. "
+							+ e.getMessage(), e);
+			throw new DaoException(e.getMessage(), e);
+		}
+
+		return false;
+	}
+
+	@Override
 	public boolean deleteBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException {
 		try {
@@ -425,7 +529,8 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
 					.append(" AND ruleName1:"
-							+ ClientUtils.escapeQueryChars(ruleName));
+							+ ClientUtils.escapeQueryChars(StringUtils
+									.trim(ruleName)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName())

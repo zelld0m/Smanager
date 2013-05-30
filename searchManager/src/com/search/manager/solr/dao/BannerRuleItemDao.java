@@ -11,16 +11,19 @@ public interface BannerRuleItemDao {
 	Collection<BannerRuleItem> getBannerRuleItems(Store store)
 			throws DaoException;
 
+	Collection<BannerRuleItem> getBannerRuleItemsByRuleId(Store store,
+			String ruleId) throws DaoException;
+
 	Collection<BannerRuleItem> getBannerRuleItemsByRuleName(Store store,
 			String ruleName) throws DaoException;
 
-	Collection<BannerRuleItem> getExpiredBannerRuleItems(Store store,
-			String ruleName) throws DaoException;
-	
 	BannerRuleItem getBannerRuleItemByMemberId(Store store, String memberId)
 			throws DaoException;
 
 	boolean loadBannerRuleItems(Store store) throws DaoException;
+
+	boolean loadBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException;
 
 	boolean loadBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException;
@@ -30,6 +33,9 @@ public interface BannerRuleItemDao {
 
 	boolean resetBannerRuleItems(Store store) throws DaoException;
 
+	boolean resetBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException;
+
 	boolean resetBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException;
 
@@ -37,6 +43,9 @@ public interface BannerRuleItemDao {
 			throws DaoException;
 
 	boolean deleteBannerRuleItems(Store store) throws DaoException;
+
+	boolean deleteBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException;
 
 	boolean deleteBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException;
