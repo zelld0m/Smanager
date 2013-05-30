@@ -618,9 +618,11 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 							.searchBannerRuleItem(criteria).getList();
 
 					if (bannerRuleItems != null && bannerRuleItems.size() > 0) {
-						daoService.addBannerRule(bannerRuleItems.get(0).getRule());
+						daoService.addBannerRule(bannerRuleItems.get(0)
+								.getRule());
 						for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
-							daoService.addBannerImagePath(bannerRuleItem.getImagePath());
+							daoService.addBannerImagePath(bannerRuleItem
+									.getImagePath());
 							daoService.addBannerRuleItem(bannerRuleItem);
 						}
 					}
@@ -1126,6 +1128,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 						bannerRule.setRuleId(id);
 						bannerRuleItemFilter.setRule(bannerRule);
 
+						daoService.deleteBannerRuleItem(bannerRuleItemFilter); // prod
 						daoService.deleteBannerRule(bannerRule); // prod
 
 						try {
