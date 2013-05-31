@@ -18,7 +18,7 @@
 
 			init: function(){
 				var self = this;
-				$("#ruleItemOptions, #ruleItemHolder, #addBannerBtn").hide();
+				$("#ruleItemHolder, #addBannerBtn").hide();
 				$("#titleText").text(self.moduleName);
 				self.getRuleList(1);
 			},
@@ -80,7 +80,6 @@
 								item.ui.find("#itemLinkPreloader").hide();
 							}
 						});
-
 					},
 
 					itemNameCallback: function(base, item){
@@ -136,9 +135,68 @@
 					afterRuleStatusRequest: function(ruleStatus){
 						self.afterShowRuleStatus();
 						self.selectedRuleStatus = ruleStatus;
+						self.setRuleItemFilter();
 						self.getRuleItemList(1);
 					}
 				});
+			},
+
+			addRuleItemToggleHandler: function(ui, item){
+				var self = this;
+				var toggle = $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
+				ui.find("#bannerInfo").hide();
+				self.setToggleStatus(ui, item, ($.isBlank(toggle) || "hide".toLowerCase() === toggle) ? false: true);
+				
+				ui.find("#toggleText").off().on({
+					click: function(e){
+						var status = $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
+						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(status) || "hide".toLowerCase() === status) ? true : false);
+					}
+				}, {ui:ui, item:item});
+			},
+			
+			setToggleStatus: function(ui, item, show){
+				var self = this;
+				
+				if (show){
+					ui.find("#toggleText").text("Show Less").end()
+					  .find("#bannerInfo").slideDown("slow",function(e){
+						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
+					});
+					
+					self.addSetAliasHandler(ui, item);
+					self.addUpdateRuleHandler(ui, item);
+					self.addDeleteItemHandler(ui, item);
+				}else{
+					ui.find("#toggleText").text("Show More").end()
+					  .find("#bannerInfo").slideUp("slow", function(e){
+						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
+					});
+				}
+			},
+			
+			setRuleItemFilter: function(value){
+				var self = this;
+				var filter = $.isNotBlank(value)? value : $.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]));
+
+				if ($.isNotBlank(filter)){
+					$("#itemFilter").val(filter);
+				}else{
+					$.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]), "all" ,{path:GLOBAL_contextPath});
+					$("#itemFilter").val("all");
+				}
+
+				$("#itemFilter").off().on({
+					change: function(e){
+						$.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]), $(this).val(), {path:GLOBAL_contextPath});
+						self.getRuleItemList(1);
+					}
+				});
+			},
+
+			getRuleItemFilter: function(){
+				var self = this;
+				return $.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]));
 			},
 
 			getRuleItemList: function(page){
@@ -146,14 +204,14 @@
 				var rule = self.selectedRule;
 				var $iHolder = $("#ruleItemHolder");
 				$iHolder.find(".ruleItem:not(#ruleItemPattern)").remove();
-				$("#ruleItemOptions, #ruleItemHolder").hide();
+				$("#ruleItemHolder").hide();
 
-				BannerServiceJS.getRuleItems(rule["ruleId"], page, self.ruleItemPageSize, {
+				BannerServiceJS.getRuleItems(self.getRuleItemFilter(), rule["ruleId"], page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
 
 						if (recordSet && recordSet["totalSize"]>0){
-							$("#ruleItemOptions, #ruleItemHolder").show();
+							$("#ruleItemHolder").show();
 
 							$("#ruleItemPagingTop").paginate({
 								type: 'short',
@@ -162,7 +220,7 @@
 								pageStyle: "style2",
 								totalItem: recordSet["totalSize"],
 								callbackText: function(itemStart, itemEnd, itemTotal){
-									var selectedText = $.trim($("#filterDisplay").val()) != "all" ? " " + $("#filterDisplay option:selected").text(): "";
+									var selectedText = $.trim($("#itemFilter").val()) !== "all" ? " " + $("#itemFilter option:selected").text(): "";
 									return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
 								},
 								pageLinkCallback: function(e){ self.getRuleItemList(e.data.page); },
@@ -174,7 +232,7 @@
 						}
 					},
 					preHook: function(e){
-
+						$("#ruleItemPagingTop").empty();
 					},
 					postHook: function(e){
 						self.adjustPageToRuleStatus(self.selectedRuleStatus["locked"] || !allowModify);
@@ -193,7 +251,7 @@
 					});
 				}else{
 					$("#addBannerBtn").show();
-					$(".ruleItem").find("input, textarea").prop({
+					$(".ruleItem").find("input:not(.imageAlias), textarea").prop({
 						readonly: false,
 						disabled: false
 					});
@@ -222,7 +280,7 @@
 			populateRuleItemFields: function(ui, item){
 				var self = this;
 
-				self.previewImage(ui, item["imagePath"]["path"]);
+				self.previewImage(ui, item, item["imagePath"]["path"]);
 
 				ui
 				.find("#imageTitle").text(item["imagePath"]["alias"]).end()
@@ -231,7 +289,11 @@
 				.find("#endDate").val(item["formattedEndDate"]).end()
 
 				.find("#imagePath").val(item["imagePath"]["path"]).end()
-				.find("#imageAlias").val(item["imagePath"]["alias"]).prop({id: item["imagePath"]["id"]}).end()
+				.find("#imageAlias").val(item["imagePath"]["alias"]).prop({
+					id: item["imagePath"]["id"],
+					readonly: true,
+					disabled: true,
+				}).end()
 				.find("#imageAlt").val(item["imageAlt"]).end()
 				.find("#linkPath").val(item["linkPath"]).end()
 				.find("#description").val(item["description"]).end()
@@ -279,9 +341,7 @@
 				self.addItemAuditHandler(ui, item);
 				self.addLastUpdateHandler(ui, item);
 				self.addItemCommentHandler(ui, item);
-				self.addSetAliasHandler(ui, item);
-				self.addUpdateRuleHandler(ui, item);
-				self.addDeleteItemHandler(ui, item);
+				self.addRuleItemToggleHandler(ui, item);
 				self.addDeleteAllItemHandler();
 				self.addDownloadRuleHandler(ui, item);
 			},
@@ -345,7 +405,7 @@
 						if (e.data.locked) return;
 
 						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-							if(callback) callback(e.data.ui, $(e.currentTarget).val());
+							if(callback) callback(e.data.ui, e.data.item, $(e.currentTarget).val());
 						}
 					},
 
@@ -353,41 +413,37 @@
 						if (e.data.locked) return;
 
 						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-							if(callback) callback(e.data.ui, $(e.currentTarget).val());
+							if(callback) callback(e.data.ui, e.data.item, $(e.currentTarget).val());
 						}
 					}
 				}, {ui: ui , item: item, locked: self.selectedRuleStatus["locked"] || !allowModify, input: ""});
 
 			},
 
-			getImagePath: function(ui, imagePath){
+			getImagePath: function(ui, item, imagePath){
 				var self = this;
 
 				BannerServiceJS.getImagePath(imagePath, {
 					callback: function(sr){
-						if (sr!=null && recordSet["totalSize"]==1){
-							var recordSet = sr["data"]; 
-							var iPath = recordSet["list"][0];
-
-							ui.find(".alias").prop({id: iPath["id"]}).val(iPath["path"]).prop({
+						var iPath = sr["data"];
+						if (iPath!=null){
+							ui.find(".imageAlias").prop({
+								id: iPath["id"],
 								readonly: true,
 								disabled: true
-							}).end()
-							.find(".setAliasLink > div").text("Update Alias");
+							}).val(iPath["alias"]).end()
 
+							.find("#setAliasBtn").show();
+
+							self.addSetAliasHandler(ui, item);
 						}else{
-							ui.find(".alias").prop({id: "alias"}).val("").prop({
+							ui.find(".imageAlias").val("").prop({
+								id: "new",
 								readonly: false,
 								disabled: false
 							}).end()
-							.find(".setAliasLink > div").text("Save Alias");
+							.find("#setAliasBtn").hide();
 						}
-					},
-					preHook: function(e){
-
-					},
-					preHook: function(e){
-
 					}
 				});
 			},
@@ -396,7 +452,7 @@
 
 			},
 
-			previewImage: function(ui, imagePath){
+			previewImage: function(ui, item, imagePath){
 				var self = this;
 				var $previewHolder = ui.find("#preview");
 
@@ -409,6 +465,8 @@
 						$(this).unbind("error").attr("src", self.noPreviewImage); 
 					}
 				});
+
+				self.getImagePath(ui, item, imagePath);
 			},
 
 			addSetAliasHandler: function(ui, item){
@@ -416,47 +474,28 @@
 
 				ui.find("#setAliasBtn").off().on({
 					click: function(e){
+						var btnSetText = "Set Alias";
+						var btnCancelText = "Cancel";
+						var setAlias = $(e.currentTarget).find("#setAliasText").text() === btnSetText;
 
 						e.data.ui
 						.find("#imagePath").prop({
-							readonly: true,
-							disabled: true
+							readonly: setAlias,
+							disabled: setAlias
 						}).end()
 
-						.find(".alias").prop({
-							readonly: false,
-							disabled: false
-						}).end()
+						.find(".imageAlias").prop({
+							readonly: !setAlias,
+							disabled: !setAlias
+						});
 
-						.find("#setAliasLink > div").text(
-								e.data.ui.find(".alias").prop("id") === "alias" ?
-										"Save Alias" :
-											"Update Alias"	
+						$(e.currentTarget).find("#setAliasText").text(
+								setAlias? btnCancelText: btnSetText
 						);
-
-						e.data.ui.find("#cancelAliasBtn").show();
+						
+						//TODO:
 					}
-				}, {ui: ui, item: item }).end()
-
-				.find("#cancelAliasBtn").off().on({
-					click: function(e){
-
-						e.data.ui
-						.find("#imagePath").prop({
-							readonly: false,
-							disabled: false
-						}).end()
-
-						.find(".alias").prop({
-							readonly: true,
-							disabled: true
-						}).val(item["imagePath"]["alias"]).end()
-
-						.find("#setAliasLink > div").text("Set Alias");
-
-						$(e.currentTarget).hide();
-					}
-				}, {ui: ui, item: item});
+				}, {ui: ui, item: item });
 			},
 
 			addCopyToHandler: function(ui, item){
@@ -474,7 +513,7 @@
 			getLinkedKeyword: function(ui, item){
 				var self = this;
 				var count = 1;
-				
+
 				self.addShowKeywordHandler(ui, item);
 				BannerServiceJS.getTotalRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"],{
 					callback: function(sr){
@@ -489,13 +528,12 @@
 					postHook: function(e){
 						ui.find("#keywordCount").text(count);
 					}
-					
 				});
 			},
-			
+
 			addShowKeywordHandler: function(ui, item){
 				var self = this;
-				
+
 				ui.find("#keywordBtn").listbox({
 					title: "Linked Keywords",
 					emptyText: "No linked keywords",

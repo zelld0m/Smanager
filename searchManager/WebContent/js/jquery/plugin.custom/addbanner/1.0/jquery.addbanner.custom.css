@@ -1,3 +1,7 @@
+.plugin-addbanner {
+	width: 600px;
+}
+
 .plugin-addbanner label.txtLabel {
 	float: left;
 	font-size: 12px;
@@ -16,6 +20,13 @@
 
 .plugin-addbanner input#startDate,.plugin-addbanner input#endDate {
 	width: 65px;
+}
+
+.plugin-addbanner .preview_container {
+	width: 100%;
+	display: block;
+	margin-bottom: 10px;
+	clear: both;
 }
 
 .plugin-addbanner #buttonset div {
