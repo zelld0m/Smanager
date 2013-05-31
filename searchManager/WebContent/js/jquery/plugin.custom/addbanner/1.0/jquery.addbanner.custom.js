@@ -112,21 +112,23 @@
 			changeMonth: true,
 			changeYear: true,
 			showOn: "both",
-			buttonImage: "../images/icon_calendar.png",
+			buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 			onClose: function(selectedDate) {
 				base.$el.find("#endDate_" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
 			}
 		}).end()
 
 		.find("#endDate").prop({ id: "endDate_" + base.options.rule["ruleId"]}).datepicker({
-			minDate: currentDate,
+			minDate: base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("getDate"),
 			defaultDate: currentDate,
 			changeMonth: true,
 			changeYear: true,
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			onClose: function(selectedDate) {
-				base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
+				if(!base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("isDisabled")){
+					base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
+				}
 			}
 		});
 
@@ -217,6 +219,7 @@
 
 					else {
 						e.data['ruleId'] = base.options.rule["ruleId"];
+						e.data['ruleName'] = base.options.rule["ruleId"];
 						e.data['startDate'] = startDate;
 						e.data['endDate'] = endDate;
 						e.data['imagePathId'] = base.imagePathId;

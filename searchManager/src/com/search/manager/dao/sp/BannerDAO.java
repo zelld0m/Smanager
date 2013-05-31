@@ -155,7 +155,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LINK_PATH, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NEW_WINDOW, Types.BOOLEAN));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));		
+			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));		
 		}
 	}
 
@@ -242,7 +242,7 @@ public class BannerDAO {
 
 	private class UpdateRuleItemImagePathStoredProcedure extends CUDStoredProcedure {
 		public UpdateRuleItemImagePathStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, DAOConstants.SP_UPDATE_BANNER_IMAGE_PATH_ALIAS);
+			super(jdbcTemplate, DAOConstants.SP_UPDATE_BANNER_IMAGE_PATH);
 		}
 
 		@Override
@@ -250,6 +250,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));
 		}
 	}
 
@@ -400,12 +401,12 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
 			inputs.put(DAOConstants.PARAM_NEW_WINDOW, ruleItem.getOpenNewWindow());
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
-			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleItem.getCreatedBy());
+			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, ruleItem.getLastModifiedBy());
 			
 			return DAOUtils.getUpdateCount(updateRuleItemSP.execute(inputs));
 		}
 		catch (Exception e) {
-			throw new DaoException("Failed during addRuleItem()", e);
+			throw new DaoException("Failed during updateRuleItem()", e);
 		}
 	}
 	
@@ -504,6 +505,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath.getId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, imagePath.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, imagePath.getAlias());
+			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, imagePath.getLastModifiedBy());
 			
 			return DAOUtils.getUpdateCount(updateRuleItemImagePathSP.execute(inputs));
 		}

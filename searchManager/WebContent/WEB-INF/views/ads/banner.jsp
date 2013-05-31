@@ -73,7 +73,7 @@
 					<ul class="display_settings fRight clearfix">
 						<li >Priority <input type="text" name="priority" id="priority"/></li>
 						<li class="bLeft duration">
-							Duration <span id="daysLeft" class="cGreen"></span>
+							<span id="daysLeft" class="cGreen"></span>
 						</li>
 						<li class="schedule">
 							Schedule <input type="text" id="startDate" class="startDate"/>

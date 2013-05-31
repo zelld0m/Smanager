@@ -160,11 +160,11 @@ public class BannerRuleItem extends ModelBean{
 	}
 	
 	public String getFormattedEndDate(){
-		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
+		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE);
 	}
 	
 	public String getFormattedEndDateTime(){
-		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getDaysLeft(){

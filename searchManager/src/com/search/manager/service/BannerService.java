@@ -1,7 +1,9 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -91,12 +93,24 @@ public class BannerService {
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> addRuleItem(String ruleId, int priority, String startDate, String endDate, String imageAlt, String linkPath, String description, String imagePathId, String imagePath, String imageAlias){
+	public ServiceResponse<Void> addRuleItem(Map<String, String> params){
 		String storeId = UtilityService.getStoreId();
 		String username = UtilityService.getUsername();
 
+		String ruleId = params.get("ruleId"); 
+		String ruleName = params.get("ruleName"); 
+		int priority  = Integer.parseInt(params.get("priority")); 
+		String startDate = params.get("startDate"); 
+		String endDate = params.get("endDate");  
+		String imageAlt = params.get("imageAlt"); 
+		String linkPath = params.get("linkPath"); 
+		String description = params.get("description"); 
+		String imagePathId = params.get("imagePathId"); 
+		String imagePath = params.get("imagePath"); 
+		String imageAlias = params.get("imageAlias"); 
+		
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
-		BannerRule rule = new BannerRule(storeId, ruleId, null, null);
+		BannerRule rule = new BannerRule(storeId, ruleId, ruleName, null);
 		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
 		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
 
@@ -225,6 +239,77 @@ public class BannerService {
 		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
 		return 	getItemsWithDateRange(ruleId, startDT, endDT, imagePathId, page, pageSize);
 	}
+	
+	@RemoteMethod
+	public ServiceResponse<Void> updateRuleItem(Map<String, String> params){
+		String storeId = UtilityService.getStoreId();
+		String username = UtilityService.getUsername();
+		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
+
+		String ruleId = params.get("ruleId");
+		String memberId = params.get("memberId");
+		String priority = params.get("priority");
+		String startDate = params.get("startDate");
+		String endDate = params.get("endDate");
+		String imagePathId = params.get("imagePathId");
+		String imagePath = params.get("imagePath");
+		String imageAlias = params.get("imageAlias");
+		String imageAlt = params.get("imageAlt");
+		String linkPath = params.get("linkPath");
+		String description = params.get("description");
+		boolean disable = BooleanUtils.toBoolean(params.get("disable")) ;
+		
+		if(StringUtils.isNotBlank(ruleId) && StringUtils.isNotBlank(memberId) && StringUtils.isNotBlank(storeId) ){
+			BannerRule rule = new BannerRule();
+			rule.setRuleId(ruleId);
+			rule.setStoreId(storeId);
+		
+			DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
+			DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
+			
+			BannerRuleItem ruleItem = new BannerRuleItem();
+			ruleItem.setRule(rule);
+			ruleItem.setMemberId(memberId);
+
+			if(StringUtils.isNotBlank(priority) && StringUtils.isNumeric(priority)){
+				ruleItem.setPriority(Integer.parseInt(priority));			
+			}
+			
+			ruleItem.setStartDate(startDT);
+			ruleItem.setEndDate(endDT);
+			ruleItem.setImageAlt(imageAlt);
+			ruleItem.setLinkPath(linkPath);
+			ruleItem.setDescription(description);
+			ruleItem.setDisabled(disable);
+			ruleItem.setLastModifiedBy(username);
+			
+			ImagePath iPath =  new ImagePath();
+			
+			if(StringUtils.isBlank(imagePathId)){
+				addImagePathLink(imagePath, imageAlias);
+				iPath = getImagePath(imagePath).getData();
+			}else{
+				updateImagePathAlias(imagePathId, imageAlias);
+				iPath.setAlias(imageAlias);
+			}
+			
+			ruleItem.setImagePath(iPath);
+			
+			// Update banner item
+			try {
+				daoService.updateBannerRuleItem(ruleItem);
+			} catch (DaoException e) {
+				logger.error(e.getMessage(), e);
+				serviceResponse.error(e.getMessage(), e);
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+				serviceResponse.error(e.getMessage(), e);
+			}
+		}
+		
+		return serviceResponse;
+	}
+
 
 	@RemoteMethod
 	public ServiceResponse<Void> addImagePathLink(String imageUrl, String alias){
@@ -315,6 +400,7 @@ public class BannerService {
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
 		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId, memberId);
+		bannerRuleItem.setImagePath(new ImagePath(storeId, imagePathId, null, null, alias));
 
 		try {
 			if (daoService.deleteBannerRuleItem(bannerRuleItem) > 0){
