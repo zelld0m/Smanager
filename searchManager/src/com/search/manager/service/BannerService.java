@@ -211,6 +211,19 @@ public class BannerService {
 	public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItems(String ruleId){
 		return getRuleItems(ruleId, 0, 0);
 	}
+	
+	@RemoteMethod
+	public ServiceResponse<BannerRule> getRuleById(String ruleId) {
+	    ServiceResponse<BannerRule> response = new ServiceResponse<BannerRule>();
+
+	    try {
+	        response.success(daoService.getBannerRuleById(UtilityService.getStoreId(), ruleId));
+	    } catch (DaoException e) {
+	        response.error("Unable to retrieve rule selected rule.");
+	    }
+
+	    return response;
+	}
 
 	public ServiceResponse<RecordSet<BannerRuleItem>> getItemsWithDateRange(String ruleId, DateTime startDate, DateTime endDate, String imagePathId, int page, int pageSize){
 		String storeId = UtilityService.getStoreId();

@@ -8,7 +8,6 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BannerRule;
 import com.search.manager.model.Product;
 import com.search.manager.model.RuleStatus;
 
@@ -22,7 +21,7 @@ import com.search.manager.model.RuleStatus;
 	RuleStatus.class,
 	RuleEntity.class,
 	Product.class,
-	BannerRule.class,
+	BannerRuleXml.class,
 	SpellRules.class
 })
 @DataTransferObject(converter = BeanConverter.class)

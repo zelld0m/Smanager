@@ -40,7 +40,8 @@ public class RuleVersionListXml<T>{
 		@XmlElementRef(name="querycleaning", type=RedirectRuleXml.class),
 		@XmlElementRef(name="rankingrule", type=RankingRuleXml.class),
 		@XmlElementRef(name="spellrule", type=SpellRules.class),
-		@XmlElementRef(name="rulefile", type=RuleFileXml.class)
+		@XmlElementRef(name="rulefile", type=RuleFileXml.class),
+        @XmlElementRef(name="banner", type=BannerRuleXml.class)
 	})
 	public List<T> getVersions() {
 		return versions;

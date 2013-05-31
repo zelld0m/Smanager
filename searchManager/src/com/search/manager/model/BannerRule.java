@@ -3,6 +3,8 @@ package com.search.manager.model;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.report.model.xml.BannerRuleXml;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class BannerRule extends ModelBean {
 
@@ -37,7 +39,11 @@ public class BannerRule extends ModelBean {
 		this(storeId, null, ruleName, null, null);
 	}
 
-	public String getStoreId() {
+	public BannerRule(BannerRuleXml xml) {
+	    this(xml.getStore(), xml.getRuleId(), xml.getRuleName(), xml.getCreatedBy());
+    }
+
+    public String getStoreId() {
 		return storeId;
 	}
 	

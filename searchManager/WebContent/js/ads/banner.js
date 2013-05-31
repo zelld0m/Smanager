@@ -113,7 +113,19 @@
 					authorizeSubmitForApproval: allowModify,
 
 					postRestoreCallback: function(base, rule){
-						
+						base.api.destroy();
+						BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
+							callback: function(response){
+								if (response.status == 0) {
+									self.setRule(response.data);
+								} else {
+									jAlert(response.errorMessage.message, "Error");
+								}
+							},
+							preHook: function(){
+								self.beforeShowRuleStatus();	
+							}
+						});
 					},
 
 					afterSubmitForApprovalRequest:function(ruleStatus){
