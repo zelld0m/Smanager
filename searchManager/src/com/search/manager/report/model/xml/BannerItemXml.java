@@ -23,6 +23,8 @@ public class BannerItemXml extends RuleItemXml {
     private String description;
     private Boolean disabled;
     private String imagePathId;
+    private String imageAlias;
+    private String imagePathType;
 
     public BannerItemXml() {
         super();
@@ -42,6 +44,9 @@ public class BannerItemXml extends RuleItemXml {
 
         if (item.getImagePath() != null) {
             setImagePathId(item.getImagePath().getId());
+            setImageAlias(item.getImagePath().getAlias());
+            setImagePath(item.getImagePath().getPath());
+            setImagePathType(item.getImagePath().getPathType() != null ? item.getImagePath().getPathType().getDisplayText() : "");
         }
 
         setCreatedBy(item.getCreatedBy());
@@ -120,5 +125,29 @@ public class BannerItemXml extends RuleItemXml {
 
     public void setImagePathId(String imagePathId) {
         this.imagePathId = imagePathId;
+    }
+
+    public String getImageAlias() {
+        return imageAlias;
+    }
+
+    public void setImageAlias(String imageAlias) {
+        this.imageAlias = imageAlias;
+    }
+
+    public String getImagePathType() {
+        return imagePathType;
+    }
+
+    public void setImagePathType(String imagePathType) {
+        this.imagePathType = imagePathType;
+    }
+
+    public String getImagePath2() {
+        return super.getImagePath();
+    }
+
+    public void setImagePath2(String imagePath) {
+        super.setImagePath(imagePath);
     }
 }
