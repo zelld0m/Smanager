@@ -307,6 +307,7 @@ public class BannerService {
 			}
 			
 			ruleItem.setImagePath(iPath);
+			ruleItem.setLastModifiedBy(username);
 			
 			// Update banner item
 			try {

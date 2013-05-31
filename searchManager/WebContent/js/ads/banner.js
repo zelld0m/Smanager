@@ -373,7 +373,7 @@
 				
 				if(!item["expired"] && item["started"]){
 					color = "green";
-					durationText = item["daysLeft"] + "left";
+					durationText = item["daysLeft"];
 				}else if(item["expired"]){
 					color = "red";
 					durationText = "Expired Already";
@@ -709,7 +709,7 @@
 						var endDate = e.data.ui.find(".endDate").val();
 						var imageAlt = e.data.ui.find("#imageAlt").val();
 						var linkPath = e.data.ui.find("#linkPath").val();
-						var description = e.data.ui.find("#description").text();
+						var description = e.data.ui.find("#description").val();
 						var disable = e.data.ui.find("#temporaryDisable").is(':checked');
 						
 						if($.isBlank(imagePath)) {
@@ -729,8 +729,7 @@
 											"imagePathId": imagePathId,
 											"imagePath": imagePath,
 											"imageAlias": imageAlias,
-
-											"priority":priority,
+											"priority": priority,
 											"startDate": startDate,
 											"endDate": endDate,
 											"imageAlt": imageAlt,

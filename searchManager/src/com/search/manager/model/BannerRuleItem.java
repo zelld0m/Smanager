@@ -172,10 +172,10 @@ public class BannerRuleItem extends ModelBean{
 	}
 	
 	public boolean isExpired(){
-		return getEndDate().isBeforeNow();
+		return DateTime.now().toDateMidnight().isAfter(getEndDate().toDateMidnight());
 	}
 	
 	public boolean isStarted(){
-		return getStartDate().isBeforeNow() || getStartDate().isEqualNow();
+		return DateTime.now().toDateMidnight().isAfter(getStartDate().toDateMidnight()) || DateTime.now().toDateMidnight().isEqual(getStartDate().toDateMidnight());
 	}
 }

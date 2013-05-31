@@ -159,16 +159,17 @@ public class JodaDateTimeUtil {
 			endDateTime = DateTime.now();
 		}
 
-		if (startDateTime.isBefore(endDateTime) || startDateTime.isEqual(endDateTime)){
-			if(Days.daysBetween(startDateTime.toDateMidnight(), endDateTime.toDateMidnight()).getDays() > 0){
+		if (startDateTime.toDateMidnight().isBefore(endDateTime) || startDateTime.toDateMidnight().isEqual(endDateTime.toDateMidnight())){
+			int days = Days.daysBetween(startDateTime.toDateMidnight(), endDateTime.toDateMidnight()).getDays();
+			if( days > 0){
 				Period period = new Period(startDateTime.toDateMidnight(), endDateTime.toDateMidnight(), PeriodType.days());
 
 				PeriodFormatter formatter = new PeriodFormatterBuilder()
-				.appendDays().appendSuffix(" day ", " days ")
+				.appendDays().appendSuffix(" day left", " days left")
 				.toFormatter();
 
 				return formatter.print(period);
-			}else if(startDateTime.isEqualNow()){
+			}else if(startDateTime.toDateMidnight().isEqual(DateTime.now().toDateMidnight())){
 				return "Today";
 			}
 		}
