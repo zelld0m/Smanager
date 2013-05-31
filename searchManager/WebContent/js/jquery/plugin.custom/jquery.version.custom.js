@@ -15,7 +15,6 @@
 
 		base.init = function(){
 			base.options = $.extend({},$.version.defaultOptions, options);
-			base.$el.empty();
 			base.showVersion();
 		};
 

@@ -235,6 +235,9 @@ public interface SolrService extends SearchDaoService {
 	Collection<BannerRuleItem> getBannerRuleItems(Store store)
 			throws DaoException;
 
+	Collection<BannerRuleItem> getBannerRuleItemsByRuleId(Store store,
+			String ruleId) throws DaoException;
+
 	Collection<BannerRuleItem> getBannerRuleItemsByRuleName(Store store,
 			String ruleName) throws DaoException;
 
@@ -242,6 +245,9 @@ public interface SolrService extends SearchDaoService {
 			throws DaoException;
 
 	boolean loadBannerRuleItems(Store store) throws DaoException;
+
+	boolean loadBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException;
 
 	boolean loadBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException;
@@ -251,6 +257,9 @@ public interface SolrService extends SearchDaoService {
 
 	boolean resetBannerRuleItems(Store store) throws DaoException;
 
+	boolean resetBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException;
+
 	boolean resetBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException;
 
@@ -258,6 +267,9 @@ public interface SolrService extends SearchDaoService {
 			throws DaoException;
 
 	boolean deleteBannerRuleItems(Store store) throws DaoException;
+
+	boolean deleteBannerRuleItemsByRuleId(Store store, String ruleId)
+			throws DaoException;
 
 	boolean deleteBannerRuleItemsByRuleName(Store store, String ruleName)
 			throws DaoException;
@@ -269,5 +281,5 @@ public interface SolrService extends SearchDaoService {
 			throws DaoException;
 
 	boolean commitBannerRuleItem() throws DaoException;
-	
+
 }

@@ -591,24 +591,24 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		return resultMap;
 	}
 
-	// TODO
 	@Override
 	public Map<String, Boolean> publishBannerRulesMap(String store,
-			List<String> ruleNames) {
-		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleNames);
+			List<String> ruleIds) {
+		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleIds);
 
 		try {
 			boolean hasError = false;
 			StringBuffer errorMsg = new StringBuffer();
 
-			for (String key : ruleNames) {
+			for (String id : ruleIds) {
 				try {
 					BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
 					BannerRule bannerRule = new BannerRule();
 					bannerRule.setStoreId(store);
-					bannerRule.setRuleName(key);
+					bannerRule.setRuleId(id);
 					bannerRuleItemFilter.setRule(bannerRule);
 
+					daoService.deleteBannerRuleItem(bannerRuleItemFilter); // prod
 					daoService.deleteBannerRule(bannerRule); // prod
 
 					// retrieve staging data then push to prod
@@ -618,24 +618,27 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 							.searchBannerRuleItem(criteria).getList();
 
 					if (bannerRuleItems != null && bannerRuleItems.size() > 0) {
+						daoService.addBannerRule(bannerRuleItems.get(0)
+								.getRule());
 						for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
+							daoService.addBannerImagePath(bannerRuleItem
+									.getImagePath());
 							daoService.addBannerRuleItem(bannerRuleItem);
 						}
 					}
 
 					try {
-						solrService.resetBannerRuleItemsByRuleName(new Store(
-								store), key);
+						solrService.resetBannerRuleItemsByRuleId(new Store(
+								store), id);
 					} catch (Exception e) {
-						errorMsg.append(" - " + key + "\n");
+						errorMsg.append(" - " + id + "\n");
 						hasError = true;
 					}
 
-					keywordStatus.put(key, true);
+					keywordStatus.put(id, true);
 				} catch (Exception e) {
-					logger.error("Failed to publish banner rule item: " + key,
-							e);
-					keywordStatus.put(key, false);
+					logger.error("Failed to publish banner rule item: " + id, e);
+					keywordStatus.put(id, false);
 				}
 			}
 
@@ -1106,43 +1109,43 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		return keywordStatus;
 	}
 
-	// TODO
 	@Override
 	public Map<String, Boolean> unpublishBannerRulesMap(String store,
-			List<String> ruleNames) {
-		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleNames);
+			List<String> ruleIds) {
+		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleIds);
 
 		try {
-			if (CollectionUtils.isNotEmpty(ruleNames)) {
+			if (CollectionUtils.isNotEmpty(ruleIds)) {
 				boolean hasError = false;
 				StringBuffer errorMsg = new StringBuffer();
 
-				for (String key : ruleNames) {
+				for (String id : ruleIds) {
 					try {
 						BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
 						BannerRule bannerRule = new BannerRule();
 						bannerRule.setStoreId(store);
-						bannerRule.setRuleName(key);
+						bannerRule.setRuleId(id);
 						bannerRuleItemFilter.setRule(bannerRule);
 
+						daoService.deleteBannerRuleItem(bannerRuleItemFilter); // prod
 						daoService.deleteBannerRule(bannerRule); // prod
 
 						try {
-							if (!solrService.deleteBannerRuleItemsByRuleName(
-									new Store(store), key)) {
-								errorMsg.append(" - " + key + "\n");
+							if (!solrService.deleteBannerRuleItemsByRuleId(
+									new Store(store), id)) {
+								errorMsg.append(" - " + id + "\n");
 								hasError = true;
 							}
 						} catch (Exception e) {
-							errorMsg.append(" - " + key + "\n");
+							errorMsg.append(" - " + id + "\n");
 							hasError = true;
 						}
 
-						keywordStatus.put(key, true);
+						keywordStatus.put(id, true);
 					} catch (Exception e) {
-						logger.error("Failed to unpublish banner rule: " + key,
+						logger.error("Failed to unpublish banner rule: " + id,
 								e);
-						keywordStatus.put(key, false);
+						keywordStatus.put(id, false);
 					}
 				}
 

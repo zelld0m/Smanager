@@ -140,8 +140,7 @@ public class RelevancyRuleBuilder extends BaseRuleBuilder implements Runnable {
 		boolean hasError = false;
 
 		try {
-			solrInputDocuments = SolrDocUtil
-					.composeSolrDocsRelevancy(relevancies);
+			solrInputDocuments = SolrDocUtil.composeSolrDocs(relevancies);
 
 			if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 				// Add rules to solr index.

@@ -121,7 +121,7 @@ public class FacetSortRuleBuilder extends BaseRuleBuilder implements Runnable {
 		try {
 			if (facetSorts != null && facetSorts.size() > 0) {
 				solrInputDocuments.addAll(SolrDocUtil
-						.composeSolrDocsFacetSort(facetSorts));
+						.composeSolrDocs(facetSorts));
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();

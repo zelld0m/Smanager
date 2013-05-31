@@ -52,6 +52,7 @@
 						base.api = api;
 						base.$el = $("div", api.elements.content);
 					},
+
 					show: function(event, api){
 						base.$el.empty().append(base.getTemplate());
 						base.setId(base.$el);
@@ -131,7 +132,7 @@
 
 		base.registerEventListener();
 	};
-	
+
 	$.addbanner.prototype.reposition = function() {
 		var base = this;
 		base.api && base.api.reposition();
@@ -239,7 +240,7 @@
 
 	$.addbanner.prototype.addInputFieldListener = function(input, callback) {
 		var base = this;
-		
+
 		input.off().on({
 			mouseenter: function(e) {
 				if(e.data.locked) {
@@ -288,10 +289,10 @@
 			}
 		});
 	};
-	
+
 	$.addbanner.prototype.getImagePath = function(ui, imagePath) {
 		var base = this;
-		
+
 		var $previewHolder = ui.find("#preview");
 
 		BannerServiceJS.getImagePath(imagePath, {
