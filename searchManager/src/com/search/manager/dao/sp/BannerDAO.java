@@ -323,6 +323,31 @@ public class BannerDAO {
 			throw new DaoException("Failed during deleteRule()", e);
 		}
 	}
+	
+	public BannerRule getRuleById(String storeId, String ruleId) throws DaoException {
+        try {
+            BannerRule rule = null;
+            Map<String, Object> inputs = new HashMap<String, Object>();
+
+            inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
+            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
+            inputs.put(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue());
+            inputs.put(DAOConstants.PARAM_SEARCH_TEXT, null);
+            inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, null);
+            inputs.put(DAOConstants.PARAM_START_ROW, 1);
+            inputs.put(DAOConstants.PARAM_END_ROW, 1);
+
+            RecordSet<BannerRule> rules = DAOUtils.getRecordSet(getRuleSP.execute(inputs));
+
+            if (rules != null && rules.getList().size() > 0) {
+                rule = rules.getList().get(0);
+            }
+
+            return rule;
+        } catch (Exception e) {
+            throw new DaoException("Failed during searchRule()", e);
+        }
+	}
 
 	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria) throws DaoException {
 		return searchRule(criteria, null, null);

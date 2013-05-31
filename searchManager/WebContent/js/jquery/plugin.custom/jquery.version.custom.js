@@ -599,7 +599,7 @@
 							$tr.prop("id", "item" + $.formatAsId(version));
 
 							$tr.find("td#itemId").html(item["version"]);
-							$tr.find("td#itemDate").text(item["formattedCreatedDateTime"]);
+							$tr.find("td#itemDate").text(new Date(item["createdDate"].millis).toGMTString());
 							$tr.find("td#itemInfo > p#name").html(item["name"]);
 							$tr.find("td#itemInfo > p#notes").html(item["notes"]);
 
