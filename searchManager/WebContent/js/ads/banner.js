@@ -244,7 +244,7 @@
 				var self = this;
 
 				if(locked){
-					$("#addBannerBtn").hide();
+					$("#addBannerBtn, .setAliasBtn").hide();
 					$(".ruleItem").find("input, textarea").prop({
 						readonly: true,
 						disabled: true
@@ -340,6 +340,7 @@
 				self.addInputFieldListener(ui, item, ui.find("input#linkPath"), self.validateLinkPath);
 				self.addCopyToHandler(ui, item);
 				self.getLinkedKeyword(ui, item);
+				self.addShowKeywordHandler(ui, item);
 				self.addItemAuditHandler(ui, item);
 				self.addLastUpdateHandler(ui, item);
 				self.addItemCommentHandler(ui, item);
@@ -476,6 +477,8 @@
 
 				ui.find("#setAliasBtn").off().on({
 					click: function(e){
+						if (e.data.locked) return;
+						
 						var btnSetText = "Set Alias";
 						var btnCancelText = "Cancel";
 						var setAlias = $(e.currentTarget).find("#setAliasText").text() === btnSetText;
@@ -489,15 +492,16 @@
 						.find(".imageAlias").prop({
 							readonly: !setAlias,
 							disabled: !setAlias
-						});
+						}).val(
+								!setAlias? e.data.item["imagePath"]["alias"] : ""
+						);
 
 						$(e.currentTarget).find("#setAliasText").text(
 								setAlias? btnCancelText: btnSetText
 						);
-						
-						//TODO:
-					}
-				}, {ui: ui, item: item });
+					},
+					mouseenter: showHoverInfo
+				}, {ui: ui, item: item, locked: self.selectedRuleStatus['locked'] || !allowModify});
 			},
 
 			addCopyToHandler: function(ui, item){
@@ -516,12 +520,12 @@
 				var self = this;
 				var count = 1;
 
-				self.addShowKeywordHandler(ui, item);
+				
 				BannerServiceJS.getTotalRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"],{
 					callback: function(sr){
-						var recordSet = sr["data"];
-						if (recordSet && $.isNumeric(recordSet["totalSize"]) && recordSet["totalSize"] > 1){
-							count = recordSet["totalSize"];
+						var total = sr["data"];
+						if ($.isNumeric(total) && total > 1){
+							count = total;
 						} 
 					},
 					preHook: function(e){
@@ -539,6 +543,7 @@
 				ui.find("#keywordBtn").listbox({
 					title: "Linked Keywords",
 					emptyText: "No linked keywords",
+					locked: self.selectedRuleStatus["locked"] || !allowModify,
 					page: 1,
 					rule: self.selectedRule,
 					ruleItem: item, 
@@ -567,6 +572,9 @@
 							},
 							preHook: function(e){
 								base.prepareList();
+							},
+							postHook: function(e){
+								self.getLinkedKeyword(ui, item);
 							}
 						});
 					}

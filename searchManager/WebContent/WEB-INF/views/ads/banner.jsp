@@ -113,7 +113,7 @@
 						<label for="imageAlias">Image Alias</label>
 						<input type="text" class="imageAlias w218px" name="imageAlias" id="imageAlias" />
 						
-						<div id="setAliasBtn" class="btn_update_alias round_btn fLeft clearfix">
+						<div id="setAliasBtn" class="setAliasBtn btn_update_alias round_btn fLeft clearfix">
 							<span class="btn_wrap"><a id="setAliasText" href="javascript:void(0);">Set Alias</a></span>
 						</div>
 							
