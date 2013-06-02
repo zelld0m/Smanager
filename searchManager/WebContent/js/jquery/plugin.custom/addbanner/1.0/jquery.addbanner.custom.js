@@ -203,7 +203,7 @@
 
 					else {
 						e.data['ruleId'] = base.options.rule["ruleId"];
-						e.data['ruleName'] = base.options.rule["ruleId"];
+						e.data['ruleName'] = base.options.rule["ruleName"];
 						e.data['startDate'] = startDate;
 						e.data['endDate'] = endDate;
 						e.data['imagePathId'] = base.imagePathId;
@@ -211,6 +211,7 @@
 						e.data['imageAlias'] = imageAlias;
 						e.data['imageAlt'] = imageAlt;
 						e.data['linkPath'] = linkPath;
+						e.data['priority'] = base.options.priority;
 						e.data['description'] = description;
 						//e.data['keyword'] = keyword;
 						e.data['mode'] = base.options.mode;

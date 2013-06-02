@@ -9,6 +9,7 @@
 
 			selectedRule: null,
 			selectedRuleItemPage: 1,
+			selectedRuleItemTotal: 1,
 			selectedRuleStatus: null,
 			ruleFilterText: "",
 			bannerInfo: null,
@@ -16,6 +17,9 @@
 			lookupMessages: {
 				successAddNewKeyword: "Successfully added keyword {0}",
 				failedAddNewKeyword: "Failed to add keyword {0}",
+				successAddBannerToKeyword: "Successfully added banner {0} to {1} with priority {2}",
+				failedAddBannerToKeyword: "Failed to add banner {0} to {1} with priority {2}",
+				jumpToPageOfAddedBanner: "The banner is in page {0}. Do you want to refresh page to view the banner?"
 			},
 
 			init: function(){
@@ -70,6 +74,7 @@
 
 								item.ui.find("#itemLinkValue").off().on({
 									click: function(e){
+										self.selectedRuleItemTotal = count;
 										self.setRule(e.data.item.model);
 									}
 								}, {item: item});
@@ -261,6 +266,9 @@
 								totalItem: recordSet["totalSize"],
 								callbackText: function(itemStart, itemEnd, itemTotal){
 									var selectedText = $.trim($("#itemFilter").val()) !== "all" ? " " + $("#itemFilter option:selected").text(): "";
+									if ($("#itemFilter").val() === "all") 
+										self.selectedRuleItemTotal = itemTotal;
+									
 									return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
 								},
 								pageLinkCallback: function(e){ self.getRuleItemList(e.data.page); },
@@ -292,6 +300,7 @@
 					}).end
 					.find(".startDate, .endDate").datepicker('disable');
 				}
+				
 			},
 
 			populateRuleItem: function(rs){
@@ -636,20 +645,21 @@
 
 			addRuleItemHandler: function(){
 				var self = this;
-
-				$("#addBannerBtn").show().addbanner({
+				
+				$("#addBannerBtn").addbanner({
 					id: 'addbanner',
 					rule: self.selectedRule,
 					ruleItem: null,
 					mode: 'add',
 					isPopup: true,
+					priority: self.selectedRuleItemTotal + 1 ,
 					addBannerCallback: function(e){
 						var params = e.data;
 
 						var mapParams = {
 								"ruleId": params["ruleId"],
 								"ruleName": params["ruleName"],
-								"priority": 1, 
+								"priority": params["priority"], 
 								"startDate": params["startDate"], 
 								"endDate": params["endDate"], 
 								"imageAlt": params["imageAlt"], 
@@ -661,15 +671,22 @@
 						};
 
 						BannerServiceJS.addRuleItem(mapParams, {
-							callback: function(e){
+							callback: function(sr){
+								switch(sr["status"]){
+								case 0: 
+									jAlert($.formatText(self.lookupMessages.successAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule", function(){
+										self.getRuleItemList(1);
+									}); 
+									break;
+								default:  jAlert($.formatText(self.lookupMessages.failedAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule"); 
+								}
 							},
-							preHook: function(e){},
-							postHook: function(e){
-								self.getRuleItemList(1);
+							preHook: function(e){
+								
 							}
 						});
 					}
-				});
+				}).show();
 			},
 
 			beforeShowRuleStatus: function(){
