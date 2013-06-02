@@ -93,19 +93,20 @@
 						BannerServiceJS.addRule(ruleName, {
 							callback: function(sr){
 								switch(sr["status"]){
-									case 0: 
-										jAlert($.formatText(self.lookupMessages.successAddNewKeyword, ruleName), "Banner Rule"); 
+								case 0: 
+									jAlert($.formatText(self.lookupMessages.successAddNewKeyword, ruleName), "Banner Rule", function(){
 										BannerServiceJS.getRuleByNameExact(ruleName, {
 											callback: function(sr){
 												self.setRule(sr["data"]);
 											}
 										});
-										break;
-									default:  jAlert($.formatText(self.lookupMessages.failedAddNewKeyword, ruleName), "Banner Rule"); 
+									}); 
+									break;
+								default:  jAlert($.formatText(self.lookupMessages.failedAddNewKeyword, ruleName), "Banner Rule"); 
 								}
-								
+
 								base.getList(ruleName, 1);
-								
+
 							},
 							preHook: function(e){
 								base.prepareList();
@@ -165,7 +166,7 @@
 				var toggle = $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
 				ui.find("#bannerInfo").hide();
 				self.setToggleStatus(ui, item, ($.isBlank(toggle) || "hide".toLowerCase() === toggle) ? false: true);
-				
+
 				ui.find("#toggleText").off().on({
 					click: function(e){
 						var status = $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
@@ -173,31 +174,46 @@
 					}
 				}, {ui:ui, item:item});
 			},
-			
+
 			setToggleStatus: function(ui, item, show){
 				var self = this;
-				
+
 				if (show){
 					ui.find("#toggleText").text("Show Less").end()
-					  .find("#bannerInfo").slideDown("slow",function(e){
+					.find("#bannerInfo").slideDown("slow", function(){
 						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
+
 						self.addInputFieldListener(ui, item, ui.find("input#imagePath"), self.previewImage);
 						self.addInputFieldListener(ui, item, ui.find("input#linkPath"), self.validateLinkPath);
 						self.addSetAliasHandler(ui, item);
 						self.addUpdateRuleItemHandler(ui, item);
 						self.addDeleteItemHandler(ui, item);
+
+						ui.find("input").prop({
+							readonly: false,
+							disabled: false
+						}).end()
+						.find(".startDate, .endDate").datepicker("enable");
+
+						self.addScheduleRestriction(ui, item);
 						self.addItemExpiredRestriction(ui, item);
+
 					});
-					
+
 				}else{
-					ui.find("#toggleText").text("Show More").end()
-					  .find("#bannerInfo").slideUp("slow", function(e){
+					ui.find("#toggleText").text("Show More");
+
+					ui.find("#bannerInfo").slideUp("slow", function(){
 						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
+						// all element readonly and disabled regardless of schedule, rule status, and expiration
+						$(this).parents(".ruleItem").find("input").prop({
+							readonly: true,
+							disabled: true
+						}).end().find(".startDate, .endDate").datepicker("disable");	
 					});
 				}
-				
 			},
-			
+
 			setRuleItemFilter: function(value){
 				var self = this;
 				var filter = $.isNotBlank(value)? value : $.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]));
@@ -226,10 +242,10 @@
 				var self = this;
 				var rule = self.selectedRule;
 				var $iHolder = $("#ruleItemHolder");
-				self.selectedRuleItemPage = page
-				$iHolder.find(".ruleItem:not(#ruleItemPattern)").remove();
+				self.selectedRuleItemPage = page;
+				$(".ruleItem:not(#ruleItemPattern)").remove();
 				$("#ruleItemHolder").hide();
-				
+
 				BannerServiceJS.getRuleItems(self.getRuleItemFilter(), rule["ruleId"], page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
@@ -258,30 +274,23 @@
 						}
 					},
 					preHook: function(e){
+						$(".ruleItem:not(#ruleItemPattern)").remove();
 						$("#ruleItemPagingTop").empty();
-					},
-					postHook: function(e){
-						self.adjustPageToRuleStatus(self.selectedRuleStatus["locked"] || !allowModify);
 					}
 				});
 			},
 
-			adjustPageToRuleStatus: function(locked){
+			addRuleStatusRestriction: function(){
 				var self = this;
-
-				if(locked){
+				
+				if(self.selectedRuleStatus["locked"]){
 					$("#addBannerBtn, .setAliasBtn").hide();
+					
 					$(".ruleItem").find("input, textarea").prop({
 						readonly: true,
 						disabled: true
-					});
-				}else{
-					$("#addBannerBtn").show();
-					$(".ruleItem").find("input:not(.imageAlias), textarea").prop({
-						readonly: false,
-						disabled: false
-					});
-					self.addRuleItemHandler();
+					}).end
+					.find(".startDate, .endDate").datepicker('disable');
 				}
 			},
 
@@ -295,11 +304,8 @@
 					var item = rs["list"][i];
 					ui.prop({
 						id: "ruleItem_" + item["memberId"]
-					});
+					}).addClass(i + 1 == rs["totalSize"] ? "last": "").appendTo($iHolder).show();
 					self.populateRuleItemFields(ui, item);
-					ui.show();
-					if (i + 1 == rs["totalSize"]) ui.addClass("last");
-					$iHolder.append(ui);
 				}
 			},
 
@@ -356,9 +362,8 @@
 
 			registerEventListener: function(ui, item){
 				var self = this;
-				
+
 				self.addDurationHandler(ui, item);
-				self.addScheduleRestriction(ui, item);
 				self.addCopyToHandler(ui, item);
 				self.getLinkedKeyword(ui, item);
 				self.addShowKeywordHandler(ui, item);
@@ -366,12 +371,15 @@
 				self.addLastUpdateHandler(ui, item);
 				self.addItemCommentHandler(ui, item);
 				self.addRuleItemToggleHandler(ui, item);
+				self.addRuleItemHandler();
 				self.addDeleteAllItemHandler();
 				self.addDownloadRuleHandler(ui, item);
+				self.addRuleStatusRestriction();
 			},
 
 			addItemExpiredRestriction: function(ui, item){
 				var self = this;
+				
 				if(item["expired"]){
 					ui.find("input, textarea").prop({
 						readonly: true,
@@ -379,12 +387,12 @@
 					});
 				}
 			},
-			
+
 			addDurationHandler: function(ui, item){
 				var self = this;
 				var color = "orange";
 				var durationText = "Not Started Yet";
-				
+
 				if(!item["expired"] && item["started"]){
 					color = "green";
 					durationText = item["daysLeft"];
@@ -392,12 +400,12 @@
 					color = "red";
 					durationText = "Expired Already";
 				}
-				
+
 				ui.find("#daysLeft").text(durationText).css({
 					color: color
 				});
 			},
-			
+
 			addDeleteAllItemHandler: function(){
 				var self = this;
 
@@ -428,9 +436,6 @@
 				var self = this;
 				// Disable when rule item has started
 				ui.find(".startDate").datepicker(item["started"]? 'disable' : 'enable');
-
-				// Disable when rule is locked, rule item has expired, and user has no permission
-				ui.find(".endDate").datepicker(item["expired"] || self.selectedRuleStatus["locked"] || !allowModify ? 'disable' : 'enable');
 			},
 
 			addInputFieldListener: function(ui, item, input, callback){
@@ -526,7 +531,7 @@
 				ui.find("#setAliasBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						
+
 						var btnSetText = "Set Alias";
 						var btnCancelText = "Cancel";
 						var setAlias = $(e.currentTarget).find("#setAliasText").text() === btnSetText;
@@ -568,7 +573,7 @@
 				var self = this;
 				var count = 1;
 
-				
+
 				BannerServiceJS.getTotalRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"],{
 					callback: function(sr){
 						var total = sr["data"];
@@ -632,7 +637,7 @@
 			addRuleItemHandler: function(){
 				var self = this;
 
-				$("#addBannerBtn").addbanner({
+				$("#addBannerBtn").show().addbanner({
 					id: 'addbanner',
 					rule: self.selectedRule,
 					ruleItem: null,
@@ -640,7 +645,7 @@
 					isPopup: true,
 					addBannerCallback: function(e){
 						var params = e.data;
-						
+
 						var mapParams = {
 								"ruleId": params["ruleId"],
 								"ruleName": params["ruleName"],
@@ -654,7 +659,7 @@
 								"imagePath": params["imagePath"], 
 								"imageAlias": params["imageAlias"]
 						};
-						
+
 						BannerServiceJS.addRuleItem(mapParams, {
 							callback: function(e){
 							},
@@ -710,14 +715,14 @@
 				ui.find("#updateBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						
+
 						//get all fields value
 						var ruleId = self.selectedRule["ruleId"];
 						var memberId = e.data.item["memberId"];
 						var imagePathId = e.data.ui.find(".imageAlias").prop("id");
 						var imagePath = e.data.ui.find("#imagePath").val();
 						var imageAlias = e.data.ui.find(".imageAlias").val();
-						
+
 						var priority = e.data.ui.find("#priority").val();
 						var startDate = e.data.ui.find(".startDate").val();
 						var endDate = e.data.ui.find(".endDate").val();
@@ -725,7 +730,7 @@
 						var linkPath = e.data.ui.find("#linkPath").val();
 						var description = e.data.ui.find("#description").val();
 						var disable = e.data.ui.find("#temporaryDisable").is(':checked');
-						
+
 						if($.isBlank(imagePath)) {
 							jAlert("Image path is required.", "Banner");
 						} else if($.isBlank(imageAlias)) {
@@ -751,13 +756,13 @@
 											"description": description,
 											"disable": disable,
 									};
-									
+
 									BannerServiceJS.updateRuleItem(mapParams, {
 										callback: function(data){
-											
+
 										},
 										preHook: function(){
-											
+
 										},
 										postHook: function(){
 											self.getRuleItemList(self.selectedRuleItemPage);

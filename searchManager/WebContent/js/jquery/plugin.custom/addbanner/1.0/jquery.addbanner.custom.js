@@ -184,7 +184,6 @@
 					var imageAlt = e.data.base.$el.find('input#imageAlt').val();
 					var linkPath = e.data.base.$el.find('input#linkPath').val();
 					var description = e.data.base.$el.find('textarea#description').val();
-					//var keyword = e.data.base.$el.find('textarea#keyword').val();
 
 					if($.isBlank(imagePath)) {
 						jAlert("Image path is required.", "Banner");
@@ -192,30 +191,15 @@
 						jAlert("Image alias is required.", "Banner");
 					} else if($.isBlank(imageAlt)) {
 						jAlert("Image alt is required.", "Banner");
-					}else if($.isBlank(linkPath)) {
+					} else if($.isBlank(linkPath)) {
 						jAlert("Link path is required.", "Banner");
+					} else if($.isBlank(startDate) || !$.isDate(startDate)){
+						jAlert("Please provide a valid start date", "Banner");
+					} else if($.isBlank(endDate) || !$.isDate(endDate)){
+						jAlert("Please provide a valid end date", "Banner");
+					} else if ($.isBlank(description) || !validateDescription("Description", description, 1, 150)) {
+						jAlert("Please provide description", "Banner");
 					} 
-
-					/*
-						else if($.isBlank(keyword)) {
-							jAlert("Keyword is required.", "Banner");
-						}*/ 
-
-					/* Datepicker will handle validation
-						else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
-							jAlert("Please provide a valid date range.", "Banner");
-						} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
-							jAlert("End date cannot be earlier than start date.", "Banner");
-						}*/
-
-					else if ($.isNotBlank(description) && !validateDescription("Description", description, 1, 150)) {
-						// error alert in function validateComment
-					} 
-
-					//TODO:
-//					else if(!base.validateLinkPath()) {
-//					jAlert("Link path is invalid.", "Banner");
-//					} 
 
 					else {
 						e.data['ruleId'] = base.options.rule["ruleId"];
