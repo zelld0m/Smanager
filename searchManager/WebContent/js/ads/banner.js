@@ -13,8 +13,9 @@
 			ruleFilterText: "",
 			bannerInfo: null,
 
-			messages: {
-
+			lookupMessages: {
+				successAddNewKeyword: "Successfully added keyword {0}",
+				failedAddNewKeyword: "Failed to add keyword {0}",
 			},
 
 			init: function(){
@@ -40,7 +41,8 @@
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
-					showAddButton: true, // TODO:
+					showAddButton: true, 
+					filterText: self.ruleFilterText,
 
 					itemDataCallback: function(base, ruleName, page){
 						self.rulePage = page;
@@ -90,10 +92,22 @@
 					itemAddCallback: function(base, ruleName){
 						BannerServiceJS.addRule(ruleName, {
 							callback: function(sr){
-								showActionResponse(sr["status"], "add", ruleName);
-								self.getRuleItemList(1);
+								switch(sr["status"]){
+									case 0: 
+										jAlert($.formatText(self.lookupMessages.successAddNewKeyword, ruleName), "Banner Rule"); 
+										BannerServiceJS.getRuleByNameExact(ruleName, {
+											callback: function(sr){
+												self.setRule(sr["data"]);
+											}
+										});
+										break;
+									default:  jAlert($.formatText(self.lookupMessages.failedAddNewKeyword, ruleName), "Banner Rule"); 
+								}
+								
+								base.getList(ruleName, 1);
+								
 							},
-							postHook: function(e){
+							preHook: function(e){
 								base.prepareList();
 							}
 						});

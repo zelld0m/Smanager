@@ -1872,10 +1872,23 @@ public class DaoServiceImpl implements DaoService {
     public BannerRule getBannerRuleById(String storeId, String ruleId) throws DaoException {
         return bannerDAO.getRuleById(storeId, ruleId);
     }
+    
+    @Override
+    public BannerRule getBannerRuleByNameExact(String storeId, String ruleName) throws DaoException {
+    	BannerRule model = new BannerRule(storeId, ruleName);
+    	SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(model);
+    	
+    	List<BannerRule> bannerRuleList = bannerDAO.searchRule(criteria, null, MatchType.MATCH_NAME).getList();
+    	
+    	if (CollectionUtils.isNotEmpty(bannerRuleList)){
+			return bannerRuleList.get(0);
+		}
+		
+		return null;
+    }
 
 	@Override
-	public RecordSet<BannerRule> searchBannerRule(
-			SearchCriteria<BannerRule> criteria) throws DaoException {
+	public RecordSet<BannerRule> searchBannerRule(SearchCriteria<BannerRule> criteria) throws DaoException {
 		return bannerDAO.searchRule(criteria, null, MatchType.LIKE_NAME);
 	}
 

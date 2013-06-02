@@ -187,7 +187,7 @@ public class BannerService {
 
 	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String filter, String ruleId, int page, int pageSize){
-
+		
 		DateTime now = DateTime.now();
 		DateTime startDate =  null;
 		DateTime endDate =  null;
@@ -219,6 +219,26 @@ public class BannerService {
 	    try {
 	        response.success(daoService.getBannerRuleById(UtilityService.getStoreId(), ruleId));
 	    } catch (DaoException e) {
+	    	logger.error(e.getMessage(), e);
+	        response.error("Unable to retrieve rule selected rule.");
+	    }
+
+	    return response;
+	}
+	
+	
+	@RemoteMethod
+	public ServiceResponse<BannerRule> getRuleByNameExact(String ruleName) {
+		String storeId = UtilityService.getStoreId();
+	    ServiceResponse<BannerRule> response = new ServiceResponse<BannerRule>();
+
+	    try {
+	        response.success(daoService.getBannerRuleByNameExact(storeId, ruleName));
+	    } catch (DaoException e) {
+	    	logger.error(e.getMessage(), e);
+	        response.error("Unable to retrieve rule selected rule.");
+	    }catch (Exception e) {
+	    	logger.error(e.getMessage(), e);
 	        response.error("Unable to retrieve rule selected rule.");
 	    }
 
