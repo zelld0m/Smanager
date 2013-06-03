@@ -174,6 +174,8 @@
 					base.setQueryCleaningCompare($li, $rowLabelUl, item); break; 
 				case "Ranking Rule": 
 					base.setRankingRuleCompare($li, $rowLabelUl, item); break; 
+				case "Banner":
+					base.setBannerCompare($li, $rowLabelUl, item); break;
 				}
 
 				$li.show();
@@ -359,6 +361,35 @@
 						}
 					});
 					$pLi.find("#prodInfo").text("Product details not available. Product id is " + product["edp"]);
+				}
+			}
+		};
+		
+		base.setBannerCompare = function(li, rowlabel, item) {
+			var $li = li;
+			var banners = item["itemXml"];
+			var $rowLabelUl = rowlabel;
+			
+			if (banners && banners.length) {
+				var $ul = $li.find("ul#bannerList");
+				var $pattern = $ul.find("li#bannerPattern");
+				
+				$ul.parent().show();
+				$rowLabelUl.find("li#banners").text("Banners").show();
+				
+				for (var idx in banners) {
+					var $itemLi = $pattern.clone();
+					var xml = banners[idx];
+					$itemLi.attr('id', xml.memberId);
+					$itemLi.find("#itemImage").attr('src', xml.imagePath);
+					$itemLi.find("#itemPriority span").text(xml.priority);
+					$itemLi.find("#itemLink a").text(xml.linkPath);
+					$itemLi.find("#itemAlt span").text(xml.imageAlt);
+					$itemLi.find("#itemDisabled span").text(xml.disabled ? "yes" : "no");
+					$itemLi.find("#itemStartDate span").text($.datepicker.formatDate("mm/dd/yy", new Date(xml.startDate.millis)));
+					$itemLi.find("#itemEndDate span").text($.datepicker.formatDate("mm/dd/yy", new Date(xml.endDate.millis)));
+					$itemLi.show();
+					$ul.append($itemLi);
 				}
 			}
 		};
@@ -792,6 +823,7 @@
 			template += '				<li id="redirectType" style="display:none"></li>';
 			template += '				<li id="redirectKeyword" style="display:none"></li>';
 			template += '				<li id="conditions" style="display:none"></li>';
+			template += '				<li id="banners" style="display:none"></li>';
 			template += '			</ul>';
 			template += '		</div>';// end label
 
@@ -852,6 +884,19 @@
 			template += '							<ul id="conditionList">';
 			template += '								<li id="conditionPattern" class="condition" style="display:none">';
 			template += '									<p id="condition"></p>';
+			template += '								</li>';
+			template += '							</ul>';
+			template += '						</li>';
+			template += '						<li id="banners" style="display:none;border:0;background:#f1f4fb;">';
+			template += '							<ul id="bannerList">';
+			template += '								<li id="bannerPattern" class="prod" style="display:none">';
+			template += '									<img id="itemImage" style="width:130px;" src="' + GLOBAL_contextPath + '/images/no-image.jpg"/>';
+			template += '									<div id="itemPriority">Priority: <span></span></div>';
+			template += '									<div id="itemLink">Link Path: <a href="javascript:void(0);"></a></div>';
+			template += '									<div id="itemAlt">Image Alt: <span></span></div>';
+			template += '									<div id="itemStartDate">Start: <span></span></div>';
+			template += '									<div id="itemEndDate">End: <span></span></div>';
+			template += '									<div id="itemDisabled">Disabled: <span></span></div>';
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';

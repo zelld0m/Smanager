@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOUtils;
@@ -73,6 +74,7 @@ import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
+import com.search.manager.utility.Transformers;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 import com.search.ws.SolrConstants;
@@ -237,6 +239,18 @@ public class RuleXmlUtil{
 
 			ruleXml = new RankingRuleXml(store, relevancy);
 			break;
+		case BANNER:
+		    try {
+		        BannerRule banner = daoService.getBannerRuleById(store, ruleId);
+		        RecordSet<BannerRuleItem> ruleItems = daoService.searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(new BannerRuleItem(ruleId, store), 1, Integer.MAX_VALUE));
+		        BannerRuleXml bRuleXml = new BannerRuleXml(banner);
+		        bRuleXml.setItemXml(Lists.transform(ruleItems.getList(), Transformers.bannerItemRuleToXml));
+		        ruleXml = bRuleXml;
+		    } catch (DaoException e) {
+                logger.error("Failed convert banner rule to rule xml", e);
+                return null;
+		    }
+		    break;
 		}
 		return ruleXml;
 	}
@@ -935,14 +949,8 @@ public class RuleXmlUtil{
 
                 // create backup first
                 if (createPreRestore) {
-                    List<BannerItemXml> citemXmls = new ArrayList<BannerItemXml>();
                     BannerRuleXml cruleXml = new BannerRuleXml(crule);
-                    
-                    cruleXml.setItemXml(citemXmls);
-                    
-                    for (BannerRuleItem citem : citems) {
-                        citemXmls.add(new BannerItemXml(citem));
-                    }
+                    cruleXml.setItemXml(Lists.transform(citems, Transformers.bannerItemRuleToXml));
     
                     if (!RuleXmlUtil.ruleXmlToFile(store, RuleEntity.BANNER, xml.getRuleId(), cruleXml, path)) {
                         logger.error("Failed to create pre-restore for Banner");
