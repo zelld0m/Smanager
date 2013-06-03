@@ -19,6 +19,8 @@
 				failedAddNewKeyword: "Failed to add keyword {0}",
 				successAddBannerToKeyword: "Successfully added banner {0} to {1} with priority {2}",
 				failedAddBannerToKeyword: "Failed to add banner {0} to {1} with priority {2}",
+				successUpdateBannerItem: "Successfully updated details of {0}",
+				failedUpdateBannerItem: "Successfully updated details of {0}",
 				jumpToPageOfAddedBanner: "The banner is in page {0}. Do you want to refresh page to view the banner?"
 			},
 
@@ -180,6 +182,15 @@
 				}, {ui:ui, item:item});
 			},
 
+			addImageAliasRestriction: function(ui, item){
+				var self = this;
+				
+				ui.find(".imageAlias").prop({
+					readonly: true,
+					disabled: true,
+				});
+			},
+			
 			setToggleStatus: function(ui, item, show){
 				var self = this;
 
@@ -188,8 +199,9 @@
 					.find("#bannerInfo").slideDown("slow", function(){
 						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
 
-						self.addInputFieldListener(ui, item, ui.find("input#imagePath"), self.previewImage);
-						self.addInputFieldListener(ui, item, ui.find("input#linkPath"), self.validateLinkPath);
+						self.addInputFieldListener(ui, item, item["imagePath"]["path"], ui.find("input#imagePath"), self.previewImage);
+						self.addInputFieldListener(ui, item, item["linkPath"], ui.find("input#linkPath"), self.validateLinkPath);
+						self.addInputFieldListener(ui, item, item["priority"], ui.find("input#priority"));
 						self.addSetAliasHandler(ui, item);
 						self.addUpdateRuleItemHandler(ui, item);
 						self.addDeleteItemHandler(ui, item);
@@ -200,6 +212,7 @@
 						}).end()
 						.find(".startDate, .endDate").datepicker("enable");
 
+						self.addImageAliasRestriction(ui, item);
 						self.addScheduleRestriction(ui, item);
 						self.addItemExpiredRestriction(ui, item);
 
@@ -354,6 +367,7 @@
 					showOn: "both",
 					buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 					buttonImageOnly: true,
+					buttonText: "Select start date",
 					onClose: function(selectedDate) {
 						ui.find("#endDate_" + item["memberId"]).datepicker("option", "minDate", selectedDate);
 					}
@@ -367,6 +381,7 @@
 					showOn: "both",
 					buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 					buttonImageOnly: true,
+					buttonText: "Select end date",
 					onClose: function(selectedDate) {
 						if(!ui.find("#startDate_" + item["memberId"]).datepicker("isDisabled")){
 							ui.find("#startDate_" + item["memberId"]).datepicker("option", "maxDate", selectedDate);
@@ -456,70 +471,77 @@
 				ui.find(".startDate").datepicker(item["started"]? 'disable' : 'enable');
 			},
 
-			addInputFieldListener: function(ui, item, input, callback){
+			addInputFieldListener: function(ui, item, currValue, input, callback){
 				var self = this;
 
 				input.off().on({
-					mouseenter: function(e) {
-						if(e.data.locked) {
-							showHoverInfo;
-						} else {
-							e.data.input = $.trim($(e.currentTarget).val());
-						}
-					},
+					mouseenter: showHoverInfo,
 
 					focusin: function(e) {
-						if(e.data.locked) {
-							showHoverInfo;
-						} else {
-							e.data.input = $.trim($(e.currentTarget).val());
+						if(e.data.locked) return
+						
+						if($.trim(currValue) === $(e.currentTarget).val()){
+							 $(e.currentTarget).val("");
 						}
 					},
 
 					mouseleave: function(e) {
-						if (e.data.locked) return;
-
-						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-							if(callback) callback(e.data.ui, e.data.item, $(e.currentTarget).val());
-						}
+						$(e.currentTarget).triggerHandler("focusout");
 					},
 
 					focusout: function(e) {
 						if (e.data.locked) return;
 
-						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-							if(callback) callback(e.data.ui, e.data.item, $(e.currentTarget).val());
+						if($.isNotBlank($(e.currentTarget).val()) && 
+								currValue !== $(e.currentTarget).val() &&
+								e.data.valueWhenRequestSent !== $(e.currentTarget).val()
+								) {
+							e.data.valueWhenRequestSent = $(e.currentTarget).val();
+							if(callback) callback.call(self, e.data.ui, e.data.item, $(e.currentTarget).val());
+						}
+						
+						if ($.isBlank($(e.currentTarget).val())){
+							e.data.valueWhenRequestSent = "";
+							$(e.currentTarget).val(currValue);
+							if(callback) callback.call(self, e.data.ui, e.data.item, $(e.currentTarget).val());
 						}
 					}
-				}, {ui: ui , item: item, locked: self.selectedRuleStatus["locked"] || !allowModify, input: ""});
+				}, {ui: ui , item: item, locked: self.selectedRuleStatus["locked"] || !allowModify, valueWhenRequestSent: ""});
 
 			},
 
 			getImagePath: function(ui, item, imagePath){
 				var self = this;
 
-				BannerServiceJS.getImagePath(imagePath, {
-					callback: function(sr){
-						var iPath = sr["data"];
-						if (iPath!=null){
-							ui.find(".imageAlias").prop({
-								id: iPath["id"],
-								readonly: true,
-								disabled: true
-							}).val(iPath["alias"]).end()
-
-							.find("#setAliasBtn").show();
-
+				ui.find("#imageTitle").text(item["imagePath"]["alias"]).end()
+				  .find(".imageAlias").val(item["imagePath"]["alias"]);
+				self.addSetAliasHandler(ui, item);
+				
+				if (!$.iequals(item["imagePath"]["path"], imagePath)){
+					BannerServiceJS.getImagePath(imagePath, {
+						callback: function(sr){
+							var iPath = sr["data"];
+							if (iPath!=null){
+								ui.find("#imageTitle").text(iPath["alias"]).end()
+								.find(".imageAlias").prop({
+									id: iPath["id"],
+									readonly: true,
+									disabled: true
+								}).val(iPath["alias"]);
+							}else{
+								// id will be used to flag new banner url
+								ui.find("#imageTitle").text("").end()
+								.find(".imageAlias").val("").prop({
+									readonly: false,
+									disabled: false
+								}).removeAttr("id");
+							}
+						},
+						postHook: function(e){
 							self.addSetAliasHandler(ui, item);
-						}else{
-							ui.find(".imageAlias").val("").prop({
-								readonly: false,
-								disabled: false
-							}).removeAttr("id").end()
-							.find("#setAliasBtn").hide();
 						}
-					}
-				});
+					});
+				}
 			},
 
 			validateLinkPath: function(ui, linkPath){
@@ -546,33 +568,36 @@
 			addSetAliasHandler: function(ui, item){
 				var self = this;
 
-				ui.find("#setAliasBtn").off().on({
-					click: function(e){
-						if (e.data.locked) return;
-
-						var btnSetText = "Set Alias";
-						var btnCancelText = "Cancel";
-						var setAlias = $(e.currentTarget).find("#setAliasText").text() === btnSetText;
-
-						e.data.ui
-						.find("#imagePath").prop({
-							readonly: setAlias,
-							disabled: setAlias
-						}).end()
-
-						.find(".imageAlias").prop({
-							readonly: !setAlias,
-							disabled: !setAlias
-						}).val(
-								!setAlias? e.data.item["imagePath"]["alias"] : ""
-						);
-
-						$(e.currentTarget).find("#setAliasText").text(
-								setAlias? btnCancelText: btnSetText
-						);
-					},
-					mouseenter: showHoverInfo
-				}, {ui: ui, item: item, locked: self.selectedRuleStatus['locked'] || !allowModify || item["expired"]});
+				ui.find("#setAliasBtn").hide();
+				if($.iequals(item["imagePath"]["path"], ui.find("#imagePath").val())){
+					ui.find("#setAliasBtn").off().on({
+						click: function(e){
+							if (e.data.locked) return;
+							
+							var btnSetText = "Set Alias";
+							var btnCancelText = "Cancel";
+							var setAlias = $(e.currentTarget).find("#setAliasText").text() === btnSetText;
+							
+							e.data.ui
+							.find("#imagePath").prop({
+								readonly: setAlias,
+								disabled: setAlias
+							}).end()
+							
+							.find(".imageAlias").prop({
+								readonly: !setAlias,
+								disabled: !setAlias
+							}).val(
+									!setAlias? e.data.item["imagePath"]["alias"] : ""
+							);
+							
+							$(e.currentTarget).find("#setAliasText").text(
+									setAlias? btnCancelText: btnSetText
+							);
+						},
+						mouseenter: showHoverInfo
+					}, {ui: ui, item: item, locked: self.selectedRuleStatus['locked'] || !allowModify || item["expired"]}).show();
+				}
 			},
 
 			addCopyToHandler: function(ui, item){
@@ -751,13 +776,30 @@
 				var openNewWindow = ui.find("#openNewWindow").is(':checked');
 				var disable = ui.find("#temporaryDisable").is(':checked');
 				
+				if($.isNotBlank(imagePathId) && $.iequals(imagePathId, item["imagePath"]["id"]) &&
+				   $.isNotBlank(imagePath) && $.iequals(imagePath, item["imagePath"]["path"]) &&
+				   $.isNotBlank(imageAlias) && $.iequals(imageAlias, item["imagePath"]["alias"])){
+					//Do nothing
+					imagePathId = imagePath = imageAlias = null;
+				}else if ($.isNotBlank(imagePath) && $.iequals(imagePath, item["imagePath"]["path"]) &&
+					$.isNotBlank(imagePathId) && $.iequals(imagePathId, item["imagePath"]["id"])){
+					// update alias, provide image path id, new alias value
+					imagePath = null;
+				}else if($.isNotBlank(imagePathId) && !$.iequals(imagePathId, item["imagePath"]["id"]) && 
+						 $.isNotBlank(imagePath) && !$.iequals(imagePathId, item["imagePath"]["path"])){
+					// update to existing banner, hide set alias btn, pass only image path id
+					imagePath = imageAlias = null;
+				}else if($.isBlank(imagePathId) &&
+						 $.isNotBlank(imagePath) && !$.iequals(imagePathId, item["imagePath"]["path"])
+					){
+					// update to new banner,  hide set alias btn, pass path and alias
+					imagePathId=null;
+				}
+				
 				var mapParams = {
-						"ruleId": self.selectedRule["ruleId"] ,
-						"memberId": item["memberId"],
-						
-						"imagePathId": imagePathId !== item["imagePath"]["id"] ?  imagePathId: null,
-						"imagePath": $.isNotBlank(imagePath) && !$.iequals(imagePath, item["imagePath"]["path"]) ? imagePath : null,
-						"imageAlias": $.isNotBlank(imageAlias) && !$.iequals(imageAlias, item["imagePath"]["alias"]) ? imageAlias: null,
+						"imagePathId": imagePathId,
+						"imagePath": imagePath,
+						"imageAlias": imageAlias,
 						
 						"priority": $.isNotBlank(priority) && $.isNumeric(priority) && !$.iequals(priority, $.trim(item["priority"]))?  priority : null,
 						"startDate": $.isNotBlank(startDate) && $.isDate(startDate) && !$.iequals(startDate, item["formattedStartDate"]) ?  startDate: null,
@@ -779,22 +821,31 @@
 					click: function(e){
 						if (e.data.locked) return;
 
+						var dirtyCount = 0;
+						
 						//get all fields value
-						var ruleId = self.selectedRule["ruleId"];
-						var memberId = e.data.item["memberId"];
-						var imagePathId = e.data.ui.find(".imageAlias").prop("id");
 						var imagePath = e.data.ui.find("#imagePath").val();
 						var imageAlias = e.data.ui.find(".imageAlias").val();
-
 						var priority = e.data.ui.find("#priority").val();
 						var startDate = e.data.ui.find(".startDate").val();
 						var endDate = e.data.ui.find(".endDate").val();
 						var imageAlt = e.data.ui.find("#imageAlt").val();
 						var linkPath = e.data.ui.find("#linkPath").val();
 						var description = e.data.ui.find("#description").val();
-						var disable = e.data.ui.find("#temporaryDisable").is(':checked');
 
-						if($.isBlank(imagePath)) {
+						var params = self.getUpdatedFields(e.data.ui, e.data.item);
+						
+						$.each(params, function(i){
+							dirtyCount += params[i]!=null? 1: 0;
+						});
+						
+						if(dirtyCount == 0){
+							jAlert("Nothing to update", "Banner");
+						}else if($.isBlank(priority) && $.isNumeric(priority)) {
+							jAlert("Priority is required and must be a number", "Banner");
+						}else if(priority > self.selectedRuleItemTotal) {
+							jAlert("Priority exceeded allowed, maximum value is " +  self.selectedRuleItemTotal, "Banner");
+						}else if($.isBlank(imagePath)) {
 							jAlert("Image path is required.", "Banner");
 						} else if($.isBlank(imageAlias)) {
 							jAlert("Image alias is required.", "Banner");
@@ -802,18 +853,30 @@
 							jAlert("Image alt is required.", "Banner");
 						}else if($.isBlank(linkPath)) {
 							jAlert("Link path is required.", "Banner");
+						} else if($.isBlank(startDate) || !$.isDate(startDate)){
+							jAlert("Please provide a valid start date", "Banner");
+						} else if($.isBlank(endDate) || !$.isDate(endDate)){
+							jAlert("Please provide a valid end date", "Banner");
+						} else if ($.isBlank(description) || !validateDescription("Description", description, 1, 150)) {
+							jAlert("Please provide description", "Banner");
 						} else{
 							jConfirm("Update " + e.data.item["imagePath"]["alias"] + "?", self.moduleName, function(result){
 								if(result){
-									BannerServiceJS.updateRuleItem(self.getUpdatedFields(e.data.ui, e.data.item), {
-										callback: function(data){
-
-										},
-										preHook: function(){
-
-										},
-										postHook: function(){
-											self.getRuleItemList(self.selectedRuleItemPage);
+									// Add fixed params
+									params["ruleId"] = self.selectedRule["ruleId"];
+									params["ruleName"] = self.selectedRule["ruleName"];
+									params["memberId"] = e.data.item["memberId"];
+									
+									BannerServiceJS.updateRuleItem(params, {
+										callback: function(sr){
+											switch(sr["status"]){
+											case 0: 
+												jAlert($.formatText(self.lookupMessages.failedUpdateBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule", function(){
+													self.getRuleItemList(self.selectedRuleItemPage);
+												}); 
+												break;
+											default:  jAlert($.formatText(self.lookupMessages.failedUpdateBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule"); 
+											}
 										}
 									});
 								}

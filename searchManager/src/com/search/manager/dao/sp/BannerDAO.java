@@ -431,7 +431,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_PRIORITY, ruleItem.getPriority());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, ruleItem.getImagePath().getId());
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, ruleItem.getImagePath()!=null ?  ruleItem.getImagePath().getId() : null);
 			inputs.put(DAOConstants.PARAM_IMAGE_ALT, ruleItem.getImageAlt());
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
 			inputs.put(DAOConstants.PARAM_NEW_WINDOW, BooleanUtils.toIntegerObject(ruleItem.getOpenNewWindow()));

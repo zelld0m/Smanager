@@ -281,6 +281,7 @@ public class BannerService {
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
 		String ruleId = params.get("ruleId");
+		String ruleName = params.get("ruleName");
 		String memberId = params.get("memberId");
 		String priority = params.get("priority");
 		String startDate = params.get("startDate");
@@ -321,12 +322,29 @@ public class BannerService {
 			
 			ImagePath iPath =  new ImagePath();
 			
-			if(StringUtils.isBlank(imagePathId)){
+			if(StringUtils.isNotBlank(imagePathId) && 
+			   StringUtils.isBlank(imagePath) && 
+			   StringUtils.isNotBlank(imageAlias)){
+				//update alias
+				logger.info(String.format("Updating banner alias", imagePathId));
+				updateImagePathAlias(imagePathId, imageAlias);
+			}else if (StringUtils.isNotBlank(imagePathId) && 
+					  StringUtils.isBlank(imagePath) && 
+					  StringUtils.isBlank(imageAlias)){
+				//update to existing banner
+				logger.info(String.format("Updating to a existing banner ", imagePathId));
+				iPath.setId(imagePathId);
+			}else if (StringUtils.isBlank(imagePathId) && 
+					  StringUtils.isNotBlank(imagePath) && 
+					  StringUtils.isNotBlank(imageAlias)){
+				//update to new banner
+				logger.info(String.format("Updating to a new banner %s %s", imagePath, imageAlias));
 				addImagePathLink(imagePath, imageAlias);
 				iPath = getImagePath(imagePath).getData();
 			}else{
-				updateImagePathAlias(imagePathId, imageAlias);
-				iPath.setAlias(imageAlias);
+				// Do not update any image path assoc details
+				logger.error(String.format("Image path update for %s failed %s %s %s", ruleName, imagePathId, imagePath, imageAlias));
+				iPath = null;
 			}
 			
 			ruleItem.setImagePath(iPath);
@@ -398,7 +416,7 @@ public class BannerService {
 		String username = UtilityService.getUsername();
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
-		ImagePath imagePath = new ImagePath(storeId, null, null, null, alias, null, username);
+		ImagePath imagePath = new ImagePath(storeId, imagePathId, null, null, alias, null, username);
 
 		try {
 			if (daoService.updateBannerImagePathAlias(imagePath) > 0){
