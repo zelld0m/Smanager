@@ -53,11 +53,11 @@ public class BannerReportBean extends ReportBean<BannerRuleItem> {
 
     @ReportField(label = "Start Date", size = 15, sortOrder = 8)
     public String getStartDate() {
-        return model.getStartDate() != null ? model.getStartDate().toString("mm/dd/yyyy") : "";
+        return model.getStartDate() != null ? model.getStartDate().toString("MM/dd/yyyy") : "";
     }
 
     @ReportField(label = "End Date", size = 15, sortOrder = 9)
     public String getEndDate() {
-        return model.getEndDate() != null ? model.getEndDate().toString("mm/dd/yyyy") : "";
+        return model.getEndDate() != null ? model.getEndDate().toString("MM/dd/yyyy") : "";
     }
 }
