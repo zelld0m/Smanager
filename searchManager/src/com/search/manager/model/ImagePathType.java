@@ -10,8 +10,8 @@ import org.directwebremoting.convert.EnumConverter;
 
 @DataTransferObject(converter = EnumConverter.class)
 public enum ImagePathType {
-	IMAGE_LINK("LINK"),
-	UPLOAD_LINK("UPLOAD");
+	IMAGE_LINK("IMAGE_LINK"),
+	UPLOAD_LINK("IMAGE_UPLOAD");
 	
 	private final String displayText;
 	private static final Map<String,ImagePathType> lookup 
