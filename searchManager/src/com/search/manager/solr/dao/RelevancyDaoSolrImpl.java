@@ -42,7 +42,8 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -73,8 +74,8 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("relevancyId:"
-					+ ClientUtils.escapeQueryChars(storeId) + "_default");
+			strQuery.append(String.format("relevancyId: %s",
+					ClientUtils.escapeQueryChars(storeId) + "_default"));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
@@ -113,9 +114,9 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND relKeyword1:"
-							+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(String.format("store: %s AND relKeyword1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(keyword)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
@@ -151,9 +152,9 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			name = StringUtils.lowerCase(StringUtils.trim(name));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND relevancyName:"
-							+ ClientUtils.escapeQueryChars(name));
+			strQuery.append(String.format("store: %s AND relevancyName: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(name)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
@@ -189,9 +190,9 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			id = StringUtils.trim(id);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND relevancyId:"
-							+ ClientUtils.escapeQueryChars(id));
+			strQuery.append(String.format("store: %s AND relevancyId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(id)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
@@ -454,8 +455,9 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				id = StringUtils.trim(id);
 
 				StringBuffer strQuery = new StringBuffer();
-				strQuery.append("store:" + storeId).append(
-						" AND relevancyId:" + ClientUtils.escapeQueryChars(id));
+				strQuery.append(String.format("store: %s AND relevancyId: %s",
+						ClientUtils.escapeQueryChars(storeId),
+						ClientUtils.escapeQueryChars(id)));
 
 				solrServers.getCoreInstance(
 						Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
@@ -523,7 +525,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId);
+			strQuery.append(String.format("store: %s", storeId));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
@@ -552,8 +554,9 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			name = StringUtils.lowerCase(StringUtils.trim(name));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId).append(
-					" AND relevancyName:" + ClientUtils.escapeQueryChars(name));
+			strQuery.append(String.format("store: %s AND relevancyName: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(name)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
@@ -583,15 +586,13 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			id = StringUtils.trim(id);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId).append(
-					" AND relevancyId:" + ClientUtils.escapeQueryChars(id));
+			strQuery.append(String.format("store: %s AND relevancyId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(id)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			// solrServers.getCoreInstance(
-			// Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;
