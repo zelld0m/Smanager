@@ -30,7 +30,6 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -521,7 +520,6 @@ public class SearchServlet extends HttpServlet {
 			if(!fromSearchGui) {
 				if (!configManager.isSolrImplOnly()) {
 					try {
-						DateTime.now();
 						return daoService.getActiveBannerRuleItems(store, keyword);
 					} catch (DaoException e1) {
 						throw e1;
@@ -1105,8 +1103,12 @@ public class SearchServlet extends HttpServlet {
 				}
 				
 				try {
-					if(!disableBanner) {
-						bannerList = getActiveBannerRuleItems(new Store(storeId), keyword, fromSearchGui);
+					bannerList = getActiveBannerRuleItems(new Store(storeId), keyword, fromSearchGui);
+					if (bannerList != null && bannerList.size() > 0) {
+						activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_BANNER, keyword, keyword, !disableBanner)));
+						if(!disableBanner) {	
+							solrHelper.setBannerRuleItems(bannerList);
+						}
 					}
 				} catch (Exception e) {
 					logger.error("Failed to get banner for keyword: " + originalKeyword, e);
@@ -1130,7 +1132,6 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setOriginalKeyword(originalKeyword);
 			solrHelper.setIncludeEDP(includeEDP);
 			solrHelper.setIncludeFacetTemplateFacet(includeFacetTemplateFacet);
-			solrHelper.setBannerRuleItems(bannerList);
 			
 			// remove json.wrf parameter as this is not a JSON standard
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION));
