@@ -134,6 +134,7 @@ public class SolrConstants {
 	public final static String TAG_VALUE_RULE_TYPE_RELEVANCY = "Ranking Rule";
 	public final static String TAG_VALUE_RULE_TYPE_FACET_SORT = "Facet Sort";
 	public final static String TAG_VALUE_RULE_TYPE_DID_YOU_MEAN = "Did You Mean";
+	public final static String TAG_VALUE_RULE_TYPE_BANNER = "Banner";
 	
 	// Enterprise Search overrides
 	public final static String REQUEST_ATTRIB_ELEVATE_OVERRIDE_MAP 		= "elevateOverrideMap";
