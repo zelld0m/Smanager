@@ -49,7 +49,7 @@
   <field name="endDate" type="date" stored="true" multiValued="false" />
   <field name="imageAlt" type="string" stored="true" multiValued="false" />
   <field name="linkPath" type="string" stored="true" multiValued="false" />
-  <field name="openNewWindow" type="string" stored="true" multiValued="false" />
+  <field name="openNewWindow" type="boolean" stored="true" multiValued="false" />
   <field name="description" type="string" stored="true" multiValued="false" />
   <field name="disabled" type="boolean" stored="true" multiValued="false" />
   <field name="imagePathId" type="string" stored="true" multiValued="false" indexed="true" />

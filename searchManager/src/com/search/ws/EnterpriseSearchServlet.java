@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.Store;
 import com.search.manager.model.Relevancy.Parameter;
@@ -163,6 +164,12 @@ public class EnterpriseSearchServlet extends SearchServlet {
 		if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
 			nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, enterpriseSearchConfigManager.getDismax(storeId)));
 		}
+	}
+	
+	@Override
+	protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui) throws DaoException {
+		// Enterprise Search does not need banners
+		return null;
 	}
 	
 	protected Relevancy getDefaultRelevancy(String storeId) {
