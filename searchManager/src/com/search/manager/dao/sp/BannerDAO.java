@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.BannerRule;
@@ -23,6 +24,8 @@ import com.search.manager.model.ImagePathType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 @Repository(value="bannerDAO")
 public class BannerDAO {
@@ -289,6 +292,7 @@ public class BannerDAO {
 		}
 	}	
 	
+	@Audit(entity = Entity.banner, operation = Operation.add)
 	public int addRule(BannerRule rule) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -310,6 +314,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.delete)
 	public int deleteRule(BannerRule rule) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -377,6 +382,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.addBanner)
 	public int addRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -408,6 +414,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.updateBanner)
 	public int updateRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -435,6 +442,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.deleteBanner)
 	public int deleteRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -499,6 +507,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.addImagePath)
 	public int addImagePath(ImagePath imagePath) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -523,6 +532,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.updateImagePath)
 	public int updateImagePath(ImagePath imagePath) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();

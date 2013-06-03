@@ -25,12 +25,14 @@ import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.BannerRule;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
+import com.search.manager.model.ImagePath;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
@@ -101,7 +103,7 @@ public class AuditInterceptor {
 
 		switch(auditable.entity()) {
 			case banner:
-				if (ArrayUtils.contains(AuditTrailConstants.bannerOperations, auditable.operation())) {
+				if (ArrayUtils.contains(AuditTrailConstants.entityOperationMap.get(AuditTrailConstants.Entity.banner), auditable.operation())) {
 					logBanner(jp, auditable, auditTrail);
 				}
 				break;
@@ -392,41 +394,109 @@ public class AuditInterceptor {
 	}
 	
 	private void logBanner(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
-		BannerRule e = null;
-		e = (BannerRule)jp.getArgs()[0];
-		auditTrail.setReferenceId(e.getRuleId());
-		auditTrail.setStoreId(e.getStoreId());
-				
-		StringBuilder message = null;
 		
-		switch (auditable.operation()) {
-			case add:
-				message = new StringBuilder("Adding ID[%1$s]");	
-				if(StringUtils.isNotBlank(e.getRuleName())){
-					message.append(" Banner Name [%2$s]");
-				}
-				break;
-			case update:
-				message = new StringBuilder("Updating ID[%1$s]");
-				if(StringUtils.isNotBlank(e.getRuleName())){
-					message.append(" Banner Name [%2$s]");
-				}
-				break;
-			case delete:
-				message = new StringBuilder("Removing ID[%1$s]");
-				break;
-			default:
-				message = new StringBuilder();
-				return;
+		StringBuilder message = new StringBuilder();
+		Operation operation = auditable.operation();
+		
+		if (ArrayUtils.contains(AuditTrailConstants.bannerOperations, auditable.operation())) {
+			BannerRule rule = (BannerRule)jp.getArgs()[0];
+			auditTrail.setReferenceId(rule.getRuleId());
+			auditTrail.setStoreId(rule.getStoreId());
+			// Operation is either Add or Delete only
+			message.append(operation == Operation.add ? "Adding " : "Removing ").append("Banner Rule with ID = [%1$s]");
+			if(StringUtils.isNotBlank(rule.getRuleName())){
+				message.append(" and Name = [%2$s]");
+			}
+			auditTrail.setDetails(String.format(message.toString(), rule.getRuleId(), rule.getRuleName()));
 		}
-		
-		auditTrail.setDetails(
-				String.format(message.toString(),
-						auditTrail.getReferenceId(), 
-						e.getRuleName()
-				)
-		);
-				
+		else if (ArrayUtils.contains(AuditTrailConstants.bannerItemOperations, operation)) {
+			BannerRuleItem ruleItem = (BannerRuleItem)jp.getArgs()[0];
+			BannerRule rule = (BannerRule)ruleItem.getRule();
+			auditTrail.setStoreId(rule.getStoreId());
+			auditTrail.setReferenceId(rule.getRuleId());
+			auditTrail.setKeyword(rule.getRuleName());
+			
+			switch (operation) {
+				case addBanner:
+					message.append("Adding ");
+					break;
+				case updateBanner:
+					message.append("Updating ");
+					break;
+				case deleteBanner:
+					message.append("Removing ");
+					break;
+			}
+			message.append("Banner with ID = [%1$s]: Setting ");
+
+			if (ruleItem.getPriority() > 0) {
+				message.append("Priority = [%2$s] and ");
+			}
+			if (ruleItem.getStartDate() != null) {
+				message.append("Start Date = [%3$s] and ");
+			}
+			if (ruleItem.getEndDate() != null) {
+				message.append("End Date = [%4$s] and ");
+			}
+			if (ruleItem.getDisabled() != null) {
+				message.append("Disabled status = [%5$s] and ");
+			}
+			if (StringUtils.isNotBlank(ruleItem.getDescription())) {
+				message.append("Description = [%11$s] and ");
+			}
+			if (ruleItem.getImagePath() != null && StringUtils.isNotBlank(ruleItem.getImagePath().getId())) {
+				message.append("Image Path Id = [%6$s] and ");
+			}
+			if (ruleItem.getImagePath() != null && StringUtils.isNotBlank(ruleItem.getImagePath().getPath())) {
+				message.append("Image Path = [%7$s] and ");
+			}
+			if (StringUtils.isNotBlank(ruleItem.getImageAlt())) {
+				message.append("Image Alt = [%8$s] and ");
+			}
+			if (StringUtils.isNotBlank(ruleItem.getLinkPath())) {
+				message.append("Link Path = [%9$s] and ");
+			}
+			if (StringUtils.isNotBlank(ruleItem.getOpenNewWindow())) {
+				message.append("Open in New Window = [%10$s] and ");
+			}
+
+			if (StringUtils.equals(message.substring(message.length() - 5), " and ")) {
+				message.replace(message.length() - 5, message.length() - 1, "");
+			}
+			
+			auditTrail.setDetails(String.format(message.toString(), ruleItem.getMemberId(), ruleItem.getPriority(),
+					JodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getStartDate(), JodaPatternType.DATE),
+					JodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getEndDate(), JodaPatternType.DATE),
+					ruleItem.getDisabled(),
+					ruleItem.getImagePath() != null ? ruleItem.getImagePath().getId() : "",
+						ruleItem.getImagePath() != null ? ruleItem.getImagePath().getPath() : "",
+					ruleItem.getImageAlt(), ruleItem.getLinkPath(), ruleItem.getOpenNewWindow(), ruleItem.getDescription()));
+		}
+		else if (ArrayUtils.contains(AuditTrailConstants.imagePathOperations, operation)) {
+			ImagePath imagePath = (ImagePath)jp.getArgs()[0];
+			auditTrail.setStoreId(imagePath.getStoreId());
+			auditTrail.setReferenceId(imagePath.getId());
+
+			// Operation is either Add or Update only
+			message.append(operation == Operation.add ? "Adding " : "Updating ").append("Image Path  with ID = [%1$s]");
+			if (StringUtils.isNotBlank(imagePath.getPath())){
+				message.append(" and Image Path = [%2$s]");
+			}
+			message.append(": Setting ");
+			if (imagePath.getPathType() != null){
+				message.append("Path Type = [%3$s] and ");
+			}
+			if (StringUtils.isNotBlank(imagePath.getAlias())){
+				message.append("Alias = [%4$s] and ");
+			}
+			
+			if (StringUtils.equals(message.substring(message.length() - 5), " and ")) {
+				message.replace(message.length() - 5, message.length() - 1, "");
+			}
+			
+			auditTrail.setDetails(String.format(message.toString(), imagePath.getId(), 
+					imagePath.getPath(), imagePath.getPathType(), imagePath.getAlias()));
+		}
 		logAuditTrail(auditTrail);
 	}
 		
