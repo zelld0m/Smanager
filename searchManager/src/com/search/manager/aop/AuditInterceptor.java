@@ -456,7 +456,7 @@ public class AuditInterceptor {
 			if (StringUtils.isNotBlank(ruleItem.getLinkPath())) {
 				message.append("Link Path = [%9$s] and ");
 			}
-			if (StringUtils.isNotBlank(ruleItem.getOpenNewWindow())) {
+			if (ruleItem.getOpenNewWindow()!=null) {
 				message.append("Open in New Window = [%10$s] and ");
 			}
 

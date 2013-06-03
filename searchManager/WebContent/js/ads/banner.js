@@ -194,14 +194,16 @@
 						self.addUpdateRuleItemHandler(ui, item);
 						self.addDeleteItemHandler(ui, item);
 
-						ui.find("input").prop({
+						var uii = $(this).parents(".ruleItem");
+						
+						uii.find("input, textarea").prop({
 							readonly: false,
 							disabled: false
 						}).end()
 						.find(".startDate, .endDate").datepicker("enable");
 
-						self.addScheduleRestriction(ui, item);
-						self.addItemExpiredRestriction(ui, item);
+						self.addScheduleRestriction(uii, item);
+						self.addItemExpiredRestriction(uii, item);
 
 					});
 
@@ -211,7 +213,9 @@
 					ui.find("#bannerInfo").slideUp("slow", function(){
 						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
 						// all element readonly and disabled regardless of schedule, rule status, and expiration
-						$(this).parents(".ruleItem").find("input").prop({
+						var uii = $(this).parents(".ruleItem");
+						
+						uii.find("input, textarea").prop({
 							readonly: true,
 							disabled: true
 						}).end().find(".startDate, .endDate").datepicker("disable");	
@@ -338,6 +342,13 @@
 				.find("#imageAlt").val(item["imageAlt"]).end()
 				.find("#linkPath").val(item["linkPath"]).end()
 				.find("#description").val(item["description"]).end()
+				.find("#description").val(item["description"]).end()
+				.find("#temporaryDisable").prop({
+					checked: item["disable"]
+				}).end()
+				.find("#openNewWindow").prop({
+					checked: item["openNewWindow"]
+				})
 
 				// Select a date range, datepicker issue on multiple id even with scoping
 				.find("#startDate").prop({id: "startDate_" + item["memberId"]}).datepicker({
@@ -400,14 +411,14 @@
 			addDurationHandler: function(ui, item){
 				var self = this;
 				var color = "orange";
-				var durationText = "Not Started Yet";
+				var durationText = "Not Yet Started";
 
 				if(!item["expired"] && item["started"]){
 					color = "green";
 					durationText = item["daysLeft"];
 				}else if(item["expired"]){
 					color = "red";
-					durationText = "Expired Already";
+					durationText = "Has Expired";
 				}
 
 				ui.find("#daysLeft").text(durationText).css({
@@ -726,6 +737,43 @@
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify || item["expired"]});
 			},
 
+			getUpdatedFields: function(ui, item){
+				var self = this;
+				
+				//Updatable fields
+				var imagePathId = $.trim(ui.find(".imageAlias").prop("id"));
+				var imagePath = $.trim(ui.find("#imagePath").val());
+				var imageAlias = $.trim(ui.find(".imageAlias").val());
+				var priority = $.trim(ui.find("#priority").val());
+				var startDate = $.trim(ui.find(".startDate").val());
+				var endDate = $.trim(ui.find(".endDate").val());
+				var imageAlt = $.trim(ui.find("#imageAlt").val());
+				var linkPath = $.trim(ui.find("#linkPath").val());
+				var description = $.trim(ui.find("#description").val());
+				var openNewWindow = ui.find("#openNewWindow").is(':checked');
+				var disable = ui.find("#temporaryDisable").is(':checked');
+				
+				var mapParams = {
+						"ruleId": self.selectedRule["ruleId"] ,
+						"memberId": item["memberId"],
+						
+						"imagePathId": imagePathId !== item["imagePath"]["id"] ?  imagePathId: null,
+						"imagePath": $.isNotBlank(imagePath) && !$.iequals(imagePath, item["imagePath"]["path"]) ? imagePath : null,
+						"imageAlias": $.isNotBlank(imageAlias) && !$.iequals(imageAlias, item["imagePath"]["alias"]) ? imageAlias: null,
+						
+						"priority": $.isNotBlank(priority) && $.isNumeric(priority) && !$.iequals(priority, $.trim(item["priority"]))?  priority : null,
+						"startDate": $.isNotBlank(startDate) && $.isDate(startDate) && !$.iequals(startDate, item["formattedStartDate"]) ?  startDate: null,
+						"endDate": $.isNotBlank(endDate) && $.isDate(endDate) && !$.iequals(endDate, item["formattedEndDate"])?  endDate: null,
+						"imageAlt": $.isNotBlank(imageAlt) &&  !$.iequals(imageAlt, item["imageAlt"]) ? imageAlt: null,
+						"linkPath": $.isNotBlank(linkPath) && !$.iequals(linkPath, item["linkPath"])  ? linkPath: null,
+						"description": $.isNotBlank(description) && !$.iequals(description, item["description"]) ? description: null,
+						"disable": disable != item["disabled"] ? disable : null,
+						"openNewWindow": openNewWindow != item["openNewWindow"] ? openNewWindow: null
+				};
+				
+				return mapParams;
+			},
+			
 			addUpdateRuleItemHandler: function(ui, item){
 				var self = this;
 
@@ -759,22 +807,7 @@
 						} else{
 							jConfirm("Update " + e.data.item["imagePath"]["alias"] + "?", self.moduleName, function(result){
 								if(result){
-									var mapParams = {
-											"ruleId": ruleId ,
-											"memberId": memberId,
-											"imagePathId": imagePathId,
-											"imagePath": imagePath,
-											"imageAlias": imageAlias,
-											"priority": priority,
-											"startDate": startDate,
-											"endDate": endDate,
-											"imageAlt": imageAlt,
-											"linkPath": linkPath,
-											"description": description,
-											"disable": disable,
-									};
-
-									BannerServiceJS.updateRuleItem(mapParams, {
+									BannerServiceJS.updateRuleItem(self.getUpdatedFields(e.data.ui, e.data.item), {
 										callback: function(data){
 
 										},

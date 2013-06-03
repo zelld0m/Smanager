@@ -158,6 +158,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LINK_PATH, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NEW_WINDOW, Types.BOOLEAN));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED, Types.BOOLEAN));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));		
 		}
 	}
@@ -433,6 +434,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
 			inputs.put(DAOConstants.PARAM_NEW_WINDOW, ruleItem.getOpenNewWindow());
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
+			inputs.put(DAOConstants.PARAM_DISABLED, ruleItem.getDisabled());
 			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, ruleItem.getLastModifiedBy());
 			
 			return DAOUtils.getUpdateCount(updateRuleItemSP.execute(inputs));

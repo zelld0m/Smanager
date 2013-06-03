@@ -19,7 +19,7 @@ public class BannerItemXml extends RuleItemXml {
     private DateTime endDate;
     private String imageAlt;
     private String linkPath;
-    private String openNewWindow;
+    private Boolean openNewWindow;
     private String description;
     private Boolean disabled;
     private String imagePathId;
@@ -95,15 +95,15 @@ public class BannerItemXml extends RuleItemXml {
         this.linkPath = linkPath;
     }
 
-    public String getOpenNewWindow() {
-        return openNewWindow;
-    }
+    public Boolean getOpenNewWindow() {
+		return openNewWindow;
+	}
 
-    public void setOpenNewWindow(String openNewWindow) {
-        this.openNewWindow = openNewWindow;
-    }
+	public void setOpenNewWindow(Boolean openNewWindow) {
+		this.openNewWindow = openNewWindow;
+	}
 
-    public String getDescription() {
+	public String getDescription() {
         return description;
     }
 
