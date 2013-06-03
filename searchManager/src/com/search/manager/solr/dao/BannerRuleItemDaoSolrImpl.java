@@ -11,6 +11,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrInputDocument;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
@@ -41,7 +43,8 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -73,10 +76,9 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleId:"
-							+ ClientUtils.escapeQueryChars(StringUtils
-									.trim(ruleId)));
+			strQuery.append(String.format("store: %s AND ruleId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(StringUtils.trim(ruleId))));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -111,10 +113,57 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleName1:"
-							+ ClientUtils.escapeQueryChars(StringUtils
-									.trim(ruleName)));
+			strQuery.append(String.format("store: %s AND ruleName1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(StringUtils.trim(ruleName))));
+
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
+			solrQuery.setQuery(strQuery.toString());
+			logger.debug(solrQuery.toString());
+			QueryResponse queryResponse = solrServers.getCoreInstance(
+					Constants.Core.BANNER_RULE_CORE.getCoreName()).query(
+					solrQuery);
+
+			if (queryResponse != null) {
+				List<BannerRuleItem> bannerRuleItems = SolrResultUtil
+						.toBannerRuleItem(queryResponse
+								.getBeans(BannerRuleItemSolr.class));
+
+				return bannerRuleItems;
+			}
+		} catch (Exception e) {
+			logger.error(
+					"Failed to get banner rule item by store and ruleName. "
+							+ e.getMessage(), e);
+			throw new DaoException(e.getMessage(), e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public List<BannerRuleItem> getActiveBannerRuleItemsByRuleName(Store store,
+			String ruleName, DateTime startDate, DateTime endDate)
+			throws DaoException {
+		try {
+			String storeId = StringUtils.lowerCase(StringUtils.trim(store
+					.getStoreId()));
+
+			StringBuffer strQuery = new StringBuffer();
+			strQuery.append(String.format("store: %s AND ruleName1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(StringUtils.trim(ruleName))));
+
+			if (startDate != null) {
+				strQuery.append(String.format(" AND startDate:[* TO %s/DAY]",
+						startDate.withZone(DateTimeZone.UTC)));
+			}
+
+			if (endDate != null) {
+				strQuery.append(String.format(" AND endDate:[%s/DAY TO *]",
+						endDate.withZone(DateTimeZone.UTC)));
+			}
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -149,10 +198,9 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND memberId:"
-							+ ClientUtils.escapeQueryChars(StringUtils
-									.trim(memberId)));
+			strQuery.append(String.format("store: %s AND memberId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(StringUtils.trim(memberId))));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -464,7 +512,8 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName())
@@ -494,10 +543,9 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			ruleId = StringUtils.trim(ruleId);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleId:"
-							+ ClientUtils.escapeQueryChars(StringUtils
-									.trim(ruleId)));
+			strQuery.append(String.format("store: %s AND ruleId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(StringUtils.trim(ruleId))));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName())
@@ -527,10 +575,9 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			ruleName = StringUtils.lowerCase(StringUtils.trim(ruleName));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleName1:"
-							+ ClientUtils.escapeQueryChars(StringUtils
-									.trim(ruleName)));
+			strQuery.append(String.format("store: %s AND ruleName1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(StringUtils.trim(ruleName))));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName())
@@ -560,10 +607,9 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND memberId:"
-							+ ClientUtils.escapeQueryChars(StringUtils
-									.trim(memberId)));
+			strQuery.append(String.format("store: %s AND memberId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(StringUtils.trim(memberId))));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName())
