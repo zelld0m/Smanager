@@ -172,7 +172,7 @@ public class DAOConstants {
 	public static final String PARAM_RELEVANCY_DESCRIPTION			= "relevancy_description";
 	public static final String PARAM_FIELD_NAME						= "field_name";
 	public static final String PARAM_FIELD_VALUE					= "field_value";
-	public static final String PARAM_PRIORITY						= "field_value";
+	public static final String PARAM_PRIORITY						= "priority";
 	public static final String PARAM_RELEVANCY 						= "relevancy";
 	public static final String PARAM_MATCH_TYPE_RELEVANCY 			= "match_type_relevancy";
 	public static final String PARAM_CAT_CODE 						= "catcode";
@@ -412,6 +412,7 @@ public class DAOConstants {
 	public static final String COLUMN_IMAGE_PATH_TYPE				= "image_path_type";
 	public static final String COLUMN_IMAGE_PATH_ALIAS				= "alias";
 	public static final String COLUMN_DISABLED						= "disabled";
+	public static final String COLUMN_OPEN_NEW_WINDOW				= "open_new_window";
 
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";

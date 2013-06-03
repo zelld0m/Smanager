@@ -30,7 +30,7 @@ public class BannerRuleItem extends ModelBean{
 	public BannerRuleItem(BannerRule rule, String memberId,
 			Integer priority, DateTime startDate, DateTime endDate,
 			String imageAlt, String linkPath, String description,
-			ImagePath imagePath, Boolean disabled) {
+			ImagePath imagePath, Boolean disabled, Boolean openNewWindow) {
 		super();
 		this.rule = rule;
 		this.memberId = memberId;
@@ -42,21 +42,22 @@ public class BannerRuleItem extends ModelBean{
 		this.description = description;
 		this.imagePath = imagePath;
 		this.disabled = disabled;
+		this.openNewWindow = openNewWindow;
 	}
 	
 	public BannerRuleItem(String ruleId, String storeId, String ruleName, String memberId,
 			int priority, DateTime startDate, DateTime endDate,
 			String imageAlt, String linkPath, String description,
-			ImagePath imagePath, Boolean disabled) {
-		this(new BannerRule(storeId, ruleId, ruleName, null), memberId, priority, startDate, endDate, imageAlt, linkPath, description, imagePath, disabled);
+			ImagePath imagePath, Boolean disabled, Boolean openNewWindow) {
+		this(new BannerRule(storeId, ruleId, ruleName, null), memberId, priority, startDate, endDate, imageAlt, linkPath, description, imagePath, disabled, openNewWindow);
 	}
 	
 	public BannerRuleItem(String ruleId, String storeId,  DateTime startDate, DateTime endDate){
-		this(ruleId, storeId, null, null, 0, startDate, endDate, null, null, null, null, null);
+		this(ruleId, storeId, null, null, 0, startDate, endDate, null, null, null, null, null, null);
 	}
 	
 	public BannerRuleItem(String ruleId, String storeId, String memberId){
-		this(ruleId, storeId, null, memberId, 0, null, null, null, null, null, null, null);
+		this(ruleId, storeId, null, memberId, 0, null, null, null, null, null, null, null, null);
 	}
 	
 	public BannerRuleItem(String ruleId, String storeId){

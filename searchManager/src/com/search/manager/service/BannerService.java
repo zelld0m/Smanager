@@ -108,6 +108,7 @@ public class BannerService {
 		String imagePathId = params.get("imagePathId"); 
 		String imagePath = params.get("imagePath"); 
 		String imageAlias = params.get("imageAlias"); 
+		Boolean openNewWindow = BooleanUtils.toBooleanObject(params.get("openNewWindow")); 
 		
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 		BannerRule rule = new BannerRule(storeId, ruleId, ruleName, null);
@@ -124,7 +125,7 @@ public class BannerService {
 			}
 		}
 
-		BannerRuleItem ruleItem = new BannerRuleItem(rule, null, priority, startDT, endDT, imageAlt, linkPath, description, newImagePath, false);
+		BannerRuleItem ruleItem = new BannerRuleItem(rule, null, priority, startDT, endDT, imageAlt, linkPath, description, newImagePath, false, openNewWindow);
 		ruleItem.setCreatedBy(username);
 
 		try {

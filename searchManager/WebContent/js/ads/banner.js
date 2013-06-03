@@ -194,16 +194,14 @@
 						self.addUpdateRuleItemHandler(ui, item);
 						self.addDeleteItemHandler(ui, item);
 
-						var uii = $(this).parents(".ruleItem");
-						
-						uii.find("input, textarea").prop({
+						$(this).parents(".ruleItem").find("input, textarea").prop({
 							readonly: false,
 							disabled: false
 						}).end()
 						.find(".startDate, .endDate").datepicker("enable");
 
-						self.addScheduleRestriction(uii, item);
-						self.addItemExpiredRestriction(uii, item);
+						self.addScheduleRestriction(ui, item);
+						self.addItemExpiredRestriction(ui, item);
 
 					});
 
@@ -213,9 +211,7 @@
 					ui.find("#bannerInfo").slideUp("slow", function(){
 						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
 						// all element readonly and disabled regardless of schedule, rule status, and expiration
-						var uii = $(this).parents(".ruleItem");
-						
-						uii.find("input, textarea").prop({
+						$(this).parents(".ruleItem").find("input, textarea").prop({
 							readonly: true,
 							disabled: true
 						}).end().find(".startDate, .endDate").datepicker("disable");	
@@ -342,13 +338,12 @@
 				.find("#imageAlt").val(item["imageAlt"]).end()
 				.find("#linkPath").val(item["linkPath"]).end()
 				.find("#description").val(item["description"]).end()
-				.find("#description").val(item["description"]).end()
 				.find("#temporaryDisable").prop({
-					checked: item["disable"]
+					checked: item["disabled"] == true
 				}).end()
 				.find("#openNewWindow").prop({
-					checked: item["openNewWindow"]
-				})
+					checked: item["openNewWindow"] == true
+				}).end()
 
 				// Select a date range, datepicker issue on multiple id even with scoping
 				.find("#startDate").prop({id: "startDate_" + item["memberId"]}).datepicker({
@@ -406,7 +401,8 @@
 					ui.find("input, textarea").prop({
 						readonly: true,
 						disabled: true
-					});
+					}).end()
+					.find(".startDate, .endDate").datepicker("disable");
 				}
 			},
 
