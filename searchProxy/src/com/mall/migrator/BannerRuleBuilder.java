@@ -25,8 +25,7 @@ public class BannerRuleBuilder extends BaseRuleBuilder implements Runnable {
 
 	private static final Logger logger = Logger
 			.getLogger(BannerRuleBuilder.class);
-
-	private String storeId;
+	
 	private int dbCount;
 	private int indexCount;
 

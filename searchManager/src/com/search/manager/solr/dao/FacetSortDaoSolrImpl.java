@@ -42,7 +42,8 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -76,11 +77,11 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			name = StringUtils.lowerCase(StringUtils.trim(name));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleName1:"
-							+ ClientUtils.escapeQueryChars(name))
-					.append(" AND ruleType1:"
-							+ ClientUtils.escapeQueryChars(strRuleType));
+			strQuery.append(String.format(
+					"store: %s AND ruleName1: %s AND ruleType1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(name),
+					ClientUtils.escapeQueryChars(strRuleType)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
@@ -117,16 +118,14 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			id = StringUtils.trim(id);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND facetSortId:"
-							+ ClientUtils.escapeQueryChars(id));
+			strQuery.append(String.format("store: %s AND facetSortId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(id)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -261,9 +260,6 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					solrServers.getCoreInstance(
 							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-					// solrServers.getCoreInstance(
-					// Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
-					// .commit();
 					return true;
 				}
 			}
@@ -335,10 +331,9 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				id = StringUtils.trim(id);
 
 				StringBuffer strQuery = new StringBuffer();
-				strQuery.append(
-						"store:" + ClientUtils.escapeQueryChars(storeId))
-						.append(" AND facetSortId:"
-								+ ClientUtils.escapeQueryChars(id));
+				strQuery.append(String.format("store: %s AND facetSortId: %s",
+						ClientUtils.escapeQueryChars(storeId),
+						ClientUtils.escapeQueryChars(id)));
 
 				solrServers.getCoreInstance(
 						Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
@@ -395,7 +390,8 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
@@ -425,10 +421,10 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			name = StringUtils.lowerCase(StringUtils.trim(name));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleName1:"
-							+ ClientUtils.escapeQueryChars(name))
-					.append(" AND ruleType:" + ruleType);
+			strQuery.append(String.format(
+					"store: %s AND ruleName1: %s AND ruleType: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(name), ruleType));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
@@ -457,16 +453,13 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			id = StringUtils.trim(id);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND facetSortId:"
-							+ ClientUtils.escapeQueryChars(id));
+			strQuery.append(String.format("store: %s AND facetSortId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(id)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			// solrServers.getCoreInstance(
-			// Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
-			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;

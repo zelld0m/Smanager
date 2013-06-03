@@ -307,12 +307,14 @@ public class SolrResultUtil {
 
 			imagePath.setId(bannerRuleItemSolr.getImagePathId());
 			imagePath.setPath(bannerRuleItemSolr.getPath());
-			if (bannerRuleItemSolr.getPathType().equals(
-					ImagePathType.IMAGE_LINK.toString())) {
-				imagePath.setPathType(ImagePathType.IMAGE_LINK);
-			} else if (bannerRuleItemSolr.getPathType().equals(
-					ImagePathType.UPLOAD_LINK.toString())) {
-				imagePath.setPathType(ImagePathType.UPLOAD_LINK);
+			if (bannerRuleItemSolr.getPathType() != null) {
+				if (bannerRuleItemSolr.getPathType().equals(
+						ImagePathType.IMAGE_LINK.getDisplayText())) {
+					imagePath.setPathType(ImagePathType.IMAGE_LINK);
+				} else if (bannerRuleItemSolr.getPathType().equals(
+						ImagePathType.UPLOAD_LINK.getDisplayText())) {
+					imagePath.setPathType(ImagePathType.UPLOAD_LINK);
+				}
 			}
 			imagePath.setAlias(bannerRuleItemSolr.getAlias());
 			bannerRuleItem.setImagePath(imagePath);

@@ -402,6 +402,7 @@ public class AuditInterceptor {
 			BannerRule rule = (BannerRule)jp.getArgs()[0];
 			auditTrail.setReferenceId(rule.getRuleId());
 			auditTrail.setStoreId(rule.getStoreId());
+			auditTrail.setKeyword(rule.getRuleName());
 			// Operation is either Add or Delete only
 			message.append(operation == Operation.add ? "Adding " : "Removing ").append("Banner Rule with ID = [%1$s]");
 			if(StringUtils.isNotBlank(rule.getRuleName())){
@@ -427,7 +428,11 @@ public class AuditInterceptor {
 					message.append("Removing ");
 					break;
 			}
-			message.append("Banner with ID = [%1$s]: Setting ");
+			message.append("Banner with ID = [%1$s]");
+			if (StringUtils.isNotBlank(rule.getRuleName())) {
+				message.append(" for Rule Name = [%12$s]");
+			}
+			message.append(Operation.deleteBanner.equals(operation) ? ": " : ": Setting ");
 
 			if (ruleItem.getPriority() > 0) {
 				message.append("Priority = [%2$s] and ");
@@ -470,7 +475,8 @@ public class AuditInterceptor {
 					ruleItem.getDisabled(),
 					ruleItem.getImagePath() != null ? ruleItem.getImagePath().getId() : "",
 						ruleItem.getImagePath() != null ? ruleItem.getImagePath().getPath() : "",
-					ruleItem.getImageAlt(), ruleItem.getLinkPath(), ruleItem.getOpenNewWindow(), ruleItem.getDescription()));
+					ruleItem.getImageAlt(), ruleItem.getLinkPath(), ruleItem.getOpenNewWindow(),
+					ruleItem.getDescription(), rule.getRuleName()));
 		}
 		else if (ArrayUtils.contains(AuditTrailConstants.imagePathOperations, operation)) {
 			ImagePath imagePath = (ImagePath)jp.getArgs()[0];

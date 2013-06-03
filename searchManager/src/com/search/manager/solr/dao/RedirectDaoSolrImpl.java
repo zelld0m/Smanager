@@ -42,15 +42,14 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("storeId:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("storeId: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -78,16 +77,14 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("storeId:" + storeId).append(
-					" AND searchTerms1:"
-							+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(String.format("storeId: %s AND searchTerms1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(keyword)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -118,15 +115,14 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 			name = StringUtils.lowerCase(StringUtils.trim(name));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("storeId:" + storeId).append(
-					" AND ruleName:" + ClientUtils.escapeQueryChars(name));
+			strQuery.append(String.format("storeId: %s AND ruleName: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(name)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -157,15 +153,14 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 			id = StringUtils.trim(id);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("storeId:" + storeId).append(
-					" AND ruleId:" + ClientUtils.escapeQueryChars(id));
+			strQuery.append(String.format("storeId: %s AND ruleId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(id)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -296,9 +291,6 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					solrServers.getCoreInstance(
 							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-					// solrServers.getCoreInstance(
-					// Constants.Core.REDIRECT_RULE_CORE.getCoreName())
-					// .softCommit();
 					return true;
 				}
 			}
@@ -370,10 +362,9 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				id = StringUtils.trim(id);
 
 				StringBuffer strQuery = new StringBuffer();
-				strQuery.append(
-						"storeId:" + ClientUtils.escapeQueryChars(storeId))
-						.append(" AND ruleId:"
-								+ ClientUtils.escapeQueryChars(id));
+				strQuery.append(String.format("storeId: %s AND ruleId: %s",
+						ClientUtils.escapeQueryChars(storeId),
+						ClientUtils.escapeQueryChars(id)));
 
 				solrServers.getCoreInstance(
 						Constants.Core.REDIRECT_RULE_CORE.getCoreName())
@@ -432,7 +423,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("storeId:" + storeId);
+			strQuery.append(String.format("storeId: %s", storeId));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
@@ -462,9 +453,9 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 			name = StringUtils.trim(name);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("storeId:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleName:"
-							+ ClientUtils.escapeQueryChars(name));
+			strQuery.append(String.format("storeId: %s AND ruleName: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(name)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
@@ -493,15 +484,13 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 			id = StringUtils.trim(id);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("storeId:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND ruleId:" + ClientUtils.escapeQueryChars(id));
+			strQuery.append(String.format("storeId: %s AND ruleId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(id)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			// solrServers.getCoreInstance(
-			// Constants.Core.REDIRECT_RULE_CORE.getCoreName())
-			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;

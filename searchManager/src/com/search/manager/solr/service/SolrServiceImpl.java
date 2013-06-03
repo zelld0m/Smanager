@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -848,6 +849,14 @@ public class SolrServiceImpl implements SolrService {
 	@Override
 	public boolean commitBannerRuleItem() throws DaoException {
 		return bannerRuleItemDao.commitBannerRuleItem();
+	}
+
+	@Override
+	public List<BannerRuleItem> getActiveBannerRuleItems(Store store,
+			String keyword) throws DaoException {
+		return (List<BannerRuleItem>) bannerRuleItemDao
+				.getActiveBannerRuleItemsByRuleName(store, keyword,
+						DateTime.now(), DateTime.now());
 	}
 
 }

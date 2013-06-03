@@ -13,6 +13,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrInputDocument;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
@@ -41,15 +43,14 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -77,18 +78,17 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
-			strQuery.append(" AND keyword1:"
-					+ ClientUtils.escapeQueryChars(keyword));
-			strQuery.append(" AND (expiryDate:[NOW/DAY+1DAY TO *] OR (*:* AND -expiryDate:[* TO *]))");
+			strQuery.append(String
+					.format("store: %s AND keyword1: %s AND (expiryDate:[%s/DAY TO *] OR (*:* AND -expiryDate:[* TO *]))",
+							ClientUtils.escapeQueryChars(storeId), ClientUtils
+									.escapeQueryChars(keyword), DateTime.now()
+									.withZone(DateTimeZone.UTC)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -116,18 +116,17 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
-			strQuery.append(" AND keyword1:"
-					+ ClientUtils.escapeQueryChars(keyword));
-			strQuery.append(" AND expiryDate:[* TO NOW/DAY]");
+			strQuery.append(String
+					.format("store: %s AND keyword1: %s AND expiryDate:[* TO %s/DAY-1DAY]",
+							ClientUtils.escapeQueryChars(storeId), ClientUtils
+									.escapeQueryChars(keyword), DateTime.now()
+									.withZone(DateTimeZone.UTC)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -286,10 +285,9 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 				String key = StringUtils.lowerCase(StringUtils.trim(keyword));
 
 				StringBuffer strQuery = new StringBuffer();
-				strQuery.append(
-						"store:" + ClientUtils.escapeQueryChars(storeId))
-						.append(" AND keyword1:"
-								+ ClientUtils.escapeQueryChars(key));
+				strQuery.append(String.format("store: %s AND keyword1: %s",
+						ClientUtils.escapeQueryChars(storeId),
+						ClientUtils.escapeQueryChars(key)));
 
 				solrServers.getCoreInstance(
 						Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
@@ -359,7 +357,8 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
@@ -390,16 +389,13 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND keyword1:"
-							+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(String.format("store: %s AND keyword1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(keyword)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			// solrServers.getCoreInstance(
-			// Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
-			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;

@@ -25,6 +25,7 @@ import com.search.manager.cache.model.CacheModel;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.exception.DataException;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -617,6 +618,13 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		} catch (Exception e){ 
 		}
 		return value;
+	}
+
+	@Override
+	public List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword)
+			throws DaoException {
+		// TODO Auto-generated method stub
+		throw new DaoException("unimplemented method!");
 	}
 
 }

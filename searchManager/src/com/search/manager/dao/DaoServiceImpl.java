@@ -1963,4 +1963,20 @@ public class DaoServiceImpl implements DaoService {
 			throws DaoException {
 		return bannerDAO.searchRule(criteria, imagePathId);
 	}
+
+	@Override
+	public List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword)
+			throws DaoException {
+		BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
+		BannerRule bannerRule = new BannerRule();
+		bannerRule.setStoreId(store.getStoreId());
+		bannerRule.setRuleName(keyword);
+		bannerRuleItemFilter.setRule(bannerRule);
+		SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
+				bannerRuleItemFilter, DateTime.now(), DateTime.now(), 0, 0);
+		List<BannerRuleItem> list = searchBannerRuleItem(criteria).getList();
+		
+		return list;
+	}
+	
 }

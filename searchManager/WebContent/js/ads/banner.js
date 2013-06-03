@@ -358,6 +358,7 @@
 					changeYear: true,
 					showOn: "both",
 					buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
+					buttonImageOnly: true,
 					onClose: function(selectedDate) {
 						ui.find("#endDate_" + item["memberId"]).datepicker("option", "minDate", selectedDate);
 					}
@@ -370,6 +371,7 @@
 					changeYear: true,
 					showOn: "both",
 					buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
+					buttonImageOnly: true,
 					onClose: function(selectedDate) {
 						if(!ui.find("#startDate_" + item["memberId"]).datepicker("isDisabled")){
 							ui.find("#startDate_" + item["memberId"]).datepicker("option", "maxDate", selectedDate);

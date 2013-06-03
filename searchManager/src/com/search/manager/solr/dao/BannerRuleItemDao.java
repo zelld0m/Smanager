@@ -2,6 +2,8 @@ package com.search.manager.solr.dao;
 
 import java.util.Collection;
 
+import org.joda.time.DateTime;
+
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Store;
@@ -16,6 +18,10 @@ public interface BannerRuleItemDao {
 
 	Collection<BannerRuleItem> getBannerRuleItemsByRuleName(Store store,
 			String ruleName) throws DaoException;
+
+	Collection<BannerRuleItem> getActiveBannerRuleItemsByRuleName(Store store,
+			String ruleName, DateTime startDate, DateTime endDate)
+			throws DaoException;
 
 	BannerRuleItem getBannerRuleItemByMemberId(Store store, String memberId)
 			throws DaoException;
