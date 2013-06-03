@@ -18,6 +18,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetSort;
@@ -54,6 +55,8 @@ public abstract class SolrResponseParser {
 	protected List<String> expiredDemotedEDPs = null;
 	protected List<String> forceAddedEDPs = null;
     
+	protected List<BannerRuleItem> bannerList = null;
+	
     /* Did You Mean rule */
 	protected SpellRule spellRule = null;
     // TODO: This should be configurable.
@@ -89,6 +92,10 @@ public abstract class SolrResponseParser {
 		this.activeRules = activeRules;
 	}
 
+	public final void setBannerRuleItems(List<BannerRuleItem> list) {
+		bannerList = list;
+	}
+	
 	public final void setElevatedItems(List<ElevateResult> list) throws SearchException {
 		elevatedList = list;
 	}
