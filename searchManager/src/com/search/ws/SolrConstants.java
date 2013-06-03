@@ -66,7 +66,14 @@ public class SolrConstants {
 	public final static String TAG_REDIRECT_PARAM = "Redirect_Param";
 	public final static String TAG_INCLUDE_KEYWORD = "Include_Keyword";
 	public final static String TAG_FORCE_ADD = "ForceAdd";
-		
+	
+	public final static String TAG_BANNERS = "banners";
+	public final static String TAG_BANNER_RULE = "banner";
+	public final static String TAG_BANNER_OPEN_NEW_WINDOW = "openNewWindow";
+	public final static String TAG_BANNER_IMAGE_ALT = "imageAlt";
+	public final static String TAG_BANNER_LINK_PATH = "linkPath";
+	public final static String TAG_BANNER_IMAGE_PATH = "imagePath";
+	
 	public final static String TAG_FACET_COUNTS = "facet_counts";
 	public final static String TAG_FACET_FIELDS = "facet_fields";
 	public final static String TAG_FACET_FIELD = "facet.field";
@@ -106,6 +113,7 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_DISABLE_RELEVANCY = "disableRelevancy";
 	public final static String SOLR_PARAM_DISABLE_FACET_SORT = "disableFacetSort";
 	public final static String SOLR_PARAM_DISABLE_DID_YOU_MEAN = "disableDidYouMean";
+	public final static String SOLR_PARAM_DISABLE_BANNER = "disableBanner";
 	
 	public final static String SOLR_PARAM_FACET_NAME 			= "facet-name";
 	public final static String SOLR_PARAM_FACET_TEMPLATE 		= "facet-template";
