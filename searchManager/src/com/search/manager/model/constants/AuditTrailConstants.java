@@ -14,7 +14,6 @@ public class AuditTrailConstants {
 		demote,
 		keyword,
 		storeKeyword,
-		campaign,
 		banner,
 		queryCleaning,
 		relevancy,
@@ -31,15 +30,15 @@ public class AuditTrailConstants {
 		delete,
 		updateComment,
 		appendComment,
-		// for campaign only
+		// for banner only
 		addBanner,
-		removeBanner,
+		updateBanner,
+		deleteBanner,
+		addImagePath,
+		updateImagePath,
 		// for elevate, demote and exclude only
 		clear,
 		updateExpiryDate,
-		// for banner only
-		addToCampaign,
-		removeFromCampaign,
 		//for relevancy only
 		addRelevancyField,
 		updateRelevancyField,
@@ -65,7 +64,6 @@ public class AuditTrailConstants {
 
 	public static Entity[] ENTITY_LIST_ASC = {
 		Entity.banner,
-		Entity.campaign,
 		Entity.demote,
 		Entity.elevate,
 		Entity.exclude,
@@ -122,37 +120,23 @@ public class AuditTrailConstants {
 		Operation.update,
 		Operation.updateComment
 		 };
-	
-	public static Operation[] campaignOperations = {
-		Operation.add,
-		Operation.appendComment, 
-		Operation.delete,
-		Operation.update,
-		Operation.updateComment,
-		};
-	
+
 	public static Operation[] bannerOperations = {
 		Operation.add,
-		Operation.appendComment,
 		Operation.delete,
-		Operation.update,
-		Operation.updateComment
-		 };
-	
-	public static Operation[] campaignBannerOperations = {
-		Operation.addBanner,
-		Operation.removeBanner,
-	};
-	
-	public static Operation[] campaignKeywordOperations = {
-		
-	};
-	
-	public static Operation[] bannerToCampaignOperations = {
-		Operation.addToCampaign,
-		Operation.removeFromCampaign
 	};
 
+	public static Operation[] bannerItemOperations = {
+		Operation.addBanner,
+		Operation.updateBanner,
+		Operation.deleteBanner,
+	};
+
+	public static Operation[] imagePathOperations = {
+		Operation.addImagePath,
+		Operation.updateImagePath,
+	};
+	
 	public static Operation[] queryCleaningOperations = {
 		Operation.add,
 		Operation.delete,
@@ -235,8 +219,11 @@ public class AuditTrailConstants {
 		entityOperationMap.put(Entity.demote, demoteOperations);
 		entityOperationMap.put(Entity.keyword, keywordOperations);
 		entityOperationMap.put(Entity.storeKeyword, storeKeywordOperations);
-		entityOperationMap.put(Entity.campaign, campaignOperations);
-		entityOperationMap.put(Entity.banner, bannerOperations);
+		ArrayList<Operation> bannerOperationList = new ArrayList<Operation>();
+		CollectionUtils.mergeArrayIntoCollection(bannerOperations, bannerOperationList);
+		CollectionUtils.mergeArrayIntoCollection(bannerItemOperations, bannerOperationList);
+		CollectionUtils.mergeArrayIntoCollection(imagePathOperations, bannerOperationList);
+		entityOperationMap.put(Entity.banner, bannerOperationList.toArray(new Operation[0]));
 		entityOperationMap.put(Entity.facetSort, facetSortOperations);
 		ArrayList<Operation> queryCleaningOperationList = new ArrayList<Operation>();
 		CollectionUtils.mergeArrayIntoCollection(queryCleaningOperations, queryCleaningOperationList);

@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.BannerRule;
@@ -23,6 +24,8 @@ import com.search.manager.model.ImagePathType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 @Repository(value="bannerDAO")
 public class BannerDAO {
@@ -155,7 +158,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LINK_PATH, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NEW_WINDOW, Types.BOOLEAN));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));		
+			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));		
 		}
 	}
 
@@ -242,7 +245,7 @@ public class BannerDAO {
 
 	private class UpdateRuleItemImagePathStoredProcedure extends CUDStoredProcedure {
 		public UpdateRuleItemImagePathStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, DAOConstants.SP_UPDATE_BANNER_IMAGE_PATH_ALIAS);
+			super(jdbcTemplate, DAOConstants.SP_UPDATE_BANNER_IMAGE_PATH);
 		}
 
 		@Override
@@ -250,6 +253,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));
 		}
 	}
 
@@ -288,6 +292,7 @@ public class BannerDAO {
 		}
 	}	
 	
+	@Audit(entity = Entity.banner, operation = Operation.add)
 	public int addRule(BannerRule rule) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -309,6 +314,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.delete)
 	public int deleteRule(BannerRule rule) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -322,6 +328,31 @@ public class BannerDAO {
 		catch (Exception e) {
 			throw new DaoException("Failed during deleteRule()", e);
 		}
+	}
+	
+	public BannerRule getRuleById(String storeId, String ruleId) throws DaoException {
+        try {
+            BannerRule rule = null;
+            Map<String, Object> inputs = new HashMap<String, Object>();
+
+            inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
+            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
+            inputs.put(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue());
+            inputs.put(DAOConstants.PARAM_SEARCH_TEXT, null);
+            inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, null);
+            inputs.put(DAOConstants.PARAM_START_ROW, 1);
+            inputs.put(DAOConstants.PARAM_END_ROW, 1);
+
+            RecordSet<BannerRule> rules = DAOUtils.getRecordSet(getRuleSP.execute(inputs));
+
+            if (rules != null && rules.getList().size() > 0) {
+                rule = rules.getList().get(0);
+            }
+
+            return rule;
+        } catch (Exception e) {
+            throw new DaoException("Failed during searchRule()", e);
+        }
 	}
 
 	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria) throws DaoException {
@@ -351,6 +382,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.addBanner)
 	public int addRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -382,6 +414,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.updateBanner)
 	public int updateRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -400,15 +433,16 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
 			inputs.put(DAOConstants.PARAM_NEW_WINDOW, ruleItem.getOpenNewWindow());
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
-			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleItem.getCreatedBy());
+			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, ruleItem.getLastModifiedBy());
 			
 			return DAOUtils.getUpdateCount(updateRuleItemSP.execute(inputs));
 		}
 		catch (Exception e) {
-			throw new DaoException("Failed during addRuleItem()", e);
+			throw new DaoException("Failed during updateRuleItem()", e);
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.deleteBanner)
 	public int deleteRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -473,6 +507,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.addImagePath)
 	public int addImagePath(ImagePath imagePath) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -497,6 +532,7 @@ public class BannerDAO {
 		}
 	}
 	
+	@Audit(entity = Entity.banner, operation = Operation.updateImagePath)
 	public int updateImagePath(ImagePath imagePath) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -504,6 +540,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath.getId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, imagePath.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, imagePath.getAlias());
+			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, imagePath.getLastModifiedBy());
 			
 			return DAOUtils.getUpdateCount(updateRuleItemImagePathSP.execute(inputs));
 		}

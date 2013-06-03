@@ -160,11 +160,11 @@ public class BannerRuleItem extends ModelBean{
 	}
 	
 	public String getFormattedEndDate(){
-		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
+		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE);
 	}
 	
 	public String getFormattedEndDateTime(){
-		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getDaysLeft(){
@@ -172,10 +172,10 @@ public class BannerRuleItem extends ModelBean{
 	}
 	
 	public boolean isExpired(){
-		return getEndDate().isBeforeNow();
+		return DateTime.now().toDateMidnight().isAfter(getEndDate().toDateMidnight());
 	}
 	
 	public boolean isStarted(){
-		return getStartDate().isBeforeNow() || getStartDate().isEqualNow();
+		return DateTime.now().toDateMidnight().isAfter(getStartDate().toDateMidnight()) || DateTime.now().toDateMidnight().isEqual(getStartDate().toDateMidnight());
 	}
 }

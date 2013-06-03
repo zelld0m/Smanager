@@ -54,6 +54,7 @@
 												}
 											});
 										}
+										plugin.populateList(null);
 									}
 								});
 							}
@@ -164,7 +165,7 @@
 			template += '	<ul class="page_info clearfix">';
 			template += '		<li class="fLeft fBold">';
 			template += '			<span>Status:</span>';
-			template += '			<span id="status" class="cRed">Action Required</span>';
+			template += '			<span id="status" class="cRed">Setup a Rule</span>';
 			template += '			<span id="statusMode" class="cOrange"></span>';
 			template += '		</li>';
 

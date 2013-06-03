@@ -44,10 +44,10 @@
 		</div>
 	
 		<div id="ruleContent" class="ruleContent fsize12" style="display:none">
-			<div id="ruleItemOptions" class="page_nav_group clearfix" style="display:none">
+			<div id="ruleItemOptions" class="page_nav_group clearfix">
 				<ul class="page_nav fRight">
 					<li>	
-						<select id="filterDisplay">
+						<select id="itemFilter">
 							<option value="all">All</option>
 							<option value="active">Active</option>
 							<option value="expired">Expired</option>
@@ -55,7 +55,7 @@
 					</li>
 					<li><div class="ico_graph ico"></div></li>
 					<li>
-						<a id="downloadRuleIcon" href="javascript:void(0);" alt="Delete All Item" title="Delete All Item">
+						<a id="downloadRuleIcon" href="javascript:void(0);" alt="Download All Item" title="Download All Item">
 							<div class="ico_download2 ico"></div>
 						</a>
 					</li>
@@ -73,7 +73,7 @@
 					<ul class="display_settings fRight clearfix">
 						<li >Priority <input type="text" name="priority" id="priority"/></li>
 						<li class="bLeft duration">
-							Duration <span id="daysLeft" class="cGreen"></span>
+							<span id="daysLeft" class="cGreen"></span>
 						</li>
 						<li class="schedule">
 							Schedule <input type="text" id="startDate" class="startDate"/>
@@ -88,7 +88,8 @@
 					</div>
 				
 					<ul class="banner_info clearfix">
-						<li ><span id="toggleIcon" class="ico_minus ico fLeft"></span><a href="javascript:void(0);" class="show_what">Show Less</a></li>
+						<li ><span id="toggleIcon" class="ico_minus ico fLeft"></span>
+							 <a id="toggleText" href="javascript:void(0);" class="show_what">Show Less</a></li>
 						<li>
 							<div id="copyToBtn" class="btn_copy_to round_btn fLeft">
 								<span class="btn_wrap"><a href="javascript:void(0);">Copy To</a></span>
@@ -105,15 +106,15 @@
 						<li><div id="commentIcon" class="ico_comments ico"></div></li>								
 					</ul>
 				
-					<div class="banner_info_more clearfix">
+					<div id="bannerInfo" class="banner_info_more clearfix">
 						<label for="imagePath">Image Path</label>
-						<input type="text" class="w565px" name="imagePath" id="imagePath" />
+						<input type="text" class="imagePath w565px" name="imagePath" id="imagePath" />
 						
 						<label for="imageAlias">Image Alias</label>
-						<input type="text" class="w218px" name="imageAlias" id="imageAlias" />
+						<input type="text" class="imageAlias w218px" name="imageAlias" id="imageAlias" />
 						
-						<div class="btn_update_alias round_btn fLeft">
-							<span class="btn_wrap"><a href="javascript:void(0);">Set Alias</a></span>
+						<div id="setAliasBtn" class="setAliasBtn btn_update_alias round_btn fLeft clearfix">
+							<span class="btn_wrap"><a id="setAliasText" href="javascript:void(0);">Set Alias</a></span>
 						</div>
 							
 						<label for="imageAlt" class="lbl_imgAlt">Image Alt:</label>

@@ -8,17 +8,23 @@
 			noPreviewImage: GLOBAL_contextPath + "/images/nopreview.png",
 
 			selectedRule: null,
+			selectedRuleItemPage: 1,
+			selectedRuleItemTotal: 1,
 			selectedRuleStatus: null,
 			ruleFilterText: "",
 			bannerInfo: null,
 
-			messages: {
-
+			lookupMessages: {
+				successAddNewKeyword: "Successfully added keyword {0}",
+				failedAddNewKeyword: "Failed to add keyword {0}",
+				successAddBannerToKeyword: "Successfully added banner {0} to {1} with priority {2}",
+				failedAddBannerToKeyword: "Failed to add banner {0} to {1} with priority {2}",
+				jumpToPageOfAddedBanner: "The banner is in page {0}. Do you want to refresh page to view the banner?"
 			},
 
 			init: function(){
 				var self = this;
-				$("#ruleItemOptions, #ruleItemHolder, #addBannerBtn").hide();
+				$("#ruleItemHolder, #addBannerBtn").hide();
 				$("#titleText").text(self.moduleName);
 				self.getRuleList(1);
 			},
@@ -39,7 +45,8 @@
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
-					showAddButton: true, // TODO:
+					showAddButton: true, 
+					filterText: self.ruleFilterText,
 
 					itemDataCallback: function(base, ruleName, page){
 						self.rulePage = page;
@@ -67,6 +74,7 @@
 
 								item.ui.find("#itemLinkValue").off().on({
 									click: function(e){
+										self.selectedRuleItemTotal = count;
 										self.setRule(e.data.item.model);
 									}
 								}, {item: item});
@@ -80,7 +88,6 @@
 								item.ui.find("#itemLinkPreloader").hide();
 							}
 						});
-
 					},
 
 					itemNameCallback: function(base, item){
@@ -90,10 +97,23 @@
 					itemAddCallback: function(base, ruleName){
 						BannerServiceJS.addRule(ruleName, {
 							callback: function(sr){
-								showActionResponse(sr["status"], "add", ruleName);
-								self.getRuleItemList(1);
+								switch(sr["status"]){
+								case 0: 
+									jAlert($.formatText(self.lookupMessages.successAddNewKeyword, ruleName), "Banner Rule", function(){
+										BannerServiceJS.getRuleByNameExact(ruleName, {
+											callback: function(sr){
+												self.setRule(sr["data"]);
+											}
+										});
+									}); 
+									break;
+								default:  jAlert($.formatText(self.lookupMessages.failedAddNewKeyword, ruleName), "Banner Rule"); 
+								}
+
+								base.getList(ruleName, 1);
+
 							},
-							postHook: function(e){
+							preHook: function(e){
 								base.prepareList();
 							}
 						});
@@ -115,8 +135,12 @@
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
 						BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
-							callback: function(data){
-								self.setRule(data);
+							callback: function(response){
+								if (response.status == 0) {
+									self.setRule(response.data);
+								} else {
+									jAlert(response.errorMessage.message, "Error");
+								}
 							},
 							preHook: function(){
 								self.beforeShowRuleStatus();	
@@ -136,24 +160,103 @@
 					afterRuleStatusRequest: function(ruleStatus){
 						self.afterShowRuleStatus();
 						self.selectedRuleStatus = ruleStatus;
+						self.setRuleItemFilter();
 						self.getRuleItemList(1);
 					}
 				});
+			},
+
+			addRuleItemToggleHandler: function(ui, item){
+				var self = this;
+				var toggle = $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
+				ui.find("#bannerInfo").hide();
+				self.setToggleStatus(ui, item, ($.isBlank(toggle) || "hide".toLowerCase() === toggle) ? false: true);
+
+				ui.find("#toggleText").off().on({
+					click: function(e){
+						var status = $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
+						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(status) || "hide".toLowerCase() === status) ? true : false);
+					}
+				}, {ui:ui, item:item});
+			},
+
+			setToggleStatus: function(ui, item, show){
+				var self = this;
+
+				if (show){
+					ui.find("#toggleText").text("Show Less").end()
+					.find("#bannerInfo").slideDown("slow", function(){
+						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
+
+						self.addInputFieldListener(ui, item, ui.find("input#imagePath"), self.previewImage);
+						self.addInputFieldListener(ui, item, ui.find("input#linkPath"), self.validateLinkPath);
+						self.addSetAliasHandler(ui, item);
+						self.addUpdateRuleItemHandler(ui, item);
+						self.addDeleteItemHandler(ui, item);
+
+						ui.find("input").prop({
+							readonly: false,
+							disabled: false
+						}).end()
+						.find(".startDate, .endDate").datepicker("enable");
+
+						self.addScheduleRestriction(ui, item);
+						self.addItemExpiredRestriction(ui, item);
+
+					});
+
+				}else{
+					ui.find("#toggleText").text("Show More");
+
+					ui.find("#bannerInfo").slideUp("slow", function(){
+						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
+						// all element readonly and disabled regardless of schedule, rule status, and expiration
+						$(this).parents(".ruleItem").find("input").prop({
+							readonly: true,
+							disabled: true
+						}).end().find(".startDate, .endDate").datepicker("disable");	
+					});
+				}
+			},
+
+			setRuleItemFilter: function(value){
+				var self = this;
+				var filter = $.isNotBlank(value)? value : $.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]));
+
+				if ($.isNotBlank(filter)){
+					$("#itemFilter").val(filter);
+				}else{
+					$.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]), "all" ,{path:GLOBAL_contextPath});
+					$("#itemFilter").val("all");
+				}
+
+				$("#itemFilter").off().on({
+					change: function(e){
+						$.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]), $(this).val(), {path:GLOBAL_contextPath});
+						self.getRuleItemList(1);
+					}
+				});
+			},
+
+			getRuleItemFilter: function(){
+				var self = this;
+				return $.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]));
 			},
 
 			getRuleItemList: function(page){
 				var self = this;
 				var rule = self.selectedRule;
 				var $iHolder = $("#ruleItemHolder");
-				$iHolder.find(".ruleItem:not(#ruleItemPattern)").remove();
-				$("#ruleItemOptions, #ruleItemHolder").hide();
+				self.selectedRuleItemPage = page;
+				$(".ruleItem:not(#ruleItemPattern)").remove();
+				$("#ruleItemHolder").hide();
 
-				BannerServiceJS.getRuleItems(rule["ruleId"], page, self.ruleItemPageSize, {
+				BannerServiceJS.getRuleItems(self.getRuleItemFilter(), rule["ruleId"], page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
 
 						if (recordSet && recordSet["totalSize"]>0){
-							$("#ruleItemOptions, #ruleItemHolder").show();
+							$("#ruleItemHolder").show();
 
 							$("#ruleItemPagingTop").paginate({
 								type: 'short',
@@ -162,43 +265,42 @@
 								pageStyle: "style2",
 								totalItem: recordSet["totalSize"],
 								callbackText: function(itemStart, itemEnd, itemTotal){
-									var selectedText = $.trim($("#filterDisplay").val()) != "all" ? " " + $("#filterDisplay option:selected").text(): "";
+									var selectedText = $.trim($("#itemFilter").val()) !== "all" ? " " + $("#itemFilter option:selected").text(): "";
+									if ($("#itemFilter").val() === "all") 
+										self.selectedRuleItemTotal = itemTotal;
+									
 									return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
 								},
 								pageLinkCallback: function(e){ self.getRuleItemList(e.data.page); },
 								nextLinkCallback: function(e){ self.getRuleItemList(e.data.page + 1); },
-								prevLinkCallback: function(e){ self.getRuleItemList(e.data.page - 1); }
+								prevLinkCallback: function(e){ self.getRuleItemList(e.data.page - 1); },
+								firstLinkCallback: function(e){ self.getRuleItemList(1); },
+								lastLinkCallback: function(e){ self.getRuleItemList(e.data.totalPages); }
 							});
 
 							self.populateRuleItem(recordSet);
 						}
 					},
 					preHook: function(e){
-
-					},
-					postHook: function(e){
-						self.adjustPageToRuleStatus(self.selectedRuleStatus["locked"] || !allowModify);
+						$(".ruleItem:not(#ruleItemPattern)").remove();
+						$("#ruleItemPagingTop").empty();
 					}
 				});
 			},
 
-			adjustPageToRuleStatus: function(locked){
+			addRuleStatusRestriction: function(){
 				var self = this;
-
-				if(locked){
-					$("#addBannerBtn").hide();
+				
+				if(self.selectedRuleStatus["locked"]){
+					$("#addBannerBtn, .setAliasBtn").hide();
+					
 					$(".ruleItem").find("input, textarea").prop({
 						readonly: true,
 						disabled: true
-					});
-				}else{
-					$("#addBannerBtn").show();
-					$(".ruleItem").find("input, textarea").prop({
-						readonly: false,
-						disabled: false
-					});
-					self.addRuleItemHandler();
+					}).end
+					.find(".startDate, .endDate").datepicker('disable');
 				}
+				
 			},
 
 			populateRuleItem: function(rs){
@@ -211,18 +313,15 @@
 					var item = rs["list"][i];
 					ui.prop({
 						id: "ruleItem_" + item["memberId"]
-					});
+					}).addClass(i + 1 == rs["totalSize"] ? "last": "").appendTo($iHolder).show();
 					self.populateRuleItemFields(ui, item);
-					ui.show();
-					if (i + 1 == rs["totalSize"]) ui.addClass("last");
-					$iHolder.append(ui);
 				}
 			},
 
 			populateRuleItemFields: function(ui, item){
 				var self = this;
 
-				self.previewImage(ui, item["imagePath"]["path"]);
+				self.previewImage(ui, item, item["imagePath"]["path"]);
 
 				ui
 				.find("#imageTitle").text(item["imagePath"]["alias"]).end()
@@ -231,7 +330,11 @@
 				.find("#endDate").val(item["formattedEndDate"]).end()
 
 				.find("#imagePath").val(item["imagePath"]["path"]).end()
-				.find("#imageAlias").val(item["imagePath"]["alias"]).prop({id: item["imagePath"]["id"]}).end()
+				.find("#imageAlias").val(item["imagePath"]["alias"]).prop({
+					id: item["imagePath"]["id"],
+					readonly: true,
+					disabled: true,
+				}).end()
 				.find("#imageAlt").val(item["imageAlt"]).end()
 				.find("#linkPath").val(item["linkPath"]).end()
 				.find("#description").val(item["description"]).end()
@@ -250,20 +353,18 @@
 				}).end()
 
 				.find("#endDate").prop({id: "endDate_" + item["memberId"]}).datepicker({
+					minDate: ui.find("#startDate_" + item["memberId"]).datepicker("getDate"),
 					defaultDate: currentDate,
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
 					buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 					onClose: function(selectedDate) {
-						ui.find("#startDate_" + item["memberId"]).datepicker("option", "maxDate", selectedDate);
+						if(!ui.find("#startDate_" + item["memberId"]).datepicker("isDisabled")){
+							ui.find("#startDate_" + item["memberId"]).datepicker("option", "maxDate", selectedDate);
+						}
 					}
 				});
-
-				// Days left
-				if($.isNotBlank(item["daysLeft"])){
-					ui.find("daysLeft").text(item["daysLeft"]);
-				}
 
 				self.registerEventListener(ui, item);
 			},
@@ -271,19 +372,47 @@
 			registerEventListener: function(ui, item){
 				var self = this;
 
-				self.addScheduleRestriction(ui, item);
-				self.addInputFieldListener(ui, item, ui.find("input#imagePath"), self.previewImage);
-				self.addInputFieldListener(ui, item, ui.find("input#linkPath"), self.validateLinkPath);
+				self.addDurationHandler(ui, item);
 				self.addCopyToHandler(ui, item);
 				self.getLinkedKeyword(ui, item);
+				self.addShowKeywordHandler(ui, item);
 				self.addItemAuditHandler(ui, item);
 				self.addLastUpdateHandler(ui, item);
 				self.addItemCommentHandler(ui, item);
-				self.addSetAliasHandler(ui, item);
-				self.addUpdateRuleHandler(ui, item);
-				self.addDeleteItemHandler(ui, item);
+				self.addRuleItemToggleHandler(ui, item);
+				self.addRuleItemHandler();
 				self.addDeleteAllItemHandler();
 				self.addDownloadRuleHandler(ui, item);
+				self.addRuleStatusRestriction();
+			},
+
+			addItemExpiredRestriction: function(ui, item){
+				var self = this;
+				
+				if(item["expired"]){
+					ui.find("input, textarea").prop({
+						readonly: true,
+						disabled: true
+					});
+				}
+			},
+
+			addDurationHandler: function(ui, item){
+				var self = this;
+				var color = "orange";
+				var durationText = "Not Started Yet";
+
+				if(!item["expired"] && item["started"]){
+					color = "green";
+					durationText = item["daysLeft"];
+				}else if(item["expired"]){
+					color = "red";
+					durationText = "Expired Already";
+				}
+
+				ui.find("#daysLeft").text(durationText).css({
+					color: color
+				});
 			},
 
 			addDeleteAllItemHandler: function(){
@@ -316,9 +445,6 @@
 				var self = this;
 				// Disable when rule item has started
 				ui.find(".startDate").datepicker(item["started"]? 'disable' : 'enable');
-
-				// Disable when rule is locked, rule item has expired, and user has no permission
-				ui.find(".endDate").datepicker(item["expired"] || self.selectedRuleStatus["locked"] || !allowModify ? 'disable' : 'enable');
 			},
 
 			addInputFieldListener: function(ui, item, input, callback){
@@ -345,7 +471,7 @@
 						if (e.data.locked) return;
 
 						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-							if(callback) callback(e.data.ui, $(e.currentTarget).val());
+							if(callback) callback(e.data.ui, e.data.item, $(e.currentTarget).val());
 						}
 					},
 
@@ -353,41 +479,36 @@
 						if (e.data.locked) return;
 
 						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()) {
-							if(callback) callback(e.data.ui, $(e.currentTarget).val());
+							if(callback) callback(e.data.ui, e.data.item, $(e.currentTarget).val());
 						}
 					}
 				}, {ui: ui , item: item, locked: self.selectedRuleStatus["locked"] || !allowModify, input: ""});
 
 			},
 
-			getImagePath: function(ui, imagePath){
+			getImagePath: function(ui, item, imagePath){
 				var self = this;
 
 				BannerServiceJS.getImagePath(imagePath, {
 					callback: function(sr){
-						if (sr!=null && recordSet["totalSize"]==1){
-							var recordSet = sr["data"]; 
-							var iPath = recordSet["list"][0];
-
-							ui.find(".alias").prop({id: iPath["id"]}).val(iPath["path"]).prop({
+						var iPath = sr["data"];
+						if (iPath!=null){
+							ui.find(".imageAlias").prop({
+								id: iPath["id"],
 								readonly: true,
 								disabled: true
-							}).end()
-							.find(".setAliasLink > div").text("Update Alias");
+							}).val(iPath["alias"]).end()
 
+							.find("#setAliasBtn").show();
+
+							self.addSetAliasHandler(ui, item);
 						}else{
-							ui.find(".alias").prop({id: "alias"}).val("").prop({
+							ui.find(".imageAlias").val("").prop({
 								readonly: false,
 								disabled: false
-							}).end()
-							.find(".setAliasLink > div").text("Save Alias");
+							}).removeAttr("id").end()
+							.find("#setAliasBtn").hide();
 						}
-					},
-					preHook: function(e){
-
-					},
-					preHook: function(e){
-
 					}
 				});
 			},
@@ -396,7 +517,7 @@
 
 			},
 
-			previewImage: function(ui, imagePath){
+			previewImage: function(ui, item, imagePath){
 				var self = this;
 				var $previewHolder = ui.find("#preview");
 
@@ -409,6 +530,8 @@
 						$(this).unbind("error").attr("src", self.noPreviewImage); 
 					}
 				});
+
+				self.getImagePath(ui, item, imagePath);
 			},
 
 			addSetAliasHandler: function(ui, item){
@@ -416,47 +539,31 @@
 
 				ui.find("#setAliasBtn").off().on({
 					click: function(e){
+						if (e.data.locked) return;
+
+						var btnSetText = "Set Alias";
+						var btnCancelText = "Cancel";
+						var setAlias = $(e.currentTarget).find("#setAliasText").text() === btnSetText;
 
 						e.data.ui
 						.find("#imagePath").prop({
-							readonly: true,
-							disabled: true
+							readonly: setAlias,
+							disabled: setAlias
 						}).end()
 
-						.find(".alias").prop({
-							readonly: false,
-							disabled: false
-						}).end()
-
-						.find("#setAliasLink > div").text(
-								e.data.ui.find(".alias").prop("id") === "alias" ?
-										"Save Alias" :
-											"Update Alias"	
+						.find(".imageAlias").prop({
+							readonly: !setAlias,
+							disabled: !setAlias
+						}).val(
+								!setAlias? e.data.item["imagePath"]["alias"] : ""
 						);
 
-						e.data.ui.find("#cancelAliasBtn").show();
-					}
-				}, {ui: ui, item: item }).end()
-
-				.find("#cancelAliasBtn").off().on({
-					click: function(e){
-
-						e.data.ui
-						.find("#imagePath").prop({
-							readonly: false,
-							disabled: false
-						}).end()
-
-						.find(".alias").prop({
-							readonly: true,
-							disabled: true
-						}).val(item["imagePath"]["alias"]).end()
-
-						.find("#setAliasLink > div").text("Set Alias");
-
-						$(e.currentTarget).hide();
-					}
-				}, {ui: ui, item: item});
+						$(e.currentTarget).find("#setAliasText").text(
+								setAlias? btnCancelText: btnSetText
+						);
+					},
+					mouseenter: showHoverInfo
+				}, {ui: ui, item: item, locked: self.selectedRuleStatus['locked'] || !allowModify || item["expired"]});
 			},
 
 			addCopyToHandler: function(ui, item){
@@ -474,13 +581,13 @@
 			getLinkedKeyword: function(ui, item){
 				var self = this;
 				var count = 1;
-				
-				self.addShowKeywordHandler(ui, item);
+
+
 				BannerServiceJS.getTotalRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"],{
 					callback: function(sr){
-						var recordSet = sr["data"];
-						if (recordSet && $.isNumeric(recordSet["totalSize"]) && recordSet["totalSize"] > 1){
-							count = recordSet["totalSize"];
+						var total = sr["data"];
+						if ($.isNumeric(total) && total > 1){
+							count = total;
 						} 
 					},
 					preHook: function(e){
@@ -489,16 +596,16 @@
 					postHook: function(e){
 						ui.find("#keywordCount").text(count);
 					}
-					
 				});
 			},
-			
+
 			addShowKeywordHandler: function(ui, item){
 				var self = this;
-				
+
 				ui.find("#keywordBtn").listbox({
 					title: "Linked Keywords",
 					emptyText: "No linked keywords",
+					locked: self.selectedRuleStatus["locked"] || !allowModify,
 					page: 1,
 					rule: self.selectedRule,
 					ruleItem: item, 
@@ -527,6 +634,9 @@
 							},
 							preHook: function(e){
 								base.prepareList();
+							},
+							postHook: function(e){
+								self.getLinkedKeyword(ui, item);
 							}
 						});
 					}
@@ -535,28 +645,48 @@
 
 			addRuleItemHandler: function(){
 				var self = this;
-
+				
 				$("#addBannerBtn").addbanner({
 					id: 'addbanner',
 					rule: self.selectedRule,
 					ruleItem: null,
 					mode: 'add',
 					isPopup: true,
+					priority: self.selectedRuleItemTotal + 1 ,
 					addBannerCallback: function(e){
 						var params = e.data;
-						BannerServiceJS.addRuleItem(
-								params["ruleId"], 1, params["startDate"], params["endDate"], 
-								params["imageAlt"], params["linkPath"], params["description"], 
-								params["imagePathId"], params["imagePath"], params["imageAlias"], {
-									callback: function(e){
-									},
-									preHook: function(e){},
-									postHook: function(e){
+
+						var mapParams = {
+								"ruleId": params["ruleId"],
+								"ruleName": params["ruleName"],
+								"priority": params["priority"], 
+								"startDate": params["startDate"], 
+								"endDate": params["endDate"], 
+								"imageAlt": params["imageAlt"], 
+								"linkPath": params["linkPath"], 
+								"description": params["description"], 
+								"imagePathId": params["imagePathId"], 
+								"imagePath": params["imagePath"], 
+								"imageAlias": params["imageAlias"]
+						};
+
+						BannerServiceJS.addRuleItem(mapParams, {
+							callback: function(sr){
+								switch(sr["status"]){
+								case 0: 
+									jAlert($.formatText(self.lookupMessages.successAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule", function(){
 										self.getRuleItemList(1);
-									}
-								});
+									}); 
+									break;
+								default:  jAlert($.formatText(self.lookupMessages.failedAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule"); 
+								}
+							},
+							preHook: function(e){
+								
+							}
+						});
 					}
-				});
+				}).show();
 			},
 
 			beforeShowRuleStatus: function(){
@@ -593,48 +723,74 @@
 						});
 					},
 					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify || item["expired"]});
 			},
 
-			addUpdateRuleHandler: function(ui, item){
+			addUpdateRuleItemHandler: function(ui, item){
 				var self = this;
 
 				ui.find("#updateBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
 
-						jConfirm("Update " + self.selectedRule["ruleName"] + "'s rule?", self.moduleName, function(result){
-							if(result){
-								BannerServiceJS.updateRule(self.selectedRule["ruleId"],self.selectedRule["linkPath"],self.selectedRule["imagePath"],self.selectedRule["imageAlt"], ruleName, description, {
-									callback: function(data){
-										response = data;
-										showActionResponse(data > 0 ? 1 : data, "update", ruleName);
-									},
-									preHook: function(){
-										self.prepareRule();
-									},
-									postHook: function(){
-										if(response>0){
-											BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
-												callback: function(data){
-													self.setRule(data);
-												},
-												preHook: function(){
-													self.prepareRule();
-												}
-											});
-										}
-										else{
-											self.setRule(self.selectedRule);
-										}
+						//get all fields value
+						var ruleId = self.selectedRule["ruleId"];
+						var memberId = e.data.item["memberId"];
+						var imagePathId = e.data.ui.find(".imageAlias").prop("id");
+						var imagePath = e.data.ui.find("#imagePath").val();
+						var imageAlias = e.data.ui.find(".imageAlias").val();
 
-									}
-								});
-							}
-						});
+						var priority = e.data.ui.find("#priority").val();
+						var startDate = e.data.ui.find(".startDate").val();
+						var endDate = e.data.ui.find(".endDate").val();
+						var imageAlt = e.data.ui.find("#imageAlt").val();
+						var linkPath = e.data.ui.find("#linkPath").val();
+						var description = e.data.ui.find("#description").val();
+						var disable = e.data.ui.find("#temporaryDisable").is(':checked');
+
+						if($.isBlank(imagePath)) {
+							jAlert("Image path is required.", "Banner");
+						} else if($.isBlank(imageAlias)) {
+							jAlert("Image alias is required.", "Banner");
+						} else if($.isBlank(imageAlt)) {
+							jAlert("Image alt is required.", "Banner");
+						}else if($.isBlank(linkPath)) {
+							jAlert("Link path is required.", "Banner");
+						} else{
+							jConfirm("Update " + e.data.item["imagePath"]["alias"] + "?", self.moduleName, function(result){
+								if(result){
+									var mapParams = {
+											"ruleId": ruleId ,
+											"memberId": memberId,
+											"imagePathId": imagePathId,
+											"imagePath": imagePath,
+											"imageAlias": imageAlias,
+											"priority": priority,
+											"startDate": startDate,
+											"endDate": endDate,
+											"imageAlt": imageAlt,
+											"linkPath": linkPath,
+											"description": description,
+											"disable": disable,
+									};
+
+									BannerServiceJS.updateRuleItem(mapParams, {
+										callback: function(data){
+
+										},
+										preHook: function(){
+
+										},
+										postHook: function(){
+											self.getRuleItemList(self.selectedRuleItemPage);
+										}
+									});
+								}
+							});
+						}	
 					},
 					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+				},{ui:ui, item:item, locked:self.selectedRuleStatus["locked"] || !allowModify || item["expired"]});
 			},
 
 			addItemCommentHandler: function(ui, item){
@@ -670,7 +826,7 @@
 							}
 						});
 					}
-				}, { item: item, locked: self.selectedRuleStatus["locked"] || !allowModify});
+				}, { item: item, locked: self.selectedRuleStatus["locked"] || !allowModify || item["expired"]});
 			},
 
 			addItemAuditHandler: function(ui, item){

@@ -134,23 +134,6 @@ public class AuditService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<AuditTrail> getCampaignTrail(String ruleId, int page,int itemsPerPage) {
-		try {
-			String store = UtilityService.getStoreId();
-			
-			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
-			AuditTrail auditTrail = new AuditTrail();
-			auditTrail.setEntity(Entity.campaign.toString());
-			auditTrail.setReferenceId(ruleId);
-			auditTrail.setStoreId(store);
-			
-			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
-		} catch (DaoException e) {
-			return null;
-		}
-	}
-	
-	@RemoteMethod
 	public RecordSet<AuditTrail> getBannerItemTrail(String ruleId, String memberId, int page,int itemsPerPage) {
 		try {
 			String store = UtilityService.getStoreId();
@@ -273,13 +256,8 @@ public class AuditService {
 							ddList.add(opt.toString());
 						}
 						break;
-					case campaign:
-						for(Object opt: Arrays.asList(AuditTrailConstants.campaignOperations)){
-							ddList.add(opt.toString());
-						}
-						break;
 					case banner:
-						for(Object opt: Arrays.asList(AuditTrailConstants.bannerOperations)){
+						for(Object opt: AuditTrailConstants.entityOperationMap.get(AuditTrailConstants.Entity.banner)){
 							ddList.add(opt.toString());
 						}
 						break;

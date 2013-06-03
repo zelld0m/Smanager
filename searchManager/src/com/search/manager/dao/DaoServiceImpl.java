@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.dao.file.BannerVersionDAO;
 import com.search.manager.dao.file.DemoteVersionDAO;
 import com.search.manager.dao.file.ElevateVersionDAO;
 import com.search.manager.dao.file.ExcludeVersionDAO;
@@ -77,6 +78,7 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
 import com.search.manager.model.constants.AuditTrailConstants;
+import com.search.manager.report.model.xml.BannerRuleXml;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
@@ -117,6 +119,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
 	@Autowired private ExportRuleMapDAO	exportRuleMapDAO;
 	@Autowired private SpellRuleDAO spellRuleDAO;
+	@Autowired private BannerVersionDAO bannerVersionDAO;
 
 	private DaoServiceImpl instance;
 	private final static Logger logger = Logger.getLogger(DaoServiceImpl.class);
@@ -186,6 +189,10 @@ public class DaoServiceImpl implements DaoService {
 
 	public void setSpellRuleDAO(SpellRuleDAO spellRuleDAO) {
 		this.spellRuleDAO = spellRuleDAO;
+	}
+
+	public void setBannerVersionDAO(BannerVersionDAO bannerVersionDAO) {
+	    this.bannerVersionDAO = bannerVersionDAO;
 	}
 
 	/* Audit Trail */
@@ -1328,6 +1335,8 @@ public class DaoServiceImpl implements DaoService {
 			return rankingRuleVersionDAO;
 		case SPELL:
 			return spellRuleDAO;
+		case BANNER:
+		    return bannerVersionDAO;
 		}
 		return null;
 	}
@@ -1354,6 +1363,9 @@ public class DaoServiceImpl implements DaoService {
 		}
 		else if (xml instanceof SpellRules) {
 			return spellRuleDAO;
+		}
+		else if (xml instanceof BannerRuleXml) {
+		    return bannerVersionDAO;
 		}
 		return null;
 	}
@@ -1856,9 +1868,27 @@ public class DaoServiceImpl implements DaoService {
 		return null;
 	}
 
+    @Override
+    public BannerRule getBannerRuleById(String storeId, String ruleId) throws DaoException {
+        return bannerDAO.getRuleById(storeId, ruleId);
+    }
+    
+    @Override
+    public BannerRule getBannerRuleByNameExact(String storeId, String ruleName) throws DaoException {
+    	BannerRule model = new BannerRule(storeId, ruleName);
+    	SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(model);
+    	
+    	List<BannerRule> bannerRuleList = bannerDAO.searchRule(criteria, null, MatchType.MATCH_NAME).getList();
+    	
+    	if (CollectionUtils.isNotEmpty(bannerRuleList)){
+			return bannerRuleList.get(0);
+		}
+		
+		return null;
+    }
+
 	@Override
-	public RecordSet<BannerRule> searchBannerRule(
-			SearchCriteria<BannerRule> criteria) throws DaoException {
+	public RecordSet<BannerRule> searchBannerRule(SearchCriteria<BannerRule> criteria) throws DaoException {
 		return bannerDAO.searchRule(criteria, null, MatchType.LIKE_NAME);
 	}
 

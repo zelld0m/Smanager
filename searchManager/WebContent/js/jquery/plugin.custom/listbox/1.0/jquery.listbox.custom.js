@@ -73,9 +73,10 @@
 		template += '		<div id="itemPagingTop"></div>';
 		template += '		<div class="clearB"></div>';
 		template += '		<div id="itemHolder">';
-		template += '			<div id="itemPattern" class="item" style="display: none;">';
+		template += '			<div id="itemPattern" class="item" style="display: none; width: 100%">';
 		template += '				<span class="deleteIcon"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png"></span>';
 		template += '				<span class="itemName"></span>';        
+		template += '				<span class="itemStatus"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif"></span>';        
 		template += '			</div>';
 		template += '		</div>';
 		template += '		<div class="clearB"></div>';
@@ -116,7 +117,6 @@
 			for (var i = 0; i < data["totalSize"]; i++) {
 
 				var item = data["list"][i];
-				console.log(itemHolder);
 				var ui = itemHolder.find('#itemPattern').clone();
 				ui.prop({
 					id: item[base.options.idField]
@@ -136,17 +136,22 @@
 	$.listbox.prototype.populateItemFields = function(ui, item){
 		var base = this;
 		
-		if(item[base.options.nameField] !== base.options.rule[base.options.nameField]){
-			ui.find(".deleteIcon").off().on({
-				click: function(e){
-					jConfirm("Delete " + e.data.base.options.parentNameText + " in " + e.data.item[base.options.nameField] + "?", "Linked Keyword", function(result){
-						if(result) base.itemDeleteCallback(base, e.data.item, e.data.parentItem);
-					});
-				}
-			}, {item: item, base: base, parentItem: base.options.ruleItem});
-		}
-
 		ui.find(".itemName").text(item[base.options.nameField]);
+		//TODO: No 
+		DeploymentServiceJS.getRuleStatus(base.options.ruleType, item["ruleId"], {
+			callback:function(data){
+				ui.find('.itemStatus').text(getRuleNameSubTextStatus(data));
+				if(item[base.options.nameField] !== base.options.rule[base.options.nameField] && !data["locked"] && allowModify){
+					ui.find(".deleteIcon").off().on({
+						click: function(e){
+							jConfirm("Delete " + e.data.base.options.parentNameText + " in " + e.data.item[base.options.nameField] + "?", "Linked Keyword", function(result){
+								if(result) e.data.base.options.itemDeleteCallback(e.data.base, e.data.item, e.data.parentItem);
+							});
+						}
+					}, {item: item, base: base, parentItem: base.options.ruleItem});
+				}
+			}
+		});
 	};
 
 	$.listbox.prototype.addPaging = function(page, total){
@@ -171,6 +176,7 @@
 
 	$.listbox.defaultOptions = {
 			id: 1,
+			ruleType: "Banner",
 			title: "Item Listing",
 			isPopup: true,
 			locked: false,

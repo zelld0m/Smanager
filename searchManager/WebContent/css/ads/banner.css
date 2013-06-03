@@ -63,7 +63,6 @@ height: 24px;
 	border: 1px solid #c4c4c4;
 	border-left: none;
 	border-right: none;
-	margin-bottom: 5px;
 	width:710px;
 	_width:100%;
 }
@@ -158,6 +157,11 @@ height: 24px;
 }
 .ban_edit .ui-datepicker-trigger {
 border:none;
+} 
+.ban_edit img.ui-datepicker-trigger {
+    padding: 3px;
+    vertical-align: middle;
+    width: 18px;
 } 
 .ban_edit .preview_container {
 	width: 100%;

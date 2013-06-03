@@ -68,7 +68,7 @@ public class DAOConstants {
 	public static final String SP_DELETE_BANNER_RULE_ITEM			= "usp_Delete_Banner_Rule_Item";
 	public static final String SP_ADD_BANNER_IMAGE_PATH				= "usp_Add_Banner_Image_Path";
 	public static final String SP_GET_BANNER_IMAGE_PATH				= "usp_Get_Banner_Image_Path";
-	public static final String SP_UPDATE_BANNER_IMAGE_PATH_ALIAS	= "usp_Update_Banner_Image_Path_Alias";
+	public static final String SP_UPDATE_BANNER_IMAGE_PATH	 		= "usp_Update_Banner_Image_Path";
 	
 	// AUDIT_TRAIL
 	public static final String SP_ADD_AUDIT_TRAIL 					= "usp_Add_Audit_Trail";
@@ -254,6 +254,7 @@ public class DAOConstants {
 	public static final String PARAM_NEW_WINDOW		 				= "open_new_window";
 	public static final String PARAM_DISABLED		 				= "disabled";
 	public static final String PARAM_SEARCH_TEXT		 			= "search_text";
+	public static final String PARAM_LAST_UPDATED_BY	 			= "last_updated_by";
 
 	// additional rule status parameters
 	public static final String PARAM_REQUEST_BY						= "request_by";
