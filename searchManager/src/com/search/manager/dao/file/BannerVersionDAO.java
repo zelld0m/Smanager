@@ -1,6 +1,5 @@
 package com.search.manager.dao.file;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,19 +7,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.BannerRule;
 import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.report.model.xml.BannerItemXml;
 import com.search.manager.report.model.xml.BannerRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.utility.Transformers;
 
 @Component("bannerVersionDAO")
 public class BannerVersionDAO extends RuleVersionDAO<BannerRuleXml> {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(BannerVersionDAO.class);
 
     @Autowired
@@ -37,7 +37,6 @@ public class BannerVersionDAO extends RuleVersionDAO<BannerRuleXml> {
         if (ruleVersionListXml != null) {
             @SuppressWarnings("unchecked")
             List<BannerRuleXml> ruleXmlList = ((RuleVersionListXml<BannerRuleXml>) ruleVersionListXml).getVersions();
-            List<BannerItemXml> itemXmlList = new ArrayList<BannerItemXml>();
             long version = ruleVersionListXml.getNextVersion();
 
             try {
@@ -48,11 +47,8 @@ public class BannerVersionDAO extends RuleVersionDAO<BannerRuleXml> {
                 BannerRule rule = daoService.getBannerRuleById(store, ruleId);
                 List<BannerRuleItem> ruleItems = daoService.searchBannerRuleItem(criteria).getList();
 
-                for (BannerRuleItem item : ruleItems) {
-                    itemXmlList.add(new BannerItemXml(item));
-                }
-
-                ruleXmlList.add(new BannerRuleXml(store, ruleId, rule.getRuleName(), name, notes, username, itemXmlList, version));
+                ruleXmlList.add(new BannerRuleXml(store, ruleId, rule.getRuleName(), name, notes, username, Lists
+                        .transform(ruleItems, Transformers.bannerItemRuleToXml), version));
                 ruleVersionListXml.setRuleId(ruleId);
                 ruleVersionListXml.setRuleName(rule.getRuleName());
 

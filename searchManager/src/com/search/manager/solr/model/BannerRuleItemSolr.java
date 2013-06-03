@@ -25,7 +25,7 @@ public class BannerRuleItemSolr {
 	@Field
 	private String linkPath;
 	@Field
-	private String openNewWindow;
+	private boolean openNewWindow;
 	@Field
 	private String description;
 	@Field
@@ -111,11 +111,11 @@ public class BannerRuleItemSolr {
 		this.linkPath = linkPath;
 	}
 
-	public String getOpenNewWindow() {
+	public boolean isOpenNewWindow() {
 		return openNewWindow;
 	}
 
-	public void setOpenNewWindow(String openNewWindow) {
+	public void setOpenNewWindow(boolean openNewWindow) {
 		this.openNewWindow = openNewWindow;
 	}
 

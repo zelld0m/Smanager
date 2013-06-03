@@ -301,8 +301,7 @@ public class SolrResultUtil {
 					bannerRuleItemSolr.getEndDate(), DateTimeZone.UTC));
 			bannerRuleItem.setImageAlt(bannerRuleItemSolr.getImageAlt());
 			bannerRuleItem.setLinkPath(bannerRuleItemSolr.getLinkPath());
-			bannerRuleItem.setOpenNewWindow(bannerRuleItemSolr
-					.getOpenNewWindow());
+			bannerRuleItem.setOpenNewWindow(bannerRuleItemSolr.isOpenNewWindow());
 			bannerRuleItem.setDescription(bannerRuleItemSolr.getDescription());
 			bannerRuleItem.setDisabled(bannerRuleItemSolr.isDisabled());
 

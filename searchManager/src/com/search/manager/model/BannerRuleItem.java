@@ -18,7 +18,7 @@ public class BannerRuleItem extends ModelBean{
 	private DateTime endDate;
 	private String imageAlt;
 	private String linkPath;
-	private String openNewWindow;
+	private Boolean openNewWindow;
 	private String description;
 	private Boolean disabled;
 	private ImagePath imagePath;
@@ -135,11 +135,11 @@ public class BannerRuleItem extends ModelBean{
 		this.imagePath = imagePath;
 	}
 
-	public String getOpenNewWindow() {
+	public Boolean getOpenNewWindow() {
 		return openNewWindow;
 	}
 
-	public void setOpenNewWindow(String openNewWindow) {
+	public void setOpenNewWindow(Boolean openNewWindow) {
 		this.openNewWindow = openNewWindow;
 	}
 

@@ -43,7 +43,7 @@ public class BannerReportBean extends ReportBean<BannerRuleItem> {
 
     //@ReportField(label = "Open In New Window", size = 15, sortOrder = 7)
     public String getOpenInNewWindow() {
-        return StringUtils.defaultString(model.getOpenNewWindow());
+        return String.valueOf(model.getOpenNewWindow() != null ? model.getOpenNewWindow() ? "Yes" : "No" : "No");
     }
 
     @ReportField(label = "Disabled", size = 10, sortOrder = 7)

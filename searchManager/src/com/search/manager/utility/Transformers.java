@@ -37,4 +37,38 @@ public class Transformers {
             return rule;
         }
     };
+
+    public static final Function<BannerRuleItem, BannerItemXml> bannerItemRuleToXml = new Function<BannerRuleItem, BannerItemXml>() {
+        public BannerItemXml apply(BannerRuleItem rule) {
+            BannerItemXml xml = null;
+
+            if (rule != null) {
+                xml = new BannerItemXml();
+                xml.setMemberId(rule.getMemberId());
+                xml.setStartDate(rule.getStartDate());
+                xml.setEndDate(rule.getEndDate());
+                xml.setImageAlt(rule.getImageAlt());
+                xml.setLinkPath(rule.getLinkPath());
+                xml.setOpenNewWindow(rule.getOpenNewWindow());
+                xml.setDescription(rule.getDescription());
+                xml.setDisabled(rule.getDisabled());
+                xml.setPriority(rule.getPriority());
+
+                if (rule.getImagePath() != null) {
+                    xml.setImagePathId(rule.getImagePath().getId());
+                    xml.setImageAlias(rule.getImagePath().getAlias());
+                    xml.setImagePath(rule.getImagePath().getPath());
+                    xml.setImagePathType(rule.getImagePath().getPathType() != null ? rule.getImagePath().getPathType()
+                            .getDisplayText() : "");
+                }
+
+                xml.setCreatedBy(rule.getCreatedBy());
+                xml.setCreatedDate(rule.getCreatedDate());
+                xml.setLastModifiedBy(rule.getLastModifiedBy());
+                xml.setLastModifiedDate(rule.getLastModifiedDate());
+            }
+
+            return xml;
+        }
+    };
 }

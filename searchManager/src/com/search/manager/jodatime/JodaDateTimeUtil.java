@@ -170,7 +170,7 @@ public class JodaDateTimeUtil {
 
 				return formatter.print(period);
 			}else if(startDateTime.toDateMidnight().isEqual(DateTime.now().toDateMidnight())){
-				return "Today";
+				return "Ends Today";
 			}
 		}
 

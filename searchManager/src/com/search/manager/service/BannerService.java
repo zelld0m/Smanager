@@ -290,7 +290,8 @@ public class BannerService {
 		String imageAlt = params.get("imageAlt");
 		String linkPath = params.get("linkPath");
 		String description = params.get("description");
-		boolean disable = BooleanUtils.toBoolean(params.get("disable")) ;
+		Boolean disable = BooleanUtils.toBooleanObject(params.get("disable"));
+		Boolean openNewWindow = BooleanUtils.toBooleanObject(params.get("openNewWindow"));
 		
 		if(StringUtils.isNotBlank(ruleId) && StringUtils.isNotBlank(memberId) && StringUtils.isNotBlank(storeId) ){
 			BannerRule rule = new BannerRule();
@@ -314,6 +315,7 @@ public class BannerService {
 			ruleItem.setLinkPath(linkPath);
 			ruleItem.setDescription(description);
 			ruleItem.setDisabled(disable);
+			ruleItem.setOpenNewWindow(openNewWindow);
 			ruleItem.setLastModifiedBy(username);
 			
 			ImagePath iPath =  new ImagePath();

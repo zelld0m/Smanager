@@ -6,8 +6,6 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
-import com.search.manager.model.BannerRuleItem;
-
 @XmlRootElement(name = "item")
 @DataTransferObject(converter = BeanConverter.class)
 public class BannerItemXml extends RuleItemXml {
@@ -19,7 +17,7 @@ public class BannerItemXml extends RuleItemXml {
     private DateTime endDate;
     private String imageAlt;
     private String linkPath;
-    private String openNewWindow;
+    private Boolean openNewWindow;
     private String description;
     private Boolean disabled;
     private String imagePathId;
@@ -28,31 +26,6 @@ public class BannerItemXml extends RuleItemXml {
 
     public BannerItemXml() {
         super();
-    }
-
-    public BannerItemXml(BannerRuleItem item) {
-        super();
-        setMemberId(item.getMemberId());
-        setStartDate(item.getStartDate());
-        setEndDate(item.getEndDate());
-        setImageAlt(item.getImageAlt());
-        setLinkPath(item.getLinkPath());
-        setOpenNewWindow(item.getOpenNewWindow());
-        setDescription(item.getDescription());
-        setDisabled(item.getDisabled());
-        setPriority(item.getPriority());
-
-        if (item.getImagePath() != null) {
-            setImagePathId(item.getImagePath().getId());
-            setImageAlias(item.getImagePath().getAlias());
-            setImagePath(item.getImagePath().getPath());
-            setImagePathType(item.getImagePath().getPathType() != null ? item.getImagePath().getPathType().getDisplayText() : "");
-        }
-
-        setCreatedBy(item.getCreatedBy());
-        setCreatedDate(item.getCreatedDate());
-        setLastModifiedBy(item.getLastModifiedBy());
-        setLastModifiedDate(item.getLastModifiedDate());
     }
 
     public int getPriority() {
@@ -95,15 +68,15 @@ public class BannerItemXml extends RuleItemXml {
         this.linkPath = linkPath;
     }
 
-    public String getOpenNewWindow() {
-        return openNewWindow;
-    }
+    public Boolean getOpenNewWindow() {
+		return openNewWindow;
+	}
 
-    public void setOpenNewWindow(String openNewWindow) {
-        this.openNewWindow = openNewWindow;
-    }
+	public void setOpenNewWindow(Boolean openNewWindow) {
+		this.openNewWindow = openNewWindow;
+	}
 
-    public String getDescription() {
+	public String getDescription() {
         return description;
     }
 
