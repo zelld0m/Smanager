@@ -1105,7 +1105,7 @@ public class SearchServlet extends HttpServlet {
 				try {
 					bannerList = getActiveBannerRuleItems(new Store(storeId), keyword, fromSearchGui);
 					if (bannerList != null && bannerList.size() > 0) {
-						activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_BANNER, keyword, keyword, !disableBanner)));
+						activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_BANNER, bannerList.get(0).getRule().getRuleId(), keyword, !disableBanner)));
 						if(!disableBanner) {	
 							solrHelper.setBannerRuleItems(bannerList);
 						}
