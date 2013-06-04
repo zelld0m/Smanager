@@ -5,10 +5,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -22,8 +20,6 @@ import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -32,12 +28,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
-import com.search.manager.report.model.xml.RuleFileXml;
-import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
-import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
-import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
 
 @Repository("spellRuleDAO")
@@ -58,6 +49,12 @@ public class SpellRuleDAO {
         updateSpellRuleProcedure = new UpdateSpellRuleProcedure(jdbcTemplate);
         deleteSpellRuleProcedure = new DeleteSpellRuleProcedure(jdbcTemplate);
         getSpellRuleForSearchTermProcedure = new GetSpellRuleForSearchTermProcedure(jdbcTemplate);
+
+        getSpellRuleVersionProcedure = new GetSpellRuleVersionProcedure(jdbcTemplate);
+        addSpellRuleVersionProcedure = new AddSpellRuleVersionProcedure(jdbcTemplate);
+        deleteSpellRuleVersionProcedure = new DeleteSpellRuleVersionProcedure(jdbcTemplate);
+        restoreSpellRuleVersionProcedure = new RestoreSpellRuleVersionProcedure(jdbcTemplate);
+        publishSpellRuleProcedure = new PublishSpellRuleProcedure(jdbcTemplate);
     }
 
     public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException {
@@ -212,115 +209,24 @@ public class SpellRuleDAO {
     }
 
     public Integer getMaxSuggest(String store) {
-        return Integer.parseInt(StringUtils.defaultIfBlank(ConfigManager.getInstance()
-                .getStoreSetting(store, "maxSpellSuggestions"), "3"));
+        return Integer.parseInt(StringUtils.defaultIfBlank(
+                ConfigManager.getInstance().getStoreSetting(store, "maxSpellSuggestions"), "3"));
     }
 
     @Audit(entity = Entity.spell, operation = Operation.updateSetting)
     public boolean setMaxSuggest(String store, Integer maxSuggest) {
-        return ConfigManager.getInstance().setStoreSetting(store, "maxSpellSuggestions",
-                String.valueOf(maxSuggest));
+        return ConfigManager.getInstance().setStoreSetting(store, "maxSpellSuggestions", String.valueOf(maxSuggest));
     }
 
     @Transactional
-    public boolean restoreSpellRules(String store, List<SpellRule> rules, int maxSuggest) throws DaoException {
+    public boolean restoreSpellRules(String store, int version) throws DaoException {
         try {
-            final Set<String> ruleIds = new HashSet<String>();
-            String username = UtilityService.getUsername();
+            Map<String, Object> params = new HashMap<String, Object>();
 
-            List<SpellRule> currentRules = getSpellRules(store, null).getList();
-            List<String> currentRuleIds = Lists.transform(currentRules, new Function<SpellRule, String>() {
-                public String apply(SpellRule arg) {
-                    ruleIds.add(arg.getRuleId());
-                    return arg.getRuleId();
-                }
-            });
-            List<String> versionRuleIds = Lists.transform(rules, new Function<SpellRule, String>() {
-                public String apply(SpellRule arg) {
-                    ruleIds.add(arg.getRuleId());
-                    return arg.getRuleId();
-                }
-            });
+            params.put(DAOConstants.PARAM_STORE_ID, store);
+            params.put(DAOConstants.PARAM_VERSION_NO, version);
 
-            List<RuleXml> ruleXmls = daoService.getPublishedRuleVersions(store, "didyoumean", "spell_rule");
-            List<SpellRule> publishedRules = Collections.emptyList();
-            List<String> publishedRuleIds = Collections.emptyList();
-
-            if (ruleXmls != null && ruleXmls.size() > 0) {
-                SpellRules spellRules = (SpellRules) RuleXmlUtil.loadVersion((RuleFileXml) ruleXmls.get(0));
-
-                publishedRules = Lists.transform(spellRules.getSpellRule(), SpellRuleXml.transformer);
-                publishedRuleIds = Lists.transform(publishedRules, new Function<SpellRule, String>() {
-                    public String apply(SpellRule arg) {
-                        ruleIds.add(arg.getRuleId());
-                        return arg.getRuleId();
-                    }
-                });
-            }
-
-            ruleIds.addAll(currentRuleIds);
-            ruleIds.addAll(versionRuleIds);
-            ruleIds.addAll(publishedRuleIds);
-
-            for (String ruleId : ruleIds) {
-                int idx;
-                SpellRule published = (idx = publishedRuleIds.indexOf(ruleId)) >= 0 ? publishedRules.get(idx) : null;
-                SpellRule version = (idx = versionRuleIds.indexOf(ruleId)) >= 0 ? rules.get(idx) : null;
-                SpellRule current = (idx = currentRuleIds.indexOf(ruleId)) >= 0 ? currentRules.get(idx) : null;
-
-                Map<String, Object> params = new HashMap<String, Object>();
-                DBAction action = DBAction.getAction(published, version, current);
-
-                params.put(DAOConstants.PARAM_STORE_ID, store);
-
-                switch (action) {
-                    case INSERT_N:
-                        params.put(DAOConstants.PARAM_RULE_ID, version.getRuleId());
-                        params.put(DAOConstants.PARAM_SEARCH_TERM, version.toTabbedSearchTerm());
-                        params.put(DAOConstants.PARAM_SUGGEST, version.toTabbedSuggestions());
-                        params.put(DAOConstants.PARAM_STATUS, action.getStatus());
-                        params.put(DAOConstants.PARAM_CREATED_BY, username);
-
-                        addSpellRuleProcedure.execute(params);
-                        break;
-                    case UPDATE_N:
-                    case UPDATE_M:
-                    case UPDATE_P:
-                        params.put(DAOConstants.PARAM_RULE_ID, version.getRuleId());
-                        params.put(DAOConstants.PARAM_SEARCH_TERM, version.toTabbedSearchTerm());
-                        params.put(DAOConstants.PARAM_SUGGEST, version.toTabbedSuggestions());
-                        params.put(DAOConstants.PARAM_STATUS, action.getStatus());
-                        params.put(DAOConstants.PARAM_MODIFIED_BY, username);
-                        updateSpellRuleProcedure.execute(params);
-                        break;
-                    case UPDATE_D:
-                        params.put(DAOConstants.PARAM_RULE_ID, published.getRuleId());
-                        params.put(DAOConstants.PARAM_SEARCH_TERM, published.toTabbedSearchTerm());
-                        params.put(DAOConstants.PARAM_SUGGEST, published.toTabbedSuggestions());
-                        params.put(DAOConstants.PARAM_STATUS, action.getStatus());
-                        params.put(DAOConstants.PARAM_MODIFIED_BY, username);
-                        updateSpellRuleProcedure.execute(params);
-                        break;
-                    case DELETE_P:
-                        params.put(DAOConstants.PARAM_RULE_ID, current.getRuleId());
-                        params.put(DAOConstants.PARAM_PHYSICAL, 1);
-                        params.put(DAOConstants.PARAM_MODIFIED_BY, username);
-                        deleteSpellRuleProcedure.execute(params);
-                        break;
-                    case DELETE_L:
-                        params.put(DAOConstants.PARAM_RULE_ID, current.getRuleId());
-                        params.put(DAOConstants.PARAM_PHYSICAL, 0);
-                        params.put(DAOConstants.PARAM_MODIFIED_BY, username);
-                        deleteSpellRuleProcedure.execute(params);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            setMaxSuggest(store, maxSuggest);
-
-            return true;
+            return DAOUtils.getUpdateCount(restoreSpellRuleVersionProcedure.execute(params)) > 0;
         } catch (Exception e) {
             logger.error("Error occurred on restoreSpellRules.", e);
             throw new DaoException("Error occurred on restoreSpellRules.", e);
@@ -329,35 +235,14 @@ public class SpellRuleDAO {
 
     @Transactional
     public boolean publishSpellRules(String store) throws DaoException {
-        String modifiedStatus = "new\tmodified\tdeleted";
-        String username = UtilityService.getUsername();
-
-        List<SpellRule> rules = getSpellRules(store, modifiedStatus).getList();
-        Map<String, Object> params = new HashMap<String, Object>();
-
-        for (SpellRule sr : rules) {
-            params.clear();
-
-            if ("deleted".equalsIgnoreCase(sr.getStatus())) {
-                params.put(DAOConstants.PARAM_RULE_ID, sr.getRuleId());
-                params.put(DAOConstants.PARAM_STORE_ID, store);
-                params.put(DAOConstants.PARAM_PHYSICAL, 1);
-                params.put(DAOConstants.PARAM_MODIFIED_BY, "");
-
-                deleteSpellRuleProcedure.execute(params);
-            } else {
-                params.put(DAOConstants.PARAM_RULE_ID, sr.getRuleId());
-                params.put(DAOConstants.PARAM_STORE_ID, store);
-                params.put(DAOConstants.PARAM_SEARCH_TERM, sr.toTabbedSearchTerm());
-                params.put(DAOConstants.PARAM_SUGGEST, sr.toTabbedSuggestions());
-                params.put(DAOConstants.PARAM_STATUS, "published");
-                params.put(DAOConstants.PARAM_MODIFIED_BY, username);
-
-                updateSpellRuleProcedure.execute(params);
-            }
+        try {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put(DAOConstants.PARAM_STORE_ID, store);
+            return DAOUtils.getUpdateCount(publishSpellRuleProcedure.execute(params)) > 0;
+        } catch (Exception e) {
+            logger.error("Error in publishing spell rules.", e);
+            throw new DaoException("Error in publishing spell rules.", e);
         }
-
-        return true;
     }
 
     /*
@@ -370,6 +255,13 @@ public class SpellRuleDAO {
     private UpdateSpellRuleProcedure updateSpellRuleProcedure;
     private DeleteSpellRuleProcedure deleteSpellRuleProcedure;
     private GetSpellRuleForSearchTermProcedure getSpellRuleForSearchTermProcedure;
+
+    // Versioning related procedures
+    private GetSpellRuleVersionProcedure getSpellRuleVersionProcedure;
+    private AddSpellRuleVersionProcedure addSpellRuleVersionProcedure;
+    private DeleteSpellRuleVersionProcedure deleteSpellRuleVersionProcedure;
+    private RestoreSpellRuleVersionProcedure restoreSpellRuleVersionProcedure;
+    private PublishSpellRuleProcedure publishSpellRuleProcedure;
 
     /*
      * //////////////////////////////////////////////////////////////
@@ -396,17 +288,7 @@ public class SpellRuleDAO {
         protected void declareSqlReturnResultSetParameters() {
             declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<SpellRule>() {
                 public SpellRule mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    SpellRule rule = new SpellRule(rs.getString(DAOConstants.COLUMN_RULE_ID),
-                            rs.getString(DAOConstants.COLUMN_STORE_ID), rs.getString(DAOConstants.COLUMN_STATUS), null,
-                            null, rs.getString(DAOConstants.COLUMN_CREATED_BY),
-                            rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-                            rs.getDate(DAOConstants.COLUMN_CREATED_STAMP),
-                            rs.getDate(DAOConstants.COLUMN_LAST_UPDATED_STAMP));
-
-                    rule.fromTabbedSearchTerms(rs.getString(DAOConstants.COLUMN_SEARCH_TERM));
-                    rule.fromTabbedSuggestions(rs.getString(DAOConstants.COLUMN_SUGGEST));
-
-                    return rule;
+                    return transform(rs);
                 }
             }));
         }
@@ -473,57 +355,138 @@ public class SpellRuleDAO {
         protected void declareSqlReturnResultSetParameters() {
             declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<SpellRule>() {
                 public SpellRule mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    SpellRule rule = new SpellRule(rs.getString(DAOConstants.COLUMN_RULE_ID),
-                            rs.getString(DAOConstants.COLUMN_STORE_ID), rs.getString(DAOConstants.COLUMN_STATUS), null,
-                            null, rs.getString(DAOConstants.COLUMN_CREATED_BY),
-                            rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-                            rs.getDate(DAOConstants.COLUMN_CREATED_STAMP),
-                            rs.getDate(DAOConstants.COLUMN_LAST_UPDATED_STAMP));
-
-                    rule.fromTabbedSearchTerms(rs.getString(DAOConstants.COLUMN_SEARCH_TERM));
-                    rule.fromTabbedSuggestions(rs.getString(DAOConstants.COLUMN_SUGGEST));
-
-                    return rule;
+                    return transform(rs);
                 }
             }));
         }
     }
 
-    private enum DBAction {
-        INSERT_N, UPDATE_N, UPDATE_M, UPDATE_P, UPDATE_D, DELETE_P, DELETE_L, NONE;
-
-        private String getStatus() {
-            switch (this) {
-                case INSERT_N:
-                case UPDATE_N:
-                    return "new";
-                case UPDATE_M:
-                    return "modified";
-                case UPDATE_P:
-                    return "published";
-                case UPDATE_D:
-                    return "deleted";
-                default:
-                    return null;
-            }
+    private class GetSpellRuleVersionProcedure extends GetStoredProcedure {
+        public GetSpellRuleVersionProcedure(JdbcTemplate jdbcTemplate) {
+            super(jdbcTemplate, DAOConstants.SP_GET_SPELL_RULE_VERSION);
         }
 
-        private static DBAction getAction(SpellRule published, SpellRule version, SpellRule current) {
-            if (published == null) {
-                if (version != null && current == null) {
-                    return INSERT_N;
-                } else if (version == null && current != null) {
-                    return DELETE_P;
-                } else if (version != null && !version.sameTermsWith(current)) {
-                    return UPDATE_N;
+        @Override
+        protected void declareParameters() {
+            declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_VERSION_NO, Types.INTEGER));
+        }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<SpellRule>() {
+                public SpellRule mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return transform(rs);
                 }
-            } else if (version != null && (current == null || !version.sameTermsWith(current))) {
-                return version.sameTermsWith(published) ? UPDATE_P : UPDATE_M;
-            } else if (version == null && current != null) {
-                return current.sameTermsWith(published) ? DELETE_L : UPDATE_D;
+            }));
+        }
+    }
+
+    private class AddSpellRuleVersionProcedure extends CUDStoredProcedure {
+        public AddSpellRuleVersionProcedure(JdbcTemplate jdbcTemplate) {
+            super(jdbcTemplate, DAOConstants.SP_ADD_SPELL_RULE_VERSION);
+        }
+
+        @Override
+        protected void declareParameters() {
+            declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_VERSION_NO, Types.INTEGER));
+        }
+    }
+
+    private class DeleteSpellRuleVersionProcedure extends CUDStoredProcedure {
+        public DeleteSpellRuleVersionProcedure(JdbcTemplate jdbcTemplate) {
+            super(jdbcTemplate, DAOConstants.SP_DELETE_SPELL_RULE_VERSION);
+        }
+
+        @Override
+        protected void declareParameters() {
+            declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_VERSION_NO, Types.INTEGER));
+        }
+    }
+
+    private class RestoreSpellRuleVersionProcedure extends CUDStoredProcedure {
+        public RestoreSpellRuleVersionProcedure(JdbcTemplate jdbcTemplate) {
+            super(jdbcTemplate, DAOConstants.SP_RESTORE_SPELL_RULE_VERSION);
+        }
+
+        @Override
+        protected void declareParameters() {
+            declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_VERSION_NO, Types.INTEGER));
+        }
+    }
+
+    private class PublishSpellRuleProcedure extends CUDStoredProcedure {
+        public PublishSpellRuleProcedure(JdbcTemplate jdbcTemplate) {
+            super(jdbcTemplate, DAOConstants.SP_PUBLISH_SPELL_RULE);
+        }
+
+        @Override
+        protected void declareParameters() {
+            declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+        }
+    }
+
+    private static final SpellRule transform(ResultSet rs) throws SQLException {
+        SpellRule rule = new SpellRule(rs.getString(DAOConstants.COLUMN_RULE_ID),
+                rs.getString(DAOConstants.COLUMN_STORE_ID), rs.getString(DAOConstants.COLUMN_STATUS), null, null,
+                rs.getString(DAOConstants.COLUMN_CREATED_BY), rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
+                rs.getDate(DAOConstants.COLUMN_CREATED_STAMP), rs.getDate(DAOConstants.COLUMN_LAST_UPDATED_STAMP));
+
+        rule.fromTabbedSearchTerms(rs.getString(DAOConstants.COLUMN_SEARCH_TERM));
+        rule.fromTabbedSuggestions(rs.getString(DAOConstants.COLUMN_SUGGEST));
+
+        return rule;
+    }
+
+    public boolean addSpellRuleVersion(String store, int versionNo) throws DaoException {
+        try {
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            params.put(DAOConstants.PARAM_STORE_ID, store);
+            params.put(DAOConstants.PARAM_VERSION_NO, versionNo);
+
+            return DAOUtils.getUpdateCount(addSpellRuleVersionProcedure.execute(params)) > 0;
+        } catch (Exception e) {
+            logger.error("Error occurred in addSpellRuleVersion.", e);
+            throw new DaoException("Error occurred in addSpellRuleVersion.", e);
+        }
+    }
+
+    public boolean deleteSpellRuleVersions(String store, int versionNo) throws DaoException {
+        try {
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            params.put(DAOConstants.PARAM_STORE_ID, store);
+            params.put(DAOConstants.PARAM_VERSION_NO, versionNo);
+
+            return DAOUtils.getUpdateCount(deleteSpellRuleVersionProcedure.execute(params)) > 0;
+        } catch (Exception e) {
+            logger.error("Error occurred in deleteSpellRuleVersions.", e);
+            throw new DaoException("Error occurred in deleteSpellRuleVersions.", e);
+        }
+    }
+
+    public List<SpellRule> getSpellRuleVersion(String store, int versionNo) throws DaoException {
+        try {
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            params.put(DAOConstants.PARAM_STORE_ID, store);
+            params.put(DAOConstants.PARAM_VERSION_NO, versionNo);
+
+            RecordSet<SpellRule> records = DAOUtils.getRecordSet(getSpellRuleVersionProcedure.execute(params));
+            List<SpellRule> spellRules = Collections.emptyList();
+
+            if (records != null) {
+                spellRules = records.getList();
             }
 
-            return NONE;
+            return spellRules;
+        } catch (Exception e) {
+            logger.error("Error occurred in getSpellRuleVersion.", e);
+            throw new DaoException("Error occurred in getSpellRuleVersion.", e);
         }
     }
 }

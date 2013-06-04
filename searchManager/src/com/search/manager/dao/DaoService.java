@@ -291,6 +291,9 @@ public interface DaoService extends SearchDaoService {
 	public int updateSpellRules(List<SpellRule> rules, List<SpellRule> deleted) throws DaoException;
 
 	public List<SpellRule> getSpellRules(String store, String status) throws DaoException;
-    public boolean restoreSpellRules(String store, List<SpellRule> transform, int maxSuggest) throws DaoException;
+    public boolean restoreSpellRules(String store, int version) throws DaoException;
     public boolean publishSpellRules(String store) throws DaoException;
+    public boolean addSpellRuleVersion(String store, int versionNo) throws DaoException;
+    public boolean deleteSpellRuleVersion(String store, int versionNo) throws DaoException;
+    public List<SpellRule> getSpellRuleVersion(String store, int versionNo) throws DaoException;
 }

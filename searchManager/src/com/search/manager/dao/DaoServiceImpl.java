@@ -1465,7 +1465,7 @@ public class DaoServiceImpl implements DaoService {
 		else if (xml instanceof RankingRuleXml) {
 			return rankingRuleVersionDAO;
 		}
-		else if (xml instanceof SpellRules) {
+		else if (xml instanceof SpellRules || xml instanceof RuleFileXml && RuleEntity.find(((RuleFileXml) xml).getEntityType()) == RuleEntity.SPELL) {
 		    return spellRuleVersionDAO;
 		}
 		return null;
@@ -1537,7 +1537,9 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
 	    if (xml instanceof RuleFileXml) {
-	        xml = RuleXmlUtil.loadVersion((RuleFileXml) xml);
+	        if (!((RuleFileXml) xml).isStoredInDB() && ((RuleFileXml) xml).getContentFileName() != null) {
+	            xml = RuleXmlUtil.loadVersion((RuleFileXml) xml);
+	        }
 	    }
 		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
 		if (dao != null) {
@@ -1881,8 +1883,8 @@ public class DaoServiceImpl implements DaoService {
     }
 
     @Override
-    public boolean restoreSpellRules(String store, List<SpellRule> rules, int maxSuggest) throws DaoException {
-        return spellRuleDAO.restoreSpellRules(store, rules, maxSuggest);
+    public boolean restoreSpellRules(String store, int version) throws DaoException {
+        return spellRuleDAO.restoreSpellRules(store, version);
     }
 
     @Override
@@ -1908,5 +1910,20 @@ public class DaoServiceImpl implements DaoService {
     @Override
     public void setMaxSuggest(String store, Integer maxSuggest) {
         spellRuleDAO.setMaxSuggest(store, maxSuggest);
+    }
+
+    @Override
+    public boolean addSpellRuleVersion(String store, int versionNo) throws DaoException {
+        return spellRuleDAO.addSpellRuleVersion(store, versionNo);
+    }
+
+    @Override
+    public boolean deleteSpellRuleVersion(String store, int versionNo) throws DaoException {
+        return spellRuleDAO.deleteSpellRuleVersions(store, versionNo);
+    }
+
+    @Override
+    public List<SpellRule> getSpellRuleVersion(String store, int versionNo) throws DaoException {
+        return spellRuleDAO.getSpellRuleVersion(store, versionNo);
     }
 }

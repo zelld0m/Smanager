@@ -149,12 +149,15 @@ public class RuleVersionUtil {
 
         if (latest instanceof RuleFileXml) {
             RuleFileXml latestVersion = (RuleFileXml) latest;
-            String contentFileName =  RuleXmlUtil.getFilenameByDir(
-                    RuleXmlUtil.getRuleFileDirectory(location, store, ruleEntity), latestVersion.getContentFileName());
-            latestVersion.setPath(contentFileName);
-
-            if (!RuleXmlUtil.saveRuleXml(latestVersion.getContent(), contentFileName, nextVersion)) {
-                return false;
+            
+            if (latestVersion.getContentFileName() != null) {
+                String contentFileName =  RuleXmlUtil.getFilenameByDir(
+                        RuleXmlUtil.getRuleFileDirectory(location, store, ruleEntity), latestVersion.getContentFileName());
+                latestVersion.setPath(contentFileName);
+    
+                if (!RuleXmlUtil.saveRuleXml(latestVersion.getContent(), contentFileName, nextVersion)) {
+                    return false;
+                }
             }
         }
 

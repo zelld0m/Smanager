@@ -1,6 +1,8 @@
 package com.search.manager.report.model.xml;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -15,10 +17,14 @@ public class RuleFileXml extends RuleXml {
     private String path;
 
     private String entityType;
-    
+
     private String contentFileName;
-    
+
     private RuleXml content;
+
+    private boolean storedInDB;
+
+    private Map<String, String> props = new HashMap<String, String>();
 
     public RuleFileXml() {
     }
@@ -75,5 +81,21 @@ public class RuleFileXml extends RuleXml {
 
     public void setContentFileName(String contentFileName) {
         this.contentFileName = contentFileName;
+    }
+
+    public boolean isStoredInDB() {
+        return storedInDB;
+    }
+
+    public void setStoredInDB(boolean storedInDB) {
+        this.storedInDB = storedInDB;
+    }
+
+    public Map<String, String> getProps() {
+        return props;
+    }
+
+    public void setProps(Map<String, String> props) {
+        this.props = props;
     }
 }

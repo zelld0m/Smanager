@@ -1,5 +1,6 @@
 package com.search.manager.dao.file;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.http.impl.cookie.DateUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -90,6 +91,11 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersionListXml);
 	}
 	
+	protected boolean deleteDatabaseVersion(String store, String ruleId, int versionNo) {
+	    // Do nothing. Let subclasses implement this method but do not require them.
+	    return false;
+	}
+	
 	public boolean restoreRuleVersion(RuleXml xml){
 		return RuleXmlUtil.restoreRule(xml);
 	};
@@ -119,12 +125,29 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			List<RuleXml> versions = (List<RuleXml>) prefsJaxb.getVersions();
 
 			if (physical) {
+			    final RuleXml[] toBeDeleted = new RuleXml[] { null };
+
 	            CollectionUtils.filter(versions, new Predicate() {
 	                @Override
 	                public boolean evaluate(Object o) {
+	                    if (((T) o).getVersion() == version) {
+	                        toBeDeleted[0] = (RuleXml) o;
+	                    } 
 	                    return ((T) o).getVersion() != version;
 	                }
 	            });
+	            
+	            if (toBeDeleted[0] instanceof RuleFileXml) {
+	                RuleFileXml xml = (RuleFileXml) toBeDeleted[0];
+
+	                if (xml.isStoredInDB()) {
+                        deleteDatabaseVersion(store, ruleId, (int) version);
+	                }
+
+	                if (xml.getContentFileName() != null) {
+	                    FileUtils.deleteQuietly(new File(xml.getContentFileName()));
+	                }
+	            }
 			} else {
     			CollectionUtils.forAllDo(versions, new Closure(){
     				public void execute(Object o) {

@@ -18,6 +18,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -872,31 +873,14 @@ public class RuleXmlUtil{
 		return false;
 	}
 
-    private static boolean restoreSpellRule(String path, RuleXml xml, boolean createPreRestore) {
-        SpellRules rules = (SpellRules) xml;
-        String store = rules.getStore();
+    private static boolean restoreSpellRule(String path, RuleFileXml xml) {
+        String store = xml.getStore();
+        long version = xml.getVersion();
 
         try {
-            List<SpellRule> ruleList = daoService.getSpellRules(store, null);
-            Integer maxSuggest = daoService.getMaxSuggest(store);
-            SpellRules crules = new SpellRules();
-            
-            crules.setRuleId(rules.getRuleId());
-            crules.setSpellRule(Lists.transform(ruleList, SpellRule.transformer));
-            crules.setMaxSuggest(maxSuggest);
-
-            if (ruleList != null) {
-                // create backup of current spell rules.
-                if (createPreRestore) {
-                    if (!RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, rules.getRuleId(), crules, path)) {
-                        logger.error("Failed to create pre-import rule");
-                        return false;
-                    }
-                }
-            }
-
             // replace current spell rules with rules to restore
-            if (daoService.restoreSpellRules(rules.getStore(), Lists.transform(rules.getSpellRule(), SpellRuleXml.transformer), rules.getMaxSuggest())) {
+            if (!daoService.restoreSpellRules(store, (int) version)) {
+                daoService.setMaxSuggest(store, Integer.parseInt(StringUtils.defaultIfBlank(xml.getProps().get("maxSuggest"), "3")));
                 logger.info("Rollback spell rules succeeded");
                 return true;
             } else {
@@ -943,7 +927,24 @@ public class RuleXmlUtil{
     }
 
     public static RuleXml loadVersion(RuleFileXml xml) {
-        return xmlFileToRuleXml(xml.getPath());
+        if (xml.getContentFileName() != null) {
+            return xmlFileToRuleXml(xml.getPath());
+        } else if (xml.isStoredInDB()) {
+            switch (RuleEntity.find(xml.getEntityType())) {
+                case SPELL: {
+                    try {
+                        return new SpellRules(xml.getStore(), xml.getVersion(), xml.getName(),
+                                xml.getNotes(), xml.getCreatedBy(), xml.getCreatedDate(), xml.getRuleId(), 3,
+                                Lists.transform(daoService.getSpellRuleVersion(xml.getStore(), (int) xml.getVersion()),
+                                        SpellRule.transformer));
+                    } catch (DaoException e) {
+                        return null;
+                    }
+                }
+            }
+        }
+        
+        return null;
     }
 
 	private static boolean restoreRule(RuleXml xml, boolean isVersion, boolean createPreRestore) {
@@ -953,6 +954,7 @@ public class RuleXmlUtil{
 		if(xml  == null){
 			return isRestored; 
 		} else if (xml instanceof RuleFileXml) {
+		    if (!((RuleFileXml) xml).isStoredInDB() && ((RuleFileXml) xml).getContentFileName() != null)
 		    xml = loadVersion((RuleFileXml) xml);
 		}
 
@@ -968,18 +970,12 @@ public class RuleXmlUtil{
 			isRestored = RuleXmlUtil.restoreQueryCleaning(path, xml, createPreRestore);
 		}else if(xml instanceof RankingRuleXml){
 			isRestored = RuleXmlUtil.restoreRankingRule(path, xml, createPreRestore);
-		}else if(xml instanceof SpellRules) {
-			if (!isVersion) {
-				Date date = new Date();
-				String username = xml.getCreatedBy();
-				SpellRules spellRules = (SpellRules)xml;
-				for (SpellRuleXml rule: spellRules.getSpellRule()) {
-					rule.setCreatedBy(username);
-					rule.setCreatedDate(date);
-					rule.setRuleId(DAOUtils.generateUniqueId());
-				}
-			}
-		    isRestored = RuleXmlUtil.restoreSpellRule(path, xml, createPreRestore);
+		}else if(xml instanceof RuleFileXml && ((RuleFileXml) xml).isStoredInDB()) {
+		    switch (RuleEntity.find(((RuleFileXml) xml).getEntityType())) {
+		        case SPELL:
+        		    isRestored = RuleXmlUtil.restoreSpellRule(path, (RuleFileXml) xml);
+        		    break;
+		    }
 		}
 		return isRestored;
 	}

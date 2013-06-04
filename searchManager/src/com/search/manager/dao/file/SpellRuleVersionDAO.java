@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
@@ -38,24 +39,34 @@ public class SpellRuleVersionDAO extends RuleVersionDAO<SpellRules> {
         if (ruleVersionListXml != null) {
             try {
                 List<RuleXml> xmlList = ((RuleVersionListXml<RuleXml>) ruleVersionListXml).getVersions();
-                List<SpellRule> spellRuleList = daoService.getSpellRules(store, null);
+                List<SpellRule> spellRuleList = daoService.getSpellRule(
+                        new SearchCriteria<SpellRule>(new SpellRule(null, store), 1, 1)).getList();
                 long nextVersion = ruleVersionListXml.getNextVersion();
                 Date now = new Date();
 
-                if (spellRuleList != null) {
-                    // create version for current rule
-                    SpellRules version = new SpellRules(store, nextVersion, name, notes, username, now, ruleId,
-                            daoService.getMaxSuggest(store), Lists.transform(spellRuleList, SpellRule.transformer));
-                    RuleFileXml fileXml = new RuleFileXml(store, nextVersion, name, notes, username, now, ruleId,
-                            RuleEntity.SPELL, version);
-
+                if (spellRuleList != null && spellRuleList.size() > 0) {
                     if (isVersion) {
-                        fileXml.setContentFileName(ruleId + "-" + nextVersion);
-                    } else {
-                        fileXml.setContentFileName(ruleId + DateUtils.formatDate(new Date(), "_yyyyMMdd_hhmmss"));
-                    }
+                        RuleFileXml fileXml = new RuleFileXml(store, nextVersion, name, notes, username, now, ruleId,
+                                RuleEntity.SPELL, null);
 
-                    xmlList.add(fileXml);
+                        daoService.addSpellRuleVersion(store, (int) nextVersion);
+                        fileXml.getProps().put("maxSuggest", String.valueOf(daoService.getMaxSuggest(store)));
+                        fileXml.setStoredInDB(true);
+                        xmlList.add(fileXml);
+                    } else {
+                        daoService.publishSpellRules(store);
+                        SpellRules version = new SpellRules(store, nextVersion, name, notes, username, now, ruleId,
+                                daoService.getMaxSuggest(store), Lists.transform(
+                                        daoService.getSpellRuleVersion(store, 0), SpellRule.transformer));
+
+                        RuleFileXml fileXml = new RuleFileXml(store, nextVersion, name, notes, username, now, ruleId,
+                                RuleEntity.SPELL, version);
+
+                        fileXml.getProps().put("maxSuggest", String.valueOf(daoService.getMaxSuggest(store)));
+                        fileXml.setStoredInDB(true);
+                        fileXml.setContentFileName(ruleId + DateUtils.formatDate(new Date(), "_yyyyMMdd_hhmmss"));
+                        xmlList.add(fileXml);
+                    }
 
                     return true;
                 }
@@ -64,5 +75,15 @@ public class SpellRuleVersionDAO extends RuleVersionDAO<SpellRules> {
             }
         }
         return false;
+    }
+    
+    @Override
+    protected boolean deleteDatabaseVersion(String store, String ruleId, int versionNo) {
+        try {
+            return daoService.deleteSpellRuleVersion(store, versionNo);
+        } catch (DaoException e) {
+            logger.error("Error occured on deleteDatabaseVersion.", e);
+            return false;
+        }
     }
 }

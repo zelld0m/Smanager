@@ -22,6 +22,7 @@ import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -34,8 +35,10 @@ import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SpellRule;
 import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
 import com.search.ws.client.SearchGuiClientService;
@@ -119,8 +122,14 @@ public class DeploymentService {
     private boolean publishSpellRule(String storeId) throws DaoException {
         boolean success = false;
         try {
-            daoService.publishSpellRules(storeId);
+            List<SpellRule> rules = daoService.getSpellRuleVersion(storeId, 0);
+            int maxSuggest = daoService.getMaxSuggest(storeId);
+            Date now = new Date();
 
+            SpellRules spellRules = new SpellRules(storeId, 0, "Did You Mean", "", UtilityService.getUsername(),
+                    now, "spell_rule", maxSuggest, Lists.transform(rules, SpellRule.transformer));
+
+            RuleXmlUtil.ruleXmlToFile(storeId, RuleEntity.SPELL, "spell_rule", spellRules, "/home/solr/utilities/published");
             ConfigManager.getInstance().setPublishedStoreLinguisticSetting(storeId, "maxSpellSuggestions",
                     String.valueOf(daoService.getMaxSuggest(storeId)));
 
