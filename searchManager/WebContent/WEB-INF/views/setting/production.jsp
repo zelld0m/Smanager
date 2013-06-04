@@ -53,6 +53,7 @@
 			<div class="minHeight400 marL3" id="facetSortTab"></div>
 			<div class="minHeight400 marL3" id="queryCleaningTab"></div>
 			<div class="minHeight400 marL3" id="rankingRuleTab"></div>
+			<div class="minHeight400 marL3" id="didYouMeanTab"></div>
 			<div class="minHeight400 marL3" id="bannerTab"></div>
 		</div>
 		<!--  end tabs -->
