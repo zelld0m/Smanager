@@ -324,8 +324,8 @@
 				var $iHolder = $("#ruleItemHolder");
 				var $iPattern = $iHolder.find("#ruleItemPattern").hide();
 
-				if(rs){
-					for(var i=0; i < rs["totalSize"]; i++){
+				if(rs && rs.list && rs.list.length){
+					for(var i=0; i < rs.list.length; i++){
 						var ui = $iPattern.clone();
 						var item = rs["list"][i];
 						ui.prop({
