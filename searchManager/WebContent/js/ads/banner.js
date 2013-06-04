@@ -330,7 +330,7 @@
 						var item = rs["list"][i];
 						ui.prop({
 							id: "ruleItem_" + item["memberId"]
-						}).addClass(i + 1 == rs["totalSize"] ? "last": "").appendTo($iHolder).show();
+						}).addClass(i + 1 == rs.list.length ? "last": "").appendTo($iHolder).show();
 						self.populateRuleItemFields(ui, item);
 					}
 				}
