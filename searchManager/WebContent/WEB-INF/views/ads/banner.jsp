@@ -122,7 +122,11 @@
 						
 						<label for="linkPath">Link Path</label>
 						<input type="text" class="w533px" name="linkPath" id="linkPath" />
-						
+
+                        <div class="clearfix openNewWindowContainer">
+                            <input type="checkbox" name="openNewWindow" id="openNewWindow" />
+                            <label for="openNewWindow" class="fBold">Open In New Window</label>
+                        </div>
 						<!-- div class="ico_check ico fLeft"></div -->
 						
 						<label for="description">Description</label>
@@ -131,9 +135,6 @@
 						<div class="button_group clearfix">
 							<input type="checkbox" name="temporaryDisable" id="temporaryDisable" />
 							<label for="temporaryDisable" class="cRed fBold fLeft lbl_temporaryDisable">Temporary Disable</label>
-							
-							<input type="checkbox" name="openNewWindow" id="openNewWindow" />
-							<label for="openNewWindow" class="fBold">Open In New Window</label>
 						
 							<div class="fRight">
 							<div id="updateBtn" class="btn_update round_btn fLeft">

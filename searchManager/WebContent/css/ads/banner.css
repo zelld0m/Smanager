@@ -200,6 +200,11 @@ border:none;
 .ban_edit .banner_info_more input {
 	height: 26px;
 }
+
+.ban_edit .banner_info_more input#linkPath {
+    margin-bottom: 0;
+}
+
 .ban_edit input, .ban_edit textarea, .ban_edit .input[type="checkbox"], .ban_edit select {
 	border: 1px solid #c6c6c6;
 	outline: none;
@@ -208,6 +213,30 @@ border:none;
 	width: 76px;
 	line-height: 26px;
 }
+
+.ban_edit .banner_info_more .openNewWindowContainer {
+	padding-left: 76px;
+	width: 100%;
+    vertical-align: middle;
+    margin: 0px;
+    padding-bottom: 5px;
+}
+
+.ban_edit .banner_info_more .openNewWindowContainer label {
+    width: 200px;
+    vertical-align: middle;
+    margin-bottom: 0px;
+    float: none;
+}
+
+.ban_edit .banner_info_more .openNewWindowContainer input {
+    margin-bottom: 0px;
+    vertical-align: middle;
+    height: 12px;
+    float: none;
+}
+
+
 .ban_edit .w565px {
 	width: 560px;
 }
