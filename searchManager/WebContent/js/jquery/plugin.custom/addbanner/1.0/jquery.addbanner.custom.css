@@ -22,6 +22,40 @@
 	width: 65px;
 }
 
+.plugin-addbanner input#openNewWindow {
+    float: left;
+    clear: left;
+    margin-left: 100px;
+    vertical-align: middle;
+}
+
+.plugin-addbanner label[for="openNewWindow"] {
+    float: left;
+    width: 200px;
+    clear: right;
+    margin-left: 5px;
+    vertical-align: middle;
+    line-height: 18px;
+    padding-bottom: 5px;
+}
+
+.plugin-addbanner label.note {
+    clear: both;
+    margin-left: 100px;
+    margin-top: 0;
+    padding-top: 0;
+    top: -5px;
+    position: relative;
+}
+
+.plugin-addbanner label[for="temporaryDisable"] {
+    line-height: 18px;
+}
+
+.plugin-addbanner input#temporaryDisable {
+    margin-left: 100px;
+}
+
 .plugin-addbanner .preview_container {
 	width: 100%;
 	display: block;
@@ -36,7 +70,7 @@
 }
 
 .plugin-addbanner #buttonset div {
-	float:left;
+	float:right;
 	margin-left:10px;
 }
 
@@ -91,6 +125,7 @@
 /* buttons start */
 .plugin-addbanner #buttonset {
 	margin-top: 10px;
+    width: 100%;
 }
 
 .plugin-addbanner .round_btn {

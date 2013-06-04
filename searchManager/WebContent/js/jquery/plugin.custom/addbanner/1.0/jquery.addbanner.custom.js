@@ -380,7 +380,7 @@
 			template += '	<label class="txtLabel">Keyword: </label> ';
 			template += '	<textarea id="keyword" class="w565px"></textarea>';
 			template += '	<div class="clearB"></div>';
-			template += '	<label>One keyword per line</label>';
+			template += '	<label class="note">One keyword per line</label>';
 			template += '	<div class="clearB"></div>';
 		}
 
@@ -397,9 +397,9 @@
 				}
 			}
 
+			template += '<input type="checkbox" name="temporaryDisable" id="temporaryDisable" />';
+			template += '<label for="temporaryDisable" class="cRed fBold fLeft lbl_temporaryDisable">Temporary Disable</label>';
 			template += '<div id="buttonset">';
-			template += '	<input type="checkbox" name="temporaryDisable" id="temporaryDisable" />';
-			template += '	<label for="temporaryDisable" class="cRed fBold fLeft lbl_temporaryDisable">Temporary Disable</label>';
 			template += '	<div class="floatR">';
 			template += '		<div id="okButton" class="btn_ok round_btn fLeft buttons">';
 			template += '			<span class="btn_wrap"><a href="javascript:void(0);">' + type + '</a></span>';
