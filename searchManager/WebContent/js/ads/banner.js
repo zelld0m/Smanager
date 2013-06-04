@@ -23,6 +23,8 @@
 				failedUpdateBannerItem: "Failed to delete details of {0}",
 				successDeleteBannerItem: "Successfully deleted {0}",
 				failedDeleteBannerItem: "Failed to delete {0}",
+				successCopyBannerItem: "Successfully copied {0} to {1}",
+				failedCopyBannerItem: "Failed to copy {0}",
 				jumpToPageOfAddedBanner: "The banner is in page {0}. Do you want to refresh page to view the banner?"
 			},
 
@@ -636,8 +638,13 @@
 								var keyList = sr["data"];
 
 								if(keyList && keyList.length > 0){
-									jAlert($.formatText(self.lookupMessages.successCopyBannerItem, base.options.ruleItem["imagePath"]["alias"]), "Banner Rule"); 
+									jAlert($.formatText(self.lookupMessages.successCopyBannerItem, base.options.ruleItem["imagePath"]["alias"], keyList.join(',')), "Banner Rule"); 
+								}else{
+									jAlert($.formatText(self.lookupMessages.failedCopyBannerItem, base.options.ruleItem["imagePath"]["alias"]), "Banner Rule"); 
 								}
+							},
+							preHook:function(){
+								e.data.base.api.hide(); 
 							}
 						});
 					}
