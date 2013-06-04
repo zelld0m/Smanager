@@ -314,7 +314,7 @@
 					$(".ruleItem").find("input, textarea").prop({
 						readonly: true,
 						disabled: true
-					}).end
+					}).end()
 					.find(".startDate, .endDate").datepicker('disable');
 				}
 			},
