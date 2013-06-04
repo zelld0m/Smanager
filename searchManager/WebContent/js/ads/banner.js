@@ -717,7 +717,7 @@
 
 			addRuleItemHandler: function(){
 				var self = this;
-				
+				$("#addBannerBtn").show();
 				$("#addBannerBtn").addbanner({
 					id: 'addbanner',
 					rule: self.selectedRule,
@@ -758,7 +758,7 @@
 							}
 						});
 					}
-				}).show();
+				});
 			},
 
 			beforeShowRuleStatus: function(){

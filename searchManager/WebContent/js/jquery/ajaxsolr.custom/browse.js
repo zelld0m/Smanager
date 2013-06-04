@@ -60,6 +60,11 @@
 			maxRelatedSearch: 3
 		}));
 		
+		Manager.addWidget(new AjaxSolr.AdRotatorWidget({
+			id: 'adRotator',
+			target: '#adRotator'
+		}));
+		
 		Manager.addWidget(new AjaxSolr.DidYouMeanWidget({
 			id: '',
 			target: '#didYouMean'
