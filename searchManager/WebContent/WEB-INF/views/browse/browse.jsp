@@ -21,6 +21,11 @@
 		var WIDGET_TEXTDEFAULT_searchWithin = 'Search Within';
 	</script>
 	<script type="text/javascript" src="<spring:url value="/js/dwr/browse.js" />"></script>
+
+	
+  <!-- AdRotator Plugin -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/slidesjs-3.0/jquery.slides.min.js" />"></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/slidesjs-3.0/slides.css" />">
 	
   <!-- Ajax Solr Dependencies -->
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/Core.js" />"></script>
@@ -44,6 +49,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultHeaderWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DidYouMeanWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchKeywordWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/AdRotatorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicAttributeWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchWithinWidget.js" />" ></script>
@@ -108,6 +114,9 @@
 			<div class="clearB"></div>
 		  </div>
 
+ 		<!-- AdRotator Widget -->
+		  <div id="adRotator" class="padT10"></div>
+		  
 		  <!-- Search Result Header Widget -->
 		  <div id="searchResultHeader" class="padT10"></div>
 		  
