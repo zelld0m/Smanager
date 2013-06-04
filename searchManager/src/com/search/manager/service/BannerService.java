@@ -1,6 +1,7 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.BannerRule;
@@ -23,6 +25,7 @@ import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.ImagePath;
 import com.search.manager.model.ImagePathType;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.response.ServiceResponse;
 
@@ -32,7 +35,7 @@ import com.search.manager.response.ServiceResponse;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "bannerService")
 )
-public class BannerService {
+public class BannerService extends RuleService{
 	private static final Logger logger = Logger.getLogger(BannerService.class);
 
 	private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
@@ -44,7 +47,13 @@ public class BannerService {
 	private static final String MSG_FAILED_GET_RULE_WITH_IMAGE = "Failed to retrieve banner rule using %s";
 
 	@Autowired private DaoService daoService;
+	@Autowired private DeploymentService deploymentService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.BANNER;
+	}
+	
 	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerRule>> getAllRules(String searchText, int page, int pageSize){
 		String storeId = UtilityService.getStoreId();
@@ -93,13 +102,40 @@ public class BannerService {
 	}
 
 	@RemoteMethod
+	public ServiceResponse<List<String>> copyToRule(String[] keywords, Map<String, String> params){
+		ServiceResponse<List<String>> serviceResponse = new ServiceResponse<List<String>>();
+		List<String> copiedToKeywordList = new ArrayList<String>();
+		
+		for(String keyword: keywords){
+			addRule(keyword);
+			ServiceResponse<BannerRule> srRule = getRuleByNameExact(keyword);
+			BannerRule rule = srRule.getData();
+			
+			if(rule!=null){
+				RuleStatus ruleStatus = deploymentService.getRuleStatus(RuleEntity.getValue(getRuleEntity().getCode()),rule.getRuleId());
+				
+				if(ruleStatus!=null && !ruleStatus.isLocked()){
+					params.put("ruleId", rule.getRuleId());
+					params.put("ruleName", rule.getRuleName());
+					ServiceResponse<Void> srRuleItem = addRuleItem(params);
+					if (srRuleItem.getStatus() == ServiceResponse.SUCCESS)
+						copiedToKeywordList.add(keyword);
+				}
+			}
+		}
+		
+		serviceResponse.success(copiedToKeywordList);
+		return serviceResponse;
+	}
+	
+	@RemoteMethod
 	public ServiceResponse<Void> addRuleItem(Map<String, String> params){
 		String storeId = UtilityService.getStoreId();
 		String username = UtilityService.getUsername();
 
 		String ruleId = params.get("ruleId"); 
 		String ruleName = params.get("ruleName"); 
-		int priority  = Integer.parseInt(params.get("priority")); 
+		Integer priority  = Integer.parseInt(params.get("priority")); 
 		String startDate = params.get("startDate"); 
 		String endDate = params.get("endDate");  
 		String imageAlt = params.get("imageAlt"); 
@@ -108,6 +144,7 @@ public class BannerService {
 		String imagePathId = params.get("imagePathId"); 
 		String imagePath = params.get("imagePath"); 
 		String imageAlias = params.get("imageAlias"); 
+		Boolean disable = BooleanUtils.toBooleanObject(params.get("disable"));
 		Boolean openNewWindow = BooleanUtils.toBooleanObject(params.get("openNewWindow")); 
 		
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
@@ -120,12 +157,16 @@ public class BannerService {
 		if(StringUtils.isBlank(imagePathId)){
 			ServiceResponse<Void> srAddImagePath = addImagePathLink(imagePath, imageAlias);
 			if (srAddImagePath.getStatus() == ServiceResponse.SUCCESS){
-				ServiceResponse<ImagePath> srGetImagePath =  getImagePath(imagePath);
+				ServiceResponse<ImagePath> srGetImagePath = getImagePath(imagePath);
 				newImagePath = srGetImagePath.getData();
+			}
+			else{
+				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imagePath));
+				return serviceResponse; 
 			}
 		}
 
-		BannerRuleItem ruleItem = new BannerRuleItem(rule, null, priority, startDT, endDT, imageAlt, linkPath, description, newImagePath, false, openNewWindow);
+		BannerRuleItem ruleItem = new BannerRuleItem(rule, null, priority, startDT, endDT, imageAlt, linkPath, description, newImagePath, disable, openNewWindow);
 		ruleItem.setCreatedBy(username);
 
 		try {
@@ -364,7 +405,6 @@ public class BannerService {
 		
 		return serviceResponse;
 	}
-
 
 	@RemoteMethod
 	public ServiceResponse<Void> addImagePathLink(String imageUrl, String alias){

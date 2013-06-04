@@ -20,7 +20,9 @@
 				successAddBannerToKeyword: "Successfully added banner {0} to {1} with priority {2}",
 				failedAddBannerToKeyword: "Failed to add banner {0} to {1} with priority {2}",
 				successUpdateBannerItem: "Successfully updated details of {0}",
-				failedUpdateBannerItem: "Successfully updated details of {0}",
+				failedUpdateBannerItem: "Failed to delete details of {0}",
+				successDeleteBannerItem: "Successfully deleted {0}",
+				failedDeleteBannerItem: "Failed to delete {0}",
 				jumpToPageOfAddedBanner: "The banner is in page {0}. Do you want to refresh page to view the banner?"
 			},
 
@@ -270,7 +272,6 @@
 
 						if (recordSet && recordSet["totalSize"]>0){
 							$("#ruleItemHolder").show();
-
 							$("#ruleItemPagingTop").paginate({
 								type: 'short',
 								currentPage: page, 
@@ -290,9 +291,10 @@
 								firstLinkCallback: function(e){ self.getRuleItemList(1); },
 								lastLinkCallback: function(e){ self.getRuleItemList(e.data.totalPages); }
 							});
-
-							self.populateRuleItem(recordSet);
 						}
+						
+						self.populateRuleItem(recordSet);
+						self.addRuleItemHandler();
 					},
 					preHook: function(e){
 						$(".ruleItem:not(#ruleItemPattern)").remove();
@@ -304,7 +306,7 @@
 			addRuleStatusRestriction: function(){
 				var self = this;
 				
-				if(self.selectedRuleStatus["locked"]){
+				if(self.selectedRuleStatus["locked"] || !allowModify){
 					$("#addBannerBtn, .setAliasBtn").hide();
 					
 					$(".ruleItem").find("input, textarea").prop({
@@ -313,7 +315,6 @@
 					}).end
 					.find(".startDate, .endDate").datepicker('disable');
 				}
-				
 			},
 
 			populateRuleItem: function(rs){
@@ -321,13 +322,15 @@
 				var $iHolder = $("#ruleItemHolder");
 				var $iPattern = $iHolder.find("#ruleItemPattern").hide();
 
-				for(var i=0; i < rs["totalSize"]; i++){
-					var ui = $iPattern.clone();
-					var item = rs["list"][i];
-					ui.prop({
-						id: "ruleItem_" + item["memberId"]
-					}).addClass(i + 1 == rs["totalSize"] ? "last": "").appendTo($iHolder).show();
-					self.populateRuleItemFields(ui, item);
+				if(rs){
+					for(var i=0; i < rs["totalSize"]; i++){
+						var ui = $iPattern.clone();
+						var item = rs["list"][i];
+						ui.prop({
+							id: "ruleItem_" + item["memberId"]
+						}).addClass(i + 1 == rs["totalSize"] ? "last": "").appendTo($iHolder).show();
+						self.populateRuleItemFields(ui, item);
+					}
 				}
 			},
 
@@ -403,7 +406,6 @@
 				self.addLastUpdateHandler(ui, item);
 				self.addItemCommentHandler(ui, item);
 				self.addRuleItemToggleHandler(ui, item);
-				self.addRuleItemHandler();
 				self.addDeleteAllItemHandler();
 				self.addDownloadRuleHandler(ui, item);
 				self.addRuleStatusRestriction();
@@ -608,14 +610,43 @@
 					rule: self.selectedRule,
 					ruleItem: item,
 					mode: 'copy',
-					isPopup: true
+					isPopup: true,
+					addBannerCallback: function(base, e){
+						var params = e.data;
+
+						var mapParams = {
+								"ruleId": params["ruleId"],
+								"ruleName": params["ruleName"],
+								"priority": params["priority"], 
+								"startDate": params["startDate"], 
+								"endDate": params["endDate"], 
+								"imagePathId": params["imagePathId"], 
+								"imagePath": params["imagePath"], 
+								"imageAlias": params["imageAlias"], 
+								"imageAlt": params["imageAlt"], 
+								"linkPath": params["linkPath"], 
+								"description": params["description"], 
+								"keywords": params["keywords"], 
+								"disable": params["disable"],
+								"openNewWindow": params["openNewWindow"]
+						};
+
+						BannerServiceJS.copyToRule(params["keywords"], mapParams, {
+							callback: function(sr){
+								var keyList = sr["data"];
+
+								if(keyList && keyList.length > 0){
+									jAlert($.formatText(self.lookupMessages.successCopyBannerItem, base.options.ruleItem["imagePath"]["alias"]), "Banner Rule"); 
+								}
+							}
+						});
+					}
 				});
 			},
 
 			getLinkedKeyword: function(ui, item){
 				var self = this;
 				var count = 1;
-
 
 				BannerServiceJS.getTotalRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"],{
 					callback: function(sr){
@@ -696,12 +727,14 @@
 								"priority": params["priority"], 
 								"startDate": params["startDate"], 
 								"endDate": params["endDate"], 
+								"imagePathId": params["imagePathId"], 
+								"imagePath": params["imagePath"], 
+								"imageAlias": params["imageAlias"], 
 								"imageAlt": params["imageAlt"], 
 								"linkPath": params["linkPath"], 
 								"description": params["description"], 
-								"imagePathId": params["imagePathId"], 
-								"imagePath": params["imagePath"], 
-								"imageAlias": params["imageAlias"]
+								"disable": params["disable"],
+								"openNewWindow": params["openNewWindow"]
 						};
 
 						BannerServiceJS.addRuleItem(mapParams, {
@@ -709,14 +742,12 @@
 								switch(sr["status"]){
 								case 0: 
 									jAlert($.formatText(self.lookupMessages.successAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule", function(){
+										$("#itemFilter").val("all");
 										self.getRuleItemList(1);
 									}); 
 									break;
 								default:  jAlert($.formatText(self.lookupMessages.failedAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule"); 
 								}
-							},
-							preHook: function(e){
-								
 							}
 						});
 					}
@@ -746,18 +777,25 @@
 					click: function(e){
 						if (e.data.locked) return;
 
-						jConfirm("Delete banner " + item["imagePath"]["alias"] + " from " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
+						jConfirm("Delete banner " + e.data.item["imagePath"]["alias"] + " from " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
-								BannerServiceJS.deleteRuleItem(self.selectedRule["ruleId"], item["memberId"], item["imagePath"]["alias"],{
+								BannerServiceJS.deleteRuleItem(self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"],{
 									callback: function(sr){
-										self.getRuleItemList(1);
+										switch(sr["status"]){
+										case 0: 
+											jAlert($.formatText(self.lookupMessages.successDeleteBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule", function(){
+												self.getRuleItemList(1);
+											}); 
+											break;
+										default:  jAlert($.formatText(self.lookupMessages.failedDeleteBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule"); 
+										}
 									}
 								});
 							}
 						});
 					},
 					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify || item["expired"]});
+				},{ui:ui, item:item, locked:self.selectedRuleStatus["locked"] || !allowModify || item["expired"]});
 			},
 
 			getUpdatedFields: function(ui, item){
@@ -871,7 +909,7 @@
 										callback: function(sr){
 											switch(sr["status"]){
 											case 0: 
-												jAlert($.formatText(self.lookupMessages.failedUpdateBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule", function(){
+												jAlert($.formatText(self.lookupMessages.successUpdateBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule", function(){
 													self.getRuleItemList(self.selectedRuleItemPage);
 												}); 
 												break;

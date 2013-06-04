@@ -27,8 +27,7 @@
 
 	$.addbanner.prototype.init = function() {
 		var base = this;
-		base.imagePathId = "";
-
+		
 		if(base.options.isPopup) {
 			base.$el.qtip({
 				id: "plugin-addbanner-qtip",
@@ -71,10 +70,10 @@
 		var base = this;
 		// at any mode, make sure alias field is always readonly and disabled
 		base.$el
-		.find('input#imageAlias').prop({
+		.find('.imageAlias').prop({
 			readonly: true,
 			disabled: true
-		});
+		}).removeProp("id");
 
 		if(base.options.ruleItem != null) {
 			var ruleItem = base.options.ruleItem;
@@ -82,11 +81,19 @@
 			base.$el.find('input#startDate').val(ruleItem['formattedStartDate']).end()
 			.find('input#endDate').val(ruleItem['formattedEndDate']).end()
 			.find('input#imagePath').val(ruleItem['imagePath']['path']).end()
-			.find('input#imageAlias').val(ruleItem['imagePath']['alias']).end()
+			.find('input.imageAlias').val(ruleItem['imagePath']['alias']).prop({
+				id: ruleItem['imagePath']['id']
+			}).end()
 			.find('input#imageAlt').val(ruleItem['imageAlt']).end()
 			.find('input#linkPath').val(ruleItem['linkPath']).end()
-			.find('textarea#description').val(ruleItem['description']).end();
-
+			.find('textarea#description').val(ruleItem['description']).end()
+			.find('#temporaryDisable').prop({
+				checked: ruleItem["disabled"] == true
+			}).end()
+			.find('#openNewWindow').prop({
+				checked: ruleItem["openNewWindow"] == true
+			});
+			
 			base.previewImage(base.$el, ruleItem['imagePath']['path']);
 
 			if(base.options.mode){
@@ -104,7 +111,7 @@
 			}
 		}
 
-		// Select a date range , TODO: must be timezone aware
+		// Select a date range
 		base.$el
 		.find("#startDate").prop({ id: "startDate_" + base.options.rule["ruleId"]}).datepicker({
 			minDate: currentDate,
@@ -114,6 +121,7 @@
 			showOn: "both",
 			buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 			buttonImageOnly: true,
+			buttonText: "Select start date",
 			onClose: function(selectedDate) {
 				base.$el.find("#endDate_" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
 			}
@@ -127,6 +135,7 @@
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
+			buttonText: "Select end date",
 			onClose: function(selectedDate) {
 				if(!base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("isDisabled")){
 					base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
@@ -179,14 +188,29 @@
 			click: function(e){
 				switch($(e.currentTarget).prop("id")){
 				case "okButton":
-					var startDate = e.data.base.$el.find('input.startDate').val();
-					var endDate = e.data.base.$el.find('input.endDate').val();
-					var imagePath = e.data.base.$el.find('input#imagePath').val();
-					var imageAlias = e.data.base.$el.find('input#imageAlias').val();
-					var imageAlt = e.data.base.$el.find('input#imageAlt').val();
-					var linkPath = e.data.base.$el.find('input#linkPath').val();
-					var description = e.data.base.$el.find('textarea#description').val();
+					var startDate = $.trim(e.data.base.$el.find('input.startDate').val());
+					var endDate = $.trim(e.data.base.$el.find('input.endDate').val());
+					var imagePath = $.trim(e.data.base.$el.find('input#imagePath').val());
+					var imageAlias = $.trim(e.data.base.$el.find('input.imageAlias').val());
+					var imageAlt = $.trim(e.data.base.$el.find('input#imageAlt').val());
+					var linkPath = $.trim(e.data.base.$el.find('input#linkPath').val());
+					var description = $.trim(e.data.base.$el.find('textarea#description').val());
+					var keywords = $.trim(e.data.base.$el.find('textarea#keyword').val());
+					var disable = e.data.base.$el.find('#temporaryDisable').is(":checked");
+					var openNewWindow = e.data.base.$el.find('#temporaryDisable').is(":checked");
 
+					var keywordArray = new Array();
+					var lines = keywords.split('\n');
+					var attemptAddToSelectedRule = false;
+					
+					$.each(lines, function(ix, el){
+						if($.isNotBlank(el) && !$.iequals($.trim(el), base.options.rule["ruleName"])){
+							keywordArray.push($.trim(el).toLowerCase());
+						}else if(($.isNotBlank(el) && $.iequals($.trim(el), base.options.rule["ruleName"]))){
+							attemptAddToSelectedRule = attemptAddToSelectedRule || true;
+						}
+					});
+					
 					if($.isBlank(imagePath)) {
 						jAlert("Image path is required.", "Banner");
 					} else if($.isBlank(imageAlias)) {
@@ -201,23 +225,30 @@
 						jAlert("Please provide a valid end date", "Banner");
 					} else if ($.isBlank(description) || !validateDescription("Description", description, 1, 150)) {
 						jAlert("Please provide description", "Banner");
-					} 
-
-					else {
+					} else if (attemptAddToSelectedRule){
+						jAlert($.formatText("Duplicate instance of this banner is not allowed in {0}", base.options.rule["ruleName"]), "Banner");
+					} else if (e.data.base.options.mode === "copy" && keywordArray.length <=0){
+						jAlert("Specify keywords where to copy this banner", "Banner");
+					} else {
 						e.data['ruleId'] = base.options.rule["ruleId"];
 						e.data['ruleName'] = base.options.rule["ruleName"];
+						e.data['priority'] = base.options.priority;
 						e.data['startDate'] = startDate;
 						e.data['endDate'] = endDate;
+
 						e.data['imagePathId'] = base.imagePathId;
 						e.data['imagePath'] = imagePath;
 						e.data['imageAlias'] = imageAlias;
+						
 						e.data['imageAlt'] = imageAlt;
 						e.data['linkPath'] = linkPath;
-						e.data['priority'] = base.options.priority;
 						e.data['description'] = description;
-						//e.data['keyword'] = keyword;
+						e.data['keywords'] = keywordArray;
+						
+						e.data['disable'] = disable;
+						e.data['openNewWindow'] = openNewWindow;
 						e.data['mode'] = base.options.mode;
-						base.options.addBannerCallback(e);
+						base.options.addBannerCallback(base, e);
 					}
 					break;
 				case "cancelButton": 
@@ -249,20 +280,20 @@
 			mouseleave: function(e) {
 				if (e.data.locked) return;
 
-				if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.sendRequest!=="true") {
-					e.data.sendRequest = "true";
+				if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.requestSent!=="true") {
+					e.data.requestSent = "true";
 					if(callback) callback.apply(e.data.base, [e.data.base.$el, $(e.currentTarget).val()]);
 				}
 			},
 			focusout: function(e) {
 				if (e.data.locked) return;
 
-				if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.sendRequest!=="true") {
-					e.data.sendRequest = "true";
+				if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.requestSent!=="true") {
+					e.data.requestSent = "true";
 					if(callback) callback.apply(e.data.base, [e.data.base.$el, $(e.currentTarget).val()]);
 				}
 			}
-		}, {base: base, locked: base.options.isLocked, input: "", sendRequest: ""});
+		}, {base: base, locked: base.options.isLocked, input: "", requestSent: ""});
 	};
 
 	$.addbanner.prototype.previewImage = function(ui, imagePath) {
@@ -282,30 +313,29 @@
 
 	$.addbanner.prototype.getImagePath = function(ui, imagePath) {
 		var base = this;
-
 		var $previewHolder = ui.find("#preview");
 
 		BannerServiceJS.getImagePath(imagePath, {
 			callback: function(sr){
 				if (sr!=null && sr["data"]!=null){
 					var iPath = sr["data"];
-					base.imagePathId = iPath["id"];
-
-					ui.find("#imageAlias").prop({
+				
+					ui.find(".imageAlias").prop({
+						id: iPath["id"],
 						readonly: true,
 						disabled: true
 					}).val(iPath["alias"]);
 
 				}else{
-					ui.find("#imageAlias").prop({
+					ui.find(".imageAlias").prop({
 						readonly: false,
 						disabled: false
-					});
+					}).removeProp("id");
 				}
 			},
 			preHook: function(e){
 				$previewHolder.find("span.preloader").show();
-				ui.find("#imageAlias").val("");
+				ui.find(".imageAlias").val("");
 			},
 			postHook: function(e){
 				$previewHolder.find("span.preloader").hide();
@@ -331,11 +361,13 @@
 		template += '		<label class="txtLabel">Image Path: </label> ';
 		template += '		<input id="imagePath" class="w565px" type="text">';
 		template += '		<label class="txtLabel">Image Alias: </label> ';
-		template += '		<input id="imageAlias" class="w218px" type="text">';
+		template += '		<input id="imageAlias" class="imageAlias w218px" type="text">';
 		template += '		<label class="txtLabel lblImageAlt">Image Alt: </label> ';
 		template += '		<input id="imageAlt" class="w218px" type="text">';
 		template += '		<label class="txtLabel">Link Path: </label> ';
 		template += '		<input id="linkPath" class="w565px" type="text">';
+		template += '		<input type="checkbox" name="openNewWindow" id="openNewWindow" />';
+		template += '		<label for="openNewWindow" class="fBold">Open In New Window</label>';
 		template += '		<label class="txtLabel">Schedule:</label> ';
 		template += '		<input id="startDate" class="startDate schedule" type="text">';
 		template += '		<input id="endDate" class="endDate schedule"  type="text">';
@@ -366,11 +398,15 @@
 			}
 
 			template += '<div id="buttonset">';
-			template += '	<div id="okButton" class="btn_ok round_btn fLeft buttons">';
-			template += '		<span class="btn_wrap"><a href="javascript:void(0);">' + type + '</a></span>';
-			template += '	</div>';
-			template += '	<div id="cancelButton" class="btn_cancel round_btn fLeft buttons">';
-			template += '		<span class="btn_wrap"><a href="javascript:void(0);">Cancel</a></span>';
+			template += '	<input type="checkbox" name="temporaryDisable" id="temporaryDisable" />';
+			template += '	<label for="temporaryDisable" class="cRed fBold fLeft lbl_temporaryDisable">Temporary Disable</label>';
+			template += '	<div class="floatR">';
+			template += '		<div id="okButton" class="btn_ok round_btn fLeft buttons">';
+			template += '			<span class="btn_wrap"><a href="javascript:void(0);">' + type + '</a></span>';
+			template += '		</div>';
+			template += '		<div id="cancelButton" class="btn_cancel round_btn fLeft buttons">';
+			template += '			<span class="btn_wrap"><a href="javascript:void(0);">Cancel</a></span>';
+			template += '		</div>';	
 			template += '	</div>';	
 			template += '</div>';
 		}
@@ -404,6 +440,7 @@
 			isPopup: false,
 			isLocked: false,
 			mode: "Add",
+			priority: 1,
 			addBannerCallback: function(e){},
 			imageAliasCallback: function(base, imagePath){}
 	};
