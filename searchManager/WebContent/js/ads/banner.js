@@ -314,7 +314,7 @@
 					$(".ruleItem").find("input, textarea").prop({
 						readonly: true,
 						disabled: true
-					}).end
+					}).end()
 					.find(".startDate, .endDate").datepicker('disable');
 				}
 			},
@@ -324,13 +324,13 @@
 				var $iHolder = $("#ruleItemHolder");
 				var $iPattern = $iHolder.find("#ruleItemPattern").hide();
 
-				if(rs){
-					for(var i=0; i < rs["totalSize"]; i++){
+				if(rs && rs.list && rs.list.length){
+					for(var i=0; i < rs.list.length; i++){
 						var ui = $iPattern.clone();
 						var item = rs["list"][i];
 						ui.prop({
 							id: "ruleItem_" + item["memberId"]
-						}).addClass(i + 1 == rs["totalSize"] ? "last": "").appendTo($iHolder).show();
+						}).addClass(i + 1 == rs.list.length ? "last": "").appendTo($iHolder).show();
 						self.populateRuleItemFields(ui, item);
 					}
 				}
