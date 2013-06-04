@@ -718,7 +718,7 @@
 					mode: 'add',
 					isPopup: true,
 					priority: self.selectedRuleItemTotal + 1 ,
-					addBannerCallback: function(e){
+					addBannerCallback: function(base, e){
 						var params = e.data;
 
 						var mapParams = {

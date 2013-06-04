@@ -123,9 +123,7 @@
 						<label for="linkPath">Link Path</label>
 						<input type="text" class="w533px" name="linkPath" id="linkPath" />
 						
-					
-						
-						<div class="ico_check ico fLeft"></div>
+						<!-- div class="ico_check ico fLeft"></div -->
 						
 						<label for="description">Description</label>
 						<textarea class="w565px" name="description" id="description" ></textarea>
