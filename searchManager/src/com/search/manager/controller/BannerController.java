@@ -55,6 +55,33 @@ public class BannerController {
         return "ads/banner";
     }
 
+    @RequestMapping(value = "/{store}/xls")
+    public void getCurrentRule(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String store, @RequestParam("filename") String filename, @RequestParam("id") String ruleId,
+            @RequestParam String keyword, @RequestParam("clientTimezone") Long clientTimezone,
+            @RequestParam("type") String type) {
+        logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
+
+        Date headerDate = new Date(clientTimezone);
+        String subTitle = "Banners for keyword [" + keyword + "]";
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+        BannerRuleXml xml = (BannerRuleXml) ruleVersionService.getCurrentRuleXml("Banner", ruleId);
+        List<BannerReportBean> reportBeans = new ArrayList<BannerReportBean>();
+
+        for (BannerItemXml itemXml : xml.getItemXml()) {
+           reportBeans.add(new BannerReportBean(Transformers.bannerItemXmlToRule.apply(itemXml)));
+        }
+
+        if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
+            try {
+                downloadService.downloadXLS(response, new BannerReportModel(reportHeader, reportBeans), null);
+            } catch (ClassNotFoundException e) {
+                logger.error("Error encountered while trying to download.", e);
+                e.printStackTrace();
+            }
+        }
+    }
+
     @RequestMapping(value = "/{store}/version/xls")
     public void getRuleVersion(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String store, @RequestParam("filename") String filename, @RequestParam("id") String ruleId,

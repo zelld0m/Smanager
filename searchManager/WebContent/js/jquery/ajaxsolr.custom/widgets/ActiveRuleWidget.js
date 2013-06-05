@@ -72,6 +72,7 @@
 						case "exclude": checkboxId="disableExclude"; break;
 						case "facet sort": checkboxId="disableFacetSort"; break;
 						case "did you mean": checkboxId="disableDidYouMean"; break;
+						case "banner": checkboxId="disableBanner"; break;
 					}
 					
 					$li.find('.select > input[type="checkbox"]').prop({
