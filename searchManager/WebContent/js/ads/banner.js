@@ -993,7 +993,7 @@
 			addDownloadRuleHandler: function(){
 				var self = this;
 
-				$("a#downloadIcon").download({
+				$("a#downloadRuleIcon").download({
 					headerText:"Download " + self.moduleName,
 					requestCallback:function(e){
 						var params = new Array();
@@ -1004,6 +1004,7 @@
 						params["id"] = self.selectedRule["ruleId"];
 						params["filename"] = e.data.filename;
 						params["type"] = e.data.type;
+						params["keyword"] = self.selectedRule["ruleName"];
 						params["clientTimezone"] = +new Date();
 
 						for(var key in params){
