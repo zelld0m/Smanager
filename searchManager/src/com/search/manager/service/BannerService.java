@@ -233,20 +233,26 @@ public class BannerService extends RuleService{
 		DateTime now = DateTime.now();
 		DateTime startDate =  null;
 		DateTime endDate =  null;
+		Boolean disabled = null;
 
 		if("active".equalsIgnoreCase(filter)){
 			startDate = now;
 			endDate = now;
+			disabled = false;
 		}else if ("expired".equalsIgnoreCase(filter)){
 			endDate = now;
+		}else if ("disabled".equalsIgnoreCase(filter)){
+			startDate = now;
+			endDate = now;
+			disabled = true;
 		}
 
-		return getItemsWithDateRange(ruleId, startDate, endDate, null, page, pageSize);
+		return getItemsWithDateRange(ruleId, startDate, endDate, disabled, null, page, pageSize);
 	}
 
 	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String ruleId, int page, int pageSize){
-		return getItemsWithDateRange(ruleId, null, null, null, page, pageSize);
+		return getItemsWithDateRange(ruleId, null, null, null, null, page, pageSize);
 	}
 
 	@RemoteMethod
@@ -268,7 +274,6 @@ public class BannerService extends RuleService{
 	    return response;
 	}
 	
-	
 	@RemoteMethod
 	public ServiceResponse<BannerRule> getRuleByNameExact(String ruleName) {
 		String storeId = UtilityService.getStoreId();
@@ -287,7 +292,7 @@ public class BannerService extends RuleService{
 	    return response;
 	}
 
-	public ServiceResponse<RecordSet<BannerRuleItem>> getItemsWithDateRange(String ruleId, DateTime startDate, DateTime endDate, String imagePathId, int page, int pageSize){
+	public ServiceResponse<RecordSet<BannerRuleItem>> getItemsWithDateRange(String ruleId, DateTime startDate, DateTime endDate, Boolean disabled, String imagePathId, int page, int pageSize){
 		String storeId = UtilityService.getStoreId();
 		BannerRuleItem model = new BannerRuleItem(ruleId, storeId);
 		SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(model, startDate, endDate, page, pageSize);
@@ -296,7 +301,7 @@ public class BannerService extends RuleService{
 		RecordSet<BannerRuleItem> recordSet = new RecordSet<BannerRuleItem>(null, 0);
 
 		try {
-			recordSet = daoService.searchBannerRuleItem(criteria);
+			recordSet = daoService.searchBannerRuleItem(criteria, disabled);
 			serviceResponse.success(recordSet);
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
@@ -312,7 +317,7 @@ public class BannerService extends RuleService{
 	public ServiceResponse<RecordSet<BannerRuleItem>> getItemsWithDateTextRange(String ruleId, String startDate, String endDate, String imagePathId, int page, int pageSize){
 		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
 		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
-		return 	getItemsWithDateRange(ruleId, startDT, endDT, imagePathId, page, pageSize);
+		return 	getItemsWithDateRange(ruleId, startDT, endDT, null, imagePathId, page, pageSize);
 	}
 	
 	@RemoteMethod

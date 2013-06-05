@@ -479,11 +479,7 @@ public class BannerDAO {
 		}
 	}
 
-	public RecordSet<BannerRuleItem> searchRuleItem(SearchCriteria<BannerRuleItem> criteria) throws DaoException {
-		return searchRuleItem(criteria, null);
-	}
-
-	public RecordSet<BannerRuleItem> searchRuleItem(SearchCriteria<BannerRuleItem> criteria, Boolean disabledOnly) throws DaoException {
+	public RecordSet<BannerRuleItem> searchRuleItem(SearchCriteria<BannerRuleItem> criteria, Boolean disable) throws DaoException {
 		try {
 			BannerRuleItem model = criteria.getModel();
 			BannerRule rule = model.getRule();
@@ -495,7 +491,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, model.getMemberId());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
-			inputs.put(DAOConstants.PARAM_DISABLED, disabledOnly);
+			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(disable, 1, 0, null));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 

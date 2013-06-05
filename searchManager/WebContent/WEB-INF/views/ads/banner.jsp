@@ -51,6 +51,7 @@
 							<option value="all">All</option>
 							<option value="active">Active</option>
 							<option value="expired">Expired</option>
+							<option value="disabled">Disabled</option>
 						</select>
 					</li>
 					<li><div class="ico_graph ico"></div></li>
