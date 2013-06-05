@@ -174,16 +174,16 @@
 
 			addRuleItemToggleHandler: function(ui, item){
 				var self = this;
-				var toggle = $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
+				var toggle = "hide"; // $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
 				ui.find("#bannerInfo").hide();
 				self.setToggleStatus(ui, item, ($.isBlank(toggle) || "hide".toLowerCase() === toggle) ? false: true);
 
 				ui.find("#toggleText").off().on({
 					click: function(e){
-						var status = $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
-						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(status) || "hide".toLowerCase() === status) ? true : false);
+						e.data.status = ($.isBlank(e.data.status) || e.data.status === "hide" )? "show" : "hide"; // $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
+						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(e.data.status) || "hide".toLowerCase() === e.data.status) ? true : false);
 					}
-				}, {ui:ui, item:item});
+				}, {ui:ui, item:item, status: ""});
 			},
 
 			addImageAliasRestriction: function(ui, item){
@@ -201,7 +201,7 @@
 				if (show){
 					ui.find("#toggleText").text("Show Less").end()
 					.find("#bannerInfo").slideDown("slow", function(){
-						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
+						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
 
 						self.addInputFieldListener(ui, item, item["imagePath"]["path"], ui.find("input#imagePath"), self.previewImage);
 						self.addInputFieldListener(ui, item, item["linkPath"], ui.find("input#linkPath"), self.validateLinkPath);
@@ -226,7 +226,7 @@
 					ui.find("#toggleText").text("Show More");
 
 					ui.find("#bannerInfo").slideUp("slow", function(){
-						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
+						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
 						// all element readonly and disabled regardless of schedule, rule status, and expiration
 						$(this).parents(".ruleItem").find("input, textarea").prop({
 							readonly: true,
