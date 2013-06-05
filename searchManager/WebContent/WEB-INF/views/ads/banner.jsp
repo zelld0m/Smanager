@@ -54,7 +54,7 @@
 							<option value="disabled">Disabled</option>
 						</select>
 					</li>
-					<li><div class="ico_graph ico"></div></li>
+					<li><div class="ico_graph ico" alt="Show All Item Statistics" title="Show All Item Statistics"></div></li>
 					<li>
 						<a id="downloadRuleIcon" href="javascript:void(0);" alt="Download All Item" title="Download All Item">
 							<div class="ico_download2 ico"></div>
@@ -101,10 +101,10 @@
 								<span class="btn_wrap"><a href="javascript:void(0);">Keyword (<span id="keywordCount">4</span>)</a></span>
 							</div>							
 						</li>	
-						<li class="bRight"><div id="auditIcon" class="ico_history ico"></div></li>
-						<li class="bRight"><div id="itemStatIcon" class="ico_graph ico"></div></li>
+						<li class="bRight"><div id="auditIcon" class="ico_history ico" alt="Show Audit" title="Show Audit"></div></li>
+						<li class="bRight"><div id="itemStatIcon" class="ico_graph ico" alt="Show Statistics" title="Show Statistics"></div></li>
 						<li class="bRight"><div id="lastModifiedIcon" class="ico_user ico"></div></li>		
-						<li><div id="commentIcon" class="ico_comments ico"></div></li>								
+						<li><div id="commentIcon" class="ico_comments ico" alt="Show Comment" title="Show Comment"></div></li>								
 					</ul>
 				
 					<div id="bannerInfo" class="banner_info_more clearfix">

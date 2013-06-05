@@ -171,23 +171,23 @@
 
 			if(base.options.authorizeSubmitForApproval){
 				template += '		<li class="fLeft bRight">';
-				template += '			<a id="submitForApprovalBtn" class="btn_submit_approval btn" href="javascript:void(0);">Submit for Approval</a>';
+				template += '			<a id="submitForApprovalBtn" class="btn_submit_approval btn" href="javascript:void(0);" alt="Submit For Approval" title="Submit For Approval">Submit for Approval</a>';
 				template += '		</li>';
 			}
 
 			if(base.options.enableVersion){
 				if(base.options.authorizeRuleBackup){
 					template += '		<li class="fLeft bRight">';
-					template += '			<a id="backupBtn" class="btn_backup_now btn" href="javascript:void(0);">Backup now</a>';
+					template += '			<a id="backupBtn" class="btn_backup_now btn" href="javascript:void(0);" alt="Backup Rule" title="Backup Rule">Backup Now</a>';
 					template += '		</li>';
 					template += '		<li class="fLeft bRight">';
-					template += '			<div id="downloadVersionIcon" class="ico_download ico"></div>';
+					template += '			<div id="downloadVersionIcon" class="ico_download ico" alt="Download Rule Version" title="Download Rule Version"></div>';
 					template += '		</li>';	
 				}
 			}	
 
 			template += '		<li class="fLeft bRight">';
-			template += '			<div id="commentBtn" class="ico_comments ico"></div>';
+			template += '			<div id="commentBtn" class="ico_comments ico" alt="Show Rule Comment" title="Show Rule Comment"></div>';
 			template += '		</li>';	
 			template += '		<li class="fRight">';
 			template += '			<span class="fbold">Published</span>:';
