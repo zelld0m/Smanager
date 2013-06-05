@@ -9,7 +9,7 @@
 
 			selectedRule: null,
 			selectedRuleItemPage: 1,
-			selectedRuleItemTotal: 1,
+			selectedRuleItemTotal: 0,
 			selectedRuleStatus: null,
 			ruleFilterText: "",
 			bannerInfo: null,
@@ -174,8 +174,8 @@
 
 				ui.find("#toggleText").off().on({
 					click: function(e){
-						e.data.status = ($.isBlank(e.data.status) || e.data.status === "hide" )? "show" : "hide"; // $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
-						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(e.data.status) || "hide".toLowerCase() === e.data.status) ? true : false);
+						e.data.status = ($.isBlank(e.data.status) || "hide" === e.data.status)? "show" : "hide"; // $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
+						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(e.data.status) || "hide" === e.data.status) ? true : false);
 					}
 				}, {ui:ui, item:item, status: ""});
 			},

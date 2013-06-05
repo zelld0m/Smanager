@@ -90,7 +90,7 @@
 				
 					<ul class="banner_info clearfix">
 						<li ><span id="toggleIcon" class="ico_minus ico fLeft"></span>
-							 <a id="toggleText" href="javascript:void(0);" class="show_what">Show Less</a></li>
+							 <a id="toggleText" class="show_what" href="javascript:void(0);">Show Less</a></li>
 						<li>
 							<div id="copyToBtn" class="btn_copy_to round_btn fLeft">
 								<span class="btn_wrap"><a href="javascript:void(0);">Copy To</a></span>
