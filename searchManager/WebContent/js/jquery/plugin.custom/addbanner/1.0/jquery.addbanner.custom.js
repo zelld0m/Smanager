@@ -197,7 +197,7 @@
 					var description = $.trim(e.data.base.$el.find('textarea#description').val());
 					var keywords = $.trim(e.data.base.$el.find('textarea#keyword').val());
 					var disable = e.data.base.$el.find('#temporaryDisable').is(":checked");
-					var openNewWindow = e.data.base.$el.find('#temporaryDisable').is(":checked");
+					var openNewWindow = e.data.base.$el.find('#openNewWindow').is(":checked");
 
 					var keywordArray = new Array();
 					var lines = keywords.split('\n');
