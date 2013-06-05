@@ -369,13 +369,17 @@ public class BannerService extends RuleService{
 			ruleItem.setLastModifiedBy(username);
 			
 			ImagePath iPath =  new ImagePath();
+			ServiceResponse<Void> srImagePath = new ServiceResponse<Void>();
 			
 			if(StringUtils.isNotBlank(imagePathId) && 
 			   StringUtils.isBlank(imagePath) && 
 			   StringUtils.isNotBlank(imageAlias)){
 				//update alias
 				logger.info(String.format("Updating banner alias", imagePathId));
-				updateImagePathAlias(imagePathId, imageAlias);
+				srImagePath = updateImagePathAlias(imagePathId, imageAlias);
+				if (srImagePath.getStatus() == ServiceResponse.ERROR){
+					return srImagePath;
+				}
 			}else if (StringUtils.isNotBlank(imagePathId) && 
 					  StringUtils.isBlank(imagePath) && 
 					  StringUtils.isBlank(imageAlias)){
@@ -387,7 +391,10 @@ public class BannerService extends RuleService{
 					  StringUtils.isNotBlank(imageAlias)){
 				//update to new banner
 				logger.info(String.format("Updating to a new banner %s %s", imagePath, imageAlias));
-				addImagePathLink(imagePath, imageAlias);
+				srImagePath = addImagePathLink(imagePath, imageAlias);
+				if (srImagePath.getStatus() == ServiceResponse.ERROR){
+					return srImagePath;
+				}
 				iPath = getImagePath(imagePath).getData();
 			}else{
 				// Do not update any image path assoc details

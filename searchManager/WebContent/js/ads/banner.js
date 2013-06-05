@@ -16,16 +16,10 @@
 
 			lookupMessages: {
 				successAddNewKeyword: "Successfully added keyword {0}",
-				failedAddNewKeyword: "Failed to add keyword {0}",
 				successAddBannerToKeyword: "Successfully added banner {0} to {1} with priority {2}",
-				failedAddBannerToKeyword: "Failed to add banner {0} to {1} with priority {2}",
 				successUpdateBannerItem: "Successfully updated details of {0}",
-				failedUpdateBannerItem: "Failed to delete details of {0}",
 				successDeleteBannerItem: "Successfully deleted {0}",
-				failedDeleteBannerItem: "Failed to delete {0}",
-				successCopyBannerItem: "Successfully copied {0} to {1}",
-				failedCopyBannerItem: "Failed to copy {0}",
-				jumpToPageOfAddedBanner: "The banner is in page {0}. Do you want to refresh page to view the banner?"
+				successCopyBannerItem: "Successfully copied {0} to {1}"
 			},
 
 			init: function(){
@@ -113,7 +107,7 @@
 										});
 									}); 
 									break;
-								default:  jAlert($.formatText(self.lookupMessages.failedAddNewKeyword, ruleName), "Banner Rule"); 
+								default:  jAlert($.formatText(sr["errorMessage"]["message"], ruleName), "Banner Rule"); 
 								}
 
 								base.getList(ruleName, 1);
@@ -643,7 +637,7 @@
 								if(keyList && keyList.length > 0){
 									jAlert($.formatText(self.lookupMessages.successCopyBannerItem, base.options.ruleItem["imagePath"]["alias"], keyList.join(',')), "Banner Rule"); 
 								}else{
-									jAlert($.formatText(self.lookupMessages.failedCopyBannerItem, base.options.ruleItem["imagePath"]["alias"]), "Banner Rule"); 
+									jAlert($.formatText(sr["errorMessage"]["message"], base.options.ruleItem["imagePath"]["alias"]), "Banner Rule"); 
 								}
 							},
 							preHook:function(){
@@ -756,7 +750,7 @@
 										self.getRuleItemList(1);
 									}); 
 									break;
-								default:  jAlert($.formatText(self.lookupMessages.failedAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule"); 
+								default:  jAlert($.formatText(sr["errorMessage"]["message"], params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule"); 
 								}
 							}
 						});
@@ -797,7 +791,7 @@
 												self.getRuleItemList(1);
 											}); 
 											break;
-										default:  jAlert($.formatText(self.lookupMessages.failedDeleteBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule"); 
+										default:  jAlert($.formatText(sr["errorMessage"]["message"], e.data.item["imagePath"]["alias"]), "Banner Rule"); 
 										}
 									}
 								});
@@ -923,7 +917,7 @@
 													self.getRuleItemList(self.selectedRuleItemPage);
 												}); 
 												break;
-											default:  jAlert($.formatText(self.lookupMessages.failedUpdateBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule"); 
+											default:  jAlert($.formatText(sr["errorMessage"]["message"], e.data.item["imagePath"]["alias"]), "Banner Rule"); 
 											}
 										}
 									});
