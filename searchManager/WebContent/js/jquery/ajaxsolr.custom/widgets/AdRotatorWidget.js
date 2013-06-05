@@ -17,7 +17,8 @@
 					var banner = banners[i];
 					var image = $("<img>", {
 						src: banner["imagePath"],
-						alt: banner["imageAlt"]
+						alt: banner["imageAlt"],
+						title: banner["imageAlt"]
 					});
 
 					slides.append(image);
@@ -28,11 +29,11 @@
 					height: 150,
 					navigation: false,
 					play:{
-						auto: banners.length > 1
+						auto: banners.length > 1,
 					},
 					pagination: {
-						active: false
-					}      
+						active: banners.length > 1,
+					}
 				});
 			}
 		},

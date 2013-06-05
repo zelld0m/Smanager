@@ -1947,12 +1947,7 @@ public class DaoServiceImpl implements DaoService {
 	
 	@Override
 	public RecordSet<BannerRuleItem> searchBannerRuleItem(SearchCriteria<BannerRuleItem> criteria) throws DaoException {
-		return bannerDAO.searchRuleItem(criteria, null);
-	}
-
-	@Override
-	public RecordSet<BannerRuleItem> searchBannerRuleItem(SearchCriteria<BannerRuleItem> criteria, Boolean disable) throws DaoException {
-		return bannerDAO.searchRuleItem(criteria, disable);
+		return bannerDAO.searchRuleItem(criteria);
 	}
 
 	@Override

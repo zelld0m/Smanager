@@ -295,13 +295,15 @@ public class BannerService extends RuleService{
 	public ServiceResponse<RecordSet<BannerRuleItem>> getItemsWithDateRange(String ruleId, DateTime startDate, DateTime endDate, Boolean disabled, String imagePathId, int page, int pageSize){
 		String storeId = UtilityService.getStoreId();
 		BannerRuleItem model = new BannerRuleItem(ruleId, storeId);
+		model.setDisabled(disabled);
+		
 		SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(model, startDate, endDate, page, pageSize);
 
 		ServiceResponse<RecordSet<BannerRuleItem>> serviceResponse = new ServiceResponse<RecordSet<BannerRuleItem>>();
 		RecordSet<BannerRuleItem> recordSet = new RecordSet<BannerRuleItem>(null, 0);
 
 		try {
-			recordSet = daoService.searchBannerRuleItem(criteria, disabled);
+			recordSet = daoService.searchBannerRuleItem(criteria);
 			serviceResponse.success(recordSet);
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);

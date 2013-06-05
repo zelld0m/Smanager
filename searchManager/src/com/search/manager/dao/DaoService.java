@@ -98,7 +98,6 @@ public interface DaoService extends SearchDaoService {
 	public int deleteBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
 	public BannerRuleItem getBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
 	public RecordSet<BannerRuleItem> searchBannerRuleItem(SearchCriteria<BannerRuleItem> criteria) throws DaoException;
-	public RecordSet<BannerRuleItem> searchBannerRuleItem(SearchCriteria<BannerRuleItem> criteria, Boolean disable) throws DaoException;
 	
 	public int addBannerImagePath(ImagePath imagePath) throws DaoException;
 	public int updateBannerImagePathAlias(ImagePath imagePath) throws DaoException;
