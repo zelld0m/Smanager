@@ -464,9 +464,12 @@
 			},
 
 			addLastUpdateHandler: function(ui, item){
+				var lastModifiedDate = $.isBlank(item["formattedLastModifiedDateTime"]) ? item["formattedCreatedDateTime"]: item["formattedLastModifiedDateTime"];
+				var lastModifiedBy = $.isBlank(item["lastModifiedBy"]) ? item["createdBy"]: item["lastModifiedBy"];
+					
 				ui.find('#lastModifiedIcon').off().on({
 					mouseenter: showLastModified 
-				},{user: item["lastModifiedBy"], date: item["formattedLastModifiedDateTime"]});
+				},{user: lastModifiedBy, date: lastModifiedDate});
 			},
 
 			addScheduleRestriction: function(ui, item){
