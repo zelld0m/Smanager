@@ -970,8 +970,9 @@
 				ui.find('#auditIcon').off().on({
 					click: function(e){
 						$(e.currentTarget).viewaudit({
+							ruleItem: item,
 							itemDataCallback: function(base, page){
-								AuditServiceJS.getBannerItemTrail(self.selectedRule["ruleId"], e.data.item["memberId"], base.options.page, base.options.pageSize, {
+								AuditServiceJS.getBannerItemTrail(self.selectedRule["ruleId"], base.options.ruleItem["memberId"], base.options.page, base.options.pageSize, {
 									callback: function(data){
 										var total = data.totalSize;
 										base.populateList(data);
