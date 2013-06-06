@@ -43,6 +43,7 @@
 
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.theme.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CurrentDateWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CurrentSearchWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/PCMGSingleSelectorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SortResultWidget.js" />" ></script>
@@ -88,7 +89,10 @@
 		  <!-- Text Widget -->
 		  <div id="search" class="floatL w730 titlePlacer marB10">
 			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>
-			<div id="pcmgSelector" class="floatR"></div>			         	
+			<div class="floatR">
+				<div id="currentDate"></div>
+				<div id="pcmgSelector"></div>
+			</div>			         	
 		  </div>
            
 		   <!-- Rule Selector Widget -->

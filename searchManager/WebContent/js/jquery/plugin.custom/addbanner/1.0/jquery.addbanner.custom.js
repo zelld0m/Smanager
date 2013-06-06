@@ -191,13 +191,14 @@
 					var startDate = $.trim(e.data.base.$el.find('input.startDate').val());
 					var endDate = $.trim(e.data.base.$el.find('input.endDate').val());
 					var imagePath = $.trim(e.data.base.$el.find('input#imagePath').val());
+					var imagePathId = $.trim(e.data.base.$el.find('input.imageAlias').prop("id"));
 					var imageAlias = $.trim(e.data.base.$el.find('input.imageAlias').val());
 					var imageAlt = $.trim(e.data.base.$el.find('input#imageAlt').val());
 					var linkPath = $.trim(e.data.base.$el.find('input#linkPath').val());
 					var description = $.trim(e.data.base.$el.find('textarea#description').val());
 					var keywords = $.trim(e.data.base.$el.find('textarea#keyword').val());
 					var disable = e.data.base.$el.find('#temporaryDisable').is(":checked");
-					var openNewWindow = e.data.base.$el.find('#temporaryDisable').is(":checked");
+					var openNewWindow = e.data.base.$el.find('#openNewWindow').is(":checked");
 
 					var keywordArray = new Array();
 					var lines = keywords.split('\n');
@@ -236,7 +237,7 @@
 						e.data['startDate'] = startDate;
 						e.data['endDate'] = endDate;
 
-						e.data['imagePathId'] = base.imagePathId;
+						e.data['imagePathId'] = imagePathId;
 						e.data['imagePath'] = imagePath;
 						e.data['imageAlias'] = imageAlias;
 						

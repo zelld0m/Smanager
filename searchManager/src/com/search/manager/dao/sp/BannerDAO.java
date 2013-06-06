@@ -202,13 +202,24 @@ public class BannerDAO {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<BannerRuleItem>() {
 				public BannerRuleItem mapRow(ResultSet rs, int rowNum) throws SQLException
 				{
-					return new BannerRuleItem(
-							new BannerRule(
-									rs.getString(DAOConstants.COLUMN_STORE_ID),
-									rs.getString(DAOConstants.COLUMN_RULE_ID),
-									rs.getString(DAOConstants.COLUMN_RULE_NAME),
-									null
-							),
+					
+					BannerRule rule = new BannerRule(
+							rs.getString(DAOConstants.COLUMN_STORE_ID),
+							rs.getString(DAOConstants.COLUMN_RULE_ID),
+							rs.getString(DAOConstants.COLUMN_RULE_NAME),
+							null
+					);
+					
+					ImagePath imagePath = new ImagePath(
+							rs.getString(DAOConstants.COLUMN_STORE_ID),
+							rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID),
+							rs.getString(DAOConstants.COLUMN_IMAGE_PATH),
+							ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)),
+							rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS)
+					);
+					
+					BannerRuleItem ruleItem = new BannerRuleItem(
+							rule,	
 							rs.getString(DAOConstants.COLUMN_MEMBER_ID),
 							rs.getInt(DAOConstants.COLUMN_PRIORITY),
 							JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
@@ -216,16 +227,17 @@ public class BannerDAO {
 							rs.getString(DAOConstants.COLUMN_IMAGE_ALT),
 							rs.getString(DAOConstants.COLUMN_LINK_PATH),
 							rs.getString(DAOConstants.COLUMN_DESCRIPTION),
-							new ImagePath(
-									rs.getString(DAOConstants.COLUMN_STORE_ID),
-									rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID),
-									rs.getString(DAOConstants.COLUMN_IMAGE_PATH),
-									ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)),
-									rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS)
-							),
+							imagePath,
 							BooleanUtils.toBoolean(rs.getInt(DAOConstants.COLUMN_DISABLED)),
 							BooleanUtils.toBoolean(rs.getInt(DAOConstants.COLUMN_OPEN_NEW_WINDOW))
-					);
+							);
+					
+					ruleItem.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+					ruleItem.setCreatedDate(JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+					ruleItem.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+					ruleItem.setLastModifiedDate(JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+					
+					return ruleItem;
 				}
 			}));			
 		}
@@ -295,18 +307,18 @@ public class BannerDAO {
 			}));			
 		}
 	}	
-	
+
 	@Audit(entity = Entity.banner, operation = Operation.add)
 	public int addRule(BannerRule rule) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			String ruleId = rule.getRuleId();
-			
+
 			if (StringUtils.isBlank(ruleId)) {
 				rule.setRuleId(DAOUtils.generateUniqueId());
 			}
-			
+
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
@@ -317,61 +329,61 @@ public class BannerDAO {
 			throw new DaoException("Failed during addRule()", e);
 		}
 	}
-	
+
 	@Audit(entity = Entity.banner, operation = Operation.delete)
 	public int deleteRule(BannerRule rule) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
-			
+
 			return DAOUtils.getUpdateCount(deleteRuleSP.execute(inputs));
 		}
 		catch (Exception e) {
 			throw new DaoException("Failed during deleteRule()", e);
 		}
 	}
-	
+
 	public BannerRule getRuleById(String storeId, String ruleId) throws DaoException {
-        try {
-            BannerRule rule = null;
-            Map<String, Object> inputs = new HashMap<String, Object>();
+		try {
+			BannerRule rule = null;
+			Map<String, Object> inputs = new HashMap<String, Object>();
 
-            inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
-            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
-            inputs.put(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue());
-            inputs.put(DAOConstants.PARAM_SEARCH_TEXT, null);
-            inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, null);
-            inputs.put(DAOConstants.PARAM_START_ROW, 1);
-            inputs.put(DAOConstants.PARAM_END_ROW, 1);
+			inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
+			inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
+			inputs.put(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue());
+			inputs.put(DAOConstants.PARAM_SEARCH_TEXT, null);
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, null);
+			inputs.put(DAOConstants.PARAM_START_ROW, 1);
+			inputs.put(DAOConstants.PARAM_END_ROW, 1);
 
-            RecordSet<BannerRule> rules = DAOUtils.getRecordSet(getRuleSP.execute(inputs));
+			RecordSet<BannerRule> rules = DAOUtils.getRecordSet(getRuleSP.execute(inputs));
 
-            if (rules != null && rules.getList().size() > 0) {
-                rule = rules.getList().get(0);
-            }
+			if (rules != null && rules.getList().size() > 0) {
+				rule = rules.getList().get(0);
+			}
 
-            return rule;
-        } catch (Exception e) {
-            throw new DaoException("Failed during searchRule()", e);
-        }
+			return rule;
+		} catch (Exception e) {
+			throw new DaoException("Failed during searchRule()", e);
+		}
 	}
 
 	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria) throws DaoException {
 		return searchRule(criteria, null, null);
 	}
-	
+
 	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria, String imagePathId) throws DaoException {
 		return searchRule(criteria, imagePathId, null);
 	}
-	
+
 	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria, String imagePathId, MatchType matchType) throws DaoException {
 		try {
 			BannerRule model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_SEARCH_TEXT, model.getRuleName());
@@ -385,19 +397,19 @@ public class BannerDAO {
 			throw new DaoException("Failed during searchRule()", e);
 		}
 	}
-	
+
 	@Audit(entity = Entity.banner, operation = Operation.addBanner)
 	public int addRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			BannerRule rule = ruleItem.getRule();
 			String memberId = ruleItem.getMemberId();
-			
+
 			if (StringUtils.isBlank(memberId)) {
 				ruleItem.setMemberId(DAOUtils.generateUniqueId());
 			}
-			
+
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
@@ -411,22 +423,22 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(ruleItem.getDisabled()));
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleItem.getCreatedBy());
-			
+
 			return DAOUtils.getUpdateCount(addRuleItemSP.execute(inputs));
 		}
 		catch (Exception e) {
 			throw new DaoException("Failed during addRuleItem()", e);
 		}
 	}
-	
+
 	@Audit(entity = Entity.banner, operation = Operation.updateBanner)
 	public int updateRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			BannerRule rule = ruleItem.getRule();
 			String memberId = ruleItem.getMemberId();
-			
+
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, memberId);
@@ -440,65 +452,61 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(ruleItem.getDisabled()));
 			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, ruleItem.getLastModifiedBy());
-			
+
 			return DAOUtils.getUpdateCount(updateRuleItemSP.execute(inputs));
 		}
 		catch (Exception e) {
 			throw new DaoException("Failed during updateRuleItem()", e);
 		}
 	}
-	
+
 	@Audit(entity = Entity.banner, operation = Operation.deleteBanner)
 	public int deleteRuleItem(BannerRuleItem ruleItem) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			BannerRule rule = ruleItem.getRule();
 			ImagePath imagePath = ruleItem.getImagePath();
-			
+
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null? imagePath.getId() : imagePath);
-			
+
 			return DAOUtils.getUpdateCount(deleteRuleItemSP.execute(inputs));
 		}
 		catch (Exception e) {
 			throw new DaoException("Failed during deleteRuleItem()", e);
 		}
 	}
-	
+
 	public RecordSet<BannerRuleItem> searchRuleItem(SearchCriteria<BannerRuleItem> criteria) throws DaoException {
-		return searchRuleItem(criteria, null);
-	}
-	
-	public RecordSet<BannerRuleItem> searchRuleItem(SearchCriteria<BannerRuleItem> criteria, Boolean disabledOnly) throws DaoException {
 		try {
 			BannerRuleItem model = criteria.getModel();
 			BannerRule rule = model.getRule();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, model.getMemberId());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
-			inputs.put(DAOConstants.PARAM_DISABLED, disabledOnly);
+			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(model.getDisabled(), 1, 0, null));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
-			
+
 			return DAOUtils.getRecordSet(getRuleItemSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during searchRuleItem()", e);
 		}
 	}
-	
+
 	public RecordSet<ImagePath> searchImagePath(SearchCriteria<ImagePath> criteria) throws DaoException {
 		try {
 			ImagePath model = criteria.getModel();
-			
+
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, model.getId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH, model.getPath());
@@ -506,48 +514,48 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, model.getAlias());
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getStartRow());
-			
+
 			return DAOUtils.getRecordSet(getRuleItemImagePathSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during searchRuleItemImagePath()", e);
 		}
 	}
-	
+
 	@Audit(entity = Entity.banner, operation = Operation.addImagePath)
 	public int addImagePath(ImagePath imagePath) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			String imagePathId = imagePath.getId();
-			
+
 			if (StringUtils.isBlank(imagePathId)) {
 				imagePathId = DAOUtils.generateUniqueId();
 			}
-			
+
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId);
 			inputs.put(DAOConstants.PARAM_STORE_ID, imagePath.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH, imagePath.getPath());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_TYPE, imagePath.getPathType());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, imagePath.getAlias());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, imagePath.getCreatedBy());
-			
+
 			return DAOUtils.getUpdateCount(addRuleItemImagePathSP.execute(inputs));
 		}
 		catch (Exception e) {
 			throw new DaoException("Failed during addRuleItemImagePath()", e);
 		}
 	}
-	
+
 	@Audit(entity = Entity.banner, operation = Operation.updateImagePath)
 	public int updateImagePath(ImagePath imagePath) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			
+
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath.getId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, imagePath.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, imagePath.getAlias());
 			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, imagePath.getLastModifiedBy());
-			
+
 			return DAOUtils.getUpdateCount(updateRuleItemImagePathSP.execute(inputs));
 		}
 		catch (Exception e) {

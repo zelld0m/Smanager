@@ -74,6 +74,10 @@
 	margin-left:10px;
 }
 
+.plugin-addbanner #buttonset div.buttons {
+    float:left;
+}
+
 .plugin-addbanner input,.plugin-addbanner textarea,
 .plugin-addbanner .input[type="checkbox"],
 .plugin-addbanner select

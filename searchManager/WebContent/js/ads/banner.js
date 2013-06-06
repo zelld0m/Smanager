@@ -9,23 +9,17 @@
 
 			selectedRule: null,
 			selectedRuleItemPage: 1,
-			selectedRuleItemTotal: 1,
+			selectedRuleItemTotal: 0,
 			selectedRuleStatus: null,
 			ruleFilterText: "",
 			bannerInfo: null,
 
 			lookupMessages: {
 				successAddNewKeyword: "Successfully added keyword {0}",
-				failedAddNewKeyword: "Failed to add keyword {0}",
 				successAddBannerToKeyword: "Successfully added banner {0} to {1} with priority {2}",
-				failedAddBannerToKeyword: "Failed to add banner {0} to {1} with priority {2}",
 				successUpdateBannerItem: "Successfully updated details of {0}",
-				failedUpdateBannerItem: "Failed to delete details of {0}",
 				successDeleteBannerItem: "Successfully deleted {0}",
-				failedDeleteBannerItem: "Failed to delete {0}",
-				successCopyBannerItem: "Successfully copied {0} to {1}",
-				failedCopyBannerItem: "Failed to copy {0}",
-				jumpToPageOfAddedBanner: "The banner is in page {0}. Do you want to refresh page to view the banner?"
+				successCopyBannerItem: "Successfully copied {0} to {1}"
 			},
 
 			init: function(){
@@ -113,7 +107,7 @@
 										});
 									}); 
 									break;
-								default:  jAlert($.formatText(self.lookupMessages.failedAddNewKeyword, ruleName), "Banner Rule"); 
+								default:  jAlert($.formatText(sr["errorMessage"]["message"], ruleName), "Banner Rule"); 
 								}
 
 								base.getList(ruleName, 1);
@@ -174,16 +168,16 @@
 
 			addRuleItemToggleHandler: function(ui, item){
 				var self = this;
-				var toggle = $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
+				var toggle = "hide"; // $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
 				ui.find("#bannerInfo").hide();
 				self.setToggleStatus(ui, item, ($.isBlank(toggle) || "hide".toLowerCase() === toggle) ? false: true);
 
 				ui.find("#toggleText").off().on({
 					click: function(e){
-						var status = $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
-						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(status) || "hide".toLowerCase() === status) ? true : false);
+						e.data.status = ($.isBlank(e.data.status) || "hide" === e.data.status)? "show" : "hide"; // $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
+						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(e.data.status) || "hide" === e.data.status) ? true : false);
 					}
-				}, {ui:ui, item:item});
+				}, {ui:ui, item:item, status: ""});
 			},
 
 			addImageAliasRestriction: function(ui, item){
@@ -201,7 +195,7 @@
 				if (show){
 					ui.find("#toggleText").text("Show Less").end()
 					.find("#bannerInfo").slideDown("slow", function(){
-						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
+						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
 
 						self.addInputFieldListener(ui, item, item["imagePath"]["path"], ui.find("input#imagePath"), self.previewImage);
 						self.addInputFieldListener(ui, item, item["linkPath"], ui.find("input#linkPath"), self.validateLinkPath);
@@ -226,7 +220,7 @@
 					ui.find("#toggleText").text("Show More");
 
 					ui.find("#bannerInfo").slideUp("slow", function(){
-						$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
+						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
 						// all element readonly and disabled regardless of schedule, rule status, and expiration
 						$(this).parents(".ruleItem").find("input, textarea").prop({
 							readonly: true,
@@ -365,8 +359,8 @@
 
 				// Select a date range, datepicker issue on multiple id even with scoping
 				.find("#startDate").prop({id: "startDate_" + item["memberId"]}).datepicker({
-					minDate: currentDate,
-					defaultDate: currentDate,
+					minDate: GLOBAL_currentDate,
+					defaultDate: GLOBAL_currentDate,
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
@@ -380,7 +374,7 @@
 
 				.find("#endDate").prop({id: "endDate_" + item["memberId"]}).datepicker({
 					minDate: ui.find("#startDate_" + item["memberId"]).datepicker("getDate"),
-					defaultDate: currentDate,
+					defaultDate: GLOBAL_currentDate,
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
@@ -464,9 +458,12 @@
 			},
 
 			addLastUpdateHandler: function(ui, item){
+				var lastModifiedDate = $.isBlank(item["formattedLastModifiedDateTime"]) ? item["formattedCreatedDateTime"]: item["formattedLastModifiedDateTime"];
+				var lastModifiedBy = $.isBlank(item["lastModifiedBy"]) ? item["createdBy"]: item["lastModifiedBy"];
+					
 				ui.find('#lastModifiedIcon').off().on({
 					mouseenter: showLastModified 
-				},{user: item["lastModifiedBy"], date: item["formattedLastModifiedDateTime"]});
+				},{user: lastModifiedBy, date: lastModifiedDate});
 			},
 
 			addScheduleRestriction: function(ui, item){
@@ -640,7 +637,7 @@
 								if(keyList && keyList.length > 0){
 									jAlert($.formatText(self.lookupMessages.successCopyBannerItem, base.options.ruleItem["imagePath"]["alias"], keyList.join(',')), "Banner Rule"); 
 								}else{
-									jAlert($.formatText(self.lookupMessages.failedCopyBannerItem, base.options.ruleItem["imagePath"]["alias"]), "Banner Rule"); 
+									jAlert($.formatText(sr["errorMessage"]["message"], base.options.ruleItem["imagePath"]["alias"]), "Banner Rule"); 
 								}
 							},
 							preHook:function(){
@@ -753,7 +750,7 @@
 										self.getRuleItemList(1);
 									}); 
 									break;
-								default:  jAlert($.formatText(self.lookupMessages.failedAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule"); 
+								default:  jAlert($.formatText(sr["errorMessage"]["message"], params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule"); 
 								}
 							}
 						});
@@ -794,7 +791,7 @@
 												self.getRuleItemList(1);
 											}); 
 											break;
-										default:  jAlert($.formatText(self.lookupMessages.failedDeleteBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule"); 
+										default:  jAlert($.formatText(sr["errorMessage"]["message"], e.data.item["imagePath"]["alias"]), "Banner Rule"); 
 										}
 									}
 								});
@@ -920,7 +917,7 @@
 													self.getRuleItemList(self.selectedRuleItemPage);
 												}); 
 												break;
-											default:  jAlert($.formatText(self.lookupMessages.failedUpdateBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule"); 
+											default:  jAlert($.formatText(sr["errorMessage"]["message"], e.data.item["imagePath"]["alias"]), "Banner Rule"); 
 											}
 										}
 									});
@@ -973,8 +970,9 @@
 				ui.find('#auditIcon').off().on({
 					click: function(e){
 						$(e.currentTarget).viewaudit({
+							ruleItem: item,
 							itemDataCallback: function(base, page){
-								AuditServiceJS.getBannerItemTrail(self.selectedRule["ruleId"], e.data.item["memberId"], base.options.page, base.options.pageSize, {
+								AuditServiceJS.getBannerItemTrail(self.selectedRule["ruleId"], base.options.ruleItem["memberId"], base.options.page, base.options.pageSize, {
 									callback: function(data){
 										var total = data.totalSize;
 										base.populateList(data);
@@ -993,7 +991,7 @@
 			addDownloadRuleHandler: function(){
 				var self = this;
 
-				$("a#downloadIcon").download({
+				$("a#downloadRuleIcon").download({
 					headerText:"Download " + self.moduleName,
 					requestCallback:function(e){
 						var params = new Array();
@@ -1004,6 +1002,7 @@
 						params["id"] = self.selectedRule["ruleId"];
 						params["filename"] = e.data.filename;
 						params["type"] = e.data.type;
+						params["keyword"] = self.selectedRule["ruleName"];
 						params["clientTimezone"] = +new Date();
 
 						for(var key in params){

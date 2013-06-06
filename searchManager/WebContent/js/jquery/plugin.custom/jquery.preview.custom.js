@@ -448,7 +448,7 @@
 					
 					if (!item.expired) {
 						$item.find("#itemValidityDaysExpired").hide();
-						item.started && $item.find("#itemDaysLeft").text("(" + item.daysLeft + " left)");
+						item.started && $item.find("#itemDaysLeft").text("(" + item.daysLeft + ")");
 					} else {
 						$item.find("#itemDaysLeft").hide();
 					}

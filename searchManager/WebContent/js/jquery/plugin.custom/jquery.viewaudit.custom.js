@@ -138,6 +138,7 @@
 			page: 1,
 			pageSize: 5,
 			emptyDisplay: "No audit trail available.",
+			ruleItem: null,
 			itemDataCallback: function(base, page){}
 	};
 

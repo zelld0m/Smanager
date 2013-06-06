@@ -853,10 +853,10 @@ public class SolrServiceImpl implements SolrService {
 
 	@Override
 	public List<BannerRuleItem> getActiveBannerRuleItems(Store store,
-			String keyword) throws DaoException {
+			String keyword, DateTime currentDate) throws DaoException {
 		return (List<BannerRuleItem>) bannerRuleItemDao
 				.getActiveBannerRuleItemsByRuleName(store, keyword,
-						DateTime.now(), DateTime.now());
+						currentDate, currentDate);
 	}
 
 }
