@@ -362,6 +362,14 @@ public class ConfigManager {
 		return "1".equals(PropsUtils.getValue("solrImplOnly"));
 	}
 	
+	public boolean getApprovalNotification() {
+		return "1".equals(PropsUtils.getValue("approvalNotification"));
+	}
+	
+	public boolean getPushToProdNotification() {
+		return "1".equals(PropsUtils.getValue("pushToProdNotification"));
+	}
+	
     public static void main(String[] args) {
     	final ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
     	System.out.println("qt: " + configManager.getSolrSelectorParam());
