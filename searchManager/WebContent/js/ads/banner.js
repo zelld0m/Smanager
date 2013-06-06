@@ -193,8 +193,10 @@
 				var self = this;
 
 				if (show){
-					ui.find("#toggleText").text("Show Less").end()
-					.find("#bannerInfo").slideDown("slow", function(){
+					ui.find("#toggleIcon").removeClass("ico_plus").addClass("ico_minus").end()
+					.find("#toggleText").text("Show Less");
+					
+					ui.find("#bannerInfo").slideDown("slow", function(){
 						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
 
 						self.addInputFieldListener(ui, item, item["imagePath"]["path"], ui.find("input#imagePath"), self.previewImage);
@@ -217,7 +219,8 @@
 					});
 
 				}else{
-					ui.find("#toggleText").text("Show More");
+					ui.find("#toggleIcon").removeClass("ico_minus").addClass("ico_plus").end()
+					   .find("#toggleText").text("Show More");
 
 					ui.find("#bannerInfo").slideUp("slow", function(){
 						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
