@@ -114,8 +114,8 @@
 		// Select a date range
 		base.$el
 		.find("#startDate").prop({ id: "startDate_" + base.options.rule["ruleId"]}).datepicker({
-			minDate: currentDate,
-			defaultDate: currentDate,
+			minDate: GLOBAL_currentDate,
+			defaultDate: GLOBAL_currentDate,
 			changeMonth: true,
 			changeYear: true,
 			showOn: "both",
@@ -129,7 +129,7 @@
 
 		.find("#endDate").prop({ id: "endDate_" + base.options.rule["ruleId"]}).datepicker({
 			minDate: base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("getDate"),
-			defaultDate: currentDate,
+			defaultDate: GLOBAL_currentDate,
 			changeMonth: true,
 			changeYear: true,
 			showOn: "both",
@@ -329,9 +329,10 @@
 
 				}else{
 					ui.find(".imageAlias").prop({
+						id:"",
 						readonly: false,
 						disabled: false
-					}).removeProp("id");
+					});
 				}
 			},
 			preHook: function(e){
