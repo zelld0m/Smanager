@@ -621,7 +621,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
-	public List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword)
+	public List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, DateTime currentDate)
 			throws DaoException {
 		// TODO Auto-generated method stub
 		throw new DaoException("unimplemented method!");
