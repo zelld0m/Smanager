@@ -54,7 +54,7 @@ public class WorkflowNotificationMailService {
 			break;
 		case UNPUBLISHED:
 			subject = "[SearchManager] Push To Prod";
-			templateLocation = "default-pushtotprod-unpublish.vm";
+			templateLocation = "default-pushtoprod-unpublish.vm";
 			break;
 		default:
 			return false;
@@ -71,32 +71,35 @@ public class WorkflowNotificationMailService {
 			logger.error("Error in getting approvedBy User information.", e1);
 		}
 
-		Map<User, List<RuleStatus>> temps = new HashMap<User, List<RuleStatus>>();
+		Map<String, List<RuleStatus>> userRuleStatus = new HashMap<String, List<RuleStatus>>();
+		Map<String, User> users = new HashMap<String, User>();
 
 		for (RuleStatus ruleStatus : ruleStatusList) {
 			if (ruleStatus.getRequestBy() != null) {
 				try {
 					User user = daoService.getUser(ruleStatus.getRequestBy());
-					if (!temps.containsKey(user)) {
-						temps.put(user, new ArrayList<RuleStatus>());
+					if (!userRuleStatus.containsKey(user.getUsername())) {
+						userRuleStatus.put(user.getUsername(),
+								new ArrayList<RuleStatus>());
+						users.put(user.getUsername(), user);
 					}
-					temps.get(user).add(ruleStatus);
+					userRuleStatus.get(user.getUsername()).add(ruleStatus);
 				} catch (DaoException e) {
 					logger.error(e);
 				}
 			}
 		}
 
-		for (Entry<User, List<RuleStatus>> entry : temps.entrySet()) {
-			messageDetails.setTo(entry.getKey().getEmail());
+		for (Entry<String, List<RuleStatus>> entry : userRuleStatus.entrySet()) {
+			messageDetails.setTo(users.get(entry.getKey()).getEmail());
 			model.put("requestBy",
-					StringUtils.trim(entry.getKey().getFullName()));
+					StringUtils.trim(users.get(entry.getKey()).getFullName()));
 
 			List<RuleStatus> rStatusList = entry.getValue();
 			StringBuffer content = new StringBuffer("<ul>");
 			for (RuleStatus r : rStatusList) {
 				content.append(String.format("<li> %s </li>",
-						StringUtils.trim(r.getRuleRefId())));
+						StringUtils.trim(r.getDescription())));
 			}
 			content.append("</ul>");
 			model.put("ruleType", ruleType);
