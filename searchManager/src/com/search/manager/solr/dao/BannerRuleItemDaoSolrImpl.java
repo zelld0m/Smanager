@@ -151,7 +151,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append(String.format("store: %s AND ruleName1: %s",
+			strQuery.append(String.format("store: %s AND ruleName1: %s AND disabled: false",
 					ClientUtils.escapeQueryChars(storeId),
 					ClientUtils.escapeQueryChars(StringUtils.trim(ruleName))));
 
