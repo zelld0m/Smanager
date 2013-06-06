@@ -196,7 +196,7 @@ public class AuditInterceptor {
 				}
 				
 				if(e.getExpiryDateTime() != null){
-					message.append(" expiring on [%2$tF]");
+					message.append(" expiring on [%2$s]");
 				}
 				
 				if(StringUtils.isNotBlank(e.getComment())){
@@ -273,7 +273,7 @@ public class AuditInterceptor {
 			case add:
 				message = new StringBuilder("Adding ID[%1$s]");
 				if(e.getExpiryDateTime() != null){
-					message.append(" expiring on [%2$tF]");
+					message.append(" expiring on [%2$s]");
 				}
 				
 				if(StringUtils.isNotBlank(e.getComment())){
@@ -292,7 +292,7 @@ public class AuditInterceptor {
 			case updateExpiryDate:
 				message = new StringBuilder();
 				if(e.getExpiryDateTime() != null)
-					message.append("Changing expiry date to [%2$tF] for excluded entry ID[%1$s]");
+					message.append("Changing expiry date to [%2$s] for excluded entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for excluded entry ID[%1$s]");
 				break;
@@ -346,7 +346,7 @@ public class AuditInterceptor {
 				}
 				
 				if(e.getExpiryDateTime() != null){
-					message.append(" expiring on [%2$tF]");
+					message.append(" expiring on [%2$s]");
 				}
 				
 				if(StringUtils.isNotBlank(e.getComment())){
@@ -368,7 +368,7 @@ public class AuditInterceptor {
 			case updateExpiryDate:
 				message = new StringBuilder();
 				if(e.getExpiryDateTime() != null)
-					message.append("Changing expiry date to [%2$tF] for demoted entry ID[%1$s]");
+					message.append("Changing expiry date to [%2$s] for demoted entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for demoted entry ID[%1$s]");
 				break;
