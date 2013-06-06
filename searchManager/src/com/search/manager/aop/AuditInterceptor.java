@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
@@ -243,7 +244,7 @@ public class AuditInterceptor {
 			}
 
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		
 		logAuditTrail(auditTrail);
@@ -311,7 +312,7 @@ public class AuditInterceptor {
 				message.append(" Condition[%4$s]");
 			}
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), e.getExpiryDateTime(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE)), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 
 		logAuditTrail(auditTrail);
@@ -387,7 +388,7 @@ public class AuditInterceptor {
 				message.append(" Condition[%5$s]");
 			}
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), e.getExpiryDateTime(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		
 		logAuditTrail(auditTrail);
@@ -470,8 +471,8 @@ public class AuditInterceptor {
 			}
 			
 			auditTrail.setDetails(String.format(message.toString(), ruleItem.getMemberId(), ruleItem.getPriority(),
-					JodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getStartDate(), JodaPatternType.DATE),
-					JodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getEndDate(), JodaPatternType.DATE),
+					ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getStartDate(), JodaPatternType.DATE)),
+					ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getEndDate(), JodaPatternType.DATE)),
 					ruleItem.getDisabled(),
 					ruleItem.getImagePath() != null ? ruleItem.getImagePath().getId() : "",
 						ruleItem.getImagePath() != null ? ruleItem.getImagePath().getPath() : "",
