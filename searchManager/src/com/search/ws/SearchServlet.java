@@ -262,7 +262,8 @@ public class SearchServlet extends HttpServlet {
 					try {
 						return daoService.getSpellRuleForSearchTerm(sk.getStoreId(), sk.getKeywordId());
 					} catch (DaoException e1) {
-						throw e1;
+						logger.error("Failed to get spellRule. " + e1,  e1);
+						return null;
 					}
 				} else {
 					return null;
@@ -281,7 +282,8 @@ public class SearchServlet extends HttpServlet {
 					try {
 						return daoService.getRedirectRule(sk);
 					} catch (DaoException e1) {
-						throw e1;
+						logger.error("Failed to get redirectRule. " + e1, e1);
+						return null;
 					}
 				} else {
 					return null;
@@ -300,7 +302,8 @@ public class SearchServlet extends HttpServlet {
 					try {
 						return daoService.getRelevancyRule(sk);
 					} catch (DaoException e1) {
-						throw e1;
+						logger.error("Failed to get relevancyRule. " + e1, e1);
+						return null;
 					}
 				} else {
 					return null;
@@ -319,7 +322,8 @@ public class SearchServlet extends HttpServlet {
 					try {
 						return daoService.getRelevancyRule(store, relevancyId);
 					} catch (DaoException e1) {
-						throw e1;
+						logger.error("Failed to get relevancyRule. " + e1, e1);
+						return null;
 					}
 				} else {
 					return null;
@@ -342,7 +346,8 @@ public class SearchServlet extends HttpServlet {
 					try {
 						return daoService.getFacetSortRule(storeKeyword);
 					} catch (DaoException e1) {
-						throw e1;
+						logger.error("Failed to get defaultRelevancyRule. " + e1, e1);
+						return null;
 					}
 				} else {
 					return null;
@@ -361,7 +366,8 @@ public class SearchServlet extends HttpServlet {
 					try {
 						return daoService.getFacetSortRule(store, templateName);
 					} catch (DaoException e1) {
-						throw e1;
+						logger.error("Failed to get facetSortRule. " + e1, e1);
+						return null;
 					}
 				} else {
 					return null;
@@ -393,7 +399,8 @@ public class SearchServlet extends HttpServlet {
 				try {
 					list = daoService.getElevateRules(storeKeyword);
 				} catch (DaoException e1) {
-					throw e1;
+					logger.error("Failed to get elevateRules. " + e1, e1);
+					return null;
 				}
 			} else {
 				return null;
@@ -415,7 +422,8 @@ public class SearchServlet extends HttpServlet {
 				try {
 					list = daoService.getExpiredElevateRules(storeKeyword);
 				} catch (DaoException e1) {
-					throw e1;
+					logger.error("Failed to get expired elevateRules. " + e1, e1);
+					return null;
 				}
 			} else {
 				return null;
@@ -437,7 +445,8 @@ public class SearchServlet extends HttpServlet {
 				try {
 					list = daoService.getExcludeRules(storeKeyword);
 				} catch (DaoException e1) {
-					throw e1;
+					logger.error("Failed to get exludeRules. " + e1, e1);
+					return null;
 				}
 			} else {
 				return null;
@@ -459,7 +468,8 @@ public class SearchServlet extends HttpServlet {
 				try {
 					list = daoService.getExpiredExcludeRules(storeKeyword);
 				} catch (DaoException e1) {
-					throw e1;
+					logger.error("Failed to get expired excludeRules. " + e1, e1);
+					return null;
 				}
 			} else {
 				return null;
@@ -481,7 +491,8 @@ public class SearchServlet extends HttpServlet {
 				try {
 					list = daoService.getDemoteRules(storeKeyword);
 				} catch (DaoException e1) {
-					throw e1;
+					logger.error("Failed to get demoteRules. " + e1, e1);
+					return null;
 				}
 			} else {
 				return null;
@@ -503,7 +514,8 @@ public class SearchServlet extends HttpServlet {
 				try {
 					list = daoService.getExpiredDemoteRules(storeKeyword);
 				} catch (DaoException e1) {
-					throw e1;
+					logger.error("Failed to get expired demoteRules. " + e1, e1);
+					return null;
 				}
 			} else {
 				return null;
@@ -522,7 +534,8 @@ public class SearchServlet extends HttpServlet {
 					try {
 						return daoService.getActiveBannerRuleItems(store, keyword);
 					} catch (DaoException e1) {
-						throw e1;
+						logger.error("Failed to get active bannerRuleItems. " + e1, e1);
+						return null;
 					}
 				} else {
 					return null;
