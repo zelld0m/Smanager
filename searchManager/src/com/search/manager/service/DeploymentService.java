@@ -34,6 +34,7 @@ import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.exception.PublishLockException;
+import com.search.manager.mail.WorkflowNotificationMailService;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
@@ -61,6 +62,8 @@ public class DeploymentService {
 
 	@Autowired private DaoService daoService;
 
+	@Autowired private WorkflowNotificationMailService mailService;
+	
 	@RemoteMethod
 	public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {
 		RecordSet<RuleStatus> rSet = null;
@@ -94,11 +97,13 @@ public class DeploymentService {
 		return list.toArray(new String[list.size()]);
 	}
 
+	// TODO add email notification
 	@RemoteMethod
 	public List<String> approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
 		List<String> result = approveRule(ruleType, Arrays.asList(ruleRefIdList));
 		daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, UtilityService.getStoreId(), UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+		
 		return result;
 	}
 	
@@ -107,6 +112,15 @@ public class DeploymentService {
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
 			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
+			
+			try {
+				if (result != null && result.size() > 0 && ConfigManager.getInstance().getApprovalNotification()) {
+					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
+					mailService.sendNotification(RuleStatusEntity.APPROVED, ruleType, UtilityService.getUsername(), ruleStatusInfoList);
+				}
+			} catch (Exception e) {
+				logger.error("Failed during sending approval notification. approveRule()", e);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
 		}
@@ -120,7 +134,7 @@ public class DeploymentService {
 			}
 		}
 	}
-
+	
 	private boolean generateSpellRuleFile(String storeId) throws DaoException {
 		boolean success = false;
 		Writer fw = null;
@@ -211,6 +225,7 @@ public class DeploymentService {
 		return success;
 	}
 	
+	// TODO add email notification
 	@RemoteMethod
 	public List<String> unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
@@ -224,6 +239,15 @@ public class DeploymentService {
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType),RuleStatusEntity.REJECTED.toString());
 			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
+			
+			try {
+				if (result != null && result.size() > 0 && ConfigManager.getInstance().getApprovalNotification()) {
+					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
+					mailService.sendNotification(RuleStatusEntity.REJECTED, ruleType, UtilityService.getUsername(), ruleStatusInfoList);
+				}
+			} catch (Exception e) {
+				logger.error("Failed during sending approval notification. unapproveRule()", e);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during unapproveRule()",e);
 		}
@@ -352,6 +376,7 @@ public class DeploymentService {
 		return new RecordSet<DeploymentModel>(publishingResultList, publishingResultList.size());
 	}
 	
+	// TODO here...
 	@RemoteMethod
 	public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
@@ -377,10 +402,22 @@ public class DeploymentService {
 			}
 			
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
-			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), DateTime.now());
+			Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), DateTime.now());
 
-			if(ruleMap != null && ruleMap.size() > 0)
+			List<String> result = new ArrayList<String>();
+			getSuccessList(result, ruleMap);
+			
+			if(ruleMap != null && ruleMap.size() > 0) {
+				try {
+					if (ConfigManager.getInstance().getPushToProdNotification()) {
+						List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
+						mailService.sendNotification(RuleStatusEntity.PUBLISHED, ruleType, UtilityService.getUsername(), ruleStatusInfoList);
+					}
+				} catch (Exception e) {
+					logger.error("Failed during sending pushToProd notification. publishRule()", e);
+				}
 				return ruleMap;
+			}
 
 		} catch (Exception e) {
 			logger.error("Failed during publishRule()",e);
@@ -437,8 +474,20 @@ public class DeploymentService {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());	
 			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, UtilityService.getUsername(), DateTime.now());
 
-			if(ruleMap != null && ruleMap.size() > 0)
+			List<String> result = new ArrayList<String>();
+			getSuccessList(result, ruleMap);
+			
+			if(ruleMap != null && ruleMap.size() > 0) {
+				try {
+					if (ConfigManager.getInstance().getPushToProdNotification()) {
+						List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
+						mailService.sendNotification(RuleStatusEntity.UNPUBLISHED, ruleType, UtilityService.getUsername(), ruleStatusInfoList);
+					}
+				} catch (Exception e) {
+					logger.error("Failed during sending pushToProd notification. unpublishRule()", e);
+				}
 				return ruleMap;
+			}
 
 		} catch (Exception e) {
 			logger.error("Failed during unpublishRule()",e);
@@ -573,5 +622,21 @@ public class DeploymentService {
 	private Map<String, Boolean> unpublishWSMap(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
 		return service.unDeployRulesMap(UtilityService.getStoreId(), ruleList, ruleType);
+	}
+	
+	private List<RuleStatus> getRuleStatusInfo(List<String> results, List<RuleStatus> ruleStatusList) {
+		List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
+		for (RuleStatus ruleStatus : ruleStatusList) {
+			try {
+				if(results.contains(ruleStatus.getRuleRefId())) {
+					ruleStatus = daoService.getRuleStatus(ruleStatus);
+					ruleStatusInfoList.add(ruleStatus);
+				}
+			} catch (DaoException e) {
+				logger.error("Error getting rule status info.", e);
+			}
+		}
+		
+		return ruleStatusInfoList;
 	}
 }
