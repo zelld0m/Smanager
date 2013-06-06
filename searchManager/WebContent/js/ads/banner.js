@@ -359,8 +359,8 @@
 
 				// Select a date range, datepicker issue on multiple id even with scoping
 				.find("#startDate").prop({id: "startDate_" + item["memberId"]}).datepicker({
-					minDate: currentDate,
-					defaultDate: currentDate,
+					minDate: GLOBAL_currentDate,
+					defaultDate: GLOBAL_currentDate,
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
@@ -374,7 +374,7 @@
 
 				.find("#endDate").prop({id: "endDate_" + item["memberId"]}).datepicker({
 					minDate: ui.find("#startDate_" + item["memberId"]).datepicker("getDate"),
-					defaultDate: currentDate,
+					defaultDate: GLOBAL_currentDate,
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
