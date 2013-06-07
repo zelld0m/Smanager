@@ -153,6 +153,7 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_REQUESTED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 		}
@@ -237,7 +238,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleStatus.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
-			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
+			inputs.put(DAOConstants.PARAM_REQUESTED_BY, ruleStatus.getRequestBy());
 			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
 			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
 			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, JodaDateTimeUtil.toSqlDate(ruleStatus.getLastRequestDate()));

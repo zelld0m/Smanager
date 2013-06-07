@@ -258,6 +258,7 @@ public class DAOConstants {
 
 	// additional rule status parameters
 	public static final String PARAM_REQUEST_BY						= "request_by";
+	public static final String PARAM_REQUESTED_BY					= "requested_by";
 	public static final String PARAM_LAST_REQUEST_DATE				= "last_request_date";
 	public static final String PARAM_APPROVAL_BY					= "approval_by";
 	public static final String PARAM_LAST_APPROVAL_DATE				= "last_approval_date";
