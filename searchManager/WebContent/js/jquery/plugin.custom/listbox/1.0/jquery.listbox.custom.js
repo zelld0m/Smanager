@@ -114,7 +114,7 @@
 		if(data && data["totalSize"] > 0){
 			var itemHolder = base.$el.find('#itemHolder');
 
-			for (var i = 0; i < data["totalSize"]; i++) {
+			for (var i = 0; i < data["list"].length; i++) {
 
 				var item = data["list"][i];
 				var ui = itemHolder.find('#itemPattern').clone();

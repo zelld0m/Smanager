@@ -244,7 +244,10 @@ public class AuditInterceptor {
 			}
 
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), 
+				ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE)), e.getComment(), 
+				e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), 
+				e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		
 		logAuditTrail(auditTrail);
