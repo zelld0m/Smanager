@@ -177,7 +177,7 @@
 						e.data.status = ("hide" === e.data.status)? "show" : "hide"; // $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
 						self.setToggleStatus(e.data.ui, e.data.item, "hide" === e.data.status);
 					}
-				}, {ui:ui, item:item, status: "show"}).preventDefault();
+				}, {ui:ui, item:item, status: "show"});
 				
 				self.setToggleStatus(ui, item, "show".toLowerCase() === toggle);
 			},
