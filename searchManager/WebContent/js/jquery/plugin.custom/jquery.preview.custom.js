@@ -445,10 +445,29 @@
 					$item.find("#itemAlt").text(item.imageAlt);
 					$item.find("#itemAlias").text(item.imagePath.alias);
 					$item.find("#itemValidity").text(item.formattedStartDate + " - " + item.formattedEndDate);
+
+					var expired = item.expired;
+					var started = item.started;
+					var daysLeft = item.daysLeft;
 					
-					if (!item.expired) {
+					if ($.simCurrDate) {
+						expired = $.simCurrDate.getTime() > item.endDate.millis;
+						started = $.simCurrDate.getTime() >= item.startDate.millis;
+
+						if (!expired && started) {
+							daysLeft = (item.endDate.millis - $.simCurrDate.getTime()) / (24 * 60 * 60 * 1000) + 1;
+							
+							if (daysLeft > 1) {
+								daysLeft = daysLeft + " days left";
+							} else {
+								daysLeft = "Ends Today";
+							}
+						}
+					}
+
+					if (!expired) {
 						$item.find("#itemValidityDaysExpired").hide();
-						item.started && $item.find("#itemDaysLeft").text("(" + item.daysLeft + ")");
+						started && $item.find("#itemDaysLeft").text("(" + daysLeft + ")");
 					} else {
 						$item.find("#itemDaysLeft").hide();
 					}

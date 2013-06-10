@@ -17,6 +17,7 @@
 				buttonText: "Simulate Current Date",
 				buttonImageOnly: true,
 				onClose: function(selectedDate){
+					$.simCurrDate = new Date(selectedDate);
 					self.manager.store.addByValue('simCurrDate', $.trim(selectedDate));
 					if($.isNotBlank(self.manager.store.values('q'))){
 						self.manager.doRequest();
