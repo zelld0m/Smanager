@@ -455,7 +455,7 @@
 						started = $.simCurrDate.getTime() >= item.startDate.millis;
 
 						if (!expired && started) {
-							daysLeft = (item.endDate.millis - $.simCurrDate.getTime()) / (24 * 60 * 60 * 1000) + 1;
+							daysLeft = Math.floor((item.endDate.millis - $.simCurrDate.getTime()) / (24 * 60 * 60 * 1000) + 1);
 							
 							if (daysLeft > 1) {
 								daysLeft = daysLeft + " days left";
