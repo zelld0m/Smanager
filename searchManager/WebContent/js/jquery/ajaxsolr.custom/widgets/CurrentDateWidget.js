@@ -4,8 +4,8 @@
 		init: function(){
 			var self = this;
 			$(self.target).html(self.getTemplate());
-			var month = (GLOBAL_currentDate.getMonth()+1).length == 2? (GLOBAL_currentDate.getMonth()+1) : "0" + (GLOBAL_currentDate.getMonth()+1);
-			var day = (GLOBAL_currentDate.getDate()).length == 2? (GLOBAL_currentDate.getDate()) : "0" + (GLOBAL_currentDate.getDate());
+			var month = ((GLOBAL_currentDate.getMonth()+1) / 10) >= 1? (GLOBAL_currentDate.getMonth()+1) : "0" + (GLOBAL_currentDate.getMonth()+1);
+			var day = (GLOBAL_currentDate.getDate() / 10) >= 1? (GLOBAL_currentDate.getDate()) : "0" + (GLOBAL_currentDate.getDate());
 			var formattedCurrentDate = $.formatText("{0}/{1}/{2}", month, day, GLOBAL_currentDate.getYear());
 			$(self.target).find("input#overrideCurrentDate").val(formattedCurrentDate).datepicker({
 				defaultDate: new Date(GLOBAL_currentDate.getYear(), GLOBAL_currentDate.getMonth(), GLOBAL_currentDate.getDate()),
