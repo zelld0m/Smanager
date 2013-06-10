@@ -22,7 +22,6 @@ import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -35,12 +34,9 @@ import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.SpellRule;
-import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.xml.file.RuleXmlUtil;
-import com.search.ws.ConfigManager;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -117,28 +113,6 @@ public class DeploymentService {
                 result.add(e.getKey());
             }
         }
-    }
-
-    private boolean publishSpellRule(String storeId) throws DaoException {
-        boolean success = false;
-        try {
-            List<SpellRule> rules = daoService.getSpellRuleVersion(storeId, 0);
-            int maxSuggest = daoService.getMaxSuggest(storeId);
-            Date now = new Date();
-
-            SpellRules spellRules = new SpellRules(storeId, 0, "Did You Mean", "", UtilityService.getUsername(),
-                    now, "spell_rule", maxSuggest, Lists.transform(rules, SpellRule.transformer));
-
-            RuleXmlUtil.ruleXmlToFile(storeId, RuleEntity.SPELL, "spell_rule", spellRules, "/home/solr/utilities/published");
-            ConfigManager.getInstance().setPublishedStoreLinguisticSetting(storeId, "maxSpellSuggestions",
-                    String.valueOf(daoService.getMaxSuggest(storeId)));
-
-            success = true;
-        } catch (Exception e) {
-            logger.error(String.format("Failed to publish spell rule for Store %s", storeId), e);
-            success = false;
-        }
-        return success;
     }
 
     @RemoteMethod
@@ -236,6 +210,7 @@ public class DeploymentService {
         if (CollectionUtils.isEmpty(approvedRuleList)) {
             logger.error("No approved rules retrieved for publishing");
         } else {
+            // Actual publishing of rules to production
             ruleMap = publishRule(ruleType, approvedRuleList);
         }
 
@@ -250,6 +225,8 @@ public class DeploymentService {
         String ruleId = "";
 
         // Populate deployment model for all rules queued for publishing
+        // The following code generates xml files for published rules required for export.
+        // Note that at this point, rules have already been published.
         for (int i = 0; i < Array.getLength(ruleRefIdList); i++) {
             ruleId = ruleRefIdList[i];
             deploymentModel = new DeploymentModel(ruleId, 0);
@@ -259,22 +236,20 @@ public class DeploymentService {
                 deploymentModel.setPublished(1);
                 publishedRuleStatusIdList.add(ruleStatusIdList[i]);
                 String name = null;
+
                 if (RuleEntity.SPELL.equals(ruleEntity)) {
                     name = "Did You Mean Rules";
                 }
+
                 if (daoService.createPublishedVersion(store, ruleEntity, ruleId, username, name, comment)) {
                     daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment,
                             publishedRuleStatusIdList.toArray(new String[0]));
                     logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));
                     if (isAutoExport) {
-                        RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store,
-                                ruleType, ruleId));
+                        RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store,ruleType, ruleId));
+
                         if (ruleXml != null) {
                             try {
-                                if (ruleXml instanceof RuleFileXml) {
-                                    ruleXml = RuleXmlUtil.loadVersion((RuleFileXml) ruleXml);
-                                }
-
                                 daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.AUTOMATIC,
                                         username, "Automatic Export on Publish");
                             } catch (DaoException e) {
@@ -315,7 +290,12 @@ public class DeploymentService {
 
             // insert custom handling for linguistics rules here
             if (RuleEntity.SPELL.equals(RuleEntity.find(ruleType))) {
-                publishSpellRule(UtilityService.getStoreId());
+                // Spell rule publishing has two phases.
+                // 1. Create published version on the database.
+                // 2. Create xml file to be transferred to WS to be picked up and transferred to solr.
+                // When any of the two steps fail, deployment should be considered a failure.
+                // Published version in DB should rollback. File should not be existing.
+                daoService.publishSpellRules(UtilityService.getStoreId());
             }
 
             List<RuleStatus> ruleStatusList = getPublishingListFromMap(

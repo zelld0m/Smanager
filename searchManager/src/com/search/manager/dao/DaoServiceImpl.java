@@ -18,9 +18,9 @@ import com.search.manager.dao.file.DemoteVersionDAO;
 import com.search.manager.dao.file.ElevateVersionDAO;
 import com.search.manager.dao.file.ExcludeVersionDAO;
 import com.search.manager.dao.file.FacetSortVersionDAO;
+import com.search.manager.dao.file.IRuleVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RedirectRuleVersionDAO;
-import com.search.manager.dao.file.RuleVersionDAO;
 import com.search.manager.dao.file.SpellRuleVersionDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
@@ -84,13 +84,12 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
-import com.search.manager.report.model.xml.RuleFileXml;
+import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.xml.file.RuleTransferUtil;
-import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -1425,7 +1424,7 @@ public class DaoServiceImpl implements DaoService {
 		return facetSortDAO.addFacetGroupItems(facetGroupItems);
 	}
 
-	private RuleVersionDAO<?> getRuleVersionDAO(RuleEntity ruleEntity) {
+	private IRuleVersionDAO<?> getRuleVersionDAO(RuleEntity ruleEntity) {
 		switch (ruleEntity) {
 		case ELEVATE:
 			return elevateVersionDAO;
@@ -1445,7 +1444,7 @@ public class DaoServiceImpl implements DaoService {
 		return null;
 	}
 	
-	private RuleVersionDAO<?> getRuleVersionDAO(RuleXml xml) {
+	private IRuleVersionDAO<?> getRuleVersionDAO(RuleXml xml) {
 		// TODO: convert to map
 		if (xml instanceof ElevateRuleXml) {
 			return elevateVersionDAO;
@@ -1465,7 +1464,7 @@ public class DaoServiceImpl implements DaoService {
 		else if (xml instanceof RankingRuleXml) {
 			return rankingRuleVersionDAO;
 		}
-		else if (xml instanceof SpellRules || xml instanceof RuleFileXml && RuleEntity.find(((RuleFileXml) xml).getEntityType()) == RuleEntity.SPELL) {
+		else if (xml instanceof SpellRules || xml instanceof DBRuleVersion && RuleEntity.find(((DBRuleVersion) xml).getEntityType()) == RuleEntity.SPELL) {
 		    return spellRuleVersionDAO;
 		}
 		return null;
@@ -1473,7 +1472,7 @@ public class DaoServiceImpl implements DaoService {
 	
 	@Override
 	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes) {
-		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		IRuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
 		if (dao != null) {
 			return dao.createPublishedRuleVersion(store, ruleId, username, name, notes);
 		}
@@ -1482,7 +1481,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public List<RuleXml> getPublishedRuleVersions(String store, String ruleType, String ruleId) {
-		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		IRuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
 		if (dao != null) {
 			return dao.getPublishedRuleVersions(store, ruleId);
 		}
@@ -1491,7 +1490,7 @@ public class DaoServiceImpl implements DaoService {
 	
 	@Override
 	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason){
-		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		IRuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
 		if (dao != null) {
 			return dao.createRuleVersion(store, ruleId, username, name, reason);
 		}
@@ -1500,25 +1499,16 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version){
-		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		IRuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
 		if (dao != null) {
 			return dao.deleteRuleVersion(store, ruleId, username, version);
 		}
 		return false;
 	}
 
-    @Override
-    public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version, boolean physical){
-        RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
-        if (dao != null) {
-            return dao.deleteRuleVersion(store, ruleId, username, version, physical);
-        }
-        return false;
-    }
-
 	@Override
 	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId) {
-		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		IRuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
 		if (dao != null) {
 			return dao.getRuleVersions(store, ruleId);
 		}
@@ -1527,7 +1517,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int getRuleVersionsCount(String store, String ruleType, String ruleId) {
-		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		IRuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
 		if (dao != null) {
 			return dao.getRuleVersionsCount(store, ruleId);
 		}
@@ -1536,12 +1526,7 @@ public class DaoServiceImpl implements DaoService {
 	
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
-	    if (xml instanceof RuleFileXml) {
-	        if (!((RuleFileXml) xml).isStoredInDB() && ((RuleFileXml) xml).getContentFileName() != null) {
-	            xml = RuleXmlUtil.loadVersion((RuleFileXml) xml);
-	        }
-	    }
-		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
+		IRuleVersionDAO<?> dao = getRuleVersionDAO(xml);
 		if (dao != null) {
 			return dao.restoreRuleVersion(xml);
 		}

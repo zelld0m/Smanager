@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +21,21 @@ import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.file.RuleVersionUtil;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.StringUtil;
+import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
 
 @Repository("spellRuleDAO")
@@ -226,19 +233,44 @@ public class SpellRuleDAO {
             params.put(DAOConstants.PARAM_STORE_ID, store);
             params.put(DAOConstants.PARAM_VERSION_NO, version);
 
-            return DAOUtils.getUpdateCount(restoreSpellRuleVersionProcedure.execute(params)) > 0;
+            //return DAOUtils.getUpdateCount(restoreSpellRuleVersionProcedure.execute(params)) > 0;
+            restoreSpellRuleVersionProcedure.execute(params);
+            return true;
         } catch (Exception e) {
             logger.error("Error occurred on restoreSpellRules.", e);
             throw new DaoException("Error occurred on restoreSpellRules.", e);
         }
     }
 
+    /*
+     * This method includes the creation of published version in DB and the creation of rule xml file that will be
+     * used by WS when updating rules in SOLR. If any of these steps should fail, the whole process should rollback.
+     * Hence, we mark this method transactional. All steps needed to publish spell rules should be included here.
+     */
     @Transactional
     public boolean publishSpellRules(String store) throws DaoException {
         try {
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put(DAOConstants.PARAM_STORE_ID, store);
-            return DAOUtils.getUpdateCount(publishSpellRuleProcedure.execute(params)) > 0;
+            // Publish spell rule in DB
+            Map<String, Object> publishParams = new HashMap<String, Object>();
+            publishParams.put(DAOConstants.PARAM_STORE_ID, store);
+            //result = DAOUtils.getUpdateCount(publishSpellRuleProcedure.execute(publishParams));
+            publishSpellRuleProcedure.execute(publishParams);
+
+            // Get published spell rule and create xml file to be transfered to WS.
+            Map<String, Object> getParams = new HashMap<String, Object>();
+            getParams.put(DAOConstants.PARAM_STORE_ID, store);
+            getParams.put(DAOConstants.PARAM_VERSION_NO, 0);
+            RecordSet<SpellRule> records = DAOUtils.getRecordSet(getSpellRuleVersionProcedure.execute(getParams));
+            List<SpellRule> spellRules = records.getList();
+            int maxSuggest = getMaxSuggest(store);
+
+            SpellRules spellRulesXml = new SpellRules(store, 0, "Did You Mean", "", UtilityService.getUsername(),
+                    new Date(), "spell_rule", maxSuggest, Lists.transform(spellRules, SpellRule.transformer));
+
+            RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
+            ConfigManager.getInstance().setPublishedStoreLinguisticSetting(store, "maxSpellSuggestions",
+                    String.valueOf(daoService.getMaxSuggest(store)));
+            return true;
         } catch (Exception e) {
             logger.error("Error in publishing spell rules.", e);
             throw new DaoException("Error in publishing spell rules.", e);
@@ -448,7 +480,9 @@ public class SpellRuleDAO {
             params.put(DAOConstants.PARAM_STORE_ID, store);
             params.put(DAOConstants.PARAM_VERSION_NO, versionNo);
 
-            return DAOUtils.getUpdateCount(addSpellRuleVersionProcedure.execute(params)) > 0;
+            //return DAOUtils.getUpdateCount(addSpellRuleVersionProcedure.execute(params)) > 0;
+            addSpellRuleVersionProcedure.execute(params);
+            return true;
         } catch (Exception e) {
             logger.error("Error occurred in addSpellRuleVersion.", e);
             throw new DaoException("Error occurred in addSpellRuleVersion.", e);
@@ -462,7 +496,9 @@ public class SpellRuleDAO {
             params.put(DAOConstants.PARAM_STORE_ID, store);
             params.put(DAOConstants.PARAM_VERSION_NO, versionNo);
 
-            return DAOUtils.getUpdateCount(deleteSpellRuleVersionProcedure.execute(params)) > 0;
+            //return DAOUtils.getUpdateCount(deleteSpellRuleVersionProcedure.execute(params)) > 0;
+            deleteSpellRuleVersionProcedure.execute(params);
+            return true;
         } catch (Exception e) {
             logger.error("Error occurred in deleteSpellRuleVersions.", e);
             throw new DaoException("Error occurred in deleteSpellRuleVersions.", e);

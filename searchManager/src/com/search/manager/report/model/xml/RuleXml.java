@@ -21,7 +21,8 @@ import com.search.manager.model.RuleStatus;
 	RuleStatus.class,
 	RuleEntity.class,
 	Product.class,
-	SpellRules.class
+	SpellRules.class,
+	DBRuleVersion.class
 })
 @DataTransferObject(converter = BeanConverter.class)
 public class RuleXml extends BaseEntityXml{

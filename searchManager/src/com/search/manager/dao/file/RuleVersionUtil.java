@@ -16,7 +16,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
@@ -27,9 +26,9 @@ public class RuleVersionUtil {
 
 	private static Logger logger = Logger.getLogger(RuleVersionUtil.class);
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
-	private static final String BACKUP_PATH = PropsUtils.getValue("backuppath");
-	private static final String PUBLISH_PATH = PropsUtils.getValue("publishedfilepath");
-	private static final String ROLLBACK_PREFIX = "rpnv";
+	public static final String BACKUP_PATH = PropsUtils.getValue("backuppath");
+	public static final String PUBLISH_PATH = PropsUtils.getValue("publishedfilepath");
+	public static final String ROLLBACK_PREFIX = "rpnv";
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static RuleXml getRuleVersion(String store, RuleEntity ruleEntity, String ruleId, int version){
@@ -144,23 +143,6 @@ public class RuleVersionUtil {
 			return false;
 		};
 
-        List versions = ruleVersionList.getVersions();
-        Object latest = versions.get(versions.size() - 1);
-
-        if (latest instanceof RuleFileXml) {
-            RuleFileXml latestVersion = (RuleFileXml) latest;
-            
-            if (latestVersion.getContentFileName() != null) {
-                String contentFileName =  RuleXmlUtil.getFilenameByDir(
-                        RuleXmlUtil.getRuleFileDirectory(location, store, ruleEntity), latestVersion.getContentFileName());
-                latestVersion.setPath(contentFileName);
-    
-                if (!RuleXmlUtil.saveRuleXml(latestVersion.getContent(), contentFileName, nextVersion)) {
-                    return false;
-                }
-            }
-        }
-
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
 			Marshaller m = context.createMarshaller();
@@ -170,6 +152,39 @@ public class RuleVersionUtil {
 			m.marshal(ruleVersionList, writer);
 			if (!removeRollbackFile(filename, nextVersion)){
 				logger.info(String.format("Failed to delete rollback file for next version %l", nextVersion));
+			};
+			return true;
+		} catch (JAXBException e) {
+			logger.error("Unable to create marshaller", e);
+			return false;
+		} catch (Exception e) {
+			logger.error("Unknown error", e);
+			return false;
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
+		}
+	}
+	
+	public static boolean saveRuleVersionList(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList, String location){
+		long nextVersion = ruleVersionList.getNextVersion();
+		FileWriter writer = null;
+		String filename = RuleXmlUtil.getFilenameByDir(
+				RuleXmlUtil.getRuleFileDirectory(location, store, ruleEntity), 
+				RuleXmlUtil.getRuleId(ruleEntity, ruleId));
+
+		if (!createRollbackFile(filename, nextVersion)){
+			logger.error("Unable to create rollback file");
+			return false;
+		};
+
+		try {
+			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			writer = new FileWriter(filename);
+			m.marshal(ruleVersionList, writer);
+			if (!removeRollbackFile(filename, nextVersion)){
+				logger.info(String.format("Failed to delete rollback file for version %l", nextVersion));
 			};
 			return true;
 		} catch (JAXBException e) {

@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +17,9 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOUtils;
@@ -47,7 +44,6 @@ import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SearchResult;
-import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.DemoteItemXml;
@@ -61,13 +57,10 @@ import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
-import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
-import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
 import com.search.ws.ConfigManager;
@@ -873,26 +866,6 @@ public class RuleXmlUtil{
 		return false;
 	}
 
-    private static boolean restoreSpellRule(String path, RuleFileXml xml) {
-        String store = xml.getStore();
-        long version = xml.getVersion();
-
-        try {
-            // replace current spell rules with rules to restore
-            if (!daoService.restoreSpellRules(store, (int) version)) {
-                daoService.setMaxSuggest(store, Integer.parseInt(StringUtils.defaultIfBlank(xml.getProps().get("maxSuggest"), "3")));
-                logger.info("Rollback spell rules succeeded");
-                return true;
-            } else {
-                logger.error("Failed to rollback ranking rule");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
 	public static boolean restoreRule(RuleXml xml) {
 		return RuleXmlUtil.restoreRule(xml, true);
 	}
@@ -926,25 +899,8 @@ public class RuleXmlUtil{
         }
     }
 
-    public static RuleXml loadVersion(RuleFileXml xml) {
-        if (xml.getContentFileName() != null) {
-            return xmlFileToRuleXml(xml.getPath());
-        } else if (xml.isStoredInDB()) {
-            switch (RuleEntity.find(xml.getEntityType())) {
-                case SPELL: {
-                    try {
-                        return new SpellRules(xml.getStore(), xml.getVersion(), xml.getName(),
-                                xml.getNotes(), xml.getCreatedBy(), xml.getCreatedDate(), xml.getRuleId(), 3,
-                                Lists.transform(daoService.getSpellRuleVersion(xml.getStore(), (int) xml.getVersion()),
-                                        SpellRule.transformer));
-                    } catch (DaoException e) {
-                        return null;
-                    }
-                }
-            }
-        }
-        
-        return null;
+    public static RuleXml loadVersion(String file) {
+        return xmlFileToRuleXml(file);
     }
 
 	private static boolean restoreRule(RuleXml xml, boolean isVersion, boolean createPreRestore) {
@@ -953,9 +909,6 @@ public class RuleXmlUtil{
 
 		if(xml  == null){
 			return isRestored; 
-		} else if (xml instanceof RuleFileXml) {
-		    if (!((RuleFileXml) xml).isStoredInDB() && ((RuleFileXml) xml).getContentFileName() != null)
-		    xml = loadVersion((RuleFileXml) xml);
 		}
 
 		if (xml instanceof ElevateRuleXml){
@@ -970,12 +923,6 @@ public class RuleXmlUtil{
 			isRestored = RuleXmlUtil.restoreQueryCleaning(path, xml, createPreRestore);
 		}else if(xml instanceof RankingRuleXml){
 			isRestored = RuleXmlUtil.restoreRankingRule(path, xml, createPreRestore);
-		}else if(xml instanceof RuleFileXml && ((RuleFileXml) xml).isStoredInDB()) {
-		    switch (RuleEntity.find(((RuleFileXml) xml).getEntityType())) {
-		        case SPELL:
-        		    isRestored = RuleXmlUtil.restoreSpellRule(path, (RuleFileXml) xml);
-        		    break;
-		    }
 		}
 		return isRestored;
 	}

@@ -13,7 +13,7 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 
 @Repository(value="queryCleaningVersionDAO")
-public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
+public class RedirectRuleVersionDAO extends AbstractRuleVersionDAO<RedirectRuleXml>{
 
 	@Autowired private DaoService daoService;
 

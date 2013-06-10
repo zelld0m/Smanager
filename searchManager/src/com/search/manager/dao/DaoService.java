@@ -265,7 +265,6 @@ public interface DaoService extends SearchDaoService {
 	/* Version */
 	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
 	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version);
-    public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version, boolean physical);
 	public boolean restoreRuleVersion(RuleXml xml);	
 	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId);
 	public int getRuleVersionsCount(String store, String ruleType, String ruleId);
