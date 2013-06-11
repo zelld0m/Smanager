@@ -161,7 +161,7 @@ public class BannerService extends RuleService{
 				newImagePath = srGetImagePath.getData();
 			}
 			else{
-				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imagePath));
+				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imagePath, imageAlias));
 				return serviceResponse; 
 			}
 		}
@@ -440,8 +440,8 @@ public class BannerService extends RuleService{
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imageUrl, alias), e);
-		}
-
+		} 
+		
 		return serviceResponse;
 	}
 
