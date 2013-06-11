@@ -95,6 +95,5 @@
 	</bean>
     
     <bean id="spellIndex" class="com.search.manager.xml.file.SpellIndex" init-method="init" destroy-method="destroy" scope="singleton" />
-	
-	<import resource="file:/home/solr/conf/cron-app.xml"/>
+	<bean id="catCodeUtil" class="com.search.manager.utility.CatCodeUtil" init-method="init" lazy-init="false" />
 </beans>
