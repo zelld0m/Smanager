@@ -74,7 +74,11 @@
 		template += '		<div class="clearB"></div>';
 		template += '		<div id="itemHolder">';
 		template += '			<div id="itemPattern" class="item" style="display: none; width: 100%">';
-		template += '				<span class="deleteIcon"><div class="delete_wrap"><img src="' + GLOBAL_contextPath + '/images/icon_delete2_gray.png"></div></span>';
+		template += '				<span class="deleteIcon">';
+		template += '					<div class="delete_wrap">';
+		template += '						<img src="' + GLOBAL_contextPath + '/images/icon_delete2_gray.png">';
+		template += '					</div>';
+		template += '				</span>';
 		template += '				<span class="itemName"></span>';        
 		template += '				<span class="itemStatus"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif"></span>';        
 		template += '			</div>';
@@ -142,6 +146,10 @@
 			callback:function(data){
 				ui.find('.itemStatus').text(getRuleNameSubTextStatus(data));
 				if(item[base.options.nameField] !== base.options.rule[base.options.nameField] && !data["locked"] && allowModify){
+					//TODO: Optimize, remove css
+					ui.find(".deleteIcon").find("img").prop({
+						src: GLOBAL_contextPath + "/images/icon_delete2.png"
+					});
 					ui.find(".deleteIcon").off().on({
 						click: function(e){
 							jConfirm("Delete " + e.data.base.options.parentNameText + " in " + e.data.item[base.options.nameField] + "?", "Linked Keyword", function(result){
