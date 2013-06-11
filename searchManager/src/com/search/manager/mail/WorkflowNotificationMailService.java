@@ -32,7 +32,7 @@ public class WorkflowNotificationMailService {
 	private DaoService daoService;
 
 	public boolean sendNotification(RuleStatusEntity status, String ruleType,
-			String approvedBy, List<RuleStatus> ruleStatusList) {
+			String approvedBy, List<RuleStatus> ruleStatusList, String comment) {
 		SimpleMailMessage messageDetails = mailDetails;
 		String templateLocation = "";
 		String subject = "";
@@ -61,7 +61,8 @@ public class WorkflowNotificationMailService {
 		}
 
 		messageDetails.setSubject(subject);
-
+		model.put("comment", comment);
+		
 		try {
 			User approvedByUser = daoService.getUser(approvedBy);
 			messageDetails.setCc(approvedByUser.getEmail());
