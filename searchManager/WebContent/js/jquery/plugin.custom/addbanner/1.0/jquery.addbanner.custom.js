@@ -364,8 +364,10 @@
 		template += '		<input id="imagePath" class="w565px" type="text">';
 		template += '		<label class="txtLabel">Image Alias: </label> ';
 		template += '		<input id="imageAlias" class="imageAlias w218px" type="text">';
-		template += '		<label class="txtLabel lblImageAlt">Image Alt: </label> ';
-		template += '		<input id="imageAlt" class="w218px" type="text">';
+		template += '		<div class="fRight">';
+		template += '			<label class="txtLabel lblImageAlt">Image Alt: </label> ';
+		template += '			<input id="imageAlt" class="w218px" type="text">';
+		template += '		</div>';
 		template += '		<label class="txtLabel mBottom0px">Link Path: </label> ';
 		template += '		<input id="linkPath" class="w565px pad0" type="text">';
 		template += '		<div class="clearfix openNewWindowContainer">';
@@ -401,9 +403,9 @@
 				}
 			}
 
+			template += '<div id="buttonset">';
 			template += '<input type="checkbox" name="temporaryDisable" id="temporaryDisable" />';
 			template += '<label for="temporaryDisable" class="cRed fBold lbl_temporaryDisable">Temporary Disable</label>';
-			template += '<div id="buttonset">';
 			template += '	<div class="floatR">';
 			template += '		<div id="okButton" class="btn_ok round_btn fLeft buttons">';
 			template += '			<span class="btn_wrap"><a href="javascript:void(0);">' + type + '</a></span>';

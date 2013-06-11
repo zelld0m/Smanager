@@ -129,7 +129,6 @@
 
 /* buttons start */
 .plugin-addbanner #buttonset {
-	margin-top: 10px;
     width: 100%;
 }
 
@@ -189,3 +188,15 @@
 	padding-top: 11px !important;
 padding-right: 10px !important;
 }
+
+.plugin-addbanner  .banner_info_more input, .plugin-addbanner  .banner_info_more label, .plugin-addbanner  .banner_info_more textarea {
+	margin-bottom:0px !important;
+}
+.plugin-addbanner .banner_info_more .lHeight100 {
+	line-height:18px !important;
+}
+
+.plugin-addbanner #keyword {
+	margin-bottom: 8px !important;
+}
+
