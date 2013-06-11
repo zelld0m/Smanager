@@ -78,7 +78,8 @@ public class RuleItemXml extends BaseEntityXml{
 			
 		this.ruleCondition = ruleCondition;
 	}
-
+	
+	@XmlAttribute(name="expiryDate")
 	public DateTime getExpiryDateTime() {
 		return expiryDateTime;
 	}

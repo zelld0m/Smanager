@@ -1964,7 +1964,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword)
+	public List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, DateTime currentDate)
 			throws DaoException {
 		BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
 		BannerRule bannerRule = new BannerRule();
@@ -1972,7 +1972,7 @@ public class DaoServiceImpl implements DaoService {
 		bannerRule.setRuleName(keyword);
 		bannerRuleItemFilter.setRule(bannerRule);
 		SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
-				bannerRuleItemFilter, DateTime.now(), DateTime.now(), 0, 0);
+				bannerRuleItemFilter, currentDate, currentDate, 0, 0);
 		List<BannerRuleItem> list = searchBannerRuleItem(criteria).getList();
 		
 		return list;

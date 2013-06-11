@@ -26,7 +26,7 @@
 			<span id="titleHeader" class="fLblue fnormal"></span>
 		</div>
 		<div id="addBannerBtn" class="btn_add_banner round_btn fRight">
-			<span class="btn_wrap"><a href="javascript:void(0)">Add Banner</a></span>
+			<span class="btn_wrap"><a href="javascript:void(0);">Add Banner</a></span>
 		</div>
 	</div>
 	<div class="clearB"></div>
@@ -89,8 +89,9 @@
 					</div>
 				
 					<ul class="banner_info clearfix">
-						<li ><span id="toggleIcon" class="ico_minus ico fLeft"></span>
-							 <a id="toggleText" class="show_what" href="javascript:void(0);">Show Less</a></li>
+						<li ><span id="toggleIcon" class="ico_plus ico fLeft"></span>
+							 <span><a id="toggleText" class="show_what" href="javascript:void(0);">Show More</a></span>
+					    </li>
 						<li>
 							<div id="copyToBtn" class="btn_copy_to round_btn fLeft">
 								<span class="btn_wrap"><a href="javascript:void(0);">Copy To</a></span>

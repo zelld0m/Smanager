@@ -33,3 +33,27 @@ label {
 	float: none;
 
 }
+
+#currentDate {
+	padding-top:10px;
+}
+
+#currentDate label {
+	float:left;
+    width: 8.1em;
+   	font-size: 12px !important;
+    line-height: 23px;    
+}
+    
+#currentDate input {
+   width: 67px;
+   }
+   
+#currentDate #overrideCurrentDate {
+	float:left;
+}
+
+#currentDate .ui-datepicker-trigger {
+ float: left;
+    padding: 3px 10px 2px 5px!important;
+}

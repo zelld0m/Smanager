@@ -169,15 +169,17 @@
 			addRuleItemToggleHandler: function(ui, item){
 				var self = this;
 				var toggle = "hide"; // $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
+				
 				ui.find("#bannerInfo").hide();
-				self.setToggleStatus(ui, item, ($.isBlank(toggle) || "hide".toLowerCase() === toggle) ? false: true);
-
-				ui.find("#toggleText").off().on({
+				
+				ui.find("#toggleText, #toggleIcon").off().on({
 					click: function(e){
-						e.data.status = ($.isBlank(e.data.status) || "hide" === e.data.status)? "show" : "hide"; // $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
-						self.setToggleStatus(e.data.ui, e.data.item, ($.isBlank(e.data.status) || "hide" === e.data.status) ? true : false);
+						e.data.status = ("hide" === e.data.status)? "show" : "hide"; // $.cookie('banner.toggle' + $.formatAsId(e.data.item["memberId"]));
+						self.setToggleStatus(e.data.ui, e.data.item, "hide" === e.data.status);
 					}
-				}, {ui:ui, item:item, status: ""});
+				}, {ui:ui, item:item, status: "show"});
+				
+				self.setToggleStatus(ui, item, "show".toLowerCase() === toggle);
 			},
 
 			addImageAliasRestriction: function(ui, item){
@@ -193,10 +195,11 @@
 				var self = this;
 
 				if (show){
-					ui.find("#toggleText").text("Show Less").end()
-					.find("#bannerInfo").slideDown("slow", function(){
+					ui.find("#toggleIcon").removeClass("ico_plus").addClass("ico_minus").end()
+					.find("#toggleText").text("Show Less");
+					
+					ui.find("#bannerInfo").slideDown("slow", function(){
 						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
-
 						self.addInputFieldListener(ui, item, item["imagePath"]["path"], ui.find("input#imagePath"), self.previewImage);
 						self.addInputFieldListener(ui, item, item["linkPath"], ui.find("input#linkPath"), self.validateLinkPath);
 						self.addInputFieldListener(ui, item, item["priority"], ui.find("input#priority"));
@@ -213,11 +216,12 @@
 						self.addImageAliasRestriction(ui, item);
 						self.addScheduleRestriction(ui, item);
 						self.addItemExpiredRestriction(ui, item);
-
+						self.addRuleStatusRestriction();
 					});
 
 				}else{
-					ui.find("#toggleText").text("Show More");
+					ui.find("#toggleIcon").removeClass("ico_minus").addClass("ico_plus").end()
+					   .find("#toggleText").text("Show More");
 
 					ui.find("#bannerInfo").slideUp("slow", function(){
 						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "hide" ,{path:GLOBAL_contextPath});
@@ -290,7 +294,6 @@
 						}
 						
 						self.populateRuleItem(recordSet);
-						self.addRuleItemHandler();
 					},
 					preHook: function(e){
 						$(".ruleItem:not(#ruleItemPattern)").remove();
@@ -302,6 +305,8 @@
 			addRuleStatusRestriction: function(){
 				var self = this;
 				
+				self.addRuleItemHandler();
+
 				if(self.selectedRuleStatus["locked"] || !allowModify){
 					$("#addBannerBtn, .setAliasBtn").hide();
 					
@@ -327,6 +332,8 @@
 						}).addClass(i + 1 == rs.list.length ? "last": "").appendTo($iHolder).show();
 						self.populateRuleItemFields(ui, item);
 					}
+				}else{
+					self.addRuleStatusRestriction()
 				}
 			},
 
@@ -359,8 +366,8 @@
 
 				// Select a date range, datepicker issue on multiple id even with scoping
 				.find("#startDate").prop({id: "startDate_" + item["memberId"]}).datepicker({
-					minDate: currentDate,
-					defaultDate: currentDate,
+					minDate: GLOBAL_currentDate,
+					defaultDate: GLOBAL_currentDate,
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
@@ -374,7 +381,7 @@
 
 				.find("#endDate").prop({id: "endDate_" + item["memberId"]}).datepicker({
 					minDate: ui.find("#startDate_" + item["memberId"]).datepicker("getDate"),
-					defaultDate: currentDate,
+					defaultDate: GLOBAL_currentDate,
 					changeMonth: true,
 					changeYear: true,
 					showOn: "both",
@@ -533,9 +540,10 @@
 								// id will be used to flag new banner url
 								ui.find("#imageTitle").text("").end()
 								.find(".imageAlias").val("").prop({
+									id:"",
 									readonly: false,
 									disabled: false
-								}).removeAttr("id");
+								});
 							}
 						},
 						postHook: function(e){
@@ -714,7 +722,7 @@
 
 			addRuleItemHandler: function(){
 				var self = this;
-				$("#addBannerBtn").show();
+				
 				$("#addBannerBtn").addbanner({
 					id: 'addbanner',
 					rule: self.selectedRule,
@@ -755,7 +763,7 @@
 							}
 						});
 					}
-				});
+				}).show();
 			},
 
 			beforeShowRuleStatus: function(){

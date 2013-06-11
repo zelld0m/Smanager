@@ -114,6 +114,7 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_DISABLE_FACET_SORT = "disableFacetSort";
 	public final static String SOLR_PARAM_DISABLE_DID_YOU_MEAN = "disableDidYouMean";
 	public final static String SOLR_PARAM_DISABLE_BANNER = "disableBanner";
+	public final static String SOLR_PARAM_SIMULATE_DATE = "simCurrDate";
 	
 	public final static String SOLR_PARAM_FACET_NAME 			= "facet-name";
 	public final static String SOLR_PARAM_FACET_TEMPLATE 		= "facet-template";

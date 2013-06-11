@@ -2,6 +2,8 @@ package com.search.manager.dao;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
@@ -63,6 +65,6 @@ public interface SearchDaoService {
 	/* Banner */
 
 	public List<BannerRuleItem> getActiveBannerRuleItems(Store store,
-			String keyword) throws DaoException;
+			String keyword, DateTime currentDate) throws DaoException;
 
 }

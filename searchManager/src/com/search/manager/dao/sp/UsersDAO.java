@@ -169,7 +169,7 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_IP, null);
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
 			inputs.put(DAOConstants.PARAM_STORE, user.getStoreId());
-			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate()==null? DateTime.now().plusYears(5): JodaDateTimeUtil.toSqlDate(user.getThruDate()));
+			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate()==null? JodaDateTimeUtil.toSqlDate(DateTime.now().plusYears(5)): JodaDateTimeUtil.toSqlDate(user.getThruDate()));
 			inputs.put(DAOConstants.PARAM_CREATED_BY, user.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_TIMEZONE_ID, user.getTimezoneId());
 			result = DAOUtils.getUpdateCount(addUserStoredProcedure.execute(inputs));

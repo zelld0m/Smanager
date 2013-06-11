@@ -14,6 +14,11 @@
 			minCharRequired: 2
 		}));
 		
+		Manager.addWidget(new AjaxSolr.CurrentDateWidget({
+			id: 'currentDate',
+			target: '#currentDate'
+		}));
+		
 		if(GLOBAL_storeId === "pcmallgov"){
 			Manager.addWidget(new AjaxSolr.PCMGSingleSelectorWidget({
 				id: "pcmgSelector",
