@@ -449,13 +449,16 @@
 					var expired = item.expired;
 					var started = item.started;
 					var daysLeft = item.daysLeft;
-					
+
 					if ($.simCurrDate) {
-						expired = $.simCurrDate.getTime() > item.endDate.millis;
-						started = $.simCurrDate.getTime() >= item.startDate.millis;
+						var itemStartDate = new Date(item.formattedStartDate);
+						var itemEndDate = new Date(item.formattedEndDate);
+
+						expired = $.simCurrDate.getTime() > itemEndDate.getTime();
+						started = $.simCurrDate.getTime() >= itemStartDate.getTime();
 
 						if (!expired && started) {
-							daysLeft = Math.floor((item.endDate.millis - $.simCurrDate.getTime()) / (24 * 60 * 60 * 1000) + 1);
+							daysLeft = Math.floor((itemEndDate.getTime() - $.simCurrDate.getTime()) / (24 * 60 * 60 * 1000) + 1);
 							
 							if (daysLeft > 1) {
 								daysLeft = daysLeft + " days left";
@@ -467,11 +470,12 @@
 
 					if (!expired) {
 						$item.find("#itemValidityDaysExpired").hide();
-						started && $item.find("#itemDaysLeft").text("(" + daysLeft + ")");
+						!started && (daysLeft = "Not Started");
+						$item.find("#itemDaysLeft").text("(" + daysLeft + ")");
 					} else {
 						$item.find("#itemDaysLeft").hide();
 					}
-					
+
 					if (item.disabled) {
 						$item.addClass("forceAddErrorClass");
 					}
