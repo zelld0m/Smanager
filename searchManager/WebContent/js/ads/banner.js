@@ -729,7 +729,6 @@
 					ruleItem: null,
 					mode: 'add',
 					isPopup: true,
-					priority: self.selectedRuleItemTotal + 1 ,
 					addBannerCallback: function(base, e){
 						var params = e.data;
 
@@ -894,7 +893,7 @@
 						}else if($.isBlank(priority) && $.isNumeric(priority)) {
 							jAlert("Priority is required and must be a number", "Banner");
 						}else if(priority > self.selectedRuleItemTotal) {
-							jAlert("Priority exceeded allowed, maximum value is " +  self.selectedRuleItemTotal, "Banner");
+							jAlert("Maximum value for priority is " +  self.selectedRuleItemTotal, "Banner");
 						}else if($.isBlank(imagePath)) {
 							jAlert("Image path is required.", "Banner");
 						} else if($.isBlank(imageAlias)) {
