@@ -74,7 +74,7 @@
 		template += '		<div class="clearB"></div>';
 		template += '		<div id="itemHolder">';
 		template += '			<div id="itemPattern" class="item" style="display: none; width: 100%">';
-		template += '				<span class="deleteIcon"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png"></span>';
+		template += '				<span class="deleteIcon"><div class="delete_wrap"><img src="' + GLOBAL_contextPath + '/images/icon_delete2_gray.png"></div></span>';
 		template += '				<span class="itemName"></span>';        
 		template += '				<span class="itemStatus"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif"></span>';        
 		template += '			</div>';

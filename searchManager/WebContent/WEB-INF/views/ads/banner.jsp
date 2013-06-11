@@ -117,27 +117,28 @@
 						<div id="setAliasBtn" class="setAliasBtn btn_update_alias round_btn fLeft clearfix">
 							<span class="btn_wrap"><a id="setAliasText" href="javascript:void(0);">Set Alias</a></span>
 						</div>
-							
+						<div class="fRight">
 						<label for="imageAlt" class="lbl_imgAlt">Image Alt:</label>
 						<input type="text" class="w218px" name="imageAlt" id="imageAlt" />
-						
-						<label for="linkPath">Link Path</label>
-						<input type="text" class="w533px" name="linkPath" id="linkPath" />
-
+						</div>
+						<div class="clearB">
+						<label for="linkPath" class="mBottom0px">Link Path</label>
+						<input type="text" class="w533px" name="linkPath" id="linkPath" class="pad0" />
+						</div>
                         <div class="clearfix openNewWindowContainer">
-                            <input type="checkbox" name="openNewWindow" id="openNewWindow" />
-                            <label for="openNewWindow" class="fBold">Open In New Window</label>
+                            <input type="checkbox" name="openNewWindow" id="openNewWindow" class="marL0"/>
+                            <label for="openNewWindow" class="fBold banner_info_more lHeight100">Open In New Window</label>
                         </div>
 						<!-- div class="ico_check ico fLeft"></div -->
 						
-						<label for="description">Description</label>
-						<textarea class="w565px" name="description" id="description" ></textarea>
+						<label for="description" >Description</label>
+						<textarea class="w565px mBottom0px" name="description" id="description" ></textarea>
 						
-						<div class="button_group clearfix">
+						<div class="button_group clearfix marT5">
 							<input type="checkbox" name="temporaryDisable" id="temporaryDisable" />
 							<label for="temporaryDisable" class="cRed fBold fLeft lbl_temporaryDisable">Temporary Disable</label>
 						
-							<div class="fRight">
+							<div class="fRight ">
 							<div id="updateBtn" class="btn_update round_btn fLeft">
 								<span class="btn_wrap"><a href="javascript:void(0);">Update</a></span>
 							</div>	

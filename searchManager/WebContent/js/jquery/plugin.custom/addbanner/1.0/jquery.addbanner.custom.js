@@ -349,7 +349,7 @@
 		var base = this;
 		var template = '';
 
-		template += '<div class="plugin-addbanner">';
+		template += '<div class="plugin-addbanner ban_edit">';
 		template += '	<div id="preview">';
 		template += '		<div id="preloader" class="circlePreloader" style="display:none">';
 		template += '			<img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ.gif" />';
@@ -358,17 +358,19 @@
 		template += '		<img id="imagePreview" src="' + GLOBAL_contextPath + '/images/nopreview.png" onError="this.onerror=null;this.src=\'' + GLOBAL_contextPath + '/images/nopreview.png\';" />';
 		template += '		</div>';
 		template += '	</div>';
-		template += '	<div id="addItemTemplate" class="mar0">';
+		template += '	<div id="addItemTemplate" class="mar0 banner_info_more" style="width:642px">';
 		template += '		<label class="txtLabel">Image Path: </label> ';
 		template += '		<input id="imagePath" class="w565px" type="text">';
 		template += '		<label class="txtLabel">Image Alias: </label> ';
 		template += '		<input id="imageAlias" class="imageAlias w218px" type="text">';
 		template += '		<label class="txtLabel lblImageAlt">Image Alt: </label> ';
 		template += '		<input id="imageAlt" class="w218px" type="text">';
-		template += '		<label class="txtLabel">Link Path: </label> ';
-		template += '		<input id="linkPath" class="w565px" type="text">';
-		template += '		<input type="checkbox" name="openNewWindow" id="openNewWindow" />';
-		template += '		<label for="openNewWindow" class="fBold">Open In New Window</label>';
+		template += '		<label class="txtLabel mBottom0px">Link Path: </label> ';
+		template += '		<input id="linkPath" class="w565px pad0" type="text">';
+		template += '		<div class="clearfix openNewWindowContainer">';
+		template += '	         <input type="checkbox" name="openNewWindow" id="openNewWindow" class="marL0"/>';
+		template += '	         <label for="openNewWindow" class="fBold banner_info_more lHeight100">Open In New Window</label>';
+		template += '	         </div>';
 		template += '		<label class="txtLabel">Schedule:</label> ';
 		template += '		<input id="startDate" class="startDate schedule" type="text">';
 		template += '		<input id="endDate" class="endDate schedule"  type="text">';
@@ -399,7 +401,7 @@
 			}
 
 			template += '<input type="checkbox" name="temporaryDisable" id="temporaryDisable" />';
-			template += '<label for="temporaryDisable" class="cRed fBold fLeft lbl_temporaryDisable">Temporary Disable</label>';
+			template += '<label for="temporaryDisable" class="cRed fBold lbl_temporaryDisable">Temporary Disable</label>';
 			template += '<div id="buttonset">';
 			template += '	<div class="floatR">';
 			template += '		<div id="okButton" class="btn_ok round_btn fLeft buttons">';

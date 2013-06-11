@@ -46,6 +46,7 @@
     padding-top: 0;
     top: -5px;
     position: relative;
+    
 }
 
 .plugin-addbanner label[for="temporaryDisable"] {
@@ -53,7 +54,7 @@
 }
 
 .plugin-addbanner input#temporaryDisable {
-    margin-left: 100px;
+    margin-left: 76px;
 }
 
 .plugin-addbanner .preview_container {
@@ -181,4 +182,10 @@
 .plugin-addbanner .btn_cancel .btn_wrap {
 	background: transparent url('image/red_rounded_big_right.png') no-repeat right;
 	padding-right: 5px;
+}
+
+
+.plugin-addbanner img.ui-datepicker-trigger {
+	padding-top: 11px !important;
+padding-right: 10px !important;
 }

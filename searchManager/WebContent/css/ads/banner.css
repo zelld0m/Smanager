@@ -1,7 +1,7 @@
 /******* general start *******/
 
 .ban_edit {
-	color: #666666;
+	color: #222222;
 	font-family: Arial, sans-serif;
 	font-size: 12px;
 	text-align: left;
@@ -33,12 +33,13 @@
 .ban_edit .page_info {
 line-height: 24px;
     padding: 10px;
-    width: 100%;
+    width: 710px;
 }
 .ban_edit .page_info li {
+	font-size:13px;
 height: 24px;
-    margin-right: 4px;
-    padding-right: 4px;
+    margin-right: 8px;
+    padding-right: 8px;
 }
 .ban_edit .page_info .fRight {
 	padding: 0;
@@ -46,8 +47,8 @@ height: 24px;
 }
 .ban_edit .page_info .fRight, .ban_edit .page_nav_group .fRight {
  font-size: 12px;
-    margin-right: 20px;
 }
+.ban_edit .pagingArrow {padding-top:8px;}
 .ban_edit .bRight {
 	border-right: 1px solid #f0f0f0;
 }
@@ -59,7 +60,7 @@ height: 24px;
 }
 .ban_edit .page_nav_group {
 	list-style: none;
-	padding: 10px;
+	padding: 0 10px;
 	border: 1px solid #c4c4c4;
 	border-left: none;
 	border-right: none;
@@ -159,9 +160,10 @@ height: 24px;
 border:none;
 } 
 .ban_edit img.ui-datepicker-trigger {
-    padding: 3px;
+    padding: 3px 5px 3px 8px;
     vertical-align: middle;
     width: 18px;
+
 } 
 .ban_edit .preview_container {
 	width: 100%;
@@ -194,15 +196,17 @@ border:none;
 .ban_edit .banner_info_more  input, .ban_edit .banner_info_more  label, .ban_edit .banner_info_more  textarea {
 	float: left;
 	margin-bottom: 10px;
-	font-family: Arial, sans-serif;
+	font-family: Arial, sans-serif !important;
 }
 
 .ban_edit .banner_info_more input {
 	height: 26px;
+	margin-bottom:15px;
 }
 
 .ban_edit .banner_info_more input#linkPath {
     margin-bottom: 0;
+    padding:2px  !important;
 }
 
 .ban_edit input, .ban_edit textarea, .ban_edit .input[type="checkbox"], .ban_edit select {
@@ -211,7 +215,8 @@ border:none;
 }
 .ban_edit .banner_info_more label {
 	width: 76px;
-	line-height: 26px;
+	line-height: 33px;
+	margin-bottom:14px;
 }
 
 .ban_edit .banner_info_more .openNewWindowContainer {
@@ -219,7 +224,7 @@ border:none;
 	width: 100%;
     vertical-align: middle;
     margin: 0px;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
 }
 
 .ban_edit .banner_info_more .openNewWindowContainer label {
@@ -227,12 +232,17 @@ border:none;
     vertical-align: middle;
     margin-bottom: 0px;
     float: none;
+    padding:0px;
+    font-size:10px;
 }
 
 .ban_edit .banner_info_more .openNewWindowContainer input {
     margin-bottom: 0px;
     vertical-align: middle;
     height: 12px;
+    padding-left:0px;
+    padding-right:0px;
+    margin-right:0px;
     float: none;
 }
 
@@ -249,7 +259,8 @@ border:none;
 .ban_edit .banner_info_more .lbl_temporaryDisable {
 	width: 200px;
 	padding-top: 3px;
-	line-height: 14px;
+	line-height: 18px;
+	float:none;
 }
 .ban_edit #temporaryDisable {
 	margin-left: 76px;
@@ -288,7 +299,7 @@ border:none;
 	text-decoration: none;
 	height: 100%;
 	display: inline-block;
-	font-size: 11px;
+	font-size: 12px !important;
 	vertical-align: middle;
 	padding: 0 7px;
 }
@@ -297,6 +308,11 @@ border:none;
 	height: 100%;
 }
 
+.ban_edit .banner_info_more label.note  {
+width: 200px;
+line-height: 100%;
+margin-left: 75px;
+}
 .ban_edit .btn_add_banner {
    background: url("image/add_banner_left.png") no-repeat scroll left center transparent;
     height: 23px;
@@ -488,6 +504,7 @@ border:none;
 	display: block;
 	background-position: -68px -19px;
 }
+
 .ban_edit .ico_next {
 	height: 10px;
 	width: 4px;
@@ -547,6 +564,18 @@ border:none;
 .dNone {
 	display: none
 }
+.ban_edit .banner_info_more .lHeight100 {
+	line-height:100%
+}
+
+.ban_edit .banner_info_more  .mBottom0px{
+	margin-bottom:0px;
+}
+
+.ban_edit .cOrange {
+	color:orange !important;
+}
+
 
 /* override end */
 
@@ -561,6 +590,7 @@ border:none;
 .ban_edit .clearfix {
 	zoom: 1;
 }
+
 /* clearfix end*/
 
 
@@ -587,3 +617,17 @@ border:none;
 	}
 }
 /* firefox fix end */
+
+
+
+.ban_edit #ruleTypeIcon {
+	display:none;
+}
+
+
+
+.ban_edit .banner_info_more label.note  {
+width: 200px;
+line-height: 100%;
+margin-left: 75px;
+}
