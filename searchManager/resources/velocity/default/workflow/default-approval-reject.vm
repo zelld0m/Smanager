@@ -8,5 +8,9 @@
 			${rules}
 		</div>
 
+		<div>
+			<i>Comment:</i>
+			<p>${comment}</p>
+		</div>
 	</body>
 </html>
