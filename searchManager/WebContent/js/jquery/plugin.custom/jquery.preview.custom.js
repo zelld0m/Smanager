@@ -112,6 +112,8 @@
 					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
 
+					var formattedExpiryDate = $.isNotBlank(list[i]["formattedExpiryDate"])? list[i]["formattedExpiryDate"]: "";
+
 					if(FACET){
 						base.setImage($tr,list[i]);
 						$tr.find("td#itemMan").text(list[i].condition["readableString"])
@@ -120,7 +122,7 @@
 						.addClass("txtAL")
 						.attr("width", "363px");
 						
-						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						$tr.find("#itemValidity").html(formattedExpiryDate + "<br/>" +  list[i]["validityText"]); 
 
 						if ($.isBlank(list[i]["isExpired"])){
 							$tr.find("#itemValidityDaysExpired").remove();
@@ -144,7 +146,7 @@
 							$tr.find("td#itemDPNo,td#itemMan,td#itemName").remove();
 						}
 
-						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]);
+						$tr.find("#itemValidity").html(formattedExpiryDate + "<br/>" +  list[i]["validityText"]);
 						if ($.isBlank(list[i]["isExpired"])){
 							$tr.find("#itemValidityDaysExpired").remove();
 						}
