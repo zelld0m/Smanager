@@ -77,17 +77,17 @@
 				base.$el.find("#prevPage").on({click: base.options.prevLinkCallback}, { page:base.options.currentPage});
 			}
 
-			base.$el.find("input#currentPage").on(
+			base.$el.find("input#currentPage").off().on(
 					{	
 						keypress:base.jumpToPage,
 						focus: function(e){
 							$(e.target).val("");
 						},
 						blur: function(e){
-							$(e.target).val(base.options.currentPage);
+							$(e.target).val(parseInt(base.options.currentPage));
 						}},
 						{	
-							currentPage:base.options.currentPage, 
+							currentPage: parseInt(base.options.currentPage), 
 							totalPages:base.options.totalPages 
 						}
 			);
@@ -187,8 +187,9 @@
 			}
 
 			var page = $.trim($(e.target).val());
-			if (charCode == 13 && $.isNumeric(page) && page>0){
-				if (page != e.data.currentPage && page <= e.data.totalPages){
+			if (charCode == 13 && $.isNumeric(page) && parseInt(page)>0){
+				page = parseInt(page);
+				if (page != parseInt(e.data.currentPage) && page <= parseInt(e.data.totalPages)){
 					e.data.page = page;
 					base.options.pageLinkCallback(e);
 				}

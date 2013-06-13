@@ -1,13 +1,13 @@
 package com.search.manager.authentication.session;
 
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -56,7 +56,7 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 				
 		User user = new User();
 		user.setUsername(obtainUsername(request));
-		user.setLastAccessDate(new Date());
+		user.setLastAccessDate(DateTime.now());
 		user.setIp(request.getRemoteAddr());
 		user.setSuccessiveFailedLogin(0);
 		user.setAccountNonLocked(true);
@@ -65,7 +65,7 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		} catch (DaoException e) {
 			logger.error("Updating successful login failed! " + e.getMessage(), e);
 		}
-		
+	
 		super.successfulAuthentication(request, response, authResult);
 	}
 

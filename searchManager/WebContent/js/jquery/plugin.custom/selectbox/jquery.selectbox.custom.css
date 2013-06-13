@@ -1,0 +1,10 @@
+.plugin-selectbox #selectionList{
+	float: left;
+	width: 240px;
+}
+
+
+.plugin-selectbox #selectedList{
+	float: right;
+	width: 240px
+}

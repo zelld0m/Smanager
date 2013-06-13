@@ -4,8 +4,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Function;
 import com.search.manager.model.SpellRule;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.report.annotation.ReportField;
-import com.search.manager.utility.DateAndTimeUtils;
 
 public class SpellReportBean extends ReportBean<SpellRule> {
 
@@ -46,7 +47,7 @@ public class SpellReportBean extends ReportBean<SpellRule> {
 
 	@ReportField(label = "Created Date", size = 20, sortOrder = 6)
 	public String getCreatedDate() {
-		return DateAndTimeUtils.formatMMddyyyyhhmmaa(model.getCreatedDate());
+		return JodaDateTimeUtil.formatFromStorePattern(model.getCreatedDate(), JodaPatternType.DATE_TIME);
 	}
 
 	@ReportField(label = "Modified By", size = 20, sortOrder = 7)
@@ -56,6 +57,6 @@ public class SpellReportBean extends ReportBean<SpellRule> {
 
 	@ReportField(label = "Modified Date", size = 20, sortOrder = 8)
 	public String getModifiedDate() {
-		return DateAndTimeUtils.formatMMddyyyyhhmmaa(model.getLastModifiedDate());
+		return JodaDateTimeUtil.formatFromStorePattern(model.getLastModifiedDate(), JodaPatternType.DATE_TIME);
 	}
 }

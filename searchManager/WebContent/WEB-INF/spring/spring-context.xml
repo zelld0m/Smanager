@@ -68,6 +68,9 @@
 	<!-- Loads DataSources configuration -->      
 	<import resource="spring-datasource.xml" />
 	
+	<!-- Loads Interceptors configuration -->      
+	<import resource="spring-interceptor.xml" />
+	
 	<!-- Loads Search Proxy Solr configuration -->      
 	<import resource="search-proxy-context.xml" />
 	
@@ -91,5 +94,5 @@
 	    <property name="interval" value="1000" />
 	</bean>
     
-	<import resource="file:/home/solr/conf/cron-app.xml"/>
+	<bean id="catCodeUtil" class="com.search.manager.utility.CatCodeUtil" init-method="init" lazy-init="false" />
 </beans>

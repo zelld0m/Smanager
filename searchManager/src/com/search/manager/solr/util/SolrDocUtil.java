@@ -7,9 +7,11 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.common.SolrInputDocument;
+import org.joda.time.DateTimeZone;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.SortType;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -23,8 +25,6 @@ import com.search.manager.solr.constants.Constants;
 public class SolrDocUtil {
 	private static final Logger logger = Logger.getLogger(SolrDocUtil.class);
 
-	/* For Demote, Exclude and Elevate Rule */
-
 	@SuppressWarnings("unchecked")
 	public static List<SolrInputDocument> composeSolrDocs(List<?> results)
 			throws Exception {
@@ -36,128 +36,173 @@ public class SolrDocUtil {
 		List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
 
 		if (results.get(0) instanceof DemoteResult) {
-			logger.info(Constants.Rule.DEMOTE + " result = " + results.size());
-			List<DemoteResult> results2 = (List<DemoteResult>) results;
-			for (DemoteResult result : results2) {
-				SolrInputDocument solrInputDocument = new SolrInputDocument();
-				solrInputDocument.addField("location", result.getLocation());
-				solrInputDocument.addField("store", result.getStoreKeyword()
-						.getStoreId());
-				solrInputDocument.addField("keyword", result.getStoreKeyword()
-						.getKeywordId());
-				solrInputDocument
-						.addField("expiryDate", result.getExpiryDate());
-				solrInputDocument.addField("entity", result.getEntity());
-				solrInputDocument.addField("memberId", result.getMemberId());
-				solrInputDocument.addField("ruleType",
-						Constants.Rule.DEMOTE.getRuleName());
-
-				if (result.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
-					solrInputDocument.addField("value", result.getEdp());
-				} else {
-					solrInputDocument.addField("value", result.getCondition()
-							.getCondition());
-				}
-
-				// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
-				String id = result.getStoreKeyword().getStoreId() + "_"
-						+ result.getStoreKeyword().getKeyword().getKeyword()
-						+ "_" + Constants.Rule.DEMOTE.getRuleName() + "_"
-						+ result.getMemberId();
-				solrInputDocument.addField("id", id);
-
-				solrInputDocuments.add(solrInputDocument);
+			List<DemoteResult> demoteResults = (List<DemoteResult>) results;
+			for (DemoteResult demoteResult : demoteResults) {
+				solrInputDocuments.add(composeSolrDoc(demoteResult));
 			}
 		} else if (results.get(0) instanceof ElevateResult) {
-			logger.info(Constants.Rule.ELEVATE + " result = " + results.size());
-			List<ElevateResult> results2 = (List<ElevateResult>) results;
-			for (ElevateResult result : results2) {
-				SolrInputDocument solrInputDocument = new SolrInputDocument();
-
-				solrInputDocument.addField("location", result.getLocation());
-				solrInputDocument.addField("forceAdd", result.getForceAdd());
-				solrInputDocument.addField("store", result.getStoreKeyword()
-						.getStoreId());
-				solrInputDocument.addField("keyword", result.getStoreKeyword()
-						.getKeywordId());
-				solrInputDocument
-						.addField("expiryDate", result.getExpiryDate());
-				solrInputDocument.addField("entity", result.getEntity());
-				solrInputDocument.addField("memberId", result.getMemberId());
-				solrInputDocument.addField("ruleType",
-						Constants.Rule.ELEVATE.getRuleName());
-
-				if (result.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
-					solrInputDocument.addField("value", result.getEdp());
-				} else {
-					solrInputDocument.addField("value", result.getCondition()
-							.getCondition());
-				}
-
-				// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
-				String id = result.getStoreKeyword().getStoreId() + "_"
-						+ result.getStoreKeyword().getKeyword().getKeyword()
-						+ "_" + Constants.Rule.ELEVATE.getRuleName() + "_"
-						+ result.getMemberId();
-				solrInputDocument.addField("id", id);
-
-				solrInputDocuments.add(solrInputDocument);
+			List<ElevateResult> elevateResults = (List<ElevateResult>) results;
+			for (ElevateResult elevateResult : elevateResults) {
+				solrInputDocuments.add(composeSolrDoc(elevateResult));
 			}
 		} else if (results.get(0) instanceof ExcludeResult) {
-			logger.info(Constants.Rule.EXCLUDE + " result = " + results.size());
-			List<ExcludeResult> results2 = (List<ExcludeResult>) results;
-			for (ExcludeResult result : results2) {
-				SolrInputDocument solrInputDocument = new SolrInputDocument();
-				solrInputDocument.addField("store", result.getStoreKeyword()
-						.getStoreId());
-				solrInputDocument.addField("keyword", result.getStoreKeyword()
-						.getKeywordId());
-				solrInputDocument
-						.addField("expiryDate", result.getExpiryDate());
-				solrInputDocument.addField("entity", result.getEntity());
-				solrInputDocument.addField("memberId", result.getMemberId());
-				solrInputDocument.addField("ruleType",
-						Constants.Rule.EXCLUDE.getRuleName());
-
-				if (result.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
-					solrInputDocument.addField("value", result.getEdp());
-				} else {
-					solrInputDocument.addField("value", result.getCondition()
-							.getCondition());
-				}
-
-				// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
-				String id = result.getStoreKeyword().getStoreId() + "_"
-						+ result.getStoreKeyword().getKeyword().getKeyword()
-						+ "_" + Constants.Rule.EXCLUDE.getRuleName() + "_"
-						+ result.getMemberId();
-				solrInputDocument.addField("id", id);
-
-				solrInputDocuments.add(solrInputDocument);
+			List<ExcludeResult> excludeResults = (List<ExcludeResult>) results;
+			for (ExcludeResult excludeResult : excludeResults) {
+				solrInputDocuments.add(composeSolrDoc(excludeResult));
+			}
+		} else if (results.get(0) instanceof RedirectRule) {
+			List<RedirectRule> redirectRules = (List<RedirectRule>) results;
+			for (RedirectRule redirectRule : redirectRules) {
+				solrInputDocuments.add(composeSolrDoc(redirectRule));
+			}
+		} else if (results.get(0) instanceof Relevancy) {
+			List<Relevancy> relevancies = (List<Relevancy>) results;
+			for (Relevancy relevancy : relevancies) {
+				solrInputDocuments.add(composeSolrDoc(relevancy));
+			}
+		} else if (results.get(0) instanceof FacetSort) {
+			List<FacetSort> facetSorts = (List<FacetSort>) results;
+			for (FacetSort facetSort : facetSorts) {
+				solrInputDocuments.add(composeSolrDoc(facetSort));
+			}
+		} else if (results.get(0) instanceof BannerRuleItem) {
+			List<BannerRuleItem> bannerRuleItems = (List<BannerRuleItem>) results;
+			for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
+				solrInputDocuments.add(composeSolrDoc(bannerRuleItem));
 			}
 		}
 
 		return solrInputDocuments;
+	}
+
+	/* For Demote Rule */
+
+	public static SolrInputDocument composeSolrDoc(DemoteResult demoteResult)
+			throws Exception {
+		if (demoteResult == null) {
+			logger.error("'DemoteResult' is null or empty.");
+			throw new Exception("'DemoteResult' is null or empty.");
+		}
+		SolrInputDocument solrInputDocument = new SolrInputDocument();
+		solrInputDocument.addField("location", demoteResult.getLocation());
+		solrInputDocument.addField("store", demoteResult.getStoreKeyword()
+				.getStoreId());
+		solrInputDocument.addField("keyword", demoteResult.getStoreKeyword()
+				.getKeywordId());
+
+		if (demoteResult.getExpiryDateTime() != null) {
+			solrInputDocument.addField("expiryDate", demoteResult
+					.getExpiryDateTime().withZone(DateTimeZone.UTC));
+		}
+
+		solrInputDocument.addField("entity", demoteResult.getEntity());
+		solrInputDocument.addField("memberId", demoteResult.getMemberId());
+		solrInputDocument.addField("ruleType",
+				Constants.Rule.DEMOTE.getRuleName());
+
+		if (demoteResult.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+			solrInputDocument.addField("value", demoteResult.getEdp());
+		} else {
+			solrInputDocument.addField("value", demoteResult.getCondition()
+					.getCondition());
+		}
+
+		// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
+		String id = demoteResult.getStoreKeyword().getStoreId() + "_"
+				+ demoteResult.getStoreKeyword().getKeyword().getKeyword()
+				+ "_" + Constants.Rule.DEMOTE.getRuleName() + "_"
+				+ demoteResult.getMemberId();
+		solrInputDocument.addField("id", id);
+
+		return solrInputDocument;
+	}
+
+	/* For Elevate Rule */
+
+	public static SolrInputDocument composeSolrDoc(ElevateResult elevateResult)
+			throws Exception {
+		if (elevateResult == null) {
+			logger.error("'ElevateResult' is null or empty.");
+			throw new Exception("'ElevateResult' is null or empty.");
+		}
+
+		SolrInputDocument solrInputDocument = new SolrInputDocument();
+
+		solrInputDocument.addField("location", elevateResult.getLocation());
+		solrInputDocument.addField("forceAdd", elevateResult.getForceAdd());
+		solrInputDocument.addField("store", elevateResult.getStoreKeyword()
+				.getStoreId());
+		solrInputDocument.addField("keyword", elevateResult.getStoreKeyword()
+				.getKeywordId());
+		if (elevateResult.getExpiryDateTime() != null) {
+			solrInputDocument.addField("expiryDate", elevateResult
+					.getExpiryDateTime().withZone(DateTimeZone.UTC));
+		}
+		solrInputDocument.addField("entity", elevateResult.getEntity());
+		solrInputDocument.addField("memberId", elevateResult.getMemberId());
+		solrInputDocument.addField("ruleType",
+				Constants.Rule.ELEVATE.getRuleName());
+
+		if (elevateResult.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+			solrInputDocument.addField("value", elevateResult.getEdp());
+		} else {
+			solrInputDocument.addField("value", elevateResult.getCondition()
+					.getCondition());
+		}
+
+		// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
+		String id = elevateResult.getStoreKeyword().getStoreId() + "_"
+				+ elevateResult.getStoreKeyword().getKeyword().getKeyword()
+				+ "_" + Constants.Rule.ELEVATE.getRuleName() + "_"
+				+ elevateResult.getMemberId();
+		solrInputDocument.addField("id", id);
+
+		return solrInputDocument;
+	}
+
+	/* For Exclude Rule */
+
+	public static SolrInputDocument composeSolrDoc(ExcludeResult excludeResult)
+			throws Exception {
+		if (excludeResult == null) {
+			logger.error("'ExcludeResult' is null or empty.");
+			throw new Exception("'ExcludeResult' is null or empty.");
+		}
+
+		SolrInputDocument solrInputDocument = new SolrInputDocument();
+		solrInputDocument.addField("store", excludeResult.getStoreKeyword()
+				.getStoreId());
+		solrInputDocument.addField("keyword", excludeResult.getStoreKeyword()
+				.getKeywordId());
+
+		if (excludeResult.getExpiryDateTime() != null) {
+			solrInputDocument.addField("expiryDate", excludeResult
+					.getExpiryDateTime().withZone(DateTimeZone.UTC));
+		}
+
+		solrInputDocument.addField("entity", excludeResult.getEntity());
+		solrInputDocument.addField("memberId", excludeResult.getMemberId());
+		solrInputDocument.addField("ruleType",
+				Constants.Rule.EXCLUDE.getRuleName());
+
+		if (excludeResult.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+			solrInputDocument.addField("value", excludeResult.getEdp());
+		} else {
+			solrInputDocument.addField("value", excludeResult.getCondition()
+					.getCondition());
+		}
+
+		// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
+		String id = excludeResult.getStoreKeyword().getStoreId() + "_"
+				+ excludeResult.getStoreKeyword().getKeyword().getKeyword()
+				+ "_" + Constants.Rule.EXCLUDE.getRuleName() + "_"
+				+ excludeResult.getMemberId();
+		solrInputDocument.addField("id", id);
+
+		return solrInputDocument;
 	}
 
 	/* For Redirect Rule */
-
-	public static List<SolrInputDocument> composeSolrDocsRedirectRule(
-			List<RedirectRule> redirectRules) throws Exception {
-		if (redirectRules == null || redirectRules.size() < 1) {
-			logger.error("'RedirectRules' is null or empty.");
-			throw new Exception("'RedirectRules' is null or empty.");
-		}
-
-		List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
-
-		for (RedirectRule redirectRule : redirectRules) {
-			SolrInputDocument solrInputDocument = composeSolrDoc(redirectRule);
-			solrInputDocuments.add(solrInputDocument);
-		}
-
-		return solrInputDocuments;
-	}
 
 	public static SolrInputDocument composeSolrDoc(RedirectRule redirectRule)
 			throws Exception {
@@ -203,21 +248,6 @@ public class SolrDocUtil {
 	}
 
 	/* For Relevancy Rule */
-
-	public static List<SolrInputDocument> composeSolrDocsRelevancy(
-			List<Relevancy> relevancies) throws Exception {
-		if (relevancies == null) {
-			logger.error("'Relevancy' is null or empty.");
-			throw new Exception("'Relevancy' is null or empty.");
-		}
-		List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
-
-		for (Relevancy relevancy : relevancies) {
-			solrInputDocuments.add(composeSolrDoc(relevancy));
-		}
-
-		return solrInputDocuments;
-	}
 
 	public static SolrInputDocument composeSolrDoc(Relevancy relevancy)
 			throws Exception {
@@ -267,21 +297,6 @@ public class SolrDocUtil {
 	}
 
 	/* For Facet Sort Rule */
-
-	public static List<SolrInputDocument> composeSolrDocsFacetSort(
-			List<FacetSort> facetSorts) throws Exception {
-		if (facetSorts == null) {
-			logger.error("'FacetSorts' is null or empty.");
-			throw new Exception("'FacetSorts' is null or empty.");
-		}
-		List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
-
-		for (FacetSort facetSort : facetSorts) {
-			solrInputDocuments.add(composeSolrDoc(facetSort));
-		}
-
-		return solrInputDocuments;
-	}
 
 	public static SolrInputDocument composeSolrDoc(FacetSort facetSort)
 			throws Exception {
@@ -359,6 +374,65 @@ public class SolrDocUtil {
 		String id = storeId + "_" + spellRuleXml.getRuleId();
 
 		solrInputDocument.addField("id", id);
+
+		return solrInputDocument;
+	}
+
+	/* For Banner Rule */
+
+	public static SolrInputDocument composeSolrDoc(BannerRuleItem bannerRuleItem)
+			throws Exception {
+		if (bannerRuleItem == null) {
+			throw new Exception("'BannerRuleItem' is null or empty");
+		}
+
+		SolrInputDocument solrInputDocument = new SolrInputDocument();
+
+		if (bannerRuleItem.getRule() != null) {
+			solrInputDocument.setField("store", bannerRuleItem.getRule()
+					.getStoreId());
+			solrInputDocument.setField("ruleId", bannerRuleItem.getRule()
+					.getRuleId());
+			solrInputDocument.setField("ruleName", bannerRuleItem.getRule()
+					.getRuleName());
+		}
+
+		solrInputDocument.setField("memberId", bannerRuleItem.getMemberId());
+		solrInputDocument.setField("priority", bannerRuleItem.getPriority());
+		if (bannerRuleItem.getStartDate() != null) {
+			solrInputDocument.setField("startDate", bannerRuleItem
+					.getStartDate().withZone(DateTimeZone.UTC));
+		}
+		if (bannerRuleItem.getEndDate() != null) {
+			solrInputDocument.setField("endDate", bannerRuleItem.getEndDate()
+					.withZone(DateTimeZone.UTC));
+		}
+		solrInputDocument.setField("imageAlt", bannerRuleItem.getImageAlt());
+		solrInputDocument.setField("linkPath", bannerRuleItem.getLinkPath());
+		solrInputDocument.setField("openNewWindow",
+				bannerRuleItem.getOpenNewWindow());
+		solrInputDocument.setField("description",
+				bannerRuleItem.getDescription());
+		solrInputDocument.setField("disabled", bannerRuleItem.getDisabled());
+
+		if (bannerRuleItem.getImagePath() != null) {
+			solrInputDocument.setField("imagePathId", bannerRuleItem
+					.getImagePath().getId());
+			solrInputDocument.setField("path", bannerRuleItem.getImagePath()
+					.getPath());
+			solrInputDocument.setField("pathType", bannerRuleItem
+					.getImagePath().getPathType());
+			solrInputDocument.setField("alias", bannerRuleItem.getImagePath()
+					.getAlias());
+		}
+
+		// store + "_" + ruleId + "_" + ruleName + "_" + memberId
+		String id = bannerRuleItem.getRule().getStoreId() + "_"
+				+ bannerRuleItem.getRule().getRuleId() + "_"
+				+ bannerRuleItem.getRule().getRuleName()
+				+ bannerRuleItem.getMemberId();
+
+		solrInputDocument.setField("id", id);
 
 		return solrInputDocument;
 	}

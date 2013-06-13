@@ -18,13 +18,17 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.Lists;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.BannerRule;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
@@ -33,6 +37,7 @@ import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
+import com.search.manager.model.ImagePath;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -46,6 +51,8 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.report.model.xml.BannerItemXml;
+import com.search.manager.report.model.xml.BannerRuleXml;
 import com.search.manager.report.model.xml.DemoteItemXml;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateItemXml;
@@ -61,8 +68,10 @@ import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
+import com.search.manager.utility.Transformers;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 import com.search.ws.SolrConstants;
@@ -227,6 +236,18 @@ public class RuleXmlUtil{
 
 			ruleXml = new RankingRuleXml(store, relevancy);
 			break;
+		case BANNER:
+		    try {
+		        BannerRule banner = daoService.getBannerRuleById(store, ruleId);
+		        RecordSet<BannerRuleItem> ruleItems = daoService.searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(new BannerRuleItem(ruleId, store), 1, Integer.MAX_VALUE));
+		        BannerRuleXml bRuleXml = new BannerRuleXml(banner);
+		        bRuleXml.setItemXml(Lists.transform(ruleItems.getList(), Transformers.bannerItemRuleToXml));
+		        ruleXml = bRuleXml;
+		    } catch (DaoException e) {
+                logger.error("Failed convert banner rule to rule xml", e);
+                return null;
+		    }
+		    break;
 		}
 		return ruleXml;
 	}
@@ -866,6 +887,87 @@ public class RuleXmlUtil{
 		return false;
 	}
 
+    private static boolean restoreBannerRule(String path, RuleXml xml, boolean createPreRestore) {
+        String username = UtilityService.getUsername();
+        String store = UtilityService.getStoreId();
+
+        try {
+            BannerRuleXml bannerRuleXml = (BannerRuleXml) xml;
+            BannerRule bannerRule = new BannerRule(bannerRuleXml);
+
+            bannerRule.setLastModifiedBy(username);
+            List<BannerRuleItem> items = new ArrayList<BannerRuleItem>();
+
+            for (BannerItemXml itemXml : bannerRuleXml.getItemXml()) {
+                ImagePath imagePath = daoService
+                        .getBannerImagePath(new ImagePath(store, itemXml.getImagePathId(), null));
+                items.add(new BannerRuleItem(bannerRule, itemXml.getMemberId(), itemXml.getPriority(), itemXml
+                        .getStartDate(), itemXml.getEndDate(), itemXml.getImageAlt(), itemXml.getLinkPath(), itemXml
+                        .getDescription(), imagePath, itemXml.getDisabled(), itemXml.getOpenNewWindow()));
+            }
+
+            // get current rules
+            BannerRule crule = daoService.getBannerRuleById(store, xml.getRuleId());
+            List<BannerRuleItem> citems = null;
+
+            if (crule != null) {
+                citems = daoService.searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(new BannerRuleItem(xml.getRuleId(), store))).getList();
+
+                // create backup first
+                if (createPreRestore) {
+                    BannerRuleXml cruleXml = new BannerRuleXml(crule);
+                    cruleXml.setItemXml(Lists.transform(citems, Transformers.bannerItemRuleToXml));
+    
+                    if (!RuleXmlUtil.ruleXmlToFile(store, RuleEntity.BANNER, xml.getRuleId(), cruleXml, path)) {
+                        logger.error("Failed to create pre-restore for Banner");
+                        return false;
+                    }
+                }
+
+                // delete current rule items
+                for (BannerRuleItem citem : citems) {
+                    daoService.deleteBannerRuleItem(citem);
+                }
+
+                // delete current rule
+                daoService.deleteBannerRule(crule);
+            }
+
+            // start re-inserting rules
+            try {
+                // add version rule
+                int updateCount = daoService.addBannerRule(bannerRule);
+
+                // add all rule items
+                for (BannerRuleItem item : items) {
+                    updateCount += daoService.addBannerRuleItem(item);
+                }
+
+                if (updateCount < 1 + items.size()) {
+                    throw new DaoException("Update count should be " + (1 + items.size()) + " but was only " + updateCount);
+                }
+                return true;
+            } catch (DaoException de) {
+                // not successful restoring rule version
+                logger.error("Unable to restore version. Rolling back...", de);
+
+                // ROLLBACK
+                // delete version
+                daoService.deleteBannerRule(bannerRule);
+                // add current version
+                daoService.addBannerRule(crule);
+                // add current items
+                for (BannerRuleItem citem : citems) {
+                    daoService.addBannerRuleItem(citem);
+                }
+            }
+        } catch (DaoException e) {
+            logger.error("Error occurred in restoreBannerRule.", e);
+        }
+
+        return false;
+    }
+
 	public static boolean restoreRule(RuleXml xml) {
 		return RuleXmlUtil.restoreRule(xml, true);
 	}
@@ -923,11 +1025,13 @@ public class RuleXmlUtil{
 			isRestored = RuleXmlUtil.restoreQueryCleaning(path, xml, createPreRestore);
 		}else if(xml instanceof RankingRuleXml){
 			isRestored = RuleXmlUtil.restoreRankingRule(path, xml, createPreRestore);
+		}else if (xml instanceof BannerRuleXml) {
+		    isRestored = RuleXmlUtil.restoreBannerRule(path, xml, createPreRestore);
 		}
 		return isRestored;
 	}
 
-	public static void deleteFile(String filepath) throws IOException{
+    public static void deleteFile(String filepath) throws IOException{
 		File file = new File(filepath);
 
 		if(file.exists() && !file.delete()){

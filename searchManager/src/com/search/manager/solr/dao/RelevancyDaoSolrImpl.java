@@ -42,15 +42,14 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId);
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -75,14 +74,13 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("relevancyId:" + storeId + "_default");
+			strQuery.append(String.format("relevancyId: %s",
+					ClientUtils.escapeQueryChars(storeId) + "_default"));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -116,16 +114,14 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId)
-					.append(" AND relKeyword1:"
-							+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(String.format("store: %s AND relKeyword1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(keyword)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -156,15 +152,14 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			name = StringUtils.lowerCase(StringUtils.trim(name));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId).append(
-					" AND relevancyName:" + ClientUtils.escapeQueryChars(name));
+			strQuery.append(String.format("store: %s AND relevancyName: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(name)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -195,15 +190,14 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			id = StringUtils.trim(id);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId).append(
-					" AND relevancyId:" + ClientUtils.escapeQueryChars(id));
+			strQuery.append(String.format("store: %s AND relevancyId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(id)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -226,59 +220,69 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 	@Override
 	public boolean loadRelevancyRules(Store store) throws DaoException {
 		try {
+			boolean hasRelevancy = false;
 			// load default relevancy
 			Relevancy defaultRelevancy = new Relevancy();
 			defaultRelevancy
 					.setRelevancyId(StringUtils.trim(store.getStoreId())
 							+ "_default");
 			defaultRelevancy = daoService.getRelevancyDetails(defaultRelevancy);
-			SolrInputDocument solrInputDocument = null;
 
 			if (defaultRelevancy != null) {
 				try {
-					solrInputDocument = SolrDocUtil
+					SolrInputDocument solrInputDocument = SolrDocUtil
 							.composeSolrDoc(defaultRelevancy);
+					solrServers.getCoreInstance(
+							Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
+							.addDoc(solrInputDocument);
+					hasRelevancy = true;
 				} catch (Exception e) {
-					logger.error("Failed to load relevancy rules by store", e);
+					logger.error("Failed to load relevancy rules by store. "
+							+ e.getMessage(), e);
 				}
 			}
 
-			List<Relevancy> relevancies = null;
 			Relevancy relevancyFilter = new Relevancy();
 			relevancyFilter.setStore(store);
 			relevancyFilter.setRelevancyName(""); // ALL
+			int page = 1;
 
-			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
-					relevancyFilter, null, null, 0, 0);
-			RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
-					criteria, MatchType.LIKE_NAME);
+			while (true) {
+				SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
+						relevancyFilter, page, MAX_ROWS);
+				RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
+						criteria, MatchType.LIKE_NAME);
 
-			if (recordSet != null && recordSet.getTotalSize() > 0) {
-				relevancies = new ArrayList<Relevancy>();
-				// setRelKeyword
-				for (Relevancy relevancy : recordSet.getList()) {
-					relevancy = daoService.getRelevancyDetails(relevancy);
-					relevancy.setRelKeyword(daoService.getRelevancyKeywords(
-							relevancy).getList());
-					relevancies.add(relevancy);
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					hasRelevancy = true;
+					List<Relevancy> relevancies = new ArrayList<Relevancy>();
+					// setRelKeyword
+					for (Relevancy relevancy : recordSet.getList()) {
+						relevancy = daoService.getRelevancyDetails(relevancy);
+						relevancy.setRelKeyword(daoService
+								.getRelevancyKeywords(relevancy).getList());
+						relevancies.add(relevancy);
+					}
+
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocs(relevancies);
+					solrServers.getCoreInstance(
+							Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
+							.addDocs(solrInputDocuments);
+
+					if (relevancies.size() < MAX_ROWS) {
+						break;
+					}
+					page++;
+				} else {
+					break;
 				}
 			}
 
-			List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-					.composeSolrDocsRelevancy(relevancies);
-
-			if (solrInputDocument != null) {
-				solrInputDocuments.add(solrInputDocument);
-			}
-
-			if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+			if (hasRelevancy) {
 				solrServers.getCoreInstance(
 						Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-						.addDocs(solrInputDocuments);
-				solrServers.getCoreInstance(
-						Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-						.softCommit();
-
+						.commit();
 				return true;
 			}
 		} catch (Exception e) {
@@ -294,38 +298,48 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			throws DaoException {
 		try {
 			name = StringUtils.trim(name);
-			List<Relevancy> relevancies = null;
 			Relevancy relevancyFilter = new Relevancy();
 			relevancyFilter.setStore(store);
 			relevancyFilter.setRelevancyName(name);
+			int page = 1;
 
-			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
-					relevancyFilter, null, null, 0, 0);
-			RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
-					criteria, MatchType.LIKE_NAME);
+			while (true) {
+				SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(
+						relevancyFilter, page, MAX_ROWS);
+				RecordSet<Relevancy> recordSet = daoService.searchRelevancy(
+						criteria, MatchType.LIKE_NAME);
 
-			if (recordSet != null && recordSet.getTotalSize() > 0) {
-				relevancies = new ArrayList<Relevancy>();
-				// setRelKeyword
-				for (Relevancy relevancy : recordSet.getList()) {
-					relevancy = daoService.getRelevancyDetails(relevancy);
-					relevancy.setRelKeyword(daoService.getRelevancyKeywords(
-							relevancy).getList());
-					relevancies.add(relevancy);
-				}
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<Relevancy> relevancies = new ArrayList<Relevancy>();
 
-				List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-						.composeSolrDocsRelevancy(relevancies);
+					for (Relevancy relevancy : recordSet.getList()) {
+						relevancy = daoService.getRelevancyDetails(relevancy);
+						relevancy.setRelKeyword(daoService
+								.getRelevancyKeywords(relevancy).getList());
+						relevancies.add(relevancy);
+					}
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocs(relevancies);
 
-				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 					solrServers.getCoreInstance(
 							Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-					solrServers.getCoreInstance(
-							Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-							.commit();
 
-					return true;
+					if (relevancies.size() < MAX_ROWS) {
+						solrServers.getCoreInstance(
+								Constants.Core.RELEVANCY_RULE_CORE
+										.getCoreName()).commit();
+						return true;
+					}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers.getCoreInstance(
+								Constants.Core.RELEVANCY_RULE_CORE
+										.getCoreName()).commit();
+						return true;
+					}
+					break;
 				}
 			}
 		} catch (Exception e) {
@@ -362,7 +376,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				}
 
 				List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-						.composeSolrDocsRelevancy(relevancies);
+						.composeSolrDocs(relevancies);
 
 				if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
 					solrServers.getCoreInstance(
@@ -441,8 +455,9 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				id = StringUtils.trim(id);
 
 				StringBuffer strQuery = new StringBuffer();
-				strQuery.append("store:" + storeId).append(
-						" AND relevancyId:" + ClientUtils.escapeQueryChars(id));
+				strQuery.append(String.format("store: %s AND relevancyId: %s",
+						ClientUtils.escapeQueryChars(storeId),
+						ClientUtils.escapeQueryChars(id)));
 
 				solrServers.getCoreInstance(
 						Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
@@ -469,7 +484,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					}
 
 					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
-							.composeSolrDocsRelevancy(relevancies);
+							.composeSolrDocs(relevancies);
 
 					if (solrInputDocuments != null
 							&& solrInputDocuments.size() > 0) {
@@ -510,7 +525,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId);
+			strQuery.append(String.format("store: %s", storeId));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
@@ -539,8 +554,9 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			name = StringUtils.lowerCase(StringUtils.trim(name));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId).append(
-					" AND relevancyName:" + ClientUtils.escapeQueryChars(name));
+			strQuery.append(String.format("store: %s AND relevancyName: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(name)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
@@ -570,15 +586,13 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			id = StringUtils.trim(id);
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + storeId).append(
-					" AND relevancyId:" + ClientUtils.escapeQueryChars(id));
+			strQuery.append(String.format("store: %s AND relevancyId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(id)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			// solrServers.getCoreInstance(
-			// Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;

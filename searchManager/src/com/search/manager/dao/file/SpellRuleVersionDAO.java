@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -45,7 +46,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 				long nextVersion = ruleVersions.getNextVersion();
 
 				if (daoService.addSpellRuleVersion(store, (int) nextVersion)) {
-					DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new Date(),
+					DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
 					        ruleId, RuleEntity.SPELL);
 					version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
 					ruleVersions.getVersions().add(version);
@@ -68,7 +69,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 			try {
 				long nextVersion = ruleVersions.getNextVersion();
 
-				DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new Date(),
+				DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
 				        ruleId, RuleEntity.SPELL);
 				version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
 				ruleVersions.getVersions().add(version);
@@ -109,7 +110,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 					if (ruleVersion.getVersion() == version) {
 						ruleVersion.setDeleted(true);
 						ruleVersion.setLastModifiedBy(username);
-						ruleVersion.setLastModifiedDate(new Date());
+						ruleVersion.setLastModifiedDate(new DateTime());
 						break;
 					}
 				}

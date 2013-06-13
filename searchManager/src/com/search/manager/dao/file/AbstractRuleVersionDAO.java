@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.Binder;
@@ -19,10 +18,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.DemoteRuleXml;
@@ -40,13 +41,13 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 	private Logger logger = Logger.getLogger(AbstractRuleVersionDAO.class);
 
 	protected abstract RuleEntity getRuleEntity();
-	
+
 	protected abstract boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion);
 
 	protected RuleVersionListXml<?> getRuleVersionList(String store, String ruleId) {
 		return RuleVersionUtil.getRuleVersionList(store, getRuleEntity(), ruleId);
 	}
-	
+
 	protected RuleVersionListXml<?> getPublishedList(String store, String ruleId) {
 		return RuleVersionUtil.getPublishedList(store, getRuleEntity(), ruleId);
 	}
@@ -115,7 +116,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 					if(((T)o).getVersion() == version){
 						((T)o).setDeleted(true);
 						((T)o).setLastModifiedBy(username);
-						((T)o).setLastModifiedDate(new Date());
+						((T)o).setLastModifiedDate(new DateTime());
 					}
 				};
 			});
@@ -159,7 +160,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 						}
 					}
 				}
-				
+
 				Collections.sort(ruleVersionInfoList, new Comparator<RuleXml>() {
 					@Override
 					public int compare(RuleXml r1, RuleXml r2) {
@@ -186,7 +187,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 	public int getRuleVersionsCount(String store, String ruleId) {
 		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
 		int count = 0;
-		
+
 		List<?> ruleXmlList =  ruleVersionListXml.getVersions();
 		if(ruleVersionListXml != null && CollectionUtils.isNotEmpty(ruleXmlList)){
 			for(RuleXml ruleVersion: (List<RuleXml>)ruleXmlList){
@@ -195,7 +196,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 				}
 			}
 		}
-		
+
 		return count;
 	}	
 }

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -16,6 +15,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,7 @@ import com.search.manager.cache.model.CacheModel;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.exception.DataException;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -286,7 +287,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		UserDetailsImpl user = new UserDetailsImpl();
 		user.setUsername(userDetails.getUsername());
 		user.setFullName(userDetails.getFullName());
-		user.setLoggedInTime(new Date());
+		user.setLoggedInTime(DateTime.now());
 		if (user != null && StringUtils.isNotEmpty(user.getUsername())) {
 			return userCacheDao.addUser(user);
 		}
@@ -617,6 +618,13 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		} catch (Exception e){ 
 		}
 		return value;
+	}
+
+	@Override
+	public List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, DateTime currentDate)
+			throws DaoException {
+		// TODO Auto-generated method stub
+		throw new DaoException("unimplemented method!");
 	}
 
 }

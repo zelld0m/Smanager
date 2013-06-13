@@ -15,7 +15,6 @@ import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.report.model.xml.FacetSortGroupXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class FacetSort extends ModelBean{
@@ -163,14 +162,6 @@ public class FacetSort extends ModelBean{
 		if(getStore() != null)
 			return getStore().getStoreId();
 		return null;
-	}
-	
-	public String getFormattedCreatedDate() {
-		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getCreatedDate());
-	}
-	
-	public String getFormattedLastModifiedDate() {
-		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getLastModifiedDate());
 	}
 	
 	public Map<String, List<String>> getItems() {

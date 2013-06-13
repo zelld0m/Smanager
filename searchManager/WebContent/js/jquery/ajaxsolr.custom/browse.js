@@ -14,6 +14,11 @@
 			minCharRequired: 2
 		}));
 		
+		Manager.addWidget(new AjaxSolr.CurrentDateWidget({
+			id: 'currentDate',
+			target: '#currentDate'
+		}));
+		
 		if(GLOBAL_storeId === "pcmallgov"){
 			Manager.addWidget(new AjaxSolr.PCMGSingleSelectorWidget({
 				id: "pcmgSelector",
@@ -58,6 +63,11 @@
 			id: 'searchResultHeader',
 			target: '#searchResultHeader',
 			maxRelatedSearch: 3
+		}));
+		
+		Manager.addWidget(new AjaxSolr.AdRotatorWidget({
+			id: 'adRotator',
+			target: '#adRotator'
 		}));
 		
 		Manager.addWidget(new AjaxSolr.DidYouMeanWidget({

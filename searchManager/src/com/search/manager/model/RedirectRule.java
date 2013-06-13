@@ -1,7 +1,6 @@
 package com.search.manager.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -9,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.report.model.xml.RedirectRuleXml;
@@ -114,7 +114,7 @@ public class RedirectRule extends ModelBean {
 	
 	public RedirectRule(String ruleId, RedirectType redirectType, String ruleName, String description, String storeId,
 			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
-			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword,
+			DateTime createdDateTime, DateTime lastModifiedDateTime, String changeKeyword, String redirectUrl, Boolean includeKeyword,
 			ReplaceKeywordMessageType replaceKeywordMessageType, String replaceKeywordMessageCustomText) {
 		super();
 		this.ruleId = ruleId;
@@ -127,8 +127,8 @@ public class RedirectRule extends ModelBean {
 		this.condition = condition;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = modifiedBy;
-		this.createdDate = dateCreated;
-		this.lastModifiedDate = dateModified;
+		this.createdDate = createdDateTime;
+		this.lastModifiedDate = lastModifiedDateTime;
 		this.changeKeyword = changeKeyword;
 		this.redirectUrl = redirectUrl;
 		this.includeKeyword = includeKeyword;
@@ -138,12 +138,11 @@ public class RedirectRule extends ModelBean {
 	
 	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String description, String storeId,
 			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
-			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword,
+			DateTime createdDateTime, DateTime lastModifiedDateTime, String changeKeyword, String redirectUrl, Boolean includeKeyword,
 			ReplaceKeywordMessageType replaceKeywordMessageType, String replaceKeywordMessageCustomText) {
-		this(ruleId, RedirectType.getRedirectType(redirectTypeId), ruleName, description, storeId, priority, searchTerm, condition, createdBy, modifiedBy, dateCreated, dateModified, changeKeyword, redirectUrl, includeKeyword,
+		this(ruleId, RedirectType.getRedirectType(redirectTypeId), ruleName, description, storeId, priority, searchTerm, condition, createdBy, modifiedBy, createdDateTime, lastModifiedDateTime, changeKeyword, redirectUrl, includeKeyword,
 				replaceKeywordMessageType, replaceKeywordMessageCustomText);
 	}
-	
 	
 	public RedirectRule(RedirectRuleXml xml) {
 		this.ruleId = xml.getRuleId();

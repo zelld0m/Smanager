@@ -131,7 +131,7 @@
 			<div class="w220 floatL">
 			            <label class="floatL w70 padT3">Username :</label><label class="w120 floatL padL5 fbold shuser"></label><div class="clearB"></div>
 			            <label class="floatL w70 padT3">Full Name :</label><label class="w120 floatL padL5 fbold shfname"></label><div class="clearB"></div>
-			            <label class="floatL w70 padT3">Last Access :</label><label class="floatL shlacss"></label><div class="clearB"></div>
+			            <label class="floatL w70 padT3">Last Access :</label><label class="floatL shlacss padT3 padL3"></label><div class="clearB"></div>
 			            
 			      </div>
 			     
@@ -172,8 +172,18 @@
 				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox active-locked">
 				            </label>
 				            <div class="clearB marT10"></div>
-				            
-				            <div class="txtAR marT10">
+				           	<div>
+					            <div class="floatL w75 padT3 marL10">Timezone:</div>
+					            <div class="floatL w200">
+						            <select id="shtimezone">
+						            	<c:forEach var="tzId" items="${timezoneIds}">
+						            		<option value="${tzId}">${tzId}</option>
+						            	</c:forEach>
+						        	</select>
+					        	</div>
+					        </div>
+					        <div class="clearB marT10"></div>
+				            <div class="txtAR marT10 padT5">
 				            	<a id="shsv" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
 				            </div>
 			            </div>
@@ -229,9 +239,22 @@
 				        <div class="clearB marT10"></div>
 				        
 				        <label class="floatL w80 padT3 marL10">Status:</label>
-				            <label class="floatL w140">
-				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox active-locked">
-				            </label>
+				        <label class="floatL w140">
+				        	<input type="checkbox" id="adlck" class="firerift-style-checkbox active-locked">
+				        </label>
+				        
+				        <div class="clearB marT10"></div>
+				        <div>
+				            <div class="floatL w80 padT3 marL10">Timezone:</div>
+				            <div class="floatL w200">
+					            <select id="adtimezone">
+					            	<c:forEach var="tzId" items="${timezoneIds}">
+					            		<option value="${tzId}">${tzId}</option>
+					            	</c:forEach>
+					        	</select>
+				        	</div>
+				        </div>
+				        <div class="clearB marT10"></div>
 			     </div>
 			                        
 				       <div class="clearB marT10"></div>     

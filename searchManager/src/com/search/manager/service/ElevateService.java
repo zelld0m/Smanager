@@ -17,6 +17,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,8 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
@@ -58,9 +61,9 @@ public class ElevateService extends RuleService{
 	@RemoteMethod
 	public int updateElevateItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
 		int changes = 0;
-
+		String storeId = UtilityService.getStoreId();
 		ElevateResult elevate = new ElevateResult();
-		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreId(), keyword));
+		elevate.setStoreKeyword(new StoreKeyword(storeId, keyword));
 		elevate.setMemberId(memberId);
 
 		try {
@@ -87,7 +90,7 @@ public class ElevateService extends RuleService{
 			changes += ((updateElevate(keyword, memberId, position, condition) > 0)? 1 : 0);
 		}
 
-		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(elevateProduct.getFormattedExpiryDate()))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaDateTimeUtil.formatFromStorePattern(storeId, elevateProduct.getExpiryDateTime(), JodaPatternType.DATE)))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 
@@ -137,7 +140,7 @@ public class ElevateService extends RuleService{
 			changes += ((updateElevate(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 
-		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(elevateProduct.getFormattedExpiryDate()))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaDateTimeUtil.formatFromStorePattern(storeId, elevateProduct.getExpiryDateTime(), JodaPatternType.DATE)))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 
@@ -148,13 +151,13 @@ public class ElevateService extends RuleService{
 		int result = -1;
 		try {
 			logger.info(String.format("%s %s %s %d %s %s", keyword, edp, condition != null ? condition.getCondition() : "", sequence, expiryDate, comment));
-			String store = UtilityService.getStoreId();
+			String storeId = UtilityService.getStoreId();
 			String userName = UtilityService.getUsername();
-			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
+			daoService.addKeyword(new StoreKeyword(storeId, keyword)); // TODO: What if keyword is not added?
 
-			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
+			ElevateResult e = new ElevateResult(new StoreKeyword(storeId, keyword));
 			e.setLocation(sequence);
-			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+			e.setExpiryDateTime(StringUtils.isEmpty(expiryDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
 			e.setCreatedBy(userName);
 			e.setComment(UtilityService.formatComment(comment));
 			e.setElevateEntity(entity);
@@ -255,17 +258,21 @@ public class ElevateService extends RuleService{
 		int result = -1;
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, expiryDate));
-			String store = UtilityService.getStoreId();
-			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword), memberId);
+			String storeId = UtilityService.getStoreId();
+			ElevateResult e = new ElevateResult(new StoreKeyword(storeId, keyword), memberId);
 			e = daoService.getElevateItem(e);
 			if (e != null) {
-				e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
+				e.setExpiryDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
 				e.setLastModifiedBy(UtilityService.getUsername());
 				result = daoService.updateElevateResultExpiryDate(e);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during updateExpiryDate()",e);
+		} catch(Exception e){
+			logger.error("Failed during updateExpiryDate()",e);
 		}
+		
+		
 		return result;
 	}
 
@@ -428,7 +435,7 @@ public class ElevateService extends RuleService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreId();
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, new Date(), null,  page, itemsPerPage);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, DateTime.now(), null,  page, itemsPerPage);
 			return daoService.getElevatedProducts(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getActiveElevatedProducts()",e);
@@ -443,7 +450,7 @@ public class ElevateService extends RuleService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreId();
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, new Date(), null,  page, itemsPerPage);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, DateTime.now(), null,  page, itemsPerPage);
 			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getActiveElevatedProducts()",e);
@@ -458,7 +465,7 @@ public class ElevateService extends RuleService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreId();
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateTime.now().minusDays(1),  page, itemsPerPage);
 			return daoService.getElevatedProducts(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredElevatedProducts()",e);
@@ -473,7 +480,7 @@ public class ElevateService extends RuleService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreId();
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateTime.now().minusDays(1),  page, itemsPerPage);
 			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredElevatedProducts()",e);

@@ -3,8 +3,6 @@ package com.search.manager.report.model;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.annotation.ReportField;
-import com.search.manager.service.UtilityService;
-import com.search.manager.utility.DateAndTimeUtils;
 
 public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 
@@ -34,7 +32,7 @@ public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 	
 	@ReportField(label="Last Published Date", size=20, sortOrder=5)
 	public String getLastPublishedDate() {
-		return DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), model.getLastPublishedDate());
+		return model.getFormattedLastPublishedDateTime();
 	}
 	
 	@ReportField(label="Comment", size=20, sortOrder=6)
@@ -47,7 +45,5 @@ public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 			comments.deleteCharAt(0);
 		}
 		return comments.toString();			
-	}
-	
-	
+	}	
 }

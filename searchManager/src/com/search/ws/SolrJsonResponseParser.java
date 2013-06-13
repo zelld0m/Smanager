@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.SortType;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.CNetFacetTemplate;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
@@ -606,6 +607,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	public boolean generateServletResponse(HttpServletResponse response, long totalTime) throws SearchException {
 		boolean success = false;
 		try {
+			addBanners();
 			addElevatedEntries();
 			addDemotedEntries();
 			addSpellcheckEntries();
@@ -631,6 +633,22 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		return success;
 	}
 
+	private void addBanners() {
+		JSONArray bannersObj = new JSONArray();
+		if (bannerList != null) {
+			int i = 0;
+			for (BannerRuleItem rule: bannerList) {
+				JSONObject ruleObject = new JSONObject();
+				ruleObject.put(SolrConstants.TAG_BANNER_OPEN_NEW_WINDOW, rule.getOpenNewWindow());
+				ruleObject.put(SolrConstants.TAG_BANNER_IMAGE_ALT, rule.getImageAlt());
+				ruleObject.put(SolrConstants.TAG_BANNER_LINK_PATH, rule.getLinkPath());
+				ruleObject.put(SolrConstants.TAG_BANNER_IMAGE_PATH, rule.getImagePath().getPath());
+				bannersObj.element(i++, ruleObject);
+			}
+		}
+		initialJson.element(SolrConstants.TAG_BANNERS, bannersObj);
+	}
+	
 	private void addElevatedEntries() {
 		if (elevatedResults != null) {
 			int i = 0;

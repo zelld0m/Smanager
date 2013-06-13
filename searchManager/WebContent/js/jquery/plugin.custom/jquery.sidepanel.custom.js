@@ -200,7 +200,7 @@
 			var name = "";
 			var id = "";
 			var $tr = null;
-			var list = data.list;
+			var list = data? data.list : [];
 			var $table = base.$el.find("table#itemListing");
 
 			$table.find("tr#sideContentItemPreloader").hide();

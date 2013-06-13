@@ -1,0 +1,16 @@
+<html>
+	<body>
+		Hi ${requestBy},
+
+		<p>The following <b>${ruleType}</b> rules were unpublished by <b>${approvedBy}</b>.</p>
+
+		<div>
+			${rules}
+		</div>
+
+		<div>
+			<i>Comment:</i>
+			<p>${comment}</p>
+		</div>
+	</body>
+</html>

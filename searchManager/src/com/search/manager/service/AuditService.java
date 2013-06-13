@@ -2,7 +2,6 @@ package com.search.manager.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,11 +10,14 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -23,7 +25,6 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.User;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "auditService")
 @RemoteProxy(
@@ -133,6 +134,23 @@ public class AuditService {
 	}
 	
 	@RemoteMethod
+	public RecordSet<AuditTrail> getBannerItemTrail(String ruleId, String memberId, int page,int itemsPerPage) {
+		try {
+			String store = UtilityService.getStoreId();
+			
+			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
+			AuditTrail auditTrail = new AuditTrail();
+			auditTrail.setEntity(Entity.banner.toString());
+			auditTrail.setReferenceId(ruleId);
+			auditTrail.setStoreId(store);
+			
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+		} catch (DaoException e) {
+			return null;
+		}
+	}
+	
+	@RemoteMethod
 	public RecordSet<AuditTrail> getFacetSortTrail(String ruleId, int page,int itemsPerPage) {
 		try {
 			String store = UtilityService.getStoreId();
@@ -175,14 +193,10 @@ public class AuditService {
 		auditTrail.setKeyword(StringUtils.isBlank(keyword)?null:keyword);
 		auditTrail.setReferenceId(StringUtils.isBlank(referenceId)?null:referenceId);
 		RecordSet<AuditTrail> rSet = null;
-		Date startDt = null;
-		Date endDt = null;
-		if (!StringUtils.isBlank(startDate)) {
-			startDt = DateAndTimeUtils.toSQLDate(store, startDate);
-		}
-		if (!StringUtils.isBlank(endDate)) {
-			endDt = DateAndTimeUtils.toSQLDate(store, endDate);
-		}
+		
+		DateTime startDt = !StringUtils.isBlank(startDate)? JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE): null;
+		DateTime endDt = !StringUtils.isBlank(endDate)? JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE): null;
+		
 		try {
 			rSet = daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, startDt, endDt, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
@@ -242,13 +256,8 @@ public class AuditService {
 							ddList.add(opt.toString());
 						}
 						break;
-					case campaign:
-						for(Object opt: Arrays.asList(AuditTrailConstants.campaignOperations)){
-							ddList.add(opt.toString());
-						}
-						break;
 					case banner:
-						for(Object opt: Arrays.asList(AuditTrailConstants.bannerOperations)){
+						for(Object opt: AuditTrailConstants.entityOperationMap.get(AuditTrailConstants.Entity.banner)){
 							ddList.add(opt.toString());
 						}
 						break;

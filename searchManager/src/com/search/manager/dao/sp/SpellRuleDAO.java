@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -27,6 +28,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SpellRule;
@@ -267,7 +269,7 @@ public class SpellRuleDAO {
             int maxSuggest = getMaxSuggest(store);
 
             SpellRules spellRulesXml = new SpellRules(store, 0, "Did You Mean", "", UtilityService.getUsername(),
-                    new Date(), "spell_rule", maxSuggest, Lists.transform(spellRules, SpellRule.transformer));
+                    new DateTime(), "spell_rule", maxSuggest, Lists.transform(spellRules, SpellRule.transformer));
 
             RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
             ConfigManager.getInstance().setPublishedStoreLinguisticSetting(store, "maxSpellSuggestions",
@@ -469,7 +471,8 @@ public class SpellRuleDAO {
         SpellRule rule = new SpellRule(rs.getString(DAOConstants.COLUMN_RULE_ID),
                 rs.getString(DAOConstants.COLUMN_STORE_ID), rs.getString(DAOConstants.COLUMN_STATUS), null, null,
                 rs.getString(DAOConstants.COLUMN_CREATED_BY), rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-                rs.getDate(DAOConstants.COLUMN_CREATED_STAMP), rs.getDate(DAOConstants.COLUMN_LAST_UPDATED_STAMP));
+                JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+                JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 
         rule.fromTabbedSearchTerms(rs.getString(DAOConstants.COLUMN_SEARCH_TERM));
         rule.fromTabbedSuggestions(rs.getString(DAOConstants.COLUMN_SUGGEST));

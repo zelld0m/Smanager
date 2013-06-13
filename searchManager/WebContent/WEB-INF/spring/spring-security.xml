@@ -24,7 +24,7 @@
     	<security:intercept-url pattern="/exclude/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/demote/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/facet/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/campaign/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/banner/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/redirect/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/catalog/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/feature/**" access="isAuthenticated()" />
@@ -49,6 +49,7 @@
         <!-- Make CSS and image resources to unsecured -->
         <security:intercept-url pattern="/css/**" access="permitAll" />
         <security:intercept-url pattern="/images/**" access="permitAll" />
+        <security:intercept-url pattern="/tz/**" access="permitAll" />
 
         <!-- Exclude web service from authentication -->
         <security:intercept-url pattern="/search/**" access="permitAll" />

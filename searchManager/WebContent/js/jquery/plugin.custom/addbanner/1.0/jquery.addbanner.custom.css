@@ -1,0 +1,202 @@
+.plugin-addbanner {
+	width: 600px;
+}
+
+.plugin-addbanner label.txtLabel {
+	float: left;
+	font-size: 12px;
+	margin-top: 5px;
+	width: 100px;
+}
+
+.plugin-addbanner input[type="text"],.plugin-addbanner textarea {
+	margin-top: 5px;
+}
+
+.plugin-addbanner #buttonset {
+	float: right;
+	margin-bottom:10px;
+}
+
+.plugin-addbanner input#startDate,.plugin-addbanner input#endDate {
+	width: 65px;
+}
+
+.plugin-addbanner input#openNewWindow {
+    float: left;
+    clear: left;
+    margin-left: 100px;
+    vertical-align: middle;
+}
+
+.plugin-addbanner label[for="openNewWindow"] {
+    float: left;
+    width: 200px;
+    clear: right;
+    margin-left: 5px;
+    vertical-align: middle;
+    line-height: 18px;
+    padding-bottom: 5px;
+}
+
+.plugin-addbanner label.note {
+    clear: both;
+    margin-left: 100px;
+    margin-top: 0;
+    padding-top: 0;
+    top: -5px;
+    position: relative;
+    
+}
+
+.plugin-addbanner label[for="temporaryDisable"] {
+    line-height: 18px;
+}
+
+.plugin-addbanner input#temporaryDisable {
+    margin-left: 76px;
+}
+
+.plugin-addbanner .preview_container {
+	width: 100%;
+	display: block;
+	margin-bottom: 10px;
+	clear: both;
+}
+
+.plugin-addbanner img.ui-datepicker-trigger {
+	float: left;
+	padding: 6px 10px 0px 3px;
+	width: 18px;
+}
+
+.plugin-addbanner #buttonset div {
+	float:right;
+	margin-left:10px;
+}
+
+.plugin-addbanner #buttonset div.buttons {
+    float:left;
+}
+
+.plugin-addbanner input,.plugin-addbanner textarea,
+.plugin-addbanner .input[type="checkbox"],
+.plugin-addbanner select
+	{
+	border: 1px solid #c6c6c6;
+	outline: none;
+	float: left;
+	font-family: Arial, sans-serif;
+}
+
+.plugin-addbanner input.schedule  {
+	width: 79px;
+	font-size: 12px;
+	text-align: center;
+}
+
+.plugin-addbanner button {
+	float: left;
+}
+
+.plugin-addbanner #preview img {
+	width: 100%;
+}
+
+.plugin-addbanner label {
+	width: 76px;
+	line-height: 26px;
+	clear: both;
+}
+
+.plugin-addbanner .lblImageAlt {
+	clear: none;
+	width: 70px !important;
+	margin-left: 42px;
+}
+
+.plugin-addbanner .w565px {
+	width: 492px;
+}
+
+.plugin-addbanner .w218px {
+	width: 187px;
+}
+
+.plugin-addbanner .w533px {
+	width: 462px;
+}
+
+/* buttons start */
+.plugin-addbanner #buttonset {
+    width: 100%;
+}
+
+.plugin-addbanner .round_btn {
+	display: block;
+}
+
+.plugin-addbanner .round_btn a {
+	color: #fff !important;
+	text-decoration: none;
+	height: 100%;
+	display: inline-block;
+	font-size: 11px;
+	vertical-align: middle;
+	padding: 0 7px;
+}
+
+.plugin-addbanner .round_btn .btn_wrap {
+	display: inline-block;
+	height: 100%;
+}
+
+.plugin-addbanner .btn_ok {
+	height: 23px;
+	padding-left: 5px;
+	background: transparent url('image/green_rounded_big_left.png') no-repeat left;
+}
+
+.plugin-addbanner .btn_ok a {
+	background: #39b54a;
+	line-height: 23px;
+}
+
+.plugin-addbanner .btn_ok .btn_wrap {
+	background: transparent url('image/green_rounded_big_right.png') no-repeat right;
+	padding-right: 5px;
+}
+
+.plugin-addbanner .btn_cancel {
+	height: 23px;
+	padding-left: 5px;
+	background: transparent url('image/red_rounded_big_left.png') no-repeat left;
+}
+
+.plugin-addbanner .btn_cancel a {
+	background: #ed1c24;
+	line-height: 23px;
+}
+
+.plugin-addbanner .btn_cancel .btn_wrap {
+	background: transparent url('image/red_rounded_big_right.png') no-repeat right;
+	padding-right: 5px;
+}
+
+
+.plugin-addbanner img.ui-datepicker-trigger {
+	padding-top: 11px !important;
+padding-right: 10px !important;
+}
+
+.plugin-addbanner  .banner_info_more input, .plugin-addbanner  .banner_info_more label, .plugin-addbanner  .banner_info_more textarea {
+	margin-bottom:0px !important;
+}
+.plugin-addbanner .banner_info_more .lHeight100 {
+	line-height:18px !important;
+}
+
+.plugin-addbanner #keyword {
+	margin-bottom: 8px !important;
+}
+

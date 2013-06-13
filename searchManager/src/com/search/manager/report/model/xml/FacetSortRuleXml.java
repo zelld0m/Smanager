@@ -1,7 +1,6 @@
 package com.search.manager.report.model.xml;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.collections.CollectionUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleType;
@@ -46,7 +46,7 @@ public class FacetSortRuleXml extends RuleXml {
 		this.groups = groups;
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDate(new Date());
+		this.setCreatedDate(DateTime.now());
 	}
 
 	public FacetSortRuleXml(String store, long version, String name, String notes, String username, String ruleType, String sortType,

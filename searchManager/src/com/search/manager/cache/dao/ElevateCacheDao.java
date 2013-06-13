@@ -1,10 +1,10 @@
 package com.search.manager.cache.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.cache.model.CacheModel;
@@ -54,7 +54,7 @@ public class ElevateCacheDao extends CacheDao<ElevateResult> {
 		ElevateResult elevateFilter = new ElevateResult();
 		elevateFilter.setStoreKeyword(storeKeyword);
 		// load only non-expired items
-		SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter, new Date(), null, 0, 0);
+		SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter, DateTime.now(), null, 0, 0);
 		List<ElevateResult> elevatedList = daoService.getElevateResultList(criteria).getList();
 		if (elevatedList == null) {
 			elevatedList = new ArrayList<ElevateResult>();
@@ -68,7 +68,7 @@ public class ElevateCacheDao extends CacheDao<ElevateResult> {
 		StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
 		elevateFilter.setStoreKeyword(storeKeyword);
 		// load only non-expired items
-		SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter, new Date(), null, 0, 0);
+		SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter, DateTime.now(), null, 0, 0);
 		List<ElevateResult> elevatedList = daoService.getElevateResultList(criteria).getList();
 		if (elevatedList == null) {
 			elevatedList = new ArrayList<ElevateResult>();
@@ -100,5 +100,4 @@ public class ElevateCacheDao extends CacheDao<ElevateResult> {
 		}
 		return result;
 	}
-
 }

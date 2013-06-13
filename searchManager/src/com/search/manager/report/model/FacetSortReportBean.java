@@ -2,7 +2,6 @@ package com.search.manager.report.model;
 
 import com.search.manager.model.FacetGroup;
 import com.search.manager.report.annotation.ReportField;
-import com.search.manager.utility.DateAndTimeUtils;
 
 public class FacetSortReportBean extends ReportBean<FacetGroup> {
 
@@ -42,7 +41,7 @@ public class FacetSortReportBean extends ReportBean<FacetGroup> {
 
 	@ReportField(label="Created Date", size=20, sortOrder=5)
 	public String getCreatedDate(){
-		return DateAndTimeUtils.formatMMddyyyy(model.getCreatedDate());
+		return model.getFormattedCreatedDate();
 	}
 
 	/*@ReportField(label="Modified By", size=20, sortOrder=6)

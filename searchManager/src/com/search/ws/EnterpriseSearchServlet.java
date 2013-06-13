@@ -15,12 +15,14 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Relevancy;
-import com.search.manager.model.Store;
 import com.search.manager.model.Relevancy.Parameter;
+import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 public class EnterpriseSearchServlet extends SearchServlet {
@@ -163,6 +165,12 @@ public class EnterpriseSearchServlet extends SearchServlet {
 		if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
 			nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, enterpriseSearchConfigManager.getDismax(storeId)));
 		}
+	}
+	
+	@Override
+	protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws DaoException {
+		// Enterprise Search does not need banners
+		return null;
 	}
 	
 	protected Relevancy getDefaultRelevancy(String storeId) {

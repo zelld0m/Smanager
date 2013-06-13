@@ -1460,6 +1460,8 @@
 				showOn: "button",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
+				changeMonth: true,
+			    changeYear: true,
 				buttonText: "Expiration Date",
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
@@ -1552,6 +1554,8 @@
 				showOn: "button",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
+				changeMonth: true,
+			    changeYear: true,
 				buttonText: "Expiration Date",
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true

@@ -1,9 +1,8 @@
 package com.search.manager.model;
 
-import java.util.Date;
-
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class DemoteProduct extends Product {
@@ -17,17 +16,17 @@ public class DemoteProduct extends Product {
 	}
 	
 	public DemoteProduct(String dpNo, String edp, String manufacturer, String mfrPN,
-			String name, String description, String imagePath, Date expiryDate, Date createdDate,
-			Date lastModifiedDate, String comment, String lastModifiedBy,
+			String name, String description, String imagePath, DateTime expiryDateTime, DateTime createdDateTime,
+			DateTime lastModifiedDateTime, String comment, String lastModifiedBy,
 			String createdBy, Integer location) {
-		super(dpNo, edp, manufacturer, mfrPN, name, description, imagePath, expiryDate, createdDate, lastModifiedDate, comment, lastModifiedBy, createdBy);
+		super(dpNo, edp, manufacturer, mfrPN, name, description, imagePath, expiryDateTime, createdDateTime, lastModifiedDateTime, comment, lastModifiedBy, createdBy);
 		this.location = location;
 	}
 	
 	public DemoteProduct(DemoteResult e){
 		super();
 		this.setEdp(e.getEdp());
-		this.setExpiryDate(e.getExpiryDate());
+		this.setExpiryDateTime(e.getExpiryDateTime());
 		this.setCreatedDate(e.getCreatedDate());
 		this.setLastModifiedDate(e.getLastModifiedDate());
 		this.setComment(e.getComment());

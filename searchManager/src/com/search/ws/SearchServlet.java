@@ -30,6 +30,7 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -39,6 +40,9 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -59,9 +63,6 @@ public class SearchServlet extends HttpServlet {
 	@Qualifier("daoService")
 	SearchDaoService daoService;
 	@Autowired
-	@Qualifier("daoCacheService")
-	SearchDaoService daoCacheService;
-	@Autowired
 	@Qualifier("solrService")
 	SearchDaoService solrService;
 	
@@ -80,10 +81,6 @@ public class SearchServlet extends HttpServlet {
 			};
 
 	protected final ExecutorService execService = Executors.newCachedThreadPool();
-
-	public void setDaoCacheService(SearchDaoService daoCacheService) {
-		this.daoCacheService = daoCacheService;
-	}
 	
 	public void setSolrService(SearchDaoService solrService) {
 		this.solrService = solrService;
@@ -266,26 +263,39 @@ public class SearchServlet extends HttpServlet {
             }
         }
     }
-	
-    protected SpellRule getSpellRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
-        try {
-            return getDaoService(fromSearchGui).getSpellRuleForSearchTerm(sk.getStoreId(), sk.getKeywordId());
-        } catch (DaoException e) {
-            if (!fromSearchGui) {
-                return null;
-            } else {
-                throw e;
-            }
-        }
-    }
+
+	protected SpellRule getSpellRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
+		try {
+			return getDaoService(fromSearchGui).getSpellRuleForSearchTerm(sk.getStoreId(), sk.getKeywordId());
+		} catch (DaoException e) {
+			if(!fromSearchGui) {
+				if (!configManager.isSolrImplOnly()) {
+					try {
+						return daoService.getSpellRuleForSearchTerm(sk.getStoreId(), sk.getKeywordId());
+					} catch (DaoException e1) {
+						logger.error("Failed to get spellRule. " + e1,  e1);
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+			throw e;
+		}
+	}
 	
 	protected RedirectRule getRedirectRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
 		try {
 			return getDaoService(fromSearchGui).getRedirectRule(sk);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
-				if (!configManager.isSolrImplOnly()) {
-					return daoCacheService.getRedirectRule(sk);
+				if(!configManager.isSolrImplOnly()) {
+					try {
+						return daoService.getRedirectRule(sk);
+					} catch (DaoException e1) {
+						logger.error("Failed to get redirectRule. " + e1, e1);
+						return null;
+					}
 				} else {
 					return null;
 				}
@@ -300,7 +310,12 @@ public class SearchServlet extends HttpServlet {
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
 				if (!configManager.isSolrImplOnly()) {
-					return daoCacheService.getRelevancyRule(sk);
+					try {
+						return daoService.getRelevancyRule(sk);
+					} catch (DaoException e1) {
+						logger.error("Failed to get relevancyRule. " + e1, e1);
+						return null;
+					}
 				} else {
 					return null;
 				}
@@ -315,7 +330,12 @@ public class SearchServlet extends HttpServlet {
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
 				if (!configManager.isSolrImplOnly()) {
-					return daoCacheService.getRelevancyRule(store, relevancyId);
+					try {
+						return daoService.getRelevancyRule(store, relevancyId);
+					} catch (DaoException e1) {
+						logger.error("Failed to get relevancyRule. " + e1, e1);
+						return null;
+					}
 				} else {
 					return null;
 				}
@@ -334,7 +354,12 @@ public class SearchServlet extends HttpServlet {
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
 				if (!configManager.isSolrImplOnly()) {
-					return daoCacheService.getFacetSortRule(storeKeyword);
+					try {
+						return daoService.getFacetSortRule(storeKeyword);
+					} catch (DaoException e1) {
+						logger.error("Failed to get defaultRelevancyRule. " + e1, e1);
+						return null;
+					}
 				} else {
 					return null;
 				}
@@ -349,7 +374,12 @@ public class SearchServlet extends HttpServlet {
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
 				if (!configManager.isSolrImplOnly()) {
-					return daoCacheService.getFacetSortRule(store, templateName);
+					try {
+						return daoService.getFacetSortRule(store, templateName);
+					} catch (DaoException e1) {
+						logger.error("Failed to get facetSortRule. " + e1, e1);
+						return null;
+					}
 				} else {
 					return null;
 				}
@@ -377,7 +407,12 @@ public class SearchServlet extends HttpServlet {
 				throw e;
 			}
 			if (!configManager.isSolrImplOnly()) {
-				list = daoCacheService.getElevateRules(storeKeyword);
+				try {
+					list = daoService.getElevateRules(storeKeyword);
+				} catch (DaoException e1) {
+					logger.error("Failed to get elevateRules. " + e1, e1);
+					return null;
+				}
 			} else {
 				return null;
 			}
@@ -395,7 +430,12 @@ public class SearchServlet extends HttpServlet {
 				throw e;
 			}
 			if (!configManager.isSolrImplOnly()) {
-				list = daoCacheService.getExpiredElevateRules(storeKeyword);
+				try {
+					list = daoService.getExpiredElevateRules(storeKeyword);
+				} catch (DaoException e1) {
+					logger.error("Failed to get expired elevateRules. " + e1, e1);
+					return null;
+				}
 			} else {
 				return null;
 			}
@@ -413,7 +453,12 @@ public class SearchServlet extends HttpServlet {
 				throw e;
 			}
 			if (!configManager.isSolrImplOnly()) {
-				list = daoCacheService.getExcludeRules(storeKeyword);
+				try {
+					list = daoService.getExcludeRules(storeKeyword);
+				} catch (DaoException e1) {
+					logger.error("Failed to get exludeRules. " + e1, e1);
+					return null;
+				}
 			} else {
 				return null;
 			}
@@ -431,7 +476,12 @@ public class SearchServlet extends HttpServlet {
 				throw e;
 			}
 			if (!configManager.isSolrImplOnly()) {
-				list = daoCacheService.getExpiredExcludeRules(storeKeyword);
+				try {
+					list = daoService.getExpiredExcludeRules(storeKeyword);
+				} catch (DaoException e1) {
+					logger.error("Failed to get expired excludeRules. " + e1, e1);
+					return null;
+				}
 			} else {
 				return null;
 			}
@@ -449,7 +499,12 @@ public class SearchServlet extends HttpServlet {
 				throw e;
 			}
 			if (!configManager.isSolrImplOnly()) {
-				list = daoCacheService.getDemoteRules(storeKeyword);
+				try {
+					list = daoService.getDemoteRules(storeKeyword);
+				} catch (DaoException e1) {
+					logger.error("Failed to get demoteRules. " + e1, e1);
+					return null;
+				}
 			} else {
 				return null;
 			}
@@ -467,13 +522,38 @@ public class SearchServlet extends HttpServlet {
 				throw e;
 			}
 			if (!configManager.isSolrImplOnly()) {
-				list = daoCacheService.getExpiredDemoteRules(storeKeyword);
+				try {
+					list = daoService.getExpiredDemoteRules(storeKeyword);
+				} catch (DaoException e1) {
+					logger.error("Failed to get expired demoteRules. " + e1, e1);
+					return null;
+				}
 			} else {
 				return null;
 			}
 		}
 		setFacetTemplateValues(list, facetMap);
 		return list;
+	}
+	
+	protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws DaoException {
+		try {
+			return getDaoService(fromSearchGui).getActiveBannerRuleItems(store, keyword, currentDate);
+		} catch (DaoException e) {
+			if(!fromSearchGui) {
+				if (!configManager.isSolrImplOnly()) {
+					try {
+						return daoService.getActiveBannerRuleItems(store, keyword, currentDate);
+					} catch (DaoException e1) {
+						logger.error("Failed to get active bannerRuleItems. " + e1, e1);
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+			throw e;
+		}
 	}
 	
 	protected Map<String, String> getFacetMap(String storeId) {
@@ -584,6 +664,21 @@ public class SearchServlet extends HttpServlet {
 	protected Relevancy getDefaultRelevancy(String storeId) {
 		return null;
 	}
+	
+	protected DateTime getOverrideCurrentDate(String dateText) {
+		DateTime convertedCurrentDate = DateTime.now();
+		DateTime overrideCurrentDate = JodaDateTimeUtil.toDateTimeFromStorePattern(dateText, JodaPatternType.DATE);
+		
+		logger.info(String.format("Current Date: %s", convertedCurrentDate.toString()));
+		if (overrideCurrentDate!=null){
+			convertedCurrentDate = convertedCurrentDate.withYear(overrideCurrentDate.getYear());
+			convertedCurrentDate = convertedCurrentDate.withMonthOfYear(overrideCurrentDate.getMonthOfYear());
+			convertedCurrentDate = convertedCurrentDate.withDayOfMonth(overrideCurrentDate.getDayOfMonth());
+			logger.info(String.format("Simulate date: %s - > %s", dateText, convertedCurrentDate.toString()));
+		}
+		
+		return convertedCurrentDate;
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: 
@@ -591,6 +686,7 @@ public class SearchServlet extends HttpServlet {
 
 		ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
 		int tasks = 0;
+		DateTime currentDate = DateTime.now();
 
 		try {
 			Long start = new Date().getTime();
@@ -629,8 +725,9 @@ public class SearchServlet extends HttpServlet {
 			Set<String> paramNames = request.getParameterMap().keySet();
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
-					
-					if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD)) {
+					if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_SIMULATE_DATE) && StringUtils.isNotBlank(paramValue)){
+						currentDate = getOverrideCurrentDate(paramValue);
+					}else if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD)) {
 						
 						String origKeyword = paramValue;
 						if (origKeyword == null) {
@@ -645,6 +742,7 @@ public class SearchServlet extends HttpServlet {
 						}
 						
 						String convertedKeyword = paramValue;
+						
 						logger.info(String.format("CLEANUP %s keyword: %s[%s] %s[%s]", storeName,
 								origKeyword, Hex.encodeHexString(origKeyword.getBytes()),
 								convertedKeyword, Hex.encodeHexString(convertedKeyword.getBytes())));
@@ -703,7 +801,7 @@ public class SearchServlet extends HttpServlet {
 					nameValuePairs.add(nvp);
 				}
 			}
-
+			
 			// grab the keyword
 			// patch for rebates search
 			// sample: http://afs-pl-schmstr.afservice.org:8080/solr14/pcmall/select
@@ -735,10 +833,10 @@ public class SearchServlet extends HttpServlet {
 			boolean disableFacetSort  = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
 			final boolean disableDidYouMean = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_DID_YOU_MEAN) != null;
 			final List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
+			boolean disableBanner = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_BANNER) != null;
 			
 			// redirect 
 			try {
-				
 				if (isActiveSearchRule(storeId, RuleEntity.QUERY_CLEANING)) {
 					RedirectRule redirect = null;
 					RedirectRule originalRedirect = null;
@@ -951,6 +1049,8 @@ public class SearchServlet extends HttpServlet {
 			List<String> expiredDemotedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
 			List<String> expiredExcludedList = new ArrayList<String>();
+			List<BannerRuleItem> bannerList = null;
+			
 			String sort = request.getParameter(SolrConstants.SOLR_PARAM_SORT);
 			boolean bestMatchFlag = StringUtils.isEmpty(sort) || !(StringUtils.containsIgnoreCase(sort, "price") ||
 							StringUtils.containsIgnoreCase(sort, "manufacturer"));
@@ -1041,7 +1141,20 @@ public class SearchServlet extends HttpServlet {
 							}
 						}
 					}
-				}				
+				}
+				
+				try {
+					bannerList = getActiveBannerRuleItems(new Store(storeId), keyword, fromSearchGui, currentDate);
+					if (bannerList != null && bannerList.size() > 0) {
+						activeRules.add((generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_BANNER, bannerList.get(0).getRule().getRuleId(), keyword, !disableBanner)));
+						if(!disableBanner) {	
+							solrHelper.setBannerRuleItems(bannerList);
+						}
+					}
+				} catch (Exception e) {
+					logger.error("Failed to get banner for keyword: " + originalKeyword, e);
+				}
+				
 			}
 
 			/* First Request */
@@ -1060,7 +1173,7 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setOriginalKeyword(originalKeyword);
 			solrHelper.setIncludeEDP(includeEDP);
 			solrHelper.setIncludeFacetTemplateFacet(includeFacetTemplateFacet);
-
+			
 			// remove json.wrf parameter as this is not a JSON standard
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION));
 
@@ -1433,5 +1546,4 @@ public class SearchServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
-
 }

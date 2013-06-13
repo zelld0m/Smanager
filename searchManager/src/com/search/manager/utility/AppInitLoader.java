@@ -13,16 +13,18 @@ import org.springframework.web.context.ServletContextAware;
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.service.LocalCacheService;
 
-public class AppInitLoader implements ApplicationContextAware, ServletContextAware {
-	
+public class AppInitLoader implements ApplicationContextAware,
+		ServletContextAware {
+
 	private static Logger logger = Logger.getLogger(AppInitLoader.class);
 	private static ServletContext CTX_WEB;
 	private static ApplicationContext CTX_APP;
-	
+
 	public static final String GLOBAL_INIT = "GLOBAL_INIT_PROPERTIES";
 	private static LocalCacheService<CacheModel<?>> localCacheService;
-	
-	public void setLocalCacheService(LocalCacheService<CacheModel<?>> localCacheService_) {
+
+	public void setLocalCacheService(
+			LocalCacheService<CacheModel<?>> localCacheService_) {
 		localCacheService = localCacheService_;
 	}
 
@@ -40,34 +42,35 @@ public class AppInitLoader implements ApplicationContextAware, ServletContextAwa
 			CTX_WEB = servletCtx;
 		}
 	}
-	
+
 	public void run() throws Exception {
 		String globalInitProp = CTX_WEB.getInitParameter(GLOBAL_INIT);
 		String[] props = globalInitProp.split(",");
-		
+
 		logger.info(">>>> LOADING APP-GLOBAL INIT <<<<");
-		
-		Map<String,String> map = new HashMap<String,String>();
-		for(String prop: props) {
+
+		Map<String, String> map = new HashMap<String, String>();
+		for (String prop : props) {
 			prop = prop.trim();
 
 			Properties rb = null;
-			
+
 			if (!StringUtil.isBlank(prop)) {
-				
+
 				rb = PropsUtils.load(prop);
-		
+
 				Enumeration<Object> enum$ = rb.keys();
-				while(enum$.hasMoreElements()) {
+				while (enum$.hasMoreElements()) {
 					String key = (String) enum$.nextElement();
 					String value = rb.getProperty(key);
 					key = key.replace(".", "_");
-					logger.info("Setting web-application-global value [key:"+key+", value:"+value+"]");
-					map.put(key, value);	
+					logger.info("Setting web-application-global value [key:"
+							+ key + ", value:" + value + "]");
+					map.put(key, value);
 				}
 			}
 		}
-		
+
 		CacheModel<String> model = new CacheModel<String>();
 		model.setMap(map);
 		localCacheService.putLocalCache(GLOBAL_INIT, model);

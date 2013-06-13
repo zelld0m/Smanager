@@ -1,10 +1,9 @@
 package com.search.manager.model;
 
-import java.util.Date;
-
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.search.manager.report.model.xml.SpellRuleXml;
@@ -59,7 +58,7 @@ public class SpellRule extends ModelBean {
     }
 
     public SpellRule(String ruleId, String storeId, String status, String[] searchTerms, String[] suggestions,
-            String createdBy, String lastModifiedBy, Date createdDate, Date lastModifiedDate) {
+            String createdBy, String lastModifiedBy, DateTime createdDate, DateTime lastModifiedDate) {
         super();
         this.ruleId = ruleId;
         this.storeId = storeId;

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -87,8 +88,8 @@ public class RelevancyDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
@@ -103,8 +104,8 @@ public class RelevancyDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
@@ -119,13 +120,13 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_NAME),
 	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 	                		new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-	                		rs.getDate(DAOConstants.COLUMN_START_DATE),
-	                		rs.getDate(DAOConstants.COLUMN_END_DATE),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -141,8 +142,8 @@ public class RelevancyDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
@@ -194,8 +195,8 @@ public class RelevancyDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_RELEVANCY, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
@@ -210,13 +211,13 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_NAME),
 	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 	                		new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-	                		rs.getDate(DAOConstants.COLUMN_START_DATE),
-	                		rs.getDate(DAOConstants.COLUMN_END_DATE),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_START_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -260,8 +261,8 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_FIELD_VALUE),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                				JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -331,8 +332,8 @@ public class RelevancyDAO {
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -376,8 +377,8 @@ public class RelevancyDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_RELEVANCY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXACT_MATCH, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
@@ -393,8 +394,8 @@ public class RelevancyDAO {
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                				JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -421,8 +422,8 @@ public class RelevancyDAO {
             inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
             inputs.put(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, StringUtils.trimToEmpty(relevancy.getDescription()));
             inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(relevancy.getStore()));
-            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDate());
-            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDate());
+            inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(relevancy.getStartDateTime()));
+            inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(relevancy.getEndDateTime()));
             inputs.put(DAOConstants.PARAM_COMMENT, relevancy.getComment());
             inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(relevancy.getCreatedBy()));
             return DAOUtils.getUpdateCount(addSP.execute(inputs));
@@ -440,8 +441,8 @@ public class RelevancyDAO {
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
             inputs.put(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, StringUtils.trimToEmpty(relevancy.getDescription()));
-            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDate());
-            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDate());
+            inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(relevancy.getStartDateTime()));
+            inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(relevancy.getEndDateTime()));
             inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(relevancy.getLastModifiedBy()));
             return DAOUtils.getUpdateCount(updateSP.execute(inputs));
     	}
@@ -512,8 +513,8 @@ public class RelevancyDAO {
 							model.getRelevancyId() : model.getRelevancyName()));
 	        inputs.put(DAOConstants.PARAM_MATCH_TYPE_RELEVANCY, (relevancyMatchType == null) ?
 	        		null : relevancyMatchType.getIntValue());
-	        inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+	        inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+	        inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        return DAOUtils.getRecordSet(searchSP.execute(inputs));
@@ -725,8 +726,8 @@ public class RelevancyDAO {
 	        		null : relevancyMatchType.getIntValue());
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(model.getKeyword()));
 	        inputs.put(DAOConstants.PARAM_EXACT_MATCH, keywordExactMatch == null ? null : keywordExactMatch.getIntValue());
-	        inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
+	        inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+	        inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        RecordSet<RelevancyKeyword>  rs = DAOUtils.getRecordSet(searchRelevancyKeywordSP.execute(inputs));

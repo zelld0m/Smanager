@@ -15,6 +15,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,6 +31,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.search.manager.enums.SortType;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
@@ -519,6 +521,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	public boolean generateServletResponse(HttpServletResponse response, long totalTime) throws SearchException {
 		boolean success = false;
 		try {
+			addBanners();
 			addElevatedEntries();
 			addDemotedEntries();
 			addSpellcheckEntries();
@@ -535,6 +538,38 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		return success;
 	}
 
+	private void addBanners() {
+		Node bannersNode = mainDoc.createElement(SolrConstants.TAG_BANNERS);
+		try {
+			if(CollectionUtils.isNotEmpty(bannerList)) {
+				for (BannerRuleItem rule: bannerList) {
+					Node ruleNode = mainDoc.createElement(SolrConstants.TAG_BANNER_RULE);
+					
+					Node newWindow = mainDoc.createElement(SolrConstants.TAG_BANNER_OPEN_NEW_WINDOW);
+					newWindow.appendChild(mainDoc.createTextNode(rule.getOpenNewWindow() + ""));
+					ruleNode.appendChild(newWindow);
+					
+					Node imageAlt = mainDoc.createElement(SolrConstants.TAG_BANNER_IMAGE_ALT);
+					imageAlt.appendChild(mainDoc.createTextNode(rule.getImageAlt()));
+					ruleNode.appendChild(imageAlt);
+					
+					Node linkPath = mainDoc.createElement(SolrConstants.TAG_BANNER_LINK_PATH);
+					linkPath.appendChild(mainDoc.createTextNode(rule.getLinkPath()));
+					ruleNode.appendChild(linkPath);
+					
+					Node imagePath = mainDoc.createElement(SolrConstants.TAG_BANNER_IMAGE_PATH);
+					imagePath.appendChild(mainDoc.createTextNode(rule.getImagePath().getPath()));
+					ruleNode.appendChild(imagePath);
+					
+					bannersNode.appendChild(ruleNode);
+				}
+			}
+			locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE).appendChild(bannersNode);
+		} catch (Exception e) {
+			logger.error("Error occured during banner creation. ", e);
+		}
+	}
+	
 	private void addElevatedEntries() {
 		for (Node node: elevatedEntries) {
         	resultNode.insertBefore(node, placeHolderNode);

@@ -1,7 +1,5 @@
 package com.search.manager.report.model.xml;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -11,6 +9,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleEntity;
@@ -58,7 +57,7 @@ public class RedirectRuleXml extends RuleXml{
 		
 		setVersion(version);
 		setSerial(serialVersionUID);
-		this.setCreatedDate(new Date());
+		this.setCreatedDate(DateTime.now());
 	}
 	
 	public RedirectRuleXml(String store, RedirectRule queryCleaning) {

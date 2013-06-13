@@ -158,6 +158,8 @@
 								showOn: "both",
 								minDate: self.expDateMinDate,
 								maxDate: self.expDateMaxDate,
+								changeMonth: true,
+						        changeYear: true,
 								buttonText: "Expiration Date",
 								buttonImage: "../images/icon_calendar.png",
 								buttonImageOnly: true

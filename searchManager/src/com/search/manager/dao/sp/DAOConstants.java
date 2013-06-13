@@ -19,27 +19,30 @@ public class DAOConstants {
 	// ELEVATE
 	public static final String SP_ADD_ELEVATE 						= "usp_Add_Elevate";
 	public static final String SP_GET_ELEVATE 						= "usp_Get_Elevate";
+	public static final String SP_GET_ELEVATE_NEW 					= "usp_Get_Elevate_New";
 	public static final String SP_GET_ELEVATE_ITEM 					= "usp_Get_Elevate_Value";
 	public static final String SP_GET_NO_EXPIRY_ELEVATE 			= "usp_Get_Elevate_NoExpiry";
 	public static final String SP_UPDATE_ELEVATE 					= "usp_Update_Elevate";
-	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date";
+	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date_NEW";
 	public static final String SP_UPDATE_ELEVATE_COMMENT 			= "usp_Update_Elevate_Comment";
 	public static final String SP_APPEND_ELEVATE_COMMENT 			= "usp_Append_Elevate_Comment";
 	public static final String SP_DELETE_ELEVATE 					= "usp_Delete_Elevate";
 	// EXCLUDE
 	public static final String SP_ADD_EXCLUDE 						= "usp_Add_Exclude";
 	public static final String SP_GET_EXCLUDE 						= "usp_Get_Exclude";
+	public static final String SP_GET_EXCLUDE_NEW 					= "usp_Get_Exclude_New";
 	public static final String SP_GET_EXCLUDE_ITEM 					= "usp_Get_Exclude_Value";
 	public static final String SP_UPDATE_EXCLUDE					= "usp_Update_Exclude";
 	public static final String SP_DELETE_EXCLUDE 					= "usp_Delete_Exclude";
 	public static final String SP_UPDATE_EXCLUDE_COMMENT 			= "usp_Update_Exclude_Comment";
 	public static final String SP_APPEND_EXCLUDE_COMMENT 			= "usp_Append_Exclude_Comment";
-	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date";
+	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date_NEW";
 	// DEMOTE
 	public static final String SP_ADD_DEMOTE 						= "usp_Add_Demote";
 	public static final String SP_GET_DEMOTE 						= "usp_Get_Demote";
+	public static final String SP_GET_DEMOTE_NEW 					= "usp_Get_Demote_New";
 	public static final String SP_UPDATE_DEMOTE 					= "usp_Update_Demote";
-	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date";
+	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date_NEW";
 	public static final String SP_DELETE_DEMOTE 					= "usp_Delete_Demote";
 
 	// FACET SORT
@@ -55,33 +58,18 @@ public class DAOConstants {
 	public static final String SP_DELETE_FACET_GROUP_ITEM			= "usp_Delete_Facet_Group_Item";
 	public static final String SP_CLEAR_FACET_GROUP_ITEM			= "usp_Clear_Facet_Group_Item";
 
-	// CAMPAIGN
-	public static final String SP_ADD_CAMPAIGN 						= "usp_Add_Campaign";
-	public static final String SP_GET_CAMPAIGN 						= "usp_Get_Campaign";
-	public static final String SP_SEARCH_CAMPAIGN 					= "usp_Search_Campaign";
-	public static final String SP_UPDATE_CAMPAIGN					= "usp_Update_Campaign";
-	public static final String SP_DELETE_CAMPAIGN 					= "usp_Delete_Campaign";
-	public static final String SP_UPDATE_CAMPAIGN_COMMENT 			= "usp_Update_Campaign_Comment";
-	public static final String SP_APPEND_CAMPAIGN_COMMENT 			= "usp_Append_Campaign_Comment";
 	// BANNER
-	public static final String SP_ADD_BANNER 						= "usp_Add_Banner";
-	public static final String SP_GET_BANNER 						= "usp_Get_Banner";
-	public static final String SP_SEARCH_BANNER 					= "usp_Search_Banner";
-	public static final String SP_UPDATE_BANNER						= "usp_Update_Banner";
-	public static final String SP_DELETE_BANNER 					= "usp_Delete_Banner";
-	public static final String SP_UPDATE_BANNER_COMMENT 			= "usp_Update_Banner_Comment";
-	public static final String SP_APPEND_BANNER_COMMENT 			= "usp_Append_Banner_Comment";
-	// CAMPAIGN_BANNER_RELATIONSHIP
-	public static final String SP_ADD_CAMPAIGN_BANNER 				= "usp_Add_Campaign_Banner_Relationship";
-	public static final String SP_UPDATE_CAMPAIGN_BANNER 			= "usp_Update_Campaign_Banner_Relationship";
-	public static final String SP_DELETE_CAMPAIGN_BANNER 			= "usp_Delete_Campaign_Banner_Relationship";
-	public static final String SP_GET_CAMPAIGN_BANNER 				= "usp_Get_Campaign_Banner_Relationship";
-	public static final String SP_SEARCH_CAMPAIGN_BANNER 			= "usp_Search_Campaign_Banner_Relationship";
-	// CAMPAIGN_PROD_KEYWORD_BANNER_RELATIONSHIP
-	public static final String SP_ADD_CAMPAIGN_BANNER_KEYWORD 		= "usp_Add_Campaign_Prod_Keyword_Banner_Relationship";
-	public static final String SP_DELETE_CAMPAIGN_BANNER_KEYWORD 	= "usp_Delete_Campaign_Prod_Keyword_Banner_Relationship";
-	public static final String SP_GET_CAMPAIGN_BANNER_KEYWORD 		= "usp_Get_Campaign_Prod_Keyword_Banner_Relationship";
-	public static final String SP_GET_CAMPAIGN_BANNER_WITH_KEYWORD	= "usp_Search_Campaign_Prod_Keyword_Banner_Relationship";
+	public static final String SP_ADD_BANNER_RULE 					= "usp_Add_Banner_Rule";
+	public static final String SP_GET_BANNER_RULE 					= "usp_Get_Banner_Rule";
+	public static final String SP_DELETE_BANNER_RULE				= "usp_Delete_Banner_Rule";
+	public static final String SP_ADD_BANNER_RULE_ITEM				= "usp_Add_Banner_Rule_Item";
+	public static final String SP_UPDATE_BANNER_RULE_ITEM			= "usp_Update_Banner_Rule_Item";
+	public static final String SP_GET_BANNER_RULE_ITEM				= "usp_Get_Banner_Rule_Item";
+	public static final String SP_DELETE_BANNER_RULE_ITEM			= "usp_Delete_Banner_Rule_Item";
+	public static final String SP_ADD_BANNER_IMAGE_PATH				= "usp_Add_Banner_Image_Path";
+	public static final String SP_GET_BANNER_IMAGE_PATH				= "usp_Get_Banner_Image_Path";
+	public static final String SP_UPDATE_BANNER_IMAGE_PATH	 		= "usp_Update_Banner_Image_Path";
+	
 	// AUDIT_TRAIL
 	public static final String SP_ADD_AUDIT_TRAIL 					= "usp_Add_Audit_Trail";
 	public static final String SP_GET_AUDIT_TRAIL 					= "usp_Get_Audit_Trail";
@@ -119,7 +107,7 @@ public class DAOConstants {
 
 	//RULE STATUS
 	public static final String SP_ADD_RULE_STATUS					= "usp_Add_Rule_Status";
-	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status";
+	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status_NEW";
 	public static final String SP_DELETE_RULE_STATUS				= "usp_Delete_Rule_Status";
 	public static final String SP_GET_RULE_STATUS					= "usp_Get_Rule_Status";
 	//COMMENT
@@ -132,9 +120,9 @@ public class DAOConstants {
 	public static final String SP_GET_CATEGORY_BY_FILTER			= "usp_Get_Product_Category_by_Filter";
 
 	//USER
-	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User";
-	public static final String SP_ADD_USERS							= "usp_Add_Manager_User";
-	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User";
+	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User_NEW";
+	public static final String SP_ADD_USERS							= "usp_Add_Manager_User_NEW";
+	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User_NEW";
 	public static final String SP_DELETE_USERS						= "usp_Delete_Manager_User";
 	public static final String SP_GET_GROUP_SECURITY				= "usp_Get_Manager_Group_Security";
 
@@ -160,6 +148,7 @@ public class DAOConstants {
 
 	/* Stored Procedure Parameter Names */
 	public static final String PARAM_STORE_ID 						= "store_id";
+	public static final String PARAM_TIMEZONE_ID					= "timezone_id";
 	public static final String PARAM_KEYWORD_ID						= "keyword_id";
 	public static final String PARAM_KEYWORD 						= "keyword";
 	public static final String PARAM_SEQUENCE 						= "sequence";
@@ -197,7 +186,7 @@ public class DAOConstants {
 	public static final String PARAM_RELEVANCY_DESCRIPTION			= "relevancy_description";
 	public static final String PARAM_FIELD_NAME						= "field_name";
 	public static final String PARAM_FIELD_VALUE					= "field_value";
-	public static final String PARAM_PRIORITY						= "field_value";
+	public static final String PARAM_PRIORITY						= "priority";
 	public static final String PARAM_RELEVANCY 						= "relevancy";
 	public static final String PARAM_MATCH_TYPE_RELEVANCY 			= "match_type_relevancy";
 	public static final String PARAM_CAT_CODE 						= "catcode";
@@ -276,11 +265,25 @@ public class DAOConstants {
     public static final String PARAM_VERSION_NO                     = "version_no";
 	public static final String PARAM_STORE_DST                      = "store_dst";
 
+	// additional for banner rule
+	public static final String PARAM_IMAGE_PATH_ID			 		= "image_path_id";
+	public static final String PARAM_IMAGE_PATH				 		= "image_path";
+	public static final String PARAM_IMAGE_PATH_TYPE		 		= "image_path_type";
+	public static final String PARAM_IMAGE_PATH_ALIAS		 		= "alias";
+	public static final String PARAM_IMAGE_ALT		 				= "image_alt";
+	public static final String PARAM_LINK_PATH				 		= "link_path";
+	public static final String PARAM_NEW_WINDOW		 				= "open_new_window";
+	public static final String PARAM_DISABLED		 				= "disabled";
+	public static final String PARAM_SEARCH_TEXT		 			= "search_text";
+	public static final String PARAM_LAST_UPDATED_BY	 			= "last_updated_by";
+
 	// additional rule status parameters
 	public static final String PARAM_REQUEST_BY						= "request_by";
+	public static final String PARAM_REQUESTED_BY					= "requested_by";
 	public static final String PARAM_LAST_REQUEST_DATE				= "last_request_date";
 	public static final String PARAM_APPROVAL_BY					= "approval_by";
 	public static final String PARAM_LAST_APPROVAL_DATE				= "last_approval_date";
+	public static final String PARAM_LAST_PUBLISHED_DATE			= "last_published_date";
 	public static final String PARAM_PUBLISHED_BY					= "published_by";
 	public static final String PARAM_EXPORT_TYPE					= "export_type";
 	public static final String PARAM_EXPORT_BY						= "export_by";
@@ -306,6 +309,7 @@ public class DAOConstants {
 	public static final String COLUMN_PRODUCT_STORE_ID     			= "product_store_id";
 	public static final String COLUMN_STORE_NAME  					= "store_name";
 	public static final String COLUMN_STORE_ID						= "store_id";
+	public static final String COLUMN_TIMEZONE_ID					= "timezone_id";
 	public static final String COLUMN_STORE  						= "store";
 	public static final String COLUMN_VALUE       					= "value";
 	public static final String COLUMN_SEQUENCE_NUM 					= "sequence_num";
@@ -367,6 +371,7 @@ public class DAOConstants {
 	public static final String COLUMN_LAST_PUBLISHED_DATE			= "last_published_date";
 	public static final String COLUMN_CREATED_STAMP					= "created_stamp";
 	public static final String COLUMN_LAST_UPDATED_STAMP			= "last_updated_stamp";
+	public static final String COLUMN_LAST_UPDATED_BY				= "last_updated_by";
 
 	public static final String COLUMN_GROUP_ID				 		= "group_id";
 	public static final String COLUMN_PERMISSION_ID		 			= "permission_id";
@@ -423,6 +428,16 @@ public class DAOConstants {
 	public static final String COLUMN_PUBLISHED_DATE				= "published_date";
 	public static final String COLUMN_EXPORT_DATE   				= "export_date";
 	public static final String COLUMN_IMPORT_DATE   				= "import_date";
+
+	// additional for banner rule
+	public static final String COLUMN_IMAGE_ALT						= "image_alt";
+	public static final String COLUMN_LINK_PATH						= "link_path";
+	public static final String COLUMN_IMAGE_PATH_ID					= "image_path_id";
+	public static final String COLUMN_IMAGE_PATH					= "image_path";
+	public static final String COLUMN_IMAGE_PATH_TYPE				= "image_path_type";
+	public static final String COLUMN_IMAGE_PATH_ALIAS				= "alias";
+	public static final String COLUMN_DISABLED						= "disabled";
+	public static final String COLUMN_OPEN_NEW_WINDOW				= "open_new_window";
 
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";

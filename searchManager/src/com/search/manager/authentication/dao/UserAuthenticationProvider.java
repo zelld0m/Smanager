@@ -60,6 +60,8 @@ public class UserAuthenticationProvider implements UserDetailsService {
 			}
 		} catch (DaoException e) {
 			logger.error(e.getMessage());
+		}catch (Exception e) {
+			logger.error(e.getMessage());
 		}
 
 		return userDetails;

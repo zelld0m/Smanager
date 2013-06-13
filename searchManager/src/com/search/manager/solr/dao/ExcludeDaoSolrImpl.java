@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -14,12 +13,13 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrInputDocument;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
-import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.ExcludeResult;
-import com.search.manager.model.Keyword;
+import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -43,15 +43,14 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -79,18 +78,17 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
-			strQuery.append(" AND keyword1:"
-					+ ClientUtils.escapeQueryChars(keyword));
-			strQuery.append(" AND (expiryDate:[NOW/DAY+1DAY TO *] OR (*:* AND -expiryDate:[* TO *]))");
-			
+			strQuery.append(String
+					.format("store: %s AND keyword1: %s AND (expiryDate:[%s/DAY TO *] OR (*:* AND -expiryDate:[* TO *]))",
+							ClientUtils.escapeQueryChars(storeId), ClientUtils
+									.escapeQueryChars(keyword), DateTime.now()
+									.withZone(DateTimeZone.UTC)));
+
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -118,18 +116,17 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
-			strQuery.append(" AND keyword1:"
-					+ ClientUtils.escapeQueryChars(keyword));
-			strQuery.append(" AND expiryDate:[* TO NOW/DAY]");
+			strQuery.append(String
+					.format("store: %s AND keyword1: %s AND expiryDate:[* TO %s/DAY-1DAY]",
+							ClientUtils.escapeQueryChars(storeId), ClientUtils
+									.escapeQueryChars(keyword), DateTime.now()
+									.withZone(DateTimeZone.UTC)));
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).query(
 					solrQuery);
 
@@ -138,7 +135,8 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error("Failed to get expired exclude rules by storeKeyword", e);
+			logger.error("Failed to get expired exclude rules by storeKeyword",
+					e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -147,58 +145,47 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 
 	@Override
 	public boolean loadExcludeRules(Store store) throws DaoException {
-		List<String> keywords = null;
-		List<Keyword> keywordList = (List<Keyword>) daoService.getAllKeywords(
-				store.getStoreId(), RuleEntity.EXCLUDE);
+		try {
+			StoreKeyword storeKeyword = new StoreKeyword(store, null);
+			ExcludeResult excludeFilter = new ExcludeResult();
+			excludeFilter.setStoreKeyword(storeKeyword);
+			int page = 1;
 
-		if (CollectionUtils.isNotEmpty(keywordList)) {
-			keywords = new ArrayList<String>();
-			for (Keyword key : keywordList) {
-				keywords.add(key.getKeywordId());
-			}
-		}
-
-		if (keywords != null) {
-			for (String keyword : keywords) {
-				StoreKeyword storeKeyword = new StoreKeyword(
-						store.getStoreId(), keyword);
-				ExcludeResult excludeFilter = new ExcludeResult();
-				excludeFilter.setStoreKeyword(storeKeyword);
-
+			while (true) {
 				SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(
-						excludeFilter, null, null, 0, 0);
-				List<ExcludeResult> excludeResults = daoService
-						.getExcludeResultList(criteria).getList();
+						excludeFilter, page, MAX_ROWS);
+				RecordSet<ExcludeResult> recordSet = daoService
+						.getExcludeResultListNew(criteria);
 
-				if (excludeResults != null && excludeResults.size() > 0) {
-					List<SolrInputDocument> solrInputDocuments = null;
-					boolean hasError = false;
-
-					try {
-						solrInputDocuments = SolrDocUtil
-								.composeSolrDocs(excludeResults);
-					} catch (Exception e) {
-						hasError = true;
-						logger.error("Failed to load exclude rules by store", e);
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<ExcludeResult> excludeResults = recordSet.getList();
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocs(excludeResults);
+					solrServers.getCoreInstance(
+							Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+							.addDocs(solrInputDocuments);
+					if (excludeResults.size() < MAX_ROWS) {
+						solrServers.getCoreInstance(
+								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+								.softCommit();
+						return true;
 					}
-					if (!hasError && solrInputDocuments != null
-							&& solrInputDocuments.size() > 0) {
-						try {
-							solrServers.getCoreInstance(
-									Constants.Core.EXCLUDE_RULE_CORE
-											.getCoreName()).addDocs(
-									solrInputDocuments);
-							solrServers.getCoreInstance(
-									Constants.Core.EXCLUDE_RULE_CORE
-											.getCoreName()).commit();
-						} catch (Exception e) {
-							logger.error("Failed to load exclude rules by store", e);
-							throw new DaoException(e.getMessage(), e);
-						}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers.getCoreInstance(
+								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+								.softCommit();
+						return true;
 					}
+					break;
 				}
 			}
-			return true;
+		} catch (Exception e) {
+			logger.error(
+					"Failed to load exclude rules by store." + e.getMessage(),
+					e);
+			throw new DaoException(e.getMessage(), e);
 		}
 
 		return false;
@@ -211,43 +198,42 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 		try {
 			ExcludeResult excludeFilter = new ExcludeResult();
 			excludeFilter.setStoreKeyword(storeKeyword);
+			int page = 1;
 
-			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(
-					excludeFilter, null, null, 0, 0);
-			List<ExcludeResult> excludeResults = daoService
-					.getExcludeResultList(criteria).getList();
+			while (true) {
+				SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(
+						excludeFilter, page, MAX_ROWS);
+				RecordSet<ExcludeResult> recordSet = daoService
+						.getExcludeResultListNew(criteria);
 
-			if (excludeResults != null && excludeResults.size() > 0) {
-				List<SolrInputDocument> solrInputDocuments = null;
-				boolean hasError = false;
-
-				try {
-					solrInputDocuments = SolrDocUtil
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<ExcludeResult> excludeResults = recordSet.getList();
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(excludeResults);
-				} catch (Exception e) {
-					hasError = true;
-					logger.error("Failed to load exclude rules by storeKeyword", e);
-				}
-
-				if (!hasError && solrInputDocuments != null
-						&& solrInputDocuments.size() > 0) {
-					try {
+					solrServers.getCoreInstance(
+							Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+							.addDocs(solrInputDocuments);
+					if (excludeResults.size() < MAX_ROWS) {
 						solrServers.getCoreInstance(
 								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
-								.addDocs(solrInputDocuments);
-						// solrServers.getCoreInstance(
-						// Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
-						// .commit();
-					} catch (Exception e) {
-						logger.error("Failed to load exclude rules by storeKeyword", e);
-						throw new DaoException(e.getMessage(), e);
+								.softCommit();
+						return true;
 					}
+					page++;
+				} else {
+					if (page != 1) {
+						solrServers.getCoreInstance(
+								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+								.softCommit();
+						return true;
+					}
+					break;
 				}
-
-				return !hasError;
 			}
 		} catch (Exception e) {
-			logger.error("Failed to load exclude rules by storeKeyword", e);
+			logger.error(
+					"Failed to load exclude rules by storeKeyword."
+							+ e.getMessage(), e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -299,10 +285,9 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 				String key = StringUtils.lowerCase(StringUtils.trim(keyword));
 
 				StringBuffer strQuery = new StringBuffer();
-				strQuery.append(
-						"store:" + ClientUtils.escapeQueryChars(storeId))
-						.append(" AND keyword1:"
-								+ ClientUtils.escapeQueryChars(key));
+				strQuery.append(String.format("store: %s AND keyword1: %s",
+						ClientUtils.escapeQueryChars(storeId),
+						ClientUtils.escapeQueryChars(key)));
 
 				solrServers.getCoreInstance(
 						Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
@@ -324,7 +309,9 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 								.composeSolrDocs(excludeResults);
 					} catch (Exception e) {
 						hasError = true;
-						logger.error("Failed to reset exclude rules by storeKeyword", e);
+						logger.error(
+								"Failed to reset exclude rules by storeKeyword",
+								e);
 					}
 
 					if (!hasError && solrInputDocuments != null
@@ -335,7 +322,9 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 											.getCoreName()).addDocs(
 									solrInputDocuments);
 						} catch (Exception e) {
-							logger.error("Failed to reset exclude rules by storeKeyword", e);
+							logger.error(
+									"Failed to reset exclude rules by storeKeyword",
+									e);
 							hasError = true;
 						}
 					}
@@ -368,7 +357,8 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
@@ -399,16 +389,13 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
-					.append(" AND keyword1:"
-							+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(String.format("store: %s AND keyword1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(keyword)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			// solrServers.getCoreInstance(
-			// Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
-			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;

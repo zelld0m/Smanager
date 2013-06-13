@@ -90,5 +90,4 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 		
 		return new StringBuffer("EDP: ").append(model.getEdp()).toString(); 
 	}
-
 }

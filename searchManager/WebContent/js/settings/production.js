@@ -253,7 +253,7 @@
 										var ruleStatusId = list[0]["ruleStatusId"];
 										$(tabSelected).find("label#numSuggestions").append(responseData.maxSuggest);
 										$(tabSelected).find("label#productionStatus").html(list[0]["publishedStatus"]);
-										$(tabSelected).find("label#productionDate").html($.isNotBlank(list[0]["lastPublishedDate"])? list[0]["lastPublishedDate"].toUTCString(): "");
+										$(tabSelected).find("label#productionDate").html($.isNotBlank(list[0]["lastPublishedDate"])? list[0]["formattedLastPublishedDateTime"]: "");
 										$table = $(tabSelected).find("table#rule");
 										if (responseList.length == 0) {
 											$table.append('<tr><td class="txtAC" colspan="3"><div>No new/modified entries found. Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</div></td></tr>');
@@ -317,7 +317,7 @@
 									$table = $(tabSelected).find("table#rule");
 									$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 	
-									var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
+									var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["formattedLastPublishedDateTime"]: "";
 									var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
 	
 									$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);

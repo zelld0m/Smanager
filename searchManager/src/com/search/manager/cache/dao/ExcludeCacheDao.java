@@ -1,10 +1,10 @@
 package com.search.manager.cache.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.cache.model.CacheModel;
@@ -54,7 +54,7 @@ public class ExcludeCacheDao extends CacheDao<ExcludeResult> {
 		ExcludeResult excludeFilter = new ExcludeResult();
 		excludeFilter.setStoreKeyword(storeKeyword);
 		// load only non-expired items
-		SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter, new Date(), null, 0, 0);
+		SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter, DateTime.now(), null, 0, 0);
 		List<ExcludeResult> excludedList = daoService.getExcludeResultList(criteria).getList();
 		if (excludedList == null) {
 			excludedList = new ArrayList<ExcludeResult>();
@@ -68,7 +68,7 @@ public class ExcludeCacheDao extends CacheDao<ExcludeResult> {
 		StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
 		excludeFilter.setStoreKeyword(storeKeyword);
 		// load only non-expired items
-		SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter, new Date(), null, 0, 0);
+		SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter, DateTime.now(), null, 0, 0);
 		List<ExcludeResult> excludedList = daoService.getExcludeResultList(criteria).getList();
 		if (excludedList == null) {
 			excludedList = new ArrayList<ExcludeResult>();

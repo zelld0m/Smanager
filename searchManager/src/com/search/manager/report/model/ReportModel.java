@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.report.annotation.ReportField;
@@ -128,14 +129,14 @@ public class ReportModel<T extends ReportBean<?>> {
 		List<ElevateReportBean> list = new ArrayList<ElevateReportBean>();
 
 		ElevateProduct elevate = new ElevateProduct("DP1", "EDP1", "Apple", "Apple-1",
-				"iPod", "Music Player", null, new Date(), new Date(),
-				new Date(), "1st item", "admin", "admin", 1);
+				"iPod", "Music Player", null, DateTime.now(), DateTime.now(),
+				DateTime.now(), "1st item", "admin", "admin", 1);
 		ElevateReportBean bean = new ElevateReportBean(elevate);
 		list.add(bean);
 
 		elevate = new ElevateProduct("DP2", "EDP2", "Apple", "Apple-2",
-				"Macbook Pro", "Portable Laptop", null, new Date(), new Date(),
-				new Date(), "2nd item", "user", "user", 1);
+				"Macbook Pro", "Portable Laptop", null, DateTime.now(), DateTime.now(),
+				DateTime.now(), "2nd item", "user", "user", 1);
 		bean = new ElevateReportBean(elevate);
 		list.add(bean);
 
@@ -163,5 +164,4 @@ public class ReportModel<T extends ReportBean<?>> {
 	public SubReportHeader getSubReportHeader(){
 		return subReportHeader;
 	}
-
 }

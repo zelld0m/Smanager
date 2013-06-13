@@ -1,7 +1,11 @@
 package com.search.manager.model;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.joda.time.DateTime;
+
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 
 public class ModelBean implements Serializable {
 	
@@ -10,8 +14,8 @@ public class ModelBean implements Serializable {
 	protected String comment;
 	protected String createdBy;
 	protected String lastModifiedBy;
-	protected Date createdDate;
-	protected Date lastModifiedDate;
+	protected DateTime createdDate;
+	protected DateTime lastModifiedDate;
 	
 	public String getComment() {
 		return comment;
@@ -36,21 +40,36 @@ public class ModelBean implements Serializable {
 	public void setLastModifiedBy(String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
-	
-	public Date getCreatedDate() {
+
+	public DateTime getCreatedDate() {
 		return createdDate;
 	}
-	
-	public void setCreatedDate(Date createdDate) {
+
+	public void setCreatedDate(DateTime createdDate) {
 		this.createdDate = createdDate;
 	}
-	
-	public Date getLastModifiedDate() {
+
+	public DateTime getLastModifiedDate() {
 		return lastModifiedDate;
 	}
-	
-	public void setLastModifiedDate(Date lastModifiedDate) {
+
+	public void setLastModifiedDate(DateTime lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
+
+	public String getFormattedCreatedDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
+	}
 	
+	public String getFormattedLastModifiedDateTime() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE_TIME);
+	}
+	
+	public String getFormattedCreatedDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
+	}
+	
+	public String getFormattedLastModifiedDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE);
+	}
 }

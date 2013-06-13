@@ -2,6 +2,9 @@ package com.search.manager.dao;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
+
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -53,9 +56,15 @@ public interface SearchDaoService {
 	public Relevancy getRelevancyRule(Store store, String relevancyId)
 			throws DaoException;
 
-    public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm)
-    		throws DaoException;
-    
-    public Integer getMaxSuggest(String storeId) throws DaoException;
-    
+	/* Spell */
+	public SpellRule getSpellRuleForSearchTerm(String store, String searchTerm)
+			throws DaoException;
+
+	public Integer getMaxSuggest(String storeId) throws DaoException;
+
+	/* Banner */
+
+	public List<BannerRuleItem> getActiveBannerRuleItems(Store store,
+			String keyword, DateTime currentDate) throws DaoException;
+
 }

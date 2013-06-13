@@ -21,6 +21,7 @@ import com.search.manager.model.RuleStatus;
 	RuleStatus.class,
 	RuleEntity.class,
 	Product.class,
+	BannerRuleXml.class,
 	SpellRules.class,
 	DBRuleVersion.class
 })

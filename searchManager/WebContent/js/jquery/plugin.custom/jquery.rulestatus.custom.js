@@ -15,6 +15,9 @@
 		base.getRuleStatus = function(){
 
 			DeploymentServiceJS.getRuleStatus(base.options.moduleName, base.options.rule["ruleId"], {
+				preHook: function(){
+					base.options.beforeRuleStatusRequest();
+				},
 				callback:function(ruleStatus){
 					base.options.ruleStatus=ruleStatus;
 					base.$el.html(base.getTemplate());
@@ -30,12 +33,13 @@
 						
 						if($.isNotBlank(ruleStatus["approvalStatus"])){
 							base.$el.find("div#statusHolder").show();
-							base.$el.find("span#status").html(getRuleNameSubTextStatus(ruleStatus));
+							base.$el.find("span#status").empty().append(getRuleNameSubTextStatus(ruleStatus));
 						}
-						
-						if($.isNotBlank(ruleStatus["lastPublishedDate"])){
+
+						if($.isNotBlank(ruleStatus["formattedLastPublishedDateTime"])){
+
 							base.$el.find("div#publishHolder").show();
-							base.$el.find("span#statusDate").html(ruleStatus["lastPublishedDate"].toUTCString());
+							base.$el.find("span#statusDate").empty().append(ruleStatus["formattedLastPublishedDateTime"]);
 						}
 
 						base.$el.find("a#submitForApprovalBtn").show();
@@ -46,6 +50,7 @@
 						
 						base.$el.find("div#versionHolder").show();
 
+						base.$el.find("div#versionHolder").show();
 						if(base.options.ruleStatus!=null && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
 							base.$el.find("div#commentHolder").show();
 							base.$el.find("div#commentHolder span#commentIcon").off().on({
@@ -147,7 +152,6 @@
 		base.init = function(){
 			base.options = $.extend({},$.rulestatus.defaultOptions, options);
 			base.$el.empty();
-			base.options.beforeRuleStatusRequest();
 			base.getRuleStatus();
 		};
 

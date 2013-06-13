@@ -67,7 +67,7 @@
 			for (var i = 0; i < data.list.length; i++) {
 				var $item = data.list[i];
 				var auditEntryHTML = base.contentHolder.find('div#auditEntryTemplate').html();
-				auditEntryHTML = auditEntryHTML.replace("%%timestamp%%", $.defaultIfBlank($item.formatDateTimeUsingConfig,"Date Not Available"));
+				auditEntryHTML = auditEntryHTML.replace("%%timestamp%%", $.defaultIfBlank($item["formattedCreatedDateTime"],"Date Not Available"));
 				auditEntryHTML = auditEntryHTML.replace("%%commentor%%", $.defaultIfBlank($item.username,"User not available"));
 				auditEntryHTML = auditEntryHTML.replace("%%comment%%", $.defaultIfBlank($item.details, "").replace(new RegExp("&",'g'),"&amp;"));
 				auditItems += auditEntryHTML;
@@ -138,6 +138,7 @@
 			page: 1,
 			pageSize: 5,
 			emptyDisplay: "No audit trail available.",
+			ruleItem: null,
 			itemDataCallback: function(base, page){}
 	};
 

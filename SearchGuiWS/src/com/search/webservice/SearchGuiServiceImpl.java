@@ -61,7 +61,8 @@ public class SearchGuiServiceImpl implements SearchGuiService {
 					case CAMPAIGN:
 						break;
 					case BANNER:
-						break;
+						return deploymentRuleService.publishBannerRulesMap(
+								list.getStore(), ruleList);
 					case QUERY_CLEANING:
 						return deploymentRuleService.publishRedirectRulesMap(
 								list.getStore(), ruleList);
@@ -111,7 +112,8 @@ public class SearchGuiServiceImpl implements SearchGuiService {
 					case CAMPAIGN:
 						break;
 					case BANNER:
-						break;
+						return deploymentRuleService.unpublishBannerRulesMap(
+								list.getStore(), ruleList);
 					case QUERY_CLEANING:
 						return deploymentRuleService.unpublishRedirectRulesMap(
 								list.getStore(), ruleList);

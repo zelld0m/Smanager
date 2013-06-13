@@ -1,8 +1,9 @@
 package com.search.manager.dao;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.joda.time.DateTime;
 
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.enums.ExportRuleMapSortType;
@@ -10,8 +11,8 @@ import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
-import com.search.manager.model.Banner;
-import com.search.manager.model.Campaign;
+import com.search.manager.model.BannerRule;
+import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
@@ -23,6 +24,7 @@ import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.Group;
+import com.search.manager.model.ImagePath;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -79,35 +81,27 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException;
 	public RecordSet<RedirectRule> searchRedirectRuleKeyword(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType,
 			ExactMatch keywordExactMatch) throws DaoException;
-
-	/* Campaigns */
-	public int addCampaign(Campaign campaign) throws DaoException;
-	public int updateCampaign(Campaign campaign) throws DaoException;
-	public int deleteCampaign(Campaign campaign) throws DaoException;
-	public int updateCampaignComment(Campaign campaign) throws DaoException;
-	public int appendCampaignComment(Campaign campaign) throws DaoException;
-	public Campaign getCampaign(Campaign campaign) throws DaoException;
-	public RecordSet<Campaign> getCampaigns(SearchCriteria<Campaign> criteria) throws DaoException;
-	public RecordSet<Campaign> getCampaignsContainingName(SearchCriteria<Campaign> criteria) throws DaoException;
-	public RecordSet<Campaign> getCampaignsWithName(SearchCriteria<Campaign> criteria) throws DaoException;
 	
 	/* Banners */
-	public int addBanner(Banner banner) throws DaoException;
-	public int updateBanner(Banner banner) throws DaoException;
-	public int deleteBanner(Banner banner) throws DaoException;
-	public int updateBannerComment(Banner banner) throws DaoException;
-	public int appendBannerComment(Banner banner) throws DaoException;
-	public Banner getBanner(Banner banner) throws DaoException;
-	public RecordSet<Banner> getBannerList(SearchCriteria<Banner> criteria) throws DaoException;
-	public RecordSet<Banner> getBannerListWithNameLike(SearchCriteria<Banner> criteria) throws DaoException;
-	public RecordSet<Banner> getBannerListWithNameMatching(SearchCriteria<Banner> criteria) throws DaoException;
+	public int addBannerRule(BannerRule rule) throws DaoException;
+	public int deleteBannerRule(BannerRule rule) throws DaoException;
+	public BannerRule getBannerRule(BannerRule rule) throws DaoException;
+	public BannerRule getBannerRuleById(String storeId, String ruleId) throws DaoException;
+	public BannerRule getBannerRuleByNameExact(String storeId, String ruleName) throws DaoException;
+	public RecordSet<BannerRule> searchBannerRule(SearchCriteria<BannerRule> criteria) throws DaoException;
+	public RecordSet<BannerRule> getBannerRuleWithImage(SearchCriteria<BannerRule> criteria, String imagePathId) throws DaoException;
 	
-	/* Banner Campaign Mapping */
-	public Banner addCampaignBanner(String campaignId, String bannerId, Date startDate, Date endDate, List<String>keywordList) throws DaoException;
-	public Banner updateCampaignBanner(String campaignId, String bannerId, Date startDate, Date endDate, List<String>keywordList) throws DaoException;
-	public RecordSet<Banner> getCampaignBannerList(String campaignId) throws DaoException;
-	public void deleteCampaignBanner(String campaignId, String bannerId) throws DaoException;
+	public int addBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
+	public int updateBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
+	public int deleteBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
+	public BannerRuleItem getBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
+	public RecordSet<BannerRuleItem> searchBannerRuleItem(SearchCriteria<BannerRuleItem> criteria) throws DaoException;
 	
+	public int addBannerImagePath(ImagePath imagePath) throws DaoException;
+	public int updateBannerImagePathAlias(ImagePath imagePath) throws DaoException;
+	public ImagePath getBannerImagePath(ImagePath imagePath) throws DaoException;
+	public RecordSet<ImagePath> searchBannerImagePath(SearchCriteria<ImagePath> criteria) throws DaoException;
+		
 	/* Elevate */
 	public int addElevateResult(ElevateResult elevate) throws DaoException;
 	public int updateElevateResult(ElevateResult elevate) throws DaoException;
@@ -118,6 +112,7 @@ public interface DaoService extends SearchDaoService {
 	public int clearElevateResult(StoreKeyword keyword) throws DaoException;
 	public int getElevateResultCount(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public RecordSet<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException;
+	public RecordSet<ElevateResult> getElevateResultListNew(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public RecordSet<ElevateResult> getNoExpireElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public Map<String, ElevateResult> getElevateResultMap(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public ElevateResult getElevateItem(ElevateResult elevate) throws DaoException;
@@ -132,6 +127,7 @@ public interface DaoService extends SearchDaoService {
 	public int clearExcludeResult(StoreKeyword keyword) throws DaoException;
 	public int getExcludeResultCount(SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public RecordSet<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria) throws DaoException;
+	public RecordSet<ExcludeResult> getExcludeResultListNew(SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public ExcludeResult getExcludeItem(ExcludeResult exclude) throws DaoException;
 	
 	/* Demote */
@@ -144,6 +140,7 @@ public interface DaoService extends SearchDaoService {
 	public int clearDemoteResult(StoreKeyword keyword) throws DaoException;
 	public int getDemoteResultCount(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public RecordSet<DemoteResult> getDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public RecordSet<DemoteResult> getDemoteResultListNew(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public RecordSet<DemoteResult> getNoExpireDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public Map<String, DemoteResult> getDemoteResultMap(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public DemoteResult getDemoteItem(DemoteResult demote) throws DaoException;
@@ -233,13 +230,13 @@ public interface DaoService extends SearchDaoService {
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException;
 	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
-	public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) throws DaoException;
+	public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) throws DaoException;
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
-	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, String requestBy, Date requestDate) throws DaoException;
-	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, Date requestDate) throws DaoException;
-	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException;
+	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, String requestBy, DateTime requestDateTime) throws DaoException;
+	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, DateTime requestDateTime) throws DaoException;
+	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, DateTime exportDateTime) throws DaoException;
 	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException;
 	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String store, String username, String pComment, String ...ruleStatusId);
 
@@ -270,7 +267,6 @@ public interface DaoService extends SearchDaoService {
 	public int getRuleVersionsCount(String store, String ruleType, String ruleId);
 	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
 	public List<RuleXml> getPublishedRuleVersions(String store, String ruleType, String ruleId);
-
 	
 	/* Export */
 	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment) throws DaoException;

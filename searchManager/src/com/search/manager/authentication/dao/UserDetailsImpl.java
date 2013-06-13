@@ -1,15 +1,14 @@
 package com.search.manager.authentication.dao;
 
 import java.util.Collection;
-import java.util.Date;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.search.manager.model.User;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class UserDetailsImpl implements UserDetails {
@@ -32,11 +31,13 @@ public class UserDetailsImpl implements UserDetails {
 
 	private boolean enabled;
 
-	private Date loggedInTime;
+	private DateTime loggedInTime;
 	
 	private String currentPage;	
 	
 	private String storeId;
+
+	private String dateTimeZoneId;
 	
 	public UserDetailsImpl() {}
 	
@@ -61,6 +62,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.credentialsNonExpired = user.isCredentialsNonExpired();
 		this.enabled = user.isEnabled();
 		this.storeId = user.getStoreId();
+		this.dateTimeZoneId = user.getTimezoneId();
 	}
 
 	public Collection<GrantedAuthority> getAuthorities() {
@@ -131,7 +133,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.enabled = enabled;
 	}		
 	
-	public void setLoggedInTime(Date loggedintime) {
+	public void setLoggedInTime(DateTime loggedintime) {
 		this.loggedInTime = loggedintime;
 	}
 
@@ -139,7 +141,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.currentPage = currentPage;
 	}
 
-	public Date getLoggedIntime() {
+	public DateTime getLoggedIntime() {
 		return loggedInTime;
 	}
 
@@ -147,15 +149,19 @@ public class UserDetailsImpl implements UserDetails {
 		return currentPage;
 	}
 	
-	public String getElapsedTime(){
-		return DateAndTimeUtils.getElapsedTime(getLoggedIntime(), new Date());
-	}
-
 	public String getStoreId() {
 		return storeId;
 	}
 
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
+	}
+
+	public String getDateTimeZoneId() {
+		return dateTimeZoneId;
+	}
+
+	public void setDateTimeZoneId(String dateTimeZoneId) {
+		this.dateTimeZoneId = dateTimeZoneId;
 	}
 }

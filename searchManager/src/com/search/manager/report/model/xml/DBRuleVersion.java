@@ -1,11 +1,12 @@
 package com.search.manager.report.model.xml;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
 
@@ -24,7 +25,7 @@ public class DBRuleVersion extends RuleXml {
 	public DBRuleVersion() {
 	}
 
-	public DBRuleVersion(String store, long version, String name, String notes, String username, Date date,
+	public DBRuleVersion(String store, long version, String name, String notes, String username, DateTime date,
 	        String ruleId, RuleEntity type) {
 		this();
 		this.setRuleId(ruleId);

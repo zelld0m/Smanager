@@ -1,0 +1,29 @@
+.plugin-listbox{
+}
+.plugin-listbox #itemHolder  {
+	display:table;
+	width:100%;
+	table-layout:fixed;
+} 
+.plugin-listbox #itemHolder .item {
+	display:table-row;
+}
+.plugin-listbox #itemHolder .item span {
+	display:table-cell;
+	padding:3px 3px;
+vertical-align: middle;
+}
+.plugin-listbox #itemHolder .item .deleteIcon {
+	width:17px;
+}
+.plugin-listbox #itemHolder .item .delete_wrap {
+	width:17px;
+	height:17px;
+	
+}
+.plugin-listbox #itemHolder .item .itemName {
+	
+}
+.plugin-listbox #itemHolder .item .itemStatus {
+	width:103px;
+}

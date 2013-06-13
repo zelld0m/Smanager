@@ -29,7 +29,7 @@ public class DemoteItemXml extends RuleItemXml{
 		}else{
 			this.setEdp(dr.getEdp()) ;
 		}
-		this.setExpiryDate(dr.getExpiryDate());
+		this.setExpiryDateTime(dr.getExpiryDateTime());
 		this.setCreatedBy(dr.getCreatedBy());
 		this.setLastModifiedBy(dr.getLastModifiedBy());
 		this.setCreatedDate(dr.getCreatedDate());

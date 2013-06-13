@@ -32,5 +32,6 @@
 	<core name="redirectrule" instanceDir="redirectrule" />
 	<core name="relevancyrule" instanceDir="relevancyrule" />
 	<core name="spellrule" instanceDir="spellrule" />
+	<core name="bannerrule" instanceDir="bannerrule" />
   </cores>
 </solr>

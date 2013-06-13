@@ -67,11 +67,11 @@ public class RuleSolrResult {
 		this.keyword = keyword;
 	}
 
-	public Date getExpiryDate() {
+	public Date getExpiryDateTime() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDateTime(Date expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 
@@ -106,5 +106,4 @@ public class RuleSolrResult {
 	public void setRule(String rule) {
 		this.rule = rule;
 	}
-
 }

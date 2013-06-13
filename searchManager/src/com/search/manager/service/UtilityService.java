@@ -21,6 +21,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTimeZone;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRuleCondition;
+import com.search.manager.model.Store;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Schema;
 import com.search.manager.utility.PropsUtils;
@@ -145,6 +147,11 @@ public class UtilityService {
 	}
 
 	@RemoteMethod
+	public static String getTimeZoneId(){
+		return DateTimeZone.getDefault().getID();
+	}
+	
+	@RemoteMethod
 	public static String getStoreCore(String storeId){
 		ConfigManager cm = ConfigManager.getInstance();
 		if(StringUtils.isNotBlank(storeId))
@@ -176,17 +183,7 @@ public class UtilityService {
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
 	}
-
-	@RemoteMethod
-	public static String getStoreLabel(){
-		String storeLabel = null;
-		ConfigManager cm = ConfigManager.getInstance();
-		if (cm != null) {
-			storeLabel = cm.getStoreName(getStoreName());
-		}
-		return storeLabel;
-	}
-
+	
 	@RemoteMethod
 	public static String getSolrConfig(){
 		JSONObject json = new JSONObject();
@@ -196,7 +193,7 @@ public class UtilityService {
 		if (m.matches()) {
 			json.put("solrUrl", PropsUtils.getValue("browsejssolrurl") + m.group(1));
 		}
-		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
+
 		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
 		return json.toString();
 	}
@@ -228,6 +225,8 @@ public class UtilityService {
 		json.put("storeFacetTemplate", getStoreFacetTemplate());
 		json.put("storeFacetTemplateName", getStoreFacetTemplateName());
 		json.put("storeGroupMembership", getStoreGroupMembership());
+		json.put("storeDateFormat", getStoreDateFormat());
+		json.put("storeDateTimeFormat", getStoreDateTimeFormat());
 		return json.toString();
 	}
 
@@ -346,7 +345,6 @@ public class UtilityService {
 	public static String getSolrSelectorParam(){
 		return ConfigManager.getInstance().getSolrSelectorParam();
 	}
-
 		
 	public static String getStoreSetting(String property) {
 		return ConfigManager.getInstance().getStoreSetting(getStoreId(), property);
@@ -392,5 +390,12 @@ public class UtilityService {
 			}
 		}
 	}
-
+	
+	public static String getStoreDateFormat() {
+		return ConfigManager.getInstance().getStoreParameter(getStoreId(), "date-format");
+	}
+	
+	public static String getStoreDateTimeFormat() {
+		return ConfigManager.getInstance().getStoreParameter(getStoreId(), "datetime-format");
+	}
 }

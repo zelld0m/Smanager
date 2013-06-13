@@ -191,6 +191,8 @@
 				} 
 
 				var formattedExpiryDate = $item["formattedExpiryDate"];
+				
+				
 				if($.isBlank(formattedExpiryDate)){
 					$li.find(".clearDate").hide();
 				}else{
@@ -202,12 +204,16 @@
 					showOn: "both",
 					minDate: self.dateMinDate,
 					maxDate: self.dateMaxDate,
+					changeMonth: true,
+				    changeYear: true,
 					buttonText: "Expiration Date",
 					buttonImage: "../images/icon_calendar.png",
+					changeMonth: true,
+					changeYear: true,
 					buttonImageOnly: true,
 					disabled: self.selectedRuleStatus["locked"] || !allowModify,
 					onSelect: function(dateText, inst) {	
-						if ($item["formattedExpiryDate"] !== dateText){
+						if ($item["expiryDate"] !== dateText){
 							self.updateValidityDate($item, "update", dateText);
 						}
 					}
@@ -246,18 +252,7 @@
 								ElevateServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
 										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
-										if(data==1){
-											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
-												callback: function(data){
-													var total = data.totalSize;
-													base.populateList(data);
-													base.addPaging(base.options.page, total);
-												},
-												preHook: function(){
-													base.prepareList();
-												}
-											});
-										}
+										base.getList(base.options.page);
 									},
 									preHook: function(){
 										base.prepareList();
@@ -290,7 +285,7 @@
 
 				$li.find('.lastModifiedIcon').off().on({
 					mouseenter: showLastModified 
-				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDate"]});
+				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDateTime"]});
 
 				$li.find('.deleteRuleItemIcon').off().on({
 					click: function(e){

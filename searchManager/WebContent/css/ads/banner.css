@@ -1,0 +1,641 @@
+/******* general start *******/
+
+.ban_edit {
+	color: #222222;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	text-align: left;
+	width: 730px;
+	margin: auto;
+	background-color: #fff;
+}
+
+.ban_edit  ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* page title start */
+.ban_edit .page_title {
+	background: #f1f4f9;
+	clear: both;
+	padding: 6px 10px;
+}
+.ban_edit .page_title h2 {
+	margin: 0;
+	font-size: 16px;
+	line-height: 23px;
+}
+/* page title end */
+
+/* page info start */
+.ban_edit .page_info {
+line-height: 24px;
+    padding: 10px;
+    width: 710px;
+}
+.ban_edit .page_info li {
+	font-size:13px;
+height: 24px;
+    margin-right: 8px;
+    padding-right: 8px;
+}
+.ban_edit .page_info .fRight {
+	padding: 0;
+	margin: 0;
+}
+.ban_edit .page_info .fRight, .ban_edit .page_nav_group .fRight {
+ font-size: 12px;
+}
+.ban_edit .pagingArrow {padding-top:8px;}
+.ban_edit .bRight {
+	border-right: 1px solid #f0f0f0;
+}
+/* page info end */
+
+/* page nav start */
+.ban_edit .page_nav_text {
+	padding-top: 4px;
+}
+.ban_edit .page_nav_group {
+	list-style: none;
+	padding: 0 10px;
+	border: 1px solid #c4c4c4;
+	border-left: none;
+	border-right: none;
+	width:710px;
+	_width:100%;
+}
+.ban_edit .page_nav_group ul.page_nav.fRight {
+    margin-right: 0;
+    margin-left: 5px;
+    padding-top: 4px;
+}
+.ban_edit .page_nav_group li {
+	margin-left: 4px;
+	height: 24px;
+	display: inline-block;
+	vertical-align: middle;
+}
+.ban_edit .page_nav .ico {
+	margin-top: 5px;
+}
+.ban_edit .page_nav .ico_page_nav {
+	margin-top: 8px;
+}
+.ban_edit  .page_nav .ico_download2 {
+	margin-top: 9px;
+}
+.ban_edit #pageNum {
+	width: 40px;
+	text-align: center;
+}
+/* page nav end */
+
+/* banners start */
+.ban_edit .ban_container {
+	background: #b1bfdb;
+	padding: 10px;
+}
+
+.ban_edit .ban_group {
+	margin-bottom: 10px;
+	padding: 10px;
+	background: #fff;
+	display:block;
+	width:690px;
+	_width:100%;
+}
+.ban_edit .ban_container .last {margin-bottom:0px;}
+
+.ban_group  img {
+	width: 100%;
+}
+.ban_edit .display_settings {
+	list-style: none;
+	background: #f1f1f1;
+	padding: 1px 5px 1px 10px;
+	margin-bottom: 8px;
+}
+.ban_edit .display_settings  li {
+	display: inline;
+}
+
+.ban_edit .schedule input {
+	width: 79px;
+	font-size: 12px;
+	text-align: center;
+}
+.ban_edit .calendar_ico_wrap {
+	padding: 3px 5px;
+}
+.ban_edit .banner_title {
+	padding-top: 6px;
+	width:180px;
+}
+
+.ban_edit .display_settings .schedule {
+	margin-top: 0;
+}
+.ban_edit .display_settings .schedule button {
+    padding-left: 3px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    vertical-align: middle;
+    background: none;
+}
+
+.ban_edit #toggleText {
+	padding-top: 2px;
+display: block;
+float: left;
+width: 5.2em;
+}
+.ban_edit #priority {
+	width: 30px;
+	text-align: center;
+}
+.ban_edit .duration {
+	border: #cecece 1px solid;
+	border-top: none;
+	border-bottom: none;
+	padding: 0 8px;
+	margin: 4px 8px 0;
+}
+.ban_edit .ui-datepicker-trigger {
+border:none;
+} 
+.ban_edit img.ui-datepicker-trigger {
+    padding: 3px 5px 3px 8px;
+    vertical-align: middle;
+    width: 18px;
+
+} 
+.ban_edit .preview_container {
+	width: 100%;
+	display: block;
+	margin-bottom: 10px;
+	clear: both;
+}
+.ban_edit .banner_info {
+	list-style: none;
+	background: #f1f1f1;
+	padding: 8px 10px;
+	width:670px;
+	_width:100%;
+}
+.ban_edit .banner_info  .bRight {
+	border-color: #cecece;
+	padding-right: 8px;
+}
+.ban_edit .banner_info  li {
+	float: left;
+	margin-right: 8px;
+}
+
+.ban_edit .banner_info_more {
+	padding: 10px 24px 0px;
+}
+.ban_edit .banner_info_more  .btn_update_alias {
+	margin: 3px 16px 0 10px;
+}
+.ban_edit .banner_info_more  input, .ban_edit .banner_info_more  label, .ban_edit .banner_info_more  textarea {
+	float: left;
+	margin-bottom: 10px;
+	font-family: Arial, sans-serif !important;
+}
+
+.ban_edit .banner_info_more input {
+	height: 26px;
+	margin-bottom:15px;
+}
+
+.ban_edit .banner_info_more input#linkPath {
+    margin-bottom: 0;
+    padding:2px  !important;
+}
+
+.ban_edit input, .ban_edit textarea, .ban_edit .input[type="checkbox"], .ban_edit select {
+	border: 1px solid #c6c6c6;
+	outline: none;
+}
+.ban_edit .banner_info_more label {
+	width: 76px;
+	line-height: 33px;
+	margin-bottom:14px;
+}
+
+.ban_edit .banner_info_more .openNewWindowContainer {
+	padding-left: 76px;
+	width: 100%;
+    vertical-align: middle;
+    margin: 0px;
+    padding-bottom: 10px;
+}
+
+.ban_edit .banner_info_more .openNewWindowContainer label {
+    width: 200px;
+    vertical-align: middle;
+    margin-bottom: 0px;
+    float: none;
+    padding:0px;
+    font-size:10px;
+}
+
+.ban_edit .banner_info_more .openNewWindowContainer input {
+    margin-bottom: 0px;
+    vertical-align: middle;
+    height: 12px;
+    padding-left:0px;
+    padding-right:0px;
+    margin-right:0px;
+    float: none;
+}
+
+
+.ban_edit .w565px {
+	width: 560px;
+}
+.ban_edit .w218px {
+	width: 183px;
+}
+.ban_edit .w533px {
+	width: 531px;
+}
+.ban_edit .banner_info_more .lbl_temporaryDisable {
+	width: 200px;
+	padding-top: 3px;
+	line-height: 19px;
+	float:none;
+}
+.ban_edit #temporaryDisable {
+	margin-left: 76px;
+	height: 14px;
+	_margin-top: 3px;
+	_width: 14px;
+	_margin-right: 5px;
+}
+.ban_edit .banner_info_more .lbl_imgAlt {
+	width: 63px;
+}
+.ban_edit .banner_info_more .ico_check {
+	margin-left: 10px;
+	margin-top: 7px;
+}
+
+/* banners end */
+
+/* general end */
+
+/* buttons start */
+.ban_edit a.btn {
+	color: #fff !important;
+	display: block;
+	color: #fff !important;
+	text-decoration: none;
+	text-align: center;
+	font-size: 12px;
+	vertical-align: middle;
+	padding: 0 8px;
+}
+.ban_edit .round_btn {
+	display: block;
+}
+.ban_edit .round_btn a {
+	color: #fff !important;
+	text-decoration: none;
+	height: 100%;
+	display: inline-block;
+	font-size: 12px !important;
+	vertical-align: middle;
+	padding: 0 7px;
+}
+.ban_edit .round_btn .btn_wrap {
+	display: inline-block;
+	height: 100%;
+}
+
+.ban_edit .banner_info_more label.note  {
+width: 200px;
+line-height: 100%;
+margin-left: 75px;
+}
+.ban_edit .btn_add_banner {
+   background: url("image/add_banner_left.png") no-repeat scroll left center transparent;
+    height: 23px;
+    margin-right: 10px;
+    margin-top: 9px;
+    padding-left: 27px;
+}
+.ban_edit .btn_add_banner a {
+	background: transparent url('image/green_gradient.png') repeat-x;
+	line-height: 21px;
+}
+.ban_edit .btn_add_banner .btn_wrap {
+	background: transparent url('image/green_gradient_right.png') no-repeat right;
+	padding-right: 6px;
+}
+
+.ban_edit .btn_submit_approval {
+	background: transparent url('image/orange_gradient.png') repeat-x;
+}
+.ban_edit .btn_backup_now {
+	background: transparent url('image/red_gradient.png') repeat-x;
+}
+
+.ban_edit .btn_copy_to {
+	height: 19px;
+	padding-left: 7px;
+	background: transparent url('image/orange_gradient_rounded_left.png') no-repeat left;
+}
+.ban_edit .btn_copy_to a {
+	background: transparent url('image/orange_gradient_rounded.png') repeat-x;
+	line-height: 20px;
+}
+.ban_edit .btn_copy_to .btn_wrap {
+	background: transparent url('image/orange_gradient_rounded_right.png') no-repeat right;
+	padding-right: 7px;
+}
+
+.ban_edit .btn_keywords {
+	height: 19px;
+	padding-left: 7px;
+	background: transparent url('image/cyan_gradient_rounded_left.png') no-repeat left;
+}
+.ban_edit .btn_keywords a {
+	background: transparent url('image/cyan_gradient_rounded.png') repeat-x;
+	line-height: 20px;
+}
+.ban_edit .btn_keywords .btn_wrap {
+	background: transparent url('image/cyan_gradient_rounded_right.png') no-repeat right;
+	padding-right: 7px;
+}
+
+.ban_edit .btn_update_alias {
+	height: 18px;
+	padding-left: 6px;
+	background: transparent url('image/green_rounded_left.png') no-repeat left;
+}
+.ban_edit .btn_update_alias a {
+	background: #39b54a;
+	line-height: 18px;
+}
+.ban_edit .btn_update_alias .btn_wrap {
+	background: transparent url('image/green_rounded_right.png') no-repeat right;
+	padding-right: 6px;
+}
+
+.ban_edit .btn_update {
+	height: 23px;
+	padding-left: 5px;
+	background: transparent url('image/green_rounded_big_left.png') no-repeat left;
+}
+.ban_edit .btn_update a {
+	background: #39b54a;
+	line-height: 23px;
+}
+.ban_edit .btn_update .btn_wrap {
+	background: transparent url('image/green_rounded_big_right.png') no-repeat right;
+	padding-right: 5px;
+}
+
+.ban_edit .btn_delete {
+	height: 23px;
+	padding-left: 5px;
+	background: transparent url('image/red_rounded_big_left.png') no-repeat left;
+}
+.ban_edit .btn_delete a {
+	background: #ed1c24;
+	line-height: 23px;
+}
+.ban_edit .btn_delete .btn_wrap {
+	background: transparent url('image/red_rounded_big_right.png') no-repeat right;
+	padding-right: 5px;
+}
+
+.ban_edit .button_group {
+	clear: both;
+	width: 100%;
+}
+.ban_edit .button_group  .fRight div {
+	margin-left: 10px;
+}
+/* buttons end */
+
+/* icons start */
+.ban_edit .ico {
+	display: block;
+	cursor: pointer;
+	background: transparent url('image/icons_sprite.png') no-repeat 1px -19px;
+}
+.ban_edit .ico_download {
+	height: 17px;
+	width: 14px;
+	display: block;
+	background-position: -101px top;
+}
+.ban_edit .ico_download2 {
+	height: 11px;
+	width: 11px;
+	display: block;
+	background-position: 1px -19px;
+}
+.ban_edit .ico_comments {
+	height: 17px;
+	width: 21px;
+	display: block;
+	background-position: 0px 0px;
+}
+.ban_edit .ico_history {
+	height: 17px;
+	width: 14px;
+	display: block;
+	background-position: -56px 0px;
+}
+.ban_edit .ico_graph {
+	height: 17px;
+	width: 16px;
+	display: block;
+	background-position: -22px top;
+}
+.ban_edit .ico_delete {
+	height: 17px;
+	width: 14px;
+	display: block;
+	background-position: -86px top;
+}
+.ban_edit .ico_user {
+	height: 17px;
+	width: 15px;
+	display: block;
+	background-position: -39px 0px;
+}
+.ban_edit .ico_calendar {
+	height: 16px;
+	width: 14px;
+	display: block;
+	background-position: -71px 0px;
+}
+.ban_edit .ico_check {
+	height: 11px;
+	width: 11px;
+	display: block;
+	background-position: -12px -19px;
+}
+.ban_edit .ico_plus {
+height: 11px;
+width: 10px;
+display: block;
+background-position: -75px -18px;
+margin-top: 5px;
+margin-right: 5px;
+}
+.ban_edit .ico_minus {
+height: 11px;
+width: 10px;
+display: block;
+background-position: -86px -18px;
+margin-top: 5px;
+margin-right: 5px;
+}
+
+.ban_edit .ico_first {
+	height: 10px;
+	width: 8px;
+	display: block;
+	background-position: -58px -19px;
+}
+.ban_edit .ico_previous {
+	height: 10px;
+	width: 5px;
+	display: block;
+	background-position: -68px -19px;
+}
+
+.ban_edit .ico_next {
+	height: 10px;
+	width: 4px;
+	display: block;
+	background-position: -42px -19px;
+}
+.ban_edit .ico_last {
+	height: 10px;
+	width: 8px;
+	display: block;
+	background-position: -42px -19px;
+}
+
+/* icons end */
+
+/* override start */
+
+.ban_edit .cBlue {
+	color: #0066ff;
+}
+.ban_edit .cBlueGray {
+	color: #3399cc;
+}
+.ban_edit .cRed {
+	color: #cc0000;
+}
+
+.ban_edit .cGreen {
+	color: #39b54a;
+}
+.cBlack {
+	color: #000;
+}
+.ban_edit .cWhite {
+	color: #fff;
+}
+
+.ban_edit .fBold {
+	font-weight: bold;
+}
+
+.ban_edit .tAlignRight {
+	text-align: right;
+}
+.ban_edit .tAlignLeft {
+	text-align: left;
+}
+.ban_edit .tAlignCenter {
+	text-align: center;
+}
+.ban_edit .fRight {
+	float: right;
+}
+.ban_edit .fLeft {
+	float: left;
+}
+.dNone {
+	display: none
+}
+.ban_edit .banner_info_more .lHeight100 {
+	line-height:100%
+}
+
+.ban_edit .banner_info_more  .mBottom0px{
+	margin-bottom:0px;
+}
+
+.ban_edit .cOrange {
+	color:orange !important;
+}
+
+
+/* override end */
+
+/* clearfix start */
+.ban_edit .clearfix:before, .ban_edit .clearfix:after {
+	content: "";
+	display: table;
+}
+.ban_edit  .clearfix:after {
+	clear: both;
+}
+.ban_edit .clearfix {
+	zoom: 1;
+}
+
+/* clearfix end*/
+
+
+/* firefox fix start */
+@-moz-document url-prefix() {
+    .ban_edit .display_settings {
+        padding-top:2px;
+        padding-bottom:2px;
+    }
+    .ban_edit .page_nav .ico {
+    	margin-top:2px;	
+    }
+    .ban_edit .duration {
+    	margin-top:2px;
+    }
+    .ban_edit .calendar_ico_wrap {
+    	padding-top:1px;
+    }
+	.ban_edit .page_nav .ico_page_nav {
+		margin-top: 6px;
+	}    
+	.ban_edit .page_nav .ico_download2 {
+		margin-top:7px;
+	}
+}
+/* firefox fix end */
+
+
+
+.ban_edit #ruleTypeIcon {
+	display:none;
+}
+
+
+
+.ban_edit .banner_info_more label.note  {
+width: 200px;
+line-height: 100%;
+margin-left: 75px;
+}

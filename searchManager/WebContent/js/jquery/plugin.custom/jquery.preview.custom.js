@@ -119,6 +119,7 @@
 						.removeClass("txtAC")
 						.addClass("txtAL")
 						.attr("width", "363px");
+						
 						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
 
 						if ($.isBlank(list[i]["isExpired"])){
@@ -380,6 +381,22 @@
 					}
 				});
 				break;
+			case "banner": 
+				var $table = $content.find("table#item");
+				BannerServiceJS.getAllRuleItems(base.options.ruleId, {
+					callback: function(sr){
+						if (sr.status == 0) {
+							base.populateBannerItem(sr["data"]);
+						} else {
+							jAlert(sr.errorMessage.message);
+						}
+					},
+					postHook:function(){
+						$table.find("tr#preloader").hide();
+						base.options.templateEvent(base);
+					}
+				});
+				break;
 			}
 		};
 
@@ -414,6 +431,68 @@
 			$table.find("tr:even").addClass("alt");
 		};
 
+		base.populateBannerItem = function(data){
+			var $table = $("div#bannerItems table#item");
+
+			if (data.list && data.list.length > 0) {
+				var $pattern = $table.find("tr#itemPattern");
+				
+				$.each(data.list, function() {
+					var $item = $pattern.clone();
+					var item = this;
+	
+					$item.attr("id", item.memberId);
+					$item.find("#itemPriority").text(item.priority);
+					$item.find("#itemImage img").attr("src", item.imagePath.path);
+					$item.find("#itemLink a").attr("href", "javascript:void(0);").text(item.linkPath);
+					$item.find("#itemAlt").text(item.imageAlt);
+					$item.find("#itemAlias").text(item.imagePath.alias);
+					$item.find("#itemValidity").text(item.formattedStartDate + " - " + item.formattedEndDate);
+
+					var expired = item.expired;
+					var started = item.started;
+					var daysLeft = item.daysLeft;
+
+					if ($.simCurrDate) {
+						var itemStartDate = new Date(item.formattedStartDate);
+						var itemEndDate = new Date(item.formattedEndDate);
+
+						expired = $.simCurrDate.getTime() > itemEndDate.getTime();
+						started = $.simCurrDate.getTime() >= itemStartDate.getTime();
+
+						if (!expired && started) {
+							daysLeft = Math.floor((itemEndDate.getTime() - $.simCurrDate.getTime()) / (24 * 60 * 60 * 1000) + 1);
+							
+							if (daysLeft > 1) {
+								daysLeft = daysLeft + " days left";
+							} else {
+								daysLeft = "Ends Today";
+							}
+						}
+					}
+
+					if (!expired) {
+						$item.find("#itemValidityDaysExpired").hide();
+						!started && (daysLeft = "Not Started");
+						$item.find("#itemDaysLeft").text("(" + daysLeft + ")");
+					} else {
+						$item.find("#itemDaysLeft").hide();
+					}
+
+					if (item.disabled) {
+						$item.addClass("forceAddErrorClass");
+					}
+					
+					$("tr#preloader").before($item);
+					$item.show();
+				});
+			} else {
+				$table.find("tr#nonFound").show();
+			}
+			
+			base.$el.qtip('reposition');
+		};
+		
 		base.getPreTemplate = function(){
 			if (base.options.enablePreTemplate){
 				return base.options.preTemplate(base);
@@ -689,6 +768,58 @@
 				template += '		</table>';
 				template += '	</div>';
 				break;
+			case "banner":
+				template += '	<div class="w600 mar0 pad0">';
+				template += '		<table class="tblItems w100p marT5">';
+				template += '			<tbody>';
+				template += '				<tr>';
+				template += '					<th width="20px">#</th>';
+				template += '					<th width="324px" id="selectAll">Banner</th>';
+				template += '					<th width="60px">Alias</th>';
+				template += '					<th width="90px">Validity</th>';
+				template += '				</tr>';
+				template += '			<tbody>';
+				template += '		</table>';
+				template += '	</div>';
+				template += '	<div id="bannerItems" class="w600 mar0 pad0" style="max-height:225px; overflow-y:auto;">';
+				template += '		<table id="item" class="tblItems w100p">';
+				template += '			<tbody>';
+				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
+				template += '					<td width="20px" class="txtAC" id="itemPriority"></td>';
+				template += '					<td width="348px" class="txtAL">';
+				template += '						<div id="itemImage">';
+				template += '							<img src="" width="324"/></div>';
+				template += '						</div>';
+				template += '						<div>';
+				template += '							<span>Link Path:</span>';
+				template += '							<span id="itemLink"><a href="" target="BLANK"></a></span>';
+				template += '						</div>';
+				template += '						<div>';
+				template += '							<span>Image Alt:</span>';
+				template += '							<span id="itemAlt"></span>';
+				template += '						</div>';
+				template += '					</td>';
+				template += '					<td width="60px" class="txtAC" id="itemAlias"></td>';
+				template += '					<td width="auto" class="txtAC">';
+				template += '						<div id="itemValidity" class="w74 wordwrap"></div>';
+				template += '						<div id="itemDaysLeft" class="fgreen"></div>';
+				template += '						<div id="itemValidityDaysExpired"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div>';
+				template +='					</td>';
+				template += '				</tr>';
+				template += '				<tr id="preloader">';
+				template += '					<td colspan="6" class="txtAC">';
+				template += '						<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
+				template += '					</td>';
+				template += '				</tr>';
+				template += '				<tr id="nonFound" style="display:none;">';
+				template += '					<td colspan="6" class="txtAL">';
+				template += '						No items found.';	
+				template += '					</td>';
+				template += '				</tr>';
+				template += '			</tbody>';
+				template += '		</table>';
+				template += '</div>';
+				break;	
 			}
 
 			return template;

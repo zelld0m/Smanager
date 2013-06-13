@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -91,7 +92,7 @@ public class AuditTrailDAO {
 		                		rs.getString(DAOConstants.COLUMN_STORE),
 		                		rs.getString(DAOConstants.COLUMN_KEYWORD),
 		                		rs.getString(DAOConstants.COLUMN_REFERENCE),
-		                		rs.getTimestamp(DAOConstants.COLUMN_DATE),
+		                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_DATE)),
 		                		rs.getString(DAOConstants.COLUMN_DETAILS)
 		                		);
 		            }
@@ -134,7 +135,7 @@ public class AuditTrailDAO {
             inputs.put(DAOConstants.PARAM_STORE, auditTrail.getStoreId());
             inputs.put(DAOConstants.PARAM_KEYWORD, auditTrail.getKeyword());
             inputs.put(DAOConstants.PARAM_REFERENCE, auditTrail.getReferenceId());
-            inputs.put(DAOConstants.PARAM_DATE, auditTrail.getDate());
+            inputs.put(DAOConstants.PARAM_DATE, JodaDateTimeUtil.toSqlDate(auditTrail.getCreatedDate()));
             inputs.put(DAOConstants.PARAM_DETAILS, auditTrail.getDetails());
             			
            	i = DAOUtils.getUpdateCount(addSP.execute(inputs));
@@ -166,8 +167,8 @@ public class AuditTrailDAO {
         inputs.put(DAOConstants.PARAM_KEYWORD, auditTrail.getKeyword());
         inputs.put(DAOConstants.PARAM_REFERENCE, auditTrail.getReferenceId());
         inputs.put(DAOConstants.PARAM_ADMIN, adminFlag?'Y':'N');
-        inputs.put(DAOConstants.PARAM_START_DATE, auditDetail.getStartDate());
-        inputs.put(DAOConstants.PARAM_END_DATE, auditDetail.getEndDate());
+        inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(auditDetail.getStartDate()));
+        inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(auditDetail.getEndDate()));
         inputs.put(DAOConstants.PARAM_START_ROW, auditDetail.getStartRow());
         inputs.put(DAOConstants.PARAM_END_ROW, auditDetail.getEndRow());
 
@@ -211,5 +212,4 @@ public class AuditTrailDAO {
 					}
 				});
 	}
-	
  }

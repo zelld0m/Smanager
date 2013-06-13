@@ -1,9 +1,8 @@
 package com.search.manager.model;
 
-import java.util.Date;
-
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
 
@@ -20,14 +19,14 @@ public class ExportRuleMap {
 	private String 		ruleNameTarget;
 	private RuleEntity 	ruleType;
 	
-	private Date		publishedDate;
-	private Date		exportDate;
-	private Date		importDate;
+	private DateTime	publishedDateTime;
+	private DateTime	exportDateTime;
+	private DateTime	importDateTime;
 	private Boolean		deleted;
 	private Boolean		rejected;
 	
 	public ExportRuleMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget,
-				Date publishedDate, Date exportDate, Date importDate, Boolean deleted, Boolean rejected) {
+				DateTime publishedDateTime, DateTime exportDateTime, DateTime importDateTime, Boolean deleted, Boolean rejected) {
 		super();
 		this.storeIdOrigin = storeIdOrigin;
 		this.ruleIdOrigin = ruleIdOrigin;
@@ -35,9 +34,9 @@ public class ExportRuleMap {
 		this.storeIdTarget = storeIdTarget;
 		this.ruleIdTarget = ruleIdTarget;
 		this.ruleNameTarget = ruleNameTarget;
-		this.publishedDate = publishedDate;
-		this.exportDate = exportDate;
-		this.importDate = importDate;
+		this.publishedDateTime = publishedDateTime;
+		this.exportDateTime = exportDateTime;
+		this.importDateTime = importDateTime;
 		this.deleted = deleted;
 		this.rejected = rejected;
 	}
@@ -47,8 +46,8 @@ public class ExportRuleMap {
 	}
 	
 	public ExportRuleMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget,
-			Date publishedDate, Date exportDate, Date importDate, Boolean deleted, Boolean rejected, RuleEntity ruleType) {
-		this(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget, publishedDate, exportDate, importDate, deleted, rejected);
+			DateTime publishedDateTime, DateTime exportDateTime, DateTime importDateTime, Boolean deleted, Boolean rejected, RuleEntity ruleType) {
+		this(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget, publishedDateTime, exportDateTime, importDateTime, deleted, rejected);
 		this.ruleType= ruleType;
 	}
 	
@@ -57,8 +56,8 @@ public class ExportRuleMap {
 	}
 
 	public ExportRuleMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget, 
-			Date publishedDate, Date exportDate, Date importDate, Boolean deleted, Boolean rejected, Integer ruleType) {
-		this(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget, publishedDate, exportDate, importDate, deleted, rejected);
+			DateTime publishedDateTime, DateTime exportDateTime, DateTime importDateTime, Boolean deleted, Boolean rejected, Integer ruleType) {
+		this(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget, publishedDateTime, exportDateTime, importDateTime, deleted, rejected);
 		if (ruleType != null) {
 			RuleEntity ruleTypeObject = RuleEntity.find(RuleEntity.getValue(ruleType));
 			if (ruleTypeObject != null) {
@@ -123,28 +122,28 @@ public class ExportRuleMap {
 		this.ruleType = ruleType;
 	}
 
-	public Date getPublishedDate() {
-		return publishedDate;
+	public DateTime getPublishedDateTime() {
+		return publishedDateTime;
 	}
 
-	public void setPublishedDate(Date publishedDate) {
-		this.publishedDate = publishedDate;
+	public void setPublishedDateTime(DateTime publishedDateTime) {
+		this.publishedDateTime = publishedDateTime;
 	}
 
-	public Date getExportDate() {
-		return exportDate;
+	public DateTime getExportDateTime() {
+		return exportDateTime;
 	}
 
-	public void setExportDate(Date exportDate) {
-		this.exportDate = exportDate;
+	public void setExportDateTime(DateTime exportDateTime) {
+		this.exportDateTime = exportDateTime;
 	}
 
-	public Date getImportDate() {
-		return importDate;
+	public DateTime getImportDateTime() {
+		return importDateTime;
 	}
 
-	public void setImportDate(Date importDate) {
-		this.importDate = importDate;
+	public void setImportDateTime(DateTime importDateTime) {
+		this.importDateTime = importDateTime;
 	}
 
 	public Boolean getDeleted() {
@@ -162,5 +161,4 @@ public class ExportRuleMap {
 	public void setRejected(Boolean rejected) {
 		this.rejected = rejected;
 	}
-
 }

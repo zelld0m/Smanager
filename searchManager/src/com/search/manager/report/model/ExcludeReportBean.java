@@ -45,7 +45,7 @@ public class ExcludeReportBean extends ReportBean<Product> {
 	
 	@ReportField(label="Valid Until", size=20, sortOrder=4)
 	public String getValidity(){
-		return model.getFormattedExpiryDate();
+		return model.getFormattedExpiryDateTime(); 
 	}
 
 	@ReportField(label="Created By", size=20, sortOrder=5)
@@ -82,8 +82,6 @@ public class ExcludeReportBean extends ReportBean<Product> {
 			.append("  SKU #:").append(model.getDpNo()).append("  Mfr. Part #:").append(model.getMfrPN()).toString();
 		}
 		
-		
 		return new StringBuffer("EDP: ").append(model.getEdp()).toString(); 
 	}
-
 }

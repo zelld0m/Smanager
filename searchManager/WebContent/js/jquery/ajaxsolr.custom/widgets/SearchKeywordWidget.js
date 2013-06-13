@@ -65,6 +65,7 @@
 					self.manager.store.remove('disableRedirect');
 					self.manager.store.remove('disableRelevancy');
 					self.manager.store.remove('disableDidYouMean');
+					self.manager.store.remove('disableBanner');
 					self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
 				}
 

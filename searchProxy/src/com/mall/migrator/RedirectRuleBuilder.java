@@ -1,21 +1,20 @@
 package com.mall.migrator;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.xml.sax.SAXException;
 
 import com.mall.mail.MailNotifier;
-import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchCriteria;
@@ -26,100 +25,81 @@ import com.search.manager.solr.util.LocalSolrServerRunner;
 import com.search.manager.solr.util.SolrDocUtil;
 import com.search.manager.solr.util.SolrServerFactory;
 
-public class RedirectRuleBuilder implements Runnable {
+public class RedirectRuleBuilder extends BaseRuleBuilder implements Runnable {
 
 	private static final Logger logger = Logger
 			.getLogger(RedirectRuleBuilder.class);
 
-	private static SolrServerFactory solrServerFactory;
+	private int dbCount;
+	private int indexCount;
 
-	private ApplicationContext context;
-	private LocalSolrServerRunner solrServer;
-	private Properties properties;
-	private DaoService daoService;
-	private String storeId;
+	@SuppressWarnings("unused")
+	private RedirectRuleBuilder() {
+		// do nothing...
+	}
 
-	private String logPath;
-	private String logIndex;
-	private String logErrorIndex;
-	private String mailNotification;
-
-	private int count;
-	private int redirectRuleCount;
-
-	RedirectRuleBuilder(String storeId, LocalSolrServerRunner solrServer,
-			Properties properties, ApplicationContext context) {
+	public RedirectRuleBuilder(String storeId, String core)
+			throws SolrServerException {
 		this.storeId = storeId;
-		this.solrServer = solrServer;
-		this.properties = properties;
-		this.context = context;
+		solrServer = solrServerFactory.getCoreInstance(core);
+	}
+
+	public RedirectRuleBuilder(ApplicationContext context,
+			SolrServerFactory solrServerFactory, Properties properties,
+			String store, String core) {
+		super(context, solrServerFactory, properties, store, core);
 	}
 
 	@Override
 	public void run() {
 		try {
-			count = 0;
-			redirectRuleCount = 0;
-			logPath = properties.getProperty("logPath");
-			logIndex = properties.getProperty("logIndex");
-			logErrorIndex = properties.getProperty("logErrorIndex");
-			mailNotification = properties.getProperty("mail.notification");
-			PropertyConfigurator.configure("config/log4j.properties");
-			daoService = (DaoService) context.getBean("daoService");
-		} catch (Exception e) {
-			logger.error(e);
-			return;
-		}
-
-		if (storeId == null) {
-			logger.debug("storeId is null.");
-			return;
-		}
-
-		if (solrServer == null) {
-			logger.debug("SolrServer is null.");
-			return;
-		}
-
-		try {
-			long timeStart = System.currentTimeMillis();
-			List<RedirectRule> redirectRules = null;
-
 			RedirectRule redirectRuleFilter = new RedirectRule();
 			redirectRuleFilter.setStoreId(storeId);
 			redirectRuleFilter.setRuleName(""); // ALL
-			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(
-					redirectRuleFilter, null, null, 0, 0);
+			long timeStart = System.currentTimeMillis();
+			long indexTime = 0;
+			int page = 1;
 
-			RecordSet<RedirectRule> recordSet = daoService.searchRedirectRule(
-					criteria, MatchType.LIKE_NAME);
-
-			if (recordSet != null) {
-				redirectRules = recordSet.getList();
-			}
-
-			long indexTime = System.currentTimeMillis();
-
-			if (redirectRules != null) {
-				count = redirectRules.size();
-				solrImport(redirectRules);
+			while (true) {
+				SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(
+						redirectRuleFilter, page, MAX_IMPORT_DOC);
+				RecordSet<RedirectRule> recordSet = daoService
+						.searchRedirectRule(criteria, MatchType.LIKE_NAME);
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					List<RedirectRule> redirectRules = recordSet.getList();
+					logger.info("Indexing Page: [" + page + "] Size: ["
+							+ redirectRules.size() + "]");
+					dbCount += redirectRules.size();
+					solrImport(redirectRules);
+					if (redirectRules.size() < MAX_IMPORT_DOC) {
+						indexTime = System.currentTimeMillis();
+						solrServer.optimize();
+						break;
+					}
+					page++;
+				} else {
+					if (page != 1) {
+						indexTime = System.currentTimeMillis();
+						solrServer.optimize();
+					}
+					break;
+				}
 			}
 
 			long elapsedTimeMillis = System.currentTimeMillis() - timeStart;
 			long elapsedIndexTime = System.currentTimeMillis() - indexTime;
 
 			StringBuffer info = new StringBuffer();
-			info.append(" Indexing completed!");
+			info.append("Indexing completed!");
 			info.append("\n Time Completed (Sec): "
-					+ (elapsedTimeMillis / (1000F)) + " secs.");
-			info.append("\n Time Completed (Min): "
-					+ (elapsedTimeMillis / (60 * 1000F)) + " mins.");
+					+ (elapsedTimeMillis / (1000F)) + " secs./");
+			info.append((elapsedTimeMillis / (60 * 1000F)) + " mins.");
 			info.append("\n Index Time (Sec): " + (elapsedIndexTime / (1000F))
-					+ " secs.");
-			info.append("\n Index Time (Min): "
-					+ (elapsedIndexTime / (60 * 1000F)) + " mins.");
-			info.append("\n Total Redirect rule indexed : " + redirectRuleCount);
-			info.append("\n Total file fetched from database : " + count);
+					+ " secs./");
+			info.append((elapsedIndexTime / (60 * 1000F)) + " mins.");
+			info.append("\n Total Redirect rule indexed : " + indexCount);
+			info.append("\n Total Redirect rule fetched from database : "
+					+ dbCount);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
@@ -128,7 +108,6 @@ public class RedirectRuleBuilder implements Runnable {
 				mailNotifier.send();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
 		}
 	}
@@ -140,12 +119,11 @@ public class RedirectRuleBuilder implements Runnable {
 
 		try {
 			if (redirectRules != null && redirectRules.size() > 0) {
-				solrInputDocuments = SolrDocUtil
-						.composeSolrDocsRedirectRule(redirectRules);
+				solrInputDocuments = SolrDocUtil.composeSolrDocs(redirectRules);
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
-				redirectRuleCount = solrInputDocuments.size();
-				solrServer.optimize();
+				solrServer.commit();
+				indexCount += solrInputDocuments.size();
 			}
 		} catch (Exception e) {
 			hasError = true;
@@ -170,51 +148,44 @@ public class RedirectRuleBuilder implements Runnable {
 
 	public static void main(String[] args) {
 		String storeId;
-		LocalSolrServerRunner solrServer;
-		Properties properties;
-		ApplicationContext context;
-
-		try {
-			FileInputStream inStream = new FileInputStream(
-					"./config/dataImport.properties");
-			properties = new Properties(System.getProperties());
-			properties.load(inStream);
-			PropertyConfigurator.configure("config/log4j.properties");
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e);
-			return;
-		}
 
 		if (args.length > 0) {
 			storeId = args[0];
 		} else {
-			logger.debug("Store is null.");
-			return;
-		}
-
-		context = new FileSystemXmlApplicationContext(
-				"/WebContent/WEB-INF/spring/search-proxy-context.xml");
-
-		solrServerFactory = (SolrServerFactory) context
-				.getBean("solrServerFactory");
-
-		if (solrServerFactory == null) {
-			logger.debug("SolrServerFactory is null.");
+			logger.info("Store is null.");
 			return;
 		}
 
 		try {
-			solrServer = solrServerFactory
-					.getCoreInstance(Constants.Core.REDIRECT_RULE_CORE
-							.getCoreName());
 			RedirectRuleBuilder redirectRuleBuilder = new RedirectRuleBuilder(
-					storeId, solrServer, properties, context);
+					storeId, Constants.Core.REDIRECT_RULE_CORE.getCoreName());
+			System.out.println("----------------------------------------");
+			System.out.println("Store	  : " + storeId);
+			System.out.println("Solr Url  : "
+					+ ((LocalSolrServerRunner) context
+							.getBean("localSolrServerRunner")).getSolrUrl());
+			System.out.println("Database  : "
+					+ ((BasicDataSource) context.getBean("dataSource_solr"))
+							.getUrl());
+			System.out.println("----------------------------------------");
+			String response = "";
+			Scanner input = new Scanner(System.in);
+
+			System.out.print("Are you sure you want to continue? (Y/N) : ");
+			response = input.next();
+
+			if (!response.toUpperCase().startsWith("Y")) {
+				solrServerFactory.shutdown();
+				return;
+			}
+
 			redirectRuleBuilder.run();
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
-			solrServerFactory.shutdown();
+			if (solrServerFactory != null) {
+				solrServerFactory.shutdown();
+			}
 		}
 	}
 
