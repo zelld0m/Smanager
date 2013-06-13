@@ -38,6 +38,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants;
+import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleTransferUtil;
@@ -463,24 +464,39 @@ public class RuleTransferService {
 		String ruleIdOrigin = ruleXml.getRuleId();
 		String ruleNameOrigin = ruleXml.getRuleName();
 
-		ruleXml.setStore(store);
-		ruleXml.setRuleId(importAsRefId);
-		ruleXml.setRuleName(ruleName);
-		ruleXml.setCreatedBy(UtilityService.getUsername());
+		switch (ruleEntity) {
+			case SPELL:
+				try {
+					success = daoService.importSpellRule(store, storeIdOrigin, UtilityService.getUsername(),
+					        Integer.valueOf(((DBRuleVersion) ruleXml).getProps().get("maxSuggest")));
+				} catch (DaoException e) {
+					logger.error("Error importing Did You Mean rules.", e);
+				}
+				break;
+			default:
+				ruleXml.setStore(store);
+				ruleXml.setRuleId(importAsRefId);
+				ruleXml.setRuleName(ruleName);
+				ruleXml.setCreatedBy(UtilityService.getUsername());
+				success = RuleTransferUtil.importRule(store, importAsRefId, ruleXml);
+		}
 
-		if(RuleTransferUtil.importRule(store, importAsRefId, ruleXml)){
-			success = true;
-			logger.info(String.format("Rule Xml [store=%s, ruleEntity=%s, ruleId=%s] successfully imported.", store, ruleEntity.name(), ruleId));
-			ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store, importAsRefId, ruleName, ruleEntity);
+		if (success) {
+			logger.info(String.format("Rule Xml [store=%s, ruleEntity=%s, ruleId=%s] successfully imported.",
+			        store, ruleEntity.name(), ruleId));
+			ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store,
+			        importAsRefId, ruleName, ruleEntity);
 			exportRuleMap.setDeleted(RuleTransferUtil.deleteRuleFile(ruleEntity, store, ruleId, comment));
 			exportRuleMap.setRejected(false);
 			exportRuleMap.setImportDate(new Date());
+
 			try {
 				daoService.saveExportRuleMap(exportRuleMap);
 			} catch (DaoException e) {
 				logger.error("Failed to add mapping of ruleId", e);
 			}
 		}
+
 		return success;
 	}
 

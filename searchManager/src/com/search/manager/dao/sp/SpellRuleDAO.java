@@ -226,12 +226,14 @@ public class SpellRuleDAO {
     }
 
     @Transactional
-    public boolean restoreSpellRules(String store, int version) throws DaoException {
+    public boolean restoreSpellRules(String store, int version, String username) throws DaoException {
         try {
             Map<String, Object> params = new HashMap<String, Object>();
 
             params.put(DAOConstants.PARAM_STORE_ID, store);
             params.put(DAOConstants.PARAM_VERSION_NO, version);
+            params.put(DAOConstants.PARAM_MODIFIED_BY, username);
+            params.put(DAOConstants.PARAM_STORE_DST, null);
 
             //return DAOUtils.getUpdateCount(restoreSpellRuleVersionProcedure.execute(params)) > 0;
             restoreSpellRuleVersionProcedure.execute(params);
@@ -447,6 +449,8 @@ public class SpellRuleDAO {
         protected void declareParameters() {
             declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_VERSION_NO, Types.INTEGER));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_DST, Types.VARCHAR));
         }
     }
 
@@ -523,6 +527,24 @@ public class SpellRuleDAO {
         } catch (Exception e) {
             logger.error("Error occurred in getSpellRuleVersion.", e);
             throw new DaoException("Error occurred in getSpellRuleVersion.", e);
+        }
+    }
+
+	public boolean importRule(String dest, String origin, String username) throws DaoException {
+        try {
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            params.put(DAOConstants.PARAM_STORE_ID, origin);
+            params.put(DAOConstants.PARAM_VERSION_NO, 0);
+            params.put(DAOConstants.PARAM_MODIFIED_BY, username);
+            params.put(DAOConstants.PARAM_STORE_DST, dest);
+
+            //return DAOUtils.getUpdateCount(restoreSpellRuleVersionProcedure.execute(params)) > 0;
+            restoreSpellRuleVersionProcedure.execute(params);
+            return true;
+        } catch (Exception e) {
+            logger.error("Error occurred on importRule.", e);
+            throw new DaoException("Error occurred on importRule.", e);
         }
     }
 }

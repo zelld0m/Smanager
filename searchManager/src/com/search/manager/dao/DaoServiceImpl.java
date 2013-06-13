@@ -1868,8 +1868,8 @@ public class DaoServiceImpl implements DaoService {
     }
 
     @Override
-    public boolean restoreSpellRules(String store, int version) throws DaoException {
-        return spellRuleDAO.restoreSpellRules(store, version);
+    public boolean restoreSpellRules(String store, int version, String username) throws DaoException {
+        return spellRuleDAO.restoreSpellRules(store, version, username);
     }
 
     @Override
@@ -1910,5 +1910,10 @@ public class DaoServiceImpl implements DaoService {
     @Override
     public List<SpellRule> getSpellRuleVersion(String store, int versionNo) throws DaoException {
         return spellRuleDAO.getSpellRuleVersion(store, versionNo);
+    }
+
+	@Override
+    public boolean importSpellRule(String dest, String origin, String username, Integer maxSuggest) throws DaoException {
+		return spellRuleDAO.importRule(dest, origin, username) && spellRuleDAO.setMaxSuggest(dest, maxSuggest);
     }
 }

@@ -14,6 +14,7 @@ import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
+import com.search.manager.service.UtilityService;
 
 @Repository("spellRuleVersionDAO")
 public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
@@ -83,10 +84,11 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
+		String username = UtilityService.getUsername();
 		DBRuleVersion version = (DBRuleVersion) xml;
 
 		try {
-			daoService.restoreSpellRules(version.getStore(), (int) version.getVersion());
+			daoService.restoreSpellRules(version.getStore(), (int) version.getVersion(), username);
 			daoService.setMaxSuggest(version.getStore(), Integer.parseInt(version.getProps().get(MAX_SUGGEST)));
 			return true;
 		} catch (DaoException e) {

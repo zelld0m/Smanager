@@ -274,6 +274,7 @@ public class DAOConstants {
     public static final String PARAM_SUGGEST                        = "suggest";
     public static final String PARAM_PHYSICAL                       = "physical";
     public static final String PARAM_VERSION_NO                     = "version_no";
+	public static final String PARAM_STORE_DST                      = "store_dst";
 
 	// additional rule status parameters
 	public static final String PARAM_REQUEST_BY						= "request_by";

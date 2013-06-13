@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.search.manager.enums.RuleEntity;
 
@@ -52,5 +53,17 @@ public class DBRuleVersion extends RuleXml {
 
 	public void setProps(Map<String, String> props) {
 		this.props = props;
+	}
+
+	@XmlTransient
+	@Override
+	public RuleEntity getRuleEntity() {
+		RuleEntity re = super.getRuleEntity();
+		
+		if (re == null && entityType != null) {
+			re = RuleEntity.find(entityType);
+		}
+		
+		return re;
 	}
 }
