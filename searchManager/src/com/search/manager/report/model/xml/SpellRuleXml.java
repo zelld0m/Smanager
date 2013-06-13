@@ -12,12 +12,11 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.google.common.base.Function;
-import com.search.manager.model.ModelBean;
 import com.search.manager.model.SpellRule;
 
 @XmlRootElement(name = "spellRule")
 @DataTransferObject(converter = BeanConverter.class)
-public class SpellRuleXml extends ModelBean {
+public class SpellRuleXml extends BaseEntityXml {
 
     private static final long serialVersionUID = 1L;
 
