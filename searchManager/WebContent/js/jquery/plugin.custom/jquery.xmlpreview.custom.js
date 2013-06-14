@@ -1121,7 +1121,7 @@
 				position:{
 					at: 'center',
 					my: 'center',
-					target: $(viewport)
+					target: $(window)
 				},
 				show:{
 					ready: true,
