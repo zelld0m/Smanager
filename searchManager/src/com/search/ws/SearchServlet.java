@@ -657,9 +657,9 @@ public class SearchServlet extends HttpServlet {
 		return null;
 	}
 	
-	protected DateTime getOverrideCurrentDate(String dateText) {
+	protected DateTime getOverrideCurrentDate(String storeId, String dateText) {
 		DateTime convertedCurrentDate = DateTime.now();
-		DateTime overrideCurrentDate = JodaDateTimeUtil.toDateTimeFromStorePattern(dateText, JodaPatternType.DATE);
+		DateTime overrideCurrentDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, dateText, JodaPatternType.DATE);
 		
 		logger.info(String.format("Current Date: %s", convertedCurrentDate.toString()));
 		if (overrideCurrentDate!=null){
@@ -718,7 +718,7 @@ public class SearchServlet extends HttpServlet {
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
 					if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_SIMULATE_DATE) && StringUtils.isNotBlank(paramValue)){
-						currentDate = getOverrideCurrentDate(paramValue);
+						currentDate = getOverrideCurrentDate(storeId, paramValue);
 					}else if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD)) {
 						
 						String origKeyword = paramValue;
