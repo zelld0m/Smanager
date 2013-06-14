@@ -27,7 +27,7 @@ public class RuleItemXml extends BaseEntityXml{
 	private String mfrNo;
 	private String manufacturer;
 	private RedirectRuleCondition ruleCondition;
-	private DateTime expiryDateTime;
+	private DateTime expiryDate;
 	
 	@XmlAttribute(name="id", required=true)
 	public String getMemberId() {
@@ -78,14 +78,13 @@ public class RuleItemXml extends BaseEntityXml{
 			
 		this.ruleCondition = ruleCondition;
 	}
-	
-	@XmlAttribute(name="expiryDate")
-	public DateTime getExpiryDateTime() {
-		return expiryDateTime;
+
+	public DateTime getExpiryDate() {
+		return expiryDate;
 	}
 
-	public void setExpiryDateTime(DateTime expiryDateTime) {
-		this.expiryDateTime = expiryDateTime;
+	public void setExpiryDate(DateTime expiryDate) {
+		this.expiryDate = expiryDate;
 	}
 
 	@XmlTransient

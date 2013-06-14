@@ -1,11 +1,14 @@
 package com.search.manager.model;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class BannerRuleItem extends ModelBean{
@@ -88,6 +91,7 @@ public class BannerRuleItem extends ModelBean{
 		this.priority = priority;
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getStartDate() {
 		return startDate;
 	}
@@ -96,6 +100,7 @@ public class BannerRuleItem extends ModelBean{
 		this.startDate = startDate;
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getEndDate() {
 		return endDate;
 	}

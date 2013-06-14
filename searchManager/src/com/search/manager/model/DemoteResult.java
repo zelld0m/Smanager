@@ -31,7 +31,7 @@ public class DemoteResult extends SearchResult {
 		this.storeKeyword = storeKeyword;
 		this.edp = xml.getEdp();
 		this.condition = xml.getRuleCondition();
-		this.expiryDateTime = xml.getExpiryDateTime();
+		this.expiryDate = xml.getExpiryDate();
 		this.entity = xml.getMemberType();
 		this.location = xml.getLocation();
 		this.createdBy = xml.getCreatedBy();

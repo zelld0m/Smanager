@@ -2,10 +2,13 @@ package com.search.manager.model;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.joda.time.DateTime;
 
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 public class ModelBean implements Serializable {
 	
@@ -41,6 +44,7 @@ public class ModelBean implements Serializable {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getCreatedDate() {
 		return createdDate;
 	}
@@ -49,6 +53,7 @@ public class ModelBean implements Serializable {
 		this.createdDate = createdDate;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getLastModifiedDate() {
 		return lastModifiedDate;
 	}

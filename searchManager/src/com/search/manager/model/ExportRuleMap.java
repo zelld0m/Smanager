@@ -1,10 +1,13 @@
 package com.search.manager.model;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class ExportRuleMap {
@@ -122,6 +125,7 @@ public class ExportRuleMap {
 		this.ruleType = ruleType;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getPublishedDateTime() {
 		return publishedDateTime;
 	}
@@ -130,6 +134,7 @@ public class ExportRuleMap {
 		this.publishedDateTime = publishedDateTime;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getExportDateTime() {
 		return exportDateTime;
 	}
@@ -138,6 +143,7 @@ public class ExportRuleMap {
 		this.exportDateTime = exportDateTime;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getImportDateTime() {
 		return importDateTime;
 	}

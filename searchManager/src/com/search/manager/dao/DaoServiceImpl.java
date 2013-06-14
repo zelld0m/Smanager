@@ -247,7 +247,7 @@ public class DaoServiceImpl implements DaoService {
 			ElevateProduct ep = new ElevateProduct();
 			ep.setEdp(e.getEdp());
 			ep.setLocation(e.getLocation());
-			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setExpiryDate(e.getExpiryDate());
 			ep.setCreatedDate(e.getCreatedDate());
 			ep.setLastModifiedDate(e.getLastModifiedDate());
 			ep.setComment(e.getComment());
@@ -279,7 +279,7 @@ public class DaoServiceImpl implements DaoService {
 		ElevateProduct ep = new ElevateProduct();
 		ep.setEdp(e.getEdp());
 		ep.setLocation(e.getLocation());
-		ep.setExpiryDateTime(e.getExpiryDateTime());
+		ep.setExpiryDate(e.getExpiryDate());
 		ep.setCreatedDate(e.getCreatedDate());
 		ep.setLastModifiedDate(e.getLastModifiedDate());
 		ep.setComment(e.getComment());
@@ -309,7 +309,7 @@ public class DaoServiceImpl implements DaoService {
 			ElevateProduct ep = new ElevateProduct();
 			ep.setEdp(e.getEdp());
 			ep.setLocation(e.getLocation());
-			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setExpiryDate(e.getExpiryDate());
 			ep.setCreatedDate(e.getCreatedDate());
 			ep.setLastModifiedDate(e.getLastModifiedDate());
 			ep.setComment(e.getComment());
@@ -339,7 +339,7 @@ public class DaoServiceImpl implements DaoService {
 			DemoteProduct ep = new DemoteProduct();
 			ep.setEdp(e.getEdp());
 			ep.setLocation(e.getLocation());
-			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setExpiryDate(e.getExpiryDate());
 			ep.setCreatedDate(e.getCreatedDate());
 			ep.setLastModifiedDate(e.getLastModifiedDate());
 			ep.setComment(e.getComment());
@@ -370,7 +370,7 @@ public class DaoServiceImpl implements DaoService {
 			DemoteProduct ep = new DemoteProduct();
 			ep.setEdp(e.getEdp());
 			ep.setLocation(e.getLocation());
-			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setExpiryDate(e.getExpiryDate());
 			ep.setCreatedDate(e.getCreatedDate());
 			ep.setLastModifiedDate(e.getLastModifiedDate());
 			ep.setComment(e.getComment());
@@ -401,7 +401,7 @@ public class DaoServiceImpl implements DaoService {
 		DemoteProduct dp = new DemoteProduct();
 		dp.setEdp(e.getEdp());
 		dp.setLocation(e.getLocation());
-		dp.setExpiryDateTime(e.getExpiryDateTime());
+		dp.setExpiryDate(e.getExpiryDate());
 		dp.setCreatedDate(e.getCreatedDate());
 		dp.setLastModifiedDate(e.getLastModifiedDate());
 		dp.setComment(e.getComment());
@@ -430,7 +430,7 @@ public class DaoServiceImpl implements DaoService {
 			DemoteProduct dp = new DemoteProduct();
 			dp.setEdp(e.getEdp());
 			dp.setLocation(e.getLocation());
-			dp.setExpiryDateTime(e.getExpiryDateTime());
+			dp.setExpiryDate(e.getExpiryDate());
 			dp.setCreatedDate(e.getCreatedDate());
 			dp.setLastModifiedDate(e.getLastModifiedDate());
 			dp.setComment(e.getComment());
@@ -459,7 +459,7 @@ public class DaoServiceImpl implements DaoService {
 		for (ExcludeResult e: set.getList()) {
 			Product ep = new Product();
 			ep.setEdp(e.getEdp());
-			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setExpiryDate(e.getExpiryDate());
 			ep.setCreatedDate(e.getCreatedDate());
 			ep.setLastModifiedDate(e.getLastModifiedDate());
 			ep.setComment(e.getComment());
@@ -489,7 +489,7 @@ public class DaoServiceImpl implements DaoService {
 		for (ExcludeResult e: set.getList()) {
 			Product ep = new Product();
 			ep.setEdp(e.getEdp());
-			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setExpiryDate(e.getExpiryDate());
 			ep.setCreatedDate(e.getCreatedDate());
 			ep.setLastModifiedDate(e.getLastModifiedDate());
 			ep.setComment(e.getComment());
@@ -780,7 +780,7 @@ public class DaoServiceImpl implements DaoService {
 		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
 		Product ep = new Product();
 		ep.setEdp(e.getEdp());
-		ep.setExpiryDateTime(e.getExpiryDateTime());
+		ep.setExpiryDate(e.getExpiryDate());
 		ep.setCreatedDate(e.getCreatedDate());
 		ep.setLastModifiedDate(e.getLastModifiedDate());
 		ep.setComment(e.getComment());

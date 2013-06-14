@@ -90,9 +90,9 @@ public class SolrDocUtil {
 		solrInputDocument.addField("keyword", demoteResult.getStoreKeyword()
 				.getKeywordId());
 
-		if (demoteResult.getExpiryDateTime() != null) {
+		if (demoteResult.getExpiryDate() != null) {
 			solrInputDocument.addField("expiryDate", demoteResult
-					.getExpiryDateTime().withZone(DateTimeZone.UTC));
+					.getExpiryDate().withZone(DateTimeZone.UTC));
 		}
 
 		solrInputDocument.addField("entity", demoteResult.getEntity());
@@ -134,9 +134,9 @@ public class SolrDocUtil {
 				.getStoreId());
 		solrInputDocument.addField("keyword", elevateResult.getStoreKeyword()
 				.getKeywordId());
-		if (elevateResult.getExpiryDateTime() != null) {
+		if (elevateResult.getExpiryDate() != null) {
 			solrInputDocument.addField("expiryDate", elevateResult
-					.getExpiryDateTime().withZone(DateTimeZone.UTC));
+					.getExpiryDate().withZone(DateTimeZone.UTC));
 		}
 		solrInputDocument.addField("entity", elevateResult.getEntity());
 		solrInputDocument.addField("memberId", elevateResult.getMemberId());
@@ -175,9 +175,9 @@ public class SolrDocUtil {
 		solrInputDocument.addField("keyword", excludeResult.getStoreKeyword()
 				.getKeywordId());
 
-		if (excludeResult.getExpiryDateTime() != null) {
+		if (excludeResult.getExpiryDate() != null) {
 			solrInputDocument.addField("expiryDate", excludeResult
-					.getExpiryDateTime().withZone(DateTimeZone.UTC));
+					.getExpiryDate().withZone(DateTimeZone.UTC));
 		}
 
 		solrInputDocument.addField("entity", excludeResult.getEntity());

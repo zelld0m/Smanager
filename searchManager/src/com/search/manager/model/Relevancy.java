@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import jxl.common.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -16,6 +18,7 @@ import org.joda.time.DateTime;
 
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 import com.search.manager.report.model.xml.RankingRuleXml;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -163,6 +166,7 @@ public class Relevancy extends ModelBean {
 		return store;
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getStartDateTime() {
 		return startDateTime;
 	}
@@ -171,6 +175,7 @@ public class Relevancy extends ModelBean {
 		this.startDateTime = startDateTime;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getEndDateTime() {
 		return endDateTime;
 	}

@@ -60,7 +60,7 @@ public class ExcludeService extends RuleService{
 			daoService.addKeyword(new StoreKeyword(storeId, keyword)); // TODO: What if keyword is not added?
 
 			ExcludeResult e = new ExcludeResult(new StoreKeyword(storeId, keyword));
-			e.setExpiryDateTime(StringUtils.isEmpty(expiryDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
+			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
 			e.setCreatedBy(userName);
 			e.setComment(UtilityService.formatComment(comment));
 			e.setExcludeEntity(entity);
@@ -296,13 +296,13 @@ public class ExcludeService extends RuleService{
 			logger.info(String.format("updateExpiryDate %s %s ", memberId, expiryDate));
 			String storeId = UtilityService.getStoreId();
 			ExcludeResult e = new ExcludeResult();
-			e.setExpiryDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
+			e.setExpiryDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setStoreKeyword(new StoreKeyword(storeId, keyword));
 			e.setMemberId(memberId);
 			e = daoService.getExcludeItem(e);
 			if (e != null) {
-				e.setExpiryDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
+				e.setExpiryDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
 				e.setLastModifiedBy(UtilityService.getUsername());
 				result = daoService.updateExcludeResultExpiryDate(e);
 			}
@@ -422,7 +422,7 @@ public class ExcludeService extends RuleService{
 			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, JodaDateTimeUtil.formatFromStorePattern(storeId, exclude.getExpiryDateTime(), JodaPatternType.DATE))) {
+		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, JodaDateTimeUtil.formatFromStorePattern(storeId, exclude.getExpiryDate(), JodaPatternType.DATE))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		

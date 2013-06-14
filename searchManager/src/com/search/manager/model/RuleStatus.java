@@ -3,6 +3,8 @@ package com.search.manager.model;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
@@ -13,6 +15,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class RuleStatus extends ModelBean {
@@ -100,6 +103,7 @@ public class RuleStatus extends ModelBean {
 			String publishedStatus, String publishedBy, DateTime lastPublishedDateTime,
 			ExportType exportType, String exportBy, DateTime lastExportDateTime,
 			String createdBy, String modifiedBy, DateTime dateCreated, DateTime dateModified) {
+		
 		this(ruleStatusId, ruleTypeId, ruleRefId, storeId, description, approvalStatus, updateStatus,
 				publishedStatus, lastPublishedDateTime, createdBy, modifiedBy, dateCreated, dateModified);
 		this.requestBy = requestBy;
@@ -251,6 +255,7 @@ public class RuleStatus extends ModelBean {
 		return this.description;
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getLastRequestDate() {
 		return lastRequestDate;
 	}
@@ -259,6 +264,7 @@ public class RuleStatus extends ModelBean {
 		this.lastRequestDate = lastRequestDate;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getLastApprovalDate() {
 		return lastApprovalDate;
 	}
@@ -267,6 +273,7 @@ public class RuleStatus extends ModelBean {
 		this.lastApprovalDate = lastApprovalDate;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getLastPublishedDate() {
 		return lastPublishedDate;
 	}
@@ -275,6 +282,7 @@ public class RuleStatus extends ModelBean {
 		this.lastPublishedDate = lastPublishedDate;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getLastExportDate() {
 		return lastExportDate;
 	}

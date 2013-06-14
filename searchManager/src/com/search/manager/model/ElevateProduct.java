@@ -27,7 +27,7 @@ public class ElevateProduct extends Product {
 	public ElevateProduct(ElevateResult e){
 		super();
 		this.setEdp(e.getEdp());
-		this.setExpiryDateTime(e.getExpiryDateTime());
+		this.setExpiryDate(e.getExpiryDate());
 		this.setCreatedDate(e.getCreatedDate());
 		this.setLastModifiedDate(e.getLastModifiedDate());
 		this.setComment(e.getComment());

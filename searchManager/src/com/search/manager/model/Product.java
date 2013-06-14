@@ -1,5 +1,7 @@
 package com.search.manager.model;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -9,6 +11,7 @@ import org.joda.time.Days;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class Product extends ModelBean {
@@ -23,7 +26,7 @@ public class Product extends ModelBean {
 	private String description;
 	private String imagePath;
 	private String store;
-	private DateTime expiryDateTime;
+	private DateTime expiryDate;
 	private MemberTypeEntity memberTypeEntity;
 	private RedirectRuleCondition condition;
 	private String memberId;
@@ -45,7 +48,7 @@ public class Product extends ModelBean {
 		this.name = name;
 		this.description = description;
 		this.imagePath = imagePath;
-		this.expiryDateTime = expiryDateTime;
+		this.expiryDate = expiryDateTime;
 		this.createdDate = createdDateTime;
 		this.lastModifiedDate = lastModifiedDateTime;
 		this.comment = comment;
@@ -56,7 +59,7 @@ public class Product extends ModelBean {
 	public Product(SearchResult e){
 		super();
 		this.setEdp(e.getEdp());
-		this.setExpiryDateTime(e.getExpiryDateTime());
+		this.setExpiryDate(e.getExpiryDate());
 		this.setCreatedDate(e.getCreatedDate());
 		this.setLastModifiedDate(e.getLastModifiedDate());
 		this.setComment(e.getComment());
@@ -156,16 +159,17 @@ public class Product extends ModelBean {
 		this.createdBy = createdBy;
 	}
 	
-	public DateTime getExpiryDateTime() {
-		return expiryDateTime;
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	public DateTime getExpiryDate() {
+		return expiryDate;
 	}
 
-	public void setExpiryDateTime(DateTime expiryDateTime) {
-		this.expiryDateTime = expiryDateTime;
+	public void setExpiryDate(DateTime expiryDate) {
+		this.expiryDate = expiryDate;
 	}
 
 	public boolean getIsExpired() {
-		DateTime expiration = getExpiryDateTime();
+		DateTime expiration = getExpiryDate();
 
 		if(expiration!=null && Days.daysBetween(DateTime.now().toDateMidnight(), expiration.toDateMidnight()).getDays() < 0){
 			return true;
@@ -179,7 +183,7 @@ public class Product extends ModelBean {
 	}
 	
 	public String getValidityText() {
-		DateTime expiration = getExpiryDateTime();
+		DateTime expiration = getExpiryDate();
 		return expiration!=null ? JodaDateTimeUtil.getRemainingDays(DateTime.now(), expiration): "";
 	}
 
@@ -224,10 +228,10 @@ public class Product extends ModelBean {
 	}
 	
 	public String getFormattedExpiryDateTime(){
-		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDateTime(), JodaPatternType.DATE_TIME);
+		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDate(), JodaPatternType.DATE_TIME);
 	}
 	
 	public String getFormattedExpiryDate(){
-		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDateTime(), JodaPatternType.DATE);
+		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDate(), JodaPatternType.DATE);
 	}
 }

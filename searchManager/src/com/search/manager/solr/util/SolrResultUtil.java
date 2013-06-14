@@ -50,7 +50,7 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			demoteResult.setStoreKeyword(storeKeyword);
 			demoteResult.setMemberId(ruleSolrResult.getMemberId());
-			demoteResult.setExpiryDateTime(JodaDateTimeUtil.toDateTime(
+			demoteResult.setExpiryDate(JodaDateTimeUtil.toDateTime(
 					ruleSolrResult.getExpiryDateTime(), DateTimeZone.UTC));
 
 			if (ruleSolrResult.getEntity().equals(
@@ -82,7 +82,7 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			elevateResult.setStoreKeyword(storeKeyword);
 			elevateResult.setMemberId(ruleSolrResult.getMemberId());
-			elevateResult.setExpiryDateTime(JodaDateTimeUtil.toDateTime(
+			elevateResult.setExpiryDate(JodaDateTimeUtil.toDateTime(
 					ruleSolrResult.getExpiryDateTime(), DateTimeZone.UTC));
 			elevateResult.setForceAdd(ruleSolrResult.getForceAdd());
 
@@ -114,7 +114,7 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			excludeResult.setStoreKeyword(storeKeyword);
 			excludeResult.setMemberId(ruleSolrResult.getMemberId());
-			excludeResult.setExpiryDateTime(JodaDateTimeUtil.toDateTime(
+			excludeResult.setExpiryDate(JodaDateTimeUtil.toDateTime(
 					ruleSolrResult.getExpiryDateTime(), DateTimeZone.UTC));
 
 			if (ruleSolrResult.getEntity().equals(

@@ -169,6 +169,5 @@ public class RuleXml extends BaseEntityXml{
 
 	public void setFileExists(boolean fileExists) {
 		this.fileExists = fileExists;
-	}
-	
+	}	
 }

@@ -1,8 +1,11 @@
 package com.search.manager.model;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.joda.time.DateTime;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 import com.search.manager.report.model.xml.RuleItemXml;
 
 public class SearchResult extends ModelBean {
@@ -11,7 +14,7 @@ public class SearchResult extends ModelBean {
 
 	protected StoreKeyword storeKeyword;
 	protected String edp;
-	protected DateTime expiryDateTime;
+	protected DateTime expiryDate;
 	protected MemberTypeEntity entity;
 	protected RedirectRuleCondition condition;
 	protected String memberId;
@@ -21,7 +24,7 @@ public class SearchResult extends ModelBean {
 	public SearchResult(StoreKeyword storeKeyword, RuleItemXml xml) {
 		this.storeKeyword = storeKeyword;
 		this.edp = xml.getEdp();
-		this.expiryDateTime = xml.getExpiryDateTime();
+		this.expiryDate = xml.getExpiryDate();
 		this.entity = xml.getMemberType();
 		this.condition = xml.getRuleCondition();
 		this.memberId = xml.getMemberId();
@@ -47,7 +50,7 @@ public class SearchResult extends ModelBean {
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.expiryDateTime = expiryDateTime;
+		this.expiryDate = expiryDateTime;
 		this.createdDate = createdDateTime;
 		this.lastModifiedDate = lastModifiedDateTime;
 		this.memberId = memberId;
@@ -60,13 +63,14 @@ public class SearchResult extends ModelBean {
 	public void setStoreKeyword(StoreKeyword storeKeyword) {
 		this.storeKeyword = storeKeyword;
 	}
-	
-	public DateTime getExpiryDateTime() {
-		return expiryDateTime;
+
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	public DateTime getExpiryDate() {
+		return expiryDate;
 	}
 
-	public void setExpiryDateTime(DateTime expiryDateTime) {
-		this.expiryDateTime = expiryDateTime;
+	public void setExpiryDate(DateTime expiryDate) {
+		this.expiryDate = expiryDate;
 	}
 
 	public String getEdp() {

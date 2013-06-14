@@ -2,12 +2,15 @@ package com.search.manager.authentication.dao;
 
 import java.util.Collection;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 import com.search.manager.model.User;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -141,6 +144,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.currentPage = currentPage;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getLoggedIntime() {
 		return loggedInTime;
 	}

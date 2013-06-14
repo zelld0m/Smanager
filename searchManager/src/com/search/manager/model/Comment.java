@@ -2,12 +2,15 @@ package com.search.manager.model;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class Comment implements Serializable {
@@ -91,6 +94,7 @@ private static final long serialVersionUID = 1L;
 		return username;
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getCreatedDate() {
 		return createdDate;
 	}

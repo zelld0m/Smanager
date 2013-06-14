@@ -2,7 +2,11 @@ package com.search.manager.model;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.joda.time.DateTime;
+
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 public class SearchCriteria<T> implements Serializable {
 
@@ -63,10 +67,12 @@ public class SearchCriteria<T> implements Serializable {
 		this(model, null, null, 0, 0);
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getStartDate() {
 		return startDate;
 	}
 
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getEndDate() {
 		return endDate;
 	}

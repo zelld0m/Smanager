@@ -195,7 +195,7 @@ public class AuditInterceptor {
 					message.append(" to position [%4$s]");
 				}
 				
-				if(e.getExpiryDateTime() != null){
+				if(e.getExpiryDate() != null){
 					message.append(" expiring on [%2$s]");
 				}
 				
@@ -222,7 +222,7 @@ public class AuditInterceptor {
 				break;
 			case updateExpiryDate:
 				message = new StringBuilder();
-				if(e.getExpiryDateTime() != null)
+				if(e.getExpiryDate() != null)
 					message.append("Changing expiry date to [%2$s] for elevated entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for elevated entry ID[%1$s]");
@@ -245,7 +245,7 @@ public class AuditInterceptor {
 
 			auditTrail.setDetails(String.format(message.toString(),
 				auditTrail.getReferenceId(), 
-				ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE)), e.getComment(), 
+				ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), 
 				e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), 
 				e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
@@ -275,7 +275,7 @@ public class AuditInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				message = new StringBuilder("Adding ID[%1$s]");
-				if(e.getExpiryDateTime() != null){
+				if(e.getExpiryDate() != null){
 					message.append(" expiring on [%2$s]");
 				}
 				
@@ -294,7 +294,7 @@ public class AuditInterceptor {
 				break;
 			case updateExpiryDate:
 				message = new StringBuilder();
-				if(e.getExpiryDateTime() != null)
+				if(e.getExpiryDate() != null)
 					message.append("Changing expiry date to [%2$s] for excluded entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for excluded entry ID[%1$s]");
@@ -315,7 +315,7 @@ public class AuditInterceptor {
 				message.append(" Condition[%4$s]");
 			}
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE)), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 
 		logAuditTrail(auditTrail);
@@ -348,7 +348,7 @@ public class AuditInterceptor {
 					message.append(" to position [%4$s]");
 				}
 				
-				if(e.getExpiryDateTime() != null){
+				if(e.getExpiryDate() != null){
 					message.append(" expiring on [%2$s]");
 				}
 				
@@ -370,7 +370,7 @@ public class AuditInterceptor {
 				break;
 			case updateExpiryDate:
 				message = new StringBuilder();
-				if(e.getExpiryDateTime() != null)
+				if(e.getExpiryDate() != null)
 					message.append("Changing expiry date to [%2$s] for demoted entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for demoted entry ID[%1$s]");
@@ -391,7 +391,7 @@ public class AuditInterceptor {
 				message.append(" Condition[%5$s]");
 			}
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDateTime(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		
 		logAuditTrail(auditTrail);

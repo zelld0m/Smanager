@@ -1,5 +1,7 @@
 package com.search.manager.model;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -7,6 +9,7 @@ import org.joda.time.DateTime;
 
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
+import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class User extends ModelBean {
@@ -153,6 +156,7 @@ public class User extends ModelBean {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getThruDate() {
 		return thruDate;
 	}
@@ -201,6 +205,7 @@ public class User extends ModelBean {
 		this.permissionId = permissionId;
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getLastAccessDate() {
 		return lastAccessDate;
 	}

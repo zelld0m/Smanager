@@ -25,7 +25,7 @@ public class ExcludeResult extends SearchResult {
 		this.storeKeyword = storeKeyword;
 		this.edp = xml.getEdp();
 		this.condition = xml.getRuleCondition();
-		this.expiryDateTime = xml.getExpiryDateTime();
+		this.expiryDate = xml.getExpiryDate();
 		this.entity = xml.getMemberType();
 	}
 	

@@ -280,7 +280,7 @@ public class DemoteDAO {
 				Integer sequence = demote.getLocation();
 				String username = StringUtils.trim(demote.getCreatedBy());
 				String comment = StringUtils.trim(demote.getComment());
-				DateTime expiryDateTime = demote.getExpiryDateTime();
+				DateTime expiryDateTime = demote.getExpiryDate();
 				demote.setMemberId(DAOUtils.generateUniqueId());
 				Map<String, Object> inputs = new HashMap<String, Object>();
 				inputs.put(DAOConstants.PARAM_MEMBER_ID, demote.getMemberId());
@@ -397,7 +397,7 @@ public class DemoteDAO {
 			DAOValidation.checkDemotePK(demote);
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, demote.getMemberId());
-			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(demote.getExpiryDateTime()));
+			inputs.put(DAOConstants.PARAM_EXPIRY_DATE, JodaDateTimeUtil.toSqlDate(demote.getExpiryDate()));
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, demote.getLastModifiedBy());
 			return DAOUtils.getUpdateCount(updateExpiryDateSP.execute(inputs));
 		} catch (Exception e) {
