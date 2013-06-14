@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -13,6 +14,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.BannerRule;
 
 @XmlRootElement(name = "banner")
+@XmlType(propOrder={"itemXml"})
 @DataTransferObject(converter = BeanConverter.class)
 public class BannerRuleXml extends RuleXml {
 
@@ -50,7 +52,7 @@ public class BannerRuleXml extends RuleXml {
         this.setRuleId(rule.getRuleId());
     }
 
-    @XmlElementRef
+    @XmlElementRef(type=BannerItemXml.class)
     public List<BannerItemXml> getItemXml() {
         return itemXml;
     }

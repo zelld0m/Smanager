@@ -55,7 +55,7 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 		this.keyword = keyword;
 	}
 	
-	@XmlElementRef
+	@XmlElementRef(type=ElevateItemXml.class)
 	public List<ElevateItemXml> getElevateItem() {
 		return elevateItem;
 	}

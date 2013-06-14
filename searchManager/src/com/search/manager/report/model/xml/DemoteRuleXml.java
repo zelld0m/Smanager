@@ -53,7 +53,7 @@ public class DemoteRuleXml extends RuleXml implements ProductDetailsAware {
 		this.keyword = keyword;
 	}
 	
-	@XmlElementRef(type=RuleItemXml.class)
+	@XmlElementRef(type=DemoteItemXml.class)
 	public List<DemoteItemXml> getDemoteItem() {
 		return demoteItem;
 	}
