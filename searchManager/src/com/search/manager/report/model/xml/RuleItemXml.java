@@ -13,7 +13,8 @@ import com.search.manager.model.RedirectRuleCondition;
 	ElevateItemXml.class,
 	ExcludeItemXml.class,
 	DemoteItemXml.class,
-	RedirectRuleCondition.class
+	RedirectRuleCondition.class,
+	BannerItemXml.class
 })
 public class RuleItemXml extends BaseEntityXml{
 	
