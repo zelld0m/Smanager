@@ -61,7 +61,7 @@
 				var flcnt = 0;
 				
 				for(var i=0; i<data.totalSize; i++){	
-					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").text();
+					var rName = list[i].rName;
 					if(list[i].published == '1'){
 						okcnt++;
 						okmsg += '<li>' + rName + "</li>";
@@ -114,9 +114,12 @@
 								if(status){
 									var exception = false;
 									DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-										callback: function(data){									
-											postMsg(data,true);	
-											getForProductionList(selRuleFltr);	
+										callback: function(data){	
+											$.each(data.list, function() {
+												this.rName = $("tr#ruleItem" + $.formatAsId(this.ruleId) + " > td#ruleRefId > p#ruleName").text();
+											});								
+											
+											getForProductionList(selRuleFltr, function() { postMsg(data,true); });	
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -148,8 +151,10 @@
 									var exception = false;
 									DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){
-											postMsg(data,false);	
-											getForProductionList(selRuleFltr);
+											$.each(data.list, function() {
+												this.rName = $("tr#ruleItem" + $.formatAsId(this.ruleId) + " > td#ruleRefId > p#ruleName").text();
+											});
+											getForProductionList(selRuleFltr, function() { postMsg(data, false); });
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -224,7 +229,7 @@
 			});
 		};		
 		
-		var getForProductionList = function(filterBy){
+		var getForProductionList = function(filterBy, callback){
 			
 			DeploymentServiceJS.getDeployedRules(entityName, filterBy, {
 				callback:function(data){
@@ -402,6 +407,10 @@
 							getForProductionList($(this).val());
 						}
 					});
+					
+					if (callback) {
+						callback();
+					}
 					
 				}			
 			});
