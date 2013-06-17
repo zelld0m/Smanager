@@ -6,9 +6,10 @@
 	<artifactId>searchManager</artifactId>
 	<name>searchManager</name>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<properties>
 		<java-version>1.6</java-version>
-		<org.springframework-version>3.1.1.RELEASE</org.springframework-version>
+		<org.springframework-version>3.0.5.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
@@ -54,18 +55,37 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
 
-		<!-- DWR -->
-		<dependency>
-			<groupId>org.directwebremoting</groupId>
-			<artifactId>dwr</artifactId>
-			<version>3.0.0-rc3-SNAPSHOT</version>
-		</dependency>
+        <!-- DWR -->
+        <dependency>
+            <groupId>org.directwebremoting</groupId>
+            <artifactId>dwr</artifactId>
+            <version>3.0.0-rc3-SNAPSHOT</version>
+        </dependency>
+        
+        <!-- Axis -->
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.4</version>
+        </dependency>
+        
+        <!-- JAXRPC -->
+        <dependency>
+            <groupId>javax.xml</groupId>
+            <artifactId>jaxrpc</artifactId>
+            <version>1.1</version>
+        </dependency>
 		
 		<!-- DBCP -->
 		<dependency>
@@ -73,6 +93,20 @@
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.2.2</version>
 		</dependency>
+        
+        <!-- JX Path -->
+        <dependency>
+            <groupId>commons-jxpath</groupId>
+            <artifactId>commons-jxpath</artifactId>
+            <version>1.3</version>
+        </dependency>
+        
+        <!-- jTDS -->
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>1.2.6</version>
+        </dependency>
 		
 		<!-- AspectJ -->
 		<dependency>
@@ -96,13 +130,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${org.slf4j-version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${org.slf4j-version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -122,7 +154,6 @@
 					<artifactId>jmxri</artifactId>
 				</exclusion>
 			</exclusions>
-			<scope>runtime</scope>
 		</dependency>
 
 		<!-- @Inject -->
@@ -177,6 +208,11 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.2</version>
 		</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time-jsptags</artifactId>
+            <version>1.1.1</version>
+        </dependency>
 
 		<!-- Mail -->
 		<dependency>
@@ -197,6 +233,13 @@
 			<version>3.9</version>
 		</dependency>
 		
+		<!--  JXL -->
+        <dependency>
+            <groupId>net.sourceforge.jexcelapi</groupId>
+            <artifactId>jxl</artifactId>
+            <version>2.6.12</version>
+        </dependency>
+
 		<!-- JSON -->
 		<dependency>
 			<groupId>net.sf.json-lib</groupId>
@@ -256,6 +299,22 @@
 			<artifactId>cglib</artifactId>
 			<version>2.2</version>
 		</dependency>
+
+		<!--  provided dependencies -->
+		<dependency>
+		    <groupId>com.search</groupId>
+		    <artifactId>topkeywords</artifactId>
+		    <scope>system</scope>
+		    <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/topkeywords.jar</systemPath>
+		    <version>1.0</version>
+		</dependency>
+        <dependency>
+            <groupId>com.search</groupId>
+            <artifactId>searchguiwsclient</artifactId>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/searchguiwsclient.jar</systemPath>
+            <version>1.0</version>
+        </dependency>
 	</dependencies>
     <build>
         <plugins>
