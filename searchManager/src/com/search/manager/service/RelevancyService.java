@@ -186,8 +186,8 @@ public class RelevancyService extends RuleService{
 			relevancy.setStore(new Store(storeId));
 			relevancy.setRelevancyName(name);
 			relevancy.setDescription(description);
-			relevancy.setStartDateTime(StringUtils.isBlank(startDate) ? null :  JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
-			relevancy.setEndDateTime(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
+			relevancy.setStartDate(StringUtils.isBlank(startDate) ? null :  JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
+			relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
 			relevancy.setCreatedBy(userName);
 			clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
 			Relevancy hostRelevancy = getRule(ruleId);
@@ -225,8 +225,8 @@ public class RelevancyService extends RuleService{
 			rule.setRuleId(id);
 			rule.setRuleName(name);
 			rule.setDescription(description);
-			rule.setStartDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
-			rule.setEndDateTime(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
+			rule.setStartDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
+			rule.setEndDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.updateRelevancy(rule);
 		} catch (DaoException e) {

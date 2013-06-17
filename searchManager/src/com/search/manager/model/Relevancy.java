@@ -32,8 +32,8 @@ public class Relevancy extends ModelBean {
 	private String relevancyName;
 	private String description;
 	private Store store;
-	private DateTime startDateTime;
-	private DateTime endDateTime;
+	private DateTime startDate;
+	private DateTime endDate;
 	private Map<String, String> fields = new HashMap<String, String>();
 	private List<RelevancyKeyword> relKeyword;
 	
@@ -83,19 +83,19 @@ public class Relevancy extends ModelBean {
 		this.relevancyName = relevancyName;
 	}
 	
-	public Relevancy(String relevancyId, String relevancyName, String description, Store store, DateTime startDateTime, DateTime endDateTime, String comment,
-			String createdBy, String lastModifiedBy, DateTime createdDateTime, DateTime lastModifiedDateTime) {
+	public Relevancy(String relevancyId, String relevancyName, String description, Store store, DateTime startDate, DateTime endDate, String comment,
+			String createdBy, String lastModifiedBy, DateTime createdDate, DateTime lastModifiedDate) {
 		this.relevancyId = relevancyId;
 		this.relevancyName = relevancyName;
 		this.description = description;
 		this.store = store;
-		this.startDateTime = startDateTime;
-		this.endDateTime = endDateTime;
+		this.startDate = startDate;
+		this.endDate = endDate;
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDate = createdDateTime;
-		this.lastModifiedDate = lastModifiedDateTime;
+		this.createdDate = createdDate;
+		this.lastModifiedDate = lastModifiedDate;
 	}
 	
 	public Relevancy(RankingRuleXml xml) {
@@ -103,8 +103,8 @@ public class Relevancy extends ModelBean {
 		this.relevancyName = xml.getRuleName();
 		this.description = xml.getDescription();
 		this.store = new Store(xml.getStore());
-		this.startDateTime = xml.getStartDateTime();
-		this.endDateTime = xml.getEndDateTime();
+		this.startDate = xml.getStartDate();
+		this.endDate = xml.getEndDate();
 //		comment = xml.getNotes();
 		this.createdBy = xml.getCreatedBy();
 		this.lastModifiedBy = xml.getLastModifiedBy();
@@ -166,28 +166,28 @@ public class Relevancy extends ModelBean {
 		return store;
 	}
 	
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
-	public DateTime getStartDateTime() {
-		return startDateTime;
-	}
-
-	public void setStartDateTime(DateTime startDateTime) {
-		this.startDateTime = startDateTime;
-	}
-
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
-	public DateTime getEndDateTime() {
-		return endDateTime;
-	}
-
-	public void setEndDateTime(DateTime endDateTime) {
-		this.endDateTime = endDateTime;
-	}
-
 	public void setAlternateQuery(String value) {
 		fields.put(Parameter.PARAM_ALTERNATE_QUERY.toString(), value);
 	}
 	
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	public DateTime getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(DateTime startDate) {
+		this.startDate = startDate;
+	}
+
+	@XmlJavaTypeAdapter(DateTimeAdapter.class)
+	public DateTime getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(DateTime endDate) {
+		this.endDate = endDate;
+	}
+
 	public String getAlternateQuery() {
 		return fields.get(Parameter.PARAM_ALTERNATE_QUERY.toString());
 	}
@@ -286,11 +286,11 @@ public class Relevancy extends ModelBean {
 	}
 
 	public String getFormattedStartDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getStartDateTime(), JodaPatternType.DATE);
+		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
 	}
 
 	public String getFormattedEndDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getEndDateTime(), JodaPatternType.DATE);
+		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE);
 	}
 	
 	/**

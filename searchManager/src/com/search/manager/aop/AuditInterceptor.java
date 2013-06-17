@@ -858,33 +858,33 @@ public class AuditInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				message = new StringBuilder("Adding relevancy[%1$s] with name[%2$s] and description[%3$s] to store[%4$s]");
-				if (relevancy.getStartDateTime() != null || relevancy.getStartDateTime() != null) {
+				if (relevancy.getStartDate() != null || relevancy.getStartDate() != null) {
 					message.append(" with schedule");
-					if (relevancy.getStartDateTime() != null) {
+					if (relevancy.getStartDate() != null) {
 						message.append(" from [%5$s]");						
 					}
-					if (relevancy.getEndDateTime() != null) {
+					if (relevancy.getEndDate() != null) {
 						message.append(" to [%6$s]");
 					}
 				}
 				auditTrail.setDetails(String.format(message.toString(),
 						relevancy.getRelevancyId(), StringUtils.trimToEmpty(relevancy.getRelevancyName()), StringUtils.trimToEmpty(relevancy.getDescription()), 
-						DAOUtils.getStoreId(relevancy.getStore()), relevancy.getStartDateTime(), relevancy.getEndDateTime()));
+						DAOUtils.getStoreId(relevancy.getStore()), ObjectUtils.toString(relevancy.getStartDate()), ObjectUtils.toString(relevancy.getEndDate())));
 				break;
 			case update:
 				message = new StringBuilder("Updating relevancy[%1$s] with name[%2$s] and description[%3$s] ");
-				if (relevancy.getStartDateTime() != null || relevancy.getStartDateTime() != null) {
+				if (relevancy.getStartDate() != null || relevancy.getStartDate() != null) {
 					message.append(" with schedule");
-					if (relevancy.getStartDateTime() != null) {
+					if (relevancy.getStartDate() != null) {
 						message.append(" from [%4$s]");						
 					}
-					if (relevancy.getEndDateTime() != null) {
+					if (relevancy.getEndDate() != null) {
 						message.append(" to [%5$s]");
 					}					
 				}
 				auditTrail.setDetails(String.format(message.toString(),
 						relevancy.getRelevancyId(), StringUtils.trimToEmpty(relevancy.getRelevancyName()), StringUtils.trimToEmpty(relevancy.getDescription()), 
-						relevancy.getStartDateTime(), relevancy.getEndDateTime()));
+						ObjectUtils.toString(relevancy.getStartDate()), ObjectUtils.toString(relevancy.getEndDate())));
 				break;
 			case delete:
 				message = new StringBuilder("Deleting relevancy[%1$s]");

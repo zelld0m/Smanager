@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.directwebremoting.annotations.DataTransferObject;
@@ -14,6 +15,8 @@ import org.joda.time.DateTime;
 
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 
@@ -23,8 +26,8 @@ public class RankingRuleXml extends RuleXml {
 
 	private static final long serialVersionUID = 1L;
 	private String description;
-	private DateTime startDateTime;
-	private DateTime endDateTime;
+	private DateTime startDate;
+	private DateTime endDate;
 	private RuleKeywordXml ruleKeyword;
 	private Map<String, String> parameters;
 
@@ -39,8 +42,8 @@ public class RankingRuleXml extends RuleXml {
 		if(rr!=null){
 			this.setRuleId(rr.getRuleId());
 			this.setRuleName(rr.getRuleName());
-			this.setStartDateTime(rr.getStartDateTime());
-			this.setEndDateTime(rr.getEndDateTime());
+			this.setStartDate(rr.getStartDate());
+			this.setEndDate(rr.getEndDate());
 			this.setDescription(rr.getDescription());
 			List<String> keywords = new ArrayList<String>();
 			if (CollectionUtils.isNotEmpty(rr.getRelKeyword())) {
@@ -73,20 +76,20 @@ public class RankingRuleXml extends RuleXml {
 		this.description = description;
 	}
 
-	public DateTime getStartDateTime() {
-		return startDateTime;
+	public DateTime getStartDate() {
+		return startDate;
 	}
 
-	public void setStartDateTime(DateTime startDateTime) {
-		this.startDateTime = startDateTime;
+	public void setStartDate(DateTime startDate) {
+		this.startDate = startDate;
 	}
 
-	public DateTime getEndDateTime() {
-		return endDateTime;
+	public DateTime getEndDate() {
+		return endDate;
 	}
 
-	public void setEndDateTime(DateTime endDateTime) {
-		this.endDateTime = endDateTime;
+	public void setEndDate(DateTime endDate) {
+		this.endDate = endDate;
 	}
 
 	@XmlElementRef(type=RuleKeywordXml.class)
@@ -106,16 +109,13 @@ public class RankingRuleXml extends RuleXml {
 		this.parameters = parameters;
 	}
 	
-	//TODO: Use util or joda tlds	
-//	@XmlTransient
-//	public String getFormattedStartDate() {
-//		if(getStore()==null) return StringUtils.EMPTY;
-//		return DateAndTimeUtils.formatDateUsingConfig(getStore(), getStartDate());
-//	}
-//	
-//	@XmlTransient
-//	public String getFormattedEndDate() {
-//		if(getStore()==null) return StringUtils.EMPTY;
-//		return DateAndTimeUtils.formatDateUsingConfig(getStore(), getEndDate());
-//	}
+	@XmlTransient
+	public String getFormattedStartDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
+	}
+	
+	@XmlTransient
+	public String getFormattedEndDate() {
+		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE);
+	}
 }
