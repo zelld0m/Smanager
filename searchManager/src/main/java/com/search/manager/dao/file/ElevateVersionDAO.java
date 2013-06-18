@@ -17,7 +17,7 @@ import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 
 @Repository(value="elevateVersionDAO")
-public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
+public class ElevateVersionDAO extends AbstractRuleVersionDAO<ElevateRuleXml>{
 
 	@Autowired private DaoService daoService;
 	

@@ -252,10 +252,18 @@ public class SearchServlet extends HttpServlet {
 		return fromSearchGui ? daoService : solrService;
 	}
 	
-	protected Integer getMaxSuggestCount(String storeId, boolean fromSearchGui) throws DaoException {
-		return getDaoService(fromSearchGui).getMaxSuggest(storeId);
-	}
-	
+    protected Integer getMaxSuggestCount(String storeId, boolean fromSearchGui) throws DaoException {
+        try {
+            return getDaoService(fromSearchGui).getMaxSuggest(storeId);
+        } catch (DaoException e) {
+            if (!fromSearchGui) {
+                return 5;
+            } else {
+                throw e;
+            }
+        }
+    }
+
 	protected SpellRule getSpellRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
 		try {
 			return getDaoService(fromSearchGui).getSpellRuleForSearchTerm(sk.getStoreId(), sk.getKeywordId());

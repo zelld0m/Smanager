@@ -17,7 +17,7 @@ import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 
 @Repository(value="demoteVersionDAO")
-public class DemoteVersionDAO extends RuleVersionDAO<DemoteRuleXml>{
+public class DemoteVersionDAO extends AbstractRuleVersionDAO<DemoteRuleXml>{
 	
 	@Autowired private DaoService daoService;
 	
