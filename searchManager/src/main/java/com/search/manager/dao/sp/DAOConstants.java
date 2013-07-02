@@ -23,7 +23,7 @@ public class DAOConstants {
 	public static final String SP_GET_ELEVATE_ITEM 					= "usp_Get_Elevate_Value";
 	public static final String SP_GET_NO_EXPIRY_ELEVATE 			= "usp_Get_Elevate_NoExpiry";
 	public static final String SP_UPDATE_ELEVATE 					= "usp_Update_Elevate";
-	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date_NEW";
+	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date";
 	public static final String SP_UPDATE_ELEVATE_COMMENT 			= "usp_Update_Elevate_Comment";
 	public static final String SP_APPEND_ELEVATE_COMMENT 			= "usp_Append_Elevate_Comment";
 	public static final String SP_DELETE_ELEVATE 					= "usp_Delete_Elevate";
@@ -36,13 +36,13 @@ public class DAOConstants {
 	public static final String SP_DELETE_EXCLUDE 					= "usp_Delete_Exclude";
 	public static final String SP_UPDATE_EXCLUDE_COMMENT 			= "usp_Update_Exclude_Comment";
 	public static final String SP_APPEND_EXCLUDE_COMMENT 			= "usp_Append_Exclude_Comment";
-	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date_NEW";
+	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date";
 	// DEMOTE
 	public static final String SP_ADD_DEMOTE 						= "usp_Add_Demote";
 	public static final String SP_GET_DEMOTE 						= "usp_Get_Demote";
 	public static final String SP_GET_DEMOTE_NEW 					= "usp_Get_Demote_New";
 	public static final String SP_UPDATE_DEMOTE 					= "usp_Update_Demote";
-	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date_NEW";
+	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date";
 	public static final String SP_DELETE_DEMOTE 					= "usp_Delete_Demote";
 
 	// FACET SORT
@@ -107,7 +107,7 @@ public class DAOConstants {
 
 	//RULE STATUS
 	public static final String SP_ADD_RULE_STATUS					= "usp_Add_Rule_Status";
-	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status_NEW";
+	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status";
 	public static final String SP_DELETE_RULE_STATUS				= "usp_Delete_Rule_Status";
 	public static final String SP_GET_RULE_STATUS					= "usp_Get_Rule_Status";
 	//COMMENT
@@ -120,9 +120,9 @@ public class DAOConstants {
 	public static final String SP_GET_CATEGORY_BY_FILTER			= "usp_Get_Product_Category_by_Filter";
 
 	//USER
-	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User_NEW";
-	public static final String SP_ADD_USERS							= "usp_Add_Manager_User_NEW";
-	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User_NEW";
+	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User";
+	public static final String SP_ADD_USERS							= "usp_Add_Manager_User";
+	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User";
 	public static final String SP_DELETE_USERS						= "usp_Delete_Manager_User";
 	public static final String SP_GET_GROUP_SECURITY				= "usp_Get_Manager_Group_Security";
 
