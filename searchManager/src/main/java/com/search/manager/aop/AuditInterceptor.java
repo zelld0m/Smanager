@@ -396,7 +396,7 @@ public class AuditInterceptor {
 		
 		logAuditTrail(auditTrail);
 	}
-	
+
 	private void logBanner(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		
 		StringBuilder message = new StringBuilder();
@@ -511,69 +511,149 @@ public class AuditInterceptor {
 	}
 		
 	private void logDidYouMean(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
-		SpellRule e = null;
-		e = (SpellRule)jp.getArgs()[0];
-		auditTrail.setReferenceId(e.getRuleId());
-		auditTrail.setStoreId(e.getStoreId());
-				
-		StringBuilder message = null;
-		
+		List<SpellRule> added = null;
+		List<SpellRule> updated = null;
+		List<SpellRule> deleted = null;
+		Integer maxSuggest = null;
+		String username = UtilityService.getUsername();
+        StringBuilder message = new StringBuilder();
+
 		switch (auditable.operation()) {
-			case add:
-				message = new StringBuilder("Adding");
-				if(StringUtils.isNotBlank(e.getRuleId())){
-					message.append(" ID [%1$s]");
-				}
-				
-				if(e.getSearchTerms() != null){
-					message.append(" Search Terms [%2$s]");
-				}
-				
-				if(e.getSuggestions() != null){
-					message.append(" Suggestions [%3$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getComment())){
-					message.append(" Comment [%4$s]");
-				}
-				break;
-			case update:
-				message = new StringBuilder("Updating ID[%1$s]");
-				if(e.getSearchTerms() != null){
-					message.append(" Search Terms [%2$s]");
-				}
-				
-				if(e.getSuggestions() != null){
-					message.append(" Suggestions [%3$s]");
-				}
-				
-				if(StringUtils.isNotBlank(e.getComment())){
-					message.append(" Comment [%4$s]");
-				}
-				break;
-			case delete:
-				message = new StringBuilder("Removing ID[%1$s]");
-				break;
-			default:
-				message = new StringBuilder();
-				return;
+		    case add:
+		        added = (List<SpellRule>) jp.getArgs()[0];
+		        break;
+		    case update:
+		        updated = (List<SpellRule>) jp.getArgs()[0];
+		        deleted = (List<SpellRule>) jp.getArgs()[1];
+		        break;
+		    case updateSetting:
+		        maxSuggest = (Integer) jp.getArgs()[1];
+		        break;
 		}
-		
-		auditTrail.setDetails(
-				String.format(message.toString(),
-						auditTrail.getReferenceId(), 
-						e.getSearchTerms() != null ? StringUtils.join(e.getSearchTerms(), "|") : "", 
-						e.getSuggestions() != null ? StringUtils.join(e.getSuggestions(), "|") : "",
-						e.getComment()
-				)
-		);
-				
-		logAuditTrail(auditTrail);
+
+		if (added != null) {
+		    for (SpellRule rule : added) {
+		        AuditTrail at = createTrail(auditable, username);
+		        at.setReferenceId(rule.getRuleId());
+		        at.setStoreId(rule.getStoreId());
+
+		        message.delete(0, message.length());
+		        message.append("Adding");
+
+		        if (StringUtils.isNotBlank(rule.getRuleId())) {
+		            message.append(" ID [%1$s]");
+		        }
+
+                if(rule.getSearchTerms() != null){
+                    message.append(" Search Terms [%2$s]");
+                }
+
+                if(rule.getSuggestions() != null){
+                    message.append(" Suggestions [%3$s]");
+                }
+
+                if(StringUtils.isNotBlank(rule.getComment())){
+                    message.append(" Comment [%4$s]");
+                }
+
+                at.setDetails(String.format(message.toString(),
+                        at.getReferenceId(), 
+                        rule.getSearchTerms() != null ? StringUtils.join(rule.getSearchTerms(), "|") : "", 
+                        rule.getSuggestions() != null ? StringUtils.join(rule.getSuggestions(), "|") : "",
+                        rule.getComment()
+                ));
+
+                logAuditTrail(at);
+		    }
+		}
+
+        if (updated != null) {
+            for (SpellRule rule : updated) {
+                AuditTrail at = createTrail(auditable, username);
+                at.setReferenceId(rule.getRuleId());
+                at.setStoreId(rule.getStoreId());
+
+                message.delete(0, message.length());
+                message.append("Updating ID [%1$s]");
+
+                if(rule.getSearchTerms() != null){
+                    message.append(" Search Terms [%2$s]");
+                }
+
+                if(rule.getSuggestions() != null){
+                    message.append(" Suggestions [%3$s]");
+                }
+
+                if(StringUtils.isNotBlank(rule.getComment())){
+                    message.append(" Comment [%4$s]");
+                }
+
+                at.setDetails(String.format(message.toString(),
+                        at.getReferenceId(), 
+                        rule.getSearchTerms() != null ? StringUtils.join(rule.getSearchTerms(), "|") : "", 
+                        rule.getSuggestions() != null ? StringUtils.join(rule.getSuggestions(), "|") : "",
+                        rule.getComment()
+                ));
+
+                logAuditTrail(at);
+            }
+        }
+
+        if (deleted != null) {
+            for (SpellRule rule : deleted) {
+                AuditTrail at = createTrail(auditable, username);
+                at.setReferenceId(rule.getRuleId());
+                at.setStoreId(rule.getStoreId());
+
+                message.delete(0, message.length());
+                message.append("Removing ID [%1$s]");
+
+                if(rule.getSearchTerms() != null){
+                    message.append(" Search Terms [%2$s]");
+                }
+
+                if(rule.getSuggestions() != null){
+                    message.append(" Suggestions [%3$s]");
+                }
+
+                if(StringUtils.isNotBlank(rule.getComment())){
+                    message.append(" Comment [%4$s]");
+                }
+
+                at.setDetails(String.format(message.toString(),
+                        at.getReferenceId(), 
+                        rule.getSearchTerms() != null ? StringUtils.join(rule.getSearchTerms(), "|") : "", 
+                        rule.getSuggestions() != null ? StringUtils.join(rule.getSuggestions(), "|") : "",
+                        rule.getComment()
+                ));
+
+                logAuditTrail(at);
+            }
+        }
+
+        if (maxSuggest != null) {
+            AuditTrail at = createTrail(auditable, username);
+
+            at.setReferenceId("spell_rule");
+            at.setStoreId((String) jp.getArgs()[0]);
+
+            at.setDetails("Maximum suggestion updated to " + maxSuggest);
+            logAuditTrail(at);
+        }
 	}
 	
+    private AuditTrail createTrail(Audit auditable, String username) {
+        AuditTrail at = new AuditTrail();
+        at.setEntity(auditable.entity().toString());
+        at.setOperation(auditable.operation().toString());
+        at.setCreatedDate(new DateTime());
+        at.setUsername(username);
+
+        return at;
+    }
 
 	private void logFacetSort(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
-		
+
 		FacetSort e = null;
 		e = (FacetSort)jp.getArgs()[0];
 		auditTrail.setReferenceId(e.getRuleId());

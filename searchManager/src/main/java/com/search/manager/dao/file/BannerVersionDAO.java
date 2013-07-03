@@ -19,7 +19,7 @@ import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.utility.Transformers;
 
 @Component("bannerVersionDAO")
-public class BannerVersionDAO extends RuleVersionDAO<BannerRuleXml> {
+public class BannerVersionDAO extends AbstractRuleVersionDAO<BannerRuleXml> {
 
     private static final Logger logger = LoggerFactory.getLogger(BannerVersionDAO.class);
 

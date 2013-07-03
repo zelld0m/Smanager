@@ -1,10 +1,13 @@
 package com.search.manager.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.search.manager.report.model.xml.SpellRuleXml;
+import com.search.manager.utility.StringUtil;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class SpellRule extends ModelBean {
@@ -54,6 +57,20 @@ public class SpellRule extends ModelBean {
         this.suggestions = suggestions;
     }
 
+    public SpellRule(String ruleId, String storeId, String status, String[] searchTerms, String[] suggestions,
+            String createdBy, String lastModifiedBy, DateTime createdDate, DateTime lastModifiedDate) {
+        super();
+        this.ruleId = ruleId;
+        this.storeId = storeId;
+        this.status = status;
+        this.searchTerms = searchTerms;
+        this.suggestions = suggestions;
+        this.createdBy = createdBy;
+        this.lastModifiedBy = lastModifiedBy;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     public String getRuleId() {
         return ruleId;
     }
@@ -83,7 +100,7 @@ public class SpellRule extends ModelBean {
     }
 
     public void setSearchTerms(String[] searchTerms) {
-        this.searchTerms = searchTerms;
+        this.searchTerms = StringUtil.toLowerCase(searchTerms);
     }
 
     public String[] getSuggestions() {
@@ -92,5 +109,26 @@ public class SpellRule extends ModelBean {
 
     public void setSuggestions(String[] suggestions) {
         this.suggestions = suggestions;
+    }
+
+    public String toTabbedSearchTerm() {
+        return StringUtils.join(searchTerms, '\t');
+    }
+
+    public String toTabbedSuggestions() {
+        return StringUtils.join(suggestions, '\t');
+    }
+
+    public void fromTabbedSearchTerms(String tabbedSearchTerms) {
+        searchTerms = StringUtils.split(tabbedSearchTerms, '\t');
+    }
+
+    public void fromTabbedSuggestions(String tabbedSuggestions) {
+        suggestions = StringUtils.split(tabbedSuggestions, '\t');
+    }
+
+    public boolean sameTermsWith(SpellRule rule) {
+        return rule != null && toTabbedSearchTerm().equals(rule.toTabbedSearchTerm())
+                && toTabbedSuggestions().equals(rule.toTabbedSuggestions());
     }
 }
