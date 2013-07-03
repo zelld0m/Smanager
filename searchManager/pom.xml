@@ -79,6 +79,18 @@
             <artifactId>axis</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.2</version>
+            <exclusions>
+                <!-- Exclude Commons Logging in favor of SLF4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         
         <!-- JAXRPC -->
         <dependency>
