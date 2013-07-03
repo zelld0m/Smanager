@@ -359,20 +359,23 @@
 				var $rulePreview = $content.find("div#leftPreview");
 
 				SpellRuleServiceJS.getRuleById(base.options.ruleId, {
-					callback: function(data){
-						var $tr = $content.find("tr#itemPattern").clone();
-						
-						var list1 = data["searchTerms"];
-						for(var i=0; i<list1.length; i++) {
-							$tr.find("td#itemSearchTerms").append("<span class='term' >" + list1[i] + "</span>");
+					callback: function(response){
+						if (response.status == 0) {
+							var $tr = $content.find("tr#itemPattern").clone();
+							var data = status.data;
+							
+							var list1 = data["searchTerms"];
+							for(var i=0; i<list1.length; i++) {
+								$tr.find("td#itemSearchTerms").append("<span class='term' >" + list1[i] + "</span>");
+							}
+							
+							var list2 = data["suggestions"];
+							for(var i=0; i<list2.length; i++) {
+								$tr.find("td#itemSuggestions").append("<span class='term' >" + list2[i] + "</span>");
+							}
+							$tr.show();
+							$table.append($tr);
 						}
-						
-						var list2 = data["suggestions"];
-						for(var i=0; i<list2.length; i++) {
-							$tr.find("td#itemSuggestions").append("<span class='term' >" + list2[i] + "</span>");
-						}
-						$tr.show();
-						$table.append($tr);
 					},
 					postHook:function() {
 						$table.find("tr#preloader").hide();

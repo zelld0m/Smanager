@@ -14,7 +14,7 @@ import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 
 @Repository(value="rankingRuleVersionDAO")
-public class RankingRuleVersionDAO extends RuleVersionDAO<RankingRuleXml>{
+public class RankingRuleVersionDAO extends AbstractRuleVersionDAO<RankingRuleXml>{
 
 	@Autowired private DaoService daoService;
 

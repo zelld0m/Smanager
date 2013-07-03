@@ -17,7 +17,7 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 
 @Repository(value="excludeVersionDAO")
-public class ExcludeVersionDAO extends RuleVersionDAO<ExcludeRuleXml>{
+public class ExcludeVersionDAO extends AbstractRuleVersionDAO<ExcludeRuleXml>{
 	
 	@Autowired private DaoService daoService;
 	

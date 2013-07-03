@@ -64,13 +64,10 @@ import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
-import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.report.model.xml.SpellRuleXml;
-import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
@@ -890,37 +887,6 @@ public class RuleXmlUtil{
 		return false;
 	}
 
-    private static boolean restoreSpellRule(String path, RuleXml xml, boolean createPreRestore) {
-        SpellRules rules = (SpellRules) xml;
-        String store = rules.getStore();
-
-        try {
-            SpellRules crules = daoService.getSpellRules(store);
-
-            if (crules != null) {
-                // create backup of current spell rules.
-                if (createPreRestore) {
-                    if (!RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, rules.getRuleId(), crules, path)) {
-                        logger.error("Failed to create pre-import rule");
-                        return false;
-                    }
-                }
-            }
-
-            // replace current spell rules with rules to restore
-            if (daoService.replaceSpellRules(rules)) {
-                logger.info("Rollback spell rules succeeded");
-                return true;
-            } else {
-                logger.error("Failed to rollback ranking rule");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
     private static boolean restoreBannerRule(String path, RuleXml xml, boolean createPreRestore) {
         String username = UtilityService.getUsername();
         String store = UtilityService.getStoreId();
@@ -1035,8 +1001,8 @@ public class RuleXmlUtil{
         }
     }
 
-    public static RuleXml loadVersion(RuleFileXml xml) {
-        return xmlFileToRuleXml(xml.getPath());
+    public static RuleXml loadVersion(String file) {
+        return xmlFileToRuleXml(file);
     }
 
 	private static boolean restoreRule(RuleXml xml, boolean isVersion, boolean createPreRestore) {
@@ -1045,8 +1011,6 @@ public class RuleXmlUtil{
 
 		if(xml  == null){
 			return isRestored; 
-		} else if (xml instanceof RuleFileXml) {
-		    xml = loadVersion((RuleFileXml) xml);
 		}
 
 		if (xml instanceof ElevateRuleXml){
@@ -1061,17 +1025,6 @@ public class RuleXmlUtil{
 			isRestored = RuleXmlUtil.restoreQueryCleaning(path, xml, createPreRestore);
 		}else if(xml instanceof RankingRuleXml){
 			isRestored = RuleXmlUtil.restoreRankingRule(path, xml, createPreRestore);
-		}else if(xml instanceof SpellRules) {
-			if (!isVersion) {
-				String username = xml.getCreatedBy();
-				SpellRules spellRules = (SpellRules)xml;
-				for (SpellRuleXml rule: spellRules.getSpellRule()) {
-					rule.setCreatedBy(username);
-					rule.setCreatedDate(DateTime.now());
-					rule.setRuleId(DAOUtils.generateUniqueId());
-				}
-			}
-		    isRestored = RuleXmlUtil.restoreSpellRule(path, xml, createPreRestore);
 		}else if (xml instanceof BannerRuleXml) {
 		    isRestored = RuleXmlUtil.restoreBannerRule(path, xml, createPreRestore);
 		}

@@ -17,7 +17,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
@@ -26,22 +25,20 @@ import org.xml.sax.SAXException;
 
 import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
-import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 
-public abstract class RuleVersionDAO<T extends RuleXml>{
-
-	private Logger logger = Logger.getLogger(RuleVersionDAO.class);
+public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRuleVersionDAO<T>{
+	
+	private Logger logger = Logger.getLogger(AbstractRuleVersionDAO.class);
 
 	protected abstract RuleEntity getRuleEntity();
 
@@ -55,7 +52,8 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return RuleVersionUtil.getPublishedList(store, getRuleEntity(), ruleId);
 	}
 
-	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
+	@Override
+    public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
 		if (ruleVersionListXml!=null) {
 			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, true)) {
@@ -65,7 +63,8 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return RuleVersionUtil.addRuleVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
 	}
 
-	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
+	@Override
+    public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
 		RuleEntity entity = getRuleEntity();
 
@@ -80,18 +79,15 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 				RuleXml latestRuleXml = (RuleXml)versions.get(versions.size() - 1);
 				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
 
-				if (latestRuleXml instanceof RuleFileXml) {
-					((RuleFileXml) latestRuleXml).getContent().setRuleStatus(ruleStatus);
-				} else {
-					latestRuleXml.setRuleStatus(ruleStatus);
-				}
+				latestRuleXml.setRuleStatus(ruleStatus);
 			}
 		}
 
 		return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersionListXml);
 	}
 
-	public boolean restoreRuleVersion(RuleXml xml){
+	@Override
+    public boolean restoreRuleVersion(RuleXml xml){
 		return RuleXmlUtil.restoreRule(xml);
 	};
 
@@ -99,13 +95,9 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return RuleVersionUtil.getRuleVersionFilename(store, getRuleEntity(), StringUtil.escapeKeyword(ruleId));
 	}
 
-	public boolean deleteRuleVersion(String store, String ruleId, String username, long version) {
-		return deleteRuleVersion(store, ruleId, username, version, false);
-	}
-
+	@Override
 	@SuppressWarnings("unchecked")
-	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version, boolean physical){
-
+    public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version) {
 		FileWriter writer = null;
 		try {
 			String filename = getRuleVersionFilename(store, ruleId);
@@ -119,24 +111,15 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 
 			List<RuleXml> versions = (List<RuleXml>) prefsJaxb.getVersions();
 
-			if (physical) {
-				CollectionUtils.filter(versions, new Predicate() {
-					@Override
-					public boolean evaluate(Object o) {
-						return ((T) o).getVersion() != version;
+			CollectionUtils.forAllDo(versions, new Closure(){
+				public void execute(Object o) {
+					if(((T)o).getVersion() == version){
+						((T)o).setDeleted(true);
+						((T)o).setLastModifiedBy(username);
+						((T)o).setLastModifiedDate(new DateTime());
 					}
-				});
-			} else {
-				CollectionUtils.forAllDo(versions, new Closure(){
-					public void execute(Object o) {
-						if(((T)o).getVersion() == version){
-							((T)o).setDeleted(true);
-							((T)o).setLastModifiedBy(username);
-							((T)o).setLastModifiedDate(DateTime.now());
-						}
-					};
-				});
-			}
+				};
+			});
 
 			prefsJaxb.setVersions(versions);
 			Marshaller m = context.createMarshaller();
@@ -189,16 +172,18 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return ruleVersionInfoList;
 	}	
 
-
-	public List<RuleXml> getPublishedRuleVersions(String store, String ruleId) {
+	@Override
+    public List<RuleXml> getPublishedRuleVersions(String store, String ruleId) {
 		return getRuleVersions(getPublishedList(store, ruleId));
 	}	
 
-	public List<RuleXml> getRuleVersions(String store, String ruleId) {
+	@Override
+    public List<RuleXml> getRuleVersions(String store, String ruleId) {
 		return getRuleVersions(getRuleVersionList(store, ruleId));
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public int getRuleVersionsCount(String store, String ruleId) {
 		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
 		int count = 0;

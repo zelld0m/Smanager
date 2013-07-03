@@ -3,20 +3,20 @@ package com.search.manager.report.model;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Function;
+import com.search.manager.model.SpellRule;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.report.annotation.ReportField;
-import com.search.manager.report.model.xml.SpellRuleXml;
 
-public class SpellReportBean extends ReportBean<SpellRuleXml> {
+public class SpellReportBean extends ReportBean<SpellRule> {
 
-	public static final Function<SpellRuleXml, SpellReportBean> transformer = new Function<SpellRuleXml, SpellReportBean>() {
-		public SpellReportBean apply(SpellRuleXml xml) {
-			return new SpellReportBean(xml);
+	public static final Function<SpellRule, SpellReportBean> transformer = new Function<SpellRule, SpellReportBean>() {
+		public SpellReportBean apply(SpellRule rule) {
+			return new SpellReportBean(rule);
 		}
 	};
 
-	public SpellReportBean(SpellRuleXml model) {
+	public SpellReportBean(SpellRule model) {
 		super(model);
 	}
 
@@ -25,15 +25,15 @@ public class SpellReportBean extends ReportBean<SpellRuleXml> {
 		return model.getRuleId();
 	}
 
-    @ReportField(label = "Search Terms", size = 20, sortOrder = 2)
-    public String getSearchTerms() {
-        return StringUtils.join(model.getRuleKeyword(), ',');
-    }
+	@ReportField(label = "Search Terms", size = 20, sortOrder = 2)
+	public String getSearchTerms() {
+		return StringUtils.join(model.getSearchTerms(), ',');
+	}
 
-    @ReportField(label = "Suggestions", size = 20, sortOrder = 3)
-    public String getSuggestions() {
-        return StringUtils.join(model.getSuggestKeyword(), ',');
-    }
+	@ReportField(label = "Suggestions", size = 20, sortOrder = 3)
+	public String getSuggestions() {
+		return StringUtils.join(model.getSuggestions(), ',');
+	}
 
 	@ReportField(label = "Status", size = 20, sortOrder = 4)
 	public String getStatus() {

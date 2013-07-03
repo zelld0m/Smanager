@@ -22,7 +22,7 @@ import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 
 @Repository(value="facetSortVersionDAO")
-public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
+public class FacetSortVersionDAO extends AbstractRuleVersionDAO<FacetSortRuleXml>{
 	
 	@Autowired private DaoService daoService;
 	

@@ -601,6 +601,20 @@ public final class StringUtil {
 		return builder.toString();
 	}
 
+    public static String[] toLowerCase(String[] strings) {
+        if (strings != null) {
+            String[] lower = new String[strings.length];
+            int idx = 0;
+
+            for (String string : strings) {
+                lower[idx++] = lowercaseTransformer.apply(string);
+            }
+
+            return lower;
+        } else
+            return null;
+    }
+
 	public static Predicate<String> createIContainsPredicate(String target) {
 	    return new IContainsPredicate(target);
 	}
