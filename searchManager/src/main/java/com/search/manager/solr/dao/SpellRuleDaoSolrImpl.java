@@ -19,7 +19,6 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.solr.constants.Constants;
@@ -84,15 +83,13 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 
 	@Override
 	public boolean loadSpellRules(Store store) throws DaoException {
-		RuleFileXml xml = new RuleFileXml();
-		String dirPath = new StringBuilder().append(BASE_RULE_DIR)
+		String path = new StringBuilder().append(BASE_RULE_DIR)
 				.append(File.separator).append(store.getStoreId())
 				.append(File.separator).append("Did You Mean")
 				.append(File.separator).append(SPELL_FILE).toString();
-		xml.setPath(dirPath);
 
 		@SuppressWarnings("static-access")
-		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(xml);
+		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
 		List<SpellRuleXml> spellRulesXml = null;
 
 		if (spellRules != null) {
@@ -134,21 +131,15 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 	@Override
 	public boolean loadSpellRules(StoreKeyword storeKeyword)
 			throws DaoException {
-
-		String store = StringUtils.lowerCase(StringUtils.trim(storeKeyword
-				.getStoreId()));
-		String keyword = StringUtils.lowerCase(StringUtils.trim(storeKeyword
-				.getKeywordId()));
-
-		RuleFileXml xml = new RuleFileXml();
-		String dirPath = new StringBuilder().append(BASE_RULE_DIR)
+		String store = StringUtils.lowerCase(StringUtils.trim(storeKeyword.getStoreId()));
+		String keyword = StringUtils.lowerCase(StringUtils.trim(storeKeyword.getKeywordId()));
+		String path = new StringBuilder().append(BASE_RULE_DIR)
 				.append(File.separator).append(store).append(File.separator)
 				.append("Did You Mean").append(File.separator)
 				.append(SPELL_FILE).toString();
-		xml.setPath(dirPath);
 
 		@SuppressWarnings("static-access")
-		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(xml);
+		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
 		List<SpellRuleXml> spellRulesXml = null;
 
 		if (spellRules != null) {
@@ -199,19 +190,16 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 	@Override
 	public boolean loadSpellRuleById(Store store, String ruleId)
 			throws DaoException {
-		String storeId = StringUtils.lowerCase(StringUtils.trim(store
-				.getStoreId()));
+		String storeId = StringUtils.lowerCase(StringUtils.trim(store.getStoreId()));
 		ruleId = StringUtils.trim(ruleId);
 
-		RuleFileXml xml = new RuleFileXml();
-		String dirPath = new StringBuilder().append(BASE_RULE_DIR)
+		String path = new StringBuilder().append(BASE_RULE_DIR)
 				.append(File.separator).append(storeId).append(File.separator)
 				.append("Did You Mean").append(File.separator)
 				.append(SPELL_FILE).toString();
-		xml.setPath(dirPath);
 
 		@SuppressWarnings("static-access")
-		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(xml);
+		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
 		List<SpellRuleXml> spellRulesXml = null;
 
 		if (spellRules != null) {
@@ -260,12 +248,10 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 	@Override
 	public boolean loadSpellRules(Store store, String dirPath, String fileName)
 			throws DaoException {
-		RuleFileXml xml = new RuleFileXml();
-		xml.setPath(new StringBuilder().append(dirPath).append(File.separator)
-				.append(fileName).toString());
+		String path = new StringBuilder().append(dirPath).append(File.separator).append(fileName).toString();
 
 		@SuppressWarnings("static-access")
-		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(xml);
+		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
 		List<SpellRuleXml> spellRulesXml = null;
 
 		if (spellRules != null) {

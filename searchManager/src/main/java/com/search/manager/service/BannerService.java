@@ -228,13 +228,13 @@ public class BannerService extends RuleService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String filter, String ruleId, int page, int pageSize){
+	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String storeId, String filter, String dateFilter, String ruleId, int page, int pageSize){
 		
 		DateTime now = DateTime.now();
 		DateTime startDate =  null;
 		DateTime endDate =  null;
 		Boolean disabled = null;
-
+		
 		if("active".equalsIgnoreCase(filter)){
 			startDate = now;
 			endDate = now;
@@ -242,9 +242,15 @@ public class BannerService extends RuleService{
 		}else if ("expired".equalsIgnoreCase(filter)){
 			endDate = now;
 		}else if ("disabled".equalsIgnoreCase(filter)){
-			startDate = now;
-			endDate = now;
+			startDate = endDate = now;
 			disabled = true;
+		}else if("customdate".equalsIgnoreCase(filter)){
+			startDate = endDate = now;
+			if(StringUtils.isNotBlank(dateFilter)){
+				startDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, dateFilter, JodaPatternType.DATE);
+				endDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, dateFilter, JodaPatternType.DATE);
+			}
+			disabled = false;
 		}
 
 		return getItemsWithDateRange(ruleId, startDate, endDate, disabled, null, page, pageSize);

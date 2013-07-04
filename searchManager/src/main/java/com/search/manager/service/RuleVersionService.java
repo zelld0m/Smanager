@@ -51,13 +51,7 @@ public class RuleVersionService{
 
     @RemoteMethod
     public boolean deleteRuleVersionPhysically(String ruleType, String ruleId, int version) {
-        boolean success = false;
-        try {
-            success = daoService.deleteRuleVersion(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version, true);
-        } catch (Exception e) {
-            logger.error("Failed during deleteRuleVersion()",e);
-        }
-        return success; 
+        return deleteRuleVersion(ruleType, ruleId, version);
     }
 
 	@RemoteMethod

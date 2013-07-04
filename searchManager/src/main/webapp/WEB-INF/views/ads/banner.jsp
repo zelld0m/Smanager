@@ -48,11 +48,13 @@
 				<ul class="page_nav fRight">
 					<li>	
 						<select id="itemFilter">
-							<option value="all">All</option>
-							<option value="active">Active</option>
-							<option value="expired">Expired</option>
-							<option value="disabled">Disabled</option>
+							<option value="all">All Items</option>
+							<option value="active">Active Only</option>
+							<option value="expired">Expired Only</option>
+							<option value="disabled">Active but Disabled</option>
+							<option value="customdate">Active on Date...</option>
 						</select>
+						<input type="text" id="filterByDate" name="filterByDate"/>
 					</li>
 					<li><div class="ico_graph ico" alt="Show All Item Statistics" title="Show All Item Statistics"></div></li>
 					<li>

@@ -59,7 +59,8 @@ public class AuditTrailConstants {
 		updateGroupItem,
 		// for import and export
 		importRule,
-		exportRule
+		exportRule,
+		updateSetting
 	}
 
 	public static Entity[] ENTITY_LIST_ASC = {
@@ -206,7 +207,7 @@ public class AuditTrailConstants {
 	
 	public static Operation[] spellOperations = {
 		Operation.add,
-		Operation.delete, 
+		Operation.updateSetting, 
 		Operation.update,
 		};
 

@@ -43,6 +43,7 @@ import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.report.model.SubReportHeader;
+import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
@@ -94,7 +95,7 @@ public class RuleXmlReportUtil{
 		        // for spell rules, one sheet per version will be created,
 		        // hence we need to set version number if subReportHeader to be used in naming sheets
 		        subReportHeader.setVersion(xml.getVersion());
-		        subReportHeader.addRow("Maximum Suggestion:", String.valueOf(((SpellRules) xml).getMaxSuggest()));
+		        subReportHeader.addRow("Maximum Suggestion:",((DBRuleVersion) xml).getProps().get("maxSuggest"));
 		        break;
             default:
                 break;
