@@ -122,11 +122,6 @@ height: 24px;
 	display: inline;
 }
 
-.ban_edit .schedule input {
-	width: 79px;
-	font-size: 12px;
-	text-align: center;
-}
 .ban_edit .calendar_ico_wrap {
 	padding: 3px 5px;
 }
@@ -624,18 +619,20 @@ margin-right: 5px;
 		margin-top:7px;
 	}
 }
+
 /* firefox fix end */
-
-
-
 .ban_edit #ruleTypeIcon {
 	display:none;
 }
-
-
 
 .ban_edit .banner_info_more label.note  {
 width: 200px;
 line-height: 100%;
 margin-left: 75px;
+}
+
+.hasDatepicker {
+	width: 79px;
+	font-size: 12px;
+	text-align: center;
 }

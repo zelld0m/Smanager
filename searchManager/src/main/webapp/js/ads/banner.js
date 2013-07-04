@@ -21,6 +21,16 @@
 				successDeleteBannerItem: "Successfully deleted {0}",
 				successCopyBannerItem: "Successfully copied {0} to {1}"
 			},
+			
+			calendarOpts: {
+				defaultDate: GLOBAL_currentDate,
+				changeMonth: true,
+				changeYear: true,
+				showOn: "both",
+				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
+				buttonImageOnly: true,
+				buttonText: "Date to simulate",				
+			},
 
 			init: function(){
 				var self = this;
@@ -245,9 +255,29 @@
 					$("#itemFilter").val("all");
 				}
 
+				$("#filterByDate").datepicker("destroy").hide();
+				
+				if($("#itemFilter").val()==="customdate"){
+					$("#filterByDate").show().datepicker($.extend({}, self.calendarOpts, {
+						onClose: function(selectedText){
+							self.getRuleItemList(1);
+						}
+					})).val($.datepicker.formatDate("mm/dd/yy", GLOBAL_currentDate));
+				}
+
 				$("#itemFilter").off().on({
 					change: function(e){
 						$.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]), $(this).val(), {path:GLOBAL_contextPath});
+				
+						$("#filterByDate").datepicker("destroy").hide();
+						
+						if($(this).val()==="customdate"){
+							$("#filterByDate").datepicker($.extend({}, self.calendarOpts, {
+								onClose: function(selectedText){
+									self.getRuleItemList(1);
+								}
+							})).val($.datepicker.formatDate("mm/dd/yy", GLOBAL_currentDate)).show();
+						}
 						self.getRuleItemList(1);
 					}
 				});
@@ -266,7 +296,7 @@
 				$(".ruleItem:not(#ruleItemPattern)").remove();
 				$("#ruleItemHolder").hide();
 
-				BannerServiceJS.getRuleItems(self.getRuleItemFilter(), rule["ruleId"], page, self.ruleItemPageSize, {
+				BannerServiceJS.getRuleItems(GLOBAL_storeId, self.getRuleItemFilter(), $("#filterByDate").val(), rule["ruleId"], page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
 
@@ -280,6 +310,7 @@
 								totalItem: recordSet["totalSize"],
 								callbackText: function(itemStart, itemEnd, itemTotal){
 									var selectedText = $.trim($("#itemFilter").val()) !== "all" ? " " + $("#itemFilter option:selected").text(): "";
+									 	selectedText = $.trim($("#itemFilter").val()) !== "customdate" ? selectedText : " " + $("#filterByDate").val();
 									if ($("#itemFilter").val() === "all") 
 										self.selectedRuleItemTotal = itemTotal;
 									
