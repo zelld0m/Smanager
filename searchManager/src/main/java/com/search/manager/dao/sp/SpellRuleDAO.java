@@ -66,6 +66,14 @@ public class SpellRuleDAO {
         publishSpellRuleProcedure = new PublishSpellRuleProcedure(jdbcTemplate);
     }
 
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+    	this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public void setDaoService(DaoService daoService) {
+    	this.daoService = daoService;
+    }
+
     public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException {
         SpellRule rule = criteria.getModel();
 
