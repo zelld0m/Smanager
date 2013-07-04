@@ -62,7 +62,7 @@
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
 
-						BannerServiceJS.getAllRules(ruleName, page, base.options.pageSize, {
+						BannerServiceJS.getAllRules(GLOBAL_storeId, ruleName, page, base.options.pageSize, {
 							callback: function(sr){
 								var data = sr["data"]; 
 								base.populateList(data, ruleName);
@@ -76,7 +76,7 @@
 
 					itemOptionCallback: function(base, item){
 
-						BannerServiceJS.getTotalRuleItems(item.model["ruleId"], {
+						BannerServiceJS.getTotalRuleItems(GLOBAL_storeId, item.model["ruleId"], {
 							callback: function(sr){
 								var count = sr["data"];
 								if (count > 0) 
@@ -110,7 +110,7 @@
 								switch(sr["status"]){
 								case 0: 
 									jAlert($.formatText(self.lookupMessages.successAddNewKeyword, ruleName), "Banner Rule", function(){
-										BannerServiceJS.getRuleByNameExact(ruleName, {
+										BannerServiceJS.getRuleByName(GLOBAL_storeId, ruleName, {
 											callback: function(sr){
 												self.setRule(sr["data"]);
 											}
@@ -144,7 +144,7 @@
 
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
-						BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
+						BannerServiceJS.getRuleById(GLOBAL_storeId, self.selectedRule["ruleId"],{
 							callback: function(response){
 								if (response.status == 0) {
 									self.setRule(response.data);
@@ -291,12 +291,11 @@
 			getRuleItemList: function(page){
 				var self = this;
 				var rule = self.selectedRule;
-				var $iHolder = $("#ruleItemHolder");
 				self.selectedRuleItemPage = page;
 				$(".ruleItem:not(#ruleItemPattern)").remove();
 				$("#ruleItemHolder").hide();
 
-				BannerServiceJS.getRuleItems(GLOBAL_storeId, self.getRuleItemFilter(), $("#filterByDate").val(), rule["ruleId"], page, self.ruleItemPageSize, {
+				BannerServiceJS.getRuleItemsByFilter(GLOBAL_storeId, rule["ruleId"], self.getRuleItemFilter(), $("#filterByDate").val(), page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
 
@@ -364,7 +363,7 @@
 						self.populateRuleItemFields(ui, item);
 					}
 				}else{
-					self.addRuleStatusRestriction()
+					self.addRuleStatusRestriction();
 				}
 			},
 
@@ -483,7 +482,7 @@
 						if (e.data.locked) return;
 						jConfirm("Delete all banner item in " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
-								BannerServiceJS.deleteAllRuleItem(self.selectedRule["ruleId"], {
+								BannerServiceJS.deleteAllRuleItems(GLOBAL_storeId, self.selectedRule["ruleId"], {
 									callback: function(e){
 										self.getRuleItemList(1);
 									}
@@ -669,7 +668,7 @@
 								"openNewWindow": params["openNewWindow"]
 						};
 
-						BannerServiceJS.copyToRule(params["keywords"], mapParams, {
+						BannerServiceJS.copyToRule(GLOBAL_storeId, params["keywords"], mapParams, {
 							callback: function(sr){
 								var keyList = sr["data"];
 
@@ -691,7 +690,7 @@
 				var self = this;
 				var count = 1;
 
-				BannerServiceJS.getTotalRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"],{
+				BannerServiceJS.getTotalRulesByImageId(GLOBAL_storeId, item["imagePath"]["id"], item["imagePath"]["alias"],{
 					callback: function(sr){
 						var total = sr["data"];
 						if ($.isNumeric(total) && total > 1){
@@ -720,7 +719,7 @@
 					pageSize: 5,
 					parentNameText: item["imagePath"]["alias"],
 					itemDataCallback:function(base, page){
-						BannerServiceJS.getAllRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"], page, base.options.pageSize, {
+						BannerServiceJS.getRulesByImageId(GLOBAL_storeId, item["imagePath"]["id"], item["imagePath"]["alias"], page, base.options.pageSize, {
 							callback:function(sr){
 								var recordSet = sr["data"];
 								var total = recordSet["totalSize"];
@@ -736,7 +735,7 @@
 						});
 					},
 					itemDeleteCallback:function(base, rule, rItem){
-						BannerServiceJS.deleteRuleItemWithImage(rule["ruleId"], rItem["imagePath"]["id"], rItem["imagePath"]["alias"], {
+						BannerServiceJS.deleteRuleItemByImageId(GLOBAL_storeId, rule["ruleId"], rItem["imagePath"]["id"], rItem["imagePath"]["alias"], {
 							callback:function(e){
 								base.getList(1);
 							},
@@ -747,6 +746,9 @@
 								self.getLinkedKeyword(ui, item);
 							}
 						});
+					},
+					itemScheduleCallback: function(base, rItem){
+						
 					}
 				});
 			},
@@ -821,7 +823,7 @@
 
 						jConfirm("Delete banner " + e.data.item["imagePath"]["alias"] + " from " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
-								BannerServiceJS.deleteRuleItem(self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"],{
+								BannerServiceJS.deleteRuleItemByMemberId(GLOBAL_storeId, self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"],{
 									callback: function(sr){
 										switch(sr["status"]){
 										case 0: 
@@ -925,13 +927,13 @@
 							jAlert("Priority is required and must be a number", "Banner");
 						}else if(priority > self.selectedRuleItemTotal) {
 							jAlert("Maximum value for priority is " +  self.selectedRuleItemTotal, "Banner");
-						}else if($.isBlank(imagePath)) {
+						}else if($.isBlank(imagePath) && $.isValidURL(imagePath)) {
 							jAlert("Image path is required.", "Banner");
 						} else if($.isBlank(imageAlias)) {
 							jAlert("Image alias is required.", "Banner");
 						} else if($.isBlank(imageAlt)) {
 							jAlert("Image alt is required.", "Banner");
-						}else if($.isBlank(linkPath)) {
+						}else if($.isBlank(linkPath) && $.isValidURL(linkPath)) {
 							jAlert("Link path is required.", "Banner");
 						} else if($.isBlank(startDate) || !$.isDate(startDate)){
 							jAlert("Please provide a valid start date", "Banner");

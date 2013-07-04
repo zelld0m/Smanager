@@ -24,7 +24,6 @@ import com.search.manager.model.ImagePath;
 import com.search.manager.model.ImagePathType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
@@ -346,40 +345,7 @@ public class BannerDAO {
 		}
 	}
 
-	public BannerRule getRuleById(String storeId, String ruleId) throws DaoException {
-		try {
-			BannerRule rule = null;
-			Map<String, Object> inputs = new HashMap<String, Object>();
-
-			inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
-			inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
-			inputs.put(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue());
-			inputs.put(DAOConstants.PARAM_SEARCH_TEXT, null);
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, null);
-			inputs.put(DAOConstants.PARAM_START_ROW, 1);
-			inputs.put(DAOConstants.PARAM_END_ROW, 1);
-
-			RecordSet<BannerRule> rules = DAOUtils.getRecordSet(getRuleSP.execute(inputs));
-
-			if (rules != null && rules.getList().size() > 0) {
-				rule = rules.getList().get(0);
-			}
-
-			return rule;
-		} catch (Exception e) {
-			throw new DaoException("Failed during searchRule()", e);
-		}
-	}
-
 	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria) throws DaoException {
-		return searchRule(criteria, null, null);
-	}
-
-	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria, String imagePathId) throws DaoException {
-		return searchRule(criteria, imagePathId, null);
-	}
-
-	public RecordSet<BannerRule> searchRule(SearchCriteria<BannerRule> criteria, String imagePathId, MatchType matchType) throws DaoException {
 		try {
 			BannerRule model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -387,8 +353,8 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_SEARCH_TEXT, model.getRuleName());
-			inputs.put(DAOConstants.PARAM_MATCH_TYPE, matchType!=null? matchType.getIntValue(): matchType);
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId);
+			inputs.put(DAOConstants.PARAM_MATCH_TYPE, criteria.getMatchType()!=null? criteria.getMatchType().getIntValue(): null);
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, criteria.getAdditionalCriteria().get("imagePathId"));
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 
