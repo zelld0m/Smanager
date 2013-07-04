@@ -113,7 +113,7 @@ public class DeploymentService {
 			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
 			
 			try {
-				if (result != null && result.size() > 0 && ConfigManager.getInstance().getApprovalNotification()) {
+				if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getMailProperty(UtilityService.getStoreId(), "approvalNotification"))) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
 					mailService.sendNotification(RuleStatusEntity.APPROVED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
 				}
@@ -239,7 +239,7 @@ public class DeploymentService {
 			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
 			
 			try {
-				if (result != null && result.size() > 0 && ConfigManager.getInstance().getApprovalNotification()) {
+				if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getMailProperty(UtilityService.getStoreId(), "approvalNotification"))) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
 					mailService.sendNotification(RuleStatusEntity.REJECTED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
 				}
@@ -406,7 +406,7 @@ public class DeploymentService {
 			
 			if(ruleMap != null && ruleMap.size() > 0) {
 				try {
-					if (ConfigManager.getInstance().getPushToProdNotification()) {
+					if ("1".equals(ConfigManager.getInstance().getMailProperty(UtilityService.getStoreId(), "pushToProdNotification"))) {
 						List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
 						mailService.sendNotification(RuleStatusEntity.PUBLISHED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
 					}
@@ -476,7 +476,7 @@ public class DeploymentService {
 			
 			if(ruleMap != null && ruleMap.size() > 0) {
 				try {
-					if (ConfigManager.getInstance().getPushToProdNotification()) {
+					if ("1".equals(ConfigManager.getInstance().getMailProperty(UtilityService.getStoreId(), "pushToProdNotification"))) {
 						List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
 						mailService.sendNotification(RuleStatusEntity.UNPUBLISHED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
 					}
@@ -536,7 +536,21 @@ public class DeploymentService {
 			ruleStatus.setStoreId(UtilityService.getStoreId());
 			result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
 					: daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
-			if (result > 0) return getRuleStatus(ruleType, ruleRefId);
+			
+			if (result > 0) {
+				RuleStatus ruleStatusInfo = getRuleStatus(ruleType, ruleRefId);
+				try {
+					if(!isDelete && "1".equals(ConfigManager.getInstance().getMailProperty(UtilityService.getStoreId(), "pendingNotification"))) {
+						List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
+						ruleStatusInfoList.add(ruleStatusInfo);
+						mailService.sendNotification(RuleStatusEntity.PENDING, ruleType, UtilityService.getUsername(), ruleStatusInfoList, "");
+					}
+				} catch (Exception e) {
+					logger.error("Failed during sending 'Submitted For Approval' notification. processRuleStatus()", e);
+				}
+				
+				return ruleStatusInfo;
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during processRuleStatus()",e);
 		} catch (Exception e) {
