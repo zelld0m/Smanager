@@ -550,7 +550,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					ruleNode.appendChild(memberId);
 					
 					Node size = mainDoc.createElement(SolrConstants.TAG_BANNER_SIZE);
-					size.appendChild(mainDoc.createTextNode(rule.getSize() + ""));
+					size.appendChild(mainDoc.createTextNode(rule.getImagePath().getSize() + ""));
 					ruleNode.appendChild(size);
 					
 					Node newWindow = mainDoc.createElement(SolrConstants.TAG_BANNER_OPEN_NEW_WINDOW);

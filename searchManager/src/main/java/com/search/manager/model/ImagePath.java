@@ -10,6 +10,7 @@ public class ImagePath extends ModelBean{
 	public String storeId;
 	public String id;
 	public String path;
+	public String size;
 	public ImagePathType pathType;
 	public String alias;
 	
@@ -86,4 +87,14 @@ public class ImagePath extends ModelBean{
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
 	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
+	
+	
 }
