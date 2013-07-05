@@ -22,6 +22,7 @@ public class BannerItemXml extends RuleItemXml {
     private Boolean disabled;
     private String imagePathId;
     private String imageAlias;
+    private String size;
     private String imagePathType;
 
     public BannerItemXml() {
@@ -123,4 +124,12 @@ public class BannerItemXml extends RuleItemXml {
     public void setImagePath2(String imagePath) {
         super.setImagePath(imagePath);
     }
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
 }

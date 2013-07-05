@@ -545,6 +545,14 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				for (BannerRuleItem rule: bannerList) {
 					Node ruleNode = mainDoc.createElement(SolrConstants.TAG_BANNER_RULE);
 					
+					Node memberId = mainDoc.createElement(SolrConstants.TAG_BANNER_MEMBER_ID);
+					memberId.appendChild(mainDoc.createTextNode(rule.getMemberId() + ""));
+					ruleNode.appendChild(memberId);
+					
+					Node size = mainDoc.createElement(SolrConstants.TAG_BANNER_SIZE);
+					size.appendChild(mainDoc.createTextNode(rule.getSize() + ""));
+					ruleNode.appendChild(size);
+					
 					Node newWindow = mainDoc.createElement(SolrConstants.TAG_BANNER_OPEN_NEW_WINDOW);
 					newWindow.appendChild(mainDoc.createTextNode(rule.getOpenNewWindow() + ""));
 					ruleNode.appendChild(newWindow);

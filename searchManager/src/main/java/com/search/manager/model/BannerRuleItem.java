@@ -21,6 +21,7 @@ public class BannerRuleItem extends ModelBean{
 	private DateTime endDate;
 	private String imageAlt;
 	private String linkPath;
+	private String size;
 	private Boolean openNewWindow;
 	private String description;
 	private Boolean disabled;
@@ -183,5 +184,13 @@ public class BannerRuleItem extends ModelBean{
 	
 	public boolean isStarted(){
 		return DateTime.now().toDateMidnight().isAfter(getStartDate().toDateMidnight()) || DateTime.now().toDateMidnight().isEqual(getStartDate().toDateMidnight());
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 }

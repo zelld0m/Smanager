@@ -69,6 +69,8 @@ public class SolrConstants {
 	
 	public final static String TAG_BANNERS = "banners";
 	public final static String TAG_BANNER_RULE = "banner";
+	public final static String TAG_BANNER_MEMBER_ID = "memberId";
+	public final static String TAG_BANNER_SIZE = "size";
 	public final static String TAG_BANNER_OPEN_NEW_WINDOW = "openNewWindow";
 	public final static String TAG_BANNER_IMAGE_ALT = "imageAlt";
 	public final static String TAG_BANNER_LINK_PATH = "linkPath";
