@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
@@ -188,7 +189,10 @@ public class WorkflowNotificationMailService {
 			messageDetails.setBcc(bcc.toArray(new String[bcc.size()]));
 		}
 
-		model.put("ruleType", ruleType);
+		RuleEntity ruleEntity = RuleEntity.find(ruleType);
+		model.put("ruleType", ruleEntity != null ? ruleEntity.getValues()
+				.get(0) : ruleType);
+
 		model.put("actionBy", StringUtils.trim(actionBy));
 
 		DateTimeZone defTZ = DateTimeZone.forID(ConfigManager.getInstance()
