@@ -17,6 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,6 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleStatusEntity;
-import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -189,10 +190,23 @@ public class WorkflowNotificationMailService {
 
 		model.put("ruleType", ruleType);
 		model.put("actionBy", StringUtils.trim(actionBy));
-		model.put("actionDate", JodaDateTimeUtil.toDateTime(DateTime.now()
-				.toDate(), DateTimeZone.forID(ConfigManager.getInstance()
+
+		DateTimeZone defTZ = DateTimeZone.forID(ConfigManager.getInstance()
 				.getStoreParameter(UtilityService.getStoreId(),
-						"default-timezone"))));
+						"default-timezone"));
+		DateTime inNewTZ = DateTime.now().withZone(defTZ);
+		String dateFormatted = "";
+
+		try {
+			String pattern = ConfigManager.getInstance().getStoreParameter(
+					UtilityService.getStoreId(), "datetime-format");
+			DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
+			dateFormatted = formatter.print(inNewTZ);
+		} catch (Exception e) {
+			dateFormatted = inNewTZ.toString("MM/dd/yyyy hh:mm aa");
+		}
+
+		model.put("actionDate", dateFormatted + " " + inNewTZ.getZone().getID());
 		model.put("comment", StringUtils.trim(comment));
 
 		Map<String, List<RuleStatus>> userRuleStatus = new HashMap<String, List<RuleStatus>>();
