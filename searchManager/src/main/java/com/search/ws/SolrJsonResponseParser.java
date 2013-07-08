@@ -639,6 +639,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			int i = 0;
 			for (BannerRuleItem rule: bannerList) {
 				JSONObject ruleObject = new JSONObject();
+				ruleObject.put(SolrConstants.TAG_BANNER_MEMBER_ID, rule.getMemberId());
+				ruleObject.put(SolrConstants.TAG_BANNER_SIZE, rule.getImagePath().getSize());
 				ruleObject.put(SolrConstants.TAG_BANNER_OPEN_NEW_WINDOW, rule.getOpenNewWindow());
 				ruleObject.put(SolrConstants.TAG_BANNER_IMAGE_ALT, rule.getImageAlt());
 				ruleObject.put(SolrConstants.TAG_BANNER_LINK_PATH, rule.getLinkPath());

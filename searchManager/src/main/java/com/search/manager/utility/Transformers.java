@@ -53,7 +53,7 @@ public class Transformers {
                 xml.setDescription(rule.getDescription());
                 xml.setDisabled(rule.getDisabled());
                 xml.setPriority(rule.getPriority());
-
+                
                 if (rule.getImagePath() != null) {
                     xml.setImagePathId(rule.getImagePath().getId());
                     xml.setImageAlias(rule.getImagePath().getAlias());
