@@ -2,6 +2,8 @@ package com.search.manager.core.statistics.report.test;
 
 import java.util.Collection;
 
+import junit.framework.Assert;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -18,7 +20,8 @@ import com.search.manager.report.statistics.util.BannerStatisticsUtil;
  * @version 0.0.1
  */
 public class BannerStatisticsTest {
-	private static final Logger logger = LoggerFactory
+	@SuppressWarnings("unused")
+    private static final Logger logger = LoggerFactory
 	        .getLogger(BannerStatisticsTest.class);
 	private static final String STORE_ID = "pcmall";
 
@@ -33,10 +36,11 @@ public class BannerStatisticsTest {
 		Collection<BannerStatistics> statsPerBannerByKeyword = BannerStatisticsUtil
 		        .getStatsPerBannerByKeyword(STORE_ID, "lcd",
 		                startDate.toDate(), endDate.toDate());
-
-		for (BannerStatistics bannerStatistics : statsPerBannerByKeyword) {
-			logger.info(bannerStatistics.toString());
-		}
+		
+		Assert.assertFalse(statsPerBannerByKeyword.isEmpty());
+//		for (BannerStatistics bannerStatistics : statsPerBannerByKeyword) {
+//			logger.info(bannerStatistics.toString());
+//		}
 	}
 
 	@Test
@@ -53,9 +57,10 @@ public class BannerStatisticsTest {
 		Collection<BannerStatistics> statsPerBannerByKeyword = BannerStatisticsUtil
 		        .getStatsPerKeywordByMemberId(STORE_ID, memberId,
 		                startDate.toDate(), endDate.toDate());
-
-		for (BannerStatistics bannerStatistics : statsPerBannerByKeyword) {
-			logger.info(bannerStatistics.toString());
-		}
+		
+		Assert.assertFalse(statsPerBannerByKeyword.isEmpty());
+//		for (BannerStatistics bannerStatistics : statsPerBannerByKeyword) {
+//			logger.info(bannerStatistics.toString());
+//		}
 	}
 }
