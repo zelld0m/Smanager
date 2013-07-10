@@ -1,13 +1,12 @@
 package com.search.manager.core.statistics.report.test;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import junit.framework.Assert;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.search.manager.report.statistics.model.BannerStatistics;
 import com.search.manager.report.statistics.util.BannerStatisticsUtil;
@@ -20,9 +19,8 @@ import com.search.manager.report.statistics.util.BannerStatisticsUtil;
  * @version 0.0.1
  */
 public class BannerStatisticsTest {
-	@SuppressWarnings("unused")
-    private static final Logger logger = LoggerFactory
-	        .getLogger(BannerStatisticsTest.class);
+    @SuppressWarnings("unused")
+    private static final Logger logger = Logger.getLogger(BannerStatisticsTest.class.getName());
 	private static final String STORE_ID = "pcmall";
 	
 	@Test
@@ -35,7 +33,7 @@ public class BannerStatisticsTest {
 
 		Collection<BannerStatistics> statsPerBannerByKeyword = BannerStatisticsUtil
 		        .getStatsPerBannerByKeyword(STORE_ID, "lcd",
-		                startDate.toDate(), endDate.toDate());		
+		                startDate.toDate(), endDate.toDate());
 		
 		Assert.assertFalse(statsPerBannerByKeyword.isEmpty());
 //		for (BannerStatistics bannerStatistics : statsPerBannerByKeyword) {

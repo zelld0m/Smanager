@@ -38,10 +38,6 @@ public class BannerStatisticsUtil {
 		        .getString("fileNotFoundMessage");
 	}
 
-	public static String test() {
-		return FILE_LOCATION;
-	}
-
 	/**
 	 * Returns all banner statistics per keyword by memberId
 	 * 
@@ -102,7 +98,7 @@ public class BannerStatisticsUtil {
 			                .formatYYYYMM(currentDateAsJavaUtilDate),
 			        StatisticsDateAndTimeUtils
 			                .formatYYYYMMDD(currentDateAsJavaUtilDate)));
-
+			
 			// read the CSV file only if it exists
 			if (csvFile.exists()) {
 				List<String[]> keywordReport = findInCSV(csvFile, keyword,

@@ -1,9 +1,10 @@
 package com.search.manager.report.statistics.util;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Loads the globalvar.properties file
@@ -11,16 +12,16 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class PropertiesUtils {
-	private static final Logger logger = LoggerFactory.getLogger(PropertiesUtils.class);
+    private static final Logger logger = Logger.getLogger(PropertiesUtils.class.getName());
 	private static PropertiesConfiguration config;
 
 	static {
-		String filePath = "C:\\home\\solr\\conf\\globalvar.properties";
+		String filePath = "/home/solr/conf/globalvar.properties";
 
 		try {
 			config = new PropertiesConfiguration(filePath);
 		} catch (ConfigurationException e) {
-			logger.error(String.format("Unable to load file %s", filePath), e);
+			logger.log(Level.SEVERE, String.format("Unable to load file %s", filePath), e);
 		}
 	}
 
