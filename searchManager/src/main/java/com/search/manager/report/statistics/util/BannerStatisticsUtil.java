@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -17,10 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.search.manager.core.statistics.report.test.BannerStatisticsTest;
 import com.search.manager.report.statistics.fluent.BannerStatisticsBuilder;
 import com.search.manager.report.statistics.model.BannerStatistics;
-import com.search.manager.utility.DateAndTimeUtils;
 
 /**
  * Utility class for retrieving banner statistics
@@ -30,20 +27,19 @@ import com.search.manager.utility.DateAndTimeUtils;
  * @version 0.0.1
  */
 public class BannerStatisticsUtil {
-	private static final Logger logger = LoggerFactory
-	        .getLogger(BannerStatisticsTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(BannerStatisticsUtil.class);
 	private static String FILE_LOCATION;
+	@SuppressWarnings("unused")
+    private static String FILE_CANNOT_BE_FOUND_MESSAGE;
 
 	static {
-		String filePath = "src/main/resources/statistics-messages.properties";
+		FILE_LOCATION = PropertiesUtils.getString("fileLocation");
+		FILE_CANNOT_BE_FOUND_MESSAGE = PropertiesUtils
+		        .getString("fileNotFoundMessage");
+	}
 
-		try {
-			PropertiesConfiguration config = new PropertiesConfiguration(
-			        filePath);
-			FILE_LOCATION = config.getString("fileLocation");
-		} catch (ConfigurationException e) {
-			logger.error(String.format("Unable to load file %s", filePath), e);
-		}
+	public static String test() {
+		return FILE_LOCATION;
 	}
 
 	/**
@@ -99,31 +95,36 @@ public class BannerStatisticsUtil {
 		        .toDateMidnight().toDateTime();
 
 		while (currentDate.isBefore(dateAfterEndDate)) {
-			File csvFile = new File(String.format(FILE_LOCATION, storeId,
-			        DateAndTimeUtils.getHyphenedDateStringMMDDYYYY(currentDate
-			                .toDate())));
+			Date currentDateAsJavaUtilDate = currentDate.toDate();
+
+			File csvFile = new File(MessageFormat.format(FILE_LOCATION,
+			        storeId, StatisticsDateAndTimeUtils
+			                .formatYYYYMM(currentDateAsJavaUtilDate),
+			        StatisticsDateAndTimeUtils
+			                .formatYYYYMMDD(currentDateAsJavaUtilDate)));
 
 			// read the CSV file only if it exists
 			if (csvFile.exists()) {
-				List<String[]> keywordReport = findInCSV(
-				        csvFile, keyword, keyColumn);
+				List<String[]> keywordReport = findInCSV(csvFile, keyword,
+				        keyColumn);
 
 				// populate the banner statistics
 				populateBannerStatistics(bannerStatistics, keywordReport);
-			}
-			// else {
-			// logger.info(String.format(FILE_CANNOT_BE_FOUND_MESSAGE,
-			// csvFile != null ? csvFile.getPath() : ""));
-			// logger.info("processing to the next file...");
-			// }
+			} 
+//			else {
+//				logger.info(MessageFormat.format(FILE_CANNOT_BE_FOUND_MESSAGE,
+//				        csvFile != null ? csvFile.getPath() : ""));
+//				logger.info("processing to the next file...");
+//			}
 
 			// go to the next day
 			currentDate = currentDate.plusDays(1);
 		}
 		return bannerStatistics;
 	}
-	
-	private static List<String[]> findInCSV(File file, String keyword, int keyCol) {
+
+	private static List<String[]> findInCSV(File file, String keyword,
+	        int keyCol) {
 		CSVReader reader = null;
 		List<String[]> lines = null;
 
@@ -143,7 +144,7 @@ public class BannerStatisticsUtil {
 				}
 			}
 		} catch (IOException ex) {
-			logger.error(ex.getMessage());
+			logger.error(ex.getMessage(), ex);
 		} finally {
 			IOUtils.closeQuietly(reader);
 		}
@@ -164,7 +165,6 @@ public class BannerStatisticsUtil {
 		for (String[] keywordReport : keywordReports) {
 			String itemKeyword = keywordReport[0];
 			String memberId = keywordReport[1];
-			// String uniqueKey = itemKeyword + "_" + memberId;
 			String imagePath = keywordReport[2];
 			String linkPath = keywordReport[3];
 			int itemClicks = Integer.parseInt(keywordReport[4]);
@@ -183,21 +183,6 @@ public class BannerStatisticsUtil {
 				retrievedBannerStats.incrementClicks(itemClicks);
 				retrievedBannerStats.incrementImpressions(itemImpressions);
 			}
-
-			// bannerStatistics.add(bannerStats);
-
-			// // find the banner stats
-			// BannerStatistics retrievedBannerStats = bannerStatistics
-			// .get(uniqueKey);
-			//
-			// // add it to the Map if not existing, else increment the clicks
-			// // and impressions
-			// if (retrievedBannerStats == null) {
-			// bannerStatistics.put(uniqueKey, bannerStats);
-			// } else {
-			// retrievedBannerStats.incrementClicks(itemClicks);
-			// retrievedBannerStats.incrementImpressions(itemImpressions);
-			// }
 		}
 	}
 
