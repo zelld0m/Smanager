@@ -167,19 +167,20 @@
 	$.addbanner.prototype.validateLinkPath = function(ui, linkPath){
 		var base = this;
 		//Validate if valid url
-
-		//Check for 200 response
-		$.ajax({ 
-			type: "GET", 
-			url: linkPath, 
-			async: false,
-			crossDomain: true,
-			statusCode: {
-				200: function() {
-					alert("Valid URL");
+		if($.isValidURL(linkPath)){
+			//Check for 200 response
+			$.ajax({ 
+				type: "GET", 
+				url: linkPath, 
+				async: false,
+				crossDomain: true,
+				statusCode: {
+					200: function() {
+						
+					}
 				}
-			}
-		});
+			});
+		}
 	};
 
 	$.addbanner.prototype.buttonListener = function() {	

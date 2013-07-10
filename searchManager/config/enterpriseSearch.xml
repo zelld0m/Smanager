@@ -151,64 +151,102 @@
 		<store-specific-fields override="pcmall"/>
 		<search-rule override="pcmall"/>
 	</store>
-
-	<!-- PC Mall Gov Open -->
+	
+	<!-- PCMG Open -->
 	<store name="pcmallgov">
-		<catalog>PC Mall Gov Open Web</catalog>
-		<store-flag>PCMallGov_OpenStoreFlag</store-flag>
+		<catalog>PCMG Open eCommerce</catalog>
+		<store-flag>PCMG_OpenStoreFlag</store-flag>
 		<store-specific-fields>
-			<facet-template>PCMallGov_FacetTemplate</facet-template>
-			<product-name>PCMallGov_Name</product-name>
-			<product-description>PCMallGov_Description</product-description>
-			<popularity>PCMallGov_Open_Popularity</popularity>
+			<facet-template>PCMG_FacetTemplate</facet-template>
+			<product-name>PCMG_Name</product-name>
+			<product-description>PCMG_Description</product-description>
+			<popularity>PCMG_Open_Popularity</popularity>
 		</store-specific-fields>
 		<search-rule override="pcmall"/>
 	</store>
-	<store name="pgoe">
-		<catalog>PC Mall Gov Open Web Order Entry</catalog>
-		<store-flag>PCMallGov_OpenOrderEntryFlag</store-flag>
+	<store name="pcmgoe">
+		<catalog>PCMG Open Order Entry</catalog>
+		<store-flag>PCMG_OpenOrderEntryFlag</store-flag>
 		<store-specific-fields override="pcmallgov"/>
-		<search-rule override="pcmallgov"/>
+		<search-rule override="pcmall"/>
 	</store>
-
-	<!-- PC Mall Gov Government -->
-	<store name="pggv">
-		<catalog>PC Mall Gov Government Web</catalog>
-		<store-flag>PCMallGov_GovStoreFlag</store-flag>
+	
+	<!-- PCMG Federal Government -->
+	<store name="pcmgfed">
+		<catalog>PCMG Federal Government eCommerce</catalog>
+		<store-flag>PCMG_FedGovStoreFlag</store-flag>
 		<store-specific-fields>
-			<facet-template>PCMallGov_FacetTemplate</facet-template>
-			<product-name>PCMallGov_Name</product-name>
-			<product-description>PCMallGov_Description</product-description>
-			<popularity>PCMallGov_Gov_Popularity</popularity>
+			<facet-template>PCMG_FacetTemplate</facet-template>
+			<product-name>PCMG_Name</product-name>
+			<product-description>PCMG_Description</product-description>
+			<popularity>PCMG_FedGov_Popularity</popularity>
 		</store-specific-fields>
-		<search-rule override="pcmallgov"/>
+		<search-rule override="pcmall"/>
 	</store>
-	<store name="pggvoe">
-		<catalog>PC Mall Gov Government Order Entry</catalog>
-		<store-flag>PCMallGov_GovOrderEntryFlag</store-flag>
-		<store-specific-fields override="pggv"/>
-		<search-rule override="pcmallgov"/>
+	<store name="pcmgfedoe">
+		<catalog>PCMG Federal Government Order Entry</catalog>
+		<store-flag>PCMG_FedGovOrderEntryFlag</store-flag>
+		<store-specific-fields override="pcmgfed"/>
+		<search-rule override="pcmall"/>
 	</store>
-
-	<!-- PC Mall Gov Academic -->
-	<store name="pged">
-		<catalog>PC Mall Gov Academic Web</catalog>
-		<store-flag>PCMallGov_ACAStoreFlag</store-flag>
+	
+	<!-- PCMG State/Local Government-->
+	<store name="pcmgsl">
+		<catalog>PCMG State/Local Government eCommerce</catalog>
+		<store-flag>PCMG_SNLGovStoreFlag</store-flag>
 		<store-specific-fields>
-			<facet-template>PCMallGov_FacetTemplate</facet-template>
-			<product-name>PCMallGov_Name</product-name>
-			<product-description>PCMallGov_Description</product-description>
-			<popularity>PCMallGov_ACA_Popularity</popularity>
+			<facet-template>PCMG_FacetTemplate</facet-template>
+			<product-name>PCMG_Name</product-name>
+			<product-description>PCMG_Description</product-description>
+			<popularity>PCMG_SNLGov_Popularity</popularity>
 		</store-specific-fields>
-		<search-rule override="pcmallgov"/>
+		<search-rule override="pcmall"/>
 	</store>
-	<store name="pgedoe">
-		<catalog>PC Mall Gov Academic Order Entry</catalog>
-		<store-flag>PCMallGov_ACAOrderEntryFlag</store-flag>
-		<store-specific-fields override="pged"/>
-		<search-rule override="pcmallgov"/>
+	<store name="pcmgsloe">
+		<catalog>PCMG State/Local Government Order Entry</catalog>
+		<store-flag>PCMG_SNLGovOrderEntryFlag</store-flag>
+		<store-specific-fields override="pcmgsl"/>
+		<search-rule override="pcmall"/>
 	</store>
-
+	
+	<!-- PCMG K-12 Educational-->
+	<store name="pcmgedk12">
+		<catalog>PCMG K12 Educational eCommerce</catalog>
+		<store-flag>PCMG_K12ACAStoreFlag</store-flag>
+		<store-specific-fields>
+			<facet-template>PCMG_FacetTemplate</facet-template>
+			<product-name>PCMG_Name</product-name>
+			<product-description>PCMG_Description</product-description>
+			<popularity>PCMG_K12ACA_Popularity</popularity>
+		</store-specific-fields>
+		<search-rule override="pcmall"/>
+	</store>
+	<store name="pcmgedk12oe">
+		<catalog>PCMG K12 Educational Order Entry</catalog>
+		<store-flag>PCMG_K12ACAOrderEntryFlag</store-flag>
+		<store-specific-fields override="pcmgedk12"/>
+		<search-rule override="pcmall"/>
+	</store>
+	
+	<!-- PCMG Higher Educational-->
+	<store name="pcmgedhe">
+		<catalog>PCMG Higher Educational eCommerce</catalog>
+		<store-flag>PCMG_HEACAStoreFlag</store-flag>
+		<store-specific-fields>
+			<facet-template>PCMG_FacetTemplate</facet-template>
+			<product-name>PCMG_Name</product-name>
+			<product-description>PCMG_Description</product-description>
+			<popularity>PCMG_HEACA_Popularity</popularity>
+		</store-specific-fields>
+		<search-rule override="pcmall"/>
+	</store>
+	<store name="pcmgedheoe">
+		<catalog>PCMG Higher Educational Order Entry</catalog>
+		<store-flag>PCMG_HEACAOrderEntryFlag</store-flag>
+		<store-specific-fields override="pcmgedhe"/>
+		<search-rule override="pcmall"/>
+	</store>
+	
 	<!-- SBN -->
 	<store name="sbn">
 		<catalog>SBN Web</catalog>

@@ -289,7 +289,7 @@ public class BannerService extends RuleService{
 		}else if ("disabled".equalsIgnoreCase(filter)){
 			startDate = endDate = now;
 			disabled = true;
-		}else if("customdate".equalsIgnoreCase(filter)){
+		}else if("date".equalsIgnoreCase(filter)){
 			startDate = endDate = now;
 			if(StringUtils.isNotBlank(dateFilter)){
 				startDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, dateFilter, JodaPatternType.DATE);

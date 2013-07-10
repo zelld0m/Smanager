@@ -274,6 +274,7 @@ public class DAOConstants {
 	public static final String PARAM_LINK_PATH				 		= "link_path";
 	public static final String PARAM_NEW_WINDOW		 				= "open_new_window";
 	public static final String PARAM_DISABLED		 				= "disabled";
+	public static final String PARAM_IMAGE_SIZE		 				= "image_size";
 	public static final String PARAM_SEARCH_TEXT		 			= "search_text";
 	public static final String PARAM_LAST_UPDATED_BY	 			= "last_updated_by";
 
@@ -437,6 +438,7 @@ public class DAOConstants {
 	public static final String COLUMN_IMAGE_PATH_TYPE				= "image_path_type";
 	public static final String COLUMN_IMAGE_PATH_ALIAS				= "alias";
 	public static final String COLUMN_DISABLED						= "disabled";
+	public static final String COLUMN_IMAGE_SIZE					= "image_size";
 	public static final String COLUMN_OPEN_NEW_WINDOW				= "open_new_window";
 
 	// GET* SPs total size
@@ -451,4 +453,7 @@ public class DAOConstants {
 	// used by settings
 	public static final String SETTINGS_AUTO_EXPORT 				= "auto_export";
 	public static final String SETTINGS_EXPORT_TARGET				= "export_target";
+	public static final String SETTINGS_SITE_DOMAIN					= "site_domain";
+	public static final String SETTINGS_DEFAULT_BANNER_SIZE			= "default_banner_size";
+	public static final String SETTINGS_ALLOWED_BANNER_SIZE			= "allowed_banner_size";
 }

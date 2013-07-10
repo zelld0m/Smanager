@@ -36,6 +36,15 @@
 				var self = this;
 				$("#ruleItemHolder, #addBannerBtn").hide();
 				$("#titleText").text(self.moduleName);
+				
+				$.each(GLOBAL_storeAllowedBannerSizes, function (index, value) {
+				    $('#filterBySize').append($('<option>', { 
+				        value: value,
+				        text : value,
+				        selected: GLOBAL_storeDefaultBannerSize === value
+				    }));
+				});
+				
 				self.getRuleList(1);
 			},
 
@@ -201,6 +210,15 @@
 				});
 			},
 			
+			addImagePathRestriction: function(ui, item){
+				var self = this;
+				
+				ui.find("#imagePath").prop({
+					readonly: true,
+					disabled: true,
+				});
+			},
+			
 			setToggleStatus: function(ui, item, show){
 				var self = this;
 
@@ -210,7 +228,6 @@
 					
 					ui.find("#bannerInfo").slideDown("slow", function(){
 						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
-						self.addInputFieldListener(ui, item, item["imagePath"]["path"], ui.find("input#imagePath"), self.previewImage);
 						self.addInputFieldListener(ui, item, item["linkPath"], ui.find("input#linkPath"), self.validateLinkPath);
 						self.addInputFieldListener(ui, item, item["priority"], ui.find("input#priority"));
 						self.addSetAliasHandler(ui, item);
@@ -224,6 +241,7 @@
 						.find(".startDate, .endDate").datepicker("enable");
 
 						self.addImageAliasRestriction(ui, item);
+						self.addImagePathRestriction(ui, item);
 						self.addScheduleRestriction(ui, item);
 						self.addItemExpiredRestriction(ui, item);
 						self.addRuleStatusRestriction();
@@ -257,13 +275,19 @@
 
 				$("#filterByDate").datepicker("destroy").hide();
 				
-				if($("#itemFilter").val()==="customdate"){
+				if($("#itemFilter").val()==="date"){
 					$("#filterByDate").show().datepicker($.extend({}, self.calendarOpts, {
 						onClose: function(selectedText){
 							self.getRuleItemList(1);
 						}
 					})).val($.datepicker.formatDate("mm/dd/yy", GLOBAL_currentDate));
 				}
+				
+				$("#filterBySize").off().on({
+					change: function(e){
+						self.getRuleItemList(1);
+					}
+				}).show();
 
 				$("#itemFilter").off().on({
 					change: function(e){
@@ -271,7 +295,7 @@
 				
 						$("#filterByDate").datepicker("destroy").hide();
 						
-						if($(this).val()==="customdate"){
+						if($(this).val()==="date"){
 							$("#filterByDate").datepicker($.extend({}, self.calendarOpts, {
 								onClose: function(selectedText){
 									self.getRuleItemList(1);
@@ -309,11 +333,12 @@
 								totalItem: recordSet["totalSize"],
 								callbackText: function(itemStart, itemEnd, itemTotal){
 									var selectedText = $.trim($("#itemFilter").val()) !== "all" ? " " + $("#itemFilter option:selected").text(): "";
-									 	selectedText = $.trim($("#itemFilter").val()) !== "customdate" ? selectedText : " " + $("#filterByDate").val();
+									 	selectedText = $.trim($("#itemFilter").val()) !== "date" ? selectedText : " " + $("#filterByDate").val();
+									 	selectedText = $.trim($("#itemFilter").val()) !== "size" ? selectedText : " " + $("#filterBySize").val();
 									if ($("#itemFilter").val() === "all") 
 										self.selectedRuleItemTotal = itemTotal;
 									
-									return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
+									return itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
 								},
 								pageLinkCallback: function(e){ self.getRuleItemList(e.data.page); },
 								nextLinkCallback: function(e){ self.getRuleItemList(e.data.page + 1); },
@@ -378,7 +403,10 @@
 				.find("#startDate").val(item["formattedStartDate"]).end()
 				.find("#endDate").val(item["formattedEndDate"]).end()
 
-				.find("#imagePath").val(item["imagePath"]["path"]).end()
+				.find("#imagePath").val(item["imagePath"]["path"]).prop({
+					readonly: true,
+					disabled: true,
+				}).end()
 				.find("#imageAlias").val(item["imagePath"]["alias"]).prop({
 					id: item["imagePath"]["id"],
 					readonly: true,
@@ -583,8 +611,19 @@
 				}
 			},
 
-			validateLinkPath: function(ui, linkPath){
-
+			validateLinkPath: function(ui, item, linkPath){
+				if($.isNotBlank(linkPath) && $.isValidURL(linkPath)){
+					var $a = $('<a/>');
+					
+					$a.attr("href", linkPath);
+					
+					for(var i = 0; i < GLOBAL_storeDomains.length; i++){
+						console.log(GLOBAL_storeDomains[i]);
+					}
+					
+				}else{
+					jAlert("Please specify a valid link path", "Banner");
+				}
 			},
 
 			previewImage: function(ui, item, imagePath){
@@ -617,21 +656,15 @@
 							var btnCancelText = "Cancel";
 							var setAlias = $(e.currentTarget).find("#setAliasText").text() === btnSetText;
 							
-							e.data.ui
-							.find("#imagePath").prop({
-								readonly: setAlias,
-								disabled: setAlias
-							}).end()
-							
-							.find(".imageAlias").prop({
+							e.data.ui.find(".imageAlias").prop({
 								readonly: !setAlias,
 								disabled: !setAlias
 							}).val(
-									!setAlias? e.data.item["imagePath"]["alias"] : ""
+								!setAlias? e.data.item["imagePath"]["alias"] : ""
 							);
 							
 							$(e.currentTarget).find("#setAliasText").text(
-									setAlias? btnCancelText: btnSetText
+								setAlias? btnCancelText: btnSetText
 							);
 						},
 						mouseenter: showHoverInfo
@@ -912,7 +945,7 @@
 						var startDate = e.data.ui.find(".startDate").val();
 						var endDate = e.data.ui.find(".endDate").val();
 						var imageAlt = e.data.ui.find("#imageAlt").val();
-						var linkPath = e.data.ui.find("#linkPath").val();
+						var linkPath = e.data.ui.find("#linkPath").val().replace(/.*?:\/\/(www\.)?/gi, "");
 						var description = e.data.ui.find("#description").val();
 
 						var params = self.getUpdatedFields(e.data.ui, e.data.item);
@@ -923,19 +956,23 @@
 						
 						if(dirtyCount == 0){
 							jAlert("Nothing to update", "Banner");
-						}else if($.isBlank(priority) && $.isNumeric(priority)) {
+						}else if($.isBlank(priority) || !$.isNumeric(priority)) {
 							jAlert("Priority is required and must be a number", "Banner");
 						}else if(priority > self.selectedRuleItemTotal) {
 							jAlert("Maximum value for priority is " +  self.selectedRuleItemTotal, "Banner");
-						}else if($.isBlank(imagePath) && $.isValidURL(imagePath)) {
+						}else if($.isBlank(imagePath)) {
 							jAlert("Image path is required.", "Banner");
-						} else if($.isBlank(imageAlias)) {
+						}else if(!$.isValidURL(imagePath)) {
+							jAlert("Please specify a valid image path.", "Banner");
+						}else if($.isBlank(imageAlias)) {
 							jAlert("Image alias is required.", "Banner");
 						} else if($.isBlank(imageAlt)) {
 							jAlert("Image alt is required.", "Banner");
-						}else if($.isBlank(linkPath) && $.isValidURL(linkPath)) {
+						}else if($.isBlank(linkPath)) {
 							jAlert("Link path is required.", "Banner");
-						} else if($.isBlank(startDate) || !$.isDate(startDate)){
+						}else if(!$.isValidURL(linkPath)) {
+							jAlert("Please specify a valid link path.", "Banner");
+						}else if($.isBlank(startDate) || !$.isDate(startDate)){
 							jAlert("Please provide a valid start date", "Banner");
 						} else if($.isBlank(endDate) || !$.isDate(endDate)){
 							jAlert("Please provide a valid end date", "Banner");
