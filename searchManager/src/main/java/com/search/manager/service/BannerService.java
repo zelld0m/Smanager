@@ -1,5 +1,6 @@
 package com.search.manager.service;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,8 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.report.statistics.model.BannerStatistics;
+import com.search.manager.report.statistics.util.BannerStatisticsUtil;
 import com.search.manager.response.ServiceResponse;
 
 @Service(value = "bannerService")
@@ -194,7 +197,7 @@ public class BannerService extends RuleService{
 				if(ruleStatus!=null && !ruleStatus.isLocked()){
 					params.put("ruleId", rule.getRuleId());
 					params.put("ruleName", rule.getRuleName());
-					ServiceResponse<Void> srRuleItem = addRuleItem(params);
+					ServiceResponse<Void> srRuleItem = addRuleItem(storeId, params);
 					if (srRuleItem.getStatus() == ServiceResponse.SUCCESS)
 						copiedToKeywordList.add(keyword);
 				}
@@ -206,8 +209,7 @@ public class BannerService extends RuleService{
 	}
 	
 	@RemoteMethod
-	public ServiceResponse<Void> addRuleItem(Map<String, String> params){
-		String storeId = UtilityService.getStoreId();
+	public ServiceResponse<Void> addRuleItem(String storeId, Map<String, String> params){
 		String username = UtilityService.getUsername();
 
 		String ruleId = params.get("ruleId"); 
@@ -234,7 +236,7 @@ public class BannerService extends RuleService{
 		if(StringUtils.isBlank(imagePathId)){
 			ServiceResponse<Void> srAddImagePath = addImagePathLink(imagePath, imageAlias);
 			if (srAddImagePath.getStatus() == ServiceResponse.SUCCESS){
-				ServiceResponse<ImagePath> srGetImagePath = getImagePath(imagePath);
+				ServiceResponse<ImagePath> srGetImagePath = getImagePath(storeId, imagePath);
 				newImagePath = srGetImagePath.getData();
 			}
 			else{
@@ -331,13 +333,31 @@ public class BannerService extends RuleService{
 	}
 	
 	@RemoteMethod
+	public ServiceResponse<BannerRuleItem> getRuleItemByMemberId(String storeId, String ruleId, String memberId){
+		ServiceResponse<BannerRuleItem> serviceResponse = new ServiceResponse<BannerRuleItem>();
+		BannerRuleItem ruleItem = new BannerRuleItem(ruleId, storeId);
+		ruleItem.setMemberId(memberId);
+		
+		try {
+			SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(ruleItem);
+			serviceResponse.success((BannerRuleItem) CollectionUtils.get(daoService.searchBannerRuleItem(criteria).getList(),0));
+		} catch (DaoException e) {
+			serviceResponse.error("", e);
+		} catch (Exception e) {
+			serviceResponse.error("", e);
+		}
+		
+		return serviceResponse;
+	}
+	
+	
+	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItems(String storeId, String ruleId){
 		return getRuleItemsByRuleId(storeId, ruleId, 0, 0);
 	}
 	
 	@RemoteMethod
-	public ServiceResponse<Void> updateRuleItem(Map<String, String> params){
-		String storeId = UtilityService.getStoreId();
+	public ServiceResponse<Void> updateRuleItem(String storeId, Map<String, String> params){
 		String username = UtilityService.getUsername();
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
@@ -408,7 +428,7 @@ public class BannerService extends RuleService{
 				if (srImagePath.getStatus() == ServiceResponse.ERROR){
 					return srImagePath;
 				}
-				iPath = getImagePath(imagePath).getData();
+				iPath = getImagePath(storeId, imagePath).getData();
 			}else{
 				// Do not update any image path assoc details
 				logger.error(String.format("Image path update for %s failed %s %s %s", ruleName, imagePathId, imagePath, imageAlias));
@@ -459,8 +479,7 @@ public class BannerService extends RuleService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<ImagePath> getImagePath(String imageUrl){
-		String storeId = UtilityService.getStoreId();
+	public ServiceResponse<ImagePath> getImagePath(String storeId, String imageUrl){
 		ImagePath imagePath = new ImagePath(storeId, imageUrl);
 		ServiceResponse<ImagePath> serviceResponse = new ServiceResponse<ImagePath>();
 
@@ -538,5 +557,45 @@ public class BannerService extends RuleService{
 		}
 
 		return serviceResponse;
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByKeyword(String storeId, String keyword, String startDateText, String endDateText){
+		return getBannerStats(storeId, keyword, null, startDateText, endDateText);
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByMemberId(String storeId, String memberId, String startDateText, String endDateText){
+		return getBannerStats(storeId, null, memberId, startDateText, endDateText);
+	}
+	
+	private ServiceResponse<RecordSet<BannerStatistics>> getBannerStats(String storeId, String keyword, String memberId, String startDateText, String endDateText){
+		ServiceResponse<RecordSet<BannerStatistics>> serviceResponse = new ServiceResponse<RecordSet<BannerStatistics>>();
+		
+		DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDateText, JodaPatternType.DATE);
+		DateTime endDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDateText, JodaPatternType.DATE);
+
+		if(startDateTime==null && endDateTime==null){
+			endDateTime = startDateTime = DateTime.now();
+		}
+		
+		List<BannerStatistics> list = new ArrayList<BannerStatistics>();
+		
+		try {
+			list = 	StringUtils.isNotBlank(keyword)? 
+					BannerStatisticsUtil.getStatsPerBannerByKeyword(storeId, keyword, startDateTime.toDate(), endDateTime.toDate()): 
+					BannerStatisticsUtil.getStatsPerKeywordByMemberId(storeId, memberId, startDateTime.toDate(), endDateTime.toDate());
+					
+			RecordSet<BannerStatistics> rs = new RecordSet<BannerStatistics>(list, 3);
+			serviceResponse.success(rs);
+		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error("File not found for getStatsPerKeyword", e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error("Exception for getStatsPerKeyword", e);
+		}
+		
+		return serviceResponse; 
 	}
 }

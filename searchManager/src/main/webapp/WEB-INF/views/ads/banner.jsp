@@ -57,7 +57,7 @@
 						<input type="text" id="filterByDate" name="filterByDate"/>
 						<select id="filterBySize" name="filterBySize"></select>
 					</li>
-					<li><div class="ico_graph ico" alt="Show All Item Statistics" title="Show All Item Statistics"></div></li>
+					<li><div id="keywordStatIcon" class="ico_graph ico" alt="Show All Item Statistics" title="Show All Item Statistics"></div></li>
 					<li>
 						<a id="downloadRuleIcon" href="javascript:void(0);" alt="Download All Item" title="Download All Item">
 							<div class="ico_download2 ico"></div>
@@ -113,7 +113,8 @@
 						<li class="bRight"><div id="lastModifiedIcon" class="ico_user ico"></div></li>		
 						<li><div id="commentIcon" class="ico_comments ico" alt="Show Comment" title="Show Comment"></div></li>								
 					</ul>
-				
+					
+					<div><label id="size"></label></div>	
 					<div id="bannerInfo" class="banner_info_more clearfix">
 						<label for="imagePath">Image Path</label>
 						<input type="text" class="imagePath w565px" name="imagePath" id="imagePath" />

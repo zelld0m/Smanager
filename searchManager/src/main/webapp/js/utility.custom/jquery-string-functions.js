@@ -114,11 +114,21 @@ jQuery.extend(
 					return obj.charAt(0).toUpperCase() + obj.slice(1);
 				},
 				
-				toCurrencyFormat: function(sSymbol, vValue) {
+				toDecimalFormat: function(vValue) {
 					if(isNaN(parseFloat(vValue))) return vValue;
 					aDigits = vValue.toFixed(2).split(".");
 					aDigits[0] = aDigits[0].split("").reverse().join("").replace(/(\d{3})(?=\d)/g, "$1,").split("").reverse().join("");
-					return sSymbol + aDigits.join(".");
+					return aDigits.join(".");
+				},
+				
+				toCurrencyFormat: function(sSymbol, vValue) {
+					if(isNaN(parseFloat(vValue))) return vValue;
+					return sSymbol + $.toDecimalFormat(vValue);
+				},
+				
+				toPercentFormat: function(sSymbol, vValue) {
+					if(isNaN(parseFloat(vValue))) return vValue;
+					return  $.toDecimalFormat(vValue) + sSymbol;
 				},
 
 				compressWhitespaces: function(text) {

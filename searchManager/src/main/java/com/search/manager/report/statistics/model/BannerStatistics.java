@@ -1,5 +1,8 @@
 package com.search.manager.report.statistics.model;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 /**
  * POJO class for Statistics
  * 
@@ -7,6 +10,7 @@ package com.search.manager.report.statistics.model;
  * @since July 08, 2013
  * @version 0.0.1
  */
+@DataTransferObject(converter = BeanConverter.class)
 public class BannerStatistics {
 	private String keyword;
 	private String memberId;
@@ -79,6 +83,14 @@ public class BannerStatistics {
 
 	public void incrementImpressions(int incrementBy) {
 		this.impressions += incrementBy;
+	}
+	
+	public String getLinkPath() {
+		return linkPath;
+	}
+
+	public void setLinkPath(String linkPath) {
+		this.linkPath = linkPath;
 	}
 
 	@Override

@@ -1,4 +1,3 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <% pageContext.setAttribute("now", org.joda.time.DateTime.now()); %>
 <% pageContext.setAttribute("year", org.joda.time.DateTime.now().toDateMidnight().getYear()); %>
@@ -179,7 +178,10 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.js" />" ></script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/listbox/1.0/jquery.listbox.custom.css" />">
-  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/listbox/1.0/jquery.listbox.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/listbox/1.0/jquery.listbox.custom.js" />" ></script>  
+  
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/statbox/1.0/jquery.statbox.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/statbox/1.0/jquery.statbox.custom.js" />" ></script>
   
   <script type="text/javascript"  src="<spring:url value="/js/jquery/searchabledropdown-1.0.8/jquery.searchabledropdown-1.0.8-modified.src.js" />"></script>  
  

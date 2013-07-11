@@ -184,7 +184,7 @@
 					}
 				});
 			},
-
+			
 			addRuleItemToggleHandler: function(ui, item){
 				var self = this;
 				var toggle = "hide"; // $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
@@ -319,6 +319,28 @@
 				$(".ruleItem:not(#ruleItemPattern)").remove();
 				$("#ruleItemHolder").hide();
 
+				$("#keywordStatIcon").statbox({
+					itemDataCallback: function(startDate, endDate){
+						var base = this;
+						BannerServiceJS.getStatsByKeyword(GLOBAL_storeId, rule["ruleName"], startDate, endDate, {
+							callback: function(sr){
+								base.populateList.call(base, sr["data"], "keyword");
+							}
+						});
+					},
+					itemImagePathCallback: function(url){
+						var u = this;
+						BannerServiceJS.getImagePath(GLOBAL_storeId, url, {
+							callback: function(sr){
+								var imagePath = sr["data"];
+								if(imagePath){
+									u.find(".itemName").text(imagePath["alias"]);
+								}
+							}
+						});
+					}
+				});
+				
 				BannerServiceJS.getRuleItemsByFilter(GLOBAL_storeId, rule["ruleId"], self.getRuleItemFilter(), $("#filterByDate").val(), page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
@@ -464,6 +486,7 @@
 				self.getLinkedKeyword(ui, item);
 				self.addShowKeywordHandler(ui, item);
 				self.addItemAuditHandler(ui, item);
+				self.addItemStatisticHandler(ui, item);
 				self.addLastUpdateHandler(ui, item);
 				self.addItemCommentHandler(ui, item);
 				self.addRuleItemToggleHandler(ui, item);
@@ -472,6 +495,33 @@
 				self.addRuleStatusRestriction();
 			},
 
+			addItemStatisticHandler: function(ui, item){
+				var self = this;
+
+				ui.find("#itemStatIcon").statbox({
+					rule: self.selectedRule,
+					itemDataCallback: function(startDate, endDate){
+						var base = this;
+						BannerServiceJS.getStatsByMemberId(GLOBAL_storeId, item["memberId"], startDate, endDate, {
+							callback: function(sr){
+								base.populateList.call(base, sr["data"], "memberId");
+							}
+						});
+					},
+					itemScheduleCallback: function(ruleId, memberId){
+						var u = this;
+						BannerServiceJS.getRuleItemByMemberId(GLOBAL_storeId, ruleId, memberId,{
+							callback: function(sr){
+								var rItem = sr["data"];
+								if(rItem){
+									u.find(".itemSchedule").text(rItem["formattedStartDate"] + '-' + rItem["formattedEndDate"]);
+								}
+							}
+						});
+					}
+				});
+			},
+			
 			addItemExpiredRestriction: function(ui, item){
 				var self = this;
 				
@@ -814,7 +864,7 @@
 								"openNewWindow": params["openNewWindow"]
 						};
 
-						BannerServiceJS.addRuleItem(mapParams, {
+						BannerServiceJS.addRuleItem(GLOBAL_storeId, mapParams, {
 							callback: function(sr){
 								switch(sr["status"]){
 								case 0: 
@@ -986,7 +1036,7 @@
 									params["ruleName"] = self.selectedRule["ruleName"];
 									params["memberId"] = e.data.item["memberId"];
 									
-									BannerServiceJS.updateRuleItem(params, {
+									BannerServiceJS.updateRuleItem(GLOBAL_storeId, params, {
 										callback: function(sr){
 											switch(sr["status"]){
 											case 0: 
