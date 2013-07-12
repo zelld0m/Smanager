@@ -356,7 +356,7 @@
 								callbackText: function(itemStart, itemEnd, itemTotal){
 									var selectedText = $.trim($("#itemFilter").val()) !== "all" ? " " + $("#itemFilter option:selected").text(): "";
 									 	selectedText = $.trim($("#itemFilter").val()) !== "date" ? selectedText : " " + $("#filterByDate").val();
-									 	selectedText = $.trim($("#itemFilter").val()) !== "size" ? selectedText : " " + $("#filterBySize").val();
+									 	selectedText = selectedText + " " + $("#filterBySize").val();
 									if ($("#itemFilter").val() === "all") 
 										self.selectedRuleItemTotal = itemTotal;
 									
@@ -558,7 +558,7 @@
 				$('#deleteAllItemIcon').off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						jConfirm("Delete all " + $("#filterBySize").val() +" in " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
+						jConfirm("Delete all " + $("#filterBySize").val() +" in keyword" + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
 								BannerServiceJS.deleteRuleItemsByImageSize(GLOBAL_storeId, self.selectedRule["ruleId"], $("#filterBySize").val(), {
 									callback: function(e){

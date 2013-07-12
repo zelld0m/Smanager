@@ -69,21 +69,17 @@
 
 		template += '<div class="plugin-statbox">';
 		template += '	<div class="w265 padB8">';
-
-		template += '		<form>';
-		template += '		<fieldset>';
-		template += '			<legend>By Date Range</legend>';
-		template += '			<div>';
-		template += '				<input type="text" id="statFilterStartDate">';
-		template += '				<input type="text" id="statFilterEndDate">';
-		template += '				<div id="goBtn" class="btn round_btn fLeft">';
-		template += '					<span class="btn_wrap">';
-		template += '						<a href="javascript:void(0);">GO</a>';
-		template += '					</span>';
-		template += '				</div>';
+		template += '		<div>';
+		template += '			<label>From</label>';
+		template += '			<input type="text" id="statFilterStartDate">';
+		template += '			<label>To</label>';
+		template += '			<input type="text" id="statFilterEndDate">';
+		template += '			<div id="goBtn" class="btn round_btn">';
+		template += '				<span class="btn_wrap">';
+		template += '					<a href="javascript:void(0);">GO</a>';
+		template += '				</span>';
 		template += '			</div>';
-		template += '		</fieldset>';
-		template += '		</form>';
+		template += '		</div>';
 		template += '		<div id="header">';
 		template += '			<div id="columnHeader">';
 		template += '				<span class="itemName">Keyword</span>';        
@@ -203,7 +199,7 @@
 
 			itemHolder.find('div:nth-child(even)').addClass("alt");
 		}else{
-			ui.find('div#emptyText').show();
+			ui.find("#emptyText").show();
 			return;
 		}
 	};

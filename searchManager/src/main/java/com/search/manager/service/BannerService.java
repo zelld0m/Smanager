@@ -560,7 +560,7 @@ public class BannerService extends RuleService{
 		ServiceResponse<RecordSet<BannerStatistics>> serviceResponse = new ServiceResponse<RecordSet<BannerStatistics>>();
 		
 		DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDateText, JodaPatternType.DATE);
-		DateTime endDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDateText, JodaPatternType.DATE);
+		DateTime endDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDateText, JodaPatternType.DATE);
 
 		if(startDateTime==null && endDateTime==null){
 			endDateTime = startDateTime = DateTime.now();
@@ -573,7 +573,7 @@ public class BannerService extends RuleService{
 					BannerStatisticsUtil.getStatsPerBannerByKeyword(storeId, keyword, startDateTime.toDate(), endDateTime.toDate()): 
 					BannerStatisticsUtil.getStatsPerKeywordByMemberId(storeId, memberId, startDateTime.toDate(), endDateTime.toDate());
 					
-			RecordSet<BannerStatistics> rs = new RecordSet<BannerStatistics>(list, 3);
+			RecordSet<BannerStatistics> rs = new RecordSet<BannerStatistics>(list, (Integer) CollectionUtils.size(list));
 			serviceResponse.success(rs);
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage(), e);
