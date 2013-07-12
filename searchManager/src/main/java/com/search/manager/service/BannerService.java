@@ -223,6 +223,7 @@ public class BannerService extends RuleService{
 		String imagePathId = params.get("imagePathId"); 
 		String imagePath = params.get("imagePath"); 
 		String imageAlias = params.get("imageAlias"); 
+		String imageSize = params.get("imageSize"); 
 		Boolean disable = BooleanUtils.toBooleanObject(params.get("disable"));
 		Boolean openNewWindow = BooleanUtils.toBooleanObject(params.get("openNewWindow")); 
 		
@@ -234,7 +235,7 @@ public class BannerService extends RuleService{
 		ImagePath newImagePath = new ImagePath(storeId, imagePathId, imagePath, null, imageAlias); 
 
 		if(StringUtils.isBlank(imagePathId)){
-			ServiceResponse<Void> srAddImagePath = addImagePathLink(imagePath, imageAlias);
+			ServiceResponse<Void> srAddImagePath = addImagePathLink(imagePath, imageAlias, imageSize);
 			if (srAddImagePath.getStatus() == ServiceResponse.SUCCESS){
 				ServiceResponse<ImagePath> srGetImagePath = getImagePath(storeId, imagePath);
 				newImagePath = srGetImagePath.getData();
@@ -274,7 +275,7 @@ public class BannerService extends RuleService{
 	}
 	
 	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItemsByFilter(String storeId, String ruleId, String filter, String dateFilter, int page, int pageSize){
+	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItemsByFilter(String storeId, String ruleId, String filter, String dateFilter, String imageSize, int page, int pageSize){
 		ServiceResponse<RecordSet<BannerRuleItem>> serviceResponse = new ServiceResponse<RecordSet<BannerRuleItem>>();
 		
 		DateTime now = DateTime.now();
@@ -301,6 +302,9 @@ public class BannerService extends RuleService{
 		}
 
 		BannerRuleItem ruleItem = new BannerRuleItem(ruleId, storeId);
+		ImagePath imagePath = new ImagePath();
+		imagePath.setSize(imageSize);
+		ruleItem.setImagePath(imagePath);
 		ruleItem.setDisabled(disabled);
 		
 		try {
@@ -401,41 +405,22 @@ public class BannerService extends RuleService{
 			ruleItem.setOpenNewWindow(openNewWindow);
 			ruleItem.setLastModifiedBy(username);
 			
-			ImagePath iPath =  new ImagePath();
-			ServiceResponse<Void> srImagePath = new ServiceResponse<Void>();
 			
 			if(StringUtils.isNotBlank(imagePathId) && 
 			   StringUtils.isBlank(imagePath) && 
 			   StringUtils.isNotBlank(imageAlias)){
 				//update alias
 				logger.info(String.format("Updating banner alias", imagePathId));
+				ServiceResponse<Void> srImagePath = new ServiceResponse<Void>();
 				srImagePath = updateImagePathAlias(imagePathId, imageAlias);
 				if (srImagePath.getStatus() == ServiceResponse.ERROR){
 					return srImagePath;
 				}
-			}else if (StringUtils.isNotBlank(imagePathId) && 
-					  StringUtils.isBlank(imagePath) && 
-					  StringUtils.isBlank(imageAlias)){
-				//update to existing banner
-				logger.info(String.format("Updating to a existing banner ", imagePathId));
-				iPath.setId(imagePathId);
-			}else if (StringUtils.isBlank(imagePathId) && 
-					  StringUtils.isNotBlank(imagePath) && 
-					  StringUtils.isNotBlank(imageAlias)){
-				//update to new banner
-				logger.info(String.format("Updating to a new banner %s %s", imagePath, imageAlias));
-				srImagePath = addImagePathLink(imagePath, imageAlias);
-				if (srImagePath.getStatus() == ServiceResponse.ERROR){
-					return srImagePath;
-				}
-				iPath = getImagePath(storeId, imagePath).getData();
 			}else{
 				// Do not update any image path assoc details
 				logger.error(String.format("Image path update for %s failed %s %s %s", ruleName, imagePathId, imagePath, imageAlias));
-				iPath = null;
 			}
 			
-			ruleItem.setImagePath(iPath);
 			ruleItem.setLastModifiedBy(username);
 			
 			// Update banner item
@@ -453,14 +438,14 @@ public class BannerService extends RuleService{
 		return serviceResponse;
 	}
 
-	@RemoteMethod
-	public ServiceResponse<Void> addImagePathLink(String imageUrl, String alias){
+	public ServiceResponse<Void> addImagePathLink(String imageUrl, String alias, String imageSize){
 		String storeId = UtilityService.getStoreId();
 		String username = UtilityService.getUsername();
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
 		ImagePath imagePath = new ImagePath(storeId, null, imageUrl, ImagePathType.IMAGE_LINK, alias, username);
-
+		imagePath.setSize(imageSize);
+		
 		try {
 			if (daoService.addBannerImagePath(imagePath) > 0){
 				serviceResponse.success(null);
@@ -522,25 +507,27 @@ public class BannerService extends RuleService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> deleteAllRuleItems(String storeId, String ruleId){
-		return deleteItem(storeId, ruleId, null, null, ""); 
+	public ServiceResponse<Void> deleteRuleItemsByImageSize(String storeId, String ruleId, String imageSize){
+		return deleteItem(storeId, ruleId, null, null, "", imageSize); 
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> deleteRuleItemByMemberId(String storeId, String ruleId, String memberId, String alias){
-		return deleteItem(storeId, ruleId, memberId, null, alias); 
+	public ServiceResponse<Void> deleteRuleItemByMemberId(String storeId, String ruleId, String memberId, String alias, String imageSize){
+		return deleteItem(storeId, ruleId, memberId, null, alias, imageSize); 
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> deleteRuleItemByImageId(String storeId, String ruleId, String imagePathId, String alias){
-		return deleteItem(storeId, ruleId, null, imagePathId, alias); 
+	public ServiceResponse<Void> deleteRuleItemByImageId(String storeId, String ruleId, String imagePathId, String alias, String imageSize){
+		return deleteItem(storeId, ruleId, null, imagePathId, alias, imageSize); 
 	}
 
-	public ServiceResponse<Void> deleteItem(String storeId, String ruleId, String memberId, String imagePathId, String alias){
+	public ServiceResponse<Void> deleteItem(String storeId, String ruleId, String memberId, String imagePathId, String alias, String imageSize){
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
 		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId, memberId);
-		bannerRuleItem.setImagePath(new ImagePath(storeId, imagePathId, null, null, alias));
+		ImagePath imagePath = new ImagePath(storeId, imagePathId, null, null, alias);
+		imagePath.setSize(imageSize);
+		bannerRuleItem.setImagePath(imagePath);
 
 		try {
 			if (daoService.deleteBannerRuleItem(bannerRuleItem) > 0){

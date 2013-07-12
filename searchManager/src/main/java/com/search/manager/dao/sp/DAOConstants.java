@@ -62,10 +62,10 @@ public class DAOConstants {
 	public static final String SP_ADD_BANNER_RULE 					= "usp_Add_Banner_Rule";
 	public static final String SP_GET_BANNER_RULE 					= "usp_Get_Banner_Rule";
 	public static final String SP_DELETE_BANNER_RULE				= "usp_Delete_Banner_Rule";
-	public static final String SP_ADD_BANNER_RULE_ITEM				= "usp_Add_Banner_Rule_Item";
-	public static final String SP_UPDATE_BANNER_RULE_ITEM			= "usp_Update_Banner_Rule_Item";
+	public static final String SP_ADD_BANNER_RULE_ITEM				= "usp_Add_Banner_Rule_Item_NEW";
+	public static final String SP_UPDATE_BANNER_RULE_ITEM			= "usp_Update_Banner_Rule_Item_NEW";
 	public static final String SP_GET_BANNER_RULE_ITEM				= "usp_Get_Banner_Rule_Item_NEW";
-	public static final String SP_DELETE_BANNER_RULE_ITEM			= "usp_Delete_Banner_Rule_Item";
+	public static final String SP_DELETE_BANNER_RULE_ITEM			= "usp_Delete_Banner_Rule_Item_NEW";
 	public static final String SP_ADD_BANNER_IMAGE_PATH				= "usp_Add_Banner_Image_Path_NEW";
 	public static final String SP_GET_BANNER_IMAGE_PATH				= "usp_Get_Banner_Image_Path_NEW";
 	public static final String SP_UPDATE_BANNER_IMAGE_PATH	 		= "usp_Update_Banner_Image_Path";
@@ -455,5 +455,7 @@ public class DAOConstants {
 	public static final String SETTINGS_EXPORT_TARGET				= "export_target";
 	public static final String SETTINGS_SITE_DOMAIN					= "site_domain";
 	public static final String SETTINGS_DEFAULT_BANNER_SIZE			= "default_banner_size";
-	public static final String SETTINGS_ALLOWED_BANNER_SIZE			= "allowed_banner_size";
+	public static final String SETTINGS_ALLOWED_BANNER_SIZES			= "allowed_banner_sizes";
+	public static final String SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL= "default_banner_linkpath_protocol";
+	public static final String SETTINGS_ALLOWED_BANNER_LINKPATH_PROTOCOLS= "allowed_banner_linkpath_protocols";
 }

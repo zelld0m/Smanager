@@ -203,8 +203,12 @@
 					
 					if($.isBlank(imagePath)) {
 						jAlert("Image path is required.", "Banner");
-					} else if($.inArray(imageSize, GLOBAL_storeAllowedBannerSizes)==-1) {
-						jAlert("Image size" + imageSize + "is not allowed", "Banner");
+					}else if(imageSize==="error") {
+						jAlert("Failed to load the image", "Banner");
+					}else if(imageSize==="loading") {
+						jAlert("Please wait, image is currently loading", "Banner");
+					}else if($.inArray(imageSize, GLOBAL_storeAllowedBannerSizes)==-1) {
+						jAlert("Image size " + imageSize + " is not allowed", "Banner");
 					} else if($.isBlank(imageAlias)) {
 						jAlert("Image alias is required.", "Banner");
 					} else if($.isBlank(imageAlt)) {
@@ -239,6 +243,7 @@
 						
 						e.data['disable'] = disable;
 						e.data['openNewWindow'] = openNewWindow;
+						e.data['imageSize'] = imageSize;
 						e.data['mode'] = base.options.mode;
 						base.options.addBannerCallback(base, e);
 					}
@@ -303,48 +308,61 @@
 		// Create new offscreen image to test
 		var theImage = new Image();
 		theImage.src = imagePath;
-
-		// Get accurate measurements from that.
-		var imageWidth = theImage.width;
-		var imageHeight = theImage.height;
+		ui.find("#imagePath").attr("data-size", "loading");
 		
-		var dimension = imageWidth + 'x' + imageHeight;
-		
-		if ($.inArray(dimension, GLOBAL_storeAllowedBannerSizes)==-1){
-			dimension = "0x0";
-			jAlert("Only the following sizes are allowed: " + GLOBAL_storeAllowedBannerSizes.join(','), "Banner Size");
-		}else{
-			BannerServiceJS.getImagePath(GLOBAL_storeId, imagePath, {
-				callback: function(sr){
-					if (sr!=null && sr["data"]!=null){
-						var iPath = sr["data"];
-						
-						ui.find(".imageAlias").prop({
-							id: iPath["id"],
-							readonly: true,
-							disabled: true
-						}).val(iPath["alias"]);
-						
-					}else{
-						ui.find(".imageAlias").prop({
-							id:"",
-							readonly: false,
-							disabled: false
-						});
-					}
-				},
-				preHook: function(e){
-					ui.find("span.preloader").show();
-					ui.find(".imageAlias").val("");
-				},
-				postHook: function(e){
-					ui.find("span.preloader").hide();
+		$(theImage).off().on({
+			error: function(e){
+				var ui = e.data.ui;
+				ui.find("#imagePath").attr("data-size", "error");
+				base.previewImage(base.options.noPreviewImage);
+			},
+			load: function(e) {
+				var ui = e.data.ui;
+				var base = e.data.base;
+				
+				// Get accurate measurements from that.
+				var imageWidth = theImage.width;
+				var imageHeight = theImage.height;
+				var dimension = imageWidth + 'x' + imageHeight;
+				
+				if ($.inArray(dimension, GLOBAL_storeAllowedBannerSizes)==-1){
 					base.previewImage(imagePath);
+					jAlert("Only the following sizes are allowed: " + GLOBAL_storeAllowedBannerSizes.join(','), "Banner Size");
+				}else{
+					BannerServiceJS.getImagePath(GLOBAL_storeId, imagePath, {
+						callback: function(sr){
+							if (sr!=null && sr["data"]!=null){
+								var iPath = sr["data"];
+								
+								ui.find(".imageAlias").prop({
+									id: iPath["id"],
+									readonly: true,
+									disabled: true
+								}).val(iPath["alias"]);
+								
+							}else{
+								ui.find(".imageAlias").prop({
+									id:"",
+									readonly: false,
+									disabled: false
+								});
+							}
+						},
+						preHook: function(e){
+							ui.find("span.preloader").show();
+							ui.find(".imageAlias").val("");
+						},
+						postHook: function(e){
+							ui.find("span.preloader").hide();
+							base.previewImage(imagePath);
+						}
+					});
 				}
-			});
-		}
-
-		ui.find("#imagePath").attr("data-size", dimension);
+				
+				ui.find("#imagePath").attr("data-size", dimension);
+			}
+		}, {ui: ui, base:base});
+		
 	};
 
 	$.addbanner.prototype.getTemplate = function() {
