@@ -41,3 +41,77 @@
 	font-size: 12px;
 	text-align: center;
 }
+
+.plugin-statbox .w265 {
+	width: 355px;
+}
+
+.plugin-statbox .round_btn {
+	display: inline-block;
+	position: relative;
+	top: -2px;
+}
+
+.plugin-statbox .ui-datepicker-trigger {
+	top: 3px;
+	position: relative;
+	margin-left: 3px;
+}
+
+.plugin-statbox .round_btn {
+	display: inline-block;
+	position: relative;
+	top: -2px;
+}
+
+#header span, #itemHolder span {
+	float: left;
+	text-align: center;
+}
+
+#header span {
+	font-weight: bold;
+	margin:4px 0;
+}
+
+#columnHeader  span:nth-child(1), #columnHeader  span:nth-child(2), #itemHolder .item  span:nth-child(1), #itemHolder .item  span:nth-child(2) {
+	text-align: left;
+}
+
+#itemHolder .item:nth-child(even) span {
+	background: #eee;
+}
+
+.plugin-statbox .itemName {
+	width: 67px;
+}
+
+.plugin-statbox .itemSchedule {
+	width: 120px;
+}
+
+.plugin-statbox .itemClick {
+	width: 36px;
+}
+
+.plugin-statbox .itemImpression {
+	width: 64px;
+}
+
+.plugin-statbox .itemPercentage {
+	width: 50px;
+}
+
+.plugin-statbox .itemHolder_wrap { 
+	overflow-y:scroll;
+	max-height: 114px;
+}
+
+.plugin-statbox #itemHolder tr:nth-child(even){background:#eee;}
+.plugin-statbox #itemHolder td {text-align:center; padding: 4px 2px;}
+.plugin-statbox #itemHolder tr td:nth-child(1), #itemHolder tr td:nth-child(2) {text-align:left;}
+#itemHolder {border-collapse:collapse;}
+.itemHolder_wrap {
+max-height:114px; 
+overflow-ycroll;
+}

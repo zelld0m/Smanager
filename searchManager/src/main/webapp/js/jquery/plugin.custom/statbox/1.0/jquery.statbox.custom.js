@@ -93,14 +93,16 @@
 		template += '		<div id="emptyText" class="txtAC">' + base.options.emptyText + '</div>';
 		template += '		<div id="preloader" class="txtAC"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif"></div>';
 		template += '		<div class="clearB"></div>';
-		template += '		<div id="itemHolder">';
-		template += '			<div id="itemPattern" class="item" style="display: none; width: 100%">';
-		template += '				<span class="itemName"><img src="' + GLOBAL_contextPath +'/images/ajax-loader-rect.gif"></span>';        
-		template += '				<span class="itemSchedule"><img src="' + GLOBAL_contextPath +'/images/ajax-loader-rect.gif"></span>';        
-		template += '				<span class="itemClick"></span>';        
-		template += '				<span class="itemImpression"></span>';        
-		template += '				<span class="itemPercentage"></span>';        
-		template += '			</div>';
+		template += '		<div class="itemHolder_wrap">';
+		template += '		<table id="itemHolder">';
+		template += '			<tr id="itemPattern" class="item" style="display: none; width: 100%">';
+		template += '				<td class="itemName"><img src="' + GLOBAL_contextPath +'/images/ajax-loader-rect.gif"></td>';        
+		template += '				<td class="itemSchedule"><img src="' + GLOBAL_contextPath +'/images/ajax-loader-rect.gif"></td>';        
+		template += '				<td class="itemClick"></td>';        
+		template += '				<td class="itemImpression"></td>';        
+		template += '				<td class="itemPercentage"></td>';        
+		template += '			</tr>';
+		template += '		</table>';
 		template += '		</div>';
 		template += '		<div class="clearB"></div>';
 		template += '	</div>';
@@ -116,7 +118,8 @@
 
 	$.statbox.prototype.prepareList = function(){
 		var base = this;
-		base.$el.find("#itemHolder > div:not(#itemPattern), #itemPagingTop, #itemPagingBottom").empty();
+		base.$el.find("#itemPagingTop, #itemPagingBottom").empty();
+		base.$el.find("table#itemHolder > tr:not(#itemPattern)").remove();
 		base.$el.find("div#emptyText").hide();
 		base.$el.find("div#preloader").show();
 	};
@@ -131,7 +134,7 @@
 		var ui = base.$el; 
 
 		ui.find('#preloader, #emptyText').hide();
-		ui.find('#itemHolder > div:not(#itemPattern)').remove();
+		ui.find('#itemHolder tr:not(#itemPattern)').remove();
 
 		var calendarOpts = {
 				defaultDate: GLOBAL_currentDate,
@@ -172,14 +175,18 @@
 				}
 			}
 		}, {base: base, type: statType});
+		
+		ui.find("#header, .itemHolder_wrap").hide();
 
 		if(data && data["totalSize"] > 0){
-			var itemHolder = ui.find('#itemHolder');
+			var itemHolder = ui.find('table#itemHolder');
 
+			ui.find("#header, .itemHolder_wrap").show();
+			
 			for (var i = 0; i < data["list"].length; i++) {
 
 				var item = data["list"][i];
-				var itemUI = itemHolder.find('#itemPattern').clone();
+				var itemUI = itemHolder.find('tr#itemPattern').clone();
 				itemUI.prop({
 					id: item["memberId"]
 				});
@@ -196,8 +203,8 @@
 				itemUI.show();
 				itemHolder.append(itemUI);
 			}
-
-			itemHolder.find('div:nth-child(even)').addClass("alt");
+			
+			base.reposition();
 		}else{
 			ui.find("#emptyText").show();
 			return;
