@@ -51,12 +51,13 @@
 							<option value="all">All Items</option>
 							<option value="active">Active Only</option>
 							<option value="expired">Expired Only</option>
-							<option value="disabled">Active but Disabled</option>
-							<option value="customdate">Active on Date...</option>
+							<option value="disabled">Disabled Only</option>
+							<option value="date">Active by Date</option>
 						</select>
 						<input type="text" id="filterByDate" name="filterByDate"/>
+						<select id="filterBySize" name="filterBySize"></select>
 					</li>
-					<li><div class="ico_graph ico" alt="Show All Item Statistics" title="Show All Item Statistics"></div></li>
+					<li><div id="keywordStatIcon" class="ico_graph ico" alt="Show All Item Statistics" title="Show All Item Statistics"></div></li>
 					<li>
 						<a id="downloadRuleIcon" href="javascript:void(0);" alt="Download All Item" title="Download All Item">
 							<div class="ico_download2 ico"></div>
@@ -70,6 +71,9 @@
 				</ul>
 				<div id="ruleItemPagingTop"></div>
 			</div>		
+			<div>
+				
+			</div>
 			<div id="ruleItemHolder" class="ban_container" style="display:none">
 				<div id="ruleItemPattern" class="ruleItem ban_group">
 					<span id="imageTitle" class="banner_title fLeft fBold cBlue"></span>
@@ -109,7 +113,8 @@
 						<li class="bRight"><div id="lastModifiedIcon" class="ico_user ico"></div></li>		
 						<li><div id="commentIcon" class="ico_comments ico" alt="Show Comment" title="Show Comment"></div></li>								
 					</ul>
-				
+					
+					<div><label id="size"></label></div>	
 					<div id="bannerInfo" class="banner_info_more clearfix">
 						<label for="imagePath">Image Path</label>
 						<input type="text" class="imagePath w565px" name="imagePath" id="imagePath" />

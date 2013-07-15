@@ -1,4 +1,3 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <% pageContext.setAttribute("now", org.joda.time.DateTime.now()); %>
 <% pageContext.setAttribute("year", org.joda.time.DateTime.now().toDateMidnight().getYear()); %>
@@ -34,8 +33,6 @@
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreParameters()" var="storeParameters" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getIndexedSchemaFields()" var="schemaFields" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreId()" var="storeId" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="storeName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getTimeZoneId()" var="timeZoneId" />
   
   <script>
@@ -71,12 +68,17 @@
 	var GLOBAL_storeId = GLOBAL_storeParameters["storeId"];
 	var GLOBAL_storeCore = GLOBAL_storeParameters["storeCore"];
 	var GLOBAL_storeName = GLOBAL_storeParameters["storeName"];
+	var GLOBAL_storeDomains = $.makeArray(GLOBAL_storeParameters["storeDomains"]);
 	var GLOBAL_storeFacetName = GLOBAL_storeParameters["storeFacetName"];
 	var GLOBAL_storeFacetTemplate = GLOBAL_storeParameters["storeFacetTemplate"];
 	var GLOBAL_storeFacetTemplateName = GLOBAL_storeParameters["storeFacetTemplateName"];
 	var GLOBAL_storeGroupMembership = GLOBAL_storeParameters["storeGroupMembership"];
 	var GLOBAL_storeDateFormat = GLOBAL_storeParameters["storeDateFormat"];
 	var GLOBAL_storeDateTimeFormat = GLOBAL_storeParameters["storeDateTimeFormat"];
+	var GLOBAL_storeDefaultBannerSize = GLOBAL_storeParameters["storeDefaultBannerSize"];
+	var GLOBAL_storeAllowedBannerSizes = GLOBAL_storeParameters["storeAllowedBannerSizes"];
+	var GLOBAL_storeDefaultBannerLinkPathProtocol = GLOBAL_storeParameters["storeDefaultBannerLinkPathProtocol"];
+	var GLOBAL_storeAllowedBannerLinkPathProtocols = GLOBAL_storeParameters["storeAllowedBannerLinkPathProtocols"];
 	
 	var GLOBAL_storeGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
 	var GLOBAL_storeGroupTotal = GLOBAL_storeGroupMembership.length;
@@ -179,7 +181,10 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/selectbox/jquery.selectbox.custom.js" />" ></script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/listbox/1.0/jquery.listbox.custom.css" />">
-  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/listbox/1.0/jquery.listbox.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/listbox/1.0/jquery.listbox.custom.js" />" ></script>  
+  
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/statbox/1.0/jquery.statbox.custom.css" />">
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/statbox/1.0/jquery.statbox.custom.js" />" ></script>
   
   <script type="text/javascript"  src="<spring:url value="/js/jquery/searchabledropdown-1.0.8/jquery.searchabledropdown-1.0.8-modified.src.js" />"></script>  
  

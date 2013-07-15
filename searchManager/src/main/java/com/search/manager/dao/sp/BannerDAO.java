@@ -137,6 +137,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NEW_WINDOW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
@@ -160,6 +161,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NEW_WINDOW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));		
 		}
 	}
@@ -175,6 +177,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 		}
 	}
 
@@ -192,6 +195,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
@@ -216,6 +220,8 @@ public class BannerDAO {
 							ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)),
 							rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS)
 					);
+					
+					imagePath.setSize(DAOConstants.COLUMN_IMAGE_SIZE);
 					
 					BannerRuleItem ruleItem = new BannerRuleItem(
 							rule,	
@@ -252,6 +258,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_TYPE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
@@ -282,6 +289,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_TYPE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
@@ -293,7 +301,7 @@ public class BannerDAO {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ImagePath>() {
 				public ImagePath mapRow(ResultSet rs, int rowNum) throws SQLException
 				{
-					return new ImagePath(
+					ImagePath imagePath = new ImagePath(
 							rs.getString(DAOConstants.COLUMN_STORE_ID),
 							rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID),
 							rs.getString(DAOConstants.COLUMN_IMAGE_PATH),
@@ -302,6 +310,10 @@ public class BannerDAO {
 							rs.getString(DAOConstants.COLUMN_CREATED_BY),
 							rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY)
 					);
+					
+					imagePath.setSize(DAOConstants.COLUMN_IMAGE_SIZE);
+					
+					return imagePath;
 				}
 			}));			
 		}
@@ -370,6 +382,7 @@ public class BannerDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 
 			BannerRule rule = ruleItem.getRule();
+			ImagePath imagePath = ruleItem.getImagePath();
 			String memberId = ruleItem.getMemberId();
 
 			if (StringUtils.isBlank(memberId)) {
@@ -382,12 +395,13 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_PRIORITY, ruleItem.getPriority());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, ruleItem.getImagePath().getId());
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath.getId());
 			inputs.put(DAOConstants.PARAM_IMAGE_ALT, ruleItem.getImageAlt());
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
 			inputs.put(DAOConstants.PARAM_NEW_WINDOW, BooleanUtils.toIntegerObject(ruleItem.getOpenNewWindow()));
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(ruleItem.getDisabled()));
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath.getSize());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleItem.getCreatedBy());
 
 			return DAOUtils.getUpdateCount(addRuleItemSP.execute(inputs));
@@ -403,6 +417,7 @@ public class BannerDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 
 			BannerRule rule = ruleItem.getRule();
+			ImagePath imagePath = ruleItem.getImagePath();
 			String memberId = ruleItem.getMemberId();
 
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
@@ -411,12 +426,13 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_PRIORITY, ruleItem.getPriority());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, ruleItem.getImagePath()!=null ?  ruleItem.getImagePath().getId() : null);
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null ? imagePath.getId() : null);
 			inputs.put(DAOConstants.PARAM_IMAGE_ALT, ruleItem.getImageAlt());
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
 			inputs.put(DAOConstants.PARAM_NEW_WINDOW, BooleanUtils.toIntegerObject(ruleItem.getOpenNewWindow()));
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(ruleItem.getDisabled()));
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath!=null ? imagePath.getSize() : null);
 			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, ruleItem.getLastModifiedBy());
 
 			return DAOUtils.getUpdateCount(updateRuleItemSP.execute(inputs));
@@ -436,7 +452,8 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null? imagePath.getId() : imagePath);
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null? imagePath.getId() : null);
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath!=null? imagePath.getSize() : null);
 
 			return DAOUtils.getUpdateCount(deleteRuleItemSP.execute(inputs));
 		}
@@ -449,6 +466,7 @@ public class BannerDAO {
 		try {
 			BannerRuleItem model = criteria.getModel();
 			BannerRule rule = model.getRule();
+			ImagePath imagePath = model.getImagePath();
 			Map<String, Object> inputs = new HashMap<String, Object>();
 
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
@@ -458,6 +476,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(model.getDisabled(), 1, 0, null));
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath!=null && StringUtils.isNotBlank(imagePath.getSize()) ? imagePath.getSize() : null);
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 
@@ -476,6 +495,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, model.getId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH, model.getPath());
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, model.getSize());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_TYPE, model.getPathType());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, model.getAlias());
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
@@ -501,6 +521,7 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId);
 			inputs.put(DAOConstants.PARAM_STORE_ID, imagePath.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH, imagePath.getPath());
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath.getSize());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_TYPE, imagePath.getPathType());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, imagePath.getAlias());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, imagePath.getCreatedBy());

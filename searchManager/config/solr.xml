@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <solr-config>
+  <!-- Core sharing, pcmbd using pcmall core -->	
   <shared-core>true</shared-core>	
   <solr-selector-param>storeAlias</solr-selector-param>
+  
+  <!-- Synched to DB Timezone, in production: America/New_York -->
   <system-timezone>America/Los_Angeles</system-timezone>
   
+  <big-bets>
+    <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>
+    <query>json.nl=map%amp;wt=json%amp;fl=%amp;start=0</query>
+  </big-bets>
+  
+  <!-- PCM -->
   <store id="pcmall" name="PCM">
     <core>pcmall</core>
     <store-id-aliases>pcm</store-id-aliases>
@@ -28,6 +37,7 @@
     </group-membership>
   </store>
   
+  <!-- MacMall -->
   <store id="macmall" name="MacMall">
     <core>macmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
@@ -50,6 +60,7 @@
     </group-membership>	
   </store>
 
+  <!-- PCM BD -->
   <store id="pcmallcap" name="PCMall BD">
   	<core>pcmall</core>
   	<store-id-aliases>pcmbd</store-id-aliases>
@@ -64,7 +75,7 @@
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>
-    <default-server>afs-pl-schpd02</default-server>
+    <default-server>search</default-server>
     <facet-template>PCMall_FacetTemplate</facet-template>
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
     <group-membership>
@@ -75,7 +86,8 @@
     </group-membership>
   </store>
   
-  <store id="pcmallgov" name="PCMG BD">
+  <!-- PCMG -->
+  <store id="pcmallgov" name="PCMG">
   	<core>pcmallgov</core>
   	<store-id-aliases>pcmgbd,pcmgov,pcmg</store-id-aliases>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
@@ -89,7 +101,7 @@
     </solr-param-value>    
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>
-    <default-server>afs-pl-schpd02</default-server>
+    <default-server>search</default-server>
     <facet-template>PCMallGov_FacetTemplate</facet-template>
     <facet-template-name>PCMallGov_FacetTemplateName</facet-template-name>
     <group-membership>
@@ -100,6 +112,7 @@
     </group-membership>
   </store>
   
+  <!-- MacMall BD -->
   <store id="macmallbd" name="MacMall BD">
     <core>macmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
@@ -113,7 +126,7 @@
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>    
-    <default-server>afs-pl-schpd02</default-server>
+    <default-server>search</default-server>
     <facet-template>xxx</facet-template>
     <facet-template-name>TemplateName</facet-template-name>
     <group-membership>
@@ -124,54 +137,45 @@
    	</group-membership>
   </store>
  
-  <!-- 
-  <server name='vtorschstg01'> 										<- name of the server to display in gui
-    <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url> 	<- the url of solr
-    <store>pcmall,macmall,ecost</store> 						<- stores whose data is inside the solr server
-  </server>
-   -->  
+  <!-- Torrance Solr Server Staging-->  
   <server name='vtorschstg01'>
     <url>http://vtorschstg01.pcmall.com:8080/solr14/(core)/</url>
-    <store>pcmall,macmall,ecost</store>
+    <store></store>
   </server>
   <server name='vtorschstg02'>
     <url>http://vtorschstg02.pcmall.com:8080/solr14/(core)/</url>
-    <store>pcmall,macmall,ecost</store>
+    <store></store>
   </server>
   <server name='vtorschstg03'>
     <url>http://vtorschstg03.pcmall.com:8080/solr14/(core)/</url>
-    <store>pcmall,macmall,ecost</store>
+    <store></store>
+  </server>
+
+  <!-- Atlanta Solr Server Production-->  
+  <server name='search'>
+    <url>http://10.17.35.36:8080/solr14/(core)/</url>
+    <store>pcmall,macmall,pcmallcap,pcmallgov</store>
   </server>
   <server name='afs-pl-schpd07'>
     <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(core)/</url>
-    <store>pcmall,macmall,ecost</store>
+    <store>pcmall,macmall,pcmallcap,pcmallgov</store>
   </server>
-  <server name='search'>
-    <url>http://10.17.35.36:8080/solr14/(core)/</url>
-    <store>pcmall,macmall,ecost</store>
+  <server name='afs-pl-schpd08'>
+    <url>http://afs-pl-schpd08.afservice.org:8080/solr14/(core)/</url>
+    <store>pcmall,macmall,pcmallcap,pcmallgov</store>
   </server>
+  
+  <!-- El Segundo Solr Server Production-->  
   <server name='search.pcmall.com'>
     <url>http://search.pcmall.com:8080/solr14/(core)/</url>
-    <store></store>
+    <store>pcmall,macmall,pcmallcap,pcmallgov</store>
   </server>
-  <server name='afs-pl-schpd04'>
-    <url>http://afs-pl-schpd04.afservice.org:8080/solr14/(core)/</url>
-    <store></store>
+  <server name='btorschprod02'>
+    <url>http://btorschprod02:8080/solr14/(core)/</url>
+  	<store>pcmall,macmall,pcmallcap,pcmallgov</store>
   </server>
-  <server name='afs-pl-schpd01'>
-    <url>http://afs-pl-schpd01.afservice.org:8080/solr14/(core)/</url>
-    <store></store>
+  <server name='btorschprod03'>
+    <url>http://btorschprod03:8080/solr14/(core)/</url>
+    <store>pcmall,macmall,pcmallcap,pcmallgov</store>
   </server>
-  <server name='afs-pl-schpd02'>
-    <url>http://afs-pl-schpd02.afservice.org:8080/solr14/(core)/</url>
-    <store>pcmallcap,pcmall,pcmallgov,macmall,macmallbd</store>
-  </server>
-  <server name='afs-pl-schmstr02'>
-    <url>http://afs-pl-schmstr02.afservice.org:8080/solr4/(core)/</url>
-    <store>pcmall,macmall,ecost</store>
-  </server>
-  <big-bets>
-    <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>
-    <query>json.nl=map%amp;wt=json%amp;fl=%amp;start=0</query>
-  </big-bets>
 </solr-config>

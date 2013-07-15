@@ -80,6 +80,7 @@
 		template += '					</div>';
 		template += '				</span>';
 		template += '				<span class="itemName"></span>';        
+		template += '				<span class="itemSchedule"></span>';        
 		template += '				<span class="itemStatus"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif"></span>';        
 		template += '			</div>';
 		template += '		</div>';
