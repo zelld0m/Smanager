@@ -137,6 +137,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NEW_WINDOW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
@@ -160,6 +161,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NEW_WINDOW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));		
 		}
 	}
@@ -175,6 +177,7 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
 		}
 	}
 
@@ -379,6 +382,7 @@ public class BannerDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 
 			BannerRule rule = ruleItem.getRule();
+			ImagePath imagePath = ruleItem.getImagePath();
 			String memberId = ruleItem.getMemberId();
 
 			if (StringUtils.isBlank(memberId)) {
@@ -391,12 +395,13 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_PRIORITY, ruleItem.getPriority());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, ruleItem.getImagePath().getId());
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath.getId());
 			inputs.put(DAOConstants.PARAM_IMAGE_ALT, ruleItem.getImageAlt());
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
 			inputs.put(DAOConstants.PARAM_NEW_WINDOW, BooleanUtils.toIntegerObject(ruleItem.getOpenNewWindow()));
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(ruleItem.getDisabled()));
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath.getSize());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleItem.getCreatedBy());
 
 			return DAOUtils.getUpdateCount(addRuleItemSP.execute(inputs));
@@ -412,6 +417,7 @@ public class BannerDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 
 			BannerRule rule = ruleItem.getRule();
+			ImagePath imagePath = ruleItem.getImagePath();
 			String memberId = ruleItem.getMemberId();
 
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
@@ -420,12 +426,13 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_PRIORITY, ruleItem.getPriority());
 			inputs.put(DAOConstants.PARAM_START_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE, JodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, ruleItem.getImagePath()!=null ?  ruleItem.getImagePath().getId() : null);
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null ? imagePath.getId() : null);
 			inputs.put(DAOConstants.PARAM_IMAGE_ALT, ruleItem.getImageAlt());
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
 			inputs.put(DAOConstants.PARAM_NEW_WINDOW, BooleanUtils.toIntegerObject(ruleItem.getOpenNewWindow()));
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleItem.getDescription());
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils.toIntegerObject(ruleItem.getDisabled()));
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath!=null ? imagePath.getSize() : null);
 			inputs.put(DAOConstants.PARAM_LAST_UPDATED_BY, ruleItem.getLastModifiedBy());
 
 			return DAOUtils.getUpdateCount(updateRuleItemSP.execute(inputs));
@@ -445,7 +452,8 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null? imagePath.getId() : imagePath);
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null? imagePath.getId() : null);
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath!=null? imagePath.getSize() : null);
 
 			return DAOUtils.getUpdateCount(deleteRuleItemSP.execute(inputs));
 		}

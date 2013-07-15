@@ -341,7 +341,7 @@
 					}
 				});
 				
-				BannerServiceJS.getRuleItemsByFilter(GLOBAL_storeId, rule["ruleId"], self.getRuleItemFilter(), $("#filterByDate").val(), page, self.ruleItemPageSize, {
+				BannerServiceJS.getRuleItemsByFilter(GLOBAL_storeId, rule["ruleId"], self.getRuleItemFilter(), $("#filterByDate").val(), $("#filterBySize").val(), page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
 
@@ -356,7 +356,7 @@
 								callbackText: function(itemStart, itemEnd, itemTotal){
 									var selectedText = $.trim($("#itemFilter").val()) !== "all" ? " " + $("#itemFilter option:selected").text(): "";
 									 	selectedText = $.trim($("#itemFilter").val()) !== "date" ? selectedText : " " + $("#filterByDate").val();
-									 	selectedText = $.trim($("#itemFilter").val()) !== "size" ? selectedText : " " + $("#filterBySize").val();
+									 	selectedText = selectedText + " " + $("#filterBySize").val();
 									if ($("#itemFilter").val() === "all") 
 										self.selectedRuleItemTotal = itemTotal;
 									
@@ -558,9 +558,9 @@
 				$('#deleteAllItemIcon').off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						jConfirm("Delete all banner item in " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
+						jConfirm("Delete all " + $("#filterBySize").val() +" in keyword" + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
-								BannerServiceJS.deleteAllRuleItems(GLOBAL_storeId, self.selectedRule["ruleId"], {
+								BannerServiceJS.deleteRuleItemsByImageSize(GLOBAL_storeId, self.selectedRule["ruleId"], $("#filterBySize").val(), {
 									callback: function(e){
 										self.getRuleItemList(1);
 									}
@@ -662,16 +662,23 @@
 			},
 
 			validateLinkPath: function(ui, item, linkPath){
-				if($.isNotBlank(linkPath) && $.isValidURL(linkPath)){
+				var isValid = false;
+				
+				if(!($.startsWith(linkPath, "https://") || $.startsWith(linkPath, "http://"))){
+					jAlert("Please specify a valid protocol", "Banner");
+				}else if($.isNotBlank(linkPath) && $.isValidURL(linkPath)){
 					var $a = $('<a/>');
-					
 					$a.attr("href", linkPath);
+					var hostname = $a[0]["hostname"];
 					
+					console.log(hostname);
 					for(var i = 0; i < GLOBAL_storeDomains.length; i++){
 						console.log(GLOBAL_storeDomains[i]);
+						console.log(/(www\.([0-9A-z]+\.)?)?GLOBAL_storeDomains[i]/.test(hostname));
 					}
 					
 				}else{
+					ui.find("#linkPath").attr("data-valid", false);
 					jAlert("Please specify a valid link path", "Banner");
 				}
 			},
@@ -818,7 +825,7 @@
 						});
 					},
 					itemDeleteCallback:function(base, rule, rItem){
-						BannerServiceJS.deleteRuleItemByImageId(GLOBAL_storeId, rule["ruleId"], rItem["imagePath"]["id"], rItem["imagePath"]["alias"], {
+						BannerServiceJS.deleteRuleItemByImageId(GLOBAL_storeId, rule["ruleId"], rItem["imagePath"]["id"], rItem["imagePath"]["alias"], $("#filterBySize").val(), {
 							callback:function(e){
 								base.getList(1);
 							},
@@ -861,7 +868,8 @@
 								"linkPath": params["linkPath"], 
 								"description": params["description"], 
 								"disable": params["disable"],
-								"openNewWindow": params["openNewWindow"]
+								"openNewWindow": params["openNewWindow"],
+								"imageSize": params["imageSize"]
 						};
 
 						BannerServiceJS.addRuleItem(GLOBAL_storeId, mapParams, {
@@ -906,7 +914,7 @@
 
 						jConfirm("Delete banner " + e.data.item["imagePath"]["alias"] + " from " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
-								BannerServiceJS.deleteRuleItemByMemberId(GLOBAL_storeId, self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"],{
+								BannerServiceJS.deleteRuleItemByMemberId(GLOBAL_storeId, self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"], $("#filterBySize").val(), {
 									callback: function(sr){
 										switch(sr["status"]){
 										case 0: 
