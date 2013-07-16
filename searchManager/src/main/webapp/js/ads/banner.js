@@ -1006,7 +1006,7 @@
 						"linkPath": $.isNotBlank(linkPath) && !$.iequals(linkPath, item["linkPath"])  ? linkPath: null,
 						"description": $.isNotBlank(description) && !$.iequals(description, item["description"]) ? description: null,
 						"disable": disable != item["disabled"] ? disable : null,
-						"openNewWindow": openNewWindow != item["openNewWindow"] ? openNewWindow: null
+						"openNewWindow": openNewWindow != item["openNewWindow"] ? openNewWindow: null,
 				};
 				
 				return mapParams;
@@ -1071,6 +1071,7 @@
 									params["ruleId"] = self.selectedRule["ruleId"];
 									params["ruleName"] = self.selectedRule["ruleName"];
 									params["memberId"] = e.data.item["memberId"];
+									params["imageSize"] = $("#filterBySize > option:selected").val();
 									
 									BannerServiceJS.updateRuleItem(GLOBAL_storeId, params, {
 										callback: function(sr){
