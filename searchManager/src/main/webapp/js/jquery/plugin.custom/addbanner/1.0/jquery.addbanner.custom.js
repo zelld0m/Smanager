@@ -162,42 +162,53 @@
 		base.addInputFieldListener("input#linkPath", ui.find("#linkPath").val(), base.validateLinkPath);
 		base.addButtonListener();
 	};
-
-	$.addbanner.prototype.isUrlExists = function UrlExists(url, callback){
-//	    var http = new XMLHttpRequest();
-//	    http.open('HEAD', url);
-//	    http.onreadystatechange = function() {
-//	    	callback.call(this);
-//	    };
-//	    http.send();
-		
-		http://www.dirtopia.com/w/images/f/fa/DirtopiaBannerMC-728x90.gif
-		
-			$.ajax({
-			    url: url,
-			    dataType: 'jsonp',
-			    success: function(data) {
-			        alert(data.result);
-			    }
-			});
-			
-		
-	};
 	
 	$.addbanner.prototype.validateLinkPath = function(linkPath){
 		var base = this;
 		var ui = base.$el;
 		
+		var validURL = false;
 		ui.find("#linkPath").attr("data-valid", false);
-		
-		if($.isNotBlank(linkPath) && $.isValidURL(linkPath)){
+
+		if($.isNotBlank(linkPath)){
+			if(!$.startsWith(linkPath,"//")){
+				jAlert("Link path value must start with //", "Banner");
+				return;
+			}
 			
-			base.isUrlExists(linkPath, function(){
-				
-			});
+			var url = GLOBAL_storeDefaultBannerLinkPathProtocol + ':' + linkPath;
+			
+			if(!$.isValidURL(url)){
+				jAlert("Please specify a valid link path", "Banner");
+				return;
+			}
+	
+			var $a = $('<a/>');
+			$a.attr("href", url);
+			var hostname = $a[0]["hostname"];
+			
+			for(var i = 0; i < GLOBAL_storeDomains.length; i++){
+				if($.isNotBlank(GLOBAL_storeDomains[i]) && $.endsWith(hostname, GLOBAL_storeDomains[i])){
+					var hostnamePrefix = hostname.replace(GLOBAL_storeDomains[i],'');
+					validURL = validURL || $.isBlank(hostnamePrefix);
+					
+					if($.isNotBlank(hostnamePrefix) && hostnamePrefix !== hostname){
+						validURL = validURL || /([A-Z0-9]*\.){0,1}/i.test(hostnamePrefix);
+					}
+				}
+			}
+			
+			ui.find("#linkPath").attr("data-valid", validURL);
+
+			if(!validURL){
+				ui.find("#linkPath").attr("data-valid", "domain");
+				jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
+			}
+			
 		}else{
-			jAlert("Please provide a valid link path", "Banner");
-		}	
+			jAlert("Please specify a link path", "Banner");
+		}
+		
 	};
 
 	$.addbanner.prototype.addButtonListener = function() {	
@@ -221,7 +232,8 @@
 					var disable = e.data.base.$el.find('#temporaryDisable').is(":checked");
 					var openNewWindow = e.data.base.$el.find('#openNewWindow').is(":checked");
 					var imageSize = e.data.base.$el.find('input#imagePath').attr("data-size");
-					var validLinkPath = e.data.base.$el.find('input#linkPath').attr("data-valid");
+					var isValidURL = e.data.base.$el.find("#linkPath").attr("data-valid")==="true";
+					var isRestrictDomain =e.data.base.$el.find("#linkPath").attr("data-valid")==="domain";
 					
 					var keywordArray = new Array();
 					var lines = keywords.split('\n');
@@ -249,10 +261,10 @@
 						jAlert("Image alt is required.", "Banner");
 					} else if($.isBlank(linkPath)) {
 						jAlert("Link path is required.", "Banner");
-					} else if(validLinkPath==="verifying") {
-						jAlert("Please wait, verifying link path", "Banner");
-					}else if(validLinkPath==="false") {
-						jAlert("Link path is not responding", "Banner");
+					}else if(isRestrictDomain) {
+						jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
+					}else if(!isValidURL) {
+						jAlert("Please specify a valid link path.", "Banner");
 					}else if($.isBlank(startDate) || !$.isDate(startDate)){
 						jAlert("Please provide a valid start date", "Banner");
 					} else if($.isBlank(endDate) || !$.isDate(endDate)){

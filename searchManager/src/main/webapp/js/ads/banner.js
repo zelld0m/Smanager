@@ -683,12 +683,12 @@
 					var hostname = $a[0]["hostname"];
 					
 					for(var i = 0; i < GLOBAL_storeDomains.length; i++){
-						if($.isNotBlank(GLOBAL_storeDomains[i]) && $.endsWith(GLOBAL_storeDomains[i], hostname)){
+						if($.isNotBlank(GLOBAL_storeDomains[i]) && $.endsWith(hostname, GLOBAL_storeDomains[i])){
 							var hostnamePrefix = hostname.replace(GLOBAL_storeDomains[i],'');
 							validURL = validURL || $.isBlank(hostnamePrefix);
 							
 							if($.isNotBlank(hostnamePrefix) && hostnamePrefix !== hostname){
-								validURL = validURL || /([A-Z0-9]*\.)?/i.test(hostnamePrefix);
+								validURL = validURL || /([A-Z0-9]*\.){0,1}/i.test(hostnamePrefix);
 							}
 						}
 					}
