@@ -407,6 +407,8 @@
 						ui.prop({
 							id: "ruleItem_" + item["memberId"]
 						}).addClass(i + 1 == rs.list.length ? "last": "").appendTo($iHolder).show();
+						
+						ui.find("input#linkPath").attr("data-valid", true);
 						self.populateRuleItemFields(ui, item);
 					}
 				}else{
