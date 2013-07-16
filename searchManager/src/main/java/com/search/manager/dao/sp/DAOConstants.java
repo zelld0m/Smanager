@@ -457,5 +457,4 @@ public class DAOConstants {
 	public static final String SETTINGS_DEFAULT_BANNER_SIZE			= "default_banner_size";
 	public static final String SETTINGS_ALLOWED_BANNER_SIZES			= "allowed_banner_sizes";
 	public static final String SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL= "default_banner_linkpath_protocol";
-	public static final String SETTINGS_ALLOWED_BANNER_LINKPATH_PROTOCOLS= "allowed_banner_linkpath_protocols";
 }

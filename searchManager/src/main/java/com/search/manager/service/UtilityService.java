@@ -231,7 +231,6 @@ public class UtilityService {
 		json.put("storeDefaultBannerSize", getStoreDefaultBannerSize(storeId));
 		json.put("storeAllowedBannerSizes", getStoreAllowedBannerSizes(storeId));
 		json.put("storeDefaultBannerLinkPathProtocol", getStoreDefaultBannerLinkPathProtocol(storeId));
-		json.put("storeAllowedBannerLinkPathProtocols", getStoreAllowedBannerLinkPathProtocols(storeId));
 		return json.toString();
 	}
 
@@ -386,11 +385,6 @@ public class UtilityService {
 	
 	public static String getStoreDefaultBannerLinkPathProtocol(String storeId) {
 		return StringUtils.defaultIfBlank(UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "728x90");
-	}
-	
-	public static List<String> getStoreAllowedBannerLinkPathProtocols(String storeId) {
-		List<String> allowedProtocols = UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_ALLOWED_BANNER_LINKPATH_PROTOCOLS);
-		return allowedProtocols != null && allowedProtocols.size() > 0 ? allowedProtocols : Arrays.asList("http://", "https://");
 	}
 	
 	public static void setFacetTemplateValues(RedirectRuleCondition condition) {

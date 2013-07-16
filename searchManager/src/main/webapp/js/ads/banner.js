@@ -662,25 +662,48 @@
 			},
 
 			validateLinkPath: function(ui, item, linkPath){
-				var isValid = false;
-				
-				if(!($.startsWith(linkPath, "https://") || $.startsWith(linkPath, "http://"))){
-					jAlert("Please specify a valid protocol", "Banner");
-				}else if($.isNotBlank(linkPath) && $.isValidURL(linkPath)){
+				var validURL = false;
+				ui.find("#linkPath").attr("data-valid", false);
+
+				if($.isNotBlank(linkPath)){
+					if(!$.startsWith(linkPath,"//")){
+						jAlert("Link path value must start with //", "Banner");
+						return;
+					}
+					
+					var url = GLOBAL_storeDefaultBannerLinkPathProtocol + ':' + linkPath;
+					
+					if(!$.isValidURL(url)){
+						jAlert("Please specify a valid link path", "Banner");
+						return;
+					}
+			
 					var $a = $('<a/>');
-					$a.attr("href", linkPath);
+					$a.attr("href", url);
 					var hostname = $a[0]["hostname"];
 					
-					console.log(hostname);
 					for(var i = 0; i < GLOBAL_storeDomains.length; i++){
-						console.log(GLOBAL_storeDomains[i]);
-						console.log(/(www\.([0-9A-z]+\.)?)?GLOBAL_storeDomains[i]/.test(hostname));
+						if($.isNotBlank(GLOBAL_storeDomains[i]) && $.endsWith(GLOBAL_storeDomains[i], hostname)){
+							var hostnamePrefix = hostname.replace(GLOBAL_storeDomains[i],'');
+							validURL = validURL || $.isBlank(hostnamePrefix);
+							
+							if($.isNotBlank(hostnamePrefix) && hostnamePrefix !== hostname){
+								validURL = validURL || /([A-Z0-9]*\.)?/i.test(hostnamePrefix);
+							}
+						}
+					}
+					
+					ui.find("#linkPath").attr("data-valid", validURL);
+
+					if(!validURL){
+						ui.find("#linkPath").attr("data-valid", "domain");
+						jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
 					}
 					
 				}else{
-					ui.find("#linkPath").attr("data-valid", false);
-					jAlert("Please specify a valid link path", "Banner");
+					jAlert("Please specify a link path", "Banner");
 				}
+				
 			},
 
 			previewImage: function(ui, item, imagePath){
@@ -1005,7 +1028,8 @@
 						var imageAlt = e.data.ui.find("#imageAlt").val();
 						var linkPath = e.data.ui.find("#linkPath").val().replace(/.*?:\/\/(www\.)?/gi, "");
 						var description = e.data.ui.find("#description").val();
-
+						var isValidURL = e.data.ui.find("#linkPath").attr("data-valid")==="true";
+						var isRestrictDomain = e.data.ui.find("#linkPath").attr("data-valid")==="domain";
 						var params = self.getUpdatedFields(e.data.ui, e.data.item);
 						
 						$.each(params, function(i){
@@ -1028,7 +1052,9 @@
 							jAlert("Image alt is required.", "Banner");
 						}else if($.isBlank(linkPath)) {
 							jAlert("Link path is required.", "Banner");
-						}else if(!$.isValidURL(linkPath)) {
+						}else if(isRestrictDomain) {
+							jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
+						}else if(!isValidURL) {
 							jAlert("Please specify a valid link path.", "Banner");
 						}else if($.isBlank(startDate) || !$.isDate(startDate)){
 							jAlert("Please provide a valid start date", "Banner");
