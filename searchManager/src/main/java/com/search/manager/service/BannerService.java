@@ -42,6 +42,7 @@ public class BannerService extends RuleService {
 
 	private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
 	private static final String MSG_FAILED_ADD_RULE_ITEM = "Failed to add banner rule item %s";
+	private static final String MSG_FAILED_UPDATE_RULE_ITEM = "Failed to update banner item %s in %s";
 	private static final String MSG_FAILED_DELETE_RULE_ITEM = "Failed to delete banner item %s";
 	private static final String MSG_FAILED_GET_IMAGE = "Failed to retrieve record for %s";
 	private static final String MSG_FAILED_ADD_IMAGE = "Failed to add image link %s : %s";
@@ -285,14 +286,14 @@ public class BannerService extends RuleService {
 			if (daoService.addBannerRuleItem(ruleItem) > 0) {
 				serviceResponse.success(null);
 			} else {
-				serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM));
+				serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM, imageAlias));
 			}
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM), e);
+			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM, imageAlias), e);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM), e);
+			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM, imageAlias), e);
 		}
 
 		return serviceResponse;
@@ -459,7 +460,7 @@ public class BannerService extends RuleService {
 					&& StringUtils.isBlank(imagePath)
 					&& StringUtils.isNotBlank(imageAlias)) {
 				// update alias
-				logger.info(String.format("Updating banner alias", imagePathId));
+				logger.info(String.format("Updating banner alias %s", imagePathId));
 				ServiceResponse<Void> srImagePath = new ServiceResponse<Void>();
 				srImagePath = updateImagePathAlias(imagePathId, imageAlias);
 				if (srImagePath.getStatus() == ServiceResponse.ERROR) {
@@ -476,13 +477,17 @@ public class BannerService extends RuleService {
 
 			// Update banner item
 			try {
-				daoService.updateBannerRuleItem(ruleItem);
+				if(daoService.updateBannerRuleItem(ruleItem)>0){
+					serviceResponse.success(null);
+				}else{
+					serviceResponse.error(String.format(MSG_FAILED_UPDATE_RULE_ITEM, imageAlias, ruleName));
+				}
 			} catch (DaoException e) {
 				logger.error(e.getMessage(), e);
-				serviceResponse.error(e.getMessage(), e);
+				serviceResponse.error(String.format(MSG_FAILED_UPDATE_RULE_ITEM, imageAlias, ruleName));
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
-				serviceResponse.error(e.getMessage(), e);
+				serviceResponse.error(String.format(MSG_FAILED_UPDATE_RULE_ITEM, imageAlias, ruleName));
 			}
 		}
 
