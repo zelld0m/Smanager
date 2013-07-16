@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,6 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRuleCondition;
-import com.search.manager.model.Store;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Schema;
 import com.search.manager.utility.PropsUtils;
@@ -216,17 +216,21 @@ public class UtilityService {
 	@RemoteMethod
 	public static String getStoreParameters(){
 		JSONObject json = new JSONObject();
+		String storeId = getStoreId();
 		json.put("username", getUsername());
 		json.put("solrSelectorParam", getSolrSelectorParam());
-		json.put("storeId", getStoreId());
+		json.put("storeId", storeId);
 		json.put("storeCore", getStoreCore());
 		json.put("storeName", getStoreName());
+		json.put("storeDomains", getStoreDomains(storeId));
 		json.put("storeFacetName", getStoreFacetName());
 		json.put("storeFacetTemplate", getStoreFacetTemplate());
 		json.put("storeFacetTemplateName", getStoreFacetTemplateName());
 		json.put("storeGroupMembership", getStoreGroupMembership());
 		json.put("storeDateFormat", getStoreDateFormat());
-		json.put("storeDateTimeFormat", getStoreDateTimeFormat());
+		json.put("storeDefaultBannerSize", getStoreDefaultBannerSize(storeId));
+		json.put("storeAllowedBannerSizes", getStoreAllowedBannerSizes(storeId));
+		json.put("storeDefaultBannerLinkPathProtocol", getStoreDefaultBannerLinkPathProtocol(storeId));
 		return json.toString();
 	}
 
@@ -363,10 +367,26 @@ public class UtilityService {
 	}
 
 	public static List<String> getStoresToExport(String storeId) {
-		List<String> list = UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_EXPORT_TARGET);
-		return list;
+		return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_EXPORT_TARGET);
 	}
-
+	
+	public static List<String> getStoreDomains(String storeId) {
+		return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_SITE_DOMAIN);
+	}
+	
+	public static String getStoreDefaultBannerSize(String storeId) {
+		return StringUtils.defaultIfBlank(UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_DEFAULT_BANNER_SIZE), "728x90");
+	}
+	
+	public static List<String> getStoreAllowedBannerSizes(String storeId) {
+		List<String> allowedSizes = UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_ALLOWED_BANNER_SIZES);
+		return allowedSizes != null && allowedSizes.size() > 0 ? allowedSizes : Arrays.asList("180x150", "728x90", "300x250", "160x600");
+	}
+	
+	public static String getStoreDefaultBannerLinkPathProtocol(String storeId) {
+		return StringUtils.defaultIfBlank(UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "728x90");
+	}
+	
 	public static void setFacetTemplateValues(RedirectRuleCondition condition) {
 		if (condition != null) {
 			condition.setFacetPrefix(getStoreFacetPrefix());

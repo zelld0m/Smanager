@@ -420,6 +420,8 @@ public class SolrDocUtil {
 					.getImagePath().getId());
 			solrInputDocument.setField("path", bannerRuleItem.getImagePath()
 					.getPath());
+			solrInputDocument.setField("size", bannerRuleItem.getImagePath()
+					.getSize());
 			solrInputDocument.setField("pathType", bannerRuleItem
 					.getImagePath().getPathType());
 			solrInputDocument.setField("alias", bannerRuleItem.getImagePath()

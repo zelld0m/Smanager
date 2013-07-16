@@ -1,16 +1,15 @@
 <html>
 	<body>
-		Hi ${requestBy},
-
-		<p>The following <b>${ruleType}</b> rules were published by <b>${approvedBy}</b>.</p>
-
+		Hi ${recipient},
+		
+		<p>The following <b>${ruleType}</b> rule(s) was/were published by <b>${actionBy}</b> on <b>${actionDate}</b>.</p>
 		<div>
 			${rules}
 		</div>
-
 		<div>
 			<i>Comment:</i>
 			<p>${comment}</p>
 		</div>
+		<p>This email is an automated notification, which is unable to receive replies. We're happy to help you with any questions or concerns you may have. Please contact us via SearchManagerDevTeam@pcmall.com</p>
 	</body>
 </html>

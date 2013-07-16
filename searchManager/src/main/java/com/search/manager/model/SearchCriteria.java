@@ -1,6 +1,8 @@
 package com.search.manager.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -17,6 +19,8 @@ public class SearchCriteria<T> implements Serializable {
 	private DateTime endDate;
 	private Integer pageNumber;
 	private Integer itemsPerPage;
+	private MatchType matchType;
+	private Map<String, Object> additionalCriteria = new HashMap<String, Object>();
 	
 	public enum ExactMatch {
 		MATCH,
@@ -51,20 +55,29 @@ public class SearchCriteria<T> implements Serializable {
 		}
 	}
 	
-	public SearchCriteria(T model, DateTime startDate, DateTime endDate, Integer pageNumber, Integer itemsPerPage) {
+	public SearchCriteria(T model, DateTime startDate, DateTime endDate, MatchType matchType, Integer pageNumber, Integer itemsPerPage) {
 		this.model = model;
 		this.startDate = startDate;
+		this.matchType = matchType;
 		this.endDate = endDate;
 		this.pageNumber = pageNumber;
 		this.itemsPerPage = itemsPerPage;
 	}
 	
+	public SearchCriteria(T model, DateTime startDate, DateTime endDate, Integer pageNumber, Integer itemsPerPage) {
+		this(model, startDate, endDate, null, pageNumber, itemsPerPage);
+	}
+	
+	public SearchCriteria(T model, MatchType matchType, Integer pageNumber, Integer itemsPerPage) {
+		this(model, null, null, matchType, pageNumber, itemsPerPage);
+	}
+	
 	public SearchCriteria(T model, Integer pageNumber, Integer itemsPerPage) {
-		this(model, null, null, pageNumber, itemsPerPage);
+		this(model, null, pageNumber, itemsPerPage);
 	}
 	
 	public SearchCriteria(T model) {
-		this(model, null, null, 0, 0);
+		this(model, 0, 0);
 	}
 	
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
@@ -122,5 +135,21 @@ public class SearchCriteria<T> implements Serializable {
 
 	public void setEndDate(DateTime endDate) {
 		this.endDate = endDate;
+	}
+
+	public MatchType getMatchType() {
+		return matchType;
+	}
+
+	public void setMatchType(MatchType matchType) {
+		this.matchType = matchType;
+	}
+
+	public Map<String, Object> getAdditionalCriteria() {
+		return additionalCriteria;
+	}
+
+	public void setAdditionalCriteria(Map<String, Object> additionalCriteria) {
+		this.additionalCriteria = additionalCriteria;
 	}
 }

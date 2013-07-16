@@ -39,6 +39,7 @@ public class ConfigManager {
     //TODO: will eventually move out if settings is migrated to DB instead of file
     private Map<String, PropertiesConfiguration> serverSettingsMap = new HashMap<String, PropertiesConfiguration>();
     private Map<String, PropertiesConfiguration> linguisticSettingsMap = new HashMap<String, PropertiesConfiguration>();
+    private Map<String, PropertiesConfiguration> mailSettingsMap = new HashMap<String, PropertiesConfiguration>();
     
     private ConfigManager() {
     	// do nothing...
@@ -89,6 +90,23 @@ public class ConfigManager {
 					propConfig.setAutoSave(true);
 					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
 					linguisticSettingsMap.put(storeId, propConfig);
+				}
+				
+				// mail properties
+				File file = new File(String.format("%s%s%s.mail.properties", configFolder, File.separator, storeId));
+				if (!file.exists()) {
+					try {
+						file.createNewFile();
+					} catch (IOException e) {
+						logger.error("Unable to create mail property file: " + f.getAbsolutePath(), e);
+					}
+				}
+				if (file.exists()) {
+					PropertiesConfiguration propConfig = new PropertiesConfiguration(file.getAbsolutePath());
+					propConfig.setAutoSave(true);
+					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+					mailSettingsMap.put(storeId, propConfig);
+					logger.info("Mail property file for " + storeId + ": " + propConfig.getFileName());
 				}
 			}
 			
@@ -296,7 +314,7 @@ public class ConfigManager {
 		PropertiesConfiguration config = serverSettingsMap.get(storeId);
 		if (config != null) {
 			synchronized(config) {
-				return config.getString(field);
+				return StringUtils.trimToEmpty(config.getString(field));
 			}
 		}
 		return null;
@@ -362,12 +380,37 @@ public class ConfigManager {
 		return "1".equals(PropsUtils.getValue("solrImplOnly"));
 	}
 	
-	public boolean getApprovalNotification() {
-		return "1".equals(PropsUtils.getValue("approvalNotification"));
+//	public boolean getPendingNotification() {
+//		return "1".equals(PropsUtils.getValue("pendingNotification"));
+//	}
+//	
+//	public boolean getApprovalNotification() {
+//		return "1".equals(PropsUtils.getValue("approvalNotification"));
+//	}
+//	
+//	public boolean getPushToProdNotification() {
+//		return "1".equals(PropsUtils.getValue("pushToProdNotification"));
+//	}
+	
+	public String getMailProperty(String storeId, String field) {
+		PropertiesConfiguration config = mailSettingsMap.get(storeId);
+		if (config != null) {
+			synchronized(config) {
+				return config.getString(field);
+			}
+		}
+		return "";
 	}
 	
-	public boolean getPushToProdNotification() {
-		return "1".equals(PropsUtils.getValue("pushToProdNotification"));
+	@SuppressWarnings("unchecked")
+	public List<String> getListMailProperty(String storeId, String field) {
+		PropertiesConfiguration config = mailSettingsMap.get(storeId);
+		if (config != null) {
+			synchronized(config) {
+				return config.getList(field);
+			}
+		}
+		return new ArrayList<String>();
 	}
 	
     public static void main(String[] args) {

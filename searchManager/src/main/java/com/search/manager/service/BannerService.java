@@ -1,9 +1,12 @@
 package com.search.manager.service;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -27,15 +30,14 @@ import com.search.manager.model.ImagePathType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.report.statistics.model.BannerStatistics;
+import com.search.manager.report.statistics.util.BannerStatisticsUtil;
 import com.search.manager.response.ServiceResponse;
 
 @Service(value = "bannerService")
-@RemoteProxy(
-		name = "BannerServiceJS",
-		creator = SpringCreator.class,
-		creatorParams = @Param(name = "beanName", value = "bannerService")
-)
-public class BannerService extends RuleService{
+@RemoteProxy(name = "BannerServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "bannerService"))
+public class BannerService extends RuleService {
 	private static final Logger logger = Logger.getLogger(BannerService.class);
 
 	private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
@@ -46,133 +48,243 @@ public class BannerService extends RuleService{
 	private static final String MSG_FAILED_UPDATE_IMAGE_ALIAS = "Failed to update image alias to %s";
 	private static final String MSG_FAILED_GET_RULE_WITH_IMAGE = "Failed to retrieve banner rule using %s";
 
-	@Autowired private DaoService daoService;
-	@Autowired private DeploymentService deploymentService;
+	@Autowired
+	private DaoService daoService;
+	@Autowired
+	private DeploymentService deploymentService;
 
 	@Override
 	public RuleEntity getRuleEntity() {
 		return RuleEntity.BANNER;
 	}
-	
-	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRule>> getAllRules(String searchText, int page, int pageSize){
-		String storeId = UtilityService.getStoreId();
-		BannerRule model = new BannerRule(storeId, searchText);
-		SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(model, page, pageSize);
 
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerRule>> getAllRules(String storeId,
+			String searchText, int page, int pageSize) {
 		ServiceResponse<RecordSet<BannerRule>> serviceResponse = new ServiceResponse<RecordSet<BannerRule>>();
-		RecordSet<BannerRule> recordSet = new RecordSet<BannerRule>(null, 0);
 
 		try {
-			recordSet = daoService.searchBannerRule(criteria);
-			serviceResponse.success(recordSet);
+			BannerRule rule = new BannerRule(storeId, searchText);
+			SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(
+					rule, MatchType.LIKE_NAME, page, pageSize);
+			serviceResponse.success(daoService.searchBannerRule(criteria));
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(e.getMessage(), e);
+			serviceResponse.error("Unable to retrieve all rules.");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(e.getMessage(), e);
+			serviceResponse.error("Unable to retrieve all rules.");
 		}
 
 		return serviceResponse;
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> addRule(String ruleName){
+	public ServiceResponse<BannerRule> getRuleByName(String storeId,
+			String ruleName) {
+		ServiceResponse<BannerRule> serviceResponse = new ServiceResponse<BannerRule>();
+
+		try {
+			BannerRule rule = new BannerRule(storeId, ruleName);
+			SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(
+					rule, MatchType.MATCH_NAME, 0, 0);
+			RecordSet<BannerRule> allRulesRS = daoService
+					.searchBannerRule(criteria);
+			serviceResponse.success((BannerRule) CollectionUtils.get(
+					allRulesRS.getList(), 0));
+		} catch (DaoException e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error("Unable to retrieve selected rule.");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error("Unable to retrieve selected rule.");
+		}
+
+		return serviceResponse;
+	}
+
+	@RemoteMethod
+	public ServiceResponse<BannerRule> getRuleById(String storeId, String ruleId) {
+		ServiceResponse<BannerRule> serviceResponse = new ServiceResponse<BannerRule>();
+		BannerRule rule = new BannerRule();
+		rule.setStoreId(storeId);
+		rule.setRuleId(ruleId);
+
+		try {
+			SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(
+					rule, MatchType.MATCH_ID, 1, 1);
+			RecordSet<BannerRule> allRulesRS = daoService
+					.searchBannerRule(criteria);
+			serviceResponse.success((BannerRule) CollectionUtils.get(
+					allRulesRS.getList(), 0));
+		} catch (DaoException e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error("Unable to retrieve selected rule.");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error("Unable to retrieve selected rule.");
+		}
+
+		return serviceResponse;
+	}
+
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerRule>> getRulesByImageId(
+			String storeId, String imagePathId, String imageAlias, int page,
+			int pageSize) {
+		ServiceResponse<RecordSet<BannerRule>> serviceResponse = new ServiceResponse<RecordSet<BannerRule>>();
+
+		BannerRule rule = new BannerRule(storeId);
+
+		Map<String, Object> additionalCriteria = new HashMap<String, Object>();
+		additionalCriteria.put("imagePathId", imagePathId);
+
+		SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(
+				rule, page, pageSize);
+		criteria.setAdditionalCriteria(additionalCriteria);
+
+		try {
+			serviceResponse.success(daoService.searchBannerRule(criteria));
+		} catch (DaoException e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_GET_RULE_WITH_IMAGE, imageAlias),
+					e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_GET_RULE_WITH_IMAGE, imageAlias),
+					e);
+		}
+
+		return serviceResponse;
+	}
+
+	@RemoteMethod
+	public ServiceResponse<Integer> getTotalRulesByImageId(String storeId,
+			String imagePathId, String imageAlias) {
+		ServiceResponse<RecordSet<BannerRule>> srAllRule = getRulesByImageId(
+				storeId, imagePathId, imageAlias, 0, 0);
+		RecordSet<BannerRule> rsAllRule = srAllRule.getData();
+
+		ServiceResponse<Integer> serviceResponse = new ServiceResponse<Integer>();
+		serviceResponse.success(rsAllRule.getTotalSize());
+
+		return serviceResponse;
+	}
+
+	@RemoteMethod
+	public ServiceResponse<Void> addRule(String ruleName) {
 		String storeId = UtilityService.getStoreId();
 		String username = UtilityService.getUsername();
 		BannerRule rule = new BannerRule(storeId, ruleName, username);
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
 		try {
-			if (daoService.addBannerRule(rule) > 0){
+			if (daoService.addBannerRule(rule) > 0) {
 				serviceResponse.success(null);
-			}else{
-				serviceResponse.error(String.format(MSG_FAILED_ADD_RULE, ruleName));
+			} else {
+				serviceResponse.error(String.format(MSG_FAILED_ADD_RULE,
+						ruleName));
 			}
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE, ruleName), e);
+			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE, ruleName),
+					e);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE, ruleName), e);
+			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE, ruleName),
+					e);
 		}
 
 		return serviceResponse;
 	}
 
 	@RemoteMethod
-	public ServiceResponse<List<String>> copyToRule(String[] keywords, Map<String, String> params){
+	public ServiceResponse<List<String>> copyToRule(String storeId,
+			String[] keywords, Map<String, String> params) {
 		ServiceResponse<List<String>> serviceResponse = new ServiceResponse<List<String>>();
 		List<String> copiedToKeywordList = new ArrayList<String>();
-		
-		for(String keyword: keywords){
+
+		for (String keyword : keywords) {
 			addRule(keyword);
-			ServiceResponse<BannerRule> srRule = getRuleByNameExact(keyword);
+			ServiceResponse<BannerRule> srRule = getRuleByName(storeId, keyword);
 			BannerRule rule = srRule.getData();
-			
-			if(rule!=null){
-				RuleStatus ruleStatus = deploymentService.getRuleStatus(RuleEntity.getValue(getRuleEntity().getCode()),rule.getRuleId());
-				
-				if(ruleStatus!=null && !ruleStatus.isLocked()){
+
+			if (rule != null) {
+				RuleStatus ruleStatus = deploymentService.getRuleStatus(
+						RuleEntity.getValue(getRuleEntity().getCode()),
+						rule.getRuleId());
+
+				if (ruleStatus != null && !ruleStatus.isLocked()) {
 					params.put("ruleId", rule.getRuleId());
 					params.put("ruleName", rule.getRuleName());
-					ServiceResponse<Void> srRuleItem = addRuleItem(params);
+					ServiceResponse<Void> srRuleItem = addRuleItem(storeId,
+							params);
 					if (srRuleItem.getStatus() == ServiceResponse.SUCCESS)
 						copiedToKeywordList.add(keyword);
 				}
 			}
 		}
-		
+
 		serviceResponse.success(copiedToKeywordList);
 		return serviceResponse;
 	}
-	
+
 	@RemoteMethod
-	public ServiceResponse<Void> addRuleItem(Map<String, String> params){
-		String storeId = UtilityService.getStoreId();
+	public ServiceResponse<Void> addRuleItem(String storeId,
+			Map<String, String> params) {
 		String username = UtilityService.getUsername();
 
-		String ruleId = params.get("ruleId"); 
-		String ruleName = params.get("ruleName"); 
-		Integer priority  = Integer.parseInt(params.get("priority")); 
-		String startDate = params.get("startDate"); 
-		String endDate = params.get("endDate");  
-		String imageAlt = params.get("imageAlt"); 
-		String linkPath = params.get("linkPath"); 
-		String description = params.get("description"); 
-		String imagePathId = params.get("imagePathId"); 
-		String imagePath = params.get("imagePath"); 
-		String imageAlias = params.get("imageAlias"); 
+		String ruleId = params.get("ruleId");
+		String ruleName = params.get("ruleName");
+		Integer priority = Integer.parseInt(params.get("priority"));
+		String startDate = params.get("startDate");
+		String endDate = params.get("endDate");
+		String imageAlt = params.get("imageAlt");
+		String linkPath = params.get("linkPath");
+		String description = params.get("description");
+		String imagePathId = params.get("imagePathId");
+		String imagePath = params.get("imagePath");
+		String imageSize = params.get("imageSize");
+		String imageAlias = params.get("imageAlias");
 		Boolean disable = BooleanUtils.toBooleanObject(params.get("disable"));
-		Boolean openNewWindow = BooleanUtils.toBooleanObject(params.get("openNewWindow")); 
-		
+		Boolean openNewWindow = BooleanUtils.toBooleanObject(params
+				.get("openNewWindow"));
+
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 		BannerRule rule = new BannerRule(storeId, ruleId, ruleName, null);
-		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
-		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
+		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(
+				startDate, JodaPatternType.DATE);
+		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate,
+				JodaPatternType.DATE);
 
-		ImagePath newImagePath = new ImagePath(storeId, imagePathId, imagePath, null, imageAlias); 
+		ImagePath newImagePath = new ImagePath(storeId, imagePathId, imagePath,
+				imageSize, null, imageAlias);
 
-		if(StringUtils.isBlank(imagePathId)){
-			ServiceResponse<Void> srAddImagePath = addImagePathLink(imagePath, imageAlias);
-			if (srAddImagePath.getStatus() == ServiceResponse.SUCCESS){
-				ServiceResponse<ImagePath> srGetImagePath = getImagePath(imagePath);
+		if (StringUtils.isBlank(imagePathId)) {
+			ServiceResponse<Void> srAddImagePath = addImagePathLink(imagePath,
+					imageAlias, imageSize);
+			if (srAddImagePath.getStatus() == ServiceResponse.SUCCESS) {
+				ServiceResponse<ImagePath> srGetImagePath = getImagePath(
+						storeId, imagePath);
 				newImagePath = srGetImagePath.getData();
-			}
-			else{
-				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imagePath, imageAlias));
-				return serviceResponse; 
+			} else {
+				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE,
+						imagePath, imageAlias));
+				return serviceResponse;
 			}
 		}
 
-		BannerRuleItem ruleItem = new BannerRuleItem(rule, null, priority, startDT, endDT, imageAlt, linkPath, description, newImagePath, disable, openNewWindow);
+		BannerRuleItem ruleItem = new BannerRuleItem(rule, null, priority,
+				startDT, endDT, imageAlt, linkPath, description, newImagePath,
+				disable, openNewWindow);
 		ruleItem.setCreatedBy(username);
 
 		try {
-			if (daoService.addBannerRuleItem(ruleItem) > 0){
+			if (daoService.addBannerRuleItem(ruleItem) > 0) {
 				serviceResponse.success(null);
-			}else{
+			} else {
 				serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM));
 			}
 		} catch (DaoException e) {
@@ -187,144 +299,114 @@ public class BannerService extends RuleService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Integer> getTotalRuleItems(String ruleId){
-		ServiceResponse<RecordSet<BannerRuleItem>> items = getRuleItems(ruleId, 1, 1);
+	public ServiceResponse<Integer> getTotalRuleItems(String storeId,
+			String ruleId) {
+		ServiceResponse<RecordSet<BannerRuleItem>> items = getRuleItemsByRuleId(
+				storeId, ruleId, 1, 1);
 		ServiceResponse<Integer> serviceResponse = new ServiceResponse<Integer>();
 		serviceResponse.success((Integer) items.getData().getTotalSize());
 		return serviceResponse;
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Integer> getTotalRuleWithImage(String imagePathId, String imageAlias){
-		ServiceResponse<RecordSet<BannerRule>> srAllRule = getAllRuleWithImage(imagePathId, imageAlias, 0, 0);
-		RecordSet<BannerRule> rsAllRule = srAllRule.getData();
+	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItemsByFilter(
+			String storeId, String ruleId, String filter, String dateFilter,
+			String imageSize, int page, int pageSize) {
+		ServiceResponse<RecordSet<BannerRuleItem>> serviceResponse = new ServiceResponse<RecordSet<BannerRuleItem>>();
 
-		ServiceResponse<Integer> serviceResponse = new ServiceResponse<Integer>();
-		serviceResponse.success(rsAllRule.getTotalSize());
-
-		return serviceResponse;
-	}
-
-	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRule>> getAllRuleWithImage(String imagePathId, String imageAlias, int page, int pageSize){
-		String storeId = UtilityService.getStoreId();
-		BannerRule bannerRule = new BannerRule(storeId, null);
-		SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(bannerRule, page, pageSize);
-		ServiceResponse<RecordSet<BannerRule>> serviceResponse = new ServiceResponse<RecordSet<BannerRule>>();
-		RecordSet<BannerRule> rules = new RecordSet<BannerRule>(new ArrayList<BannerRule>(), 0);
-
-		try {
-			rules = daoService.getBannerRuleWithImage(criteria, imagePathId);
-			serviceResponse.success(rules);
-		} catch (DaoException e) {
-			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_GET_RULE_WITH_IMAGE, imageAlias), e);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_GET_RULE_WITH_IMAGE, imageAlias), e);
-		}
-
-		return serviceResponse;
-	}
-
-	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String filter, String ruleId, int page, int pageSize){
-		
 		DateTime now = DateTime.now();
-		DateTime startDate =  null;
-		DateTime endDate =  null;
+		DateTime startDate = null;
+		DateTime endDate = null;
 		Boolean disabled = null;
 
-		if("active".equalsIgnoreCase(filter)){
+		if ("active".equalsIgnoreCase(filter)) {
 			startDate = now;
 			endDate = now;
 			disabled = false;
-		}else if ("expired".equalsIgnoreCase(filter)){
+		} else if ("expired".equalsIgnoreCase(filter)) {
 			endDate = now;
-		}else if ("disabled".equalsIgnoreCase(filter)){
-			startDate = now;
-			endDate = now;
+		} else if ("disabled".equalsIgnoreCase(filter)) {
+			startDate = endDate = now;
 			disabled = true;
+		} else if ("date".equalsIgnoreCase(filter)) {
+			startDate = endDate = now;
+			if (StringUtils.isNotBlank(dateFilter)) {
+				startDate = JodaDateTimeUtil.toDateTimeFromStorePattern(
+						storeId, dateFilter, JodaPatternType.DATE);
+				endDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId,
+						dateFilter, JodaPatternType.DATE);
+			}
+			disabled = false;
 		}
 
-		return getItemsWithDateRange(ruleId, startDate, endDate, disabled, null, page, pageSize);
-	}
-
-	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItems(String ruleId, int page, int pageSize){
-		return getItemsWithDateRange(ruleId, null, null, null, null, page, pageSize);
-	}
-
-	@RemoteMethod
-	public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItems(String ruleId){
-		return getRuleItems(ruleId, 0, 0);
-	}
-	
-	@RemoteMethod
-	public ServiceResponse<BannerRule> getRuleById(String ruleId) {
-	    ServiceResponse<BannerRule> response = new ServiceResponse<BannerRule>();
-
-	    try {
-	        response.success(daoService.getBannerRuleById(UtilityService.getStoreId(), ruleId));
-	    } catch (DaoException e) {
-	    	logger.error(e.getMessage(), e);
-	        response.error("Unable to retrieve rule selected rule.");
-	    }
-
-	    return response;
-	}
-	
-	@RemoteMethod
-	public ServiceResponse<BannerRule> getRuleByNameExact(String ruleName) {
-		String storeId = UtilityService.getStoreId();
-	    ServiceResponse<BannerRule> response = new ServiceResponse<BannerRule>();
-
-	    try {
-	        response.success(daoService.getBannerRuleByNameExact(storeId, ruleName));
-	    } catch (DaoException e) {
-	    	logger.error(e.getMessage(), e);
-	        response.error("Unable to retrieve rule selected rule.");
-	    }catch (Exception e) {
-	    	logger.error(e.getMessage(), e);
-	        response.error("Unable to retrieve rule selected rule.");
-	    }
-
-	    return response;
-	}
-
-	public ServiceResponse<RecordSet<BannerRuleItem>> getItemsWithDateRange(String ruleId, DateTime startDate, DateTime endDate, Boolean disabled, String imagePathId, int page, int pageSize){
-		String storeId = UtilityService.getStoreId();
-		BannerRuleItem model = new BannerRuleItem(ruleId, storeId);
-		model.setDisabled(disabled);
-		
-		SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(model, startDate, endDate, page, pageSize);
-
-		ServiceResponse<RecordSet<BannerRuleItem>> serviceResponse = new ServiceResponse<RecordSet<BannerRuleItem>>();
-		RecordSet<BannerRuleItem> recordSet = new RecordSet<BannerRuleItem>(null, 0);
+		BannerRuleItem ruleItem = new BannerRuleItem(ruleId, storeId);
+		ImagePath imagePath = new ImagePath();
+		imagePath.setSize(imageSize);
+		ruleItem.setImagePath(imagePath);
+		ruleItem.setDisabled(disabled);
 
 		try {
-			recordSet = daoService.searchBannerRuleItem(criteria);
-			serviceResponse.success(recordSet);
+			SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
+					ruleItem, startDate, endDate, page, pageSize);
+			serviceResponse.success(daoService.searchBannerRuleItem(criteria));
 		} catch (DaoException e) {
-			logger.error(e.getMessage(), e);
-			serviceResponse.error(e.getMessage(), e);
+			serviceResponse.error("", e);
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			serviceResponse.error(e.getMessage(), e);
+			serviceResponse.error("", e);
 		}
 
 		return serviceResponse;
 	}
 
-	public ServiceResponse<RecordSet<BannerRuleItem>> getItemsWithDateTextRange(String ruleId, String startDate, String endDate, String imagePathId, int page, int pageSize){
-		DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
-		DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
-		return 	getItemsWithDateRange(ruleId, startDT, endDT, null, imagePathId, page, pageSize);
-	}
-	
 	@RemoteMethod
-	public ServiceResponse<Void> updateRuleItem(Map<String, String> params){
-		String storeId = UtilityService.getStoreId();
+	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItemsByRuleId(
+			String storeId, String ruleId, int page, int pageSize) {
+		ServiceResponse<RecordSet<BannerRuleItem>> serviceResponse = new ServiceResponse<RecordSet<BannerRuleItem>>();
+		BannerRuleItem ruleItem = new BannerRuleItem(ruleId, storeId);
+
+		try {
+			SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
+					ruleItem, page, pageSize);
+			serviceResponse.success(daoService.searchBannerRuleItem(criteria));
+		} catch (DaoException e) {
+			serviceResponse.error("", e);
+		} catch (Exception e) {
+			serviceResponse.error("", e);
+		}
+
+		return serviceResponse;
+	}
+
+	@RemoteMethod
+	public ServiceResponse<BannerRuleItem> getRuleItemByMemberId(
+			String storeId, String ruleId, String memberId) {
+		ServiceResponse<BannerRuleItem> serviceResponse = new ServiceResponse<BannerRuleItem>();
+		BannerRuleItem ruleItem = new BannerRuleItem(ruleId, storeId);
+		ruleItem.setMemberId(memberId);
+
+		try {
+			SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
+					ruleItem);
+			serviceResponse.success((BannerRuleItem) CollectionUtils.get(
+					daoService.searchBannerRuleItem(criteria).getList(), 0));
+		} catch (DaoException e) {
+			serviceResponse.error("", e);
+		} catch (Exception e) {
+			serviceResponse.error("", e);
+		}
+
+		return serviceResponse;
+	}
+
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerRuleItem>> getAllRuleItems(
+			String storeId, String ruleId) {
+		return getRuleItemsByRuleId(storeId, ruleId, 0, 0);
+	}
+
+	@RemoteMethod
+	public ServiceResponse<Void> updateRuleItem(String storeId,
+			Map<String, String> params) {
 		String username = UtilityService.getUsername();
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
@@ -341,24 +423,29 @@ public class BannerService extends RuleService{
 		String linkPath = params.get("linkPath");
 		String description = params.get("description");
 		Boolean disable = BooleanUtils.toBooleanObject(params.get("disable"));
-		Boolean openNewWindow = BooleanUtils.toBooleanObject(params.get("openNewWindow"));
-		
-		if(StringUtils.isNotBlank(ruleId) && StringUtils.isNotBlank(memberId) && StringUtils.isNotBlank(storeId) ){
+		Boolean openNewWindow = BooleanUtils.toBooleanObject(params
+				.get("openNewWindow"));
+
+		if (StringUtils.isNotBlank(ruleId) && StringUtils.isNotBlank(memberId)
+				&& StringUtils.isNotBlank(storeId)) {
 			BannerRule rule = new BannerRule();
 			rule.setRuleId(ruleId);
 			rule.setStoreId(storeId);
-		
-			DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE);
-			DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE);
-			
+
+			DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(
+					startDate, JodaPatternType.DATE);
+			DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(
+					endDate, JodaPatternType.DATE);
+
 			BannerRuleItem ruleItem = new BannerRuleItem();
 			ruleItem.setRule(rule);
 			ruleItem.setMemberId(memberId);
 
-			if(StringUtils.isNotBlank(priority) && StringUtils.isNumeric(priority)){
-				ruleItem.setPriority(Integer.parseInt(priority));			
+			if (StringUtils.isNotBlank(priority)
+					&& StringUtils.isNumeric(priority)) {
+				ruleItem.setPriority(Integer.parseInt(priority));
 			}
-			
+
 			ruleItem.setStartDate(startDT);
 			ruleItem.setEndDate(endDT);
 			ruleItem.setImageAlt(imageAlt);
@@ -367,44 +454,26 @@ public class BannerService extends RuleService{
 			ruleItem.setDisabled(disable);
 			ruleItem.setOpenNewWindow(openNewWindow);
 			ruleItem.setLastModifiedBy(username);
-			
-			ImagePath iPath =  new ImagePath();
-			ServiceResponse<Void> srImagePath = new ServiceResponse<Void>();
-			
-			if(StringUtils.isNotBlank(imagePathId) && 
-			   StringUtils.isBlank(imagePath) && 
-			   StringUtils.isNotBlank(imageAlias)){
-				//update alias
+
+			if (StringUtils.isNotBlank(imagePathId)
+					&& StringUtils.isBlank(imagePath)
+					&& StringUtils.isNotBlank(imageAlias)) {
+				// update alias
 				logger.info(String.format("Updating banner alias", imagePathId));
+				ServiceResponse<Void> srImagePath = new ServiceResponse<Void>();
 				srImagePath = updateImagePathAlias(imagePathId, imageAlias);
-				if (srImagePath.getStatus() == ServiceResponse.ERROR){
+				if (srImagePath.getStatus() == ServiceResponse.ERROR) {
 					return srImagePath;
 				}
-			}else if (StringUtils.isNotBlank(imagePathId) && 
-					  StringUtils.isBlank(imagePath) && 
-					  StringUtils.isBlank(imageAlias)){
-				//update to existing banner
-				logger.info(String.format("Updating to a existing banner ", imagePathId));
-				iPath.setId(imagePathId);
-			}else if (StringUtils.isBlank(imagePathId) && 
-					  StringUtils.isNotBlank(imagePath) && 
-					  StringUtils.isNotBlank(imageAlias)){
-				//update to new banner
-				logger.info(String.format("Updating to a new banner %s %s", imagePath, imageAlias));
-				srImagePath = addImagePathLink(imagePath, imageAlias);
-				if (srImagePath.getStatus() == ServiceResponse.ERROR){
-					return srImagePath;
-				}
-				iPath = getImagePath(imagePath).getData();
-			}else{
+			} else {
 				// Do not update any image path assoc details
-				logger.error(String.format("Image path update for %s failed %s %s %s", ruleName, imagePathId, imagePath, imageAlias));
-				iPath = null;
+				logger.error(String.format(
+						"Image path update for %s failed %s %s %s", ruleName,
+						imagePathId, imagePath, imageAlias));
 			}
-			
-			ruleItem.setImagePath(iPath);
+
 			ruleItem.setLastModifiedBy(username);
-			
+
 			// Update banner item
 			try {
 				daoService.updateBannerRuleItem(ruleItem);
@@ -416,38 +485,42 @@ public class BannerService extends RuleService{
 				serviceResponse.error(e.getMessage(), e);
 			}
 		}
-		
+
 		return serviceResponse;
 	}
 
-	@RemoteMethod
-	public ServiceResponse<Void> addImagePathLink(String imageUrl, String alias){
+	public ServiceResponse<Void> addImagePathLink(String imageUrl,
+			String alias, String imageSize) {
 		String storeId = UtilityService.getStoreId();
 		String username = UtilityService.getUsername();
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
-		ImagePath imagePath = new ImagePath(storeId, null, imageUrl, ImagePathType.IMAGE_LINK, alias, username);
+		ImagePath imagePath = new ImagePath(storeId, null, imageUrl, imageSize,
+				ImagePathType.IMAGE_LINK, alias, username);
 
 		try {
-			if (daoService.addBannerImagePath(imagePath) > 0){
+			if (daoService.addBannerImagePath(imagePath) > 0) {
 				serviceResponse.success(null);
-			}else{
-				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imageUrl, alias));
+			} else {
+				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE,
+						imageUrl, alias));
 			}
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imageUrl, alias), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_ADD_IMAGE, imageUrl, alias), e);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imageUrl, alias), e);
-		} 
-		
+			serviceResponse.error(
+					String.format(MSG_FAILED_ADD_IMAGE, imageUrl, alias), e);
+		}
+
 		return serviceResponse;
 	}
 
 	@RemoteMethod
-	public ServiceResponse<ImagePath> getImagePath(String imageUrl){
-		String storeId = UtilityService.getStoreId();
+	public ServiceResponse<ImagePath> getImagePath(String storeId,
+			String imageUrl) {
 		ImagePath imagePath = new ImagePath(storeId, imageUrl);
 		ServiceResponse<ImagePath> serviceResponse = new ServiceResponse<ImagePath>();
 
@@ -455,74 +528,144 @@ public class BannerService extends RuleService{
 			serviceResponse.success(daoService.getBannerImagePath(imagePath));
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_GET_IMAGE, imageUrl), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_GET_IMAGE, imageUrl), e);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_GET_IMAGE, imageUrl), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_GET_IMAGE, imageUrl), e);
 		}
 
 		return serviceResponse;
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> updateImagePathAlias(String imagePathId, String alias){
+	public ServiceResponse<Void> updateImagePathAlias(String imagePathId,
+			String alias) {
 		String storeId = UtilityService.getStoreId();
 		String username = UtilityService.getUsername();
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
-		ImagePath imagePath = new ImagePath(storeId, imagePathId, null, null, alias, null, username);
+		ImagePath imagePath = new ImagePath(storeId, imagePathId, null, null,
+				null, alias, null, username);
 
 		try {
-			if (daoService.updateBannerImagePathAlias(imagePath) > 0){
+			if (daoService.updateBannerImagePathAlias(imagePath) > 0) {
 				serviceResponse.success(null);
-			}else{
-				serviceResponse.error(String.format(MSG_FAILED_UPDATE_IMAGE_ALIAS, alias));
+			} else {
+				serviceResponse.error(String.format(
+						MSG_FAILED_UPDATE_IMAGE_ALIAS, alias));
 			}
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_UPDATE_IMAGE_ALIAS, alias), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_UPDATE_IMAGE_ALIAS, alias), e);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_UPDATE_IMAGE_ALIAS, alias), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_UPDATE_IMAGE_ALIAS, alias), e);
 		}
 
 		return serviceResponse;
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> deleteAllRuleItem(String ruleId){
-		return deleteItem(ruleId, null, null, ""); 
+	public ServiceResponse<Void> deleteRuleItemsByImageSize(String storeId,
+			String ruleId, String imageSize) {
+		return deleteItem(storeId, ruleId, null, null, "", imageSize);
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> deleteRuleItem(String ruleId, String memberId, String alias){
-		return deleteItem(ruleId, memberId, null, alias); 
+	public ServiceResponse<Void> deleteRuleItemByMemberId(String storeId,
+			String ruleId, String memberId, String alias, String imageSize) {
+		return deleteItem(storeId, ruleId, memberId, null, alias, imageSize);
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> deleteRuleItemWithImage(String ruleId, String imagePathId, String alias){
-		return deleteItem(ruleId, null, imagePathId, alias); 
+	public ServiceResponse<Void> deleteRuleItemByImageId(String storeId,
+			String ruleId, String imagePathId, String alias, String imageSize) {
+		return deleteItem(storeId, ruleId, null, imagePathId, alias, imageSize);
 	}
 
-	public ServiceResponse<Void> deleteItem(String ruleId, String memberId, String imagePathId, String alias){
-		String storeId = UtilityService.getStoreId();
+	public ServiceResponse<Void> deleteItem(String storeId, String ruleId,
+			String memberId, String imagePathId, String alias, String imageSize) {
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
-		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId, memberId);
-		bannerRuleItem.setImagePath(new ImagePath(storeId, imagePathId, null, null, alias));
+		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId,
+				memberId);
+		ImagePath imagePath = new ImagePath(storeId, imagePathId, null,
+				imageSize, null, alias);
+		bannerRuleItem.setImagePath(imagePath);
 
 		try {
-			if (daoService.deleteBannerRuleItem(bannerRuleItem) > 0){
+			if (daoService.deleteBannerRuleItem(bannerRuleItem) > 0) {
 				serviceResponse.success(null);
-			}else{
-				serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias));
+			} else {
+				serviceResponse.error(String.format(
+						MSG_FAILED_DELETE_RULE_ITEM, alias));
 			}
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
+			serviceResponse.error(
+					String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
+		}
+
+		return serviceResponse;
+	}
+
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByKeyword(
+			String storeId, String keyword, String startDateText,
+			String endDateText) {
+		return getBannerStats(storeId, keyword, null, startDateText,
+				endDateText);
+	}
+
+	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByMemberId(
+			String storeId, String memberId, String startDateText,
+			String endDateText) {
+		return getBannerStats(storeId, null, memberId, startDateText,
+				endDateText);
+	}
+
+	private ServiceResponse<RecordSet<BannerStatistics>> getBannerStats(
+			String storeId, String keyword, String memberId,
+			String startDateText, String endDateText) {
+		ServiceResponse<RecordSet<BannerStatistics>> serviceResponse = new ServiceResponse<RecordSet<BannerStatistics>>();
+
+		DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(
+				storeId, startDateText, JodaPatternType.DATE);
+		DateTime endDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(
+				storeId, endDateText, JodaPatternType.DATE);
+
+		if (startDateTime == null && endDateTime == null) {
+			endDateTime = startDateTime = DateTime.now();
+		}
+
+		List<BannerStatistics> list = new ArrayList<BannerStatistics>();
+
+		try {
+			list = StringUtils.isNotBlank(keyword) ? BannerStatisticsUtil
+					.getStatsPerBannerByKeyword(storeId, keyword,
+							startDateTime.toDate(), endDateTime.toDate())
+					: BannerStatisticsUtil.getStatsPerKeywordByMemberId(
+							storeId, memberId, startDateTime.toDate(),
+							endDateTime.toDate());
+
+			RecordSet<BannerStatistics> rs = new RecordSet<BannerStatistics>(
+					list, (Integer) CollectionUtils.size(list));
+			serviceResponse.success(rs);
+		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error("File not found for getStatsPerKeyword", e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			serviceResponse.error("Exception for getStatsPerKeyword", e);
 		}
 
 		return serviceResponse;

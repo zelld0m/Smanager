@@ -18,8 +18,10 @@
 		base.init();
 	};
 
-	$.addbanner.prototype.setId = function(ui, id) {
+	$.addbanner.prototype.setId = function(id) {
 		var base = this;
+		var ui = base.$el;
+		
 		ui.find("div:first").prop({
 			id: $.isNotBlank(id)? id: "plugin-addbanner-" + base.options.id
 		});
@@ -54,23 +56,24 @@
 
 					show: function(event, api){
 						base.$el.empty().append(base.getTemplate());
-						base.setId(base.$el);
-						base.populateContents();
+						base.setId();
+						base.populateContents.call(base);
 					}
 				}
 			});
 		} else {
 			base.$el.empty().append(base.getTemplate());
-			base.setId(base.$el);
-			base.populateContents();
+			base.setId();
+			base.populateContents.call(base);
 		}
 	};
 
 	$.addbanner.prototype.populateContents = function() {
 		var base = this;
+		var ui = base.$el;
+		
 		// at any mode, make sure alias field is always readonly and disabled
-		base.$el
-		.find('.imageAlias').prop({
+		ui.find('.imageAlias').prop({
 			readonly: true,
 			disabled: true
 		}).removeProp("id");
@@ -78,7 +81,7 @@
 		if(base.options.ruleItem != null) {
 			var ruleItem = base.options.ruleItem;
 
-			base.$el.find('input#startDate').val(ruleItem['formattedStartDate']).end()
+			ui.find('input#startDate').val(ruleItem['formattedStartDate']).end()
 			.find('input#endDate').val(ruleItem['formattedEndDate']).end()
 			.find('input#imagePath').val(ruleItem['imagePath']['path']).end()
 			.find('input.imageAlias').val(ruleItem['imagePath']['alias']).prop({
@@ -94,7 +97,7 @@
 				checked: ruleItem["openNewWindow"] == true
 			});
 			
-			base.previewImage(base.$el, ruleItem['imagePath']['path']);
+			base.previewImage(ruleItem['imagePath']['path']);
 
 			if(base.options.mode){
 				switch(base.options.mode.toLowerCase()){
@@ -112,8 +115,7 @@
 		}
 
 		// Select a date range
-		base.$el
-		.find("#startDate").prop({ id: "startDate_" + base.options.rule["ruleId"]}).datepicker({
+		ui.find("#startDate").prop({ id: "startDate_" + base.options.rule["ruleId"]}).datepicker({
 			minDate: GLOBAL_currentDate,
 			defaultDate: GLOBAL_currentDate,
 			changeMonth: true,
@@ -123,7 +125,7 @@
 			buttonImageOnly: true,
 			buttonText: "Select start date",
 			onClose: function(selectedDate) {
-				base.$el.find("#endDate_" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
+				ui.find("#endDate_" + base.options.rule["ruleId"]).datepicker("option", "minDate", selectedDate);
 			}
 		}).end()
 
@@ -137,8 +139,8 @@
 			buttonImageOnly: true,
 			buttonText: "Select end date",
 			onClose: function(selectedDate) {
-				if(!base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("isDisabled")){
-					base.$el.find("#startDate_" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
+				if(!ui.find("#startDate_" + base.options.rule["ruleId"]).datepicker("isDisabled")){
+					ui.find("#startDate_" + base.options.rule["ruleId"]).datepicker("option", "maxDate", selectedDate);
 				}
 			}
 		});
@@ -151,41 +153,71 @@
 		base.api && base.api.reposition();
 	};
 
-	$.addbanner.prototype.populateImageAlias = function(ui, item) {
-		var base = this;
-		// TODO
-	};
-
 	$.addbanner.prototype.registerEventListener = function(){
 		var base = this;
+		var ui = base.$el;
+		
 		base.reposition();
-		base.addInputFieldListener(base.$el.find("input#imagePath"), base.getImagePath);
-		base.addInputFieldListener(base.$el.find("input#linkPath"), base.validateLinkPath);
-		base.buttonListener();
+		base.addInputFieldListener("input#imagePath", ui.find("#imagePath").val(), base.getImagePath);
+		base.addInputFieldListener("input#linkPath", ui.find("#linkPath").val(), base.validateLinkPath);
+		base.addButtonListener();
 	};
-
-	$.addbanner.prototype.validateLinkPath = function(ui, linkPath){
+	
+	$.addbanner.prototype.validateLinkPath = function(linkPath){
 		var base = this;
-		//Validate if valid url
+		var ui = base.$el;
+		
+		var validURL = false;
+		ui.find("#linkPath").attr("data-valid", false);
 
-		//Check for 200 response
-		$.ajax({ 
-			type: "GET", 
-			url: linkPath, 
-			async: false,
-			crossDomain: true,
-			statusCode: {
-				200: function() {
-					alert("Valid URL");
+		if($.isNotBlank(linkPath)){
+			if(!$.startsWith(linkPath,"//")){
+				jAlert("Link path value must start with //", "Banner");
+				return;
+			}
+			
+			var url = GLOBAL_storeDefaultBannerLinkPathProtocol + ':' + linkPath;
+			
+			if(!$.isValidURL(url)){
+				jAlert("Please specify a valid link path", "Banner");
+				return;
+			}
+	
+			var $a = $('<a/>');
+			$a.attr("href", url);
+			var hostname = $a[0]["hostname"];
+			
+			for(var i = 0; i < GLOBAL_storeDomains.length; i++){
+				if($.isNotBlank(GLOBAL_storeDomains[i]) && $.endsWith(hostname, GLOBAL_storeDomains[i])){
+					var hostnamePrefix = hostname.replace(GLOBAL_storeDomains[i],'');
+					validURL = validURL || $.isBlank(hostnamePrefix);
+					
+					if($.isNotBlank(hostnamePrefix) && hostnamePrefix !== hostname){
+						validURL = validURL || /([A-Z0-9]*\.){0,1}/i.test(hostnamePrefix);
+					}
 				}
 			}
-		});
+			
+			ui.find("#linkPath").attr("data-valid", validURL);
+
+			if(!validURL){
+				ui.find("#linkPath").attr("data-valid", "domain");
+				jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
+			}
+			
+		}else{
+			jAlert("Please specify a link path", "Banner");
+		}
+		
 	};
 
-	$.addbanner.prototype.buttonListener = function() {	
+	$.addbanner.prototype.addButtonListener = function() {	
 		var base = this;
-		base.$el.find(".buttons").off().on({
+		var ui = base.$el;
+		
+		ui.find(".buttons").off().on({
 			click: function(e){
+				
 				switch($(e.currentTarget).prop("id")){
 				case "okButton":
 					var startDate = $.trim(e.data.base.$el.find('input.startDate').val());
@@ -199,7 +231,10 @@
 					var keywords = $.trim(e.data.base.$el.find('textarea#keyword').val());
 					var disable = e.data.base.$el.find('#temporaryDisable').is(":checked");
 					var openNewWindow = e.data.base.$el.find('#openNewWindow').is(":checked");
-
+					var imageSize = e.data.base.$el.find('input#imagePath').attr("data-size");
+					var isValidURL = e.data.base.$el.find("#linkPath").attr("data-valid")==="true";
+					var isRestrictDomain =e.data.base.$el.find("#linkPath").attr("data-valid")==="domain";
+					
 					var keywordArray = new Array();
 					var lines = keywords.split('\n');
 					var attemptAddToSelectedRule = false;
@@ -214,13 +249,23 @@
 					
 					if($.isBlank(imagePath)) {
 						jAlert("Image path is required.", "Banner");
+					}else if(imageSize==="error") {
+						jAlert("Failed to load the image", "Banner");
+					}else if(imageSize==="loading") {
+						jAlert("Please wait, image is currently loading", "Banner");
+					}else if($.inArray(imageSize, GLOBAL_storeAllowedBannerSizes)==-1) {
+						jAlert("Image size " + imageSize + " is not allowed", "Banner");
 					} else if($.isBlank(imageAlias)) {
 						jAlert("Image alias is required.", "Banner");
 					} else if($.isBlank(imageAlt)) {
 						jAlert("Image alt is required.", "Banner");
 					} else if($.isBlank(linkPath)) {
 						jAlert("Link path is required.", "Banner");
-					} else if($.isBlank(startDate) || !$.isDate(startDate)){
+					}else if(isRestrictDomain) {
+						jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
+					}else if(!isValidURL) {
+						jAlert("Please specify a valid link path.", "Banner");
+					}else if($.isBlank(startDate) || !$.isDate(startDate)){
 						jAlert("Please provide a valid start date", "Banner");
 					} else if($.isBlank(endDate) || !$.isDate(endDate)){
 						jAlert("Please provide a valid end date", "Banner");
@@ -248,6 +293,7 @@
 						
 						e.data['disable'] = disable;
 						e.data['openNewWindow'] = openNewWindow;
+						e.data['imageSize'] = imageSize;
 						e.data['mode'] = base.options.mode;
 						base.options.addBannerCallback(base, e);
 					}
@@ -260,90 +306,113 @@
 		}, {base: base});
 	};
 
-	$.addbanner.prototype.addInputFieldListener = function(input, callback) {
+	$.addbanner.prototype.addInputFieldListener = function(id, currValue, callback) {
 		var base = this;
-
-		input.off().on({
-			mouseenter: function(e) {
-				if(e.data.locked) {
-					showHoverInfo;
-				} else {
-					e.data.input = $.trim($(e.currentTarget).val());
-				}
-			},
+		var ui = base.$el;
+		
+		ui.find(id).off().on({
 			focusin: function(e) {
-				if(e.data.locked) {
-					showHoverInfo;
-				} else {
-					e.data.input = $.trim($(e.currentTarget).val());
-				}
-			},
-			mouseleave: function(e) {
-				if (e.data.locked) return;
-
-				if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.requestSent!=="true") {
-					e.data.requestSent = "true";
-					if(callback) callback.apply(e.data.base, [e.data.base.$el, $(e.currentTarget).val()]);
-				}
+				if(e.data.locked) return
+				e.data.input = $.trim($(e.currentTarget).val());
 			},
 			focusout: function(e) {
 				if (e.data.locked) return;
 
-				if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase() && e.data.requestSent!=="true") {
-					e.data.requestSent = "true";
-					if(callback) callback.apply(e.data.base, [e.data.base.$el, $(e.currentTarget).val()]);
+				if($.isNotBlank($(e.currentTarget).val()) && 
+						currValue !== $(e.currentTarget).val() &&
+						e.data.valueWhenRequestSent !== $(e.currentTarget).val()
+						) {
+					e.data.valueWhenRequestSent = $(e.currentTarget).val();
+					if(callback) callback.call(e.data.base, $(e.currentTarget).val());
+				}
+				
+				if ($.isBlank($(e.currentTarget).val())){
+					e.data.valueWhenRequestSent = "";
+					$(e.currentTarget).val(currValue);
+					if(callback) callback.call(e.data.base, $(e.currentTarget).val());
 				}
 			}
-		}, {base: base, locked: base.options.isLocked, input: "", requestSent: ""});
+		}, {base: base, locked: base.options.isLocked, valueWhenRequestSent: ""});
 	};
 
-	$.addbanner.prototype.previewImage = function(ui, imagePath) {
+	$.addbanner.prototype.previewImage = function(imagePath) {
 		var base = this;
-		var $previewHolder = ui.find("#preview");
+		var ui = base.$el;
 
 		if($.isBlank(imagePath)) {
 			imagePath = base.options.noPreviewImage;
 		}
 
-		$previewHolder.find("img#imagePreview").attr("src",imagePath).off().on({
+		ui.find("img#imagePreview").attr("src",imagePath).off().on({
 			error:function(){ 
 				$(this).unbind("error").attr("src", base.options.noPreviewImage); 
 			}
 		});
+
 	};
 
-	$.addbanner.prototype.getImagePath = function(ui, imagePath) {
+	$.addbanner.prototype.getImagePath = function(imagePath) {
 		var base = this;
-		var $previewHolder = ui.find("#preview");
-
-		BannerServiceJS.getImagePath(imagePath, {
-			callback: function(sr){
-				if (sr!=null && sr["data"]!=null){
-					var iPath = sr["data"];
+		var ui = base.$el;
+		
+		// Create new offscreen image to test
+		var theImage = new Image();
+		theImage.src = imagePath;
+		ui.find("#imagePath").attr("data-size", "loading");
+		
+		$(theImage).off().on({
+			error: function(e){
+				var ui = e.data.ui;
+				ui.find("#imagePath").attr("data-size", "error");
+				base.previewImage(base.options.noPreviewImage);
+			},
+			load: function(e) {
+				var ui = e.data.ui;
+				var base = e.data.base;
 				
-					ui.find(".imageAlias").prop({
-						id: iPath["id"],
-						readonly: true,
-						disabled: true
-					}).val(iPath["alias"]);
-
+				// Get accurate measurements from that.
+				var imageWidth = theImage.width;
+				var imageHeight = theImage.height;
+				var dimension = imageWidth + 'x' + imageHeight;
+				
+				if ($.inArray(dimension, GLOBAL_storeAllowedBannerSizes)==-1){
+					base.previewImage(imagePath);
+					jAlert("Only the following sizes are allowed: " + GLOBAL_storeAllowedBannerSizes.join(','), "Banner Size");
 				}else{
-					ui.find(".imageAlias").prop({
-						id:"",
-						readonly: false,
-						disabled: false
+					BannerServiceJS.getImagePath(GLOBAL_storeId, imagePath, {
+						callback: function(sr){
+							if (sr!=null && sr["data"]!=null){
+								var iPath = sr["data"];
+								
+								ui.find(".imageAlias").prop({
+									id: iPath["id"],
+									readonly: true,
+									disabled: true
+								}).val(iPath["alias"]);
+								
+							}else{
+								ui.find(".imageAlias").prop({
+									id:"",
+									readonly: false,
+									disabled: false
+								});
+							}
+						},
+						preHook: function(e){
+							ui.find("span.preloader").show();
+							ui.find(".imageAlias").val("");
+						},
+						postHook: function(e){
+							ui.find("span.preloader").hide();
+							base.previewImage(imagePath);
+						}
 					});
 				}
-			},
-			preHook: function(e){
-				$previewHolder.find("span.preloader").show();
-				ui.find(".imageAlias").val("");
-			},
-			postHook: function(e){
-				$previewHolder.find("span.preloader").hide();
-				base.previewImage(ui, imagePath);
+				
+				ui.find("#imagePath").attr("data-size", dimension);
 			}
-		});
+		}, {ui: ui, base:base});
+		
 	};
 
 	$.addbanner.prototype.getTemplate = function() {

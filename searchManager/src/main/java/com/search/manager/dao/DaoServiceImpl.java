@@ -1849,26 +1849,17 @@ public class DaoServiceImpl implements DaoService {
 
     @Override
     public BannerRule getBannerRuleById(String storeId, String ruleId) throws DaoException {
-        return bannerDAO.getRuleById(storeId, ruleId);
-    }
-
-    @Override
-    public BannerRule getBannerRuleByNameExact(String storeId, String ruleName) throws DaoException {
-    	BannerRule model = new BannerRule(storeId, ruleName);
-    	SearchCriteria<BannerRule> criteria = new SearchCriteria<BannerRule>(model);
+    	BannerRule rule = new BannerRule();
+    	rule.setStoreId(storeId);
+    	rule.setRuleId(ruleId);
+    	RecordSet<BannerRule> ruleRS = searchBannerRule(new SearchCriteria<BannerRule>(rule, MatchType.MATCH_ID, 1, 1));
     	
-    	List<BannerRule> bannerRuleList = bannerDAO.searchRule(criteria, null, MatchType.MATCH_NAME).getList();
-    	
-    	if (CollectionUtils.isNotEmpty(bannerRuleList)){
-			return bannerRuleList.get(0);
-		}
-		
-		return null;
+    	return (BannerRule) CollectionUtils.get(ruleRS.getList(), 0);
     }
-
+  
 	@Override
 	public RecordSet<BannerRule> searchBannerRule(SearchCriteria<BannerRule> criteria) throws DaoException {
-		return bannerDAO.searchRule(criteria, null, MatchType.LIKE_NAME);
+		return bannerDAO.searchRule(criteria);
 	}
 
 	@Override
@@ -1933,13 +1924,6 @@ public class DaoServiceImpl implements DaoService {
 	public int deleteBannerRuleItem(BannerRuleItem ruleItem)
 			throws DaoException {
 		return bannerDAO.deleteRuleItem(ruleItem);
-	}
-
-	@Override
-	public RecordSet<BannerRule> getBannerRuleWithImage(
-			SearchCriteria<BannerRule> criteria, String imagePathId)
-			throws DaoException {
-		return bannerDAO.searchRule(criteria, imagePathId);
 	}
  
 	@Override

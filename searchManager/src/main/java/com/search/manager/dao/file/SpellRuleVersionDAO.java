@@ -1,6 +1,5 @@
 package com.search.manager.dao.file;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -28,6 +27,10 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	@Autowired
 	private DaoService daoService;
+
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
+	}
 
 	protected boolean deleteDatabaseVersion(String store, String ruleId, int versionNo) {
 		try {

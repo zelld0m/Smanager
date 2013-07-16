@@ -1,0 +1,11 @@
+<html>
+	<body>
+		Hi ${recipient},
+		
+		<p>The following <b>${ruleType}</b> rule(s) was/were submitted for approval by <b>${actionBy}</b> on <b>${actionDate}</b>.</p>
+		<div>
+			${rules}
+		</div>
+		<p>This email is an automated notification, which is unable to receive replies. We're happy to help you with any questions or concerns you may have. Please contact us via SearchManagerDevTeam@pcmall.com</p>
+	</body>
+</html>

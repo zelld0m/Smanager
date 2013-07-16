@@ -21,11 +21,30 @@
 				successDeleteBannerItem: "Successfully deleted {0}",
 				successCopyBannerItem: "Successfully copied {0} to {1}"
 			},
+			
+			calendarOpts: {
+				defaultDate: GLOBAL_currentDate,
+				changeMonth: true,
+				changeYear: true,
+				showOn: "both",
+				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
+				buttonImageOnly: true,
+				buttonText: "Date to simulate",				
+			},
 
 			init: function(){
 				var self = this;
 				$("#ruleItemHolder, #addBannerBtn").hide();
 				$("#titleText").text(self.moduleName);
+				
+				$.each(GLOBAL_storeAllowedBannerSizes, function (index, value) {
+				    $('#filterBySize').append($('<option>', { 
+				        value: value,
+				        text : value,
+				        selected: GLOBAL_storeDefaultBannerSize === value
+				    }));
+				});
+				
 				self.getRuleList(1);
 			},
 
@@ -52,7 +71,7 @@
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
 
-						BannerServiceJS.getAllRules(ruleName, page, base.options.pageSize, {
+						BannerServiceJS.getAllRules(GLOBAL_storeId, ruleName, page, base.options.pageSize, {
 							callback: function(sr){
 								var data = sr["data"]; 
 								base.populateList(data, ruleName);
@@ -66,7 +85,7 @@
 
 					itemOptionCallback: function(base, item){
 
-						BannerServiceJS.getTotalRuleItems(item.model["ruleId"], {
+						BannerServiceJS.getTotalRuleItems(GLOBAL_storeId, item.model["ruleId"], {
 							callback: function(sr){
 								var count = sr["data"];
 								if (count > 0) 
@@ -100,7 +119,7 @@
 								switch(sr["status"]){
 								case 0: 
 									jAlert($.formatText(self.lookupMessages.successAddNewKeyword, ruleName), "Banner Rule", function(){
-										BannerServiceJS.getRuleByNameExact(ruleName, {
+										BannerServiceJS.getRuleByName(GLOBAL_storeId, ruleName, {
 											callback: function(sr){
 												self.setRule(sr["data"]);
 											}
@@ -134,7 +153,7 @@
 
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
-						BannerServiceJS.getRuleById(self.selectedRule["ruleId"],{
+						BannerServiceJS.getRuleById(GLOBAL_storeId, self.selectedRule["ruleId"],{
 							callback: function(response){
 								if (response.status == 0) {
 									self.setRule(response.data);
@@ -165,7 +184,7 @@
 					}
 				});
 			},
-
+			
 			addRuleItemToggleHandler: function(ui, item){
 				var self = this;
 				var toggle = "hide"; // $.cookie('banner.toggle' + $.formatAsId(item["memberId"]));
@@ -191,6 +210,15 @@
 				});
 			},
 			
+			addImagePathRestriction: function(ui, item){
+				var self = this;
+				
+				ui.find("#imagePath").prop({
+					readonly: true,
+					disabled: true,
+				});
+			},
+			
 			setToggleStatus: function(ui, item, show){
 				var self = this;
 
@@ -200,7 +228,6 @@
 					
 					ui.find("#bannerInfo").slideDown("slow", function(){
 						//$.cookie('banner.toggle' + $.formatAsId(item["memberId"]), "show" ,{path:GLOBAL_contextPath});
-						self.addInputFieldListener(ui, item, item["imagePath"]["path"], ui.find("input#imagePath"), self.previewImage);
 						self.addInputFieldListener(ui, item, item["linkPath"], ui.find("input#linkPath"), self.validateLinkPath);
 						self.addInputFieldListener(ui, item, item["priority"], ui.find("input#priority"));
 						self.addSetAliasHandler(ui, item);
@@ -214,6 +241,7 @@
 						.find(".startDate, .endDate").datepicker("enable");
 
 						self.addImageAliasRestriction(ui, item);
+						self.addImagePathRestriction(ui, item);
 						self.addScheduleRestriction(ui, item);
 						self.addItemExpiredRestriction(ui, item);
 						self.addRuleStatusRestriction();
@@ -245,9 +273,35 @@
 					$("#itemFilter").val("all");
 				}
 
+				$("#filterByDate").datepicker("destroy").hide();
+				
+				if($("#itemFilter").val()==="date"){
+					$("#filterByDate").show().datepicker($.extend({}, self.calendarOpts, {
+						onClose: function(selectedText){
+							self.getRuleItemList(1);
+						}
+					})).val($.datepicker.formatDate("mm/dd/yy", GLOBAL_currentDate));
+				}
+				
+				$("#filterBySize").off().on({
+					change: function(e){
+						self.getRuleItemList(1);
+					}
+				}).show();
+
 				$("#itemFilter").off().on({
 					change: function(e){
 						$.cookie('banner.filter' + $.formatAsId(self.selectedRule["ruleId"]), $(this).val(), {path:GLOBAL_contextPath});
+				
+						$("#filterByDate").datepicker("destroy").hide();
+						
+						if($(this).val()==="date"){
+							$("#filterByDate").datepicker($.extend({}, self.calendarOpts, {
+								onClose: function(selectedText){
+									self.getRuleItemList(1);
+								}
+							})).val($.datepicker.formatDate("mm/dd/yy", GLOBAL_currentDate)).show();
+						}
 						self.getRuleItemList(1);
 					}
 				});
@@ -261,12 +315,33 @@
 			getRuleItemList: function(page){
 				var self = this;
 				var rule = self.selectedRule;
-				var $iHolder = $("#ruleItemHolder");
 				self.selectedRuleItemPage = page;
 				$(".ruleItem:not(#ruleItemPattern)").remove();
 				$("#ruleItemHolder").hide();
 
-				BannerServiceJS.getRuleItems(self.getRuleItemFilter(), rule["ruleId"], page, self.ruleItemPageSize, {
+				$("#keywordStatIcon").statbox({
+					itemDataCallback: function(startDate, endDate){
+						var base = this;
+						BannerServiceJS.getStatsByKeyword(GLOBAL_storeId, rule["ruleName"], startDate, endDate, {
+							callback: function(sr){
+								base.populateList.call(base, sr["data"], "keyword");
+							}
+						});
+					},
+					itemImagePathCallback: function(url){
+						var u = this;
+						BannerServiceJS.getImagePath(GLOBAL_storeId, url, {
+							callback: function(sr){
+								var imagePath = sr["data"];
+								if(imagePath){
+									u.find(".itemName").text(imagePath["alias"]);
+								}
+							}
+						});
+					}
+				});
+				
+				BannerServiceJS.getRuleItemsByFilter(GLOBAL_storeId, rule["ruleId"], self.getRuleItemFilter(), $("#filterByDate").val(), $("#filterBySize").val(), page, self.ruleItemPageSize, {
 					callback: function(sr){
 						var recordSet = sr["data"];
 
@@ -280,10 +355,12 @@
 								totalItem: recordSet["totalSize"],
 								callbackText: function(itemStart, itemEnd, itemTotal){
 									var selectedText = $.trim($("#itemFilter").val()) !== "all" ? " " + $("#itemFilter option:selected").text(): "";
+									 	selectedText = $.trim($("#itemFilter").val()) !== "date" ? selectedText : " " + $("#filterByDate").val();
+									 	selectedText = selectedText + " " + $("#filterBySize").val();
 									if ($("#itemFilter").val() === "all") 
 										self.selectedRuleItemTotal = itemTotal;
 									
-									return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
+									return itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
 								},
 								pageLinkCallback: function(e){ self.getRuleItemList(e.data.page); },
 								nextLinkCallback: function(e){ self.getRuleItemList(e.data.page + 1); },
@@ -333,7 +410,7 @@
 						self.populateRuleItemFields(ui, item);
 					}
 				}else{
-					self.addRuleStatusRestriction()
+					self.addRuleStatusRestriction();
 				}
 			},
 
@@ -348,7 +425,10 @@
 				.find("#startDate").val(item["formattedStartDate"]).end()
 				.find("#endDate").val(item["formattedEndDate"]).end()
 
-				.find("#imagePath").val(item["imagePath"]["path"]).end()
+				.find("#imagePath").val(item["imagePath"]["path"]).prop({
+					readonly: true,
+					disabled: true,
+				}).end()
 				.find("#imageAlias").val(item["imagePath"]["alias"]).prop({
 					id: item["imagePath"]["id"],
 					readonly: true,
@@ -406,6 +486,7 @@
 				self.getLinkedKeyword(ui, item);
 				self.addShowKeywordHandler(ui, item);
 				self.addItemAuditHandler(ui, item);
+				self.addItemStatisticHandler(ui, item);
 				self.addLastUpdateHandler(ui, item);
 				self.addItemCommentHandler(ui, item);
 				self.addRuleItemToggleHandler(ui, item);
@@ -414,6 +495,33 @@
 				self.addRuleStatusRestriction();
 			},
 
+			addItemStatisticHandler: function(ui, item){
+				var self = this;
+
+				ui.find("#itemStatIcon").statbox({
+					rule: self.selectedRule,
+					itemDataCallback: function(startDate, endDate){
+						var base = this;
+						BannerServiceJS.getStatsByMemberId(GLOBAL_storeId, item["memberId"], startDate, endDate, {
+							callback: function(sr){
+								base.populateList.call(base, sr["data"], "memberId");
+							}
+						});
+					},
+					itemScheduleCallback: function(ruleId, memberId){
+						var u = this;
+						BannerServiceJS.getRuleItemByMemberId(GLOBAL_storeId, ruleId, memberId,{
+							callback: function(sr){
+								var rItem = sr["data"];
+								if(rItem){
+									u.find(".itemSchedule").text(rItem["formattedStartDate"] + '-' + rItem["formattedEndDate"]);
+								}
+							}
+						});
+					}
+				});
+			},
+			
 			addItemExpiredRestriction: function(ui, item){
 				var self = this;
 				
@@ -450,9 +558,9 @@
 				$('#deleteAllItemIcon').off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						jConfirm("Delete all banner item in " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
+						jConfirm("Delete all " + $("#filterBySize").val() +" in keyword" + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
-								BannerServiceJS.deleteAllRuleItem(self.selectedRule["ruleId"], {
+								BannerServiceJS.deleteRuleItemsByImageSize(GLOBAL_storeId, self.selectedRule["ruleId"], $("#filterBySize").val(), {
 									callback: function(e){
 										self.getRuleItemList(1);
 									}
@@ -553,8 +661,49 @@
 				}
 			},
 
-			validateLinkPath: function(ui, linkPath){
+			validateLinkPath: function(ui, item, linkPath){
+				var validURL = false;
+				ui.find("#linkPath").attr("data-valid", false);
 
+				if($.isNotBlank(linkPath)){
+					if(!$.startsWith(linkPath,"//")){
+						jAlert("Link path value must start with //", "Banner");
+						return;
+					}
+					
+					var url = GLOBAL_storeDefaultBannerLinkPathProtocol + ':' + linkPath;
+					
+					if(!$.isValidURL(url)){
+						jAlert("Please specify a valid link path", "Banner");
+						return;
+					}
+			
+					var $a = $('<a/>');
+					$a.attr("href", url);
+					var hostname = $a[0]["hostname"];
+					
+					for(var i = 0; i < GLOBAL_storeDomains.length; i++){
+						if($.isNotBlank(GLOBAL_storeDomains[i]) && $.endsWith(hostname, GLOBAL_storeDomains[i])){
+							var hostnamePrefix = hostname.replace(GLOBAL_storeDomains[i],'');
+							validURL = validURL || $.isBlank(hostnamePrefix);
+							
+							if($.isNotBlank(hostnamePrefix) && hostnamePrefix !== hostname){
+								validURL = validURL || /([A-Z0-9]*\.){0,1}/i.test(hostnamePrefix);
+							}
+						}
+					}
+					
+					ui.find("#linkPath").attr("data-valid", validURL);
+
+					if(!validURL){
+						ui.find("#linkPath").attr("data-valid", "domain");
+						jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
+					}
+					
+				}else{
+					jAlert("Please specify a link path", "Banner");
+				}
+				
 			},
 
 			previewImage: function(ui, item, imagePath){
@@ -587,21 +736,15 @@
 							var btnCancelText = "Cancel";
 							var setAlias = $(e.currentTarget).find("#setAliasText").text() === btnSetText;
 							
-							e.data.ui
-							.find("#imagePath").prop({
-								readonly: setAlias,
-								disabled: setAlias
-							}).end()
-							
-							.find(".imageAlias").prop({
+							e.data.ui.find(".imageAlias").prop({
 								readonly: !setAlias,
 								disabled: !setAlias
 							}).val(
-									!setAlias? e.data.item["imagePath"]["alias"] : ""
+								!setAlias? e.data.item["imagePath"]["alias"] : ""
 							);
 							
 							$(e.currentTarget).find("#setAliasText").text(
-									setAlias? btnCancelText: btnSetText
+								setAlias? btnCancelText: btnSetText
 							);
 						},
 						mouseenter: showHoverInfo
@@ -638,7 +781,7 @@
 								"openNewWindow": params["openNewWindow"]
 						};
 
-						BannerServiceJS.copyToRule(params["keywords"], mapParams, {
+						BannerServiceJS.copyToRule(GLOBAL_storeId, params["keywords"], mapParams, {
 							callback: function(sr){
 								var keyList = sr["data"];
 
@@ -660,7 +803,7 @@
 				var self = this;
 				var count = 1;
 
-				BannerServiceJS.getTotalRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"],{
+				BannerServiceJS.getTotalRulesByImageId(GLOBAL_storeId, item["imagePath"]["id"], item["imagePath"]["alias"],{
 					callback: function(sr){
 						var total = sr["data"];
 						if ($.isNumeric(total) && total > 1){
@@ -689,7 +832,7 @@
 					pageSize: 5,
 					parentNameText: item["imagePath"]["alias"],
 					itemDataCallback:function(base, page){
-						BannerServiceJS.getAllRuleWithImage(item["imagePath"]["id"], item["imagePath"]["alias"], page, base.options.pageSize, {
+						BannerServiceJS.getRulesByImageId(GLOBAL_storeId, item["imagePath"]["id"], item["imagePath"]["alias"], page, base.options.pageSize, {
 							callback:function(sr){
 								var recordSet = sr["data"];
 								var total = recordSet["totalSize"];
@@ -705,7 +848,7 @@
 						});
 					},
 					itemDeleteCallback:function(base, rule, rItem){
-						BannerServiceJS.deleteRuleItemWithImage(rule["ruleId"], rItem["imagePath"]["id"], rItem["imagePath"]["alias"], {
+						BannerServiceJS.deleteRuleItemByImageId(GLOBAL_storeId, rule["ruleId"], rItem["imagePath"]["id"], rItem["imagePath"]["alias"], $("#filterBySize").val(), {
 							callback:function(e){
 								base.getList(1);
 							},
@@ -716,6 +859,9 @@
 								self.getLinkedKeyword(ui, item);
 							}
 						});
+					},
+					itemScheduleCallback: function(base, rItem){
+						
 					}
 				});
 			},
@@ -745,10 +891,11 @@
 								"linkPath": params["linkPath"], 
 								"description": params["description"], 
 								"disable": params["disable"],
-								"openNewWindow": params["openNewWindow"]
+								"openNewWindow": params["openNewWindow"],
+								"imageSize": params["imageSize"]
 						};
 
-						BannerServiceJS.addRuleItem(mapParams, {
+						BannerServiceJS.addRuleItem(GLOBAL_storeId, mapParams, {
 							callback: function(sr){
 								switch(sr["status"]){
 								case 0: 
@@ -790,7 +937,7 @@
 
 						jConfirm("Delete banner " + e.data.item["imagePath"]["alias"] + " from " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
-								BannerServiceJS.deleteRuleItem(self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"],{
+								BannerServiceJS.deleteRuleItemByMemberId(GLOBAL_storeId, self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"], $("#filterBySize").val(), {
 									callback: function(sr){
 										switch(sr["status"]){
 										case 0: 
@@ -879,9 +1026,10 @@
 						var startDate = e.data.ui.find(".startDate").val();
 						var endDate = e.data.ui.find(".endDate").val();
 						var imageAlt = e.data.ui.find("#imageAlt").val();
-						var linkPath = e.data.ui.find("#linkPath").val();
+						var linkPath = e.data.ui.find("#linkPath").val().replace(/.*?:\/\/(www\.)?/gi, "");
 						var description = e.data.ui.find("#description").val();
-
+						var isValidURL = e.data.ui.find("#linkPath").attr("data-valid")==="true";
+						var isRestrictDomain = e.data.ui.find("#linkPath").attr("data-valid")==="domain";
 						var params = self.getUpdatedFields(e.data.ui, e.data.item);
 						
 						$.each(params, function(i){
@@ -890,19 +1038,25 @@
 						
 						if(dirtyCount == 0){
 							jAlert("Nothing to update", "Banner");
-						}else if($.isBlank(priority) && $.isNumeric(priority)) {
+						}else if($.isBlank(priority) || !$.isNumeric(priority)) {
 							jAlert("Priority is required and must be a number", "Banner");
 						}else if(priority > self.selectedRuleItemTotal) {
 							jAlert("Maximum value for priority is " +  self.selectedRuleItemTotal, "Banner");
 						}else if($.isBlank(imagePath)) {
 							jAlert("Image path is required.", "Banner");
-						} else if($.isBlank(imageAlias)) {
+						}else if(!$.isValidURL(imagePath)) {
+							jAlert("Please specify a valid image path.", "Banner");
+						}else if($.isBlank(imageAlias)) {
 							jAlert("Image alias is required.", "Banner");
 						} else if($.isBlank(imageAlt)) {
 							jAlert("Image alt is required.", "Banner");
 						}else if($.isBlank(linkPath)) {
 							jAlert("Link path is required.", "Banner");
-						} else if($.isBlank(startDate) || !$.isDate(startDate)){
+						}else if(isRestrictDomain) {
+							jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
+						}else if(!isValidURL) {
+							jAlert("Please specify a valid link path.", "Banner");
+						}else if($.isBlank(startDate) || !$.isDate(startDate)){
 							jAlert("Please provide a valid start date", "Banner");
 						} else if($.isBlank(endDate) || !$.isDate(endDate)){
 							jAlert("Please provide a valid end date", "Banner");
@@ -916,7 +1070,7 @@
 									params["ruleName"] = self.selectedRule["ruleName"];
 									params["memberId"] = e.data.item["memberId"];
 									
-									BannerServiceJS.updateRuleItem(params, {
+									BannerServiceJS.updateRuleItem(GLOBAL_storeId, params, {
 										callback: function(sr){
 											switch(sr["status"]){
 											case 0: 

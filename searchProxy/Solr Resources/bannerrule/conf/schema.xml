@@ -54,6 +54,7 @@
   <field name="disabled" type="boolean" stored="true" multiValued="false" />
   <field name="imagePathId" type="string" stored="true" multiValued="false" indexed="true" />
   <field name="path" type="string" stored="true" multiValued="false" />
+  <field name="size" type="string" stored="true" multiValued="false" />
   <field name="pathType" type="string" stored="true" multiValued="false" />
   <field name="alias" type="string" stored="true" multiValued="false" indexed="true" />
   <field name="_version_" type="long" stored="true" multiValued="false" indexed="true" />

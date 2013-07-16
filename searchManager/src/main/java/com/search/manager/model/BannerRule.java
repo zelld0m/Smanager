@@ -38,6 +38,10 @@ public class BannerRule extends ModelBean {
 	public BannerRule(String storeId, String ruleName) {
 		this(storeId, null, ruleName, null, null);
 	}
+	
+	public BannerRule(String storeId) {
+		this(storeId, null, null, null, null);
+	}
 
 	public BannerRule(BannerRuleXml xml) {
 	    this(xml.getStore(), xml.getRuleId(), xml.getRuleName(), xml.getCreatedBy());
