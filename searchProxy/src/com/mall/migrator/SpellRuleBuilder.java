@@ -14,7 +14,6 @@ import org.apache.solr.common.SolrInputDocument;
 import org.xml.sax.SAXException;
 
 import com.mall.mail.MailNotifier;
-import com.search.manager.report.model.xml.RuleFileXml;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.solr.constants.Constants;
@@ -51,11 +50,9 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 		try {
 			long timeStart = System.currentTimeMillis();
 
-			RuleFileXml xml = new RuleFileXml();
-			xml.setPath(BASE_RULE_DIR + storeId + "\\" + SPELL_FILE);
-
 			@SuppressWarnings("static-access")
-			SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(xml);
+			SpellRules spellRules = (SpellRules) ruleXmlUtil
+					.loadVersion(BASE_RULE_DIR + storeId + "\\" + SPELL_FILE);
 
 			List<SpellRuleXml> spellRulesXml = null;
 
@@ -144,7 +141,7 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 
 		try {
 			SpellRuleBuilder spellRuleBuilder = new SpellRuleBuilder(storeId,
-					Constants.Rule.SPELL.getRuleName());
+					Constants.Core.SPELL_RULE_CORE.getCoreName());
 
 			System.out.println("----------------------------------------");
 			System.out.println("Store	  : " + storeId);
@@ -154,6 +151,7 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 			System.out.println("Database  : "
 					+ ((BasicDataSource) context.getBean("dataSource_solr"))
 							.getUrl());
+			System.out.println("Path : " + BASE_RULE_DIR + storeId + "\\" + SPELL_FILE);
 			System.out.println("----------------------------------------");
 			String response = "";
 			Scanner input = new Scanner(System.in);

@@ -10,65 +10,66 @@ import org.joda.time.DateTime;
 @DataTransferObject(converter = BeanConverter.class)
 public class BannerItemXml extends RuleItemXml {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private int priority;
-    private DateTime startDate;
-    private DateTime endDate;
-    private String imageAlt;
-    private String linkPath;
-    private Boolean openNewWindow;
-    private String description;
-    private Boolean disabled;
-    private String imagePathId;
-    private String imageAlias;
-    private String imagePathType;
+	private int priority;
+	private DateTime startDate;
+	private DateTime endDate;
+	private String imageAlt;
+	private String linkPath;
+	private Boolean openNewWindow;
+	private String description;
+	private Boolean disabled;
+	private String imagePathId;
+	private String imageAlias;
+	private String imagePathType;
+	private String imageSize;
 
-    public BannerItemXml() {
-        super();
-    }
+	public BannerItemXml() {
+		super();
+	}
 
-    public int getPriority() {
-        return priority;
-    }
+	public int getPriority() {
+		return priority;
+	}
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
 
-    public DateTime getStartDate() {
-        return startDate;
-    }
+	public DateTime getStartDate() {
+		return startDate;
+	}
 
-    public void setStartDate(DateTime startDate) {
-        this.startDate = startDate;
-    }
+	public void setStartDate(DateTime startDate) {
+		this.startDate = startDate;
+	}
 
-    public DateTime getEndDate() {
-        return endDate;
-    }
+	public DateTime getEndDate() {
+		return endDate;
+	}
 
-    public void setEndDate(DateTime endDate) {
-        this.endDate = endDate;
-    }
+	public void setEndDate(DateTime endDate) {
+		this.endDate = endDate;
+	}
 
-    public String getImageAlt() {
-        return imageAlt;
-    }
+	public String getImageAlt() {
+		return imageAlt;
+	}
 
-    public void setImageAlt(String imageAlt) {
-        this.imageAlt = imageAlt;
-    }
+	public void setImageAlt(String imageAlt) {
+		this.imageAlt = imageAlt;
+	}
 
-    public String getLinkPath() {
-        return linkPath;
-    }
+	public String getLinkPath() {
+		return linkPath;
+	}
 
-    public void setLinkPath(String linkPath) {
-        this.linkPath = linkPath;
-    }
+	public void setLinkPath(String linkPath) {
+		this.linkPath = linkPath;
+	}
 
-    public Boolean getOpenNewWindow() {
+	public Boolean getOpenNewWindow() {
 		return openNewWindow;
 	}
 
@@ -77,50 +78,58 @@ public class BannerItemXml extends RuleItemXml {
 	}
 
 	public String getDescription() {
-        return description;
-    }
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public Boolean getDisabled() {
-        return disabled;
-    }
+	public Boolean getDisabled() {
+		return disabled;
+	}
 
-    public void setDisabled(Boolean disabled) {
-        this.disabled = disabled;
-    }
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
+	}
 
-    public String getImagePathId() {
-        return imagePathId;
-    }
+	public String getImagePathId() {
+		return imagePathId;
+	}
 
-    public void setImagePathId(String imagePathId) {
-        this.imagePathId = imagePathId;
-    }
+	public void setImagePathId(String imagePathId) {
+		this.imagePathId = imagePathId;
+	}
 
-    public String getImageAlias() {
-        return imageAlias;
-    }
+	public String getImageAlias() {
+		return imageAlias;
+	}
 
-    public void setImageAlias(String imageAlias) {
-        this.imageAlias = imageAlias;
-    }
+	public void setImageAlias(String imageAlias) {
+		this.imageAlias = imageAlias;
+	}
 
-    public String getImagePathType() {
-        return imagePathType;
-    }
+	public String getImagePathType() {
+		return imagePathType;
+	}
 
-    public void setImagePathType(String imagePathType) {
-        this.imagePathType = imagePathType;
-    }
+	public void setImagePathType(String imagePathType) {
+		this.imagePathType = imagePathType;
+	}
 
-    public String getImagePath2() {
-        return super.getImagePath();
-    }
+	public String getImagePath2() {
+		return super.getImagePath();
+	}
 
-    public void setImagePath2(String imagePath) {
-        super.setImagePath(imagePath);
-    }
+	public void setImagePath2(String imagePath) {
+		super.setImagePath(imagePath);
+	}
+
+	public String getImageSize() {
+		return imageSize;
+	}
+
+	public void setImageSize(String imageSize) {
+		this.imageSize = imageSize;
+	}
 }

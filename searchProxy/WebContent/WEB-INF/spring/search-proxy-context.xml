@@ -93,6 +93,5 @@
 	</bean>
 	
 	<bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil"/>
-	<bean id="spellIndex" class="com.search.manager.xml.file.SpellIndex" init-method="init" destroy-method="destroy" scope="singleton" />
 	
 </beans>

@@ -301,12 +301,14 @@ public class SolrResultUtil {
 					bannerRuleItemSolr.getEndDate(), DateTimeZone.UTC));
 			bannerRuleItem.setImageAlt(bannerRuleItemSolr.getImageAlt());
 			bannerRuleItem.setLinkPath(bannerRuleItemSolr.getLinkPath());
-			bannerRuleItem.setOpenNewWindow(bannerRuleItemSolr.isOpenNewWindow());
+			bannerRuleItem.setOpenNewWindow(bannerRuleItemSolr
+					.isOpenNewWindow());
 			bannerRuleItem.setDescription(bannerRuleItemSolr.getDescription());
 			bannerRuleItem.setDisabled(bannerRuleItemSolr.isDisabled());
 
 			imagePath.setId(bannerRuleItemSolr.getImagePathId());
 			imagePath.setPath(bannerRuleItemSolr.getPath());
+			imagePath.setSize(bannerRuleItemSolr.getSize());
 			if (bannerRuleItemSolr.getPathType() != null) {
 				if (bannerRuleItemSolr.getPathType().equals(
 						ImagePathType.IMAGE_LINK.getDisplayText())) {

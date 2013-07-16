@@ -43,38 +43,31 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 	@Override
 	public SpellRule getSpellRuleForSearchTerm(String storeId, String searchTerm)
 			throws DaoException {
-		List<SpellRule> spellRules = null;
-
 		try {
 			storeId = StringUtils.lowerCase(StringUtils.trim(storeId));
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
-
-			searchTerm = StringUtils.lowerCase(StringUtils.trim(searchTerm));
-			strQuery.append(" AND keywords1:"
-					+ ClientUtils.escapeQueryChars(StringUtils.trim(searchTerm)));
-
+			strQuery.append(String.format("store: %s AND keywords1: %s",
+					ClientUtils.escapeQueryChars(storeId), ClientUtils
+							.escapeQueryChars(StringUtils.lowerCase(StringUtils
+									.trim(searchTerm)))));
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
-			QueryResponse queryResponse = null;
-
-			queryResponse = solrServers.getCoreInstance(
+			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.SPELL_RULE_CORE.getCoreName()).query(
 					solrQuery);
-
 			if (queryResponse != null) {
-				spellRules = SolrResultUtil.toSpellRule(queryResponse
-						.getBeans(SpellRuleSolr.class));
-
+				List<SpellRule> spellRules = SolrResultUtil
+						.toSpellRule(queryResponse
+								.getBeans(SpellRuleSolr.class));
 				if (spellRules != null && spellRules.size() > 0) {
 					return spellRules.get(0);
 				}
 			}
-
 		} catch (Exception e) {
-			logger.error("Failed to get spell rules by store", e);
+			logger.error("Failed to get spell rule by storeId and searchTerm. "
+					+ e, e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -90,38 +83,44 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 
 		@SuppressWarnings("static-access")
 		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
-		List<SpellRuleXml> spellRulesXml = null;
 
 		if (spellRules != null) {
-			spellRulesXml = spellRules.getSpellRule();
+			List<SpellRuleXml> spellRulesXml = spellRules.getSpellRule();
+			UpdateResponse updateResponse = null;
 
 			if (spellRulesXml != null && spellRulesXml.size() > 0) {
-				List<SolrInputDocument> solrInputDocuments = null;
-				boolean hasError = false;
-
 				try {
-					solrInputDocuments = SolrDocUtil.composeSolrDocsSpell(
-							spellRulesXml, spellRules.getStore());
-				} catch (Exception e) {
-					hasError = true;
-					logger.error("Failed to load spell rules by store", e);
-				}
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocsSpell(spellRulesXml,
+									spellRules.getStore());
 
-				if (!hasError && solrInputDocuments != null
-						&& solrInputDocuments.size() > 0) {
-					try {
+					if (solrInputDocuments != null
+							&& solrInputDocuments.size() > 0) {
 						solrServers.getCoreInstance(
 								Constants.Core.SPELL_RULE_CORE.getCoreName())
 								.addDocs(solrInputDocuments);
-						solrServers.getCoreInstance(
+						updateResponse = solrServers.getCoreInstance(
 								Constants.Core.SPELL_RULE_CORE.getCoreName())
 								.softCommit();
-					} catch (Exception e) {
-						logger.error("Failed to load spell rules by store", e);
-						throw new DaoException(e.getMessage(), e);
+						if (updateResponse.getStatus() == 0) {
+							return true;
+						}
 					}
+				} catch (Exception e) {
+					logger.error("Failed to load spell rules by store" + e, e);
 				}
-				return !hasError;
+			} else {
+				try {
+					updateResponse = solrServers.getCoreInstance(
+							Constants.Core.SPELL_RULE_CORE.getCoreName())
+							.softCommit();
+					if (updateResponse.getStatus() == 0) {
+						return true;
+					}
+				} catch (Exception e) {
+					logger.error("Failed to load spell rules by store(commit) "
+							+ e, e);
+				}
 			}
 		}
 
@@ -131,8 +130,10 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 	@Override
 	public boolean loadSpellRules(StoreKeyword storeKeyword)
 			throws DaoException {
-		String store = StringUtils.lowerCase(StringUtils.trim(storeKeyword.getStoreId()));
-		String keyword = StringUtils.lowerCase(StringUtils.trim(storeKeyword.getKeywordId()));
+		String store = StringUtils.lowerCase(StringUtils.trim(storeKeyword
+				.getStoreId()));
+		String keyword = StringUtils.lowerCase(StringUtils.trim(storeKeyword
+				.getKeywordId()));
 		String path = new StringBuilder().append(BASE_RULE_DIR)
 				.append(File.separator).append(store).append(File.separator)
 				.append("Did You Mean").append(File.separator)
@@ -190,7 +191,8 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 	@Override
 	public boolean loadSpellRuleById(Store store, String ruleId)
 			throws DaoException {
-		String storeId = StringUtils.lowerCase(StringUtils.trim(store.getStoreId()));
+		String storeId = StringUtils.lowerCase(StringUtils.trim(store
+				.getStoreId()));
 		ruleId = StringUtils.trim(ruleId);
 
 		String path = new StringBuilder().append(BASE_RULE_DIR)
@@ -248,7 +250,8 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 	@Override
 	public boolean loadSpellRules(Store store, String dirPath, String fileName)
 			throws DaoException {
-		String path = new StringBuilder().append(dirPath).append(File.separator).append(fileName).toString();
+		String path = new StringBuilder().append(dirPath)
+				.append(File.separator).append(fileName).toString();
 
 		@SuppressWarnings("static-access")
 		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
@@ -341,7 +344,8 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 					.getStoreId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(String.format("store: %s",
+					ClientUtils.escapeQueryChars(storeId)));
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.SPELL_RULE_CORE.getCoreName())
@@ -368,9 +372,9 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 					.trim(storeKeyword.getKeywordId()));
 
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
-			strQuery.append(" AND keywords1:"
-					+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(String.format("store: %s AND keywords1: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(keyword)));
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.SPELL_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
@@ -391,13 +395,11 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 		try {
 			String storeId = StringUtils.lowerCase(StringUtils.trim(store
 					.getStoreId()));
-
 			ruleId = StringUtils.trim(ruleId);
-
 			StringBuffer strQuery = new StringBuffer();
-			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
-			strQuery.append(" AND ruleId:"
-					+ ClientUtils.escapeQueryChars(ruleId));
+			strQuery.append(String.format("store: %s AND ruleId: %s",
+					ClientUtils.escapeQueryChars(storeId),
+					ClientUtils.escapeQueryChars(ruleId)));
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.SPELL_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());

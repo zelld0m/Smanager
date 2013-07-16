@@ -35,6 +35,8 @@ public class BannerRuleItemSolr {
 	@Field
 	private String path;
 	@Field
+	private String size;
+	@Field
 	private String pathType;
 	@Field
 	private String alias;
@@ -149,6 +151,14 @@ public class BannerRuleItemSolr {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 
 	public String getPathType() {
