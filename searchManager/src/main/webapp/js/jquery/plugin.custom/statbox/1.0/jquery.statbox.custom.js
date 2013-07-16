@@ -70,7 +70,7 @@
 		template += '<div class="plugin-statbox">';
 		template += '	<div class="w265 padB8">';
 		template += '		<div>';
-		template += '			<label>Select Date Range</label>';
+		template += '			<label>Report Date: </label>';
 		template += '			<input type="text" id="statFilterStartDate">';
 		template += '			<label>-</label>';
 		template += '			<input type="text" id="statFilterEndDate">';

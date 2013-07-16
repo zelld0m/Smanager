@@ -155,16 +155,49 @@
 
 	$.addbanner.prototype.registerEventListener = function(){
 		var base = this;
+		var ui = base.$el;
+		
 		base.reposition();
-		base.addInputFieldListener("input#imagePath", $("#imagePath").val(), base.getImagePath);
-		base.addInputFieldListener("input#linkPath", $("#linkPath").val(), base.validateLinkPath);
+		base.addInputFieldListener("input#imagePath", ui.find("#imagePath").val(), base.getImagePath);
+		base.addInputFieldListener("input#linkPath", ui.find("#linkPath").val(), base.validateLinkPath);
 		base.addButtonListener();
 	};
 
+	$.addbanner.prototype.isUrlExists = function UrlExists(url, callback){
+//	    var http = new XMLHttpRequest();
+//	    http.open('HEAD', url);
+//	    http.onreadystatechange = function() {
+//	    	callback.call(this);
+//	    };
+//	    http.send();
+		
+		http://www.dirtopia.com/w/images/f/fa/DirtopiaBannerMC-728x90.gif
+		
+			$.ajax({
+			    url: url,
+			    dataType: 'jsonp',
+			    success: function(data) {
+			        alert(data.result);
+			    }
+			});
+			
+		
+	};
+	
 	$.addbanner.prototype.validateLinkPath = function(linkPath){
 		var base = this;
 		var ui = base.$el;
-		//TODO: 
+		
+		ui.find("#linkPath").attr("data-valid", false);
+		
+		if($.isNotBlank(linkPath) && $.isValidURL(linkPath)){
+			
+			base.isUrlExists(linkPath, function(){
+				
+			});
+		}else{
+			jAlert("Please provide a valid link path", "Banner");
+		}	
 	};
 
 	$.addbanner.prototype.addButtonListener = function() {	
@@ -188,6 +221,7 @@
 					var disable = e.data.base.$el.find('#temporaryDisable').is(":checked");
 					var openNewWindow = e.data.base.$el.find('#openNewWindow').is(":checked");
 					var imageSize = e.data.base.$el.find('input#imagePath').attr("data-size");
+					var validLinkPath = e.data.base.$el.find('input#linkPath').attr("data-valid");
 					
 					var keywordArray = new Array();
 					var lines = keywords.split('\n');
@@ -215,7 +249,11 @@
 						jAlert("Image alt is required.", "Banner");
 					} else if($.isBlank(linkPath)) {
 						jAlert("Link path is required.", "Banner");
-					} else if($.isBlank(startDate) || !$.isDate(startDate)){
+					} else if(validLinkPath==="verifying") {
+						jAlert("Please wait, verifying link path", "Banner");
+					}else if(validLinkPath==="false") {
+						jAlert("Link path is not responding", "Banner");
+					}else if($.isBlank(startDate) || !$.isDate(startDate)){
 						jAlert("Please provide a valid start date", "Banner");
 					} else if($.isBlank(endDate) || !$.isDate(endDate)){
 						jAlert("Please provide a valid end date", "Banner");
