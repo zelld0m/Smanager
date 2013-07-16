@@ -780,6 +780,7 @@
 								"description": params["description"], 
 								"keywords": params["keywords"], 
 								"disable": params["disable"],
+								"imageSize": params["imageSize"],
 								"openNewWindow": params["openNewWindow"]
 						};
 
