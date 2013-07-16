@@ -422,6 +422,7 @@ public class BannerService extends RuleService {
 		String imageAlias = params.get("imageAlias");
 		String imageAlt = params.get("imageAlt");
 		String linkPath = params.get("linkPath");
+		String imageSize = params.get("imageSize");
 		String description = params.get("description");
 		Boolean disable = BooleanUtils.toBooleanObject(params.get("disable"));
 		Boolean openNewWindow = BooleanUtils.toBooleanObject(params
@@ -455,6 +456,10 @@ public class BannerService extends RuleService {
 			ruleItem.setDisabled(disable);
 			ruleItem.setOpenNewWindow(openNewWindow);
 			ruleItem.setLastModifiedBy(username);
+
+			ImagePath iPath = new ImagePath();
+			iPath.setSize(imageSize);
+			ruleItem.setImagePath(iPath);
 
 			if (StringUtils.isNotBlank(imagePathId)
 					&& StringUtils.isBlank(imagePath)
