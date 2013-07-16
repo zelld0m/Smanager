@@ -26,6 +26,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.ws.ConfigManager;
 
 @Repository(value = "bannerDAO")
 public class BannerDAO {
@@ -268,6 +269,11 @@ public class BannerDAO {
 						public BannerRuleItem mapRow(ResultSet rs, int rowNum)
 								throws SQLException {
 
+							ConfigManager cm = ConfigManager.getInstance();
+							String autoPrefixProtocol = cm.getStoreSetting(DAOConstants.COLUMN_STORE_ID, DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
+							String protocol = StringUtils.defaultIfBlank(cm.getStoreSetting(DAOConstants.COLUMN_STORE_ID, DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http");
+							Boolean isAutoPrefixProtocol =  BooleanUtils.toBoolean(StringUtils.defaultIfBlank(autoPrefixProtocol, "false"));
+							
 							BannerRule rule = new BannerRule(
 									rs.getString(DAOConstants.COLUMN_STORE_ID),
 									rs.getString(DAOConstants.COLUMN_RULE_ID),
@@ -292,7 +298,7 @@ public class BannerDAO {
 									JodaDateTimeUtil.toDateTime(rs
 											.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 									rs.getString(DAOConstants.COLUMN_IMAGE_ALT),
-									rs.getString(DAOConstants.COLUMN_LINK_PATH),
+									(isAutoPrefixProtocol ? protocol + ":": "") + rs.getString(DAOConstants.COLUMN_LINK_PATH),
 									rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 									imagePath,
 									BooleanUtils.toBoolean(rs

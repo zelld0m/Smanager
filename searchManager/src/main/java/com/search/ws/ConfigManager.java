@@ -314,7 +314,7 @@ public class ConfigManager {
 		PropertiesConfiguration config = serverSettingsMap.get(storeId);
 		if (config != null) {
 			synchronized(config) {
-				return config.getString(field);
+				return StringUtils.trimToEmpty(config.getString(field));
 			}
 		}
 		return null;
