@@ -83,12 +83,12 @@
 
 			ui.find('input#startDate').val(ruleItem['formattedStartDate']).end()
 			.find('input#endDate').val(ruleItem['formattedEndDate']).end()
-			.find('input#imagePath').val(ruleItem['imagePath']['path']).end()
+			.find('input#imagePath').val(ruleItem['imagePath']['path']).attr("data-size", ruleItem['imagePath']['size']).end()
 			.find('input.imageAlias').val(ruleItem['imagePath']['alias']).prop({
 				id: ruleItem['imagePath']['id']
 			}).end()
 			.find('input#imageAlt').val(ruleItem['imageAlt']).end()
-			.find('input#linkPath').val(ruleItem['linkPath']).end()
+			.find('input#linkPath').val(ruleItem['linkPath']).attr("data-valid", true).end()
 			.find('textarea#description').val(ruleItem['description']).end()
 			.find('#temporaryDisable').prop({
 				checked: ruleItem["disabled"] == true
