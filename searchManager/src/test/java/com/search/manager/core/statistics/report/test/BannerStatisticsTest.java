@@ -75,7 +75,7 @@ public class BannerStatisticsTest {
         assertEquals(bannerStats3.getImpressions(), 1);
         
         BannerStatistics bannerStats4 = statsPerBannerByKeyword.get(3);
-        // expected keyword="coy2", clicks=0, impressions=1
+        // expected keyword="coy2", clicks=1, impressions=1
         assertEquals(bannerStats4.getKeyword(), keyword);
         assertEquals(bannerStats4.getClicks(), 1);
         assertEquals(bannerStats4.getImpressions(), 1);
