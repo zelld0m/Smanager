@@ -438,7 +438,7 @@ public class AuditInterceptor {
 			}
 			message.append(Operation.deleteBanner.equals(operation) ? ": " : ": Setting ");
 
-			if (ruleItem.getPriority() > 0) {
+			if (ruleItem.getPriority()!=null && ruleItem.getPriority() > 0) {
 				message.append("Priority = [%2$s] and ");
 			}
 			if (ruleItem.getStartDate() != null) {

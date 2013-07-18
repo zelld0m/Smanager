@@ -254,6 +254,8 @@ public class BannerDAO {
 					Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED,
 					Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID,
+					Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE,
 					Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW,
@@ -270,8 +272,8 @@ public class BannerDAO {
 								throws SQLException {
 
 							ConfigManager cm = ConfigManager.getInstance();
-							String autoPrefixProtocol = cm.getStoreSetting(DAOConstants.COLUMN_STORE_ID, DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
-							String protocol = StringUtils.defaultIfBlank(cm.getStoreSetting(DAOConstants.COLUMN_STORE_ID, DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http");
+							String autoPrefixProtocol = cm.getStoreSetting(rs.getString(DAOConstants.COLUMN_STORE_ID), DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
+							String protocol = StringUtils.defaultIfBlank(cm.getStoreSetting(rs.getString(DAOConstants.COLUMN_STORE_ID), DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http");
 							Boolean isAutoPrefixProtocol =  BooleanUtils.toBoolean(StringUtils.defaultIfBlank(autoPrefixProtocol, "false"));
 							
 							BannerRule rule = new BannerRule(
@@ -560,10 +562,8 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
-			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID,
-					imagePath != null ? imagePath.getId() : null);
-			inputs.put(DAOConstants.PARAM_IMAGE_SIZE,
-					imagePath != null ? imagePath.getSize() : null);
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath != null ? imagePath.getId() : null);
+			inputs.put(DAOConstants.PARAM_IMAGE_SIZE, imagePath != null ? imagePath.getSize() : null);
 
 			return DAOUtils.getUpdateCount(deleteRuleItemSP.execute(inputs));
 		} catch (Exception e) {
@@ -589,6 +589,7 @@ public class BannerDAO {
 					JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils
 					.toIntegerObject(model.getDisabled(), 1, 0, null));
+			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null? imagePath.getId() : null);
 			inputs.put(
 					DAOConstants.PARAM_IMAGE_SIZE,
 					imagePath != null

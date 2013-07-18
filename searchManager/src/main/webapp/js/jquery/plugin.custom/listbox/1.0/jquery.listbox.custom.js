@@ -18,8 +18,9 @@
 		base.init();
 	};
 
-	$.listbox.prototype.setId = function(ui, id) {
+	$.listbox.prototype.setId = function(id) {
 		var base= this;
+		var ui = base.$el;
 
 		ui.find("div:first").prop({
 			id: $.isNotBlank(id)? id: "plugin-listbox-" + base.options.id
@@ -50,14 +51,14 @@
 					},
 					show: function(event, api){
 						base.$el.html(base.getTemplate());
-						base.setId(base.$el);
-						base.getList(base.options.page);
+						base.setId.call(base);
+						base.getList.call(base, base.options.page);
 					}
 				}
 			});
 		} else {
 			base.$el.html(base.getTemplate());
-			base.setId(base.$el);
+			base.setId(base);
 			base.getList(base.options.page);
 		}
 	};
@@ -71,6 +72,14 @@
 		template += '		<div id="emptyText" class="txtAC">' + base.options.emptyText + '</div>';
 		template += '		<div id="preloader" class="txtAC"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif"></div>';
 		template += '		<div id="itemPagingTop"></div>';
+		template += '		<div id="header" style="display:none">';
+		template += '			<div id="columnHeader">';
+		template += '				<span class="deleteIconHeader"></span>';
+		template += '				<span id="itemNameHeader">Keyword</span>';        
+		template += '				<span id="itemScheduleHeader">Schedule</span>';        
+		template += '				<span id="itemStatusHeader">Status</span>';        
+		template += '			</div>';
+		template += '		</div>';
 		template += '		<div class="clearB"></div>';
 		template += '		<div id="itemHolder">';
 		template += '			<div id="itemPattern" class="item" style="display: none; width: 100%">';
@@ -95,14 +104,16 @@
 	$.listbox.prototype.getList = function(page) {
 		var base = this;
 		base.options.page = page;
-		base.options.itemDataCallback(base, page);
+		base.options.itemDataCallback.call(base);
 	};
 
 	$.listbox.prototype.prepareList = function(){
 		var base = this;
-		base.$el.find("#itemHolder > div:not(#itemPattern), #itemPagingTop, #itemPagingBottom").empty();
-		base.$el.find("div#emptyText").hide();
-		base.$el.find("div#preloader").show();
+		var ui = base.$el;
+		
+		ui.find("#itemHolder > div:not(#itemPattern), #itemPagingTop, #itemPagingBottom").empty();
+		ui.find("div#emptyText").hide();
+		ui.find("div#preloader").show();
 	};
 
 	$.listbox.prototype.reposition = function() {
@@ -112,28 +123,30 @@
 
 	$.listbox.prototype.populateList = function(data){
 		var base = this;
+		var baseUI = base.$el;
 
-		base.$el.find('#preloader, #emptyText').hide();
-		base.$el.find('#itemHolder > div:not(#itemPattern)').remove();
+		baseUI.find('#preloader, #emptyText, #header').hide();
+		baseUI.find('#itemHolder > div:not(#itemPattern)').remove();
 
 		if(data && data["totalSize"] > 0){
-			var itemHolder = base.$el.find('#itemHolder');
+			baseUI.find('#header').show();
+			var itemHolder = baseUI.find('#itemHolder');
 
 			for (var i = 0; i < data["list"].length; i++) {
 
 				var item = data["list"][i];
-				var ui = itemHolder.find('#itemPattern').clone();
-				ui.prop({
-					id: item[base.options.idField]
+				var itemUI = itemHolder.find('#itemPattern').clone();
+				
+				itemUI.prop({
+					id: item["memberId"]
 				});
-				base.populateItemFields(ui, item);
-				ui.show();
-				itemHolder.append(ui);
+				
+				base.populateItemFields.call(base, itemUI, item);
+				itemUI.show();
+				itemHolder.append(itemUI);
 			}
-
-			itemHolder.find('div:nth-child(even)').addClass("alt");
 		}else{
-			base.$el.find('div#emptyText').show();
+			baseUI.find('div#emptyText').show();
 			return;
 		}
 	};
@@ -141,30 +154,14 @@
 	$.listbox.prototype.populateItemFields = function(ui, item){
 		var base = this;
 		
-		ui.find(".itemName").text(item[base.options.nameField]);
-		//TODO: No 
-		DeploymentServiceJS.getRuleStatus(base.options.ruleType, item["ruleId"], {
-			callback:function(data){
-				ui.find('.itemStatus').text(getRuleNameSubTextStatus(data));
-				if(item[base.options.nameField] !== base.options.rule[base.options.nameField] && !data["locked"] && allowModify){
-					//TODO: Optimize, remove css
-					ui.find(".deleteIcon").find("img").prop({
-						src: GLOBAL_contextPath + "/images/icon_delete2.png"
-					});
-					ui.find(".deleteIcon").off().on({
-						click: function(e){
-							jConfirm("Delete " + e.data.base.options.parentNameText + " in " + e.data.item[base.options.nameField] + "?", "Linked Keyword", function(result){
-								if(result) e.data.base.options.itemDeleteCallback(e.data.base, e.data.item, e.data.parentItem);
-							});
-						}
-					}, {item: item, base: base, parentItem: base.options.ruleItem});
-				}
-			}
-		});
+		ui.find(".itemName").text(item["rule"]["ruleName"]);
+		ui.find(".itemSchedule").text(item["formattedStartDate"] + ' - ' + item["formattedEndDate"]);
+		base.options.itemRuleStatusCallback.call(base, ui, item);
 	};
 
 	$.listbox.prototype.addPaging = function(page, total){
 		var base = this;
+		
 		if (total > 0)
 			base.$el.find("#itemPagingTop, #itemPagingBottom").paginate({
 				type: "short",
@@ -192,9 +189,6 @@
 			page: 1,
 			pageSize: 5,
 			emptyText: "No item available.",
-			idField: "ruleId",
-			nameField: "ruleName",
-			parentNameField: "ruleName",
 			itemDataCallback: function(base, page){},
 			itemDeleteCallback: function(base, rule, ruleItem){}
 	};
