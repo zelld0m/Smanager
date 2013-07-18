@@ -1,79 +1,92 @@
 (function ($) {
 
 	AjaxSolr.AdRotatorWidget = AjaxSolr.AbstractWidget.extend({
-		init: function(){
+		sizesWithItemArr: null,
+		sizesItemCountLookup: null,
+
+		init:function(){
+			if($.isBlank($.cookie('simulate.banner.size')))
+				$.cookie('simulate.banner.size',GLOBAL_storeDefaultBannerSize,{path:GLOBAL_contextPath});
+		},
+
+		setUpImages: function(banners){
 			var self = this;
-			$(self.target).html(self.getTemplate());
-			var $selectBySize = $(self.target).find('#selectBySize');
-			
+			var groupBySize = $(self.target).find("#groupBySize");
+			var sizeSelector = $(self.target).find('#selectBySize');
+
+			var cachedSizeSelected = $.cookie('simulate.banner.size');
+
+			self.sizesWithItemArr = new Array();
+			self.sizesItemCountLookup = {};
+
+			// Reset size selector
+			sizeSelector.find("option").remove();
+
+			// Create container for images based on size
 			$.each(GLOBAL_storeAllowedBannerSizes, function (index, value) {
-				$selectBySize.append($('<option>', { 
+				groupBySize.append($('<div>').prop({
+					id: value,
+				}));
+			});
+
+			for(var i=0; i<banners.length; i++){
+				var banner = banners[i];
+
+				// Process only allowed sizes
+				if($.inArray(banner["size"], GLOBAL_storeAllowedBannerSizes) >= 0){
+					var dimension = banner["size"].split("x"); 
+
+					if ($.inArray(banner["size"], self.sizesWithItemArr) == -1){
+						self.sizesWithItemArr.push(banner["size"]);
+						self.sizesItemCountLookup[banner["size"]] = 0;
+					} 
+
+					var image = $("<img>", {
+						src: banner["imagePath"],
+						alt: banner["imageAlt"],
+						title: banner["imageAlt"],
+						width: parseInt(dimension[0]),
+						height: parseInt(dimension[1]),
+					});
+
+					self.sizesItemCountLookup[banner["size"]]++;
+					groupBySize.find("div#"+banner["size"]).append(image);
+				}
+			}
+
+			// Remove container with no image
+			$.each(GLOBAL_storeAllowedBannerSizes, function (index, value) {
+				if($.inArray(value, self.sizesWithItemArr) == -1){
+					groupBySize.find("div#" + value).remove();
+					sizeSelector.find("option[value='" + value + "']").remove();
+				}else{
+					groupBySize.find("div#" + value).attr("data-item", self.sizesItemCountLookup[value]);
+				}
+			});
+
+			$.each(self.sizesWithItemArr, function (index, value) {
+				sizeSelector.append($('<option>', { 
 					value: value,
 					text : value,
-					selected: GLOBAL_storeDefaultBannerSize === value
+					selected: $.isNotBlank(cachedSizeSelected) && cachedSizeSelected=== value || GLOBAL_storeDefaultBannerSize === value
 				}));
 			});
 		},
-		
-		setUpImages: function(size){
-			var self = this;
-			var slidesGroup = $(self.target).find("#slidesGroup");
-			var response = self.manager.response; 
-			var banners = response.banners;
-			var $selectBySize = $(self.target).find('#selectBySize');
-			
-			if (response && banners && banners.length > 0){
-				var withItemArr = new Array();
-				var countLookUp = {};
-				
-				$.each(GLOBAL_storeAllowedBannerSizes, function (index, value) {
-					slidesGroup.append($('<div>').prop({
-						id: value,
-					}));
-				});
-				
-				for(var i=0; i<banners.length; i++){
-					var banner = banners[i];
-					if ($.inArray(banner["size"], withItemArr) == -1){
-						withItemArr.push(banner["size"]);
-						countLookUp[banner["size"]] = 0;
-					} 
-					
-					var image = $("<img>", {
-							src: banner["imagePath"],
-							alt: banner["imageAlt"],
-							title: banner["imageAlt"]
-							});
-					
-					countLookUp[banner["size"]]++;
-					slidesGroup.find("div#"+banner["size"]).append(image);
-				}
 
-				$.each(GLOBAL_storeAllowedBannerSizes, function (index, value) {
-					if($.inArray(value, withItemArr) == -1){
-						slidesGroup.find("div#" + value).remove();
-						$selectBySize.find("option[value='" + value + "']").remove();
-					}else{
-						slidesGroup.find("div#" + value).attr("data-item", countLookUp[value]);
-					}
-				});
-			}	
-		},
-		
 		toSlides: function(size){
 			var self = this;
 			$(self.target).find("#slides").empty().show();
-			var slidesGroup = $(self.target).find("#slidesGroup");
-			var imageSource = slidesGroup.find("div#" + size).clone();
+			var groupBySize = $(self.target).find("#groupBySize");
+			var imageSource = groupBySize.find("div#" + size).clone();
 			var dimension = imageSource.attr("id").split("x");
 			var imageItem = imageSource.attr("data-item");
-			
+
 			imageSource.prop({
 				id: "show" + imageSource.attr("id")
 			}).show();
-			
+
 			$(self.target).find("#slides").html(imageSource);
-			
+
 			$(self.target).find("#show"+ size).slidesjs({
 				width: parseInt(dimension[0]),
 				height: parseInt(dimension[1]),
@@ -85,32 +98,38 @@
 					active: parseInt(imageItem) > 1
 				}
 			});
-			
+
 		},
-		
+
 		beforeRequest: function () {
 			var self = this;
-			$(self.target).find("#slides-images").empty();
-			$(self.target).find("#slides").empty();
+			$(self.target).empty();
 		},
 
 		afterRequest: function () {
 			var self = this;
-			var $selectBySize = $(self.target).find('#selectBySize');
-			
-			self.setUpImages();
-			self.toSlides($selectBySize.find("option:selected").val());
-			
-			$selectBySize.off().on({
-				change: function(e){
-					self.toSlides($(e.currentTarget).val());
-				}
-			});
+			var response = self.manager.response; 
+			var banners = response.banners;
 
+			if (response && banners && banners.length > 0){
+				$(self.target).html(self.getTemplate());
+				var sizeSelector = $(self.target).find('#selectBySize');
+				self.setUpImages(banners);
+
+				if(self.sizesWithItemArr && self.sizesWithItemArr.length > 0){
+					var selectedSize = sizeSelector.find("option:selected").length == 0 ? sizeSelector.find("option:eq(0)").val(): sizeSelector.find("option:selected").val()
+					self.toSlides(selectedSize);
+
+					sizeSelector.off().on({
+						change: function(e){
+							e.data.self.toSlides($(e.currentTarget).val());
+						}
+					}, {self:self});
+				}
+			}
 		},
 
 		getTemplate: function(){
-			var self = this;
 			var template = "";
 
 			template += '<div class="floatR">';
@@ -118,9 +137,9 @@
 			template += '	<select id="selectBySize"></select>';
 			template += '</div>';
 			template += '<div class="clearB"></div>';
-			template += '<div id="slidesGroup" style="display:none"></div>';
+			template += '<div id="groupBySize" style="display:none"></div>';
 			template += '<div id="slides"></div>';
-			
+
 			return template;
 		}
 	});

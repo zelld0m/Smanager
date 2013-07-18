@@ -8,6 +8,7 @@
 			noPreviewImage: GLOBAL_contextPath + "/images/nopreview.png",
 
 			selectedRule: null,
+			selectedRulePage: 1,
 			selectedRuleItemPage: 1,
 			selectedRuleItemTotal: 0,
 			selectedRuleStatus: null,
@@ -70,7 +71,7 @@
 					itemDataCallback: function(base, ruleName, page){
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
-
+						self.selectedRulePage = page;
 						BannerServiceJS.getAllRules(GLOBAL_storeId, ruleName, page, base.options.pageSize, {
 							callback: function(sr){
 								var data = sr["data"]; 
@@ -485,7 +486,7 @@
 
 				self.addDurationHandler(ui, item);
 				self.addCopyToHandler(ui, item);
-				self.getLinkedKeyword(ui, item);
+				self.updateTotalLinkedKeyword(ui, item);
 				self.addShowKeywordHandler(ui, item);
 				self.addItemAuditHandler(ui, item);
 				self.addItemStatisticHandler(ui, item);
@@ -565,6 +566,9 @@
 								BannerServiceJS.deleteRuleItemsByImageSize(GLOBAL_storeId, self.selectedRule["ruleId"], $("#filterBySize").val(), {
 									callback: function(e){
 										self.getRuleItemList(1);
+									},
+									postHook: function(e){
+										self.getRuleList(self.selectedRulePage);
 									}
 								});
 							}
@@ -803,7 +807,7 @@
 				});
 			},
 
-			getLinkedKeyword: function(ui, item){
+			updateTotalLinkedKeyword: function(ui, item){
 				var self = this;
 				var count = 1;
 
@@ -868,7 +872,8 @@
 								base.prepareList();
 							},
 							postHook: function(e){
-								self.getLinkedKeyword(ui, item);
+								self.updateTotalLinkedKeyword(ui, item);
+								self.getRuleList(self.selectedRuleItemPage);
 							}
 						});
 					},
