@@ -16,7 +16,7 @@ public class BannerRuleItem extends ModelBean{
 
 	private BannerRule rule;
 	private String memberId;
-	private int priority;
+	private Integer priority;
 	private DateTime startDate;
 	private DateTime endDate;
 	private String imageAlt;
@@ -83,14 +83,14 @@ public class BannerRuleItem extends ModelBean{
 		this.memberId = memberId;
 	}
 	
-	public int getPriority() {
+	public Integer getPriority() {
 		return priority;
 	}
-	
-	public void setPriority(int priority) {
+
+	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
-	
+
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	public DateTime getStartDate() {
 		return startDate;

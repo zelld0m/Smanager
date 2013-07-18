@@ -129,7 +129,6 @@ public class BannerService extends RuleService {
 		return serviceResponse;
 	}
 
-	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerRule>> getRulesByImageId(
 			String storeId, String imagePathId, String imageAlias, int page,
 			int pageSize) {
@@ -360,6 +359,28 @@ public class BannerService extends RuleService {
 	}
 
 	@RemoteMethod
+	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItemsByImageId(
+			String storeId, String imageId, int page, int pageSize) {
+		ServiceResponse<RecordSet<BannerRuleItem>> serviceResponse = new ServiceResponse<RecordSet<BannerRuleItem>>();
+		BannerRuleItem ruleItem = new BannerRuleItem(null, storeId);
+		ImagePath imagePath = new ImagePath();
+		imagePath.setId(imageId);
+		ruleItem.setImagePath(imagePath);
+		
+		try {
+			SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
+					ruleItem, page, pageSize);
+			serviceResponse.success(daoService.searchBannerRuleItem(criteria));
+		} catch (DaoException e) {
+			serviceResponse.error("", e);
+		} catch (Exception e) {
+			serviceResponse.error("", e);
+		}
+
+		return serviceResponse;
+	}
+	
+	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerRuleItem>> getRuleItemsByRuleId(
 			String storeId, String ruleId, int page, int pageSize) {
 		ServiceResponse<RecordSet<BannerRuleItem>> serviceResponse = new ServiceResponse<RecordSet<BannerRuleItem>>();
@@ -444,7 +465,7 @@ public class BannerService extends RuleService {
 			ruleItem.setMemberId(memberId);
 
 			if (StringUtils.isNotBlank(priority)
-					&& StringUtils.isNumeric(priority)) {
+					&& StringUtils.isNumeric(priority) && Integer.parseInt(priority) > 0) {
 				ruleItem.setPriority(Integer.parseInt(priority));
 			}
 
@@ -512,8 +533,7 @@ public class BannerService extends RuleService {
 			if (daoService.addBannerImagePath(imagePath) > 0) {
 				serviceResponse.success(null);
 			} else {
-				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE,
-						imageUrl, alias));
+				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE, imageUrl, alias));
 			}
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
@@ -580,48 +600,34 @@ public class BannerService extends RuleService {
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> deleteRuleItemsByImageSize(String storeId,
-			String ruleId, String imageSize) {
-		return deleteItem(storeId, ruleId, null, null, "", imageSize);
+	public ServiceResponse<Void> deleteRuleItemsByImageSize(String storeId, String ruleId, String imageSize) {
+		return deleteItem(storeId, ruleId, null, "", imageSize);
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Void> deleteRuleItemByMemberId(String storeId,
-			String ruleId, String memberId, String alias, String imageSize) {
-		return deleteItem(storeId, ruleId, memberId, null, alias, imageSize);
-	}
-
-	@RemoteMethod
-	public ServiceResponse<Void> deleteRuleItemByImageId(String storeId,
-			String ruleId, String imagePathId, String alias, String imageSize) {
-		return deleteItem(storeId, ruleId, null, imagePathId, alias, imageSize);
+	public ServiceResponse<Void> deleteRuleItemByMemberId(String storeId, String ruleId, String memberId, String alias, String imageSize) {
+		return deleteItem(storeId, ruleId, memberId, alias, imageSize);
 	}
 
 	public ServiceResponse<Void> deleteItem(String storeId, String ruleId,
-			String memberId, String imagePathId, String alias, String imageSize) {
+			String memberId, String alias, String imageSize) {
 		ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
-		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId,
-				memberId);
-		ImagePath imagePath = new ImagePath(storeId, imagePathId, null,
-				imageSize, null, alias);
-		bannerRuleItem.setImagePath(imagePath);
+		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId, memberId);
+		bannerRuleItem.setImagePath(new ImagePath(storeId, null, null, imageSize, null, alias));
 
 		try {
 			if (daoService.deleteBannerRuleItem(bannerRuleItem) > 0) {
 				serviceResponse.success(null);
 			} else {
-				serviceResponse.error(String.format(
-						MSG_FAILED_DELETE_RULE_ITEM, alias));
+				serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias));
 			}
 		} catch (DaoException e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(
-					String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
+			serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			serviceResponse.error(
-					String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
+			serviceResponse.error(String.format(MSG_FAILED_DELETE_RULE_ITEM, alias), e);
 		}
 
 		return serviceResponse;
