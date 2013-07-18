@@ -348,8 +348,8 @@
 	
 									$tr.find("#itemSortType").text(sortTypeDisplay);
 
-									facetName == 'Category' && $categoryTR = $tr;
-									facetName == 'Manufacturer' && $manufacturerTR = $tr;
+									facetName == 'Category' && ($categoryTR = $tr);
+									facetName == 'Manufacturer' && ($manufacturerTR = $tr);
 									$tr.show();
 								}
 
