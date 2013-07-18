@@ -2,12 +2,9 @@ package com.search.manager.core.statistics.report.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.joda.time.DateTime;
-
-import com.search.manager.report.statistics.model.BannerStatistics;
-import com.search.manager.report.statistics.util.BannerStatisticsUtil;
-import com.search.manager.report.statistics.util.PropertiesUtils;
 import java.util.List;
+
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +12,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+
+import com.search.manager.report.statistics.model.BannerStatistics;
+import com.search.manager.report.statistics.util.BannerStatisticsUtil;
 
 /**
  * Test class for retrieving a banner statistic.
@@ -36,8 +36,7 @@ public class BannerStatisticsTest {
                 "FILE_LOCATION",
                 "src/test/resources/home/solr/utilities/banner-stats/{0}/{1}/{2}.csv");
         Whitebox.setInternalState(BannerStatisticsUtil.class,
-                "FILE_CANNOT_BE_FOUND_MESSAGE",
-                PropertiesUtils.getString("File {0} cannot be found."));
+                "FILE_CANNOT_BE_FOUND_MESSAGE", "File {0} cannot be found.");
     }
 
     @Test
