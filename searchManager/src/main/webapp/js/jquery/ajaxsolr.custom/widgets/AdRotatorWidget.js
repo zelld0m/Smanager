@@ -122,6 +122,7 @@
 
 					sizeSelector.off().on({
 						change: function(e){
+							$.cookie('simulate.banner.size',$(e.currentTarget).val(),{path:GLOBAL_contextPath});
 							e.data.self.toSlides($(e.currentTarget).val());
 						}
 					}, {self:self});
