@@ -12,7 +12,7 @@ public class BannerItemXml extends RuleItemXml {
 
 	private static final long serialVersionUID = 1L;
 
-	private int priority;
+	private Integer priority;
 	private DateTime startDate;
 	private DateTime endDate;
 	private String imageAlt;
@@ -29,11 +29,11 @@ public class BannerItemXml extends RuleItemXml {
 		super();
 	}
 
-	public int getPriority() {
+	public Integer getPriority() {
 		return priority;
 	}
 
-	public void setPriority(int priority) {
+	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
 

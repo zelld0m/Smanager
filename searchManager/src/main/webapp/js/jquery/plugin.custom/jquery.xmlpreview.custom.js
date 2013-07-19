@@ -318,6 +318,9 @@
 								$table.append($tr);
 							}
 							else{
+							    var $categoryTR = null;
+							    var $manufacturerTR = null;
+
 								for(var facetGroup in data.items){
 									var facetName = facetGroup;
 									var facetValue = data.items[facetGroup];
@@ -344,9 +347,14 @@
 									}
 	
 									$tr.find("#itemSortType").text(sortTypeDisplay);
+
+									facetName == 'Category' && ($categoryTR = $tr);
+									facetName == 'Manufacturer' && ($manufacturerTR = $tr);
 									$tr.show();
-									$table.append($tr);
 								}
+
+								$categoryTR && $table.append($categoryTR);
+								$manufacturerTR && $table.append($manufacturerTR);
 							}
 						}						
 					}

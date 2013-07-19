@@ -64,7 +64,7 @@ public class DAOConstants {
 	public static final String SP_DELETE_BANNER_RULE				= "usp_Delete_Banner_Rule";
 	public static final String SP_ADD_BANNER_RULE_ITEM				= "usp_Add_Banner_Rule_Item_NEW";
 	public static final String SP_UPDATE_BANNER_RULE_ITEM			= "usp_Update_Banner_Rule_Item_NEW";
-	public static final String SP_GET_BANNER_RULE_ITEM				= "usp_Get_Banner_Rule_Item_NEW";
+	public static final String SP_GET_BANNER_RULE_ITEM				= "usp_Get_Banner_Rule_Item_NEW2";
 	public static final String SP_DELETE_BANNER_RULE_ITEM			= "usp_Delete_Banner_Rule_Item_NEW";
 	public static final String SP_ADD_BANNER_IMAGE_PATH				= "usp_Add_Banner_Image_Path_NEW";
 	public static final String SP_GET_BANNER_IMAGE_PATH				= "usp_Get_Banner_Image_Path_NEW";
@@ -133,18 +133,18 @@ public class DAOConstants {
 	public static final String SP_DELETE_EXPORT_RULE_MAP			= "usp_Delete_Export_Rule_Map";
 	
 	//SPELL_RULE
-    public static final String SP_GET_SPELL_RULE = "usp_Get_Spell_Rule_NEW";
-    public static final String SP_GET_SPELL_RULE_FOR_SEARCH_TERM = "usp_Get_Spell_Rule_For_Search_Term_NEW";
-    public static final String SP_ADD_SPELL_RULE = "usp_Add_Spell_Rule_NEW";
-    public static final String SP_UPDATE_SPELL_RULE = "usp_Update_Spell_Rule_NEW";
-    public static final String SP_DELETE_SPELL_RULE = "usp_Delete_Spell_Rule_NEW";
+    public static final String SP_GET_SPELL_RULE					= "usp_Get_Spell_Rule";
+    public static final String SP_GET_SPELL_RULE_FOR_SEARCH_TERM	= "usp_Get_Spell_Rule_For_Search_Term";
+    public static final String SP_ADD_SPELL_RULE					= "usp_Add_Spell_Rule";
+    public static final String SP_UPDATE_SPELL_RULE					= "usp_Update_Spell_Rule";
+    public static final String SP_DELETE_SPELL_RULE					= "usp_Delete_Spell_Rule";
 
     // SPELL_RULE VERSIONS
-    public static final String SP_ADD_SPELL_RULE_VERSION = "usp_Add_Spell_Rule_Version";
-    public static final String SP_DELETE_SPELL_RULE_VERSION = "usp_Delete_Spell_Rule_Version";
-    public static final String SP_PUBLISH_SPELL_RULE = "usp_Publish_Spell_Rule";
-    public static final String SP_RESTORE_SPELL_RULE_VERSION = "usp_Restore_Spell_Rule_Version";
-    public static final String SP_GET_SPELL_RULE_VERSION = "usp_Get_Rule_Version";
+    public static final String SP_ADD_SPELL_RULE_VERSION			= "usp_Add_Spell_Rule_Version";
+    public static final String SP_DELETE_SPELL_RULE_VERSION			= "usp_Delete_Spell_Rule_Version";
+    public static final String SP_PUBLISH_SPELL_RULE				= "usp_Publish_Spell_Rule";
+    public static final String SP_RESTORE_SPELL_RULE_VERSION		= "usp_Restore_Spell_Rule_Version";
+    public static final String SP_GET_SPELL_RULE_VERSION			= "usp_Get_Spell_Rule_Version";
 
 	/* Stored Procedure Parameter Names */
 	public static final String PARAM_STORE_ID 						= "store_id";
