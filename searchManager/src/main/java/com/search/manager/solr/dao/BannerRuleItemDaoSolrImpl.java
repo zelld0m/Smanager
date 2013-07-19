@@ -156,12 +156,12 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					ClientUtils.escapeQueryChars(StringUtils.trim(ruleName))));
 
 			if (startDate != null) {
-				strQuery.append(String.format(" AND startDate:[* TO %s/DAY]",
+				strQuery.append(String.format(" AND startDate:[* TO %s]",
 						startDate.withZone(DateTimeZone.UTC)));
 			}
 
 			if (endDate != null) {
-				strQuery.append(String.format(" AND endDate:[%s/DAY TO *]",
+				strQuery.append(String.format(" AND endDate:{%s-1DAY TO *]",
 						endDate.withZone(DateTimeZone.UTC)));
 			}
 

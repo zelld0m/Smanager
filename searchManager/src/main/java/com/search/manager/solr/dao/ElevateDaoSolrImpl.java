@@ -81,7 +81,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append(String
-					.format("store: %s AND keyword1: %s AND (expiryDate:[%s/DAY TO *] OR (*:* AND -expiryDate:[* TO *]))",
+					.format("store: %s AND keyword1: %s AND (expiryDate:{%s-1DAY TO *] OR (*:* AND -expiryDate:[* TO *]))",
 							ClientUtils.escapeQueryChars(storeId), ClientUtils
 									.escapeQueryChars(keyword), DateTime.now()
 									.withZone(DateTimeZone.UTC)));
@@ -119,7 +119,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append(String
-					.format("store: %s AND keyword1: %s AND expiryDate:[* TO %s/DAY-1DAY]",
+					.format("store: %s AND keyword1: %s AND expiryDate:[* TO %s-1DAY]",
 							ClientUtils.escapeQueryChars(storeId), ClientUtils
 									.escapeQueryChars(keyword), DateTime.now()
 									.withZone(DateTimeZone.UTC)));
