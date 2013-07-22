@@ -105,9 +105,9 @@ public class BannerStatistics {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + (this.keyword != null ? this.keyword.hashCode() : 0);
-        hash = 59 * hash + (this.memberId != null ? this.memberId.hashCode() : 0);
-        hash = 59 * hash + (this.imagePath != null ? this.imagePath.hashCode() : 0);
+        hash = 11 * hash + (this.keyword != null ? this.keyword.hashCode() : 0);
+        hash = 11 * hash + (this.memberId != null ? this.memberId.hashCode() : 0);
+        hash = 11 * hash + (this.imagePath != null ? this.imagePath.hashCode() : 0);
         return hash;
     }
 

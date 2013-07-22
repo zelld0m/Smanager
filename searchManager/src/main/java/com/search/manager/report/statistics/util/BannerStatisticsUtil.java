@@ -18,6 +18,7 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import com.search.manager.report.statistics.fluent.BannerStatisticsBuilder;
 import com.search.manager.report.statistics.model.BannerStatistics;
+import com.search.manager.utility.PropertiesUtils;
 
 /**
  * Utility class for retrieving banner statistics
@@ -34,9 +35,9 @@ public class BannerStatisticsUtil {
     private static String FILE_CANNOT_BE_FOUND_MESSAGE;
 
     static {
-        FILE_LOCATION = PropertiesUtils.getString("fileLocation");
+        FILE_LOCATION = PropertiesUtils.getValue("fileLocation");
         FILE_CANNOT_BE_FOUND_MESSAGE = PropertiesUtils
-                .getString("fileNotFoundMessage");
+                .getValue("fileNotFoundMessage");
     }
 
     /**
@@ -240,7 +241,9 @@ public class BannerStatisticsUtil {
             BannerStatistics objectToFind, boolean isAggregated) {
 
         for (BannerStatistics bannerStats : bannerStatistics) {
-            if (bannerStatistics.contains(bannerStats)) {
+            if (bannerStats.getKeyword().equals(objectToFind.getKeyword()) && 
+                    bannerStats.getMemberId().equals(objectToFind.getMemberId()) &&
+                    bannerStats.getImagePath().equals(objectToFind.getImagePath())) {
                 if (isAggregated) {
                     return true;
                 } else if (bannerStats.getLinkPath().equals(objectToFind.getLinkPath())) {
@@ -256,7 +259,9 @@ public class BannerStatisticsUtil {
             BannerStatistics objectToFind, boolean isAggregated) {
         
         for (BannerStatistics bannerStats : bannerStatistics) {
-            if (bannerStatistics.contains(bannerStats)) {
+            if (bannerStats.getKeyword().equals(objectToFind.getKeyword()) && 
+                    bannerStats.getMemberId().equals(objectToFind.getMemberId()) &&
+                    bannerStats.getImagePath().equals(objectToFind.getImagePath())) {
                 
                 if (isAggregated) {
                     return bannerStats;

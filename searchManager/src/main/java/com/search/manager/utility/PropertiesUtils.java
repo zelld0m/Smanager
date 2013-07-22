@@ -1,4 +1,4 @@
-package com.search.manager.report.statistics.util;
+package com.search.manager.utility;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +33,7 @@ public class PropertiesUtils {
      * @param key the key in the properties file
      * @return the value of a key in the globalvar.properties file
      */
-    public static String getString(String key) {
+    public static String getValue(String key) {
         return config.getString(key);
     }
 }
