@@ -5,134 +5,130 @@ import org.directwebremoting.convert.BeanConverter;
 
 /**
  * POJO class for Statistics
- * 
+ *
  * @author Philip Mark Gutierrez
  * @since July 08, 2013
  * @version 0.0.1
  */
 @DataTransferObject(converter = BeanConverter.class)
 public class BannerStatistics {
-	private String keyword;
-	private String memberId;
-	private String imagePath;
-	private String linkPath;
-	private int clicks;
-	private int impressions;
 
-	public BannerStatistics() {
-		// NOTHING!
-	}
+    private String keyword;
+    private String memberId;
+    private String imagePath;
+    private String linkPath;
+    private int clicks;
+    private int impressions;
 
-	public BannerStatistics(String keyword, String memberId) {
-		this.keyword = keyword;
-		this.memberId = memberId;
-	}
+    public BannerStatistics() {
+        // NOTHING!
+    }
 
-	public BannerStatistics(String keyword, String memberId, String imagePath,
-	        String linkPath, int clicks, int impressions) {
-		this(keyword, memberId);
-		this.imagePath = imagePath;
-		this.linkPath = linkPath;
-		this.clicks = clicks;
-		this.impressions = impressions;
-	}
+    public BannerStatistics(String keyword, String memberId) {
+        this.keyword = keyword;
+        this.memberId = memberId;
+    }
 
-	public String getKeyword() {
-		return keyword;
-	}
+    public BannerStatistics(String keyword, String memberId, String imagePath,
+            String linkPath, int clicks, int impressions) {
+        this(keyword, memberId);
+        this.imagePath = imagePath;
+        this.linkPath = linkPath;
+        this.clicks = clicks;
+        this.impressions = impressions;
+    }
 
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
+    public String getKeyword() {
+        return keyword;
+    }
 
-	public String getMemberId() {
-		return memberId;
-	}
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
 
-	public void setMemberId(String memberId) {
-		this.memberId = memberId;
-	}
+    public String getMemberId() {
+        return memberId;
+    }
 
-	public String getImagePath() {
-		return imagePath;
-	}
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
 
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
-	}
+    public String getImagePath() {
+        return imagePath;
+    }
 
-	public int getClicks() {
-		return clicks;
-	}
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
-	public void setClicks(int clicks) {
-		this.clicks = clicks;
-	}
+    public String getLinkPath() {
+        return linkPath;
+    }
 
-	public void incrementClicks(int incrementBy) {
-		this.clicks += incrementBy;
-	}
+    public void setLinkPath(String linkPath) {
+        this.linkPath = linkPath;
+    }
 
-	public int getImpressions() {
-		return impressions;
-	}
+    public int getClicks() {
+        return clicks;
+    }
 
-	public void setImpressions(int impressions) {
-		this.impressions = impressions;
-	}
+    public void setClicks(int clicks) {
+        this.clicks = clicks;
+    }
 
-	public void incrementImpressions(int incrementBy) {
-		this.impressions += incrementBy;
-	}
-	
-	public String getLinkPath() {
-		return linkPath;
-	}
+    public int getImpressions() {
+        return impressions;
+    }
 
-	public void setLinkPath(String linkPath) {
-		this.linkPath = linkPath;
-	}
+    public void setImpressions(int impressions) {
+        this.impressions = impressions;
+    }
 
-	@Override
-	public String toString() {
-		return "BannerStatistics{" + "keyword=" + keyword + ", memberId="
-		        + memberId + ", imagePath=" + imagePath + ", linkPath="
-		        + linkPath + ", clicks=" + clicks + ", impressions="
-		        + impressions + '}';
-	}
+    public void incrementClicks(int incrementBy) {
+        this.clicks += incrementBy;
+    }
 
-	@Override
-	public int hashCode() {
-		int hash = 5;
-		hash = 79 * hash + (this.keyword != null ? this.keyword.hashCode() : 0);
-		hash = 79 * hash
-		        + (this.memberId != null ? this.memberId.hashCode() : 0);
-		hash = 79 * hash
-		        + (this.imagePath != null ? this.imagePath.hashCode() : 0);
-		return hash;
-	}
+    public void incrementImpressions(int incrementBy) {
+        this.impressions += incrementBy;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final BannerStatistics other = (BannerStatistics) obj;
-		if ((this.keyword == null) ? (other.keyword != null) : !this.keyword
-		        .equals(other.keyword)) {
-			return false;
-		}
-		if ((this.memberId == null) ? (other.memberId != null) : !this.memberId
-		        .equals(other.memberId)) {
-			return false;
-		}
-		if ((this.imagePath == null) ? (other.imagePath != null)
-		        : !this.imagePath.equals(other.imagePath)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public String toString() {
+        return "BannerStatistics{" + "keyword=" + keyword + ", memberId="
+                + memberId + ", imagePath=" + imagePath + ", linkPath="
+                + linkPath + ", clicks=" + clicks + ", impressions="
+                + impressions + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.keyword != null ? this.keyword.hashCode() : 0);
+        hash = 59 * hash + (this.memberId != null ? this.memberId.hashCode() : 0);
+        hash = 59 * hash + (this.imagePath != null ? this.imagePath.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BannerStatistics other = (BannerStatistics) obj;
+        if ((this.keyword == null) ? (other.keyword != null) : !this.keyword.equals(other.keyword)) {
+            return false;
+        }
+        if ((this.memberId == null) ? (other.memberId != null) : !this.memberId.equals(other.memberId)) {
+            return false;
+        }
+        if ((this.imagePath == null) ? (other.imagePath != null) : !this.imagePath.equals(other.imagePath)) {
+            return false;
+        }
+        return true;
+    }
 }
