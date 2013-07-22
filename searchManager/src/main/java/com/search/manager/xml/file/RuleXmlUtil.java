@@ -898,12 +898,14 @@ public class RuleXmlUtil{
             bannerRule.setLastModifiedBy(username);
             List<BannerRuleItem> items = new ArrayList<BannerRuleItem>();
 
-            for (BannerItemXml itemXml : bannerRuleXml.getItemXml()) {
-                ImagePath imagePath = daoService
-                        .getBannerImagePath(new ImagePath(store, itemXml.getImagePathId(), null));
-                items.add(new BannerRuleItem(bannerRule, itemXml.getMemberId(), itemXml.getPriority(), itemXml
-                        .getStartDate(), itemXml.getEndDate(), itemXml.getImageAlt(), itemXml.getLinkPath(), itemXml
-                        .getDescription(), imagePath, itemXml.getDisabled(), itemXml.getOpenNewWindow()));
+            if (bannerRuleXml.getItemXml() != null) {
+                for (BannerItemXml itemXml : bannerRuleXml.getItemXml()) {
+                    ImagePath imagePath = daoService
+                            .getBannerImagePath(new ImagePath(store, itemXml.getImagePathId(), null));
+                    items.add(new BannerRuleItem(bannerRule, itemXml.getMemberId(), itemXml.getPriority(), itemXml
+                            .getStartDate(), itemXml.getEndDate(), itemXml.getImageAlt(), itemXml.getLinkPath(), itemXml
+                            .getDescription(), imagePath, itemXml.getDisabled(), itemXml.getOpenNewWindow()));
+                }
             }
 
             // get current rules
@@ -953,7 +955,11 @@ public class RuleXmlUtil{
 
                 // ROLLBACK
                 // delete version
+                for (BannerRuleItem item : items) {
+                   daoService.deleteBannerRuleItem(item);
+                }
                 daoService.deleteBannerRule(bannerRule);
+
                 // add current version
                 daoService.addBannerRule(crule);
                 // add current items
