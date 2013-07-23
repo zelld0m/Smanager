@@ -158,7 +158,7 @@
 			id: startDateId
 		}).datepicker($.extend({}, calendarOpts, {
 			onClose: function(selectedDate) {
-				ui.find("#" + startDateId).datepicker("option", "minDate", selectedDate);
+				ui.find("#" + endDateId).datepicker("option", "minDate", selectedDate);
 			}
 		}));
 
@@ -167,7 +167,7 @@
 			id: endDateId
 		}).datepicker($.extend({}, calendarOpts, {
 			onClose: function(selectedDate) {
-				ui.find("#" + endDateId).datepicker("option", "maxDate", selectedDate);
+				ui.find("#" + startDateId).datepicker("option", "maxDate", selectedDate);
 			}
 		}));
 		
