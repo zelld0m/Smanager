@@ -13,7 +13,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import com.search.manager.report.statistics.model.BannerStatistics;
-import com.search.manager.report.statistics.util.BannerStatisticsUtil;
 
 /**
  * Test class for retrieving a banner statistic.
@@ -28,7 +27,7 @@ public class BannerStatisticsUtilTest {
     private static final String STORE_ID = "pcmall";
 
     @Before
-    public void initialize() {
+    public void init() {
         Whitebox.setInternalState(BannerStatisticsUtil.class,
                 "FILE_LOCATION",
                 "src/test/resources/home/solr/utilities/banner-stats/{0}/{1}/{2}.csv");
@@ -49,7 +48,6 @@ public class BannerStatisticsUtilTest {
         List<BannerStatistics> statsPerBannerByKeyword =
                 BannerStatisticsUtil.getStatsPerBannerByKeyword(STORE_ID,
                 keyword, startDate.toDate(), endDate.toDate());
-
 
         // expected size=2
         assertEquals(statsPerBannerByKeyword.size(), 2);
