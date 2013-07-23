@@ -72,6 +72,7 @@
 		template += '		<div id="emptyText" class="txtAC">' + base.options.emptyText + '</div>';
 		template += '		<div id="preloader" class="txtAC"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif"></div>';
 		template += '		<div id="itemPagingTop"></div>';
+		template += '		<div class="clearB"></div>';
 		template += '		<div id="header" style="display:none">';
 		template += '			<div id="columnHeader">';
 		template += '				<span class="deleteIconHeader"></span>';
@@ -112,7 +113,7 @@
 		var ui = base.$el;
 		
 		ui.find("#itemHolder > div:not(#itemPattern), #itemPagingTop, #itemPagingBottom").empty();
-		ui.find("div#emptyText").hide();
+		ui.find("div#emptyText, #header").hide();
 		ui.find("div#preloader").show();
 	};
 

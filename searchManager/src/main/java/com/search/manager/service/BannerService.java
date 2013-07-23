@@ -161,8 +161,7 @@ public class BannerService extends RuleService {
 	}
 
 	@RemoteMethod
-	public ServiceResponse<Integer> getTotalRulesByImageId(String storeId,
-			String imagePathId, String imageAlias) {
+	public ServiceResponse<Integer> getTotalRulesByImageId(String storeId, String imagePathId, String imageAlias) {
 		ServiceResponse<RecordSet<BannerRule>> srAllRule = getRulesByImageId(
 				storeId, imagePathId, imageAlias, 0, 0);
 		RecordSet<BannerRule> rsAllRule = srAllRule.getData();
@@ -636,22 +635,20 @@ public class BannerService extends RuleService {
 	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByKeyword(
 			String storeId, String keyword, String startDateText,
-			String endDateText) {
-		return getBannerStats(storeId, keyword, null, startDateText,
-				endDateText);
+			String endDateText, boolean aggregate) {
+		return getBannerStats(storeId, keyword, null, startDateText, endDateText, aggregate);
 	}
 
 	@RemoteMethod
 	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByMemberId(
 			String storeId, String memberId, String startDateText,
 			String endDateText) {
-		return getBannerStats(storeId, null, memberId, startDateText,
-				endDateText);
+		return getBannerStats(storeId, null, memberId, startDateText, endDateText, false);
 	}
 
 	private ServiceResponse<RecordSet<BannerStatistics>> getBannerStats(
 			String storeId, String keyword, String memberId,
-			String startDateText, String endDateText) {
+			String startDateText, String endDateText, boolean aggregate) {
 		ServiceResponse<RecordSet<BannerStatistics>> serviceResponse = new ServiceResponse<RecordSet<BannerStatistics>>();
 
 		DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(
@@ -667,8 +664,7 @@ public class BannerService extends RuleService {
 
 		try {
 			list = StringUtils.isNotBlank(keyword) ? BannerStatisticsUtil
-					.getStatsPerBannerByKeyword(storeId, keyword,
-							startDateTime.toDate(), endDateTime.toDate())
+					.getStatsPerBannerByKeyword(storeId, keyword, startDateTime.toDate(), endDateTime.toDate(), aggregate)
 					: BannerStatisticsUtil.getStatsPerKeywordByMemberId(
 							storeId, memberId, startDateTime.toDate(),
 							endDateTime.toDate());
