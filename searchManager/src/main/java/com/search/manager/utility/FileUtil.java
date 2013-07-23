@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 public class FileUtil {
 	
 	public static final String XML_FILE_TYPE = ".xml";
-	public static final String path = PropsUtils.getValue("backuppath");
+	public static final String path = PropertiesUtils.getValue("backuppath");
 	private static Logger logger = Logger.getLogger(FileUtil.class);
 
 	public static void createDirectory(String basePath,String directoryName) throws Exception{

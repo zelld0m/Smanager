@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.search.manager.exception.DataException;
 
+@Deprecated
 public interface CacheClientInterface {
 	
 	public static final Integer PERSISTENT_CACHE_NODE_BASE			= 8800; 

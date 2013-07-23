@@ -38,6 +38,7 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.ws.ConfigManager;
 
+@Deprecated
 @Service(value="daoCacheService")
 @RemoteProxy(
 		name = "DAOCacheServiceJS",

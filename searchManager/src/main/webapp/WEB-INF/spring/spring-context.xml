@@ -34,13 +34,14 @@
          </property>
     </bean>	
 	
-	<bean id="webAppInitLoader" class="com.search.manager.utility.AppInitLoader" init-method="run" lazy-init="false">
+<!--	<bean id="webAppInitLoader" class="com.search.manager.utility.AppInitLoader" init-method="run" lazy-init="false">
 	     	<property name="localCacheService" ref="localCacheService" />
-	</bean>
+	</bean>-->
 	
-	<bean id="propsUtils" class="com.search.manager.utility.PropsUtils">
+        <bean id="propsUtils" class="com.search.manager.utility.PropertiesUtils"/>
+<!--	<bean id="propsUtils" class="com.search.manager.utility.PropsUtils">
 	     	<property name="localCacheService" ref="localCacheService" />
-	</bean>
+	</bean>-->
 		
 	<bean id="userPreferences" class="com.search.manager.model.UserPreferences" scope="session"/>
 	

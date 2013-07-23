@@ -2,6 +2,7 @@ package com.search.manager.cache.ehcache;
 
 import java.util.Map;
 
+@Deprecated
 public class CacheMapWrapper implements java.io.Serializable {
   
   @SuppressWarnings("unchecked")

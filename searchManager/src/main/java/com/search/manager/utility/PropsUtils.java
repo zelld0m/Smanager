@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.service.LocalCacheService;
 
+@Deprecated
 public class PropsUtils {
 
 	private static LocalCacheService<CacheModel<?>> localCacheService;

@@ -36,7 +36,7 @@ public class TopKeywordService {
     @RemoteMethod
     public List<String> getFileList() {
         List<String> filenameList = new ArrayList<String>();
-        File dir = new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId());
+        File dir = new File(PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId());
 
         File[] files = dir.listFiles();
 
@@ -65,7 +65,7 @@ public class TopKeywordService {
         BufferedReader reader = null;
         try {
             try {
-                String filePath = PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
+                String filePath = PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
                         + File.separator + filename;
 
                 if (filename.indexOf("-splunk") > 0) {
@@ -113,7 +113,7 @@ public class TopKeywordService {
     }
 
     private File getFile(String filename) {
-        return new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
+        return new File(PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
                 + File.separator + filename);
     }
 

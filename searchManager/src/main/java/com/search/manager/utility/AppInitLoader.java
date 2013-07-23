@@ -13,6 +13,7 @@ import org.springframework.web.context.ServletContextAware;
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.service.LocalCacheService;
 
+@Deprecated
 public class AppInitLoader implements ApplicationContextAware,
 		ServletContextAware {
 

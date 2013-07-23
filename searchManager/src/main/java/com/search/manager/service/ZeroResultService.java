@@ -30,7 +30,7 @@ import com.search.manager.mail.ReportNotificationMailService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.ZeroResult;
 import com.search.manager.utility.CombinedInputStream;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 
 @Service(value = "zeroResultService")
 @RemoteProxy(
@@ -47,7 +47,7 @@ public class ZeroResultService {
 	@RemoteMethod
 	public List<String> getFileList(){
 		List<String> filenameList = new ArrayList<String>();
-		File dir = new File(PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId());
+		File dir = new File(PropertiesUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId());
 		
 		File[] files = dir.listFiles();
 		
@@ -76,7 +76,7 @@ public class ZeroResultService {
 		BufferedReader reader = null;
 		try {
 			try {
-				String filePath = PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId() + File.separator + filename;
+				String filePath = PropertiesUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId() + File.separator + filename;
 				
 				if (filename.indexOf("-splunk") > 0) {
 					readCsvFile(filePath, list);
@@ -120,7 +120,7 @@ public class ZeroResultService {
 	}
 
 	private File getFile(String filename){
-		return new File(PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId() + File.separator + filename);
+		return new File(PropertiesUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId() + File.separator + filename);
 	}
 	
 	@RemoteMethod

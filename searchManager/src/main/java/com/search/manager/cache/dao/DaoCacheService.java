@@ -15,6 +15,7 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
+@Deprecated
 public interface DaoCacheService extends SearchDaoService {
 
 	/* Keywords */

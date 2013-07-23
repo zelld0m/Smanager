@@ -1,5 +1,6 @@
 package com.search.manager.cache.lccache;
 
+@Deprecated
 public class LocalCache{
 	private static LocalCache instance = new LocalCache();
 	private final ConcurrentCacheMap<String, Object> cache;

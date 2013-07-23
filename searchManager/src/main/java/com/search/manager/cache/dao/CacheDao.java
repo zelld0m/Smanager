@@ -17,6 +17,7 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 
+@Deprecated
 public abstract class CacheDao<T> {
 	
 	@Autowired protected DaoService daoService;

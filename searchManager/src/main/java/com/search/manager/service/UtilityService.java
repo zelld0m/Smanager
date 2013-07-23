@@ -38,7 +38,7 @@ import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Schema;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
 
@@ -191,10 +191,10 @@ public class UtilityService {
 		Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
 		Matcher m = pattern.matcher(url);
 		if (m.matches()) {
-			json.put("solrUrl", PropsUtils.getValue("browsejssolrurl") + m.group(1));
+			json.put("solrUrl", PropertiesUtils.getValue("browsejssolrurl") + m.group(1));
 		}
 
-		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
+		json.put("isFmGui", PropertiesUtils.getValue("isFmSolrGui").equals("1")?true:false);
 		return json.toString();
 	}
 	

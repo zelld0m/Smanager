@@ -3,11 +3,11 @@ package com.search.manager.cache.ehcache;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
-import com.search.manager.cache.ehcache.EhCachEDistributedClient;
 import com.search.manager.cache.utility.CacheResourceUtil;
 import com.search.manager.exception.DataConfigException;
 import com.search.manager.exception.DataException;
 
+@Deprecated
 public class CacheClient {
 	
 	public static final Integer TEST_PRIMARY_NODE_DEFAULT 	= -999;

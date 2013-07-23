@@ -18,6 +18,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
+@Deprecated
 @Repository("redirectCacheDao")
 public class RedirectCacheDao extends CacheDao<RedirectRule> {
 

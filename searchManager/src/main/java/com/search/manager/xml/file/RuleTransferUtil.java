@@ -20,13 +20,13 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 
 public class RuleTransferUtil {
 
 	private static Logger logger = Logger.getLogger(RuleTransferUtil.class);
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
-	private static final String IMPORT_FILE_PATH = PropsUtils.getValue("importfilepath");
+	private static final String IMPORT_FILE_PATH = PropertiesUtils.getValue("importfilepath");
 	
 	public static List<RuleXml> getAllExportedRules(String store, String ruleType) {
 		return (ArrayList<RuleXml>) getRules(store, RuleEntity.find(ruleType), IMPORT_FILE_PATH);

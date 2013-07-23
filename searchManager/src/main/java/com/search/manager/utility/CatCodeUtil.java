@@ -419,8 +419,8 @@ public class CatCodeUtil {
 	/** Initialized Category code utility when startup */
 	public static void init() throws Exception {
 		try {
-			CatCodeUtil.loadXlsxWorkbook(PropsUtils.getValue(SOLR_OBJECTS_DEFINITION_XLSX),CatCodes.WORKBOOK_OBJECTS.getCodeStr());
-			CatCodeUtil.loadXlsxWorkbook(PropsUtils.getValue(ALTERNATIVE_CNET_CATEGORIZATION_XLSX),CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());		
+			CatCodeUtil.loadXlsxWorkbook(PropertiesUtils.getValue(SOLR_OBJECTS_DEFINITION_XLSX),CatCodes.WORKBOOK_OBJECTS.getCodeStr());
+			CatCodeUtil.loadXlsxWorkbook(PropertiesUtils.getValue(ALTERNATIVE_CNET_CATEGORIZATION_XLSX),CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());		
 			loadToCache();
 		} catch (DataException e) {
 			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);

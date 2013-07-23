@@ -36,7 +36,7 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
 import com.search.manager.model.SearchResult;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 
 public class SearchHelper {
 
@@ -644,7 +644,7 @@ public class SearchHelper {
 			String core = configManager.getStoreParameter(storeId, "core");
 			String serverUrl = configManager.getServerParameter(server, "url")
 					.replaceAll("\\(core\\)", core).concat("select?")
-					.replace("http://",PropsUtils.getValue("browsejssolrurl"));
+					.replace("http://",PropertiesUtils.getValue("browsejssolrurl"));
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("q", keyword));
 			nameValuePairs.add(new BasicNameValuePair("rows", "0"));

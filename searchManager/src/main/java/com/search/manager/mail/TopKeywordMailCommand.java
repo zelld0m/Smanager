@@ -112,6 +112,6 @@ public class TopKeywordMailCommand implements Command {
     }
 
     private String getSolrUrl() {
-        return PropsUtils.getValue(store.toLowerCase() + "_solrUrl");
+        return PropertiesUtils.getValue(store.toLowerCase() + "_solrUrl");
     }
 }

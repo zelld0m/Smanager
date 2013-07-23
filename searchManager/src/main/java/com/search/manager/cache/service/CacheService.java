@@ -12,6 +12,7 @@ import com.search.manager.cache.ehcache.EhCachEDistributedClient;
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.exception.DataException;
 
+@Deprecated
 @Service("cacheService")
 @RemoteProxy(
 		name = "CacheServiceJS",

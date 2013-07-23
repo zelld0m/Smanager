@@ -23,6 +23,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
+@Deprecated
 @Repository("relevancyCacheDao")
 public class RelevancyCacheDao extends CacheDao<Relevancy> {
 

@@ -51,7 +51,7 @@ public class KeywordTrendsService {
 
     @RemoteMethod
     public Date getMostRecentStatsDate() {
-        File dir = new File(PropsUtils.getValue("splunkdir") + File.separator + UtilityService.getStoreId());
+        File dir = new File(PropertiesUtils.getValue("splunkdir") + File.separator + UtilityService.getStoreId());
         File[] files = dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {

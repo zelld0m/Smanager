@@ -19,15 +19,15 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.manager.xml.file.RuleXmlUtil;
 
 public class RuleVersionUtil {
 
 	private static Logger logger = Logger.getLogger(RuleVersionUtil.class);
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
-	public static final String BACKUP_PATH = PropsUtils.getValue("backuppath");
-	public static final String PUBLISH_PATH = PropsUtils.getValue("publishedfilepath");
+	public static final String BACKUP_PATH = PropertiesUtils.getValue("backuppath");
+	public static final String PUBLISH_PATH = PropertiesUtils.getValue("publishedfilepath");
 	public static final String ROLLBACK_PREFIX = "rpnv";
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

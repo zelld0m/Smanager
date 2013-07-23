@@ -18,6 +18,7 @@ import com.search.manager.exception.DataException;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
+@Deprecated
 @Repository("keywordCacheDao")
 public class KeywordCacheDao {
 	

@@ -29,7 +29,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.search.manager.mail.ReportNotificationMailService;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.ws.ConfigManager;
 
 
@@ -54,7 +54,7 @@ public class ReportGeneratorService {
 		
 		String solrParams="select?rows=1&"+ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreId())+"e&wt=xml";
 	    String url = cm.getServerParameter(UtilityService.getServerName(), "url")
-		.replace("(core)", core).replace("http://",PropsUtils.getValue("browsejssolrurl")) + solrParams;
+		.replace("(core)", core).replace("http://",PropertiesUtils.getValue("browsejssolrurl")) + solrParams;
 	    HashMap<String, KeyValuePair> map = processFile(content,format);
         
         if(map.containsKey("error"))
@@ -100,7 +100,7 @@ public class ReportGeneratorService {
 		
         String solrParams="select?rows=1&"+ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreId())+"e&wt=xml";
     	String url = cm.getServerParameter(UtilityService.getServerName(), "url")
-		.replace("(core)", core).replace("http://",PropsUtils.getValue("browsejssolrurl")) + solrParams;
+		.replace("(core)", core).replace("http://",PropertiesUtils.getValue("browsejssolrurl")) + solrParams;
     	 
         TopKeywords top = new TopKeywords(url);
         HashMap<String, KeyValuePair> map = processFile(content,format);

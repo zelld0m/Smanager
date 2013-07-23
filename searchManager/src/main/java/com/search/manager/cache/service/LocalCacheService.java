@@ -7,6 +7,7 @@ import com.search.manager.cache.lccache.ConcurrentCacheMap;
 import com.search.manager.cache.lccache.LocalCache;
 import com.search.manager.cache.model.CacheModel;
 
+@Deprecated
 @Service("localCacheService")
 public class LocalCacheService<E extends CacheModel<?>>{
 	

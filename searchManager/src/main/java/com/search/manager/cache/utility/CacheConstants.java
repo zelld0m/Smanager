@@ -3,6 +3,7 @@ package com.search.manager.cache.utility;
 import com.search.manager.exception.DataException;
 import com.search.manager.utility.StringUtil;
 
+@Deprecated
 public class CacheConstants {
 	public static final String SEARCH_CACHE_KEY = "search";
 	public static final String ELEVATED_LIST_CACHE_KEY 			= "EL";

@@ -11,6 +11,7 @@ import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.exception.DataException;
 
+@Deprecated
 @Repository("userCacheDao")
 public class UserCacheDao {
 	

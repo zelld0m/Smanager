@@ -21,6 +21,7 @@ import com.search.manager.cache.utility.EHcacHEResourceUtil;
 import com.search.manager.exception.DataConfigException;
 import com.search.manager.exception.DataException;
 
+@Deprecated
 public class EhCachEDistributedClient implements CacheClientInterface {
 	
 	private static Logger logger = Logger.getLogger(EhCachEDistributedClient.class);

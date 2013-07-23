@@ -5,6 +5,7 @@ import java.util.Properties;
 import com.search.manager.exception.DataConfigException;
 import com.search.manager.utility.PropsUtils;
 
+@Deprecated
 public class CacheResourceUtil {
 	private static final String CACHE_STRATEGY			= "cache.strategy";
 	private static final String CACHE_ENABLED			= "cache.enabled";

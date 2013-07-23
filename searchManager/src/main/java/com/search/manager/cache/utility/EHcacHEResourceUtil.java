@@ -5,6 +5,7 @@ import java.util.Properties;
 import com.search.manager.exception.DataConfigException;
 import com.search.manager.utility.PropsUtils;
 
+@Deprecated
 public class EHcacHEResourceUtil {
 	public static final String EH_TOTAL_SERVERS		= "ehcache.total.servers";
 	public static final String EH_SERVER			= "ehcache.server.";

@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
+@Deprecated
 public class ConcurrentCacheMap<K, V> extends Thread implements ConcurrentMap<K, V>
 {
 	private ConcurrentLinkedQueue<K> queue;
