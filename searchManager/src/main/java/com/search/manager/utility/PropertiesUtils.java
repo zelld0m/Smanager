@@ -1,5 +1,9 @@
 package com.search.manager.utility;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +18,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
  *
  */
 public class PropertiesUtils {
+
     private static final Logger logger = Logger.getLogger(PropertiesUtils.class.getName());
     private static PropertiesConfiguration config = initPropertiesConfig();
     private static final String FILE_PATH = "/home/solr/conf/globalvar.properties";
@@ -21,7 +26,7 @@ public class PropertiesUtils {
     private PropertiesUtils() {
         // NOTHING
     }
-    
+
     private static PropertiesConfiguration initPropertiesConfig() {
         try {
             config = new PropertiesConfiguration(FILE_PATH);
@@ -31,6 +36,34 @@ public class PropertiesUtils {
         }
 
         return config;
+    }
+
+    @Deprecated
+    public static Properties load(String propsName) throws Exception {
+        Properties props = new Properties();
+        FileInputStream fis = new FileInputStream(new File(propsName));
+        props.load(fis);
+        fis.close();
+        return props;
+    }
+
+    @Deprecated
+    public static Properties load(File propsFile) throws IOException {
+        Properties props = new Properties();
+        FileInputStream fis = new FileInputStream(propsFile);
+        props.load(fis);
+        fis.close();
+
+        return props;
+    }
+
+    @Deprecated
+    public static Properties getProperties(String propsName) {
+        try {
+            return load(getValue(propsName));
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     /**

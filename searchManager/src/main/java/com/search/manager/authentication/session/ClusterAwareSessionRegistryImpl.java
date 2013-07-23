@@ -8,22 +8,18 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.stereotype.Component;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
-import com.search.manager.cache.dao.DaoCacheService;
 
 @Singleton
 @Component("sessionRegistry")
 public class ClusterAwareSessionRegistryImpl extends SessionRegistryImpl {
 
 	private static final Logger logger = Logger.getLogger(ClusterAwareSessionRegistryImpl.class);
-	
-	@Autowired DaoCacheService daoCacheService;
-	
+		
 	Map<String, List<String>> userMap = new ConcurrentHashMap<String, List<String>>();
 	Map<String, String> sessionMap = new ConcurrentHashMap<String, String>();
 	
@@ -63,11 +59,6 @@ public class ClusterAwareSessionRegistryImpl extends SessionRegistryImpl {
 		sessionMap.put(sessionId, principal.toString());
 		UserDetailsImpl user = new UserDetailsImpl();
 		user.setUsername(String.valueOf(principal));
-		try {
-			daoCacheService.loginUser(user);
-		} catch (Exception e) {
-			logger.error("Failed to add user to cache: " + user, e);
-		}
 	}
 
 	@Override
@@ -75,15 +66,7 @@ public class ClusterAwareSessionRegistryImpl extends SessionRegistryImpl {
 		String principal = sessionMap.remove(sessionId);
 		if (principal != null) {
 			List<String> sessions = userMap.get(principal);
-			sessions.remove(sessionId);
-			if (sessions.isEmpty()) {
-				userMap.remove(principal);
-				try {
-					daoCacheService.logoutUser(principal);
-				} catch (Exception e) {
-					logger.error("Failed to remove user from cache: " + principal, e);
-				}
-			}			
+			sessions.remove(sessionId);			
 		}
 	}
 	

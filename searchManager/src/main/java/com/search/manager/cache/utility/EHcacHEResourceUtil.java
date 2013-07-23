@@ -3,7 +3,7 @@ package com.search.manager.cache.utility;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import com.search.manager.exception.DataConfigException;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 
 @Deprecated
 public class EHcacHEResourceUtil {
@@ -25,7 +25,7 @@ public class EHcacHEResourceUtil {
 	public EHcacHEResourceUtil(){
 		try {
 			if(dbProps == null)
-				dbProps = PropsUtils.getProperties(RESOURCE_MAP);
+				dbProps = PropertiesUtils.getProperties(RESOURCE_MAP);
 		} catch (Exception ex) {
 			ex.printStackTrace(System.err);
 		}

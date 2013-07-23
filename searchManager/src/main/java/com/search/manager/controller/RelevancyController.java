@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Keyword;
@@ -51,7 +50,6 @@ public class RelevancyController {
 
 	private static final Logger logger = Logger.getLogger(RelevancyController.class);
 	private static final String RULE_TYPE = RuleEntity.RANKING_RULE.toString();
-	@Autowired DaoCacheService daoCacheService;
 	@Autowired private RelevancyService relevancyService;
 	@Autowired private DownloadService downloadService;
 	@Autowired private RuleVersionService ruleVersionService;
@@ -75,12 +73,6 @@ public class RelevancyController {
 		model.addAttribute("store", store);
 		model.addAttribute("longFields", longFields);
 		model.addAttribute("shortFields", shortFields);
-		
-		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Ranking Rule");
-		} catch (Exception e) {
-			logger.error("Failed to access local cache ", e);
-		}
 		
 		return "rules/relevancy";
 	}

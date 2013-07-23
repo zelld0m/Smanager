@@ -18,7 +18,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
@@ -69,7 +68,7 @@ import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.utility.Transformers;
 import com.search.ws.ConfigManager;
@@ -81,8 +80,8 @@ public class RuleXmlUtil{
 	private static final String XML_FILE_TYPE = ".xml";
 
 	private static Logger logger = Logger.getLogger(RuleXmlUtil.class);
-	private static final String PREIMPORTPATH = PropsUtils.getValue("pre-importpath");
-	private static final String PRERESTOREPATH = PropsUtils.getValue("pre-restorepath");
+	private static final String PREIMPORTPATH = PropertiesUtils.getValue("pre-importpath");
+	private static final String PRERESTOREPATH = PropertiesUtils.getValue("pre-restorepath");
 	@Autowired private static DaoService daoService;
 
 	private static RuleXmlUtil instance = null;
