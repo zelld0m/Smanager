@@ -15,6 +15,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.search.manager.report.statistics.model.BannerStatistics;
 import com.search.manager.report.statistics.util.BannerStatisticsUtil;
+import java.util.logging.Logger;
 
 /**
  * Test class for retrieving a banner statistic.
@@ -26,8 +27,8 @@ import com.search.manager.report.statistics.util.BannerStatisticsUtil;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(BannerStatisticsUtil.class)
 @SuppressStaticInitializationFor(
-    "com.search.manager.report.statistics.util.BannerStatisticsUtil")
-public class BannerStatisticsTest {
+        "com.search.manager.report.statistics.util.BannerStatisticsUtil")
+public class BannerStatisticsTest {    
     private static final String STORE_ID = "pcmall";
 
     @Before
@@ -40,72 +41,115 @@ public class BannerStatisticsTest {
     }
 
     @Test
-    public void testGetStatsPerBannerByKeyword() throws Exception {
-        // July 16, 2013 00:00:00
-        DateTime startDate = new DateTime(2013, 7, 16, 0, 0);
+    public void testGetStatsPerBannerByKeyword_isAggregated_Equals_False()
+            throws Exception {
+        // July 21, 2013 00:00:00
+        DateTime startDate = new DateTime(2013, 7, 20, 0, 0);
 
-        // July 17, 2013 00:00:00
-        DateTime endDate = new DateTime(2013, 7, 17, 0, 0);
-        String keyword = "coy2";
+        // July 21, 2013 00:00:00
+        DateTime endDate = new DateTime(2013, 7, 21, 0, 0);
+        String keyword = "test123";
 
         List<BannerStatistics> statsPerBannerByKeyword =
-                BannerStatisticsUtil.getStatsPerBannerByKeyword(STORE_ID, 
+                BannerStatisticsUtil.getStatsPerBannerByKeyword(STORE_ID,
                 keyword, startDate.toDate(), endDate.toDate());
 
-        // expected size=4
-        assertEquals(statsPerBannerByKeyword.size(), 4);
-        
+
+        // expected size=2
+        assertEquals(statsPerBannerByKeyword.size(), 2);
+
         BannerStatistics bannerStats1 = statsPerBannerByKeyword.get(0);
-        // expected keyword="coy2", clicks=1, impressions=1
+        // expected keyword="test123", clicks=2, impressions=0
         assertEquals(bannerStats1.getKeyword(), keyword);
-        assertEquals(bannerStats1.getClicks(), 1);
-        assertEquals(bannerStats1.getImpressions(), 1);
-        
+        assertEquals(bannerStats1.getClicks(), 2);
+        assertEquals(bannerStats1.getImpressions(), 0);
+
         BannerStatistics bannerStats2 = statsPerBannerByKeyword.get(1);
-        // expected keyword="coy2", clicks=1, impressions=1
+        // expected keyword="test123", clicks=4, impressions=2
         assertEquals(bannerStats2.getKeyword(), keyword);
-        assertEquals(bannerStats2.getClicks(), 1);
-        assertEquals(bannerStats2.getImpressions(), 1);
-        
-        BannerStatistics bannerStats3 = statsPerBannerByKeyword.get(2);
-        // expected keyword="coy2", clicks=0, impressions=1
-        assertEquals(bannerStats3.getKeyword(), keyword);
-        assertEquals(bannerStats3.getClicks(), 0);
-        assertEquals(bannerStats3.getImpressions(), 1);
-        
-        BannerStatistics bannerStats4 = statsPerBannerByKeyword.get(3);
-        // expected keyword="coy2", clicks=1, impressions=1
-        assertEquals(bannerStats4.getKeyword(), keyword);
-        assertEquals(bannerStats4.getClicks(), 1);
-        assertEquals(bannerStats4.getImpressions(), 1);
+        assertEquals(bannerStats2.getClicks(), 4);
+        assertEquals(bannerStats2.getImpressions(), 2);
     }
 
     @Test
-    public void testStatsPerKeywordByMemberId() throws Exception {
-        // July 16, 2013 00:00:00
-        DateTime startDate = new DateTime(2013, 7, 16, 0, 0);
+    public void testGetStatsPerBannerByKeyword_isAggregated_Equals_True()
+            throws Exception {
+        // July 21, 2013 00:00:00
+        DateTime startDate = new DateTime(2013, 7, 20, 0, 0);
 
-        // July 17, 2013 00:00:00
-        DateTime endDate = new DateTime(2013, 7, 17, 0, 0);
+        // July 21, 2013 00:00:00
+        DateTime endDate = new DateTime(2013, 7, 21, 0, 0);
+        String keyword = "test123";
+
+        List<BannerStatistics> statsPerBannerByKeyword =
+                BannerStatisticsUtil.getStatsPerBannerByKeyword(STORE_ID,
+                keyword, startDate.toDate(), endDate.toDate(), true);
+
+        // expected size=1
+        assertEquals(statsPerBannerByKeyword.size(), 1);
+
+        BannerStatistics bannerStats1 = statsPerBannerByKeyword.get(0);
+        // expected keyword="test123", clicks=6, impressions=2
+        assertEquals(bannerStats1.getKeyword(), keyword);
+        assertEquals(bannerStats1.getClicks(), 6);
+        assertEquals(bannerStats1.getImpressions(), 2);
+    }
+
+    @Test
+    public void testStatsPerKeywordByMemberId_isAggregated_Equals_False()
+            throws Exception {
+        // July 21, 2013 00:00:00
+        DateTime startDate = new DateTime(2013, 7, 20, 0, 0);
+
+        // July 21, 2013 00:00:00
+        DateTime endDate = new DateTime(2013, 7, 21, 0, 0);
 
         // member ID of cable
-        final String memberId = "0064dYW1P0OBpaRiyRLD";
+        final String memberId = "abc123";
 
         List<BannerStatistics> statsPerBannerByMemberId =
                 BannerStatisticsUtil.getStatsPerKeywordByMemberId(STORE_ID,
                 memberId, startDate.toDate(), endDate.toDate());
-        
+
+        // expected size=2
+        assertEquals(statsPerBannerByMemberId.size(), 2);
+
+        BannerStatistics bannerStats1 = statsPerBannerByMemberId.get(0);
+        // expected keyword="test123", memberId=abc123, clicks=2, impressions=0
+        assertEquals(bannerStats1.getKeyword(), "test123");
+        assertEquals(bannerStats1.getClicks(), 2);
+        assertEquals(bannerStats1.getImpressions(), 0);
+
+        BannerStatistics bannerStats2 = statsPerBannerByMemberId.get(1);
+        // expected keyword="test123", memberId=abc123, clicks=4, impressions=2
+        assertEquals(bannerStats2.getKeyword(), "test123");
+        assertEquals(bannerStats2.getClicks(), 4);
+        assertEquals(bannerStats2.getImpressions(), 2);
+    }
+
+    @Test
+    public void testStatsPerKeywordByMemberId_isAggregated_Equals_True()
+            throws Exception {
+        // July 21, 2013 00:00:00
+        DateTime startDate = new DateTime(2013, 7, 20, 0, 0);
+
+        // July 21, 2013 00:00:00
+        DateTime endDate = new DateTime(2013, 7, 21, 0, 0);
+
+        // member ID of cable
+        final String memberId = "abc123";
+
+        List<BannerStatistics> statsPerBannerByMemberId =
+                BannerStatisticsUtil.getStatsPerKeywordByMemberId(STORE_ID,
+                memberId, startDate.toDate(), endDate.toDate(), true);
+
         // expected size=1
         assertEquals(statsPerBannerByMemberId.size(), 1);
-        
-        BannerStatistics bannerStats = statsPerBannerByMemberId.get(0);
 
-        // expected keyword="cable", memberId = "0064dYW1P0OBpaRiyRLD", 
-        // clicks=1, impressions=1
-        assertEquals(bannerStats.getKeyword(), "cable");
-        assertEquals(bannerStats.getMemberId(),
-                memberId);
-        assertEquals(bannerStats.getClicks(), 1);
-        assertEquals(bannerStats.getImpressions(), 1);
+        BannerStatistics bannerStats1 = statsPerBannerByMemberId.get(0);
+        // expected keyword="test123", memberId=abc123, clicks=6, impressions=2
+        assertEquals(bannerStats1.getKeyword(), "test123");
+        assertEquals(bannerStats1.getClicks(), 6);
+        assertEquals(bannerStats1.getImpressions(), 2);
     }
 }

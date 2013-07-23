@@ -1,29 +1,42 @@
-.plugin-listbox{
+.plugin-listbox .w265 {
+	width: 354px;
 }
-.plugin-listbox #itemHolder  {
-	display:table;
-	width:100%;
-	table-layout:fixed;
-} 
-.plugin-listbox #itemHolder .item {
-	display:table-row;
+
+.plugin-listbox #header {
+	display: table-row;
 }
-.plugin-listbox #itemHolder .item span {
-	display:table-cell;
-	padding:3px 3px;
-vertical-align: middle;
+
+.plugin-listbox #columnHeader {
+	width: 354px;
 }
-.plugin-listbox #itemHolder .item .deleteIcon {
-	width:17px;
+
+.plugin-listbox #itemHolder {
+	display: table-row !important;
 }
-.plugin-listbox #itemHolder .item .delete_wrap {
-	width:17px;
-	height:17px;
-	
+
+.plugin-listbox #columnHeader span,.plugin-listbox #itemHolder span
+	{
+	float: none;
+	display: table-cell;
+	padding: 3px 3px;
 }
-.plugin-listbox #itemHolder .item .itemName {
-	
+
+.plugin-listbox #itemHolder .deleteIcon,.plugin-listbox #columnHeader .deleteIconHeader
+	{
+	width: 17px;
 }
-.plugin-listbox #itemHolder .item .itemStatus {
-	width:103px;
+
+.plugin-listbox #itemHolder .itemName,.plugin-listbox #columnHeader #itemNameHeader
+	{
+	width: 75px;
+}
+
+.plugin-listbox #itemHolder .itemSchedule,.plugin-listbox #columnHeader #itemScheduleHeader
+	{
+	width: 127px;
+}
+
+.plugin-listbox #itemHolder .itemStatus,.plugin-listbox #columnHeader #itemStatusHeader
+	{
+	width: 111px;
 }

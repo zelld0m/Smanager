@@ -321,9 +321,10 @@
 				$("#ruleItemHolder").hide();
 
 				$("#keywordStatIcon").statbox({
-					itemDataCallback: function(startDate, endDate){
+					itemDataCallback: function(startDate, endDate, aggregate){
 						var base = this;
-						BannerServiceJS.getStatsByKeyword(GLOBAL_storeId, rule["ruleName"], startDate, endDate, {
+						aggregate = aggregate == null? false: aggregate;
+						BannerServiceJS.getStatsByKeyword(GLOBAL_storeId, rule["ruleName"], startDate, endDate, aggregate, {
 							callback: function(sr){
 								base.populateList.call(base, sr["data"], "keyword");
 							}
