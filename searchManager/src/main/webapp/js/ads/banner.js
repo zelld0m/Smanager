@@ -504,6 +504,7 @@
 
 				ui.find("#itemStatIcon").statbox({
 					rule: self.selectedRule,
+					ruleItem: item,
 					itemDataCallback: function(startDate, endDate){
 						var base = this;
 						BannerServiceJS.getStatsByMemberId(GLOBAL_storeId, item["memberId"], startDate, endDate, {

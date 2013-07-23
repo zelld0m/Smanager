@@ -153,30 +153,36 @@
 				buttonText: "Date to simulate",				
 		};
 
+		var startDateId = "statFilterStartDate_" + (base.options.ruleItem && $.isNotBlank(base.options.ruleItem["memberId"])? base.options.ruleItem["memberId"] : statType);
 		ui.find("#statFilterStartDate").prop({
-			id: "statFilterStartDate_" +  statType
+			id: startDateId
 		}).datepicker($.extend({}, calendarOpts, {
 			onClose: function(selectedDate) {
-				ui.find("#statFilterEndDate_" + statType).datepicker("option", "minDate", selectedDate);
+				ui.find("#" + startDateId).datepicker("option", "minDate", selectedDate);
 			}
 		}));
 
+		var endDateId = "statFilterEndDate_" + (base.options.ruleItem && $.isNotBlank(base.options.ruleItem["memberId"])? base.options.ruleItem["memberId"] : statType);
 		ui.find("#statFilterEndDate").prop({
-			id: "statFilterEndDate_" +  statType
+			id: endDateId
 		}).datepicker($.extend({}, calendarOpts, {
 			onClose: function(selectedDate) {
-				ui.find("#statFilterStartDate_" + statType).datepicker("option", "maxDate", selectedDate);
+				ui.find("#" + endDateId).datepicker("option", "maxDate", selectedDate);
 			}
 		}));
 		
 		ui.find("#goBtn").off().on({
 			click: function(e){
+				var base = e.data.base;
 				
-				var startDateText = e.data.base.$el.find("#statFilterStartDate_" + e.data.type).val(); 
-				var endDateText = e.data.base.$el.find("#statFilterEndDate_" + e.data.type).val();
+				var startDateId = "statFilterStartDate_" + (base.options.ruleItem && $.isNotBlank(base.options.ruleItem["memberId"])? base.options.ruleItem["memberId"] : e.data.type);
+				var endDateId = "statFilterEndDate_" + (base.options.ruleItem && $.isNotBlank(base.options.ruleItem["memberId"])? base.options.ruleItem["memberId"] : e.data.type);
+				
+				var startDateText = base.$el.find("#" + startDateId).val(); 
+				var endDateText = base.$el.find("#" + endDateId).val();
 				
 				if($.isNotBlank(startDateText) && $.isNotBlank(endDateText) && $.isDate(startDateText) && $.isDate(endDateText)){
-					e.data.base.options.itemDataCallback.call(e.data.base, startDateText, endDateText, e.data.base.$el.find("#statAggregate").is(":checked"));
+					base.options.itemDataCallback.call(base, startDateText, endDateText, base.$el.find("#statAggregate").is(":checked"));
 				}else{
 					jAlert("Please specify a valid date range","Banner Statistic");
 				}
@@ -256,6 +262,7 @@
 	$.statbox.defaultOptions = {
 			id: 1,
 			rule: null, 
+			ruleItem: null, 
 			ruleType: "Banner",
 			title: "Banner Statistics",
 			isPopup: true,
