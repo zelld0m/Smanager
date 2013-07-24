@@ -369,29 +369,29 @@ function initFileUploads() {
 
 		});
 
-		$("#onlineList").auditpanel({
-			fieldName: "username",
-			headerText : "Online",
-			page: 1,
-			pageSize: 5,
-			type: "online",
-			itemDataCallback: function(base, page){
-				DAOCacheServiceJS.getAllLoggedInUser({
-					callback: function(data){
-						base.populateList(data);
-						base.addPaging(page, data.totalSize);
-					},
-					preHook: function(){ base.prepareList(); }
-				});
-			},
-			itemOptionCallback: function(base, id, name, model){
-				var selector = '#item' + $.escapeQuotes($.formatAsId(id)); 
-				base.$el.find(selector + ' img.avatar').attr("src", GLOBAL_contextPath + "/images/noAvatar.jpg");
-				base.$el.find(selector + ' .user').html(model["username"]);
-				base.$el.find(selector + ' .duration').html(model["elapsedTime"]);
-				base.$el.find(selector + ' .page').html(model["currentPage"]);
-			}
-		});
+//		$("#onlineList").auditpanel({
+//			fieldName: "username",
+//			headerText : "Online",
+//			page: 1,
+//			pageSize: 5,
+//			type: "online",
+//			itemDataCallback: function(base, page){
+//				DAOCacheServiceJS.getAllLoggedInUser({
+//					callback: function(data){
+//						base.populateList(data);
+//						base.addPaging(page, data.totalSize);
+//					},
+//					preHook: function(){ base.prepareList(); }
+//				});
+//			},
+//			itemOptionCallback: function(base, id, name, model){
+//				var selector = '#item' + $.escapeQuotes($.formatAsId(id)); 
+//				base.$el.find(selector + ' img.avatar').attr("src", GLOBAL_contextPath + "/images/noAvatar.jpg");
+//				base.$el.find(selector + ' .user').html(model["username"]);
+//				base.$el.find(selector + ' .duration').html(model["elapsedTime"]);
+//				base.$el.find(selector + ' .page').html(model["currentPage"]);
+//			}
+//		});
 
 		useTabs();
 		useTinyMCE();
