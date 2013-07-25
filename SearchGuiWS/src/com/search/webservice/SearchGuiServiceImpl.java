@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.service.DeploymentRuleService;
 import com.search.webservice.model.TransportList;
 
@@ -26,7 +26,7 @@ public class SearchGuiServiceImpl implements SearchGuiService {
 
 	static {
 		try {
-			token = PropsUtils.getValue(RESOURCE_MAP);
+			token = PropertiesUtils.getValue(RESOURCE_MAP);
 		} catch (Exception ex) {
 			ex.printStackTrace(System.err);
 		}
