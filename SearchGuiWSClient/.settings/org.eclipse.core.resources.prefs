@@ -1,9 +1,0 @@
-#Tue Apr 24 10:30:26 CST 2012
-eclipse.preferences.version=1
-encoding//src/com/search/webservice/model/ElevatedList.java=UTF-8
-encoding//src/com/search/webservice/model/ExcludedList.java=UTF-8
-encoding//src/com/search/webservice/model/TransportList.java=UTF-8
-encoding//src/com/search/ws/client/SearchGuiService.java=UTF-8
-encoding//src/com/search/ws/client/SearchGuiServiceHttpBindingStub.java=UTF-8
-encoding//src/com/search/ws/client/SearchGuiServiceLocator.java=UTF-8
-encoding//src/com/search/ws/client/SearchGuiServicePortType.java=UTF-8
