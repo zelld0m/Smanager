@@ -41,16 +41,6 @@
   </servlet-mapping>
   <servlet>
     <description></description>
-    <display-name>ForceCacheServlet</display-name>
-    <servlet-name>ForceCacheServlet</servlet-name>
-    <servlet-class>com.search.servlet.ForceCacheServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ForceCacheServlet</servlet-name>
-    <url-pattern>/cache/forceItBaby</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <description></description>
     <display-name>ForceSolrServlet</display-name>
     <servlet-name>ForceSolrServlet</servlet-name>
     <servlet-class>com.search.servlet.ForceSolrServlet</servlet-class>
