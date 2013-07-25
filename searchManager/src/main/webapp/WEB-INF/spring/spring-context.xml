@@ -1,99 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:security="http://www.springframework.org/schema/security"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xsi:schemaLocation=" http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-        				 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        				 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-        				 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
-						 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-	
-	<!-- Specify that messages.properties is loaded to load resource bundles.  This means that
-		 we can apply overrides to binding messages which aren't very nice -->
-	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" scope="singleton" >
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- Specify that messages.properties is loaded to load resource bundles. 
+		This means that we can apply overrides to binding messages which aren't very 
+		nice -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource"
+		scope="singleton">
 		<!-- Custom conversion error messages. -->
-		<property name="basenames" >
+		<property name="basenames">
 			<list>
 				<value>messages</value>
 				<value>build-versions</value>
 			</list>
 		</property>
 	</bean>
-	
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-         <property name="locations">
-         	<list>
-         		<value>file:/home/solr/conf/solr.properties</value>
-         		<value>file:/home/solr/conf/database.properties</value>
-         		<value>file:/home/solr/conf/mail.properties</value>
-         	</list>
-         </property>
-    </bean>	
-	
-<!--	<bean id="webAppInitLoader" class="com.search.manager.utility.AppInitLoader" init-method="run" lazy-init="false">
-	     	<property name="localCacheService" ref="localCacheService" />
-	</bean>-->
-	
-        <bean id="propsUtils" class="com.search.manager.utility.PropertiesUtils"/>
-<!--	<bean id="propsUtils" class="com.search.manager.utility.PropsUtils">
-	     	<property name="localCacheService" ref="localCacheService" />
-	</bean>-->
-		
-	<bean id="userPreferences" class="com.search.manager.model.UserPreferences" scope="session"/>
-	
-	<context:annotation-config />		
 
-	<!-- Scans within the base package of the application for @Components to configure as beans,
-		 @Controller, @Service, @Configuration, etc. -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:/home/solr/conf/solr.properties</value>
+				<value>file:/home/solr/conf/database.properties</value>
+				<value>file:/home/solr/conf/mail.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- <bean id="webAppInitLoader" class="com.search.manager.utility.AppInitLoader" 
+		init-method="run" lazy-init="false"> <property name="localCacheService" ref="localCacheService" 
+		/> </bean> -->
+
+	<bean id="propsUtils" class="com.search.manager.utility.PropertiesUtils" />
+	<!-- <bean id="propsUtils" class="com.search.manager.utility.PropsUtils"> 
+		<property name="localCacheService" ref="localCacheService" /> </bean> -->
+
+	<bean id="userPreferences" class="com.search.manager.model.UserPreferences"
+		scope="session" />
+
+	<context:annotation-config />
+
+	<!-- Scans within the base package of the application for @Components to 
+		configure as beans, @Controller, @Service, @Configuration, etc. -->
 	<context:component-scan base-package="com.search.manager" />
 
 	<!-- Enables the Spring MVC @Controller programming model. -->
 	<mvc:annotation-driven />
-	
+
 	<!-- Enables AOP -->
-	<aop:aspectj-autoproxy/>
-	 
-	<!-- Loads DWR-related configuration -->      
+	<aop:aspectj-autoproxy />
+
+	<!-- Loads DWR-related configuration -->
 	<import resource="dwr-context.xml" />
-	
-	<!-- Loads Spring Security -->      
+
+	<!-- Loads Spring Security -->
 	<import resource="spring-security.xml" />
-	
-	<!-- Loads E-Mail configuration -->      
+
+	<!-- Loads E-Mail configuration -->
 	<import resource="spring-mail.xml" />
-	
-	<!-- Loads DataSources configuration -->      
+
+	<!-- Loads DataSources configuration -->
 	<import resource="spring-datasource.xml" />
-	
-	<!-- Loads Interceptors configuration -->      
+
+	<!-- Loads Interceptors configuration -->
 	<import resource="spring-interceptor.xml" />
-	
-	<!-- Loads Search Proxy Solr configuration -->      
+
+	<!-- Loads Search Proxy Solr configuration -->
 	<import resource="search-proxy-context.xml" />
-	
-	<!-- Velocity integration for template -->	
-	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
-	  <property name="configLocation" value="file:/home/solr/conf/velocity.properties"/>
+
+	<!-- Velocity integration for template -->
+	<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="configLocation" value="file:/home/solr/conf/velocity.properties" />
 	</bean>
-	
+
 	<!-- Enables our custom @ActiveUser annotation. -->
-	<bean id="annotationMethodHandlerAdapter" name="annotationMethodHandlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-	    <property name="customArgumentResolver" ref="activeUserResolver" />
+	<bean id="annotationMethodHandlerAdapter" name="annotationMethodHandlerAdapter"
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="customArgumentResolver" ref="activeUserResolver" />
 	</bean>
-	
+
 	<bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil">
-	 	<property name="daoService" ref="daoService" />
+		<property name="daoService" ref="daoService" />
 	</bean>
-	
-	<bean id="commandExecutor" class="com.search.manager.utility.CommandExecutor" init-method="init" destroy-method="destroy" scope="singleton">
-	    <!-- maximum length of command queue -->
-	    <property name="maxCount" value="1000" />
-	    <property name="interval" value="1000" />
+
+	<bean id="commandExecutor" class="com.search.manager.utility.CommandExecutor"
+		init-method="init" destroy-method="destroy" scope="singleton">
+		<!-- maximum length of command queue -->
+		<property name="maxCount" value="1000" />
+		<property name="interval" value="1000" />
 	</bean>
-    
-	<bean id="catCodeUtil" class="com.search.manager.utility.CatCodeUtil" init-method="init" lazy-init="false" />
+
+	<bean id="catCodeUtil" class="com.search.manager.utility.CatCodeUtil"
+		init-method="init" lazy-init="false" />
 </beans>

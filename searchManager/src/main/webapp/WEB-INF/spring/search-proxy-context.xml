@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        				 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-        				 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation=" 
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
 	<context:annotation-config />
-	
+
 	<bean id="localSolrServerRunner" class="com.search.manager.solr.util.LocalSolrServerRunner">
 		<property name="solrUrl" value="${solr.rule.url}" />
 		<property name="maxRetries" value="${solr.rule.conn.prop.maxRetries}" />
 		<property name="connectionTimeout" value="${solr.rule.conn.prop.connectionTimeout}" />
 		<property name="soTimeout" value="${solr.rule.conn.prop.soTimeout}" />
-		<property name="defaultMaxConnectionsPerHost" value="${solr.rule.conn.prop.defaultMaxConnectionsPerHost}" />
+		<property name="defaultMaxConnectionsPerHost"
+			value="${solr.rule.conn.prop.defaultMaxConnectionsPerHost}" />
 		<property name="maxTotalConnections" value="${solr.rule.conn.prop.maxTotalConnections}" />
 		<property name="followRedirects" value="${solr.rule.conn.prop.followRedirects}" />
 		<property name="allowCompression" value="${solr.rule.conn.prop.allowCompression}" />
 	</bean>
-	
+
 	<bean id="demoteSolrServer" parent="localSolrServerRunner" scope="singleton">
 		<property name="coreName" value="${solr.core.demote}" />
 	</bean>
@@ -27,13 +28,16 @@
 	<bean id="excludeSolrServer" parent="localSolrServerRunner" scope="singleton">
 		<property name="coreName" value="${solr.core.exclude}" />
 	</bean>
-	<bean id="facetsortSolrServer" parent="localSolrServerRunner" scope="singleton">
+	<bean id="facetsortSolrServer" parent="localSolrServerRunner"
+		scope="singleton">
 		<property name="coreName" value="${solr.core.facetsort}" />
 	</bean>
-	<bean id="redirectSolrServer" parent="localSolrServerRunner" scope="singleton">
+	<bean id="redirectSolrServer" parent="localSolrServerRunner"
+		scope="singleton">
 		<property name="coreName" value="${solr.core.redirect}" />
 	</bean>
-	<bean id="relevancySolrServer" parent="localSolrServerRunner" scope="singleton">
+	<bean id="relevancySolrServer" parent="localSolrServerRunner"
+		scope="singleton">
 		<property name="coreName" value="${solr.core.relevancy}" />
 	</bean>
 	<bean id="spellSolrServer" parent="localSolrServerRunner" scope="singleton">
@@ -42,8 +46,9 @@
 	<bean id="bannerSolrServer" parent="localSolrServerRunner" scope="singleton">
 		<property name="coreName" value="${solr.core.banner}" />
 	</bean>
-	
-	<bean id="solrServerFactory" class="com.search.manager.solr.util.SolrServerFactory" scope="singleton">
+
+	<bean id="solrServerFactory" class="com.search.manager.solr.util.SolrServerFactory"
+		scope="singleton">
 		<constructor-arg>
 			<list>
 				<ref bean="demoteSolrServer" />
@@ -57,17 +62,18 @@
 			</list>
 		</constructor-arg>
 	</bean>
-	
+
 	<bean id="solrJobDetailBean" class="org.springframework.scheduling.quartz.JobDetailBean">
-		<property name="jobClass" value="com.search.manager.cron.SolrResetServerCronSingle" />
+		<property name="jobClass"
+			value="com.search.manager.cron.SolrResetServerCronSingle" />
 	</bean>
-	
+
 	<bean id="solrSimpleTriggerBean" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="solrJobDetailBean" />
 		<property name="startDelay" value="5000" />
 		<property name="repeatInterval" value="200000" />
 	</bean>
-	
+
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
@@ -82,5 +88,5 @@
 			</map>
 		</property>
 	</bean>
-	
+
 </beans>
