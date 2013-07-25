@@ -9,14 +9,14 @@ import javax.xml.rpc.Stub;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.webservice.model.TransportList;
 
 public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 	
 	private static Logger logger = Logger.getLogger(SearchGuiClientServiceImpl.class);
-	private static String WS_CLIENT = PropsUtils.getValue("guiwsclient");
-	private static String TOKEN = PropsUtils.getValue("token");
+	private static String WS_CLIENT = PropertiesUtils.getValue("guiwsclient");
+	private static String TOKEN = PropertiesUtils.getValue("token");
 	
 	// for testing only: do not use in prod
 //	static{

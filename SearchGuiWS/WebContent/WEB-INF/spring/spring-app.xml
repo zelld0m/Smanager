@@ -25,14 +25,12 @@
     
     <!-- Scans within the base package of the application for @Components to configure as beans,
 		 @Controller, @Service, @Configuration, etc. -->
-	<context:component-scan base-package="com.search.manager.solr, com.search.manager.cache, com.search.service, com.search.manager.authentication.dao" />
+	<context:component-scan base-package="com.search.manager.solr, com.search.service" />
 	
     <import resource="./mail-app.xml"/>
 	<import resource="./db-app.xml"/>
 	<import resource="./solr-app.xml"/>
 	<import resource="./service-app.xml"/>
-	<!-- import resource="./cache-app.xml"/ -->
-	<!-- import resource="file:/home/solr/bin/ws/config/cron-app.xml"/ -->
 	
 	<bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil" scope="singleton" />
 	

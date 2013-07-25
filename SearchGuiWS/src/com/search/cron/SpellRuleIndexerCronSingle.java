@@ -20,14 +20,14 @@ import org.apache.log4j.Logger;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Store;
 import com.search.manager.solr.service.SolrService;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 
-public class SolrProcessorCronSingle implements Runnable {
+public class SpellRuleIndexerCronSingle implements Runnable {
 
 	private final static Logger logger = Logger
-			.getLogger(SolrProcessorCronSingle.class);
+			.getLogger(SpellRuleIndexerCronSingle.class);
 
-	private static final String BASE_RULE_DIR = PropsUtils
+	private static final String BASE_RULE_DIR = PropertiesUtils
 			.getValue("publishedfilepath");
 	private static final String XML_FILE_TYPE = ".xml";
 	private static final String DID_YOU_MEAN = "Did You Mean";
@@ -41,7 +41,8 @@ public class SolrProcessorCronSingle implements Runnable {
 	private boolean indexing = false;
 	private long lastIndexedFile;
 
-	public SolrProcessorCronSingle(SolrService solrService, List<String> stores) {
+	public SpellRuleIndexerCronSingle(SolrService solrService,
+			List<String> stores) {
 		this.solrService = solrService;
 		this.stores = stores;
 
