@@ -4,7 +4,7 @@
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
 	xsi:schemaLocation="
   			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-  			http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr.xsd">
+  			http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
 
 	<!-- DWR will scan all Spring managed beans containing @RemoteProxy or @RemoteMethod 
 		annotations and register Creator proxies for them. This will NOT scan any 
