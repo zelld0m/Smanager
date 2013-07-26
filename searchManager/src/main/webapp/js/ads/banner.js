@@ -563,7 +563,7 @@
 				$('#deleteAllItemIcon').off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						jConfirm("Delete all " + $("#filterBySize").val() +" in keyword" + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
+						jConfirm("Delete all " + $("#filterBySize").val() +" in keyword " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result){
 							if(result){
 								BannerServiceJS.deleteRuleItemsByImageSize(GLOBAL_storeId, self.selectedRule["ruleId"], $("#filterBySize").val(), {
 									callback: function(e){
