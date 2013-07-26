@@ -9,7 +9,7 @@
 		<repository>
 			<id>VTORGUISCHDEV01.pcmall.com</id>
 			<name>VTORGUISCHDEV01.pcmall.com-snapshots</name>
-			<url>http://vtorguischdev01:8081/artifactory/searchManager-snapshots</url>
+			<url>http://vtorguischdev01:8081/artifactory/searchManager-releases</url>
 		</repository>
 	</repositories>
 
