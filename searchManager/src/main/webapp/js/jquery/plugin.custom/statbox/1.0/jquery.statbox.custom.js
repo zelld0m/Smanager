@@ -24,7 +24,7 @@
 
 		ui.find("div:first").prop({
 			id: $.isNotBlank(id)? id: "plugin-statbox-" + base.options.id
-		});
+		}).show();
 	};
 
 	$.statbox.prototype.init = function(){
@@ -51,14 +51,14 @@
 					},
 					show: function(event, api){
 						base.$el.html(base.getTemplate());
-						base.setId.call(base, base.$el);
+						base.setId.call(base);
 						base.getList.call(base);
 					}
 				}
 			});
 		} else {
 			base.$el.html(base.getTemplate());
-			base.setId.call(base, base.$el);
+			base.setId.call(base);
 			base.getList.call(base);
 		}
 	};
@@ -67,18 +67,25 @@
 		var base = this;
 		var template  = '';
 
-		template += '<div class="plugin-statbox">';
+		template += '<div class="plugin-statbox" style="display:none">';
 		template += '	<div class="w265 padB8">';
-		template += '		<div>';
-		template += '			<label>Report Date: </label>';
-		template += '			<input type="text" id="statFilterStartDate">';
-		template += '			<label>-</label>';
-		template += '			<input type="text" id="statFilterEndDate">';
-		template += '			<div id="goBtn" class="btn round_btn">';
-		template += '				<span class="btn_wrap">';
-		template += '					<a href="javascript:void(0);">GO</a>';
-		template += '				</span>';
-		template += '			</div>';
+		template += '		<div class="marB10">';
+		template += '			<span>';
+		template += '				<label>Report Date: </label>';
+		template += '				<input type="text" id="statFilterStartDate">';
+		template += '				<label>-</label>';
+		template += '				<input type="text" id="statFilterEndDate">';
+		template += '				<div id="goBtn" class="btn round_btn">';
+		template += '					<span class="btn_wrap">';
+		template += '						<a href="javascript:void(0);">GO</a>';
+		template += '					</span>';
+		template += '				</div>';
+		template += '			</span>';
+		template += '			<div class="clearB"></div>';
+		template += '			<span id="aggregate" style="margin-left:60px">';
+		template += '				<input type="checkbox" id="statAggregate">';
+		template += '				<label>Aggregate report by alias</label>';
+		template += '			</span>';
 		template += '		</div>';
 		template += '		<div id="header">';
 		template += '			<div id="columnHeader">';
@@ -169,15 +176,24 @@
 				var endDateText = e.data.base.$el.find("#statFilterEndDate_" + e.data.type).val();
 				
 				if($.isNotBlank(startDateText) && $.isNotBlank(endDateText) && $.isDate(startDateText) && $.isDate(endDateText)){
-					e.data.base.options.itemDataCallback.call(e.data.base, startDateText, endDateText);
+					e.data.base.options.itemDataCallback.call(e.data.base, startDateText, endDateText, e.data.base.$el.find("#statAggregate").is(":checked"));
 				}else{
 					jAlert("Please specify a valid date range","Banner Statistic");
 				}
 			}
 		}, {base: base, type: statType});
 		
-		ui.find("#header, .itemHolder_wrap").hide();
-
+		ui.find("#header, .itemHolder_wrap, #aggregate").hide();
+		
+		switch(statType.toLowerCase()){
+		case "keyword": 
+			ui.find("#aggregate").show();
+			break;
+		case "memberid": 
+			ui.find("#aggregate").remove();
+			break;
+		}
+		
 		if(data && data["totalSize"] > 0){
 			var itemHolder = ui.find('table#itemHolder');
 
@@ -213,7 +229,7 @@
 
 	$.statbox.prototype.populateItemFieldsByKeyword = function(itemUI, item){
 		var base = this;
-
+		var ui = base.$el;
 		itemUI.find(".itemName").text(item["keyword"]);
 		base.options.itemScheduleCallback.call(itemUI, base.options.rule["ruleId"],item["memberId"]);
 		itemUI.find(".itemClick").text(item["clicks"]);
