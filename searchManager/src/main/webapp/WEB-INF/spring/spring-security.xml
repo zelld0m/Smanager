@@ -1,104 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:security="http://www.springframework.org/schema/security"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	   xmlns:aop="http://www.springframework.org/schema/aop"
-	   xmlns:p="http://www.springframework.org/schema/p"
-	   xsi:schemaLocation="	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                        	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
-        					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<!-- This is where we configure Spring-Security -->
-	<security:http 
-		auto-config="false" 
-		use-expressions="true"
-		access-denied-page="/denied/" 
-		entry-point-ref="authenticationEntryPoint">
+	<security:http auto-config="false" use-expressions="true"
+		access-denied-page="/denied/" entry-point-ref="authenticationEntryPoint">
 
-		<security:intercept-url pattern="/" access="isAuthenticated()"/>
-    	<security:intercept-url pattern="/browse/**" access="isAuthenticated()" />
-     	<security:intercept-url pattern="/relevancy/**" access="isAuthenticated()" />
-     	<security:intercept-url pattern="/keyword/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/elevate/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/exclude/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/demote/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/facet/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/banner/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/redirect/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/catalog/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/feature/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/migrator/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/synonym/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/stopword/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/protword/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/spell/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/setting/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/production/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
-    	<security:intercept-url pattern="/approval/**" access="isAuthenticated() and hasRole('APPROVE_RULE')" />
-    	<security:intercept-url pattern="/import/**" access="isAuthenticated() and hasAnyRole('CREATE_RULE','APPROVE_RULE','PUBLISH_RULE')" />
-    	<security:intercept-url pattern="/export/**" access="isAuthenticated() and hasRole('APPROVE_RULE')" />
-    	<security:intercept-url pattern="/audit/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/security/**" access="isAuthenticated() and hasRole('MANAGE_USER')" />
-     	<security:intercept-url pattern="/dwr/**" access="isAuthenticated()" />
-     	<security:intercept-url pattern="/topkeyword/**" access="isAuthenticated()"/>
-     	<security:intercept-url pattern="/zeroresult/**" access="isAuthenticated()"/>
-     	<security:intercept-url pattern="/keywordtrends/**" access="isAuthenticated()"/>
-     	<security:intercept-url pattern="/reportgenerator/**" access="isAuthenticated()"/>
+		<security:intercept-url pattern="/"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/browse/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/relevancy/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/keyword/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/elevate/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/exclude/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/demote/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/facet/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/banner/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/redirect/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/catalog/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/feature/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/migrator/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/synonym/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/stopword/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/protword/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/spell/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/setting/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/production/**"
+			access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
+		<security:intercept-url pattern="/approval/**"
+			access="isAuthenticated() and hasRole('APPROVE_RULE')" />
+		<security:intercept-url pattern="/import/**"
+			access="isAuthenticated() and hasAnyRole('CREATE_RULE','APPROVE_RULE','PUBLISH_RULE')" />
+		<security:intercept-url pattern="/export/**"
+			access="isAuthenticated() and hasRole('APPROVE_RULE')" />
+		<security:intercept-url pattern="/audit/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/security/**"
+			access="isAuthenticated() and hasRole('MANAGE_USER')" />
+		<security:intercept-url pattern="/dwr/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/topkeyword/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/zeroresult/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/keywordtrends/**"
+			access="isAuthenticated()" />
+		<security:intercept-url pattern="/reportgenerator/**"
+			access="isAuthenticated()" />
 
-        <!-- Make CSS and image resources to unsecured -->
-        <security:intercept-url pattern="/css/**" access="permitAll" />
-        <security:intercept-url pattern="/images/**" access="permitAll" />
-        <security:intercept-url pattern="/tz/**" access="permitAll" />
+		<!-- Make CSS and image resources to unsecured -->
+		<security:intercept-url pattern="/css/**"
+			access="permitAll" />
+		<security:intercept-url pattern="/images/**"
+			access="permitAll" />
+		<security:intercept-url pattern="/tz/**"
+			access="permitAll" />
 
-        <!-- Exclude web service from authentication -->
-        <security:intercept-url pattern="/search/**" access="permitAll" />
+		<!-- Exclude web service from authentication -->
+		<security:intercept-url pattern="/search/**"
+			access="permitAll" />
 
-		<security:logout invalidate-session="true" logout-success-url="/login.jsp" logout-url="/logout" />
+		<security:logout invalidate-session="true"
+			logout-success-url="/login.jsp" logout-url="/logout" />
 
 		<!-- Querying the SessionRegistry for currently authenticated users and 
 			their sessions http://static.springsource.org/spring-security/site/docs/3.1.x/reference/session-mgmt.html#list-authenticated-principals -->
-		<security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
-		<security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER" />
-		<security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy"/>
+		<security:custom-filter ref="authenticationFilter"
+			position="FORM_LOGIN_FILTER" />
+		<security:custom-filter ref="concurrencyFilter"
+			position="CONCURRENT_SESSION_FILTER" />
+		<security:session-management
+			session-authentication-strategy-ref="sessionAuthenticationStrategy" />
 	</security:http>
 
 	<bean id="authenticationFilter"
 		class="com.search.manager.authentication.session.ClusterAwareUsernamePasswordAuthentication"
-		p:sessionAuthenticationStrategy-ref="sessionAuthenticationStrategy" 
+		p:sessionAuthenticationStrategy-ref="sessionAuthenticationStrategy"
 		p:authenticationManager-ref="authenticationManager"
 		p:authenticationFailureHandler-ref="authenticationFailureHandler"
 		p:authenticationSuccessHandler-ref="authenticationSuccessHandler" />
-              
 
 	<!-- Declare an authentication-manager to use a custom userDetailsService -->
 	<!-- It's important to set the alias here because it's used by the authenticationFilter -->
 	<security:authentication-manager alias="authenticationManager">
-		<security:authentication-provider user-service-ref="userDetailsService">
+		<security:authentication-provider
+			user-service-ref="userDetailsService">
 			<security:password-encoder ref="passwordEncoder" />
 		</security:authentication-provider>
 	</security:authentication-manager>
-	
-	
+
 	<!-- The AuthenticationEntryPoint is responsible for redirecting the user 
 		to a particular page, like a login page, whenever the server sends back a 
 		response requiring authentication -->
 	<!-- See Spring-Security Reference 5.4.1 for more info -->
 	<bean id="authenticationEntryPoint"
-		  class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
-		  p:loginFormUrl="/login.jsp" />
+		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
+		p:loginFormUrl="/login.jsp" />
 
-	
+	<!-- Use a Md5 encoder since the user's passwords are stored as Md5 in the 
+		database -->
+	<bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
 
-	<!-- Use a Md5 encoder since the user's passwords are stored as Md5 in the database -->
-	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
 	<!-- Filter required by concurrent session handling package The ConcurrentSessionFilter 
 		requires two properties, sessionRegistry, which generally points to an instance 
 		of SessionRegistryImpl, and expiredUrl, which points to the page to display 
 		when a session has expired. See: http://static.springsource.org/spring-security/site/docs/3.1.x/reference/session-mgmt.html#list-authenticated-principals -->
 	<bean id="concurrencyFilter"
-		  class="org.springframework.security.web.session.ConcurrentSessionFilter"
-		  p:sessionRegistry-ref="sessionRegistry" 
-		  p:expiredUrl="/login.jsp?login_error=expiredsession" />
+		class="org.springframework.security.web.session.ConcurrentSessionFilter"
+		p:sessionRegistry-ref="sessionRegistry" p:expiredUrl="/login.jsp?login_error=expiredsession" />
 
 </beans>

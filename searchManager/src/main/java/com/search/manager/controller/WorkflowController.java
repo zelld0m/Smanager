@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.ApprovalRuleStatusReportBean;
@@ -27,7 +26,6 @@ import com.search.manager.report.model.PublishRuleStatusReportModel;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.service.DeploymentService;
 import com.search.manager.service.DownloadService;
-import com.search.manager.service.UtilityService;
 
 @Controller
 @RequestMapping("/")
@@ -37,15 +35,9 @@ public class WorkflowController {
 
 	@Autowired private DeploymentService deploymentService;
 	@Autowired private DownloadService downloadService;
-	@Autowired DaoCacheService daoCacheService;
 	
 	@RequestMapping(value="/approval/{store}")
 	public String pendingApproval(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
-		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Approval");
-		} catch (Exception e) {
-			logger.error("Failed to access local cache ", e);
-		}
 		model.addAttribute("store", store);
 		return "setting/approval";
 	}
@@ -53,11 +45,7 @@ public class WorkflowController {
 	@RequestMapping(value="/production/{store}")
 	public String pushToProd(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);
-		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Push to Production");
-		} catch (Exception e) {
-			logger.error("Failed to access local cache ", e);
-		}
+
 		return "setting/production";
 	}
 	
@@ -65,22 +53,13 @@ public class WorkflowController {
 	public String importRule(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);
 		
-		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Import Rule");
-		} catch (Exception e) {
-			logger.error("Failed to access local cache ", e);
-		}
 		return "setting/import";
 	}
 	
 	@RequestMapping(value="/export/{store}")
 	public String exportRule(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);
-		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Export Rule");
-		} catch (Exception e) {
-			logger.error("Failed to access local cache ", e);
-		}
+
 		return "setting/export";
 	}
 

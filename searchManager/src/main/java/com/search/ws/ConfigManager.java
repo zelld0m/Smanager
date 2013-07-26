@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTimeZone;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 
 public class ConfigManager {
 	
@@ -74,7 +74,7 @@ public class ConfigManager {
 				}
 				
 				// did you mean
-				String fileName = PropsUtils.getValue("publishedfilepath");
+				String fileName = PropertiesUtils.getValue("publishedfilepath");
 				if (StringUtils.isNotBlank(fileName)) {
 					fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.properties";
 					File spellFile = new File(fileName);
@@ -369,7 +369,7 @@ public class ConfigManager {
 	}
 	
 	public String getPublishedDidYouMeanPath(String storeId) {
-		String fileName = PropsUtils.getValue("publishedfilepath");
+		String fileName = PropertiesUtils.getValue("publishedfilepath");
 		if (StringUtils.isNotBlank(fileName)) {
 			fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.csv";
 		}
@@ -377,7 +377,7 @@ public class ConfigManager {
 	}
 	
 	public boolean isSolrImplOnly() {
-		return "1".equals(PropsUtils.getValue("solrImplOnly"));
+		return "1".equals(PropertiesUtils.getValue("solrImplOnly"));
 	}
 	
 //	public boolean getPendingNotification() {

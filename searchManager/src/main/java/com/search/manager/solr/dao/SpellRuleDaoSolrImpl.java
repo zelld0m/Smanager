@@ -25,7 +25,7 @@ import com.search.manager.solr.constants.Constants;
 import com.search.manager.solr.model.SpellRuleSolr;
 import com.search.manager.solr.util.SolrDocUtil;
 import com.search.manager.solr.util.SolrResultUtil;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.manager.xml.file.RuleXmlUtil;
 
 @Repository("spellRuleDaoSolr")
@@ -36,9 +36,9 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 
 	@Autowired
 	private RuleXmlUtil ruleXmlUtil;
-	private static final String BASE_RULE_DIR = PropsUtils
+	private static final String BASE_RULE_DIR = PropertiesUtils
 			.getValue("publishedfilepath");
-	private static final String SPELL_FILE = PropsUtils.getValue("spellfile");
+	private static final String SPELL_FILE = PropertiesUtils.getValue("spellfile");
 
 	@Override
 	public SpellRule getSpellRuleForSearchTerm(String storeId, String searchTerm)

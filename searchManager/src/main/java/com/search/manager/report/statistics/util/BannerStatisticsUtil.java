@@ -30,15 +30,9 @@ import com.search.manager.utility.PropertiesUtils;
 public class BannerStatisticsUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(BannerStatisticsUtil.class);
-    private static String FILE_LOCATION;
-    @SuppressWarnings("unused")
-    private static String FILE_CANNOT_BE_FOUND_MESSAGE;
-
-    static {
-        FILE_LOCATION = PropertiesUtils.getValue("fileLocation");
-        FILE_CANNOT_BE_FOUND_MESSAGE = PropertiesUtils
+    private static final String FILE_LOCATION = PropertiesUtils.getValue("fileLocation");
+    private static final String FILE_CANNOT_BE_FOUND_MESSAGE = PropertiesUtils
                 .getValue("fileNotFoundMessage");
-    }
 
     /**
      * <p>

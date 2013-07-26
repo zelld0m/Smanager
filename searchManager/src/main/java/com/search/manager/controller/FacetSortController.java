@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.FacetGroup;
@@ -47,7 +46,6 @@ public class FacetSortController {
 	
 	private static final Logger logger = Logger.getLogger(FacetSortController.class);
 	private static final String RULE_TYPE = RuleEntity.FACET_SORT.toString();
-	@Autowired private DaoCacheService daoCacheService;
 	@Autowired private FacetSortService facetSortService;
 	@Autowired private DownloadService downloadService;
 	@Autowired private RuleVersionService ruleVersionService;
@@ -55,11 +53,7 @@ public class FacetSortController {
 	@RequestMapping(value="/{store}")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);
-		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Facet Sort");
-		} catch (Exception e) {
-			logger.error("Failed to access local cache ", e);
-		}
+
 		return "rules/facet";
 	}
 	

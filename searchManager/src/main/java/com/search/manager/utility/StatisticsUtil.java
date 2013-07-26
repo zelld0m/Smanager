@@ -202,7 +202,7 @@ public class StatisticsUtil {
     }
 
     public static String getSplunkFilePattern(String storeName) {
-        return new StringBuilder().append(PropsUtils.getValue("splunkdir")).append(File.separator)
+        return new StringBuilder().append(PropertiesUtils.getValue("splunkdir")).append(File.separator)
                 .append(storeName).append(File.separator).append("{0}").append(File.separator)
                 .append("{1}.csv").toString();
     }

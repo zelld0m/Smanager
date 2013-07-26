@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.collect.Lists;
-import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.RuleVersionUtil;
@@ -36,7 +35,6 @@ import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.service.SpellRuleService;
-import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller
@@ -45,9 +43,6 @@ import com.search.manager.xml.file.RuleXmlReportUtil;
 public class SpellController {
 
 	private static final Logger logger = Logger.getLogger(SpellController.class);
-
-	@Autowired
-	private DaoCacheService daoCacheService;
 
 	@Autowired
 	private RuleVersionService ruleVersionService;
@@ -67,11 +62,6 @@ public class SpellController {
 	@RequestMapping(value = "/{store}")
 	public String execute(HttpServletRequest request, HttpServletResponse response, Model model,
 	        @PathVariable String store) {
-		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Spell");
-		} catch (Exception e) {
-			logger.error("Failed to access local cache ", e);
-		}
 		model.addAttribute("store", store);
 		return "lexicon/spell";
 	}

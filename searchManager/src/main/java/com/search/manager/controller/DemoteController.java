@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.RecordSet;
@@ -31,7 +30,6 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.DemoteService;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
-import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller
@@ -43,7 +41,6 @@ public class DemoteController {
 	
 	private static final String RULE_TYPE = RuleEntity.DEMOTE.toString();
 	
-	@Autowired private DaoCacheService daoCacheService;
 	@Autowired private DemoteService demoteService;
 	@Autowired private DownloadService downloadService;
 	@Autowired private RuleVersionService ruleVersionService;
@@ -51,11 +48,7 @@ public class DemoteController {
 	@RequestMapping(value="/{store}")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model,@PathVariable String store){
 		model.addAttribute("store", store);
-		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Demote");
-		} catch (Exception e) {
-			logger.error("Failed to access local cache ", e);
-		}
+
 		return "rules/demote";
 	}
 

@@ -1,4 +1,4 @@
-package com.search.manager.core.statistics.report.test;
+package com.search.manager.report.statistics.util;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,13 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import com.search.manager.report.statistics.model.BannerStatistics;
-import com.search.manager.report.statistics.util.BannerStatisticsUtil;
-import java.util.logging.Logger;
 
 /**
  * Test class for retrieving a banner statistic.
@@ -26,13 +23,11 @@ import java.util.logging.Logger;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(BannerStatisticsUtil.class)
-@SuppressStaticInitializationFor(
-        "com.search.manager.report.statistics.util.BannerStatisticsUtil")
-public class BannerStatisticsTest {    
+public class BannerStatisticsUtilTest {    
     private static final String STORE_ID = "pcmall";
 
     @Before
-    public void initialize() {
+    public void init() {
         Whitebox.setInternalState(BannerStatisticsUtil.class,
                 "FILE_LOCATION",
                 "src/test/resources/home/solr/utilities/banner-stats/{0}/{1}/{2}.csv");
@@ -53,7 +48,6 @@ public class BannerStatisticsTest {
         List<BannerStatistics> statsPerBannerByKeyword =
                 BannerStatisticsUtil.getStatsPerBannerByKeyword(STORE_ID,
                 keyword, startDate.toDate(), endDate.toDate());
-
 
         // expected size=2
         assertEquals(statsPerBannerByKeyword.size(), 2);
