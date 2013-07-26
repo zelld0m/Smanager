@@ -2,3 +2,5 @@
 /war
 /.classpath
 .settings
+/bin
+/target

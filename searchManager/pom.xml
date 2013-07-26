@@ -19,6 +19,11 @@
             <name>DWR repository</name>
             <url>https://oss.sonatype.org/content/groups/public</url>
         </repository>
+        <repository>
+            <id>VTORGUISCHDEV01.pcmall.com</id>
+            <name>VTORGUISCHDEV01.pcmall.com-searchManager</name>
+            <url>http://vtorguischdev01:8081/artifactory/searchManager</url>
+        </repository>
     </repositories>
     <dependencies>
 		
@@ -358,16 +363,14 @@
         <dependency>
             <groupId>com.search</groupId>
             <artifactId>topkeywords</artifactId>
-            <scope>system</scope>
-            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/topkeywords.jar</systemPath>
             <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.search</groupId>
             <artifactId>wsclient</artifactId>
-            <scope>system</scope>
-            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/searchguiwsclient.jar</systemPath>
             <version>1.0</version>
+            <classifier>FINAL</classifier>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
