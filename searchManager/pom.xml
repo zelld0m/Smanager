@@ -367,12 +367,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.search</groupId>
-            <artifactId>wsclient</artifactId>
-            <version>1.0</version>
-            <classifier>FINAL</classifier>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-lgpl</artifactId>
             <version>1.7.7</version>
