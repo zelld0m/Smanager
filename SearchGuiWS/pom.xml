@@ -1,650 +1,650 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.search</groupId>
-	<artifactId>SearchGuiWS</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-
-	<repositories>
-		<repository>
-			<id>VTORGUISCHDEV01.pcmall.com</id>
-			<name>VTORGUISCHDEV01.pcmall.com-snapshots</name>
-			<url>http://vtorguischdev01:8081/artifactory/searchManager-releases</url>
-		</repository>
-	</repositories>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.search</groupId>
+    <artifactId>SearchGuiWS</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>VTORGUISCHDEV01.pcmall.com</id>
+            <name>VTORGUISCHDEV01.pcmall.com-searchManager</name>
+            <url>http://vtorguischdev01:8081/artifactory/searchManager</url>
+        </repository>
+    </repositories>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<!-- JAVAX ACTIVATION VERSION -->
-		<activation.version>1.1</activation.version>
+        <!-- JAVAX ACTIVATION VERSION -->
+        <activation.version>1.1</activation.version>
 
-		<!-- APACHE AXIS VERSION -->
-		<axis.version>1.4</axis.version>
+        <!-- APACHE AXIS VERSION -->
+        <axis.version>1.4</axis.version>
 
-		<!-- APACHE COMMONS VERSIONS -->
-		<commons-attributes.version>2.2</commons-attributes.version>
-		<commons-beanutils.version>1.8.3</commons-beanutils.version>
-		<commons-cli.version>1.2</commons-cli.version>
-		<commons-codec.version>1.7</commons-codec.version>
-		<commons-collections.version>3.2.1</commons-collections.version>
-		<commons-configuration.version>1.6</commons-configuration.version>
-		<commons-dbcp.version>1.2.1</commons-dbcp.version>
-		<commons-discovery.version>0.2</commons-discovery.version>
-		<commons-fileupload.version>1.2.1</commons-fileupload.version>
-		<commons-httpclient.version>3.0</commons-httpclient.version>
-		<commons-io.version>2.1</commons-io.version>
-		<commons-jxpath.version>1.3</commons-jxpath.version>
-		<commons-lang.version>2.6</commons-lang.version>
-		<commons-logging.version>1.1.1</commons-logging.version>
-		<commons-pool.version>1.2</commons-pool.version>
+        <!-- APACHE COMMONS VERSIONS -->
+        <commons-attributes.version>2.2</commons-attributes.version>
+        <commons-beanutils.version>1.8.3</commons-beanutils.version>
+        <commons-cli.version>1.2</commons-cli.version>
+        <commons-codec.version>1.7</commons-codec.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-configuration.version>1.6</commons-configuration.version>
+        <commons-dbcp.version>1.2.1</commons-dbcp.version>
+        <commons-discovery.version>0.2</commons-discovery.version>
+        <commons-fileupload.version>1.2.1</commons-fileupload.version>
+        <commons-httpclient.version>3.0</commons-httpclient.version>
+        <commons-io.version>2.1</commons-io.version>
+        <commons-jxpath.version>1.3</commons-jxpath.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-logging.version>1.1.1</commons-logging.version>
+        <commons-pool.version>1.2</commons-pool.version>
 
-		<!-- DIRECT WEB REMOTING VERSION -->
-		<org.directwebremoting.version>3.0.M1</org.directwebremoting.version>
+        <!-- DIRECT WEB REMOTING VERSION -->
+        <org.directwebremoting.version>3.0.M1</org.directwebremoting.version>
 
-		<!-- EHCACHE VERSION -->
-		<net.sf.ehcache.version>1.6.0</net.sf.ehcache.version>
+        <!-- EHCACHE VERSION -->
+        <net.sf.ehcache.version>1.6.0</net.sf.ehcache.version>
 
-		<!-- GROOVY VERSION -->
-		<org.codehaus.groovy.version>1.8.3</org.codehaus.groovy.version>
+        <!-- GROOVY VERSION -->
+        <org.codehaus.groovy.version>1.8.3</org.codehaus.groovy.version>
 
-		<!-- GUAVA VERSION -->
-		<com.google.guava.version>13.0.1</com.google.guava.version>
+        <!-- GUAVA VERSION -->
+        <com.google.guava.version>13.0.1</com.google.guava.version>
 
-		<!-- HSQLDB VERSION -->
-		<hsqldb.version>1.8.0.10</hsqldb.version>
+        <!-- HSQLDB VERSION -->
+        <hsqldb.version>1.8.0.10</hsqldb.version>
 
-		<!-- APACHE HTTP COMPONENTS VERSION -->
-		<org.apache.httpcomponents.version>4.2.4</org.apache.httpcomponents.version>
+        <!-- APACHE HTTP COMPONENTS VERSION -->
+        <org.apache.httpcomponents.version>4.2.4</org.apache.httpcomponents.version>
 
-		<!-- LOG4J VERSION -->
-		<log4j.version>1.2.16</log4j.version>
+        <!-- LOG4J VERSION -->
+        <log4j.version>1.2.16</log4j.version>
 
-		<!-- OPEN SYMPHONY VERSION -->
-		<opensymphony.version>1.6.3</opensymphony.version>
+        <!-- OPEN SYMPHONY VERSION -->
+        <opensymphony.version>1.6.3</opensymphony.version>
 
-		<!-- JAVAX SERVLET VERSION -->
-		<javax.servlet.version>2.5</javax.servlet.version>
+        <!-- JAVAX SERVLET VERSION -->
+        <javax.servlet.version>2.5</javax.servlet.version>
 
-		<!-- SPRING FRAMEWORK VERSION -->
-		<org.springframework.version>3.0.5.RELEASE</org.springframework.version>
+        <!-- SPRING FRAMEWORK VERSION -->
+        <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
 
-		<!-- SPRING SUPPORT VERSION -->
-		<spring-support.version>2.0.8</spring-support.version>
+        <!-- SPRING SUPPORT VERSION -->
+        <spring-support.version>2.0.8</spring-support.version>
 
-		<!-- JAVA SIMPLE MONITORING API VERSION -->
-		<org.javasimon.version>3.3.0</org.javasimon.version>
-		<javasimon-jdbc3.version>2.5.0</javasimon-jdbc3.version>
-		<javasimon-jmx.version>2.5.0</javasimon-jmx.version>
-
-		<!-- JAXEN VERSION -->
-		<jaxen.version>1.1.4</jaxen.version>
-
-		<!-- JAVAX XML VERSION -->
-		<javax.xml.version>1.1.1</javax.xml.version>
-		<!-- SLF4J VERSION -->
-		<org.slf4j.version>1.7.5</org.slf4j.version>
-
-		<!-- JDOM VERSION -->
-		<jdom.version>1.1</jdom.version>
-
-		<!-- JODA TIME VERSION -->
-		<joda-time.version>2.2</joda-time.version>
-		<joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
-
-		<!-- JAVA SECURITY CHANNEL API VERSION -->
-		<jsch.version>0.1.50</jsch.version>
-
-		<!-- JTDS VERSION -->
-		<jtds.version>1.3.1</jtds.version>
-
-		<!-- JUNIT VERSION -->
-		<junit.version>4.11</junit.version>
-
-		<!-- JEXCEL API VERSION -->
-		<jxl.version>2.6.12</jxl.version>
-
-		<!-- LUCENE VERSION -->
-		<org.apache.lucene.version>4.3.1</org.apache.lucene.version>
-
-		<!-- JMAIL VERSION -->
-		<javax.mail.version>1.4.7</javax.mail.version>
-
-		<!-- CARROT2 VERSION -->
-		<org.carrot2.version>1.6.0</org.carrot2.version>
-
-		<!-- SOLR VERSION -->
-		<org.apache.solr.version>4.3.1</org.apache.solr.version>
-
-		<!-- SPATIAL VERSION -->
-		<com.spatial4j.version>0.3</com.spatial4j.version>
-
-		<!-- FASTERXML VERSION -->
-		<com.fasterxml.uuid.version>3.1.3</com.fasterxml.uuid.version>
-
-		<!-- WSDL4J VERSION -->
-		<wsdl4j.version>1.6.3</wsdl4j.version>
-
-		<!-- APACHE WEB SERVICE SECURITY VERSION -->
-		<org.apache.ws.security.version>1.6.11</org.apache.ws.security.version>
-
-		<!-- WOODSTOX VERSION -->
-		<woodstox.version>3.2.0</woodstox.version>
-
-		<!-- APACHE XBEAN VERSION -->
-		<org.apache.xbean.version>3.14</org.apache.xbean.version>
-
-		<!-- XFIRE VERSION -->
-		<org.codehaus.xfire.version>1.2.6</org.codehaus.xfire.version>
-
-		<!-- XML SCHEMA VERSION -->
-		<org.apache.ws.commons.schema.version>1.4.7</org.apache.ws.commons.schema.version>
-
-		<!-- XML PULL PARSER VERSION -->
-		<xpp3.version>1.1.4c</xpp3.version>
-
-		<!-- XSTREAM VERSION -->
-		<xstream.version>1.2.2</xstream.version>
-
-		<!-- ZOOKEEPER VERSION -->
-		<org.apache.zookeeper.version>3.4.5</org.apache.zookeeper.version>
-	</properties>
-
-	<dependencies>
-		<!-- JAVAX ACTIVATION -->
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-			<version>${activation.version}</version>
-		</dependency>
-
-		<!-- APACHE AXIS -->
-		<dependency>
-			<groupId>org.apache.axis</groupId>
-			<artifactId>axis</artifactId>
-			<version>${axis.version}</version>
-		</dependency>
-
-		<!-- APACHE COMMONS -->
-		<dependency>
-			<groupId>commons-attributes</groupId>
-			<artifactId>commons-attributes-api</artifactId>
-			<version>${commons-attributes.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>${commons-beanutils.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>${commons-cli.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>${commons-codec.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>${commons-collections.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<version>${commons-configuration.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>${commons-dbcp.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-discovery</groupId>
-			<artifactId>commons-discovery</artifactId>
-			<version>${commons-discovery.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>${commons-fileupload.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>${commons-httpclient.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${commons-io.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-jxpath</groupId>
-			<artifactId>commons-jxpath</artifactId>
-			<version>${commons-jxpath.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>${commons-lang.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${commons-logging.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>${commons-pool.version}</version>
-		</dependency>
-
-		<!-- DIRECT WEB REMOTING -->
-		<dependency>
-			<groupId>org.directwebremoting</groupId>
-			<artifactId>dwr</artifactId>
-			<version>${org.directwebremoting.version}</version>
-		</dependency>
-
-		<!-- EHCACHE -->
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>1.6.0</version>
-		</dependency>
-
-		<!-- GROOVY -->
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-			<version>${org.codehaus.groovy.version}</version>
-		</dependency>
-
-		<!-- GUAVA -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${com.google.guava.version}</version>
-		</dependency>
-
-		<!-- HSQDB -->
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>${hsqldb.version}</version>
-		</dependency>
-
-		<!-- HTTP COMPONENTS -->
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>${org.apache.httpcomponents.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient-cache</artifactId>
-			<version>${org.apache.httpcomponents.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<version>${org.apache.httpcomponents.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-			<version>${org.apache.httpcomponents.version}</version>
-		</dependency>
-
-		<!-- JAVA SIMPLE MONITORING API -->
-		<dependency>
-			<groupId>org.javasimon</groupId>
-			<artifactId>javasimon-core</artifactId>
-			<version>${org.javasimon.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.javasimon</groupId>
-			<artifactId>javasimon-jdbc3</artifactId>
-			<version>${javasimon-jdbc3.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.javasimon</groupId>
-			<artifactId>javasimon-jmx</artifactId>
-			<version>${javasimon-jmx.version}</version>
-		</dependency>
-
-		<!-- LOG4J -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
-
-		<!-- OPENSYMPHONY -->
-		<dependency>
-			<groupId>opensymphony</groupId>
-			<artifactId>quartz-all</artifactId>
-			<version>${opensymphony.version}</version>
-		</dependency>
-
-		<!-- SERVLET API -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>${javax.servlet.version}</version>
-		</dependency>
-
-		<!-- JAXEN VERSION -->
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
-			<version>${jaxen.version}</version>
-		</dependency>
-
-		<!-- JAVAX XML -->
-		<dependency>
-			<groupId>javax.xml.rpc</groupId>
-			<artifactId>javax.xml.rpc-api</artifactId>
-			<version>${javax.xml.version}</version>
-		</dependency>
-
-		<!-- SLF4J -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${org.slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${org.slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>${org.slf4j.version}</version>
-		</dependency>
-
-		<!-- JDOM -->
-		<dependency>
-			<groupId>jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>${jdom.version}</version>
-		</dependency>
-
-		<!-- JODA TIME -->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>${joda-time.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time-jsptags</artifactId>
-			<version>${joda-time-jsptags.version}</version>
-		</dependency>
-
-		<!-- JAVA SECURITY CHANNEL -->
-		<dependency>
-			<groupId>com.jcraft</groupId>
-			<artifactId>jsch</artifactId>
-			<version>${jsch.version}</version>
-		</dependency>
-
-		<!-- JTDS -->
-		<dependency>
-			<groupId>net.sourceforge.jtds</groupId>
-			<artifactId>jtds</artifactId>
-			<version>${jtds.version}</version>
-		</dependency>
-
-		<!-- JUNIT -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-		</dependency>
-
-		<!-- JEXCEL API -->
-		<dependency>
-			<groupId>net.sourceforge.jexcelapi</groupId>
-			<artifactId>jxl</artifactId>
-			<version>${jxl.version}</version>
-		</dependency>
-
-		<!-- LUCENE -->
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers-common</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers-kuromoji</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers-morfologik</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers-phonetic</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-grouping</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-highlighter</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-memory</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-misc</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-queries</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-queryparser</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-spatial</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-suggest</artifactId>
-			<version>${org.apache.lucene.version}</version>
-		</dependency>
-
-		<!-- JMAIL -->
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>${javax.mail.version}</version>
-		</dependency>
-
-		<!-- CARROT2 -->
-		<dependency>
-			<groupId>org.carrot2</groupId>
-			<artifactId>morfologik-fsa</artifactId>
-			<version>${org.carrot2.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.carrot2</groupId>
-			<artifactId>morfologik-polish</artifactId>
-			<version>${org.carrot2.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.carrot2</groupId>
-			<artifactId>morfologik-stemming</artifactId>
-			<version>${org.carrot2.version}</version>
-		</dependency>
-
-		<!-- SPRING FRAMEWORK -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${org.springframework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${org.springframework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>${org.springframework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${org.springframework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-support</artifactId>
-			<version>${spring-support.version}</version>
-		</dependency>
-
-		<!-- SOLR -->
-		<dependency>
-			<groupId>org.apache.solr</groupId>
-			<artifactId>solr-core</artifactId>
-			<version>${org.apache.solr.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.solr</groupId>
-			<artifactId>solr-solrj</artifactId>
-			<version>${org.apache.solr.version}</version>
-		</dependency>
-
-		<!-- SPATIAL -->
-		<dependency>
-			<groupId>com.spatial4j</groupId>
-			<artifactId>spatial4j</artifactId>
-			<version>${com.spatial4j.version}</version>
-		</dependency>
-
-		<!-- FASTERXML UUID -->
-		<dependency>
-			<groupId>com.fasterxml.uuid</groupId>
-			<artifactId>java-uuid-generator</artifactId>
-			<version>${com.fasterxml.uuid.version}</version>
-		</dependency>
-
-		<!-- WSDL4J -->
-		<dependency>
-			<groupId>wsdl4j</groupId>
-			<artifactId>wsdl4j</artifactId>
-			<version>${wsdl4j.version}</version>
-		</dependency>
-
-		<!-- APACHE WEB SERVICE SECURITY -->
-		<dependency>
-			<groupId>org.apache.ws.security</groupId>
-			<artifactId>wss4j</artifactId>
-			<version>${org.apache.ws.security.version}</version>
-		</dependency>
-
-		<!-- WOODSTOX -->
-		<dependency>
-			<groupId>woodstox</groupId>
-			<artifactId>wstx-api</artifactId>
-			<version>${woodstox.version}</version>
-		</dependency>
-
-		<!-- APACHE XBEAN -->
-		<dependency>
-			<groupId>org.apache.xbean</groupId>
-			<artifactId>xbean-spring</artifactId>
-			<version>${org.apache.xbean.version}</version>
-		</dependency>
-
-		<!-- XFIRE -->
-		<dependency>
-			<groupId>org.codehaus.xfire</groupId>
-			<artifactId>xfire-all</artifactId>
-			<version>${org.codehaus.xfire.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.xfire</groupId>
-			<artifactId>xfire-spring</artifactId>
-			<version>${org.codehaus.xfire.version}</version>
-		</dependency>
-
-		<!-- XML SCHEMA VERSION -->
-		<dependency>
-			<groupId>org.apache.ws.commons.schema</groupId>
-			<artifactId>XmlSchema</artifactId>
-			<version>${org.apache.ws.commons.schema.version}</version>
-		</dependency>
-
-		<!-- XML PULL PARSER -->
-		<dependency>
-			<groupId>xpp3</groupId>
-			<artifactId>xpp3_min</artifactId>
-			<version>${xpp3.version}</version>
-		</dependency>
-
-		<!-- XSTREAM -->
-		<dependency>
-			<groupId>xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>${xstream.version}</version>
-		</dependency>
-
-		<!-- ZOOKEEPER -->
-		<dependency>
-			<groupId>org.apache.zookeeper</groupId>
-			<artifactId>zookeeper</artifactId>
-			<version>${org.apache.zookeeper.version}</version>
-		</dependency>
-
-		<!-- SEARCH MANAGER -->
-		<dependency>
-			<groupId>com.search</groupId>
-			<artifactId>searchManager</artifactId>
-			<version>1.0.0-BUILD-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+        <!-- JAVA SIMPLE MONITORING API VERSION -->
+        <org.javasimon.version>3.3.0</org.javasimon.version>
+        <javasimon-jdbc3.version>2.5.0</javasimon-jdbc3.version>
+        <javasimon-jmx.version>2.5.0</javasimon-jmx.version>
+
+        <!-- JAXEN VERSION -->
+        <jaxen.version>1.1.4</jaxen.version>
+
+        <!-- JAVAX XML VERSION -->
+        <javax.xml.version>1.1.1</javax.xml.version>
+        <!-- SLF4J VERSION -->
+        <org.slf4j.version>1.7.5</org.slf4j.version>
+
+        <!-- JDOM VERSION -->
+        <jdom.version>1.1</jdom.version>
+
+        <!-- JODA TIME VERSION -->
+        <joda-time.version>2.2</joda-time.version>
+        <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
+
+        <!-- JAVA SECURITY CHANNEL API VERSION -->
+        <jsch.version>0.1.50</jsch.version>
+
+        <!-- JTDS VERSION -->
+        <jtds.version>1.3.1</jtds.version>
+
+        <!-- JUNIT VERSION -->
+        <junit.version>4.11</junit.version>
+
+        <!-- JEXCEL API VERSION -->
+        <jxl.version>2.6.12</jxl.version>
+
+        <!-- LUCENE VERSION -->
+        <org.apache.lucene.version>4.3.1</org.apache.lucene.version>
+
+        <!-- JMAIL VERSION -->
+        <javax.mail.version>1.4.7</javax.mail.version>
+
+        <!-- CARROT2 VERSION -->
+        <org.carrot2.version>1.6.0</org.carrot2.version>
+
+        <!-- SOLR VERSION -->
+        <org.apache.solr.version>4.3.1</org.apache.solr.version>
+
+        <!-- SPATIAL VERSION -->
+        <com.spatial4j.version>0.3</com.spatial4j.version>
+
+        <!-- FASTERXML VERSION -->
+        <com.fasterxml.uuid.version>3.1.3</com.fasterxml.uuid.version>
+
+        <!-- WSDL4J VERSION -->
+        <wsdl4j.version>1.6.3</wsdl4j.version>
+
+        <!-- APACHE WEB SERVICE SECURITY VERSION -->
+        <org.apache.ws.security.version>1.6.11</org.apache.ws.security.version>
+
+        <!-- WOODSTOX VERSION -->
+        <woodstox.version>3.2.0</woodstox.version>
+
+        <!-- APACHE XBEAN VERSION -->
+        <org.apache.xbean.version>3.14</org.apache.xbean.version>
+
+        <!-- XFIRE VERSION -->
+        <org.codehaus.xfire.version>1.2.6</org.codehaus.xfire.version>
+
+        <!-- XML SCHEMA VERSION -->
+        <org.apache.ws.commons.schema.version>1.4.7</org.apache.ws.commons.schema.version>
+
+        <!-- XML PULL PARSER VERSION -->
+        <xpp3.version>1.1.4c</xpp3.version>
+
+        <!-- XSTREAM VERSION -->
+        <xstream.version>1.2.2</xstream.version>
+
+        <!-- ZOOKEEPER VERSION -->
+        <org.apache.zookeeper.version>3.4.5</org.apache.zookeeper.version>
+    </properties>
+
+    <dependencies>
+        <!-- JAVAX ACTIVATION -->
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>${activation.version}</version>
+        </dependency>
+
+        <!-- APACHE AXIS -->
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>${axis.version}</version>
+        </dependency>
+
+        <!-- APACHE COMMONS -->
+        <dependency>
+            <groupId>commons-attributes</groupId>
+            <artifactId>commons-attributes-api</artifactId>
+            <version>${commons-attributes.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beanutils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>${commons-cli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons-collections.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>${commons-configuration.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons-dbcp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>${commons-discovery.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>${commons-fileupload.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons-httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-jxpath</groupId>
+            <artifactId>commons-jxpath</artifactId>
+            <version>${commons-jxpath.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+            <version>${commons-pool.version}</version>
+        </dependency>
+
+        <!-- DIRECT WEB REMOTING -->
+        <dependency>
+            <groupId>org.directwebremoting</groupId>
+            <artifactId>dwr</artifactId>
+            <version>${org.directwebremoting.version}</version>
+        </dependency>
+
+        <!-- EHCACHE -->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+        <!-- GROOVY -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>${org.codehaus.groovy.version}</version>
+        </dependency>
+
+        <!-- GUAVA -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${com.google.guava.version}</version>
+        </dependency>
+
+        <!-- HSQDB -->
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+        </dependency>
+
+        <!-- HTTP COMPONENTS -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${org.apache.httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-cache</artifactId>
+            <version>${org.apache.httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${org.apache.httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>${org.apache.httpcomponents.version}</version>
+        </dependency>
+
+        <!-- JAVA SIMPLE MONITORING API -->
+        <dependency>
+            <groupId>org.javasimon</groupId>
+            <artifactId>javasimon-core</artifactId>
+            <version>${org.javasimon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javasimon</groupId>
+            <artifactId>javasimon-jdbc3</artifactId>
+            <version>${javasimon-jdbc3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javasimon</groupId>
+            <artifactId>javasimon-jmx</artifactId>
+            <version>${javasimon-jmx.version}</version>
+        </dependency>
+
+        <!-- LOG4J -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- OPENSYMPHONY -->
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>quartz-all</artifactId>
+            <version>${opensymphony.version}</version>
+        </dependency>
+
+        <!-- SERVLET API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${javax.servlet.version}</version>
+        </dependency>
+
+        <!-- JAXEN VERSION -->
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>${jaxen.version}</version>
+        </dependency>
+
+        <!-- JAVAX XML -->
+        <dependency>
+            <groupId>javax.xml.rpc</groupId>
+            <artifactId>javax.xml.rpc-api</artifactId>
+            <version>${javax.xml.version}</version>
+        </dependency>
+
+        <!-- SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+
+        <!-- JDOM -->
+        <dependency>
+            <groupId>jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>${jdom.version}</version>
+        </dependency>
+
+        <!-- JODA TIME -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time-jsptags</artifactId>
+            <version>${joda-time-jsptags.version}</version>
+        </dependency>
+
+        <!-- JAVA SECURITY CHANNEL -->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>${jsch.version}</version>
+        </dependency>
+
+        <!-- JTDS -->
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>${jtds.version}</version>
+        </dependency>
+
+        <!-- JUNIT -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+
+        <!-- JEXCEL API -->
+        <dependency>
+            <groupId>net.sourceforge.jexcelapi</groupId>
+            <artifactId>jxl</artifactId>
+            <version>${jxl.version}</version>
+        </dependency>
+
+        <!-- LUCENE -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-kuromoji</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-morfologik</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-phonetic</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-grouping</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-memory</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-misc</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queries</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-spatial</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-suggest</artifactId>
+            <version>${org.apache.lucene.version}</version>
+        </dependency>
+
+        <!-- JMAIL -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+
+        <!-- CARROT2 -->
+        <dependency>
+            <groupId>org.carrot2</groupId>
+            <artifactId>morfologik-fsa</artifactId>
+            <version>${org.carrot2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.carrot2</groupId>
+            <artifactId>morfologik-polish</artifactId>
+            <version>${org.carrot2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.carrot2</groupId>
+            <artifactId>morfologik-stemming</artifactId>
+            <version>${org.carrot2.version}</version>
+        </dependency>
+
+        <!-- SPRING FRAMEWORK -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-support</artifactId>
+            <version>${spring-support.version}</version>
+        </dependency>
+
+        <!-- SOLR -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>${org.apache.solr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>${org.apache.solr.version}</version>
+        </dependency>
+
+        <!-- SPATIAL -->
+        <dependency>
+            <groupId>com.spatial4j</groupId>
+            <artifactId>spatial4j</artifactId>
+            <version>${com.spatial4j.version}</version>
+        </dependency>
+
+        <!-- FASTERXML UUID -->
+        <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>${com.fasterxml.uuid.version}</version>
+        </dependency>
+
+        <!-- WSDL4J -->
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>${wsdl4j.version}</version>
+        </dependency>
+
+        <!-- APACHE WEB SERVICE SECURITY -->
+        <dependency>
+            <groupId>org.apache.ws.security</groupId>
+            <artifactId>wss4j</artifactId>
+            <version>${org.apache.ws.security.version}</version>
+        </dependency>
+
+        <!-- WOODSTOX -->
+        <dependency>
+            <groupId>woodstox</groupId>
+            <artifactId>wstx-api</artifactId>
+            <version>${woodstox.version}</version>
+        </dependency>
+
+        <!-- APACHE XBEAN -->
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>${org.apache.xbean.version}</version>
+        </dependency>
+
+        <!-- XFIRE -->
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-all</artifactId>
+            <version>${org.codehaus.xfire.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xfire-spring</artifactId>
+            <version>${org.codehaus.xfire.version}</version>
+        </dependency>
+
+        <!-- XML SCHEMA VERSION -->
+        <dependency>
+            <groupId>org.apache.ws.commons.schema</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <version>${org.apache.ws.commons.schema.version}</version>
+        </dependency>
+
+        <!-- XML PULL PARSER -->
+        <dependency>
+            <groupId>xpp3</groupId>
+            <artifactId>xpp3_min</artifactId>
+            <version>${xpp3.version}</version>
+        </dependency>
+
+        <!-- XSTREAM -->
+        <dependency>
+            <groupId>xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>${xstream.version}</version>
+        </dependency>
+
+        <!-- ZOOKEEPER -->
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>${org.apache.zookeeper.version}</version>
+        </dependency>
+
+        <!-- SEARCH MANAGER -->
+        <dependency>
+            <groupId>com.search</groupId>
+            <artifactId>searchManager</artifactId>
+            <version>1.0.0-BUILD-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
