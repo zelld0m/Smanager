@@ -762,7 +762,6 @@ public class CatCodeUtil {
         logger.info("****************CNET");
          for (Template t : cnetTemplateMap.values()) {
             logger.info(String.format("%s:%s"), t.templateNumber, t.templateName);
-            System.out.println(t.templateNumber + ":" + t.templateName);
             for (Attribute a : t.attributeList) {
                 logger.info(String.format("\t%s -> %s", a.attributeDisplayName, a.attributeName));
                 for (String values : a.attributeValues) {

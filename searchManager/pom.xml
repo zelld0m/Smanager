@@ -1116,7 +1116,7 @@
                                     <searchTransitive>true</searchTransitive>
                                     <excludes>
                                         <exclude>javassist:javaassist</exclude>
-                                        <!--<exclude>commons-logging</exclude>-->
+                                        <exclude>commons-logging</exclude>
                                         <exclude>aspectj:aspectj*</exclude>
                                         <exclude>hqldb:hsqldb</exclude>
                                         <exclude>log4j:log4j</exclude>
@@ -1178,4 +1178,3 @@
         </plugins>
     </build>
 </project>
->>>>>>> 58e59c7... Refactored: Fixed the pom.xml and added log4j.properties in main/resources.

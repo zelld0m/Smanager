@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -109,13 +108,13 @@ public class DateConstant extends Constant {
 
     public static void main(String[] args) {
         try {
-            System.out.println(URLEncoder.encode("Printers & Print", "UTF-8"));
+            logger.info(URLEncoder.encode("Printers & Print", "UTF-8"));
         } catch (UnsupportedEncodingException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
-        System.out.println(ClientUtils.escapeQueryChars("Manufacturer:\"Apple\""));
+        logger.info(ClientUtils.escapeQueryChars("Manufacturer:\"Apple\""));
         if (true) {
             return;
         }
