@@ -252,5 +252,9 @@ public class SolrProcessorCronSingle implements Runnable {
 
 		logger.info("End!");
 	}
+	
+	public void shutdown() {
+		running = false;
+	}
 
 }
