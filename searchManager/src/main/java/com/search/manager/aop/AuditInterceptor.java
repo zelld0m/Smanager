@@ -501,6 +501,7 @@ public class AuditInterceptor {
         logAuditTrail(auditTrail);
     }
 
+    @SuppressWarnings("unchecked")
     private void logDidYouMean(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
         List<SpellRule> added = null;
         List<SpellRule> updated = null;
@@ -511,23 +512,14 @@ public class AuditInterceptor {
 
         switch (auditable.operation()) {
             case add:
-                if (jp.getArgs()[0] instanceof List) {
-                    added = (List<SpellRule>) jp.getArgs()[0];
-                }
+                added = (List<SpellRule>) jp.getArgs()[0];
                 break;
             case update:
-                if (jp.getArgs()[0] instanceof List) {
-                    updated = (List<SpellRule>) jp.getArgs()[0];
-                }
-                
-                if (jp.getArgs()[1] instanceof List) {
-                    deleted = (List<SpellRule>) jp.getArgs()[1];
-                }
+                updated = (List<SpellRule>) jp.getArgs()[0];
+                deleted = (List<SpellRule>) jp.getArgs()[1];
                 break;
             case updateSetting:
-                if (jp.getArgs()[1] instanceof Integer) {
-                    maxSuggest = (Integer) jp.getArgs()[1];
-                }
+                maxSuggest = (Integer) jp.getArgs()[1];
                 break;
         }
 
