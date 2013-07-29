@@ -40,7 +40,7 @@ public class SolrProcessorCronSingle implements Runnable {
 	private List<String> stores = new ArrayList<String>();
 	private boolean running = false;
 	private boolean indexing = false;
-	
+
 	public SolrProcessorCronSingle(SolrService solrService, List<String> stores) {
 		this.solrService = solrService;
 		this.stores = stores;
@@ -62,8 +62,7 @@ public class SolrProcessorCronSingle implements Runnable {
 		if (listOfFiles != null) {
 			for (File file : listOfFiles) {
 				if (file.getName().startsWith(FILE_PREFIX)
-						&& file.getName().endsWith(XML_FILE_TYPE)
-						&& file.lastModified() > storeIndexedDate.get(storeId)) {
+						&& file.getName().endsWith(XML_FILE_TYPE)) {
 					fileNames.add(file.getName() + " - " + file.lastModified());
 				}
 			}
