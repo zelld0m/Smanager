@@ -207,7 +207,7 @@ public final class DateAndTimeUtils {
             DateFormat formatter = new SimpleDateFormat(ConfigManager.getInstance().getStoreParameter(store, "dateformat"));
 
             try {
-                convertedDate = (Date) formatter.parse(str);
+                convertedDate = formatter.parse(str);
             } catch (ParseException e) {
                 logger.error(String.format("Error converting %s", str), e);
             }

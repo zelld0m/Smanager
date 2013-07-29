@@ -408,7 +408,7 @@ public class AuditInterceptor {
             auditTrail.setDetails(String.format(message.toString(), rule.getRuleId(), rule.getRuleName()));
         } else if (ArrayUtils.contains(AuditTrailConstants.bannerItemOperations, operation)) {
             BannerRuleItem ruleItem = (BannerRuleItem) jp.getArgs()[0];
-            BannerRule rule = (BannerRule) ruleItem.getRule();
+            BannerRule rule = ruleItem.getRule();
             auditTrail.setStoreId(rule.getStoreId());
             auditTrail.setReferenceId(rule.getRuleId());
             auditTrail.setKeyword(rule.getRuleName());

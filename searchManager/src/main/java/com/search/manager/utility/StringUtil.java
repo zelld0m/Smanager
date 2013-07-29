@@ -186,7 +186,7 @@ public final class StringUtil {
 	}	
 	
 	public static final boolean hasXSSTag(String input) {
-		String out = XSSUtil.stripCTRLChars((String)input);
+		String out = XSSUtil.stripCTRLChars(input);
 		if (XSSUtil.hasWatchListStrOnEachTag(out)) {
 			return true;
 		}

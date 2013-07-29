@@ -59,7 +59,7 @@ public class Schema implements Serializable {
 		List<String> excludeFieldNames = (List<String>) CollectionUtils.collect(excludeFields, new Transformer() {  
 		    @Override  
 			public Object transform(Object o) {  
-		          return (String)((Field) o).getName();  
+		          return ((Field) o).getName();  
 		    }  
 		});  
 		

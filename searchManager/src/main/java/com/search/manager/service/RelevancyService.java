@@ -338,7 +338,7 @@ public class RelevancyService extends RuleService{
 
 			Iterator<RelevancyKeyword> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				RelevancyKeyword relKey = (RelevancyKeyword) iterator.next();
+				RelevancyKeyword relKey = iterator.next();
 				String key = relKey.getKeyword()==null? StringUtils.EMPTY : relKey.getKeyword().getKeyword();
 				if (StringUtils.isNotBlank(keyword) && StringUtils.containsIgnoreCase(key, keyword)){
 					matchedList.add(relKey);
