@@ -338,7 +338,7 @@ public class DownloadService {
 		logger.debug("Downloading Excel report");
 		// Make sure to set the correct content type
 		response.setContentType("application/vnd.ms-excel");
-		response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 		// Write to the output stream
 		
 		logger.debug("Writing report to the stream");

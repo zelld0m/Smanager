@@ -86,8 +86,6 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 
 		if (spellRules != null) {
 			List<SpellRuleXml> spellRulesXml = spellRules.getSpellRule();
-			UpdateResponse updateResponse = null;
-
 			if (spellRulesXml != null && spellRulesXml.size() > 0) {
 				try {
 					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
@@ -99,28 +97,16 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 						solrServers.getCoreInstance(
 								Constants.Core.SPELL_RULE_CORE.getCoreName())
 								.addDocs(solrInputDocuments);
-						updateResponse = solrServers.getCoreInstance(
-								Constants.Core.SPELL_RULE_CORE.getCoreName())
-								.softCommit();
-						if (updateResponse.getStatus() == 0) {
-							return true;
-						}
+						return commitSpellRule();
 					}
 				} catch (Exception e) {
-					logger.error("Failed to load spell rules by store" + e, e);
+					logger.error(
+							"Failed to load spell rules by store. loadSpellRules(Store store):"
+									+ e, e);
 				}
 			} else {
-				try {
-					updateResponse = solrServers.getCoreInstance(
-							Constants.Core.SPELL_RULE_CORE.getCoreName())
-							.softCommit();
-					if (updateResponse.getStatus() == 0) {
-						return true;
-					}
-				} catch (Exception e) {
-					logger.error("Failed to load spell rules by store(commit) "
-							+ e, e);
-				}
+				logger.info("SpellRulesXml is null. do commitSpellRule().");
+				return commitSpellRule();
 			}
 		}
 
@@ -165,7 +151,8 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 						spellRulesXml, spellRules.getStore());
 			} catch (Exception e) {
 				hasError = true;
-				logger.error("Failed to load spell rules by store", e);
+				logger.error(
+						"Failed to load spell rules by storeKeyword. " + e, e);
 			}
 
 			if (!hasError && solrInputDocuments != null
@@ -178,7 +165,8 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 							Constants.Core.SPELL_RULE_CORE.getCoreName())
 							.softCommit();
 				} catch (Exception e) {
-					logger.error("Failed to load spell rules by store", e);
+					logger.error("Failed to load spell rules by storeKeyword. "
+							+ e, e);
 					throw new DaoException(e.getMessage(), e);
 				}
 			}
@@ -224,7 +212,7 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 						spellRulesXml, spellRules.getStore());
 			} catch (Exception e) {
 				hasError = true;
-				logger.error("Failed to load spell rule by id", e);
+				logger.error("Failed to load spell rule by id." + e, e);
 			}
 
 			if (!hasError && solrInputDocuments != null
@@ -237,7 +225,7 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 							Constants.Core.SPELL_RULE_CORE.getCoreName())
 							.softCommit();
 				} catch (Exception e) {
-					logger.error("Failed to load spell rule by id", e);
+					logger.error("Failed to load spell rule by id. " + e, e);
 					throw new DaoException(e.getMessage(), e);
 				}
 			}
@@ -259,7 +247,6 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 
 		if (spellRules != null) {
 			spellRulesXml = spellRules.getSpellRule();
-
 			if (spellRulesXml != null && spellRulesXml.size() > 0) {
 				List<SolrInputDocument> solrInputDocuments = null;
 				boolean hasError = false;
@@ -278,15 +265,16 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 						solrServers.getCoreInstance(
 								Constants.Core.SPELL_RULE_CORE.getCoreName())
 								.addDocs(solrInputDocuments);
-						solrServers.getCoreInstance(
-								Constants.Core.SPELL_RULE_CORE.getCoreName())
-								.softCommit();
+						return commitSpellRule();
 					} catch (Exception e) {
 						logger.error("Failed to load spell rules", e);
 						throw new DaoException(e.getMessage(), e);
 					}
 				}
 				return !hasError;
+			} else {
+				logger.info("SpellRulesXml is null. do commitSpellRule().");
+				return commitSpellRule();
 			}
 		}
 
@@ -446,7 +434,7 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 					.getCoreInstance(Constants.Core.SPELL_RULE_CORE
 							.getCoreName()));
 		} catch (SolrServerException e) {
-			logger.error("Failed to commit spell rules", e);
+			logger.error("Failed to commit spell rules. " + e, e);
 			return false;
 		}
 	}
