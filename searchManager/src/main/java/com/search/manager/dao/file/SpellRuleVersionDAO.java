@@ -10,11 +10,13 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
+import com.search.manager.xml.file.RuleXmlUtil;
 
 @Repository("spellRuleVersionDAO")
 public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
@@ -74,7 +76,9 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 				DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
 				        ruleId, RuleEntity.SPELL);
+				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
 				version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
+				version.setRuleStatus(ruleStatus);
 				ruleVersions.getVersions().add(version);
 
 				return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersions);
