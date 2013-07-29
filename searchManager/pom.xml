@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -565,3 +566,615 @@
         </plugins>
     </build>
 </project>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.search</groupId>
+    <artifactId>searchManager</artifactId>
+    <name>searchManager</name>
+    <version>1.0.0-BUILD-SNAPSHOT</version>
+    <packaging>war</packaging>
+    
+    <properties>
+        <!-- BUILD ENCODING -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <!-- JAVA VERSION -->
+        <java-version>1.6</java-version>
+        
+        <!-- SPRINGFRAMEWORK VERSION -->
+        <org.springframework-version>3.0.5.RELEASE</org.springframework-version>
+        
+        <!-- ASPECTJ VERSION -->
+        <org.aspectj-version>1.6.10</org.aspectj-version>
+        
+        <!-- SLF4J VERSION -->
+        <org.slf4j-version>1.6.6</org.slf4j-version>
+        
+        <!-- DWR VERSION -->
+        <org.directwebremoting-version>3.0.0-rc3-SNAPSHOT</org.directwebremoting-version>
+        
+        <!-- AXIS VERSION -->
+        <org.apache.axis-version>1.4</org.apache.axis-version>
+        
+        <!-- COMMONS DISCOVERY -->
+        <commons-discovery-version>0.2</commons-discovery-version>
+        
+        <!-- JAVAX XML VERSION -->
+        <javax.xml-version>1.1</javax.xml-version>
+        
+        <!-- DBCP VERSION -->
+        <commons-dbcp-version>1.2.2</commons-dbcp-version>
+        
+        <!-- JX PATH VERSION -->
+        <commons-jxpath-version>1.3</commons-jxpath-version>
+        
+        <!-- JTDS VERSION -->
+        <net.sourceforge.jtds-version>1.2.6</net.sourceforge.jtds-version>
+        
+        <!-- LOG4J VERSION -->
+        <log4j-version>1.2.15</log4j-version>
+        
+        <!-- JAVAX INJECT VERSION -->
+        <javax.inject-version>1</javax.inject-version>
+        
+        <!-- SERVLET API VERSION -->
+        <javax.servlet-version>2.5</javax.servlet-version>
+        
+        <!-- JAVAX SERVLET JSP VERSION -->
+        <javax.servlet.jsp-version>2.1</javax.servlet.jsp-version>
+        
+        <!-- JSTL VERSION -->
+        <jstl-version>1.2</jstl-version>
+        
+        <!-- UNIT TESTING VERSIONS -->
+        <junit-version>4.11</junit-version>
+        <org.easymock-version>3.1</org.easymock-version>
+        <org.powermock-version>1.5</org.powermock-version>
+        
+        <!-- SOLR VERSION -->
+        <org.apache.solr-version>4.1.0</org.apache.solr-version>
+        
+        <!-- JODATIME VERSION -->
+        <joda-time-version>2.2</joda-time-version>
+        <joda-time-jsptags-version>1.1.1</joda-time-jsptags-version>
+        
+        <!-- JMAIL -->
+        <javax.mail-version>1.4</javax.mail-version>
+        
+        <!-- POI VERSION -->
+        <org.apache.poi-version>3.9</org.apache.poi-version>
+        
+        <!-- JEXCEL API VERSION -->
+        <net.sourceforge.jexcelapi-version>2.6.12</net.sourceforge.jexcelapi-version>
+        
+        <!-- JSON -->
+        <net.sf.json-lib-version>2.4</net.sf.json-lib-version>
+        
+        <!-- VELOCITY VERSION -->
+        <org.apache.velocity-version>1.7</org.apache.velocity-version>
+        
+        <!-- QUARTS VERSION -->
+        <quartz-version>1.5.2</quartz-version>
+        
+        <!-- OPENCSV VERSION -->
+        <net.sf.opencsv-version>2.3</net.sf.opencsv-version>
+        
+        <!-- GROOVY VERSION -->
+        <org.codehaus.groovy-version>1.8.3</org.codehaus.groovy-version>
+        
+        <!-- COMMONS CONFIGURATION VERSION -->
+        <commons-configuration-version>1.6</commons-configuration-version>
+        
+        <!-- HTTP COMPONENTS VERSION -->
+        <org.apache.httpcomponents-version>4.2.3</org.apache.httpcomponents-version>
+        
+        <!-- CGLIB VERSION -->
+        <cglib-version>2.2</cglib-version>
+        
+        <!-- WSDL4J VERSION -->
+        <wsdl4j-version>1.6.3</wsdl4j-version>
+        
+        <!-- XFIRE VERSION -->
+        <org.codehaus.xfire-version>1.3.0</org.codehaus.xfire-version>
+        
+        <!-- SEARCH MANAGER VERSION -->
+        <com.search-version>1.0</com.search-version>
+        
+        <!-- JACKSON VERSION -->
+        <org.codehaus.jackson-version>1.7.7</org.codehaus.jackson-version>
+        
+        <!-- JCRAFT VERSION -->
+        <com.jcraft-version>0.1.43</com.jcraft-version>
+        
+        <!-- MAVEN PLUGIN VERSION -->
+        <maven.enforcer.plugin>1.2</maven.enforcer.plugin>
+        <maven.version.range>[2.2.1,3.1.0]</maven.version.range>
+    </properties>
+    
+    <repositories>
+        <repository>
+            <id>repository.sonatype.org -public</id>
+            <name>DWR repository</name>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>VTORGUISCHDEV01.pcmall.com</id>
+            <name>VTORGUISCHDEV01.pcmall.com-searchManager</name>
+            <url>http://vtorguischdev01:8081/artifactory/searchManager</url>
+        </repository>
+    </repositories>
+    <dependencies>
+		
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework-version}</version>
+            <exclusions>
+                <!-- Exclude Commons Logging in favor of SLF4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+
+        <!-- DWR -->
+        <dependency>
+            <groupId>org.directwebremoting</groupId>
+            <artifactId>dwr</artifactId>
+            <version>${org.directwebremoting-version}</version>
+        </dependency>
+        
+        <!-- Axis -->
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>${org.apache.axis-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>${commons-discovery-version}</version>
+            <exclusions>
+                <!-- Exclude Commons Logging in favor of SLF4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        
+        <!-- JAXRPC -->
+        <dependency>
+            <groupId>javax.xml</groupId>
+            <artifactId>jaxrpc</artifactId>
+            <version>${javax.xml-version}</version>
+        </dependency>
+		
+        <!-- DBCP -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons-dbcp-version}</version>
+        </dependency>
+        
+        <!-- JX Path -->
+        <dependency>
+            <groupId>commons-jxpath</groupId>
+            <artifactId>commons-jxpath</artifactId>
+            <version>${commons-jxpath-version}</version>
+        </dependency>
+        
+        <!-- jTDS -->
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>${net.sourceforge.jtds-version}</version>
+        </dependency>
+		
+        <!-- AspectJ -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${org.aspectj-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${org.aspectj-version}</version>
+        </dependency>
+		
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j-version}</version>
+        </dependency>
+<!--        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j-version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- @Inject -->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>${javax.inject-version}</version>
+        </dependency>
+				
+        <!-- Servlet -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${javax.servlet-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>${javax.servlet.jsp-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl-version}</version>
+        </dependency>
+	
+        <!-- Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>${org.easymock-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-easymock</artifactId>
+            <version>${org.powermock-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${org.powermock-version}</version>
+            <scope>test</scope>
+        </dependency>
+		
+        <!-- Solr -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>${org.apache.solr-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>${org.apache.solr-version}</version>
+        </dependency>
+		
+        <!-- Joda Time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time-jsptags</artifactId>
+            <version>${joda-time-jsptags-version}</version>
+        </dependency>
+
+        <!-- Mail -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail-version}</version>
+        </dependency>
+		
+        <!-- POI -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${org.apache.poi-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${org.apache.poi-version}</version>
+        </dependency>
+		
+        <!--  JXL -->
+        <dependency>
+            <groupId>net.sourceforge.jexcelapi</groupId>
+            <artifactId>jxl</artifactId>
+            <version>${net.sourceforge.jexcelapi-version}</version>
+        </dependency>
+
+        <!-- JSON -->
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>${net.sf.json-lib-version}</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>${org.apache.velocity-version}</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>quartz</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz-version}</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>${net.sf.opencsv-version}</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${org.codehaus.groovy-version}</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>${commons-configuration-version}</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${org.apache.httpcomponents-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${org.apache.httpcomponents-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-cache</artifactId>
+            <version>${org.apache.httpcomponents-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>${org.apache.httpcomponents-version}</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>${cglib-version}</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>${wsdl4j-version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.xfire</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>${org.codehaus.xfire-version}</version>
+        </dependency>
+
+        <!-- Unable to resolve
+        <dependency>
+            <groupId>xom</groupId>
+            <artifactId>xom</artifactId>
+            <version>1.2.7</version>
+        </dependency>
+        -->
+        <!--  provided dependencies -->
+        <dependency>
+            <groupId>com.search</groupId>
+            <artifactId>topkeywords</artifactId>
+            <version>${com.search-version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.search</groupId>
+            <artifactId>wsclient</artifactId>
+            <version>${com.search-version}</version>
+            <classifier>FINAL</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-lgpl</artifactId>
+            <version>${org.codehaus.jackson-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>${com.jcraft-version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <additionalProjectnatures>
+                        <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+                        <projectnature>org.eclipse.wst.common.modulecore.ModuleCoreNature</projectnature>
+                        <projectnature>org.eclipse.wst.common.project.facet.core.nature</projectnature>
+                        <projectnature>org.eclipse.wst.jsdt.core.jsNature</projectnature>
+                    </additionalProjectnatures>
+                    <additionalProjectFacets>
+                        <jst.web>2.5</jst.web>
+                        <wst.jsdt.web>1.0</wst.jsdt.web>
+                    </additionalProjectFacets>
+                    <additionalBuildcommands>
+                        <buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+                    </additionalBuildcommands>
+                    <downloadSources>false</downloadSources>
+                    <downloadJavadocs>false</downloadJavadocs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven.enforcer.plugin}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <excludes>
+                                        <exclude>javassist:javaassist</exclude>
+                                        <!--<exclude>commons-logging</exclude>-->
+                                        <exclude>aspectj:aspectj*</exclude>
+                                        <exclude>hqldb:hsqldb</exclude>
+                                        <!--<exclude>log4j:log4j</exclude>-->
+                                        <exclude>org.slf4j:1.5*</exclude>
+                                        <exclude>org.springframework:2.*</exclude>
+                                        <!--<exclude>org.springframework:3.0.*</exclude>-->
+                                    </excludes>
+                                </bannedDependencies>
+                                <requireMavenVersion>
+                                    <version>${maven.version.range}</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${java-version}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <warName>searchManager</warName>
+                    <archiveClasses>true</archiveClasses>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>make-a-jar</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>searchManager</finalName>
+                            <excludes>
+                                <exclude>*.properties</exclude>
+                                <exclude>*.txt</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>org.test.int1.Main</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+>>>>>>> 58e59c7... Refactored: Fixed the pom.xml and added log4j.properties in main/resources.
