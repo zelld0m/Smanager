@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -30,20 +29,20 @@ import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.utility.Transformers;
 import com.search.manager.xml.file.RuleXmlReportUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/banner")
 @Scope(value = "prototype")
 public class BannerController {
 
-    private static final Logger logger = Logger.getLogger(BannerController.class);
-
+    private static final Logger logger =
+            LoggerFactory.getLogger(BannerController.class);
     @Autowired
     private BannerService bannerService;
-
     @Autowired
     private RuleVersionService ruleVersionService;
-
     @Autowired
     private DownloadService downloadService;
 
@@ -69,7 +68,7 @@ public class BannerController {
         List<BannerReportBean> reportBeans = new ArrayList<BannerReportBean>();
 
         for (BannerItemXml itemXml : xml.getItemXml()) {
-           reportBeans.add(new BannerReportBean(Transformers.bannerItemXmlToRule.apply(itemXml)));
+            reportBeans.add(new BannerReportBean(Transformers.bannerItemXmlToRule.apply(itemXml)));
         }
 
         if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {

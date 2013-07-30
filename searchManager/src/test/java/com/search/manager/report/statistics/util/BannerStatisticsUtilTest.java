@@ -13,6 +13,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import com.search.manager.report.statistics.model.BannerStatistics;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
 /**
  * Test class for retrieving a banner statistic.
@@ -23,6 +24,7 @@ import com.search.manager.report.statistics.model.BannerStatistics;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(BannerStatisticsUtil.class)
+@PowerMockIgnore("javax.management.*")
 public class BannerStatisticsUtilTest {    
     private static final String STORE_ID = "pcmall";
 

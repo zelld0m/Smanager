@@ -8,7 +8,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -47,12 +46,15 @@ import com.search.manager.model.User;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.service.UtilityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Aspect
 @Component("auditInterceptor")
 public class AuditInterceptor {
 
-    private static final Logger logger = Logger.getLogger(AuditInterceptor.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(AuditInterceptor.class);
     @Autowired
     private AuditTrailDAO auditTrailDAO;
 

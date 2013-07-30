@@ -6,16 +6,18 @@ import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.search.manager.model.KeywordStats;
 import com.search.manager.model.TopKeyword;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StatisticsUtil {
 
-    private final static Logger logger = Logger.getLogger(StatisticsUtil.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(StatisticsUtil.class);
 
     public static List<String[]> findInCSV(File file, String keyword, int keyCol) {
         return findInCSV(file, Arrays.asList(keyword), keyCol);
@@ -172,7 +174,7 @@ public class StatisticsUtil {
             IOUtils.closeQuietly(reader);
         }
     }
-    
+
     public static List<TopKeyword> getTopKeywordsInRange(Date from, Date to, String storeName) {
         Map<String, TopKeyword> stats = new HashMap<String, TopKeyword>();
         Date limit = to;
@@ -191,9 +193,8 @@ public class StatisticsUtil {
 
     /**
      * Get CSV file for the given date or null if non-existent.
-     * 
-     * @param date
-     *            Date
+     *
+     * @param date Date
      * @return CSV file for the given date
      */
     public static File getSplunkFile(Date date, String storeName) {

@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -31,142 +30,143 @@ import com.search.manager.service.DemoteService;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/demote")
-@Scope(value="prototype")
+@Scope(value = "prototype")
 public class DemoteController {
-	
-	private static final Logger logger = Logger.getLogger(DemoteController.class);
-	
-	private static final String RULE_TYPE = RuleEntity.DEMOTE.toString();
-	
-	@Autowired private DemoteService demoteService;
-	@Autowired private DownloadService downloadService;
-	@Autowired private RuleVersionService ruleVersionService;
 
-	@RequestMapping(value="/{store}")
-	public String execute(HttpServletRequest request,HttpServletResponse response, Model model,@PathVariable String store){
-		model.addAttribute("store", store);
+    private static final Logger logger =
+            LoggerFactory.getLogger(DemoteController.class);
+    private static final String RULE_TYPE = RuleEntity.DEMOTE.toString();
+    @Autowired
+    private DemoteService demoteService;
+    @Autowired
+    private DownloadService downloadService;
+    @Autowired
+    private RuleVersionService ruleVersionService;
 
-		return "rules/demote";
-	}
+    @RequestMapping(value = "/{store}")
+    public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
+        model.addAttribute("store", store);
 
-	/**
-	 * Downloads the report as an Excel format.
-	 * <p>
-	 * Make sure this method doesn't return any model. Otherwise, you'll get
-	 * an "IllegalStateException: getOutputStream() has already been called for this response"
-	 */
-	@RequestMapping(value = "/{store}/xls", method = RequestMethod.GET)
-	// TODO: change to POST, retrieve filter type
-	public void getXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
-		
-		String keyword = request.getParameter("keyword");
-		String type = request.getParameter("type");
-		String filter = request.getParameter("filter");
-		String page = request.getParameter("page");
-		String filename = request.getParameter("filename");
-		String itemsPerPage = request.getParameter("itemperpage");
-		long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
-		
-		Date headerDate = new Date(clientTimezone);
-	
+        return "rules/demote";
+    }
 
-		logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
-		
-		if (StringUtils.isBlank(filename)) {
-			filename = "demote";
-		}
+    /**
+     * Downloads the report as an Excel format.
+     * <p>
+     * Make sure this method doesn't return any model. Otherwise, you'll get an
+     * "IllegalStateException: getOutputStream() has already been called for this
+     * response"
+     */
+    @RequestMapping(value = "/{store}/xls", method = RequestMethod.GET)
+    // TODO: change to POST, retrieve filter type
+    public void getXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
 
-		int nPage = 0;
-		int nItemsPerPage = 0;
-		if (!"all".equalsIgnoreCase(page)) {
-			try {
-				nPage = Integer.parseInt(page);
-			} catch (Exception e) {
-			}
-			try {
-				nItemsPerPage = Integer.parseInt(itemsPerPage);
-			} catch (Exception e) {
-			}
-		}
-		RecordSet<DemoteProduct> demoteProducts = demoteService.getProducts(filter, keyword, nPage, nItemsPerPage);
-		
-		List<DemoteReportBean> list = new ArrayList<DemoteReportBean>();
-		for (DemoteProduct p: demoteProducts.getList()) {
-			list.add(new DemoteReportBean(p));
-		}
-		
-		String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
-		if ("active".equalsIgnoreCase(filter)) {
-			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
-		}
-		else if ("expired".equalsIgnoreCase(filter)) {
-			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Expired ");
-		}
-		else {
-			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
-		}
-		
-		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
-		ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, list);
-		
-		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
-		if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
-			downloadService.downloadXLS(response, reportModel, null);
-		}
-	}
-	
-	@RequestMapping(value = "/{store}/version/xls", method = RequestMethod.GET)
-	// TODO: change to POST, retrieve filter type
-	public void getVersionXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
-		String keyword = request.getParameter("keyword");
-		String type = request.getParameter("type");
-		String filter = request.getParameter("filter");
-		String filename = request.getParameter("filename");
-		long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
-		Date headerDate = new Date(clientTimezone);
+        String keyword = request.getParameter("keyword");
+        String type = request.getParameter("type");
+        String filter = request.getParameter("filter");
+        String page = request.getParameter("page");
+        String filename = request.getParameter("filename");
+        String itemsPerPage = request.getParameter("itemperpage");
+        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
 
-		logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
-		
-		String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
-		if ("active".equalsIgnoreCase(filter)) {
-			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
-		}
-		else if ("expired".equalsIgnoreCase(filter)) {
-			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Expired ");
-		}
-		else {
-			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
-		}
-		
-		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
-		
-		ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, new ArrayList<DemoteReportBean>());
-		ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
-		
-		List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, keyword);
-		if(rules != null){
-			for(RuleXml xml : rules){
-				if(xml != null){
-					SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.DEMOTE);
-					subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts(xml)));
-				}
-			}
-		}
-		download(response, reportModel, subModels, type);
-	}
-	
-	private void download(HttpServletResponse response, ReportModel<? extends ReportBean<?>> mainModel, ArrayList<ReportModel<? extends ReportBean<?>>> subModels, String fileType){
-		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
-		if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(fileType)) {
-			try {
-				downloadService.downloadXLS(response, mainModel, subModels);
-			} catch (ClassNotFoundException e) {
-				logger.error("Error encountered while trying to download.", e);
-				e.printStackTrace();
-			}
-		}
-	}
+        Date headerDate = new Date(clientTimezone);
+
+
+        logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
+
+        if (StringUtils.isBlank(filename)) {
+            filename = "demote";
+        }
+
+        int nPage = 0;
+        int nItemsPerPage = 0;
+        if (!"all".equalsIgnoreCase(page)) {
+            try {
+                nPage = Integer.parseInt(page);
+            } catch (Exception e) {
+            }
+            try {
+                nItemsPerPage = Integer.parseInt(itemsPerPage);
+            } catch (Exception e) {
+            }
+        }
+        RecordSet<DemoteProduct> demoteProducts = demoteService.getProducts(filter, keyword, nPage, nItemsPerPage);
+
+        List<DemoteReportBean> list = new ArrayList<DemoteReportBean>();
+        for (DemoteProduct p : demoteProducts.getList()) {
+            list.add(new DemoteReportBean(p));
+        }
+
+        String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
+        if ("active".equalsIgnoreCase(filter)) {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
+        } else if ("expired".equalsIgnoreCase(filter)) {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Expired ");
+        } else {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
+        }
+
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+        ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, list);
+
+        // Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
+        if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
+            downloadService.downloadXLS(response, reportModel, null);
+        }
+    }
+
+    @RequestMapping(value = "/{store}/version/xls", method = RequestMethod.GET)
+    // TODO: change to POST, retrieve filter type
+    public void getVersionXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
+        String keyword = request.getParameter("keyword");
+        String type = request.getParameter("type");
+        String filter = request.getParameter("filter");
+        String filename = request.getParameter("filename");
+        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+        Date headerDate = new Date(clientTimezone);
+
+        logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
+
+        String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
+        if ("active".equalsIgnoreCase(filter)) {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
+        } else if ("expired".equalsIgnoreCase(filter)) {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Expired ");
+        } else {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
+        }
+
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+
+        ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, new ArrayList<DemoteReportBean>());
+        ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
+
+        List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, keyword);
+        if (rules != null) {
+            for (RuleXml xml : rules) {
+                if (xml != null) {
+                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.DEMOTE);
+                    subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts(xml)));
+                }
+            }
+        }
+        download(response, reportModel, subModels, type);
+    }
+
+    private void download(HttpServletResponse response, ReportModel<? extends ReportBean<?>> mainModel, ArrayList<ReportModel<? extends ReportBean<?>>> subModels, String fileType) {
+        // Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
+        if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(fileType)) {
+            try {
+                downloadService.downloadXLS(response, mainModel, subModels);
+            } catch (ClassNotFoundException e) {
+                logger.error("Error encountered while trying to download.", e);
+                e.printStackTrace();
+            }
+        }
+    }
 }

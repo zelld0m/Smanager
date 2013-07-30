@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -18,6 +19,7 @@ import org.powermock.reflect.Whitebox;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PropertiesUtils.class)
+@PowerMockIgnore("javax.management.*")
 @SuppressStaticInitializationFor(
         "com.search.manager.utility.PropertiesUtils")
 public class PropertiesUtilsTest {
