@@ -9,16 +9,19 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 
 import com.search.ws.ConfigManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility class for Date and Time related functions.
  */
 public final class DateAndTimeUtils {
 
-    private static final Logger logger = Logger.getLogger(DateAndTimeUtils.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(DateAndTimeUtils.class);
+    
     /**
      * The format for parsing dates without times.
      */

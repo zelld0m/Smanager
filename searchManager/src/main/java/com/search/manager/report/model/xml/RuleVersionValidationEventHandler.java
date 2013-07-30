@@ -2,17 +2,19 @@ package com.search.manager.report.model.xml;
 
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuleVersionValidationEventHandler implements ValidationEventHandler {
-	private Logger logger = Logger.getLogger(RuleVersionValidationEventHandler.class);
 
-	@Override
-	public boolean handleEvent(ValidationEvent event) {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("\nEVENT");
+    private static final Logger logger =
+            LoggerFactory.getLogger(RuleVersionValidationEventHandler.class);
+
+    @Override
+    public boolean handleEvent(ValidationEvent event) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("\nEVENT");
         sb.append("\nSEVERITY:  " + event.getSeverity());
         sb.append("\nMESSAGE:  " + event.getMessage());
         sb.append("\nLINKED EXCEPTION:  " + event.getLinkedException());
@@ -27,6 +29,5 @@ public class RuleVersionValidationEventHandler implements ValidationEventHandler
         }
         logger.error(sb.toString());
         return true;
-	}
-
+    }
 }
