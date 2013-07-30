@@ -18,6 +18,7 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
+import com.search.manager.authentication.session.internal.ClusterAwareSessionRegistryImpl;
 import com.search.manager.cookie.CookieUtils;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;

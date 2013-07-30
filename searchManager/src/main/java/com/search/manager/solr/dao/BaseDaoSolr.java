@@ -14,10 +14,10 @@ import com.search.manager.solr.util.SolrServerFactory;
 public class BaseDaoSolr {
 
 	@Autowired
-	DaoService daoService;
+	protected DaoService daoService;
 
 	@Autowired
-	SolrServerFactory solrServers;
+	protected SolrServerFactory solrServers;
 
 	public static final Integer MAX_ROWS = 1000;
 	public static final String SOLR_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:sss'Z'";

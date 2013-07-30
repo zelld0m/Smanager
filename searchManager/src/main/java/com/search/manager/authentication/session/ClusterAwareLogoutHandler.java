@@ -1,5 +1,6 @@
 package com.search.manager.authentication.session;
 
+import com.search.manager.authentication.session.internal.ClusterAwareSessionRegistryImpl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
