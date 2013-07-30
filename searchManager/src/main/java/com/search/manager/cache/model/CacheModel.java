@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Deprecated
 public class CacheModel<E> implements Serializable {
 
 	private static final long serialVersionUID = 5653921520358579530L;

@@ -109,7 +109,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 			Binder<Node> binder = context.createBinder();
 			RuleVersionListXml<RuleXml> prefsJaxb = (RuleVersionListXml<RuleXml>) binder.unmarshal(prefsDom);
 
-			List<RuleXml> versions = (List<RuleXml>) prefsJaxb.getVersions();
+			List<RuleXml> versions = prefsJaxb.getVersions();
 
 			CollectionUtils.forAllDo(versions, new Closure(){
 				public void execute(Object o) {

@@ -82,7 +82,7 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 				.append(File.separator).append(SPELL_FILE).toString();
 
 		@SuppressWarnings("static-access")
-		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
+		SpellRules spellRules = (SpellRules) RuleXmlUtil.loadVersion(path);
 
 		if (spellRules != null) {
 			List<SpellRuleXml> spellRulesXml = spellRules.getSpellRule();
@@ -140,7 +140,7 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 				.append(SPELL_FILE).toString();
 
 		@SuppressWarnings("static-access")
-		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
+		SpellRules spellRules = (SpellRules) RuleXmlUtil.loadVersion(path);
 		List<SpellRuleXml> spellRulesXml = null;
 
 		if (spellRules != null) {
@@ -201,7 +201,7 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 				.append(SPELL_FILE).toString();
 
 		@SuppressWarnings("static-access")
-		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
+		SpellRules spellRules = (SpellRules) RuleXmlUtil.loadVersion(path);
 		List<SpellRuleXml> spellRulesXml = null;
 
 		if (spellRules != null) {
@@ -254,7 +254,7 @@ public class SpellRuleDaoSolrImpl extends BaseDaoSolr implements SpellRuleDao {
 				.append(File.separator).append(fileName).toString();
 
 		@SuppressWarnings("static-access")
-		SpellRules spellRules = (SpellRules) ruleXmlUtil.loadVersion(path);
+		SpellRules spellRules = (SpellRules) RuleXmlUtil.loadVersion(path);
 		List<SpellRuleXml> spellRulesXml = null;
 
 		if (spellRules != null) {
