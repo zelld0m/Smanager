@@ -36,7 +36,7 @@
 	height: 100%;
 }
 
-.hasDatepicker {
+.plugin-statbox .hasDatepicker {
 	width: 79px;
 	font-size: 12px;
 	text-align: center;
