@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
@@ -83,6 +84,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
+			solrQuery.setSortField("priority", ORDER.asc);
 			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName()).query(
@@ -120,6 +122,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
+			solrQuery.setSortField("priority", ORDER.asc);
 			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName()).query(
@@ -169,6 +172,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.debug(solrQuery.toString());
+			solrQuery.setSortField("priority", ORDER.asc);
 			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName()).query(
 					solrQuery);
