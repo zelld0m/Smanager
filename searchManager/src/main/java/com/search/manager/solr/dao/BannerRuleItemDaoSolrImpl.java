@@ -171,8 +171,8 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			logger.debug(solrQuery.toString());
 			solrQuery.setSortField("priority", ORDER.asc);
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName()).query(
 					solrQuery);
