@@ -631,7 +631,7 @@
         <dependency>
             <groupId>com.search</groupId>
             <artifactId>searchManager</artifactId>
-            <version>1.0.0-BUILD-SNAPSHOT</version>
+            <version>1.0.0-rc4</version>
         </dependency>
     </dependencies>
 
