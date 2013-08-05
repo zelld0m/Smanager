@@ -331,33 +331,28 @@ public class DownloadService {
 
         download(response, workbook, fileName);
     }
+	
+	public void download(HttpServletResponse response, HSSFWorkbook workbook, String fileName) throws ClassNotFoundException {
+		logger.debug("Downloading Excel report");
+		// Make sure to set the correct content type
+		response.setContentType("application/vnd.ms-excel");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+		// Write to the output stream
+		
+		logger.debug("Writing report to the stream");
+		ServletOutputStream outputStream  = null;
+		try {
+			// Retrieve the output stream
+			outputStream = response.getOutputStream();
+			// Write to the output stream
+			workbook.write(outputStream);
+			// Flush the stream
+			outputStream.flush();
 
-    public void download(HttpServletResponse response, HSSFWorkbook workbook, String fileName) throws ClassNotFoundException {
-        logger.debug("Downloading Excel report");
-        // Make sure to set the correct content type
-        response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
-        // Write to the output stream
-
-        logger.debug("Writing report to the stream");
-        ServletOutputStream outputStream = null;
-        try {
-            // Retrieve the output stream
-            outputStream = response.getOutputStream();
-            // Write to the output stream
-            workbook.write(outputStream);
-            // Flush the stream
-            outputStream.flush();
-
-        } catch (Exception e) {
-            logger.error("Unable to write report to the output stream");
-        } finally {
-            try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            } catch (IOException e) {
-            }
-        }
-    }
+		} catch (Exception e) {
+			logger.error("Unable to write report to the output stream");
+		} finally {
+			try { if (outputStream != null) outputStream.close(); } catch (IOException e) { } 
+		}
+	}
 }

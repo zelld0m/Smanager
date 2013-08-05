@@ -59,7 +59,7 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="spellRuleIndexerCronSingle" class="com.search.cron.SpellRuleIndexerCronSingle" scope="singleton">
+	<bean id="solrProcessorCronSingle" class="com.search.cron.SolrProcessorCronSingle" scope="singleton" destroy-method="shutdown">
 		<constructor-arg>
 			<list>
 				<value>macmall</value>

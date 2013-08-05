@@ -36,10 +36,10 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 
 	private SolrService solrService;
 	private Map<String, String> storeSpellRule = new HashMap<String, String>();
+	private Map<String, Long> storeIndexedDate = new HashMap<String, Long>();
 	private List<String> stores = new ArrayList<String>();
 	private boolean running = false;
 	private boolean indexing = false;
-	private long lastIndexedFile;
 
 	public SpellRuleIndexerCronSingle(SolrService solrService,
 			List<String> stores) {
@@ -63,8 +63,7 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 		if (listOfFiles != null) {
 			for (File file : listOfFiles) {
 				if (file.getName().startsWith(FILE_PREFIX)
-						&& file.getName().endsWith(XML_FILE_TYPE)
-						&& file.lastModified() > lastIndexedFile) {
+						&& file.getName().endsWith(XML_FILE_TYPE)) {
 					fileNames.add(file.getName() + " - " + file.lastModified());
 				}
 			}
@@ -114,44 +113,48 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 				if (temp != null && temp.length > 1) {
 					newFile = temp[0];
 					newFileLastModified = Long.parseLong(temp[1]);
-				}
 
-				if (storeSpellRule.containsKey(store)) {
-					String[] temp1 = storeSpellRule.get(store).split(" - ");
-					String oldFile = "";
-					long oldFileLastModified = 0;
+					if (storeSpellRule.containsKey(store)) {
+						String[] temp1 = storeSpellRule.get(store).split(" - ");
+						String oldFile = "";
+						long oldFileLastModified = 0;
 
-					if (temp1 != null && temp1.length > 1) {
-						oldFile = temp1[0];
-						oldFileLastModified = Long.parseLong(temp1[1]);
-					}
+						if (temp1 != null && temp1.length > 1) {
+							oldFile = temp1[0];
+							oldFileLastModified = Long.parseLong(temp1[1]);
 
-					if (!oldFile.equals(newFile)
-							&& newFileLastModified > oldFileLastModified) {
-						logger.info("Old Doc: " + storeSpellRule.get(store));
-						logger.info("New Doc: " + fileNames.get(0));
-						logger.info("Start indexing spell rules for " + store
-								+ ": " + fileNames.get(0));
+							if (!oldFile.equals(newFile)
+									|| (oldFile.equals(newFile) && newFileLastModified > oldFileLastModified)) {
+								logger.info("Old Doc: "
+										+ storeSpellRule.get(store));
+								logger.info("New Doc: " + fileNames.get(0));
+								logger.info("Start indexing spell rules for "
+										+ store + ": " + fileNames.get(0));
+								indexing = true;
+								if (resetIndexData(store, newFile)) {
+									storeSpellRule.put(store, fileNames.get(0));
+									storeIndexedDate.put(store,
+											newFileLastModified);
+									write(store, fileNames.get(0));
+									logger.info("Done indexing spell rules for "
+											+ store + ": " + fileNames.get(0));
+								}
+								indexing = false;
+							}
+						}
+					} else {
+						logger.info("Initial spell rules for " + store + ": "
+								+ fileNames.get(0));
 						indexing = true;
 						if (resetIndexData(store, newFile)) {
 							storeSpellRule.put(store, fileNames.get(0));
+							storeIndexedDate.put(store, newFileLastModified);
 							write(store, fileNames.get(0));
 							logger.info("Done indexing spell rules for "
 									+ store + ": " + fileNames.get(0));
 						}
 						indexing = false;
 					}
-				} else {
-					logger.info("Initial spell rules for " + store + ": "
-							+ fileNames.get(0));
-					indexing = true;
-					if (resetIndexData(store, newFile)) {
-						storeSpellRule.put(store, fileNames.get(0));
-						write(store, fileNames.get(0));
-						logger.info("Done indexing spell rules for " + store
-								+ ": " + fileNames.get(0));
-					}
-					indexing = false;
 				}
 			}
 		}
@@ -190,8 +193,8 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 
 	public void init(String store) {
 		BufferedReader bufferedReader = null;
-
 		try {
+			storeIndexedDate.put(store, 0L);
 			FileInputStream fileInputStream = new FileInputStream(
 					new StringBuilder().append(BASE_RULE_DIR)
 							.append(File.separator).append(store)
@@ -207,6 +210,11 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 				while ((str = bufferedReader.readLine()) != null) {
 					if (!str.trim().equals("")) {
 						storeSpellRule.put(store, str.trim());
+						String[] temp1 = storeSpellRule.get(store).split(" - ");
+						if (temp1 != null && temp1.length > 1) {
+							storeIndexedDate.put(store,
+									Long.parseLong(temp1[1]));
+						}
 					}
 				}
 			}
@@ -244,6 +252,10 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 		}
 
 		logger.info("End!");
+	}
+	
+	public void shutdown() {
+		running = false;
 	}
 
 }

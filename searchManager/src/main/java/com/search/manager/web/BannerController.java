@@ -67,8 +67,10 @@ public class BannerController {
         BannerRuleXml xml = (BannerRuleXml) ruleVersionService.getCurrentRuleXml("Banner", ruleId);
         List<BannerReportBean> reportBeans = new ArrayList<BannerReportBean>();
 
-        for (BannerItemXml itemXml : xml.getItemXml()) {
-            reportBeans.add(new BannerReportBean(Transformers.bannerItemXmlToRule.apply(itemXml)));
+        if (xml.getItemXml() != null) {
+            for (BannerItemXml itemXml : xml.getItemXml()) {
+               reportBeans.add(new BannerReportBean(Transformers.bannerItemXmlToRule.apply(itemXml)));
+            }
         }
 
         if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
@@ -101,8 +103,10 @@ public class BannerController {
             List<BannerItemXml> itemXmls = ruleXml.getItemXml();
             List<BannerReportBean> reportBeans = new ArrayList<BannerReportBean>();
 
-            for (BannerItemXml itemXml : itemXmls) {
-                reportBeans.add(new BannerReportBean(Transformers.bannerItemXmlToRule.apply(itemXml)));
+            if (itemXmls != null) {
+                for (BannerItemXml itemXml : itemXmls) {
+                    reportBeans.add(new BannerReportBean(Transformers.bannerItemXmlToRule.apply(itemXml)));
+                }
             }
 
             subModels.add(new BannerReportModel(reportHeader, RuleXmlReportUtil.getVersionSubReportHeader(ruleXml,
