@@ -14,6 +14,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
@@ -22,7 +25,7 @@ import com.search.manager.model.Store;
 import com.search.manager.solr.service.SolrService;
 import com.search.manager.utility.PropertiesUtils;
 
-public class SpellRuleIndexerCronSingle implements Runnable {
+public class SpellRuleIndexerCronSingle extends TimerTask {
 
 	private final static Logger logger = Logger
 			.getLogger(SpellRuleIndexerCronSingle.class);
@@ -43,8 +46,9 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 	private Map<String, String> storeSpellRule = new HashMap<String, String>();
 	private Map<String, Long> storeIndexedDate = new HashMap<String, Long>();
 	private List<String> stores = new ArrayList<String>();
-	private boolean running = false;
-	private boolean indexing = false;
+
+    private AtomicBoolean stopped = new AtomicBoolean(false);
+    private Timer timer = new Timer();
 
 	public SpellRuleIndexerCronSingle(SolrService solrService,
 			List<String> stores) {
@@ -129,7 +133,6 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 								logger.info("New Doc: " + fileNames.get(0));
 								logger.info("Start indexing spell rules for "
 										+ store + ": " + fileNames.get(0));
-								indexing = true;
 								if (resetIndexData(store, newFile)) {
 									storeSpellRule.put(store, fileNames.get(0));
 									storeIndexedDate.put(store,
@@ -138,13 +141,11 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 									logger.info("Done indexing spell rules for "
 											+ store + ": " + fileNames.get(0));
 								}
-								indexing = false;
 							}
 						}
 					} else {
 						logger.info("Initial spell rules for " + store + ": "
 								+ fileNames.get(0));
-						indexing = true;
 						if (resetIndexData(store, newFile)) {
 							storeSpellRule.put(store, fileNames.get(0));
 							storeIndexedDate.put(store, newFileLastModified);
@@ -152,7 +153,6 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 							logger.info("Done indexing spell rules for "
 									+ store + ": " + fileNames.get(0));
 						}
-						indexing = false;
 					}
 				}
 			}
@@ -232,29 +232,11 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 
 	@Override
 	public void run() {
-		logger.info("Running...");
-
-		while (running) {
-			if (!indexing) {
-				logger.debug("Checking for new doc...");
-				checkForNewDoc();
-			} else {
-				logger.debug("indexing...");
-			}
-
-			try {
-				Thread.sleep(CHECK_INTERVAL);
-			} catch (InterruptedException e) {
-				logger.error(e);
-			}
-		}
-
-		logger.info("End!");
+		logger.debug("Checking for new doc...");
+		checkForNewDoc();
 	}
 	
 	public void start() {
-		running = true;
-
 		try {
 			CHECK_INTERVAL = Integer.parseInt(PropertiesUtils
 					.getValue("spellcheckinterval"));
@@ -266,11 +248,15 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 			init(store);
 		}
 
-		new Thread(this).start();
+		logger.info("Starting Spell Rule Indexer");
+		timer.schedule(this, 500, CHECK_INTERVAL);
 	}
 
 	public void shutdown() {
-		running = false;
+		logger.info("Shutting down Spell Rule Indexer.");
+		stopped.set(true);
+		timer.cancel();
+		logger.info("Spell Rule Indexed stopped.");
 	}
 
 }
