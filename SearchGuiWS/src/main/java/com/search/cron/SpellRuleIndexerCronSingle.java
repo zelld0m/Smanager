@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.dao.DaoException;
@@ -27,19 +27,13 @@ import com.search.manager.utility.PropertiesUtils;
 
 public class SpellRuleIndexerCronSingle extends TimerTask {
 
-	private final static Logger logger = Logger
-			.getLogger(SpellRuleIndexerCronSingle.class);
+	private final static Logger logger = Logger.getLogger(SpellRuleIndexerCronSingle.class);
 
-	private static final String BASE_RULE_DIR = PropertiesUtils
-			.getValue("publishedfilepath");
-	private static final String XML_FILE_TYPE = PropertiesUtils
-			.getValue("spellfileextension");
-	private static final String DID_YOU_MEAN = PropertiesUtils
-			.getValue("didyoumeanfolder");
-	private static final String FILE_PREFIX = PropertiesUtils
-			.getValue("spellfileprefix");
-	private static final String DATA_INDEX = PropertiesUtils
-			.getValue("spelldataindex");
+	private static final String BASE_RULE_DIR = PropertiesUtils.getValue("publishedfilepath");
+	private static final String XML_FILE_TYPE = PropertiesUtils.getValue("spellfileextension");
+	private static final String DID_YOU_MEAN = PropertiesUtils.getValue("didyoumeanfolder");
+	private static final String FILE_PREFIX = PropertiesUtils.getValue("spellfileprefix");
+	private static final String DATA_INDEX = PropertiesUtils.getValue("spelldataindex");
 	private static Integer CHECK_INTERVAL = 20000;
 
 	private SolrService solrService;
@@ -47,26 +41,22 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 	private Map<String, Long> storeIndexedDate = new HashMap<String, Long>();
 	private List<String> stores = new ArrayList<String>();
 
-    private AtomicBoolean stopped = new AtomicBoolean(false);
-    private Timer timer = new Timer();
+	private Timer timer = new Timer();
 
-	public SpellRuleIndexerCronSingle(SolrService solrService,
-			List<String> stores) {
+	public SpellRuleIndexerCronSingle(SolrService solrService, List<String> stores) {
 		this.solrService = solrService;
 		this.stores = stores;
 	}
 
 	public List<String> checkFiles(String storeId) {
-		File folder = new File(new StringBuilder().append(BASE_RULE_DIR)
-				.append(File.separator).append(storeId).append(File.separator)
-				.append(DID_YOU_MEAN).append(File.separator).toString());
+		File folder = new File(new StringBuilder().append(BASE_RULE_DIR).append(File.separator).append(storeId)
+		        .append(File.separator).append(DID_YOU_MEAN).append(File.separator).toString());
 		File[] listOfFiles = folder.listFiles();
 		List<String> fileNames = new ArrayList<String>();
 
 		if (listOfFiles != null) {
 			for (File file : listOfFiles) {
-				if (file.getName().startsWith(FILE_PREFIX)
-						&& file.getName().endsWith(XML_FILE_TYPE)) {
+				if (file.getName().startsWith(FILE_PREFIX) && file.getName().endsWith(XML_FILE_TYPE)) {
 					fileNames.add(file.getName() + " - " + file.lastModified());
 				}
 			}
@@ -86,18 +76,14 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 	public boolean resetIndexData(String storeId, String fileName) {
 		try {
 			Store store = new Store(storeId);
-			String path = new StringBuilder().append(BASE_RULE_DIR)
-					.append(File.separator).append(storeId)
-					.append(File.separator).append(DID_YOU_MEAN)
-					.append(File.separator).toString();
+			String path = new StringBuilder().append(BASE_RULE_DIR).append(File.separator).append(storeId)
+			        .append(File.separator).append(DID_YOU_MEAN).append(File.separator).toString();
 
 			if (solrService.deleteSpellRules(store)) {
 				return solrService.loadSpellRules(store, path, fileName);
 			}
 		} catch (DaoException e) {
-			logger.error(
-					"Error in resetIndexData(String storeId, String fileName) : ",
-					e);
+			logger.error("Error in resetIndexData(String storeId, String fileName) : ", e);
 			return false;
 		}
 
@@ -127,31 +113,25 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 							oldFileLastModified = Long.parseLong(temp1[1]);
 
 							if (!oldFile.equals(newFile)
-									|| (oldFile.equals(newFile) && newFileLastModified > oldFileLastModified)) {
-								logger.info("Old Doc: "
-										+ storeSpellRule.get(store));
+							        || (oldFile.equals(newFile) && newFileLastModified > oldFileLastModified)) {
+								logger.info("Old Doc: " + storeSpellRule.get(store));
 								logger.info("New Doc: " + fileNames.get(0));
-								logger.info("Start indexing spell rules for "
-										+ store + ": " + fileNames.get(0));
+								logger.info("Start indexing spell rules for " + store + ": " + fileNames.get(0));
 								if (resetIndexData(store, newFile)) {
 									storeSpellRule.put(store, fileNames.get(0));
-									storeIndexedDate.put(store,
-											newFileLastModified);
+									storeIndexedDate.put(store, newFileLastModified);
 									write(store, fileNames.get(0));
-									logger.info("Done indexing spell rules for "
-											+ store + ": " + fileNames.get(0));
+									logger.info("Done indexing spell rules for " + store + ": " + fileNames.get(0));
 								}
 							}
 						}
 					} else {
-						logger.info("Initial spell rules for " + store + ": "
-								+ fileNames.get(0));
+						logger.info("Initial spell rules for " + store + ": " + fileNames.get(0));
 						if (resetIndexData(store, newFile)) {
 							storeSpellRule.put(store, fileNames.get(0));
 							storeIndexedDate.put(store, newFileLastModified);
 							write(store, fileNames.get(0));
-							logger.info("Done indexing spell rules for "
-									+ store + ": " + fileNames.get(0));
+							logger.info("Done indexing spell rules for " + store + ": " + fileNames.get(0));
 						}
 					}
 				}
@@ -163,10 +143,8 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 		BufferedWriter bufferWritter = null;
 		FileWriter fileWriter = null;
 		try {
-			File file = new File(new StringBuilder().append(BASE_RULE_DIR)
-					.append(File.separator).append(store)
-					.append(File.separator).append(DID_YOU_MEAN)
-					.append(File.separator).append(DATA_INDEX).toString());
+			File file = new File(new StringBuilder().append(BASE_RULE_DIR).append(File.separator).append(store)
+			        .append(File.separator).append(DID_YOU_MEAN).append(File.separator).append(DATA_INDEX).toString());
 
 			if (!file.exists()) {
 				file.createNewFile();
@@ -177,8 +155,7 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 			bufferWritter.flush();
 
 		} catch (IOException e) {
-			logger.error("Error in write(String store, String indexData) : "
-					+ e.getMessage(), e);
+			logger.error("Error in write(String store, String indexData) : " + e.getMessage(), e);
 		} finally {
 			if (bufferWritter != null) {
 				try {
@@ -194,16 +171,12 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 		BufferedReader bufferedReader = null;
 		try {
 			storeIndexedDate.put(store, 0L);
-			FileInputStream fileInputStream = new FileInputStream(
-					new StringBuilder().append(BASE_RULE_DIR)
-							.append(File.separator).append(store)
-							.append(File.separator).append(DID_YOU_MEAN)
-							.append(File.separator).append(DATA_INDEX)
-							.toString());
+			FileInputStream fileInputStream = new FileInputStream(new StringBuilder().append(BASE_RULE_DIR)
+			        .append(File.separator).append(store).append(File.separator).append(DID_YOU_MEAN)
+			        .append(File.separator).append(DATA_INDEX).toString());
 
 			if (fileInputStream != null) {
-				bufferedReader = new BufferedReader(new InputStreamReader(
-						new DataInputStream(fileInputStream)));
+				bufferedReader = new BufferedReader(new InputStreamReader(new DataInputStream(fileInputStream)));
 				String str = "";
 
 				while ((str = bufferedReader.readLine()) != null) {
@@ -211,8 +184,7 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 						storeSpellRule.put(store, str.trim());
 						String[] temp1 = storeSpellRule.get(store).split(" - ");
 						if (temp1 != null && temp1.length > 1) {
-							storeIndexedDate.put(store,
-									Long.parseLong(temp1[1]));
+							storeIndexedDate.put(store, Long.parseLong(temp1[1]));
 						}
 					}
 				}
@@ -235,14 +207,9 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 		logger.debug("Checking for new doc...");
 		checkForNewDoc();
 	}
-	
+
 	public void start() {
-		try {
-			CHECK_INTERVAL = Integer.parseInt(PropertiesUtils
-					.getValue("spellcheckinterval"));
-		} catch (Exception e) {
-			CHECK_INTERVAL = 20000;
-		}
+		CHECK_INTERVAL = NumberUtils.toInt(PropertiesUtils.getValue("spellcheckinterval"), 20000);
 
 		for (String store : stores) {
 			init(store);
@@ -254,7 +221,6 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 
 	public void shutdown() {
 		logger.info("Shutting down Spell Rule Indexer.");
-		stopped.set(true);
 		timer.cancel();
 		logger.info("Spell Rule Indexed stopped.");
 	}
