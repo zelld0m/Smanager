@@ -71,12 +71,10 @@
 			access="isAuthenticated()" />
 
 		<!-- Make CSS and image resources to unsecured -->
-		<security:intercept-url pattern="/css/**"
-			access="permitAll" />
-		<security:intercept-url pattern="/images/**"
-			access="permitAll" />
-		<security:intercept-url pattern="/tz/**"
-			access="permitAll" />
+		<security:intercept-url pattern="/css/**" access="permitAll" />
+		<security:intercept-url pattern="/images/**" access="permitAll" />
+		<security:intercept-url pattern="/tz/**" access="permitAll" />
+		<security:intercept-url pattern="/ajaxsolr/**" access="permitAll" />
 
 		<!-- Exclude web service from authentication -->
 		<security:intercept-url pattern="/search/**"

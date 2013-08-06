@@ -251,7 +251,7 @@ public class SpellRuleIndexerCronSingle implements Runnable {
 
 		logger.info("End!");
 	}
-
+	
 	public void start() {
 		running = true;
 
