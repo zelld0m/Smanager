@@ -1,9 +1,9 @@
 (function ($) {
 
 	AjaxSolr.PCMGSingleSelectorWidget = AjaxSolr.AbstractWidget.extend({
-		SOLRFIELD_OPEN: "PCMallGov_OpenStoreFlag",
-		SOLRFIELD_GOVT: "PCMallGov_GovStoreFlag",
-		SOLRFIELD_ACAD: "PCMallGov_ACAStoreFlag",
+		SOLRFIELD_OPEN: "PCMG_OpenStoreFlag",
+		SOLRFIELD_GOVT: "PCMG_GovStoreFlag",
+		SOLRFIELD_ACAD: "PCMG_ACAStoreFlag",
 		inputToSolrFieldMap: [],
 		solrFacetIndices : -1, 
 		solrFacetValue : "",
@@ -46,8 +46,8 @@
 
 			// Set default selected value
 			if(!hasSelection ){
-				self.solrFacetValue = "PCMallGov_OpenStoreFlag:true";
-				self.manager.store.addByValue("fq", "PCMallGov_OpenStoreFlag:true");
+				self.solrFacetValue = "PCMG_OpenStoreFlag:true";
+				self.manager.store.addByValue("fq", "PCMG_OpenStoreFlag:true");
 			}
 			
 			switch(self.solrFacetValue){
