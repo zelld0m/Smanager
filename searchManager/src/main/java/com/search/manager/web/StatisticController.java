@@ -13,12 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-@RequestMapping("/")
 @Scope(value = "prototype")
 public class StatisticController {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(StatisticController.class);
+    private static final Logger logger = LoggerFactory.getLogger(StatisticController.class);
 
     @RequestMapping(value = "/topkeyword/{store}")
     public String topKeyword(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
