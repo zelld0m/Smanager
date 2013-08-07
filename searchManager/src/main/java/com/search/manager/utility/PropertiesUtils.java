@@ -20,22 +20,15 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 public class PropertiesUtils {
 
     private static final Logger logger = Logger.getLogger(PropertiesUtils.class.getName());
-    private static PropertiesConfiguration config = initPropertiesConfig();
-    private static final String FILE_PATH = "/home/solr/conf/globalvar.properties";
+    private static PropertiesConfiguration config;
 
-    private PropertiesUtils() {
-        // NOTHING
-    }
-
-    private static PropertiesConfiguration initPropertiesConfig() {
+    public static void initPropertiesConfig(String path) {
         try {
-            config = new PropertiesConfiguration(FILE_PATH);
+            config = new PropertiesConfiguration(path);
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
         } catch (ConfigurationException e) {
-            logger.log(Level.SEVERE, String.format("Unable to load file %s", FILE_PATH), e);
+            logger.log(Level.SEVERE, String.format("Unable to load file %s", path), e);
         }
-
-        return config;
     }
 
     @Deprecated
