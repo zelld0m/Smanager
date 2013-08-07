@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads the globalvar.properties file
@@ -19,23 +19,18 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
  */
 public class PropertiesUtils {
 
-    private static final Logger logger = Logger.getLogger(PropertiesUtils.class.getName());
-    private static PropertiesConfiguration config = initPropertiesConfig();
-    private static final String FILE_PATH = "/home/solr/conf/globalvar.properties";
+    private static final Logger logger =
+            LoggerFactory.getLogger(PropertiesUtils.class);
+    
+    private static PropertiesConfiguration config;
 
-    private PropertiesUtils() {
-        // NOTHING
-    }
-
-    private static PropertiesConfiguration initPropertiesConfig() {
+    public static void initPropertiesConfig(String path) {
         try {
-            config = new PropertiesConfiguration(FILE_PATH);
+            config = new PropertiesConfiguration(path);
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
         } catch (ConfigurationException e) {
-            logger.log(Level.SEVERE, String.format("Unable to load file %s", FILE_PATH), e);
+            logger.error(String.format("Unable to load file %s", path), e);
         }
-
-        return config;
     }
 
     @Deprecated

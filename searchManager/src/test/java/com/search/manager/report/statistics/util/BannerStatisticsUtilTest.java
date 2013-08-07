@@ -13,6 +13,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import com.search.manager.report.statistics.model.BannerStatistics;
+import com.search.manager.utility.PropertiesUtils;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
 /**
@@ -25,11 +28,28 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(BannerStatisticsUtil.class)
 @PowerMockIgnore("javax.management.*")
-public class BannerStatisticsUtilTest {    
+public class BannerStatisticsUtilTest {
+
     private static final String STORE_ID = "pcmall";
 
     @Before
-    public void init() {
+    public void init() throws Exception {
+        // set the properties configuration
+        propertiesUtilsHelper();
+
+        // set the values needed by banner statistics util
+        bannerStatisticsUtilHelper();
+    }
+
+    private void propertiesUtilsHelper()
+            throws Exception {
+        String filePath = "src/test/resources/config/globalvar.properties";
+        PropertiesConfiguration config = new PropertiesConfiguration(filePath);
+        config.setReloadingStrategy(new FileChangedReloadingStrategy());
+        Whitebox.setInternalState(PropertiesUtils.class, "config", config);
+    }
+
+    private void bannerStatisticsUtilHelper() {
         Whitebox.setInternalState(BannerStatisticsUtil.class,
                 "FILE_LOCATION",
                 "src/test/resources/home/solr/utilities/banner-stats/{0}/{1}/{2}.csv");

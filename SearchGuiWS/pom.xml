@@ -1,10 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.search</groupId>
     <artifactId>SearchGuiWS</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-
+    <packaging>war</packaging>
+    
     <repositories>
         <repository>
             <id>VTORGUISCHDEV01.pcmall.com</id>
@@ -14,7 +16,9 @@
     </repositories>
 
     <properties>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java-version>1.6</java-version>
 
         <!-- JAVAX ACTIVATION VERSION -->
         <activation.version>1.1</activation.version>
@@ -22,21 +26,27 @@
         <!-- APACHE AXIS VERSION -->
         <axis.version>1.4</axis.version>
 
+        <!-- ANT VERSION -->
+        <ant.version>1.5.2</ant.version>
+
+        <!-- ANTLR VERSION -->
+        <org.antlr.version>3.1.3</org.antlr.version>
+
         <!-- APACHE COMMONS VERSIONS -->
-        <commons-attributes.version>2.2</commons-attributes.version>
+        <commons-attributes.version>2.1</commons-attributes.version>
         <commons-beanutils.version>1.8.3</commons-beanutils.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.7</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
         <commons-configuration.version>1.6</commons-configuration.version>
         <commons-dbcp.version>1.2.1</commons-dbcp.version>
+        <commons-digester.version>2.1</commons-digester.version>
         <commons-discovery.version>0.2</commons-discovery.version>
         <commons-fileupload.version>1.2.1</commons-fileupload.version>
         <commons-httpclient.version>3.0</commons-httpclient.version>
         <commons-io.version>2.1</commons-io.version>
         <commons-jxpath.version>1.3</commons-jxpath.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-logging.version>1.1.1</commons-logging.version>
         <commons-pool.version>1.2</commons-pool.version>
 
         <!-- DIRECT WEB REMOTING VERSION -->
@@ -57,17 +67,17 @@
         <!-- APACHE HTTP COMPONENTS VERSION -->
         <org.apache.httpcomponents.version>4.2.4</org.apache.httpcomponents.version>
 
-        <!-- LOG4J VERSION -->
-        <log4j.version>1.2.16</log4j.version>
-
         <!-- OPEN SYMPHONY VERSION -->
-        <opensymphony.version>1.6.3</opensymphony.version>
+        <opensymphony.version>1.6.1</opensymphony.version>
 
         <!-- JAVAX SERVLET VERSION -->
         <javax.servlet.version>2.5</javax.servlet.version>
 
         <!-- SPRING FRAMEWORK VERSION -->
         <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
+
+        <!-- SPRING SECURITY -->
+        <org.springframework.security.version>3.0.5.RELEASE</org.springframework.security.version>
 
         <!-- SPRING SUPPORT VERSION -->
         <spring-support.version>2.0.8</spring-support.version>
@@ -82,11 +92,14 @@
 
         <!-- JAVAX XML VERSION -->
         <javax.xml.version>1.1.1</javax.xml.version>
-        <!-- SLF4J VERSION -->
+
+        <!-- LOGGING VERSIONS -->
         <org.slf4j.version>1.7.5</org.slf4j.version>
+        <ch.qos.logback-version>1.0.13</ch.qos.logback-version>
+        <org.logback-extensions-version>0.1.1</org.logback-extensions-version>
 
         <!-- JDOM VERSION -->
-        <jdom.version>1.1</jdom.version>
+        <jdom.version>2.0.1</jdom.version>
 
         <!-- JODA TIME VERSION -->
         <joda-time.version>2.2</joda-time.version>
@@ -95,8 +108,14 @@
         <!-- JAVA SECURITY CHANNEL API VERSION -->
         <jsch.version>0.1.50</jsch.version>
 
+        <!-- JSON LIB VERSION -->
+        <net.sf.json-lib.version>2.4</net.sf.json-lib.version>
+
         <!-- JTDS VERSION -->
         <jtds.version>1.3.1</jtds.version>
+
+        <!-- JUG VERSION -->
+        <org.safehaus.jug.version>2.0.0</org.safehaus.jug.version>
 
         <!-- JUNIT VERSION -->
         <junit.version>4.11</junit.version>
@@ -114,7 +133,7 @@
         <org.carrot2.version>1.6.0</org.carrot2.version>
 
         <!-- SOLR VERSION -->
-        <org.apache.solr.version>4.3.1</org.apache.solr.version>
+        <org.apache.solr.version>4.1.0</org.apache.solr.version>
 
         <!-- SPATIAL VERSION -->
         <com.spatial4j.version>0.3</com.spatial4j.version>
@@ -129,13 +148,16 @@
         <org.apache.ws.security.version>1.6.11</org.apache.ws.security.version>
 
         <!-- WOODSTOX VERSION -->
-        <woodstox.version>3.2.0</woodstox.version>
+        <woodstox.version>3.1.3</woodstox.version>
 
         <!-- APACHE XBEAN VERSION -->
         <org.apache.xbean.version>3.14</org.apache.xbean.version>
 
         <!-- XFIRE VERSION -->
         <org.codehaus.xfire.version>1.2.6</org.codehaus.xfire.version>
+
+        <!-- XML SECURITY VERSION -->
+        <xml-security.version>1.3.0</xml-security.version>
 
         <!-- XML SCHEMA VERSION -->
         <org.apache.ws.commons.schema.version>1.4.7</org.apache.ws.commons.schema.version>
@@ -144,10 +166,17 @@
         <xpp3.version>1.1.4c</xpp3.version>
 
         <!-- XSTREAM VERSION -->
-        <xstream.version>1.2.2</xstream.version>
+        <xstream.version>1.4.4</xstream.version>
 
         <!-- ZOOKEEPER VERSION -->
         <org.apache.zookeeper.version>3.4.5</org.apache.zookeeper.version>
+
+        <!-- SEARCH MANAGER VERSION -->
+        <com.search.version>1.0.0</com.search.version>
+
+        <!-- MAVEN PLUGIN VERSION -->
+        <maven.enforcer.plugin-version>1.2</maven.enforcer.plugin-version>
+        <maven.version.range>[2.2.1,3.1.0]</maven.version.range>
     </properties>
 
     <dependencies>
@@ -165,6 +194,20 @@
             <version>${axis.version}</version>
         </dependency>
 
+        <!-- ANT -->
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-optional</artifactId>
+            <version>${ant.version}</version>
+        </dependency>
+
+        <!-- ANTLR -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>${org.antlr.version}</version>
+        </dependency>
+
         <!-- APACHE COMMONS -->
         <dependency>
             <groupId>commons-attributes</groupId>
@@ -175,6 +218,12 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>${commons-beanutils.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
@@ -195,6 +244,12 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>${commons-configuration.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -202,9 +257,26 @@
             <version>${commons-dbcp.version}</version>
         </dependency>
         <dependency>
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+            <version>${commons-digester.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>commons-discovery</groupId>
             <artifactId>commons-discovery</artifactId>
             <version>${commons-discovery.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -215,6 +287,12 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>${commons-httpclient.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -230,11 +308,6 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>${commons-lang.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>${commons-logging.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-pool</groupId>
@@ -282,11 +355,23 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${org.apache.httpcomponents.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient-cache</artifactId>
             <version>${org.apache.httpcomponents.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -316,16 +401,9 @@
             <version>${javasimon-jmx.version}</version>
         </dependency>
 
-        <!-- LOG4J -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-
         <!-- OPENSYMPHONY -->
         <dependency>
-            <groupId>opensymphony</groupId>
+            <groupId>org.opensymphony.quartz</groupId>
             <artifactId>quartz-all</artifactId>
             <version>${opensymphony.version}</version>
         </dependency>
@@ -351,7 +429,7 @@
             <version>${javax.xml.version}</version>
         </dependency>
 
-        <!-- SLF4J -->
+        <!-- LOGGING -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -367,10 +445,35 @@
             <artifactId>slf4j-jdk14</artifactId>
             <version>${org.slf4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${ch.qos.logback-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.logback-extensions</groupId>
+            <artifactId>logback-ext-spring</artifactId>
+            <version>${org.logback-extensions-version}</version>
+        </dependency>
 
         <!-- JDOM -->
         <dependency>
-            <groupId>jdom</groupId>
+            <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
             <version>${jdom.version}</version>
         </dependency>
@@ -394,6 +497,20 @@
             <version>${jsch.version}</version>
         </dependency>
 
+        <!-- JSON LIB -->
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>${net.sf.json-lib.version}</version>
+            <classifier>jdk15</classifier>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- JTDS -->
         <dependency>
             <groupId>net.sourceforge.jtds</groupId>
@@ -413,6 +530,12 @@
             <groupId>net.sourceforge.jexcelapi</groupId>
             <artifactId>jxl</artifactId>
             <version>${jxl.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- LUCENE -->
@@ -511,7 +634,15 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${org.springframework.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <!-- SPRING FRAMEWORK -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -528,9 +659,20 @@
             <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${org.springframework.security.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-support</artifactId>
             <version>${spring-support.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- SOLR -->
@@ -557,6 +699,12 @@
             <groupId>com.fasterxml.uuid</groupId>
             <artifactId>java-uuid-generator</artifactId>
             <version>${com.fasterxml.uuid.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- WSDL4J -->
@@ -571,12 +719,18 @@
             <groupId>org.apache.ws.security</groupId>
             <artifactId>wss4j</artifactId>
             <version>${org.apache.ws.security.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- WOODSTOX -->
         <dependency>
-            <groupId>woodstox</groupId>
-            <artifactId>wstx-api</artifactId>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>stax2-api</artifactId>
             <version>${woodstox.version}</version>
         </dependency>
 
@@ -585,6 +739,12 @@
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
             <version>${org.apache.xbean.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- XFIRE -->
@@ -592,14 +752,37 @@
             <groupId>org.codehaus.xfire</groupId>
             <artifactId>xfire-all</artifactId>
             <version>${org.codehaus.xfire.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.codehaus.xfire</groupId>
             <artifactId>xfire-spring</artifactId>
             <version>${org.codehaus.xfire.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- XML SCHEMA VERSION -->
+        <!-- XML SECURITY -->
+        <dependency>
+            <groupId>xml-security</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>${xml-security.version}</version>
+        </dependency>
+
+        <!-- XML SCHEMA -->
         <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
@@ -609,13 +792,13 @@
         <!-- XML PULL PARSER -->
         <dependency>
             <groupId>xpp3</groupId>
-            <artifactId>xpp3_min</artifactId>
+            <artifactId>xpp3</artifactId>
             <version>${xpp3.version}</version>
         </dependency>
 
         <!-- XSTREAM -->
         <dependency>
-            <groupId>xstream</groupId>
+            <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>${xstream.version}</version>
         </dependency>
@@ -625,13 +808,23 @@
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
             <version>${org.apache.zookeeper.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- SEARCH MANAGER -->
         <dependency>
             <groupId>com.search</groupId>
             <artifactId>searchManager</artifactId>
-            <version>1.0.0-rc4</version>
+            <version>${com.search.version}</version>
         </dependency>
     </dependencies>
 
@@ -644,6 +837,44 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven.enforcer.plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <excludes>
+                                        <exclude>javassist:javaassist</exclude>
+                                        <exclude>commons-logging</exclude>
+                                        <exclude>aspectj:aspectj*</exclude>
+                                        <exclude>hqldb:hsqldb</exclude>
+                                        <exclude>log4j:log4j</exclude>
+                                        <exclude>org.slf4j:1.5*</exclude>
+                                        <exclude>org.org.slf4j:1.5*springframework:2.*</exclude>
+                                        <!-- TODO uncomment the tag below after upgrading to springframework 3.2.* -->
+                                        <!--<exclude>org.springframework:3.0.*</exclude>-->
+                                    </excludes>
+                                </bannedDependencies>
+                                <requireMavenVersion>
+                                    <version>${maven.version.range}</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${java-version}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

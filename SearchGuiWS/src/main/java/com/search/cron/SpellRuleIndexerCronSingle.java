@@ -18,16 +18,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Store;
 import com.search.manager.solr.service.SolrService;
 import com.search.manager.utility.PropertiesUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SpellRuleIndexerCronSingle extends TimerTask {
 
-	private final static Logger logger = Logger.getLogger(SpellRuleIndexerCronSingle.class);
+	 private static final Logger logger = LoggerFactory.getLogger(SpellRuleIndexerCronSingle.class);
 
 	private static final String BASE_RULE_DIR = PropertiesUtils.getValue("publishedfilepath");
 	private static final String XML_FILE_TYPE = PropertiesUtils.getValue("spellfileextension");
@@ -161,7 +162,7 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 				try {
 					bufferWritter.close();
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error("{}", e);
 				}
 			}
 		}
@@ -196,7 +197,7 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
 				try {
 					bufferedReader.close();
 				} catch (IOException e) {
-					logger.error(e);
+					logger.error("{}", e);
 				}
 			}
 		}
