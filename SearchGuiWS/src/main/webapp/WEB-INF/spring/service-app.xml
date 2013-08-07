@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-    xmlns:beans="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
-
-	<beans:bean id="deploymentRuleSolrService" class="com.search.service.DeploymentRuleServiceSolrImpl" scope="singleton">
-		<beans:property name="solrService" ref="solrService"/>
-		<beans:property name="daoService" ref="daoService"/>
-		<beans:property name="daoServiceStg" ref="daoServiceStg"/>
-		<beans:property name="mailSender" ref="mailSender"/>
-		<beans:property name="mailDetails" ref="mailDetails"/>
-	</beans:bean>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+   
+	<bean id="deploymentRuleSolrService" class="com.search.service.DeploymentRuleServiceSolrImpl" scope="singleton">
+		<property name="solrService" ref="solrService"/>
+		<property name="daoService" ref="daoService"/>
+		<property name="daoServiceStg" ref="daoServiceStg"/>
+		<property name="mailSender" ref="mailSender"/>
+		<property name="mailDetails" ref="mailDetails"/>
+	</bean>
 	
-	<beans:bean id="searchGuiService" class="com.search.webservice.SearchGuiServiceImpl" scope="singleton">
-		<beans:property name="deploymentRuleService" ref="deploymentRuleSolrService"/>
-	</beans:bean>
+	<bean id="searchGuiService" class="com.search.webservice.SearchGuiServiceImpl" scope="singleton">
+		<property name="deploymentRuleService" ref="deploymentRuleSolrService"/>
+	</bean>
 	
-</beans:beans>
+</beans>
