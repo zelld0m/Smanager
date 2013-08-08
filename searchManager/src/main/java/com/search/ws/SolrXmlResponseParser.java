@@ -99,8 +99,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
             post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
             post.addHeader("Connection", "close");
             if (logger.isDebugEnabled()) {
-                logger.debug("URL: " + post.getURI());
-                logger.debug("Parameter: " + requestParams);
+                logger.debug("URL: {} Parameter: {}", post.getURI(), requestParams);
             }
             solrResponse = client.execute(post);
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

@@ -2,6 +2,7 @@ package com.search.ws;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.BannerRuleItem;
@@ -24,8 +27,6 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.SpellRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class SolrResponseParser {
 
@@ -408,15 +409,19 @@ public abstract class SolrResponseParser {
 
     protected void logSolrError(HttpPost post, String description, Exception e) {
         StringBuilder builder = new StringBuilder();
-        builder.append(description).append(": ").append(post.getRequestLine().getUri());
+        builder.append(String.format("%s: %s", description, post.getRequestLine().getUri()));
+        
         if (post != null && post.getEntity() != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
                 post.getEntity().writeTo(baos);
                 builder.append("?").append(baos.toString("UTF-8"));
+                logger.error("URL Decoded Solr Request: {}", URLDecoder.decode(builder.toString(), "UTF-8"));
             } catch (IOException e1) {
+            } catch (UnsupportedOperationException uso){
             }
         }
+        
         logger.error(builder.toString(), e);
     }
 
