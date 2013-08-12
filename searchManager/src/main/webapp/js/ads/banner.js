@@ -639,34 +639,8 @@
 
 				ui.find("#imageTitle").text(item["imagePath"]["alias"]).end()
 				  .find(".imageAlias").val(item["imagePath"]["alias"]);
-				self.addSetAliasHandler(ui, item);
 				
-				if (!$.iequals(item["imagePath"]["path"], imagePath)){
-					BannerServiceJS.getImagePath(imagePath, {
-						callback: function(sr){
-							var iPath = sr["data"];
-							if (iPath!=null){
-								ui.find("#imageTitle").text(iPath["alias"]).end()
-								.find(".imageAlias").prop({
-									id: iPath["id"],
-									readonly: true,
-									disabled: true
-								}).val(iPath["alias"]);
-							}else{
-								// id will be used to flag new banner url
-								ui.find("#imageTitle").text("").end()
-								.find(".imageAlias").val("").prop({
-									id:"",
-									readonly: false,
-									disabled: false
-								});
-							}
-						},
-						postHook: function(e){
-							self.addSetAliasHandler(ui, item);
-						}
-					});
-				}
+				self.addSetAliasHandler(ui, item);
 			},
 			
 			validateLinkPath: function(ui, item, linkPath){
@@ -1083,7 +1057,7 @@
 							jAlert("Maximum value for priority is " +  self.selectedRuleItemTotal, "Banner");
 						}else if($.isBlank(imagePath)) {
 							jAlert("Image path is required.", "Banner");
-						}else if(!$.isValidURL(imagePath)) {
+						}else if(!$.startsWith(imagePath,"//") && !$.isValidURL(imagePath)) {
 							jAlert("Please specify a valid image path.", "Banner");
 						}else if($.isBlank(imageAlias)) {
 							jAlert("Image alias is required.", "Banner");
