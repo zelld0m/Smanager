@@ -639,36 +639,10 @@
 
 				ui.find("#imageTitle").text(item["imagePath"]["alias"]).end()
 				  .find(".imageAlias").val(item["imagePath"]["alias"]);
-				self.addSetAliasHandler(ui, item);
 				
-				if (!$.iequals(item["imagePath"]["path"], imagePath)){
-					BannerServiceJS.getImagePath(imagePath, {
-						callback: function(sr){
-							var iPath = sr["data"];
-							if (iPath!=null){
-								ui.find("#imageTitle").text(iPath["alias"]).end()
-								.find(".imageAlias").prop({
-									id: iPath["id"],
-									readonly: true,
-									disabled: true
-								}).val(iPath["alias"]);
-							}else{
-								// id will be used to flag new banner url
-								ui.find("#imageTitle").text("").end()
-								.find(".imageAlias").val("").prop({
-									id:"",
-									readonly: false,
-									disabled: false
-								});
-							}
-						},
-						postHook: function(e){
-							self.addSetAliasHandler(ui, item);
-						}
-					});
-				}
+				self.addSetAliasHandler(ui, item);
 			},
-
+			
 			validateLinkPath: function(ui, item, linkPath){
 				var validURL = false;
 				ui.find("#linkPath").attr("data-valid", false);
@@ -711,7 +685,6 @@
 				}else{
 					jAlert("Please specify a link path", "Banner");
 				}
-				
 			},
 
 			previewImage: function(ui, item, imagePath){
@@ -1037,9 +1010,9 @@
 						"imagePath": imagePath,
 						"imageAlias": imageAlias,
 						
-						"priority": $.isNotBlank(priority) && $.isNumeric(priority) && !$.iequals(priority, $.trim(item["priority"]))?  priority : null,
-						"startDate": $.isNotBlank(startDate) && $.isDate(startDate) && !$.iequals(startDate, item["formattedStartDate"]) ?  startDate: null,
-						"endDate": $.isNotBlank(endDate) && $.isDate(endDate) && !$.iequals(endDate, item["formattedEndDate"])?  endDate: null,
+						"priority": $.isNotBlank(priority) && !$.iequals(priority, $.trim(item["priority"]))?  priority : null,
+						"startDate": $.isNotBlank(startDate) && !$.iequals(startDate, item["formattedStartDate"]) ?  startDate: null,
+						"endDate": $.isNotBlank(endDate) && !$.iequals(endDate, item["formattedEndDate"])?  endDate: null,
 						"imageAlt": $.isNotBlank(imageAlt) &&  !$.iequals(imageAlt, item["imageAlt"]) ? imageAlt: null,
 						"linkPath": $.isNotBlank(linkPath) && !$.iequals(linkPath, item["linkPath"])  ? linkPath: null,
 						"description": $.isNotBlank(description) && !$.iequals(description, item["description"]) ? description: null,
@@ -1078,13 +1051,13 @@
 						
 						if(dirtyCount == 0){
 							jAlert("Nothing to update", "Banner");
-						}else if($.isBlank(priority) || !$.isNumeric(priority)) {
+						}else if($.isBlank(priority) || !$.isNumeric(priority) || priority.indexOf(".") >= 0) {
 							jAlert("Priority is required and must be a number", "Banner");
 						}else if(priority > self.selectedRuleItemTotal) {
 							jAlert("Maximum value for priority is " +  self.selectedRuleItemTotal, "Banner");
 						}else if($.isBlank(imagePath)) {
 							jAlert("Image path is required.", "Banner");
-						}else if(!$.isValidURL(imagePath)) {
+						}else if(!$.startsWith(imagePath,"//") && !$.isValidURL(imagePath)) {
 							jAlert("Please specify a valid image path.", "Banner");
 						}else if($.isBlank(imageAlias)) {
 							jAlert("Image alias is required.", "Banner");
