@@ -668,7 +668,7 @@
 					});
 				}
 			},
-
+			
 			validateLinkPath: function(ui, item, linkPath){
 				var validURL = false;
 				ui.find("#linkPath").attr("data-valid", false);
@@ -711,7 +711,6 @@
 				}else{
 					jAlert("Please specify a link path", "Banner");
 				}
-				
 			},
 
 			previewImage: function(ui, item, imagePath){
@@ -1037,9 +1036,9 @@
 						"imagePath": imagePath,
 						"imageAlias": imageAlias,
 						
-						"priority": $.isNotBlank(priority) && $.isNumeric(priority) && !$.iequals(priority, $.trim(item["priority"]))?  priority : null,
-						"startDate": $.isNotBlank(startDate) && $.isDate(startDate) && !$.iequals(startDate, item["formattedStartDate"]) ?  startDate: null,
-						"endDate": $.isNotBlank(endDate) && $.isDate(endDate) && !$.iequals(endDate, item["formattedEndDate"])?  endDate: null,
+						"priority": $.isNotBlank(priority) && !$.iequals(priority, $.trim(item["priority"]))?  priority : null,
+						"startDate": $.isNotBlank(startDate) && !$.iequals(startDate, item["formattedStartDate"]) ?  startDate: null,
+						"endDate": $.isNotBlank(endDate) && !$.iequals(endDate, item["formattedEndDate"])?  endDate: null,
 						"imageAlt": $.isNotBlank(imageAlt) &&  !$.iequals(imageAlt, item["imageAlt"]) ? imageAlt: null,
 						"linkPath": $.isNotBlank(linkPath) && !$.iequals(linkPath, item["linkPath"])  ? linkPath: null,
 						"description": $.isNotBlank(description) && !$.iequals(description, item["description"]) ? description: null,
@@ -1078,7 +1077,7 @@
 						
 						if(dirtyCount == 0){
 							jAlert("Nothing to update", "Banner");
-						}else if($.isBlank(priority) || !$.isNumeric(priority)) {
+						}else if($.isBlank(priority) || !$.isNumeric(priority) || priority.indexOf(".") >= 0) {
 							jAlert("Priority is required and must be a number", "Banner");
 						}else if(priority > self.selectedRuleItemTotal) {
 							jAlert("Maximum value for priority is " +  self.selectedRuleItemTotal, "Banner");
