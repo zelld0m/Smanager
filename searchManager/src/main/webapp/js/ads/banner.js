@@ -1010,12 +1010,12 @@
 						"imagePath": imagePath,
 						"imageAlias": imageAlias,
 						
-						"priority": $.isNotBlank(priority) && !$.iequals(priority, $.trim(item["priority"]))?  priority : null,
-						"startDate": $.isNotBlank(startDate) && !$.iequals(startDate, item["formattedStartDate"]) ?  startDate: null,
-						"endDate": $.isNotBlank(endDate) && !$.iequals(endDate, item["formattedEndDate"])?  endDate: null,
-						"imageAlt": $.isNotBlank(imageAlt) &&  !$.iequals(imageAlt, item["imageAlt"]) ? imageAlt: null,
-						"linkPath": $.isNotBlank(linkPath) && !$.iequals(linkPath, item["linkPath"])  ? linkPath: null,
-						"description": $.isNotBlank(description) && !$.iequals(description, item["description"]) ? description: null,
+						"priority": !$.iequals(priority, $.trim(item["priority"]))?  priority : null,
+						"startDate": !$.iequals(startDate, item["formattedStartDate"]) ?  startDate: null,
+						"endDate": !$.iequals(endDate, item["formattedEndDate"])?  endDate: null,
+						"imageAlt": !$.iequals(imageAlt, item["imageAlt"]) ? imageAlt: null,
+						"linkPath": !$.iequals(linkPath, item["linkPath"])  ? linkPath: null,
+						"description": !$.iequals(description, item["description"]) ? description: null,
 						"disable": disable != item["disabled"] ? disable : null,
 						"openNewWindow": openNewWindow != item["openNewWindow"] ? openNewWindow: null,
 				};
