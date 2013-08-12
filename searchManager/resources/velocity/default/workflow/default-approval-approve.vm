@@ -2,7 +2,7 @@
 	<body>
 		Hi ${recipient},
 		
-		<p>The following <b>${ruleType}</b> rules were approved by <b>${actionBy}</b> on <b>${actionDate}</b>.</p>
+		<p>The following <b>${store}<b> <b>${ruleType}</b> rules were approved by <b>${actionBy}</b> on <b>${actionDate}</b>.</p>
 		<div>
 			${rules}
 		</div>
