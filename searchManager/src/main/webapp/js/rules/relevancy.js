@@ -768,8 +768,14 @@
 		$('div#relevancy .saveIcon').off().on({
 			click:function(e){
 				var field = getRelevancyField(e);
-				if (!e.data.locked && allowModify ) 
-					addRuleFieldValue(field.id, field.value);
+				if (!e.data.locked && allowModify )  {
+					if(field.value == selectedRule.parameters[field.id]) {
+						jAlert("Nothing to update test.","Ranking Rule");
+						return false;
+					} else {
+						addRuleFieldValue(field.id, field.value);
+					}
+				}
 			},
 			mouseenter: showHoverInfo
 		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
@@ -898,8 +904,9 @@
 	var addRuleFieldValue = function(field, value){
 		var $parent = $('div#relevancy div[id="' + field + '"]');
 		var label = $parent.find('span[id="fieldLabel"]').html();
-
+		
 		//Save validation TODO: field validation
+		
 		if (field=="tie" && !(value >= 0 && value <= 1)){
 			jAlert("Tie value should be between 0 - 1.","Ranking Rule");
 			return false;
