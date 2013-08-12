@@ -189,6 +189,7 @@ public class WorkflowNotificationMailService {
 			messageDetails.setBcc(bcc.toArray(new String[bcc.size()]));
 		}
 
+		model.put("store", UtilityService.getStoreId());
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		model.put("ruleType", ruleEntity != null ? ruleEntity.getValues()
 				.get(0) : ruleType);
