@@ -153,7 +153,7 @@
 					$li.find("#restoreLink").show();
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
-					$li.find("#verDate").text(item["formattedCreatedDateTime"] ? item["formattedCreatedDateTime"] : "");
+					$li.find("#verDate").text($.isNotBlank(item["formattedCreatedDateTime"]) ? item["formattedCreatedDateTime"] : "");
 				}
 				else {
 					$li.find("#verName").text("Not Available");
