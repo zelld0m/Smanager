@@ -213,33 +213,33 @@ public class DownloadService {
 		
 		int recordCount = model.getNumberOfRecords();
 		
+		HSSFCellStyle cellStyleHeaderParam = getCellStyle(workbook, styleMap, "SUBREPORT_HEADER_NAME", createFont(workbook, (short)11, true), 
+				null, null, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
+		HSSFCellStyle cellStyleHeaderValue = getCellStyle(workbook, styleMap, "SUBREPORT_HEADER_VALUE", createFont(workbook, (short)11, false), 
+				CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false);
+		
+		/* Record Headers */
+		SubReportHeader subReportHeader = model.getSubReportHeader();
+		if(subReportHeader != null && subReportHeader.getRows() != null){
+			Map<String, String> items = subReportHeader.getRows();
+			
+			for(Map.Entry<String, String> entry : items.entrySet()){
+				HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
+				createCell(rowHeader, 0, cellStyleHeaderParam, entry.getKey());
+				createCell(rowHeader, 1, cellStyleHeaderValue, entry.getValue());
+				worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
+			}
+		}
+			
+		/* Column Headers */
+		HSSFCellStyle headerCellStyle = getCellStyle(workbook, styleMap, "COLUMN_NAME", createFont(workbook, (short)10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
+				CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_40_PERCENT.index, HSSFCellStyle.SOLID_FOREGROUND);
+		HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
+		for (int i = 0; i < model.getColumnCount(); i++) {
+			createCell(rowHeader, i, headerCellStyle, model.getColumn(i).label());
+		}
+		
 		if(recordCount > 0){
-			
-			HSSFCellStyle cellStyleHeaderParam = getCellStyle(workbook, styleMap, "SUBREPORT_HEADER_NAME", createFont(workbook, (short)11, true), 
-					null, null, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
-			HSSFCellStyle cellStyleHeaderValue = getCellStyle(workbook, styleMap, "SUBREPORT_HEADER_VALUE", createFont(workbook, (short)11, false), 
-					CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false);
-			
-			/* Record Headers */
-			SubReportHeader subReportHeader = model.getSubReportHeader();
-			if(subReportHeader != null && subReportHeader.getRows() != null){
-				Map<String, String> items = subReportHeader.getRows();
-				
-				for(Map.Entry<String, String> entry : items.entrySet()){
-					HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
-					createCell(rowHeader, 0, cellStyleHeaderParam, entry.getKey());
-					createCell(rowHeader, 1, cellStyleHeaderValue, entry.getValue());
-					worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
-				}
-			}
-				
-			/* Column Headers */
-			HSSFCellStyle headerCellStyle = getCellStyle(workbook, styleMap, "COLUMN_NAME", createFont(workbook, (short)10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
-					CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_40_PERCENT.index, HSSFCellStyle.SOLID_FOREGROUND);
-			HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
-			for (int i = 0; i < model.getColumnCount(); i++) {
-				createCell(rowHeader, i, headerCellStyle, model.getColumn(i).label());
-			}
 			
 			/* Data */
 			Font bodyFont = createFont(workbook, (short)10, false);
