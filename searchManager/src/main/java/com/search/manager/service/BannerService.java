@@ -330,10 +330,8 @@ public class BannerService extends RuleService {
 		} else if ("date".equalsIgnoreCase(filter)) {
 			startDate = endDate = now;
 			if (StringUtils.isNotBlank(dateFilter)) {
-				startDate = JodaDateTimeUtil.toDateTimeFromStorePattern(
-						storeId, dateFilter, JodaPatternType.DATE);
-				endDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId,
-						dateFilter, JodaPatternType.DATE);
+				startDate = JodaDateTimeUtil.toUserDateTimeZone(storeId, dateFilter).toDateMidnight().toDateTime();
+				endDate = startDate;
 			}
 			disabled = false;
 		}
