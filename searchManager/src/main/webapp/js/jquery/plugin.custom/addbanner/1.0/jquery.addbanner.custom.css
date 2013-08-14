@@ -16,6 +16,7 @@
 .plugin-addbanner #buttonset {
 	float: right;
 	margin-bottom:10px;
+	margin-top:10px;
 }
 
 .plugin-addbanner input#startDate,.plugin-addbanner input#endDate {
