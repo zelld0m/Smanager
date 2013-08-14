@@ -283,7 +283,11 @@ public class SolrDocUtil {
         solrInputDocument.addField("phraseSlop", relevancy.getPhraseSlop());
         solrInputDocument.addField("queryFields", relevancy.getQueryFields());
         solrInputDocument.addField("querySlop", relevancy.getQuerySlop());
-
+        solrInputDocument.addField("phraseBigramFields", relevancy.getPhraseBigramFields());
+        solrInputDocument.addField("phraseBigramSlop", relevancy.getPhraseBigramSlop());
+        solrInputDocument.addField("phraseTrigramFields", relevancy.getPhraseTrigramFields());
+        solrInputDocument.addField("phraseTrigramSlop", relevancy.getPhraseTrigramSlop());
+        
         // Value of 'id' is <storeId>_<relevancyName>_<relevancyId>
         String id = relevancy.getStore().getStoreId() + "_"
                 + relevancy.getRelevancyName() + "_"
