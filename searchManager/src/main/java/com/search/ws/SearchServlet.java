@@ -746,6 +746,7 @@ public class SearchServlet extends HttpServlet {
                             for (String field : fields) {
                                 if (StringUtils.equals(field, "*") || StringUtils.equals(field, "EDP")) {
                                     includeEDP = true;
+                                    break;
                                 }
                             }
                             if (!includeEDP) {
