@@ -1,9 +1,14 @@
 package com.search.ws.client;
 
-public interface SearchGuiService extends javax.xml.rpc.Service {
-    public java.lang.String getSearchGuiServiceHttpPortAddress();
+import java.net.URL;
 
-    public com.search.ws.client.SearchGuiServicePortType getSearchGuiServiceHttpPort() throws javax.xml.rpc.ServiceException;
+import javax.xml.rpc.Service;
+import javax.xml.rpc.ServiceException;
 
-    public com.search.ws.client.SearchGuiServicePortType getSearchGuiServiceHttpPort(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+public interface SearchGuiService extends Service {
+    public String getSearchGuiServiceHttpPortAddress();
+
+    public SearchGuiServicePortType getSearchGuiServiceHttpPort() throws ServiceException;
+
+    public SearchGuiServicePortType getSearchGuiServiceHttpPort(URL portAddress) throws ServiceException;
 }

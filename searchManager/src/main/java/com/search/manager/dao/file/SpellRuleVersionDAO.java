@@ -18,6 +18,7 @@ import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
 
 @Repository("spellRuleVersionDAO")
+@SuppressWarnings("unchecked")
 public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	private static Logger logger = LoggerFactory.getLogger(SpellRuleVersionDAO.class);

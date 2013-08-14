@@ -1,131 +1,146 @@
 package com.search.ws.client;
 
-public class SearchGuiServiceLocator extends org.apache.axis.client.Service implements com.search.ws.client.SearchGuiService {
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.rmi.Remote;
 
-    public SearchGuiServiceLocator() {
-    }
+import javax.xml.namespace.QName;
+import javax.xml.rpc.ServiceException;
 
+import org.apache.axis.AxisFault;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Stub;
 
-    public SearchGuiServiceLocator(org.apache.axis.EngineConfiguration config) {
-        super(config);
-    }
+public class SearchGuiServiceLocator extends Service implements SearchGuiService {
 
-    public SearchGuiServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
-        super(wsdlLoc, sName);
-    }
+	private static final long serialVersionUID = 1L;
 
-    // Use to get a proxy class for SearchGuiServiceHttpPort
-    private java.lang.String SearchGuiServiceHttpPort_address = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";
+	public SearchGuiServiceLocator() {
+	}
 
-    @Override
-    public java.lang.String getSearchGuiServiceHttpPortAddress() {
-        return SearchGuiServiceHttpPort_address;
-    }
+	public SearchGuiServiceLocator(EngineConfiguration config) {
+		super(config);
+	}
 
-    // The WSDD service name defaults to the port name.
-    private java.lang.String SearchGuiServiceHttpPortWSDDServiceName = "SearchGuiServiceHttpPort";
+	public SearchGuiServiceLocator(String wsdlLoc, QName sName) throws ServiceException {
+		super(wsdlLoc, sName);
+	}
 
-    public java.lang.String getSearchGuiServiceHttpPortWSDDServiceName() {
-        return SearchGuiServiceHttpPortWSDDServiceName;
-    }
+	// Use to get a proxy class for SearchGuiServiceHttpPort
+	private String SearchGuiServiceHttpPort_address = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";
 
-    public void setSearchGuiServiceHttpPortWSDDServiceName(java.lang.String name) {
-        SearchGuiServiceHttpPortWSDDServiceName = name;
-    }
+	@Override
+	public String getSearchGuiServiceHttpPortAddress() {
+		return SearchGuiServiceHttpPort_address;
+	}
 
-    @Override
-    public com.search.ws.client.SearchGuiServicePortType getSearchGuiServiceHttpPort() throws javax.xml.rpc.ServiceException {
-       java.net.URL endpoint;
-        try {
-            endpoint = new java.net.URL(SearchGuiServiceHttpPort_address);
-        }
-        catch (java.net.MalformedURLException e) {
-            throw new javax.xml.rpc.ServiceException(e);
-        }
-        return getSearchGuiServiceHttpPort(endpoint);
-    }
+	// The WSDD service name defaults to the port name.
+	private String SearchGuiServiceHttpPortWSDDServiceName = "SearchGuiServiceHttpPort";
 
-    @Override
-    public com.search.ws.client.SearchGuiServicePortType getSearchGuiServiceHttpPort(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
-        try {
-            com.search.ws.client.SearchGuiServiceHttpBindingStub _stub = new com.search.ws.client.SearchGuiServiceHttpBindingStub(portAddress, this);
-            _stub.setPortName(getSearchGuiServiceHttpPortWSDDServiceName());
-            return _stub;
-        }
-        catch (org.apache.axis.AxisFault e) {
-            return null;
-        }
-    }
+	public String getSearchGuiServiceHttpPortWSDDServiceName() {
+		return SearchGuiServiceHttpPortWSDDServiceName;
+	}
 
-    public void setSearchGuiServiceHttpPortEndpointAddress(java.lang.String address) {
-        SearchGuiServiceHttpPort_address = address;
-    }
+	public void setSearchGuiServiceHttpPortWSDDServiceName(String name) {
+		SearchGuiServiceHttpPortWSDDServiceName = name;
+	}
 
-    /**
-     * For the given interface, get the stub implementation.
-     * If this service has no port for the given interface,
-     * then ServiceException is thrown.
-     */
-    @Override
-    public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
-        try {
-            if (com.search.ws.client.SearchGuiServicePortType.class.isAssignableFrom(serviceEndpointInterface)) {
-                com.search.ws.client.SearchGuiServiceHttpBindingStub _stub = new com.search.ws.client.SearchGuiServiceHttpBindingStub(new java.net.URL(SearchGuiServiceHttpPort_address), this);
-                _stub.setPortName(getSearchGuiServiceHttpPortWSDDServiceName());
-                return _stub;
-            }
-        }
-        catch (java.lang.Throwable t) {
-            throw new javax.xml.rpc.ServiceException(t);
-        }
-        throw new javax.xml.rpc.ServiceException("There is no stub implementation for the interface:  " + (serviceEndpointInterface == null ? "null" : serviceEndpointInterface.getName()));
-    }
+	@Override
+	public SearchGuiServicePortType getSearchGuiServiceHttpPort() throws ServiceException {
+		URL endpoint;
+		try {
+			endpoint = new URL(SearchGuiServiceHttpPort_address);
+		} catch (MalformedURLException e) {
+			throw new ServiceException(e);
+		}
+		return getSearchGuiServiceHttpPort(endpoint);
+	}
 
-    /**
-     * For the given interface, get the stub implementation.
-     * If this service has no port for the given interface,
-     * then ServiceException is thrown.
-     */
-    @Override
-    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
-        if (portName == null) {
-            return getPort(serviceEndpointInterface);
-        }
-        java.lang.String inputPortName = portName.getLocalPart();
-        if ("SearchGuiServiceHttpPort".equals(inputPortName)) {
-            return getSearchGuiServiceHttpPort();
-        }
-        else  {
-            java.rmi.Remote _stub = getPort(serviceEndpointInterface);
-            ((org.apache.axis.client.Stub) _stub).setPortName(portName);
-            return _stub;
-        }
-    }
+	@Override
+	public SearchGuiServicePortType getSearchGuiServiceHttpPort(URL portAddress) throws ServiceException {
+		try {
+			SearchGuiServiceHttpBindingStub _stub = new SearchGuiServiceHttpBindingStub(portAddress, this);
+			_stub.setPortName(getSearchGuiServiceHttpPortWSDDServiceName());
+			return _stub;
+		} catch (AxisFault e) {
+			return null;
+		}
+	}
 
-    @Override
-    public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("http://ws.search.com/client", "SearchGuiService");
-    }
+	public void setSearchGuiServiceHttpPortEndpointAddress(String address) {
+		SearchGuiServiceHttpPort_address = address;
+	}
 
-    /**
-    * Set the endpoint address for the specified port name.
-    */
-//    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
-//        
-//if ("SearchGuiServiceHttpPort".equals(portName)) {
-//            setSearchGuiServiceHttpPortEndpointAddress(address);
-//        }
-//        else 
-//{ // Unknown Port Name
-//            throw new javax.xml.rpc.ServiceException(" Cannot set Endpoint Address for Unknown Port" + portName);
-//        }
-//    }
+	/**
+	 * For the given interface, get the stub implementation. If this service has
+	 * no port for the given interface, then ServiceException is thrown.
+	 */
+	@Override
+	@SuppressWarnings("rawtypes")
+	public Remote getPort(Class serviceEndpointInterface) throws ServiceException {
+		try {
+			if (SearchGuiServicePortType.class.isAssignableFrom(serviceEndpointInterface)) {
+				SearchGuiServiceHttpBindingStub _stub = new SearchGuiServiceHttpBindingStub(new URL(
+				        SearchGuiServiceHttpPort_address), this);
+				_stub.setPortName(getSearchGuiServiceHttpPortWSDDServiceName());
+				return _stub;
+			}
+		} catch (Throwable t) {
+			throw new ServiceException(t);
+		}
+		throw new ServiceException("There is no stub implementation for the interface:  "
+		        + (serviceEndpointInterface == null ? "null" : serviceEndpointInterface.getName()));
+	}
 
-//    /**
-//    * Set the endpoint address for the specified port name.
-//    */
-//    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
-//        setEndpointAddress(portName.getLocalPart(), address);
-//    }
+	/**
+	 * For the given interface, get the stub implementation. If this service has
+	 * no port for the given interface, then ServiceException is thrown.
+	 */
+	@Override
+	@SuppressWarnings("rawtypes")
+	public Remote getPort(QName portName, Class serviceEndpointInterface) throws ServiceException {
+		if (portName == null) {
+			return getPort(serviceEndpointInterface);
+		}
+		String inputPortName = portName.getLocalPart();
+		if ("SearchGuiServiceHttpPort".equals(inputPortName)) {
+			return getSearchGuiServiceHttpPort();
+		} else {
+			Remote _stub = getPort(serviceEndpointInterface);
+			((Stub) _stub).setPortName(portName);
+			return _stub;
+		}
+	}
+
+	@Override
+	public QName getServiceName() {
+		return new QName("http://ws.search.com/client", "SearchGuiService");
+	}
+
+	/**
+	 * Set the endpoint address for the specified port name.
+	 */
+	// public void setEndpointAddress(java.lang.String portName,
+	// java.lang.String address) throws javax.xml.rpc.ServiceException {
+	//
+	// if ("SearchGuiServiceHttpPort".equals(portName)) {
+	// setSearchGuiServiceHttpPortEndpointAddress(address);
+	// }
+	// else
+	// { // Unknown Port Name
+	// throw new
+	// javax.xml.rpc.ServiceException(" Cannot set Endpoint Address for Unknown Port"
+	// + portName);
+	// }
+	// }
+
+	// /**
+	// * Set the endpoint address for the specified port name.
+	// */
+	// public void setEndpointAddress(javax.xml.namespace.QName portName,
+	// java.lang.String address) throws javax.xml.rpc.ServiceException {
+	// setEndpointAddress(portName.getLocalPart(), address);
+	// }
 
 }

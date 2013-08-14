@@ -1,189 +1,182 @@
 package com.search.ws.client;
 
-public class SearchGuiServiceHttpBindingStub extends
-		org.apache.axis.client.Stub implements
-		com.search.ws.client.SearchGuiServicePortType {
-	private java.util.Vector cachedSerClasses = new java.util.Vector();
-	private java.util.Vector cachedSerQNames = new java.util.Vector();
-	private java.util.Vector cachedSerFactories = new java.util.Vector();
-	private java.util.Vector cachedDeserFactories = new java.util.Vector();
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.Enumeration;
+import java.util.Vector;
 
-	static org.apache.axis.description.OperationDesc[] _operations;
+import javax.xml.namespace.QName;
+
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.NoEndPointException;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Stub;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
+import org.apache.axis.encoding.ser.ArraySerializerFactory;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.encoding.ser.EnumDeserializerFactory;
+import org.apache.axis.encoding.ser.EnumSerializerFactory;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.JavaUtils;
+
+import com.search.manager.enums.RuleEntity;
+import com.search.webservice.model.TransportList;
+
+public class SearchGuiServiceHttpBindingStub extends Stub implements SearchGuiServicePortType {
+	private Vector<Class<?>> cachedSerClasses = new Vector<Class<?>>();
+	private Vector<QName> cachedSerQNames = new Vector<QName>();
+	private Vector<Object> cachedSerFactories = new Vector<Object>();
+	private Vector<Object> cachedDeserFactories = new Vector<Object>();
+
+	static OperationDesc[] _operations;
 
 	static {
-		_operations = new org.apache.axis.description.OperationDesc[2];
+		_operations = new OperationDesc[2];
 		_initOperationDesc1();
 	}
 
 	private static void _initOperationDesc1() {
-		org.apache.axis.description.OperationDesc oper;
-		org.apache.axis.description.ParameterDesc param;
+		OperationDesc oper;
+		ParameterDesc param;
 
-		oper = new org.apache.axis.description.OperationDesc();
+		oper = new OperationDesc();
 		oper.setName("deployRulesMap");
-		param = new org.apache.axis.description.ParameterDesc(
-				new javax.xml.namespace.QName("http://ws.search.com/client",
-						"in0"), org.apache.axis.description.ParameterDesc.IN,
-				new javax.xml.namespace.QName(
-						"http://model.webservice.search.com", "TransportList"),
-				com.search.webservice.model.TransportList.class, false, false);
+		param = new ParameterDesc(new QName("http://ws.search.com/client", "in0"), ParameterDesc.IN, new QName(
+		        "http://model.webservice.search.com", "TransportList"), TransportList.class, false, false);
 		param.setNillable(true);
 		oper.addParameter(param);
-		oper.setReturnType(new javax.xml.namespace.QName(
-				"http://ws.search.com/client", "anyType2anyTypeMap"));
-		oper.setReturnClass(com.search.ws.client.AnyType2AnyTypeMapEntry[].class);
-		oper.setReturnQName(new javax.xml.namespace.QName(
-				"http://ws.search.com/client", "out"));
+		oper.setReturnType(new QName("http://ws.search.com/client", "anyType2anyTypeMap"));
+		oper.setReturnClass(AnyType2AnyTypeMapEntry[].class);
+		oper.setReturnQName(new QName("http://ws.search.com/client", "out"));
 		param = oper.getReturnParamDesc();
-		param.setItemQName(new javax.xml.namespace.QName(
-				"http://ws.search.com/client", "entry"));
-		oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
-		oper.setUse(org.apache.axis.constants.Use.LITERAL);
+		param.setItemQName(new QName("http://ws.search.com/client", "entry"));
+		oper.setStyle(Style.WRAPPED);
+		oper.setUse(Use.LITERAL);
 		_operations[0] = oper;
 
-		oper = new org.apache.axis.description.OperationDesc();
+		oper = new OperationDesc();
 		oper.setName("unDeployRulesMap");
-		param = new org.apache.axis.description.ParameterDesc(
-				new javax.xml.namespace.QName("http://ws.search.com/client",
-						"in0"), org.apache.axis.description.ParameterDesc.IN,
-				new javax.xml.namespace.QName(
-						"http://model.webservice.search.com", "TransportList"),
-				com.search.webservice.model.TransportList.class, false, false);
+		param = new ParameterDesc(new QName("http://ws.search.com/client", "in0"), ParameterDesc.IN, new QName(
+		        "http://model.webservice.search.com", "TransportList"), TransportList.class, false, false);
 		param.setNillable(true);
 		oper.addParameter(param);
-		oper.setReturnType(new javax.xml.namespace.QName(
-				"http://ws.search.com/client", "anyType2anyTypeMap"));
-		oper.setReturnClass(com.search.ws.client.AnyType2AnyTypeMapEntry[].class);
-		oper.setReturnQName(new javax.xml.namespace.QName(
-				"http://ws.search.com/client", "out"));
+		oper.setReturnType(new QName("http://ws.search.com/client", "anyType2anyTypeMap"));
+		oper.setReturnClass(AnyType2AnyTypeMapEntry[].class);
+		oper.setReturnQName(new QName("http://ws.search.com/client", "out"));
 		param = oper.getReturnParamDesc();
-		param.setItemQName(new javax.xml.namespace.QName(
-				"http://ws.search.com/client", "entry"));
-		oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
-		oper.setUse(org.apache.axis.constants.Use.LITERAL);
+		param.setItemQName(new QName("http://ws.search.com/client", "entry"));
+		oper.setStyle(Style.WRAPPED);
+		oper.setUse(Use.LITERAL);
 		_operations[1] = oper;
 
 	}
 
-	public SearchGuiServiceHttpBindingStub() throws org.apache.axis.AxisFault {
+	public SearchGuiServiceHttpBindingStub() throws AxisFault {
 		this(null);
 	}
 
-	public SearchGuiServiceHttpBindingStub(java.net.URL endpointURL,
-			javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
+	public SearchGuiServiceHttpBindingStub(URL endpointURL, javax.xml.rpc.Service service) throws AxisFault {
 		this(service);
 		super.cachedEndpoint = endpointURL;
 	}
 
-	public SearchGuiServiceHttpBindingStub(javax.xml.rpc.Service service)
-			throws org.apache.axis.AxisFault {
+	public SearchGuiServiceHttpBindingStub(javax.xml.rpc.Service service) throws AxisFault {
 		if (service == null) {
-			super.service = new org.apache.axis.client.Service();
+			super.service = new Service();
 		} else {
 			super.service = service;
 		}
-		((org.apache.axis.client.Service) super.service)
-				.setTypeMappingVersion("1.2");
-		java.lang.Class cls;
-		javax.xml.namespace.QName qName;
-		javax.xml.namespace.QName qName2;
-		java.lang.Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;
-		java.lang.Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;
-		java.lang.Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;
-		java.lang.Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;
+		((Service) super.service).setTypeMappingVersion("1.2");
+		Class<?> cls;
+		QName qName;
+		QName qName2;
 
-		qName = new javax.xml.namespace.QName(
-				"http://enums.manager.search.com", "RuleEntity");
+		Class<BeanSerializerFactory> beansf = BeanSerializerFactory.class;
+		Class<BeanDeserializerFactory> beandf = BeanDeserializerFactory.class;
+		Class<EnumSerializerFactory> enumsf = EnumSerializerFactory.class;
+		Class<EnumDeserializerFactory> enumdf = EnumDeserializerFactory.class;
+
+		qName = new QName("http://enums.manager.search.com", "RuleEntity");
 		cachedSerQNames.add(qName);
-		cls = com.search.manager.enums.RuleEntity.class;
+		cls = RuleEntity.class;
 		cachedSerClasses.add(cls);
 		cachedSerFactories.add(enumsf);
 		cachedDeserFactories.add(enumdf);
 
-		qName = new javax.xml.namespace.QName(
-				"http://model.webservice.search.com", "TransportList");
+		qName = new QName("http://model.webservice.search.com", "TransportList");
 		cachedSerQNames.add(qName);
-		cls = com.search.webservice.model.TransportList.class;
+		cls = TransportList.class;
 		cachedSerClasses.add(cls);
 		cachedSerFactories.add(beansf);
 		cachedDeserFactories.add(beandf);
 
-		qName = new javax.xml.namespace.QName("http://ws.search.com/client",
-				">anyType2anyTypeMap>entry");
+		qName = new QName("http://ws.search.com/client", ">anyType2anyTypeMap>entry");
 		cachedSerQNames.add(qName);
-		cls = com.search.ws.client.AnyType2AnyTypeMapEntry.class;
+		cls = AnyType2AnyTypeMapEntry.class;
 		cachedSerClasses.add(cls);
 		cachedSerFactories.add(beansf);
 		cachedDeserFactories.add(beandf);
 
-		qName = new javax.xml.namespace.QName("http://ws.search.com/client",
-				">deployRulesMap");
+		qName = new QName("http://ws.search.com/client", ">deployRulesMap");
 		cachedSerQNames.add(qName);
-		cls = com.search.ws.client.DeployRulesMap.class;
+		cls = DeployRulesMap.class;
 		cachedSerClasses.add(cls);
 		cachedSerFactories.add(beansf);
 		cachedDeserFactories.add(beandf);
 
-		qName = new javax.xml.namespace.QName("http://ws.search.com/client",
-				">deployRulesMapResponse");
+		qName = new QName("http://ws.search.com/client", ">deployRulesMapResponse");
 		cachedSerQNames.add(qName);
-		cls = com.search.ws.client.DeployRulesMapResponse.class;
+		cls = DeployRulesMapResponse.class;
 		cachedSerClasses.add(cls);
 		cachedSerFactories.add(beansf);
 		cachedDeserFactories.add(beandf);
 
-		qName = new javax.xml.namespace.QName("http://ws.search.com/client",
-				">unDeployRulesMap");
+		qName = new QName("http://ws.search.com/client", ">unDeployRulesMap");
 		cachedSerQNames.add(qName);
-		cls = com.search.ws.client.UnDeployRulesMap.class;
+		cls = UnDeployRulesMap.class;
 		cachedSerClasses.add(cls);
 		cachedSerFactories.add(beansf);
 		cachedDeserFactories.add(beandf);
 
-		qName = new javax.xml.namespace.QName("http://ws.search.com/client",
-				">unDeployRulesMapResponse");
+		qName = new QName("http://ws.search.com/client", ">unDeployRulesMapResponse");
 		cachedSerQNames.add(qName);
-		cls = com.search.ws.client.UnDeployRulesMapResponse.class;
+		cls = UnDeployRulesMapResponse.class;
 		cachedSerClasses.add(cls);
 		cachedSerFactories.add(beansf);
 		cachedDeserFactories.add(beandf);
 
-		qName = new javax.xml.namespace.QName("http://ws.search.com/client",
-				"anyType2anyTypeMap");
+		qName = new QName("http://ws.search.com/client", "anyType2anyTypeMap");
 		cachedSerQNames.add(qName);
-		cls = com.search.ws.client.AnyType2AnyTypeMapEntry[].class;
+		cls = AnyType2AnyTypeMapEntry[].class;
 		cachedSerClasses.add(cls);
-		qName = new javax.xml.namespace.QName("http://ws.search.com/client",
-				">anyType2anyTypeMap>entry");
-		qName2 = new javax.xml.namespace.QName("http://ws.search.com/client",
-				"entry");
-		cachedSerFactories
-				.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(
-						qName, qName2));
-		cachedDeserFactories
-				.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+		qName = new QName("http://ws.search.com/client", ">anyType2anyTypeMap>entry");
+		qName2 = new QName("http://ws.search.com/client", "entry");
+		cachedSerFactories.add(new ArraySerializerFactory(qName, qName2));
+		cachedDeserFactories.add(new ArrayDeserializerFactory());
 
-		qName = new javax.xml.namespace.QName("http://ws.search.com/client",
-				"ArrayOfString");
+		qName = new QName("http://ws.search.com/client", "ArrayOfString");
 		cachedSerQNames.add(qName);
-		cls = java.lang.String[].class;
+		cls = String[].class;
 		cachedSerClasses.add(cls);
-		qName = new javax.xml.namespace.QName(
-				"http://www.w3.org/2001/XMLSchema", "string");
-		qName2 = new javax.xml.namespace.QName("http://ws.search.com/client",
-				"string");
-		cachedSerFactories
-				.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(
-						qName, qName2));
-		cachedDeserFactories
-				.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+		qName = new QName("http://www.w3.org/2001/XMLSchema", "string");
+		qName2 = new QName("http://ws.search.com/client", "string");
+		cachedSerFactories.add(new ArraySerializerFactory(qName, qName2));
+		cachedDeserFactories.add(new ArrayDeserializerFactory());
 
 	}
 
-	protected org.apache.axis.client.Call createCall()
-			throws java.rmi.RemoteException {
+	protected Call createCall() throws RemoteException {
 		try {
-			org.apache.axis.client.Call _call = super._createCall();
+			Call _call = super._createCall();
 			if (super.maintainSessionSet) {
 				_call.setMaintainSession(super.maintainSession);
 			}
@@ -202,9 +195,9 @@ public class SearchGuiServiceHttpBindingStub extends
 			if (super.cachedPortName != null) {
 				_call.setPortName(super.cachedPortName);
 			}
-			java.util.Enumeration keys = super.cachedProperties.keys();
+			Enumeration<Object> keys = super.cachedProperties.keys();
 			while (keys.hasMoreElements()) {
-				java.lang.String key = (java.lang.String) keys.nextElement();
+				String key = (String) keys.nextElement();
 				_call.setProperty(key, super.cachedProperties.get(key));
 			}
 			// All the type mapping information is registered
@@ -217,116 +210,91 @@ public class SearchGuiServiceHttpBindingStub extends
 					// must set encoding style before registering serializers
 					_call.setEncodingStyle(null);
 					for (int i = 0; i < cachedSerFactories.size(); ++i) {
-						java.lang.Class cls = (java.lang.Class) cachedSerClasses
-								.get(i);
-						javax.xml.namespace.QName qName = (javax.xml.namespace.QName) cachedSerQNames
-								.get(i);
-						java.lang.Object x = cachedSerFactories.get(i);
+						Class<?> cls = (Class<?>) cachedSerClasses.get(i);
+						QName qName = cachedSerQNames.get(i);
+						Object x = cachedSerFactories.get(i);
 						if (x instanceof Class) {
-							java.lang.Class sf = (java.lang.Class) cachedSerFactories
-									.get(i);
-							java.lang.Class df = (java.lang.Class) cachedDeserFactories
-									.get(i);
+							Class<?> sf = (Class<?>) cachedSerFactories.get(i);
+							Class<?> df = (Class<?>) cachedDeserFactories.get(i);
 							_call.registerTypeMapping(cls, qName, sf, df, false);
 						} else if (x instanceof javax.xml.rpc.encoding.SerializerFactory) {
-							org.apache.axis.encoding.SerializerFactory sf = (org.apache.axis.encoding.SerializerFactory) cachedSerFactories
-									.get(i);
-							org.apache.axis.encoding.DeserializerFactory df = (org.apache.axis.encoding.DeserializerFactory) cachedDeserFactories
-									.get(i);
+							SerializerFactory sf = (SerializerFactory) cachedSerFactories.get(i);
+							DeserializerFactory df = (DeserializerFactory) cachedDeserFactories.get(i);
 							_call.registerTypeMapping(cls, qName, sf, df, false);
 						}
 					}
 				}
 			}
 			return _call;
-		} catch (java.lang.Throwable _t) {
-			throw new org.apache.axis.AxisFault(
-					"Failure trying to get the Call object", _t);
+		} catch (Throwable _t) {
+			throw new AxisFault("Failure trying to get the Call object", _t);
 		}
 	}
 
-	public com.search.ws.client.AnyType2AnyTypeMapEntry[] deployRulesMap(
-			com.search.webservice.model.TransportList in0)
-			throws java.rmi.RemoteException {
+	public AnyType2AnyTypeMapEntry[] deployRulesMap(TransportList in0) throws RemoteException {
 		if (super.cachedEndpoint == null) {
-			throw new org.apache.axis.NoEndPointException();
+			throw new NoEndPointException();
 		}
-		org.apache.axis.client.Call _call = createCall();
+		Call _call = createCall();
 		_call.setOperation(_operations[0]);
 		// _call.setUseSOAPAction(true);
 		// _call.setSOAPActionURI("");
 		_call.setEncodingStyle(null);
-		_call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR,
-				Boolean.FALSE);
-		_call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS,
-				Boolean.FALSE);
-		_call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-		_call.setOperationName(new javax.xml.namespace.QName(
-				"http://ws.search.com/client", "deployRulesMap"));
+		_call.setProperty(Call.SEND_TYPE_ATTR, Boolean.FALSE);
+		_call.setProperty(AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+		_call.setSOAPVersion(SOAPConstants.SOAP11_CONSTANTS);
+		_call.setOperationName(new QName("http://ws.search.com/client", "deployRulesMap"));
 
 		setRequestHeaders(_call);
 		setAttachments(_call);
 		try {
-			java.lang.Object _resp = _call
-					.invoke(new java.lang.Object[] { in0 });
+			Object _resp = _call.invoke(new Object[] { in0 });
 
-			if (_resp instanceof java.rmi.RemoteException) {
-				throw (java.rmi.RemoteException) _resp;
+			if (_resp instanceof RemoteException) {
+				throw (RemoteException) _resp;
 			} else {
 				extractAttachments(_call);
 				try {
-					return (com.search.ws.client.AnyType2AnyTypeMapEntry[]) _resp;
-				} catch (java.lang.Exception _exception) {
-					return (com.search.ws.client.AnyType2AnyTypeMapEntry[]) org.apache.axis.utils.JavaUtils
-							.convert(
-									_resp,
-									com.search.ws.client.AnyType2AnyTypeMapEntry[].class);
+					return (AnyType2AnyTypeMapEntry[]) _resp;
+				} catch (Exception _exception) {
+					return (AnyType2AnyTypeMapEntry[]) JavaUtils.convert(_resp, AnyType2AnyTypeMapEntry[].class);
 				}
 			}
-		} catch (org.apache.axis.AxisFault axisFaultException) {
+		} catch (AxisFault axisFaultException) {
 			throw axisFaultException;
 		}
 	}
 
-	public com.search.ws.client.AnyType2AnyTypeMapEntry[] unDeployRulesMap(
-			com.search.webservice.model.TransportList in0)
-			throws java.rmi.RemoteException {
+	public AnyType2AnyTypeMapEntry[] unDeployRulesMap(TransportList in0) throws RemoteException {
 		if (super.cachedEndpoint == null) {
-			throw new org.apache.axis.NoEndPointException();
+			throw new NoEndPointException();
 		}
-		org.apache.axis.client.Call _call = createCall();
+		Call _call = createCall();
 		_call.setOperation(_operations[1]);
 		// _call.setUseSOAPAction(true);
 		// _call.setSOAPActionURI("");
 		_call.setEncodingStyle(null);
-		_call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR,
-				Boolean.FALSE);
-		_call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS,
-				Boolean.FALSE);
-		_call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-		_call.setOperationName(new javax.xml.namespace.QName(
-				"http://ws.search.com/client", "unDeployRulesMap"));
+		_call.setProperty(Call.SEND_TYPE_ATTR, Boolean.FALSE);
+		_call.setProperty(AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+		_call.setSOAPVersion(SOAPConstants.SOAP11_CONSTANTS);
+		_call.setOperationName(new QName("http://ws.search.com/client", "unDeployRulesMap"));
 
 		setRequestHeaders(_call);
 		setAttachments(_call);
 		try {
-			java.lang.Object _resp = _call
-					.invoke(new java.lang.Object[] { in0 });
+			Object _resp = _call.invoke(new Object[] { in0 });
 
-			if (_resp instanceof java.rmi.RemoteException) {
-				throw (java.rmi.RemoteException) _resp;
+			if (_resp instanceof RemoteException) {
+				throw (RemoteException) _resp;
 			} else {
 				extractAttachments(_call);
 				try {
-					return (com.search.ws.client.AnyType2AnyTypeMapEntry[]) _resp;
-				} catch (java.lang.Exception _exception) {
-					return (com.search.ws.client.AnyType2AnyTypeMapEntry[]) org.apache.axis.utils.JavaUtils
-							.convert(
-									_resp,
-									com.search.ws.client.AnyType2AnyTypeMapEntry[].class);
+					return (AnyType2AnyTypeMapEntry[]) _resp;
+				} catch (Exception _exception) {
+					return (AnyType2AnyTypeMapEntry[]) JavaUtils.convert(_resp, AnyType2AnyTypeMapEntry[].class);
 				}
 			}
-		} catch (org.apache.axis.AxisFault axisFaultException) {
+		} catch (AxisFault axisFaultException) {
 			throw axisFaultException;
 		}
 	}
