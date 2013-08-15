@@ -214,6 +214,14 @@ public class SolrResultUtil {
 			relevancy.setPhraseSlop(relevancyRuleSolr.getPhraseSlop());
 			relevancy.setQueryFields(relevancyRuleSolr.getQueryFields());
 			relevancy.setQuerySlop(relevancyRuleSolr.getQuerySlop());
+			relevancy.setPhraseBigramFields(relevancyRuleSolr
+					.getPhraseBigramFields());
+			relevancy.setPhraseBigramSlop(relevancyRuleSolr
+					.getPhraseBigramSlop());
+			relevancy.setPhraseTrigramFields(relevancyRuleSolr
+					.getPhraseTrigramFields());
+			relevancy.setPhraseTrigramSlop(relevancyRuleSolr
+					.getPhraseTrigramSlop());
 
 			relevancies.add(relevancy);
 		}

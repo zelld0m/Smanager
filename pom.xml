@@ -72,7 +72,7 @@
         <logback.ext.version>0.1.1</logback.ext.version>
         
         <!-- SOLR VERSION -->
-        <solr.version>4.1.0</solr.version>
+        <solr.version>4.3.0</solr.version>
 
         <!-- SPRING FRAMEWORK VERSION -->
         <spring.version>3.0.5.RELEASE</spring.version>

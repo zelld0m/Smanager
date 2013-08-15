@@ -36,6 +36,14 @@ public class RelevancyRuleSolr {
 	private String queryFields;
 	@Field
 	private String querySlop;
+	@Field
+	private String phraseBigramFields;
+	@Field
+	private String phraseBigramSlop;
+	@Field
+	private String phraseTrigramFields;
+	@Field
+	private String phraseTrigramSlop;
 
 	public String getRelevancyId() {
 		return relevancyId;
@@ -155,6 +163,38 @@ public class RelevancyRuleSolr {
 
 	public void setQuerySlop(String querySlop) {
 		this.querySlop = querySlop;
+	}
+
+	public String getPhraseBigramFields() {
+		return phraseBigramFields;
+	}
+
+	public void setPhraseBigramFields(String phraseBigramFields) {
+		this.phraseBigramFields = phraseBigramFields;
+	}
+
+	public String getPhraseBigramSlop() {
+		return phraseBigramSlop;
+	}
+
+	public void setPhraseBigramSlop(String phraseBigramSlop) {
+		this.phraseBigramSlop = phraseBigramSlop;
+	}
+
+	public String getPhraseTrigramFields() {
+		return phraseTrigramFields;
+	}
+
+	public void setPhraseTrigramFields(String phraseTrigramFields) {
+		this.phraseTrigramFields = phraseTrigramFields;
+	}
+
+	public String getPhraseTrigramSlop() {
+		return phraseTrigramSlop;
+	}
+
+	public void setPhraseTrigramSlop(String phraseTrigramSlop) {
+		this.phraseTrigramSlop = phraseTrigramSlop;
 	}
 
 }
