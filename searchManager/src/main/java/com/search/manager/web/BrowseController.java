@@ -23,6 +23,6 @@ public class BrowseController {
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
 
-        return "browse/simulator";
+        return "browse/browse";
     }
 }
