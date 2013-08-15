@@ -53,6 +53,10 @@
   <field name="phraseSlop" type="string" stored="true" multiValued="false" />
   <field name="queryFields" type="string" stored="true" multiValued="false" />
   <field name="querySlop" type="string" stored="true" multiValued="false" />
+  <field name="phraseBigramFields" type="string" stored="true" multiValued="false" />
+  <field name="phraseBigramSlop" type="string" stored="true" multiValued="false" />
+  <field name="phraseTrigramFields" type="string" stored="true" multiValued="false" />
+  <field name="phraseTrigramSlop" type="string" stored="true" multiValued="false" />
   <field name="_version_" type="long" stored="true" multiValued="false" indexed="true" />
  </fields>
 
