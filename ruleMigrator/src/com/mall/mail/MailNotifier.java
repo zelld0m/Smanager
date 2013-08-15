@@ -11,13 +11,15 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.search.manager.utility.StringUtil;
 
 public class MailNotifier {
 
-	private static final Logger logger = Logger.getLogger(MailNotifier.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(MailNotifier.class);
 
 	private Message message;
 
@@ -33,7 +35,7 @@ public class MailNotifier {
 		try {
 			localhostname = java.net.InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 
 		String recepient = prop.getProperty("mail.recepient");
@@ -63,7 +65,7 @@ public class MailNotifier {
 		try {
 			Transport.send(getMessage());
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 	}
 

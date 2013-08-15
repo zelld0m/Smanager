@@ -8,9 +8,10 @@ import java.util.Scanner;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.mall.mail.MailNotifier;
@@ -24,7 +25,7 @@ import com.search.manager.xml.file.RuleXmlUtil;
 
 public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 
-	private static final Logger logger = Logger
+	private static final Logger logger = LoggerFactory
 			.getLogger(SpellRuleBuilder.class);
 
 	private static final String BASE_RULE_DIR = "C:\\home\\solr\\utilities\\rules\\Did You Mean\\";
@@ -89,7 +90,7 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -110,7 +111,7 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 		} catch (Exception e) {
 			hasError = true;
 			e.printStackTrace();
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 
 		if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
@@ -151,7 +152,8 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 			System.out.println("Database  : "
 					+ ((BasicDataSource) context.getBean("dataSource_solr"))
 							.getUrl());
-			System.out.println("Path : " + BASE_RULE_DIR + storeId + "\\" + SPELL_FILE);
+			System.out.println("Path : " + BASE_RULE_DIR + storeId + "\\"
+					+ SPELL_FILE);
 			System.out.println("----------------------------------------");
 			String response = "";
 			Scanner input = new Scanner(System.in);
@@ -166,7 +168,7 @@ public class SpellRuleBuilder extends BaseRuleBuilder implements Runnable {
 
 			spellRuleBuilder.run();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		} finally {
 			if (solrServerFactory != null) {
 				solrServerFactory.shutdown();

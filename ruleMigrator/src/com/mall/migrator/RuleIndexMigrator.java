@@ -6,9 +6,9 @@ import java.util.Properties;
 import java.util.Scanner;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -18,7 +18,7 @@ import com.search.manager.solr.util.SolrServerFactory;
 
 public class RuleIndexMigrator {
 
-	private static final Logger logger = Logger
+	private static final Logger logger = LoggerFactory
 			.getLogger(RuleIndexMigrator.class);
 
 	public static void main(String[] args) {
@@ -32,7 +32,7 @@ public class RuleIndexMigrator {
 					"config/dataImport.properties");
 			properties = new Properties(System.getProperties());
 			properties.load(inStream);
-			PropertyConfigurator.configure("config/log4j.properties");
+			// PropertyConfigurator.configure("config/log4j.properties");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -46,7 +46,7 @@ public class RuleIndexMigrator {
 		}
 
 		context = new FileSystemXmlApplicationContext(
-				"/WebContent/WEB-INF/spring/search-proxy-context.xml");
+				"resources/spring/search-proxy-context.xml");
 
 		solrServerFactory = (SolrServerFactory) context
 				.getBean("solrServerFactory");
@@ -119,7 +119,7 @@ public class RuleIndexMigrator {
 					.getCoreInstance(Constants.Core.BANNER_RULE_CORE
 							.getCoreName());
 		} catch (SolrServerException e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			return;
 		}
 
@@ -158,7 +158,7 @@ public class RuleIndexMigrator {
 				return;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			return;
 		}
 
@@ -193,7 +193,7 @@ public class RuleIndexMigrator {
 					solrServerFactory, properties, storeId,
 					Constants.Core.BANNER_RULE_CORE.getCoreName());
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			return;
 		}
 
@@ -223,7 +223,7 @@ public class RuleIndexMigrator {
 			excludeRuleBuilderThread.join();
 			bannerRuleBuilderThread.join();
 		} catch (InterruptedException e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		} finally {
 			logger.info("Shutting down solr servers...");
 			solrServerFactory.shutdown();

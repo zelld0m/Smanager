@@ -9,9 +9,10 @@ import java.util.Scanner;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.xml.sax.SAXException;
 
@@ -29,7 +30,7 @@ import com.search.manager.solr.util.SolrServerFactory;
 
 public class RelevancyRuleBuilder extends BaseRuleBuilder implements Runnable {
 
-	private static final Logger logger = Logger
+	private static final Logger logger = LoggerFactory
 			.getLogger(RelevancyRuleBuilder.class);
 
 	private int dbCount;
@@ -130,7 +131,7 @@ public class RelevancyRuleBuilder extends BaseRuleBuilder implements Runnable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -150,7 +151,7 @@ public class RelevancyRuleBuilder extends BaseRuleBuilder implements Runnable {
 			}
 		} catch (Exception e) {
 			hasError = true;
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 
 		if (solrInputDocuments.size() > 0) {
@@ -199,7 +200,7 @@ public class RelevancyRuleBuilder extends BaseRuleBuilder implements Runnable {
 		} catch (Exception e) {
 			hasError = true;
 			e.printStackTrace();
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 
 		if (solrInputDocuments.size() > 0) {
@@ -252,7 +253,7 @@ public class RelevancyRuleBuilder extends BaseRuleBuilder implements Runnable {
 
 			relevancyRuleBuilder.run();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		} finally {
 			solrServerFactory.shutdown();
 		}

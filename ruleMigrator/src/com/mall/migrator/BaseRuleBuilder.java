@@ -3,9 +3,9 @@ package com.mall.migrator;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -16,7 +16,7 @@ import com.search.ws.ConfigManager;
 
 public class BaseRuleBuilder {
 
-	private static final Logger logger = Logger
+	private static final Logger logger = LoggerFactory
 			.getLogger(BaseRuleBuilder.class);
 
 	protected static ApplicationContext context;
@@ -34,13 +34,11 @@ public class BaseRuleBuilder {
 	public BaseRuleBuilder() {
 		try {
 			FileInputStream inStream = new FileInputStream(
-					"./config/dataImport.properties");
+					"resources/dataImport.properties");
 			properties = new Properties(System.getProperties());
 			properties.load(inStream);
-			PropertyConfigurator.configure("config/log4j.properties");
-
 			context = new FileSystemXmlApplicationContext(
-					"/WebContent/WEB-INF/spring/search-proxy-context.xml");
+					"resources/spring/search-proxy-context.xml");
 
 			solrServerFactory = (SolrServerFactory) context
 					.getBean("solrServerFactory");
@@ -56,7 +54,7 @@ public class BaseRuleBuilder {
 				logger.info("DaoService is null.");
 				return;
 			}
-			
+
 			init();
 		} catch (Exception e) {
 			logger.error("Error in BaseRuleBuiler() : " + e.getMessage(), e);
@@ -81,28 +79,27 @@ public class BaseRuleBuilder {
 		try {
 			solrServer = solrServerFactory.getCoreInstance(core_);
 		} catch (SolrServerException e) {
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 		}
 
 		if (solrServer == null) {
 			logger.info("SolrServer is null.");
 			return;
 		}
-		
+
 		init();
 	}
 
 	public void init() {
-		ConfigManager.getInstance("C:\\home\\solr\\conf\\solr.xml");
-		
+		ConfigManager.getInstance(properties.getProperty("solrXml"));
 		logPath = properties.getProperty("logPath");
 		logIndex = properties.getProperty("logIndex");
 		logErrorIndex = properties.getProperty("logErrorIndex");
 		mailNotification = properties.getProperty("mail.notification");
 	}
-	
+
 	public SolrServerFactory solrServerFactory() {
 		return solrServerFactory;
 	}
-	
+
 }
