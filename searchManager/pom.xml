@@ -68,7 +68,7 @@
         <org.powermock-version>1.5</org.powermock-version>
         
         <!-- SOLR VERSION -->
-        <org.apache.solr-version>4.1.0</org.apache.solr-version>
+        <org.apache.solr-version>4.3.0</org.apache.solr-version>
         
         <!-- JODATIME VERSION -->
         <joda-time-version>2.2</joda-time-version>

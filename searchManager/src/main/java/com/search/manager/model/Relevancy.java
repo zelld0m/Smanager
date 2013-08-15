@@ -48,7 +48,11 @@ public class Relevancy extends ModelBean {
 		PARAM_PHRASE_SLOP("ps"),
 		PARAM_QUERY_SLOP("qs"),
 		PARAM_MIN_TO_MATCH("mm"),
-		PARAM_TIE_BREAKER("tie");
+		PARAM_TIE_BREAKER("tie"),
+		PARAM_PHRASE_BIGRAM_FIELDS("pf2"),
+		PARAM_PHRASE_BIGRAM_SLOP("ps2"),
+		PARAM_PHRASE_TRIGRAM_FIELDS("pf3"),
+		PARAM_PHRASE_TRIGRAM_SLOP("ps3");
 		
 		private String name;
 		
@@ -255,7 +259,39 @@ public class Relevancy extends ModelBean {
 	public String getBoostQuery() {
 		return fields.get(Parameter.PARAM_BOOST_QUERY.toString());
 	}
-
+	
+	public void setPhraseBigramFields(String value) {
+		fields.put(Parameter.PARAM_PHRASE_BIGRAM_FIELDS.toString(), value);
+	}
+	
+	public String getPhraseBigramFields() {
+		return fields.get(Parameter.PARAM_PHRASE_BIGRAM_FIELDS.toString());
+	}
+	
+	public void setPhraseBigramSlop(String value) {
+		fields.put(Parameter.PARAM_PHRASE_BIGRAM_SLOP.toString(), value);
+	}
+	
+	public String getPhraseBigramSlop() {
+		return fields.get(Parameter.PARAM_PHRASE_BIGRAM_SLOP.toString());
+	}
+	
+	public void setPhraseTrigramFields(String value) {
+		fields.put(Parameter.PARAM_PHRASE_TRIGRAM_FIELDS.toString(), value);
+	}
+	
+	public String getPhraseTrigramFields() {
+		return fields.get(Parameter.PARAM_PHRASE_TRIGRAM_FIELDS.toString());
+	}
+	
+	public void setPhraseTrigramSlop(String value) {
+		fields.put(Parameter.PARAM_PHRASE_TRIGRAM_SLOP.toString(), value);
+	}
+	
+	public String getPhraseTrigramSlop() {
+		return fields.get(Parameter.PARAM_PHRASE_TRIGRAM_SLOP.toString());
+	}
+	
 	public void setDescription(String description) {
 		this.description = description;
 	}
