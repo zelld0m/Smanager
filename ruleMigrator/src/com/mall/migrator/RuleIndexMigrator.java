@@ -29,10 +29,9 @@ public class RuleIndexMigrator {
 
 		try {
 			FileInputStream inStream = new FileInputStream(
-					"config/dataImport.properties");
+					"resources/dataImport.properties");
 			properties = new Properties(System.getProperties());
 			properties.load(inStream);
-			// PropertyConfigurator.configure("config/log4j.properties");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
