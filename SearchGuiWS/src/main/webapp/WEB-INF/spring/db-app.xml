@@ -91,7 +91,7 @@
 	<beans:bean name="exportRuleMapDAO" id="exportRuleMapDAO" class="com.search.manager.dao.sp.ExportRuleMapDAO" scope="singleton" />
 	<beans:bean name="bannerVersionDAO" id="bannerVersionDAO" class="com.search.manager.dao.file.BannerVersionDAO" scope="singleton" />
 	
-	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
+	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.internal.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAO"/>
 		<beans:property name="excludeDAO" ref="excludeDAO"/>
 		<beans:property name="demoteDAO" ref="demoteDAO"/>
@@ -164,7 +164,7 @@
         <beans:property name="daoService" ref="daoServiceStg" />
     </beans:bean>   
 
-	<beans:bean name="daoServiceStg" id="daoServiceStg" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
+	<beans:bean name="daoServiceStg" id="daoServiceStg" class="com.search.manager.dao.internal.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAOStg"/>
 		<beans:property name="excludeDAO" ref="excludeDAOStg"/>
 		<beans:property name="demoteDAO" ref="demoteDaoStg"/>
