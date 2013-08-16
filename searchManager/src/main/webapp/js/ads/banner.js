@@ -1073,8 +1073,8 @@
 							jAlert("Please provide a valid start date", "Banner");
 						} else if($.isBlank(endDate) || !$.isDate(endDate)){
 							jAlert("Please provide a valid end date", "Banner");
-						} else if ($.isBlank(description) || !validateDescription("Description", description, 1, 150)) {
-							// error alert in function
+						} else if (!validateDescription("Banner", description, 1, 150)) {
+							// error alert in function	
 						} else{
 							jConfirm("Update " + e.data.item["imagePath"]["alias"] + "?", self.moduleName, function(result){
 								if(result){

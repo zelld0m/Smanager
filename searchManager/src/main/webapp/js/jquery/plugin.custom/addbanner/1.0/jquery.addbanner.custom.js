@@ -269,8 +269,8 @@
 						jAlert("Please provide a valid start date", "Banner");
 					} else if($.isBlank(endDate) || !$.isDate(endDate)){
 						jAlert("Please provide a valid end date", "Banner");
-					} else if ($.isBlank(description) || !validateDescription("Description", description, 1, 150)) {
-						jAlert("Please provide description", "Banner");
+					} else if (!validateDescription("Banner", description, 1, 150)) {
+						// error alert in function	
 					} else if (attemptAddToSelectedRule){
 						jAlert($.formatText("Duplicate instance of this banner is not allowed in {0}", base.options.rule["ruleName"]), "Banner");
 					} else if (e.data.base.options.mode === "copy" && keywordArray.length <=0){
