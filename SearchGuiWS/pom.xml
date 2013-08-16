@@ -72,7 +72,7 @@
         <jaxen.version>1.1.4</jaxen.version>
 
         <!-- JDOM VERSION -->
-        <jdom.version>2.0.1</jdom.version>
+        <jdom.version>1.0</jdom.version>
 
         <!-- JAVA SECURITY CHANNEL API VERSION -->
         <jsch.version>0.1.50</jsch.version>
@@ -414,7 +414,7 @@
 
         <!-- JDOM -->
         <dependency>
-            <groupId>org.jdom</groupId>
+            <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
             <version>${jdom.version}</version>
         </dependency>
