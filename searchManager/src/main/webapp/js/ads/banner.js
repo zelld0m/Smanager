@@ -1061,7 +1061,9 @@
 							jAlert("Please specify a valid image path.", "Banner");
 						}else if($.isBlank(imageAlias)) {
 							jAlert("Image alias is required.", "Banner");
-						} else if($.isBlank(imageAlt)) {
+						}else if(!isXSSSafe(imageAlias)) {
+							jAlert("Invalid image alias. HTML/XSS is not allowed.", "Banner");
+						}else if($.isBlank(imageAlt)) {
 							jAlert("Image alt is required.", "Banner");
 						}else if($.isBlank(linkPath)) {
 							jAlert("Link path is required.", "Banner");

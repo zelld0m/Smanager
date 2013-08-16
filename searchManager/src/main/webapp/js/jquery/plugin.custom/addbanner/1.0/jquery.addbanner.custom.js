@@ -259,7 +259,6 @@
 						jAlert("Image alias is required.", "Banner");
 					} else if(!isXSSSafe(imageAlias)) {
 						jAlert("Invalid image alias. HTML/XSS is not allowed.", "Banner");
-						return false;
 					} else if($.isBlank(imageAlt)) {
 						jAlert("Image alt is required.", "Banner");
 					} else if($.isBlank(linkPath)) {
