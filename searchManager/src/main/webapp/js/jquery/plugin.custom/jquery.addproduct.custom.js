@@ -1137,7 +1137,7 @@
 						$tab.find("table#addDynamicAttributeName").hide();
 						
 						if($.isNotBlank(selectedTemplateName)){
-							jAlert("Selected template name does not have any dynamic attributes.", self.moduleName);
+							jAlert("Selected template name does not have any dynamic attributes.", base.getTypeLabel());
 						}
 					}
 				},
@@ -1219,7 +1219,7 @@
 
 						if($.isNotBlank(inDynamicAttribute)){
 							if($divItemList.find("div#"+$.formatAsId(attrName)).length > 0){
-								jAlert("Attribute already added. Please select a different attribute name.");
+								jAlert("Attribute already added. Please select a different attribute name.", base.getTypeLabel());
 							}
 							else{
 								$ulAttributeValues.prop({id: $.formatAsId(attrName), title: attrName});
@@ -1257,7 +1257,7 @@
 							}
 						}
 						else{
-							jAlert("Please select a dynamic attribute.");
+							jAlert("Please select a dynamic attribute.", base.getTypeLabel());
 						}
 					}
 				},
@@ -1303,7 +1303,7 @@
 						$tab.find("table#addDynamicAttributeName").hide();
 						
 						if($.isNotBlank(selectedTemplateName)){
-							jAlert("Selected template name does not have any dynamic attributes.", self.moduleName);
+							jAlert("Selected template name does not have any dynamic attributes.", base.getTypeLabel());
 						}
 					}
 				},
@@ -1508,7 +1508,7 @@
 
 						if (valid && $.isEmptyObject(condMap)){
 							valid = false;
-							jAlert('Please specify at least one filter condition');
+							jAlert('Please specify at least one filter condition', base.getTypeLabel());
 						}
 						else if(valid && base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
 							valid = false;
@@ -1631,7 +1631,7 @@
 		};
 		
 		base.getTypeLabel = function(type){
-			switch(type){
+			switch(type || base.options.type){
 			case "product":
 				return 'Product Item';
 			case "ims":
