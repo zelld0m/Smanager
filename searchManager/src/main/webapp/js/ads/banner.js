@@ -1065,6 +1065,8 @@
 							jAlert("Invalid image alias. HTML/XSS is not allowed.", "Banner");
 						}else if($.isBlank(imageAlt)) {
 							jAlert("Image alt is required.", "Banner");
+						}else if (!isXSSSafe(imageAlt)){
+							jAlert("Image alt contains XSS.","Banner");
 						}else if($.isBlank(linkPath)) {
 							jAlert("Link path is required.", "Banner");
 						}else if(isRestrictDomain) {
@@ -1073,11 +1075,11 @@
 							jAlert("Please specify a valid link path.", "Banner");
 						}else if($.isBlank(startDate) || !$.isDate(startDate)){
 							jAlert("Please provide a valid start date", "Banner");
-						} else if($.isBlank(endDate) || !$.isDate(endDate)){
+						}else if($.isBlank(endDate) || !$.isDate(endDate)){
 							jAlert("Please provide a valid end date", "Banner");
-						} else if (!validateDescription("Banner", description, 1, 150)) {
+						}else if (!validateDescription("Banner", description, 1, 150)) {
 							// error alert in function	
-						} else{
+						}else{
 							jConfirm("Update " + e.data.item["imagePath"]["alias"] + "?", self.moduleName, function(result){
 								if(result){
 									// Add fixed params

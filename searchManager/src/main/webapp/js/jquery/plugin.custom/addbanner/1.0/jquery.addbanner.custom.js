@@ -261,7 +261,9 @@
 						jAlert("Invalid image alias. HTML/XSS is not allowed.", "Banner");
 					} else if($.isBlank(imageAlt)) {
 						jAlert("Image alt is required.", "Banner");
-					} else if($.isBlank(linkPath)) {
+					} else if (!isXSSSafe(imageAlt)){
+						jAlert("Image alt contains XSS.","Banner");
+					}else if($.isBlank(linkPath)) {
 						jAlert("Link path is required.", "Banner");
 					}else if(isRestrictDomain) {
 						jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
@@ -277,6 +279,8 @@
 						jAlert($.formatText("Duplicate instance of this banner is not allowed in {0}", base.options.rule["ruleName"]), "Banner");
 					} else if (e.data.base.options.mode === "copy" && keywordArray.length <=0){
 						jAlert("Specify keywords where to copy this banner", "Banner");
+					} else if (!isXSSSafe(keywords)){
+						jAlert("Keywords contains XSS.","Banner");
 					} else {
 						e.data['ruleId'] = base.options.rule["ruleId"];
 						e.data['ruleName'] = base.options.rule["ruleName"];
