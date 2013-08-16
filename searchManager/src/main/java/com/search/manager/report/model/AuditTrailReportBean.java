@@ -2,6 +2,7 @@ package com.search.manager.report.model;
 
 import com.search.manager.model.AuditTrail;
 import com.search.manager.report.annotation.ReportField;
+import com.search.manager.utility.DateAndTimeUtils;
 
 public class AuditTrailReportBean extends ReportBean<AuditTrail> {
 
@@ -11,7 +12,7 @@ public class AuditTrailReportBean extends ReportBean<AuditTrail> {
 
 	@ReportField(label="Date", size=20, sortOrder=1)
 	public String getDate(){
-		return ""; //TODO: DateAndTimeUtils.formatMMddyyyyhhmmaa(model.getDateTime());
+		return model.getFormattedCreatedDateTime();
 	}
 
 	@ReportField(label="Ref ID", size=20, sortOrder=2)
