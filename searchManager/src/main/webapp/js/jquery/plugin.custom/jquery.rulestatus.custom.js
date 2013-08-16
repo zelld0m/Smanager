@@ -137,7 +137,7 @@
 											document.location.href = url + '?' + urlParams;
 										}
 										else{
-											jAlert("No available version to download for this rule.", "Download " + base.options.moduleName + " Rule Versions");
+											jAlert("No available version to download for this rule.", "Download Rule Versions");
 										}
 									}
 								});
