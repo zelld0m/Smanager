@@ -770,7 +770,7 @@
 				var field = getRelevancyField(e);
 				if (!e.data.locked && allowModify )  {
 					if(field.value == selectedRule.parameters[field.id]) {
-						jAlert("Nothing to update test.","Ranking Rule");
+						jAlert("Nothing to update.","Ranking Rule");
 						return false;
 					} else {
 						addRuleFieldValue(field.id, field.value);
