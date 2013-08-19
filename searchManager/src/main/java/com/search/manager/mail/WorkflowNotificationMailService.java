@@ -55,7 +55,7 @@ public class WorkflowNotificationMailService {
 			String approvedBy, List<RuleStatus> ruleStatusList, String comment) {
 
 		Map<Object, Object> model = new HashMap<Object, Object>();
-		SimpleMailMessage messageDetails = mailDetails;
+		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "";
 		String subject = "";
 		String actionBy = approvedBy;
