@@ -14,12 +14,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
+import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropsUtils;
 
 public class RuleTransferUtil {
@@ -27,38 +30,49 @@ public class RuleTransferUtil {
 	private static Logger logger = Logger.getLogger(RuleTransferUtil.class);
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
 	private static final String IMPORT_FILE_PATH = PropsUtils.getValue("importfilepath");
-	
+
 	public static List<RuleXml> getAllExportedRules(String store, String ruleType) {
 		return (ArrayList<RuleXml>) getRules(store, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
 	}
-	
+
 	public static RuleXml getRuleToImport(String store, RuleEntity ruleEntity, String ruleId){
 		return getRule(store, ruleEntity, ruleId, IMPORT_FILE_PATH);
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId, String path){
 		RuleXml ruleXml = getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), path);
 
 		if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
 			ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
 			productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml, store));
+
+			List<RuleItemXml> ruleItemXmlList = (List<RuleItemXml>) productDetailsAware.getItem();
+
+			if(ruleItemXmlList!=null){
+				for(RuleItemXml ruleItemXml: ruleItemXmlList){
+					RedirectRuleCondition rrc = ruleItemXml.getRuleCondition();
+					rrc.setFacetValues(UtilityService.getStoreFacetPrefix(), UtilityService.getStoreFacetTemplate(), UtilityService.getStoreFacetTemplateName());
+				}
+			} 
 		}
+
 		return ruleXml;
 	}
 
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path){
-        try {
-              if (file != null  && file.exists()) {
-                    JAXBContext context = JAXBContext.newInstance(RuleXml.class);
-                    Unmarshaller um = context.createUnmarshaller(); 
-                    um.setEventHandler(new RuleVersionValidationEventHandler());
-                    return (RuleXml) um.unmarshal(file);
-              }
-              logger.warn(String.format("File %s does not exist", file));
-        } catch (JAXBException e) {
-              logger.error("Unable to create unmarshaller", e);
-        }
-        return null;
+		try {
+			if (file != null  && file.exists()) {
+				JAXBContext context = JAXBContext.newInstance(RuleXml.class);
+				Unmarshaller um = context.createUnmarshaller(); 
+				um.setEventHandler(new RuleVersionValidationEventHandler());
+				return (RuleXml) um.unmarshal(file);
+			}
+			logger.warn(String.format("File %s does not exist", file));
+		} catch (JAXBException e) {
+			logger.error("Unable to create unmarshaller", e);
+		}
+		return null;
 	}
 
 
@@ -102,7 +116,7 @@ public class RuleTransferUtil {
 		logger.info(String.format("Exporting rule xml... [store = %s, ruleId = %s, path = %s]", targetStore, ruleId, IMPORT_FILE_PATH));
 		return RuleXmlUtil.ruleXmlToFile(targetStore, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
 	}
-	
+
 	public static boolean importRule(String store, String ruleId, RuleXml ruleXml){
 		logger.info(String.format("Importing rule xml... [store = %s, ruleId = %s]", store, ruleId));
 		return RuleXmlUtil.importRule(ruleXml);
@@ -111,7 +125,7 @@ public class RuleTransferUtil {
 	public static String getFilename(String store, RuleEntity ruleEntity ,String ruleId){
 		return RuleXmlUtil.getFilename(IMPORT_FILE_PATH, store, ruleEntity, ruleId);
 	}
-	
+
 	public static boolean deleteRuleFile(RuleEntity ruleEntity, String store, String ruleId, String comment){
 		boolean success = false;
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
