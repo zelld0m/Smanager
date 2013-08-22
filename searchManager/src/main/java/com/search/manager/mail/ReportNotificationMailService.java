@@ -16,7 +16,7 @@ public class ReportNotificationMailService {
 	@Autowired private SimpleMailMessage mailDetails;
 
 	public boolean sendTopKeyword(File file, String filename, String[] recipients,ByteArrayInputStream bias, String contentType){
-		SimpleMailMessage messageDetails = mailDetails;
+		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "default-topkeyword.vm";
 		String subject = "[SearchManager] Top Keyword";
 		Map<Object,Object> model = new HashMap<Object,Object>();
@@ -31,7 +31,7 @@ public class ReportNotificationMailService {
 	}
 
     public boolean sendTopKeyword(InputStream is, String filename, String[] recipients,ByteArrayInputStream bias, String contentType){
-        SimpleMailMessage messageDetails = mailDetails;
+        SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
         String templateLocation = "default-topkeyword.vm";
         String subject = "[SearchManager] Top Keyword";
         Map<Object,Object> model = new HashMap<Object,Object>();
@@ -46,7 +46,7 @@ public class ReportNotificationMailService {
     }
 
 	public boolean sendZeroResult(File file, String filename, String[] recipients,ByteArrayInputStream bias, String contentType){
-		SimpleMailMessage messageDetails = mailDetails;
+		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "default-zeroresult.vm";
 		String subject = "[SearchManager] Zero Result";
 		Map<Object,Object> model = new HashMap<Object,Object>();
