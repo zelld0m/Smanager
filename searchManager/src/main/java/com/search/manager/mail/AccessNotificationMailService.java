@@ -53,20 +53,4 @@ public class AccessNotificationMailService {
 		
 		emailSender.send(messageDetails, templateLocation, model);
 	}
-
-	public EmailSender getEmailSender() {
-		return emailSender;
-	}
-
-	public void setEmailSender(EmailSender emailSender) {
-		this.emailSender = emailSender;
-	}
-
-	public SimpleMailMessage getMailDetails() {
-		return mailDetails;
-	}
-
-	public void setMailDetails(SimpleMailMessage mailDetails) {
-		this.mailDetails = mailDetails;
-	}
 }

@@ -117,7 +117,7 @@
     <core>macmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxmacmallrelevancy</qt>
-    <facet-name>MacMall</facet-name>
+    <facet-name>MacMallBD</facet-name>
     <solr-param-name>
     	<param-name>fq</param-name>
     </solr-param-name>
