@@ -52,7 +52,7 @@ public class RuleTransferUtil {
 			if(ruleItemXmlList!=null){
 				for(RuleItemXml ruleItemXml: ruleItemXmlList){
 					RedirectRuleCondition rrc = ruleItemXml.getRuleCondition();
-					rrc.setFacetValues(UtilityService.getStoreFacetPrefix(), UtilityService.getStoreFacetTemplate(), UtilityService.getStoreFacetTemplateName());
+					if(rrc!=null) rrc.setFacetValues(UtilityService.getStoreFacetPrefix(), UtilityService.getStoreFacetTemplate(), UtilityService.getStoreFacetTemplateName());
 				}
 			} 
 		}
