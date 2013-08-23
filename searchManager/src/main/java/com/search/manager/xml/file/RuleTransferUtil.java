@@ -11,22 +11,24 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
+import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropertiesUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RuleTransferUtil {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(RuleTransferUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(RuleTransferUtil.class);
     public static final Pattern PATTERN = Pattern.compile("__(.*).xml", Pattern.DOTALL);
     private static final String IMPORT_FILE_PATH = PropertiesUtils.getValue("importfilepath");
 
@@ -38,13 +40,24 @@ public class RuleTransferUtil {
         return getRule(store, ruleEntity, ruleId, IMPORT_FILE_PATH);
     }
 
+    @SuppressWarnings("unchecked")
     public static RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId, String path) {
         RuleXml ruleXml = getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), path);
 
         if (ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml) {
             ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
             productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml, store));
+        
+            List<RuleItemXml> ruleItemXmlList = (List<RuleItemXml>) productDetailsAware.getItem();
+
+			if(ruleItemXmlList!=null){
+				for(RuleItemXml ruleItemXml: ruleItemXmlList){
+					RedirectRuleCondition rrc = ruleItemXml.getRuleCondition();
+					if(rrc!=null) rrc.setFacetValues(UtilityService.getStoreFacetPrefix(), UtilityService.getStoreFacetTemplate(), UtilityService.getStoreFacetTemplateName());
+				}
+			} 
         }
+        
         return ruleXml;
     }
 

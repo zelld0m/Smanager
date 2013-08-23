@@ -19,7 +19,7 @@ public class AccessNotificationMailService {
 	private final static String APP_LINK = "";
 	
 	public void sendAddUser(User user){
-		SimpleMailMessage messageDetails = mailDetails;
+		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "default-adduser.vm";
 		String subject = "[SearchManager] Welcome to Search Manager";
 		Map<Object,Object> model = new HashMap<Object,Object>();
@@ -37,7 +37,7 @@ public class AccessNotificationMailService {
 	}
 	
 	public void sendResetPassword(User user){
-		SimpleMailMessage messageDetails = mailDetails;
+		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "default-resetpassword.vm";
 		String subject = "[SearchManager] Your password was reset";
 		Map<Object,Object> model = new HashMap<Object,Object>();

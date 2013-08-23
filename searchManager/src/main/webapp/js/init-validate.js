@@ -40,6 +40,11 @@ isAlphanumeric = function(text){
 	return digitRegex.test(text) && $.isNotBlank(text);
 };
 
+isValidUsername = function(text) {
+    var digitRegex= /^[a-zA-Z0-9\-\.\_]*$/;
+    return digitRegex.test(text) && $.isNotBlank(text);
+};
+
 validateEmail = function(fieldName, fieldValue, length) {
 	if (!validateGeneric(fieldName, fieldValue, length)) {
 		return false;
@@ -126,7 +131,7 @@ validateUsername = function(fieldName, fieldValue, length) {
 		return false;
 	};
 	if (!$.isBlank(fieldValue)) {
-		if(!isAllowedName(fieldValue)){
+		if(!isValidUsername(fieldValue)){
 			jAlert(fieldName+" contains invalid value.");
 			return false;
 		}

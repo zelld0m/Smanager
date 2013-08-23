@@ -41,8 +41,7 @@ import org.slf4j.LoggerFactory;
         @Param(name = "beanName", value = "bannerService"))
 public class BannerService extends RuleService {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(BannerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(BannerService.class);
     private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
     private static final String MSG_FAILED_ADD_RULE_ITEM = "Failed to add banner rule item %s";
     private static final String MSG_FAILED_UPDATE_RULE_ITEM = "Failed to update banner item %s in %s";
@@ -333,10 +332,8 @@ public class BannerService extends RuleService {
         } else if ("date".equalsIgnoreCase(filter)) {
             startDate = endDate = now;
             if (StringUtils.isNotBlank(dateFilter)) {
-                startDate = JodaDateTimeUtil.toDateTimeFromStorePattern(
-                        storeId, dateFilter, JodaPatternType.DATE);
-                endDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId,
-                        dateFilter, JodaPatternType.DATE);
+            	startDate = JodaDateTimeUtil.toUserDateTimeZone(storeId, dateFilter).toDateMidnight().toDateTime();
+				endDate = startDate;
             }
             disabled = false;
         }

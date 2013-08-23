@@ -11,64 +11,35 @@
 	<security:http auto-config="false" use-expressions="true"
 		access-denied-page="/denied/" entry-point-ref="authenticationEntryPoint">
 
-		<security:intercept-url pattern="/"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/browse/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/relevancy/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/keyword/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/elevate/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/exclude/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/demote/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/facet/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/banner/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/redirect/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/catalog/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/feature/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/migrator/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/synonym/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/stopword/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/protword/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/spell/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/setting/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/production/**"
-			access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
-		<security:intercept-url pattern="/approval/**"
-			access="isAuthenticated() and hasRole('APPROVE_RULE')" />
-		<security:intercept-url pattern="/import/**"
-			access="isAuthenticated() and hasAnyRole('CREATE_RULE','APPROVE_RULE','PUBLISH_RULE')" />
-		<security:intercept-url pattern="/export/**"
-			access="isAuthenticated() and hasRole('APPROVE_RULE')" />
-		<security:intercept-url pattern="/audit/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/security/**"
-			access="isAuthenticated() and hasRole('MANAGE_USER')" />
-		<security:intercept-url pattern="/dwr/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/topkeyword/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/zeroresult/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/keywordtrends/**"
-			access="isAuthenticated()" />
-		<security:intercept-url pattern="/reportgenerator/**"
-			access="isAuthenticated()" />
+		<security:intercept-url pattern="/" access="isAuthenticated()"/>
+    	<security:intercept-url pattern="/browse/**" access="isAuthenticated()" />
+     	<security:intercept-url pattern="/relevancy/**" access="isAuthenticated()" />
+     	<security:intercept-url pattern="/keyword/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/elevate/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/exclude/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/demote/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/facet/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/banner/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/redirect/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/catalog/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/feature/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/migrator/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/synonym/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/stopword/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/protword/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/spell/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/setting/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/production/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
+    	<security:intercept-url pattern="/approval/**" access="isAuthenticated() and hasRole('APPROVE_RULE')" />
+    	<security:intercept-url pattern="/import/**" access="isAuthenticated() and hasRole('CREATE_RULE')" />
+    	<security:intercept-url pattern="/export/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
+    	<security:intercept-url pattern="/audit/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/security/**" access="isAuthenticated() and hasRole('MANAGE_USER')" />
+     	<security:intercept-url pattern="/dwr/**" access="isAuthenticated()" />
+     	<security:intercept-url pattern="/topkeyword/**" access="isAuthenticated()"/>
+     	<security:intercept-url pattern="/zeroresult/**" access="isAuthenticated()"/>
+     	<security:intercept-url pattern="/keywordtrends/**" access="isAuthenticated()"/>
+     	<security:intercept-url pattern="/reportgenerator/**" access="isAuthenticated()"/>
 
 		<!-- Make CSS and image resources to unsecured -->
 		<security:intercept-url pattern="/css/**" access="permitAll" />

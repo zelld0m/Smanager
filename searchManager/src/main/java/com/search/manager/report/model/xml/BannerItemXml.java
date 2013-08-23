@@ -1,5 +1,6 @@
 package com.search.manager.report.model.xml;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.directwebremoting.annotations.DataTransferObject;
@@ -117,6 +118,7 @@ public class BannerItemXml extends RuleItemXml {
 		this.imagePathType = imagePathType;
 	}
 
+	@XmlElement(name="imagePath")
 	public String getImagePath2() {
 		return super.getImagePath();
 	}

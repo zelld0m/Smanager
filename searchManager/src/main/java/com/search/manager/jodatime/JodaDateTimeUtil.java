@@ -11,6 +11,8 @@ import org.joda.time.Period;
 import org.joda.time.PeriodType;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
@@ -181,4 +183,23 @@ public class JodaDateTimeUtil {
 
         return StringUtils.EMPTY;
     }
+	
+	/**
+	 *  Convert string to user-defined timezone if set, otherwise store-defined timezone will be applied
+	 *  
+	 */
+	public static DateTime toUserDateTimeZone(String storeId, String dateTimeText){
+		ConfigManager cm = ConfigManager.getInstance();
+		String dateFormat = cm.getStoreParameter(storeId, "date-format");
+		String dateTimeFormat = cm.getStoreParameter(storeId, "datetime-format");
+		
+		DateTimeParser[] parsers = { 
+		        DateTimeFormat.forPattern(dateFormat).getParser(),
+		        DateTimeFormat.forPattern(dateTimeFormat).getParser() 
+		        };
+		
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder().append(null, parsers).toFormatter();
+		logger.info("-DTZ- User Timezone: " + getTimeZone().getID());
+		return formatter.parseDateTime(dateTimeText).withZone(getTimeZone());
+	} 
 }

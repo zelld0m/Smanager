@@ -59,6 +59,7 @@ public class Transformers {
 					xml.setImagePathId(rule.getImagePath().getId());
 					xml.setImageAlias(rule.getImagePath().getAlias());
 					xml.setImagePath(rule.getImagePath().getPath());
+					xml.setImageSize(rule.getImagePath().getSize());
 					xml.setImagePathType(rule.getImagePath().getPathType() != null ? rule
 							.getImagePath().getPathType().getDisplayText()
 							: "");

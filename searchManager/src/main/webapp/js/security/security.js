@@ -401,7 +401,7 @@
 											else {
 												$tr.find("td#delIcon > a").prop("id", "del"+$.formatAsId(list[i].username));
 											}
-											$tr.find("td#userInfo > span#username > a").prop("id", "user"+$.formatAsId(list[i].username)).html(list[i].username);
+											$tr.find("td#userInfo > span#username > a").prop("id", "user"+$.formatAsId(list[i].username)).text(list[i].username);
 											$tr.find("td#userInfo > span#fullName").text(list[i].fullName);
 											$tr.find("td#userInfo > span#email").text(list[i].email);
 											$tr.find("td#role > span").text(list[i].groupId);

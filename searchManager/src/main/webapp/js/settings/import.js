@@ -1265,11 +1265,19 @@
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
 				$('div#'+id+'.reject_btn').removeClass('reject_active').addClass('reject_gray');
 			},
+			
+			filterContent: function() {
+			    if (GLOBAL_storeId == "pcmallgov") {
+        		    $("#import ul li a[href='#rankingRuleTab']").closest("li").remove();
+        		    $("#import div#rankingRuleTab").remove();
+			    }
+			},
 
 			init : function() {
 				var self = this;
 				$("#titleText").html(self.moduleName);
 				self.getRuleEntityList();
+				self.filterContent();
 				self.populateTabContent();
 			}
 	};
