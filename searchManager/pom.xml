@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>searchManager</artifactId>
     <name>searchManager</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <parent>
         <groupId>com.search</groupId>
         <artifactId>searchManager-parent</artifactId>
