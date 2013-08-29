@@ -20,9 +20,6 @@
         
         <!-- GUAVA VERSION -->
         <com.google.guava.version>14.0.1</com.google.guava.version>
-        
-        <!-- UNIT TESTING VERSIONS -->
-        <junit.version>4.11</junit.version>
     </properties>
     <dependencies>
         
@@ -31,14 +28,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${com.google.guava.version}</version>
-        </dependency>
-        
-        <!-- UNIT TESTING -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
