@@ -323,14 +323,23 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
-                <configuration>
-                    <finalName>searchManager</finalName>
-                    <excludes>
-                        <exclude>*.properties</exclude>
-                        <exclude>*.txt</exclude>
-                        <exclude>logback*.xml</exclude>
-                    </excludes>
-                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>searchManager</finalName>
+                            <classifier>classes</classifier>
+                            <excludes>
+                                <exclude>*.properties</exclude>
+                                <exclude>*.txt</exclude>
+                                <exclude>logback*.xml</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -347,18 +356,7 @@
                 <configuration>
                     <warName>searchManager</warName>
                     <archiveClasses>true</archiveClasses>
-                    <primaryArtifact>false</primaryArtifact>
-                    <classifier>web</classifier>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>create-war</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
