@@ -6,7 +6,7 @@ isAscii = function(text){
 isXSSSafe = function(text){
 	//var hasNoXSSRegex= /^((?!(javascript:|<script>)).)*$/i;
 	//return hasNoXSSRegex.test(text) && isAscii(text);
-	return isAscii(text) && !((text.indexOf("<") >= 0) && (text.indexOf(">") >= 0));
+	return isAscii(text) && !((text.indexOf("<") >= 0) || (text.indexOf(">") >= 0));
 };
 
 isXSSSafeAllowNonAscii = function(text){
