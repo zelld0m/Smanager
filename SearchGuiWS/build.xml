@@ -1,91 +1,34 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." name="SearchGuiWS">
 
-<project name="SearchGuiWSBuilder" basedir=".">
-	
-  <property environment="env"/>
-  <property name="debuglevel" value="source,lines,vars"/>
-  <property name="target" value="1.6"/>
-  <property name="source" value="1.6"/>
-	
-  <!-- Define the properties used by the build -->
-  <property name="conf.home" value="C:/home/solr/bin/ws/config"/>
-  <property name="deploy.path" value="C:/Search Manager/wspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp3/wtpwebapps/SearchGuiWS"/>	
+  <property environment="env" />
 
-  <property name="dependencies" value="../Dependencies"/>
+  <condition property="isWindows">
+    <os family="windows" />
+  </condition>
 
-  <!-- Define the CLASSPATH -->
-  <path id="compile.classpath">
-    <fileset dir="${dependencies}/lib">
-      <include name="*.jar"/>
-    </fileset>
-  	<fileset dir="${dependencies}/tomcat/lib">
-  	  <include name="*.jar"/>
-  	</fileset>
-  	<fileset dir="${dependencies}/searchmanager/jar">
-  	    <include name="*.jar"/>
-  	</fileset>
-  </path>
-<!--
-  <target name="jar" description="JAR Java sources">
-  		<delete dir="${dependencies}/lib" />
-  		<delete dir="${dependencies}/ws/jar" />
-  		<delete dir="${dependencies}/ws/classes" />
-  		<mkdir dir="${dependencies}/lib" />
-  		<mkdir dir="${dependencies}/ws/jar" />
-  		<mkdir dir="${dependencies}/ws/classes" />
-  		<copy todir="${dependencies}/lib">
-  	  	 		<fileset dir="${basedir}/WebContent/WEB-INF/lib" />
-  	  	</copy>
-	    <javac srcdir="${basedir}/src" destdir="${dependencies}/ws/classes">
-	        <classpath refid="compile.classpath"/>
-	    </javac>
-  	  	<jar destfile="${dependencies}/ws/jar/searchguiws.jar">
-  	  	  	<fileset dir="${dependencies}/ws/classes">
-  	  	  			<include name="**/*.class"/> 
-  	  	  	</fileset>
-  	  	</jar>	
-  		<delete dir="${dependencies}/lib" />
-  		<delete dir="${dependencies}/ws/classes" />
+  <condition property="isUnix">
+    <os family="unix" />
+  </condition>
+
+  <target description="Deploy config files" name="config">
+    <mkdir dir="${conf.home}" />
+    <copy todir="${conf.home}">
+      <fileset dir="${basedir}/config" />
+    </copy>
   </target>
-  -->
-	
-  <target name="jar" description="JAR Java sources">
-	  <delete dir="${dependencies}/ws/jar" />
-	  <mkdir dir="${dependencies}/ws/jar" />
-		<jar destfile="${dependencies}/ws/jar/searchguiws.jar">
-			<fileset dir="${basedir}/bin">
-				<include name="**/*.class"/> 
-			</fileset>
-		</jar>	
-  </target>	
-	
-  <target name="war" description="WAR Java sources">
-		<ant target="jar" />
-  		<delete dir="${dependencies}/ws/war" />
-  		<delete dir="${dependencies}/ws/WebContent" />
-  		<mkdir dir="${dependencies}/ws/war" />
-  		<mkdir dir="${dependencies}/ws/WebContent" />
-  		<mkdir dir="${dependencies}/ws/WebContent/WEB-INF/lib" />
-  	 	<copy todir="${dependencies}/ws/WebContent">
-  	 		<fileset dir="${basedir}/WebContent" />
-  	    </copy>
-  		<copy todir="${dependencies}/ws/WebContent/WEB-INF/lib">
-  	  	 	<fileset file="${dependencies}/ws/jar/searchguiws.jar" />
-  			<fileset file="${dependencies}/searchmanager/jar/searchmanager.jar" />
-  			<fileset file="${basedir}/WebContent/WEB-INF/lib/x">
-  				<include name="**/*.jar"/> 
-  			</fileset>
-  	  	</copy>
-		<war destfile="${dependencies}/ws/war/searchguiws.war">
-			<fileset dir="${dependencies}/ws/WebContent" />
-		</war>
-  		<delete dir="${dependencies}/ws/WebContent" />	
+
+  <target if="isWindows" name="--set-win-props">
+    <property name="conf.home" value="C:/home/solr/bin/ws/config" />
   </target>
-	
-  <target name="config" description="Deploy config files">
-  		<mkdir dir="${conf.home}" />
-  		<copy todir="${conf.home}">
-  	  	 	<fileset dir="${basedir}/config" />
-  	  	</copy>
+
+  <target if="isUnix" name="--set-unix-props">
+    <property name="conf.home" value="/home/solr/bin/ws/config" />
   </target>
-</project> 
+
+  <target depends="--set-win-props,--set-unix-props" name="--set-props">
+    <echo message="conf.home: ${conf.home}" />
+  </target>
+
+  <target depends="--set-props" name="props" />
+</project>
+
