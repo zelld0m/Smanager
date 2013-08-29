@@ -452,10 +452,10 @@
 			RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.rule["ruleId"], name, notes, {
 				callback: function(data){
 					if (data) {
-						jAlert("Successfully created back up!");
+						jAlert("Successfully created back up!", "Create Version");
 						base.getAvailableVersion();
 					} else {
-						jAlert("Failed creating back up!");
+						jAlert("Failed creating back up!", "Create Version");
 					}
 				},
 				postHook:function(){
