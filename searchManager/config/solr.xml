@@ -117,7 +117,7 @@
     <core>macmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxmacmallrelevancy</qt>
-    <facet-name>MacMallBD</facet-name>
+    <facet-name>MacMall</facet-name>
     <solr-param-name>
     	<param-name>fq</param-name>
     </solr-param-name>
@@ -154,7 +154,7 @@
   <!-- Atlanta Solr Server Production-->
   <server name='search43'>
     <url>http://afs-pl-schmstr02.afservice.org:9080/solr/(core)/</url>
-    <store>pcmall,macmall,pcmallcap,pcmallgov</store>
+    <store>pcmall,macmall,macmallbd,pcmallcap,pcmallgov</store>
   </server>  
   <server name='search'>
     <url>http://10.17.35.36:8080/solr14/(core)/</url>
