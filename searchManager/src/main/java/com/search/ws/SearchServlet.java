@@ -342,6 +342,10 @@ public class SearchServlet extends HttpServlet {
 		String relevancyRuleId = StringUtils.defaultIfBlank(configManager.getStoreParameter(storeId, "default-relevancy-rule"), storeId + "_default");
 		return getRelevancyRule(store, relevancyRuleId, fromSearchGui);
 	}
+	
+	protected String getDefType(String storeId) throws DaoException {
+		return StringUtils.defaultIfBlank(configManager.getStoreParameter(storeId, "defType"), "edismax");
+	}
 
 	protected FacetSort getFacetSortRule(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
 		try {
@@ -689,7 +693,6 @@ public class SearchServlet extends HttpServlet {
 			NameValuePair nvp;
 			final SolrResponseParser solrHelper;
 			NameValuePair redirectFqNvp = null;
-			NameValuePair defTypeNVP = new BasicNameValuePair("defType", "edismax");
 
 			String storeId = "";
 			try {
@@ -700,6 +703,7 @@ public class SearchServlet extends HttpServlet {
 				return;
 			}
 
+			NameValuePair defTypeNVP = new BasicNameValuePair("defType", getDefType(storeId));
 			String storeName = configManager.getStoreName(storeId);
 			initFieldOverrideMaps(request, solrHelper, storeId);
 			logger.debug("Config store name mapped to {}: {}", storeId, storeName);
@@ -1219,7 +1223,7 @@ public class SearchServlet extends HttpServlet {
 				if (keywordNvp != null && nameValuePairs.remove(defTypeNVP)) {
 					nameValuePairs.remove(keywordNvp);
 					StringBuilder newQuery = new StringBuilder();
-					newQuery.append(String.format("(_query_:\"{!edismax v=$searchKeyword}\") OR (%s)", forceAddFilter.toString()));
+					newQuery.append(String.format("(_query_:\"{!%s v=$searchKeyword}\") OR (%s)", getDefType(storeId), forceAddFilter.toString()));
 					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
 					nameValuePairs.add(new BasicNameValuePair("searchKeyword", StringUtils.isBlank(keyword) ? "*:*" : keyword));
 				}
