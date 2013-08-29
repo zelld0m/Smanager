@@ -21,7 +21,6 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -190,8 +189,10 @@ public class RelevancyService extends RuleService {
             relevancy.setStore(new Store(storeId));
             relevancy.setRelevancyName(name);
             relevancy.setDescription(description);
-            relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
-            relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
+//            relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
+//            relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
+            relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : JodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
+            relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
             relevancy.setCreatedBy(userName);
             clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
             Relevancy hostRelevancy = getRule(ruleId);
@@ -229,8 +230,10 @@ public class RelevancyService extends RuleService {
             rule.setRuleId(id);
             rule.setRuleName(name);
             rule.setDescription(description);
-            rule.setStartDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
-            rule.setEndDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
+//            rule.setStartDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
+//            rule.setEndDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
+            rule.setStartDate(JodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
+            rule.setEndDate(JodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
             rule.setLastModifiedBy(UtilityService.getUsername());
             return daoService.updateRelevancy(rule);
         } catch (DaoException e) {
