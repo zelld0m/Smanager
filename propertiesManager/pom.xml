@@ -20,6 +20,9 @@
         
         <!-- GUAVA VERSION -->
         <com.google.guava.version>14.0.1</com.google.guava.version>
+        
+        <!-- SPRING FRAMEWORK VERSION -->
+        <spring.version>3.0.5.RELEASE</spring.version>
     </properties>
     <dependencies>
         
@@ -28,6 +31,14 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${com.google.guava.version}</version>
+        </dependency>
+        
+        <!-- UNIT TEST -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
