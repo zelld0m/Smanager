@@ -31,6 +31,14 @@ public class PropertiesManager {
         this.storePropertiesLocation = storePropertiesLocation;
     }
 
+    public String getStorePropertiesLocation() {
+        return storePropertiesLocation;
+    }
+
+    public void setStorePropertiesLocation(String storePropertiesLocation) {
+        this.storePropertiesLocation = storePropertiesLocation;
+    }
+
     public StoreProperties getStoreProperties()
             throws StorePropertiesXmlNotLoadedException {
         try {
