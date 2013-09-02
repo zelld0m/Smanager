@@ -1486,10 +1486,10 @@
 
 						if ($.isNotBlank(expiryDate) && !$.isDate(expiryDate)){
 							valid = false;
-							jAlert("Invalid date specified.", "Invalid Input");
+							jAlert("Invalid date specified.", base.getTypeLabel());
 						} else if(today.getTime() > new Date(expiryDate).getTime()) {
 							valid = false;
-							jAlert("Date 'Valid Until' cannot be earlier than today", "Invalid Input");
+							jAlert("Date 'Valid Until' cannot be earlier than today.", base.getTypeLabel());
 						}
 						
 						if (valid && !validateGeneric("Validity Date", expiryDate)){
@@ -1497,7 +1497,7 @@
 						}
 
 						if (valid && $.isNotBlank(comment)){
-							if(validateComment("Comment", comment, 1, 250)){
+							if(validateComment(base.getTypeLabel(), comment, 1, 250)){
 								comment = comment.replace(/\n\r?/g, '<br/>');
 							}else{
 								valid = false;
@@ -1508,11 +1508,11 @@
 
 						if (valid && $.isEmptyObject(condMap)){
 							valid = false;
-							jAlert('Please specify at least one filter condition', base.getTypeLabel());
+							jAlert('Please specify at least one filter condition.', base.getTypeLabel());
 						}
 						else if(valid && base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
 							valid = false;
-							jAlert("Position value should be from 1 - " + base.options.maxPosition + ".", "Max Value Exceeded");
+							jAlert("Max Value Exceeded. Position value should be from 1 - " + base.options.maxPosition + ".", base.getTypeLabel());
 						}
 
 						if (valid && !$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"])){
@@ -1597,20 +1597,20 @@
 					base.contentHolder.find("#addItemDate").datepicker('disable');
 
 					if ($.isBlank(skus)) {
-						jAlert("There are no SKUs specified in the list.", "Invalid Input");
+						jAlert("There are no SKUs specified in the list.", base.getTypeLabel());
 					}
 					else if (!commaDelimitedNumberPattern.test(skus)) {
-						jAlert("List contains an invalid SKU.", "Invalid Input");
+						jAlert("List contains an invalid SKU.", base.getTypeLabel());
 					}							
 					else if (!$.isBlank(expDate) && !$.isDate(expDate)){
-						jAlert("Invalid date specified.", "Invalid Input");
+						jAlert("Invalid date specified.", base.getTypeLabel());
 					}
 					else if(base.options.showPosition && (sequence < 1 || sequence > base.options.maxPosition)){
-						jAlert("Position value should be from 1 - " + (base.options.maxPosition) + ".", "Max Value Exceeded");
+						jAlert("Max Value Exceeded. Position value should be from 1 - " + (base.options.maxPosition) + ".", base.getTypeLabel());
 					}
 					else if(today.getTime() > new Date(expDate).getTime())
-						jAlert("Start date cannot be earlier than today", "Invalid Input");
-					else if ($.isNotBlank(comment) && !validateComment("Invalid Input", comment, 1, 250)){
+						jAlert("Start date cannot be earlier than today", base.getTypeLabel());
+					else if ($.isNotBlank(comment) && !validateComment(base.getTypeLabel(), comment, 1, 250)){
 						//error alert in function validateComment
 					}
 					else {
