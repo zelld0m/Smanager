@@ -56,11 +56,6 @@ public class PropertiesManagerUtilTest {
         assertEquals(PropertiesManagerUtil.hasParent(pcmallStore), false);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testHasParent_Argument_Null_Throw_NullPointerException() {
-        PropertiesManagerUtil.hasParent(null);
-    }
-
     @Test
     public void testGetParent_Store_Parent_Exists() {
         StoreProperties storeProperties = propertiesManagerService.getStoreProperties();
