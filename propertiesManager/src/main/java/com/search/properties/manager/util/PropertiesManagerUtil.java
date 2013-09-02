@@ -1,7 +1,5 @@
 package com.search.properties.manager.util;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Strings;
 import com.search.properties.manager.PropertiesManager;
 import com.search.properties.manager.exception.StoreNotFoundException;
@@ -23,11 +21,8 @@ public class PropertiesManagerUtil {
      *
      * @param store the {@link Store} object
      * @return <pre>true</pre> if the store has a parent else <pre>false</pre>
-     * @throws NullPointerException when the argument pass is <pre>null</pre>
      */
-    public static boolean hasParent(Store store) throws NullPointerException {
-        checkNotNull(store);
-
+    public static boolean hasParent(Store store) {
         return !Strings.isNullOrEmpty(store.getParent());
     }
 
