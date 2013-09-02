@@ -12,7 +12,9 @@
     <bean id="propertiesManager"
           class="com.search.properties.manager.PropertiesManager">
         <constructor-arg name="storePropertiesLocation" 
-                         value="/home/solr/conf/store-properties.xml"/>
+                         value="/Users/pgutierr/Desktop/store-properties.xml"/>
+        <constructor-arg name="storePropertiesSaveLocation" 
+                         value="/Users/pgutierr/Desktop"/>
     </bean>
             
     <context:annotation-config />

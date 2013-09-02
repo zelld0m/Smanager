@@ -23,4 +23,12 @@ public class PropertiesManagerService {
     public StoreProperties getStoreProperties() {
         return propertiesManager.getStoreProperties();
     }
+    
+    /**
+     * Saves the store properties defined in store-properties.xml to the provided
+     * store properties folder
+     */
+    public void saveStoreProperties() {
+        propertiesManager.saveStoreProperties();
+    }
 }
