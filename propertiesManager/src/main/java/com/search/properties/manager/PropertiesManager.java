@@ -8,6 +8,7 @@ import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Property;
 import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
+import com.search.properties.manager.util.PropertiesManagerUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -97,9 +98,20 @@ public class PropertiesManager {
         List<Store> stores = storeProperties.getStores();
 
         for (Store store : stores) {
+            String storeId = store.getId();
+            boolean overrideProperties = false;
 
-            // load and save the store modules
-            loadAndSaveStoreModules(store);
+            if (PropertiesManagerUtil.hasParent(store)) {
+                Store parentStore = PropertiesManagerUtil.getParent(storeProperties,
+                        store);
+                // load and save the store modules of the parent store
+                loadAndSaveStoreModules(parentStore.getModules(), storeId);
+
+                overrideProperties = true;
+            }
+
+            // load and save the store modules of the store
+            loadAndSaveStoreModules(store.getModules(), storeId, overrideProperties);
         }
     }
 
@@ -110,8 +122,7 @@ public class PropertiesManager {
      * @param module the module object
      * @return the formatted file path of the properties file
      */
-    private String getFormattedPropertiesFilePath(Store store, Module module) {
-        String storeId = store.getId();
+    private String getFormattedPropertiesFilePath(String storeId, Module module) {
         String moduleName = module.getName();
         return String.format("%s%s%s.%s.properties", storePropertiesSaveLocation,
                 File.separator, storeId, moduleName);
@@ -125,7 +136,7 @@ public class PropertiesManager {
      */
     private void loadPropertiesFile(Properties properties, String filePath) {
         File fileNameFile = new File(filePath);
-        
+
         if (fileNameFile.exists()) {
             try {
                 properties.load(new FileInputStream(filePath));
@@ -137,8 +148,9 @@ public class PropertiesManager {
 
     /**
      * Save the properties file
+     *
      * @param properties the properties file object containing the properties to save
-     * @param filePath  the file path of the properties file
+     * @param filePath the file path of the properties file
      */
     private void savePropertiesFile(Properties properties, String filePath) {
         try {
@@ -147,18 +159,22 @@ public class PropertiesManager {
             logger.info(e.getMessage(), e);
         }
     }
-    
+
     /**
      * Adds the properties file read from store-properties.xml to the properties object.
+     *
      * @param propertyList the list of {@link Property} objects
-     * @param properties  the properties object to save on
+     * @param properties the properties object to save on
+     * @param overrideProperties determines if the properties should be overridden if
+     * already existing
      */
-    private void addEachProperty(List<Property> propertyList, Properties properties) {
+    private void addEachProperty(List<Property> propertyList, Properties properties,
+            boolean overrideProperties) {
         for (Property property : propertyList) {
             String id = property.getId();
             String defaultValue = property.getDefaultValue();
 
-            if (properties.getProperty(id) == null) {
+            if (overrideProperties || properties.getProperty(id) == null) {
                 properties.setProperty(id, defaultValue);
             }
         }
@@ -166,14 +182,28 @@ public class PropertiesManager {
 
     /**
      * Loads and saves the store modules
-     * @param store the {@link Store} object
+     *
+     * @param modules the {@link Store} object
+     * @param storeId the store id
      */
-    private void loadAndSaveStoreModules(Store store) {
-        List<Module> modules = store.getModules();
+    private void loadAndSaveStoreModules(List<Module> modules, String storeId) {
+        loadAndSaveStoreModules(modules, storeId, false);
+    }
+
+    /**
+     * Loads and saves the store modules
+     *
+     * @param modules the {@link Store} object
+     * @param storeId the store id
+     * @param overrideProperties determines if the properties should be overridden if
+     * already existing
+     */
+    private void loadAndSaveStoreModules(List<Module> modules, String storeId,
+            boolean overrideProperties) {
 
         for (Module module : modules) {
             List<Property> propertyList = module.getProperties();
-            String filePath = getFormattedPropertiesFilePath(store, module);
+            String filePath = getFormattedPropertiesFilePath(storeId, module);
 
             Properties properties = new Properties();
 
@@ -181,8 +211,8 @@ public class PropertiesManager {
             loadPropertiesFile(properties, filePath);
 
             // save each property file in store-properties.xml
-            addEachProperty(propertyList, properties);
-            
+            addEachProperty(propertyList, properties, overrideProperties);
+
             // save the properties file
             savePropertiesFile(properties, filePath);
         }
