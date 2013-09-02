@@ -70,7 +70,7 @@
 					});
 					
 					if(base.selectedVersion.length != 2){
-						jAlert("Please select a version to compare.");
+						jAlert("Please select a version to compare.", "Compare Version");
 					}
 					else{
 						base.setCompare();
