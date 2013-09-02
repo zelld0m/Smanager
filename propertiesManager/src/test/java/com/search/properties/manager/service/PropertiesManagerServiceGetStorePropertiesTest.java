@@ -26,7 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/spring-context.xml")
-public class PropertiesManagerServiceTest {
+public class PropertiesManagerServiceGetStorePropertiesTest {
 
     @Autowired
     private PropertiesManagerService propertiesManagerService;
