@@ -7,6 +7,7 @@ import com.search.properties.manager.PropertiesManager;
 import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Member;
 import com.search.properties.manager.model.Module;
+import com.search.properties.manager.model.Property;
 import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
 import java.util.List;
@@ -60,7 +61,13 @@ public class PropertiesManagerServiceTest {
         assertEquals(bannerAdsFeatureGroup.getName(), "Banner Ads Feature");
         
         List<Member> bannerAdsFeatureMembers = bannerAdsFeatureGroup.getMembers();
-        Member siteDomain = bannerAdsFeatureMembers.get(0);
-        assertEquals(siteDomain.getPropertyId(), "site_domain");
+        Member siteDomainMember = bannerAdsFeatureMembers.get(0);
+        assertEquals(siteDomainMember.getPropertyId(), "site_domain");
+        
+        List<Property> storeSettingsProperties = storeSettingsModule.getProperties();
+        Property siteDomainProperty = storeSettingsProperties.get(0);
+        assertEquals(siteDomainProperty.getLabel(), "Site Domain");
+        assertEquals(siteDomainProperty.getDescription(), "Domain of managed site.");
+        assertEquals(siteDomainProperty.getDefaultValue(), "pcm.com");
     }
 }
