@@ -225,7 +225,7 @@
 			return function () {
 				arr.splice(ind,1);
 				self.manager.store.removeByValue("fq", fVal);
-				self.manager.store.addByValue("fq", arr.join(' '));
+				arr.length && self.manager.store.addByValue("fq", arr.join(' '));
 				self.manager.doRequest(0);
 				return false;
 			};
