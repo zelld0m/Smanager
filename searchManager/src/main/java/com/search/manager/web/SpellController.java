@@ -172,14 +172,16 @@ public class SpellController {
         try {
             if (rules != null) {
                 for (RuleXml xml : rules) {
-                    DBRuleVersion version = (DBRuleVersion) xml;
-                    List<SpellRule> spellRules = daoService.getSpellRuleVersion(store, (int) version.getVersion());
-                    if (spellRules != null) {
-                        SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(version,
-                                RuleEntity.SPELL);
-                        subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(spellRules,
-                                SpellReportBean.transformer)));
-                    }
+                	if (!xml.isDeleted()) {
+                        DBRuleVersion version = (DBRuleVersion) xml;
+                        List<SpellRule> spellRules = daoService.getSpellRuleVersion(store, (int) version.getVersion());
+                        if (spellRules != null) {
+                            SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(version,
+                                    RuleEntity.SPELL);
+                            subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(spellRules,
+                                    SpellReportBean.transformer)));
+                        }
+                	}
                 }
             }
 
