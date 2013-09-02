@@ -1,6 +1,7 @@
 package com.search.properties.manager.model;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,15 +27,19 @@ public class Module {
     private String title;
     @XmlElementWrapper(name = "groups")
     @XmlElement(name = "group")
-    private List<Group> groups;
+    private List<Group> groups = Lists.newArrayList();
+    @XmlElementWrapper(name = "properties")
+    @XmlElement(name = "property")
+    private List<Property> properties = Lists.newArrayList();
 
     public Module() {
     }
 
-    public Module(String name, String title, List<Group> groups) {
+    public Module(String name, String title, List<Group> groups, List<Property> properties) {
         this.name = name;
         this.title = title;
         this.groups = groups;
+        this.properties = properties;
     }
 
     public String getName() {
@@ -61,12 +66,21 @@ public class Module {
         this.groups = groups;
     }
 
+    public List<Property> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this).
                 add("name", name).
                 add("title", title).
                 add("groups", groups).
+                add("properties", properties).
                 toString();
     }
 }

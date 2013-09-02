@@ -1,6 +1,7 @@
 package com.search.properties.manager.model;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,11 +16,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version 1.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="store-properties")
+@XmlRootElement(name = "store-properties")
 public class StoreProperties {
 
     @XmlElement(name = "store")
-    private List<Store> stores;
+    private List<Store> stores = Lists.newArrayList();
 
     public StoreProperties() {
     }

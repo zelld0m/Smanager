@@ -1,6 +1,7 @@
 package com.search.properties.manager.model;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +25,7 @@ public class Store {
     @XmlAttribute(name = "extends")
     private String parent;
     @XmlElement(name = "module")
-    private List<Module> modules;
+    private List<Module> modules = Lists.newArrayList();
 
     public Store() {
     }
