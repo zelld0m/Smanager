@@ -228,6 +228,8 @@
 			$('#typeList').prop("selectedIndex", 0);
 			$('#refList').prop("selectedIndex", 0);
 			
+			$("#actionList").attr("disabled","disabled");
+			$("#refList").attr("disabled","disabled");
 			getAuditTrail(1);
 		});
 
