@@ -27,5 +27,6 @@ div#importAlert img						{position: relative; top: 2px;}
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-all;
 }

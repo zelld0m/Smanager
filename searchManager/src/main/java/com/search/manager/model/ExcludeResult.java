@@ -27,6 +27,10 @@ public class ExcludeResult extends SearchResult {
 		this.condition = xml.getRuleCondition();
 		this.expiryDate = xml.getExpiryDate();
 		this.entity = xml.getMemberType();
+		this.createdBy = xml.getCreatedBy();
+		this.createdDate = xml.getCreatedDate();
+		this.lastModifiedBy = xml.getLastModifiedBy();
+		this.lastModifiedDate = xml.getLastModifiedDate();
 	}
 	
 	public MemberTypeEntity getExcludeEntity() {

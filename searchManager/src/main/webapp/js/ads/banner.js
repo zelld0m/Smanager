@@ -835,9 +835,9 @@
 						});
 					},
 					
-					itemDeleteCallback:function(){
+					itemDeleteCallback:function(baseItem){
 						var base = this;
-						var baseItem = base.options.ruleItem;
+						//var baseItem = base.options.ruleItem;
 						
 						BannerServiceJS.deleteRuleItemByMemberId(GLOBAL_storeId, baseItem["rule"]["ruleId"], baseItem["memberId"], baseItem["imagePath"]["alias"], baseItem["imagePath"]["size"], {
 							callback:function(e){
@@ -868,7 +868,7 @@
 									ui.find(".deleteIcon").off().on({
 										click: function(e){
 											jConfirm("Delete " + e.data.item["imagePath"]["alias"] + " in " + e.data.item["rule"]["ruleName"] + "?", "Linked Keyword", function(result){
-												if(result) e.data.base.options.itemDeleteCallback.call(e.data.base);
+												if(result) e.data.base.options.itemDeleteCallback.call(e.data.base, e.data.item);
 											});
 										}
 									}, {item: item, base: base});

@@ -958,3 +958,5 @@ div#rightPreview div.rulePreview div#importAs.wAuto div div.ss-wrapper select.ss
 
 #item #itemSearchTerms .term,
 #item #itemSuggestions .term { min-width: 10px; min-height: 12px; border: 1px solid #ccc; padding: 2px 2px; margin-right: 2px; margin-bottom: 2px; display: inline-block; color: rgb(70, 70, 70); border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px; white-space: nowrap;}
+
+input[type='text'].searchBoxIconBg                { background:url(images/icon_magniGlass13.png) center right no-repeat #fff; padding-right: 18px; }
