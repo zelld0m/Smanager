@@ -12,6 +12,9 @@
     </parent>
 
     <properties>
+        <!-- PROPERTIES MANAGER VERSION -->
+        <properties.manager.version>1.0-SNAPSHOT</properties.manager.version>
+        
         <!-- ASPECTJ VERSION -->
         <aspectj.version>1.6.10</aspectj.version>
 
@@ -68,7 +71,13 @@
     </properties>
 
     <dependencies>
-
+        <!-- PROPERTIES MANAGER -->
+        <dependency>
+            <groupId>com.search</groupId>
+            <artifactId>propertiesManager</artifactId>
+            <version>${properties.manager.version}</version>
+        </dependency>
+        
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>

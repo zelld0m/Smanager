@@ -97,7 +97,8 @@
 		      		</sec:authorize>	      		
 		      		</c:if>
 		      		
-		      		<li ${submenu eq 'monitor'? 'class="active"': ''}><a href="<spring:url value="/monitor/" />">Monitor</a></li>	      		
+		      		<li ${submenu eq 'monitor'? 'class="active"': ''}><a href="<spring:url value="/monitor/" />">Monitor</a></li>
+                                <li ${submenu eq 'store_settings'? 'class="active"': ''}><a href="<spring:url value="/store_settings/" />${storeId}">Store Settings</a></li>
 		       </ul>
 	      </c:if>
 	          
