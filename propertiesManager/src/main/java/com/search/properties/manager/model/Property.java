@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
 /**
  * Represents a property of a module in the store-properties.xml file
@@ -16,8 +18,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Property {
+@DataTransferObject(converter = BeanConverter.class)
+public class Property implements java.io.Serializable {
 
+    private static final long serialVersionUID = 3848487761515404464L;
     @XmlAttribute(required = true)
     private String id;
     @XmlAttribute
@@ -36,7 +40,7 @@ public class Property {
     public Property() {
     }
 
-    public Property(String id, String type, boolean multiValued, boolean required, 
+    public Property(String id, String type, boolean multiValued, boolean required,
             String label, String description, String defaultValue) {
         this.id = id;
         this.type = type;

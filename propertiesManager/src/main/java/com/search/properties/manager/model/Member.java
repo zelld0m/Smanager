@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
 /**
  * Represents a member of a group in the store-properties.xml file
@@ -15,9 +17,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Member {
+@DataTransferObject(converter = BeanConverter.class)
+public class Member implements java.io.Serializable {
 
-    @XmlAttribute(name="property-id", required = true)
+    private static final long serialVersionUID = -4536630867321550383L;
+    @XmlAttribute(name = "property-id", required = true)
     private String propertyId;
 
     public Member() {

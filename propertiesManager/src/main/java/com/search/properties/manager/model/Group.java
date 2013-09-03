@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
 /**
  * Represents a group of a store in the store-properties.xml file
@@ -18,8 +20,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Group {
+@DataTransferObject(converter = BeanConverter.class)
+public class Group implements java.io.Serializable {
 
+    private static final long serialVersionUID = -7403612053638059677L;
     @XmlAttribute(required = true)
     private String name;
     @XmlElement(name = "member")

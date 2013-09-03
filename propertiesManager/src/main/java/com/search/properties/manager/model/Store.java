@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
 /**
  * Represents the store of the store-properties.xml file
@@ -18,8 +20,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Store {
+@DataTransferObject(converter = BeanConverter.class)
+public class Store implements java.io.Serializable {
 
+    private static final long serialVersionUID = 4703673883683467685L;
     @XmlAttribute(required = true)
     private String id;
     @XmlAttribute(name = "extends")
