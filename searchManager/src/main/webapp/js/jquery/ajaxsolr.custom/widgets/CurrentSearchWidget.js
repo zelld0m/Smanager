@@ -11,9 +11,9 @@
 			self.solrFieldToTextDisplayMap["ImageExists:1"] = "With Product Image Only";
 			self.solrFieldToTextDisplayMap["ImageExists:0"] = "Without Product Image Only";
 
-			self.solrFieldToTextDisplayMap["PCMallGov_ACAStoreFlag:true"] = "Academic Catalog";
-			self.solrFieldToTextDisplayMap["PCMallGov_OpenStoreFlag:true"] = "Open Catalog";
-			self.solrFieldToTextDisplayMap["PCMallGov_GovStoreFlag:true"] = "Government Catalog";
+			self.solrFieldToTextDisplayMap["PCMG_ACAStoreFlag:true"] = "Academic Catalog";
+			self.solrFieldToTextDisplayMap["PCMG_OpenStoreFlag:true"] = "Open Catalog";
+			self.solrFieldToTextDisplayMap["PCMG_GovStoreFlag:true"] = "Government Catalog";
 
 			self.solrFieldToTextDisplayMap["Refurbished_Flag:1"] = "Refurbished Products";
 			self.solrFieldToTextDisplayMap["OpenBox_Flag:1"] = "Open Box Products";
@@ -42,7 +42,7 @@
 				var filterFieldValue = facetValue.substr(facetValue.indexOf(':') + 1);
 				
 				var conditionSelector = facetValue.match(/Refurbished_Flag|OpenBox_Flag|Clearance_Flag/g);
-				var pcmgSelector = facetValue.match(/PCMallGov_ACAStoreFlag|PCMallGov_OpenStoreFlag|PCMallGov_GovStoreFlag/g);
+				var pcmgSelector = facetValue.match(/PCMG_ACAStoreFlag|PCMG_OpenStoreFlag|PCMG_GovStoreFlag/g);
 				
 				var multiFieldFq = !$.isEmptyObject(conditionSelector) && conditionSelector.length > 0  ||
 				!$.isEmptyObject(pcmgSelector) && pcmgSelector.length > 0;
