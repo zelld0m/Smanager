@@ -102,8 +102,8 @@ public class PropertiesManager {
             boolean overrideProperties = false;
 
             if (PropertiesManagerUtil.hasParent(store)) {
-                Store parentStore = PropertiesManagerUtil.getParent(storeProperties,
-                        store);
+                Store parentStore = PropertiesManagerUtil.getParent(store, 
+                        storeProperties);
                 // load and save the store modules of the parent store
                 loadAndSaveStoreModules(parentStore.getModules(), storeId);
 

@@ -1,8 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <store-properties>
-    <store id="pcmallbd" extends="pcmall"/>
+    <store id="pcmallcap" extends="pcmall">
+        <module name="settings" title="Store Settings">
+            <properties>
+                <property id="test" type="String" required="true">
+                    <label>Test</label>
+                    <description>This is a test.</description>
+                    <defaultValue>A test</defaultValue>
+                </property>
+                <property id="site_domain" type="String" required="true">
+                    <label>Site Domain</label>
+                    <description>Domain of the main site.</description>
+                    <defaultValue>pcmbd.com</defaultValue>
+                </property>
+            </properties>
+        </module>
+    </store>
     <store id="pcmall">
-        <module name="store-settings" title="Store Settings">
+        <module name="mail" title="Mail">
+            <groups>
+                <group>
+                    <member property-id="pendingNotification"/>
+                    <member property-id="approvalNotification"/>
+                    <member property-id="pushToProdNotification"/>
+                </group>
+            </groups>
+            
+            <properties>
+                <property id="pendingNotification" type="Boolean">
+                    <label>Pending Notification</label>
+                    <description>Pending Notification</description>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="approvalNotification" type="Boolean">
+                    <label>Approval Notification</label>
+                    <description>Approval Notification</description>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="pushToProdNotification" type="Boolean">
+                    <label>Push To Prod Notification</label>
+                    <description>Push To Prod Notification</description>
+                    <defaultValue>true</defaultValue>
+                </property>
+            </properties>
+        </module>
+        <module name="settings" title="Settings">
             <groups>
                 <group name="Banner Ads Feature">
                     <member property-id="site_domain"/>
@@ -56,4 +98,3 @@
         </module>
     </store>
 </store-properties>
-

@@ -28,24 +28,41 @@ public class PropertiesManagerUtil {
 
     /**
      * @param store the {@link Store} object
+     * @param storeProperties the {@link StoreProperties} object
      * @return the parent of the {@link Store} object provided
      * @throws StoreNotFoundException thrown when the parent of the passed {@link Store}
      * object cannot be found
      */
-    public static Store getParent(StoreProperties storeProperties, Store store)
+    public static Store getParent(Store store, StoreProperties storeProperties)
             throws StoreNotFoundException {
         String passedStoreParentId = store.getParent();
 
         if (hasParent(store)) {
-            List<Store> stores = storeProperties.getStores();
-            for (Store theStore : stores) {
-                if (theStore.getId().equals(passedStoreParentId)) {
-                    return theStore;
-                }
-            }
+            return getStoreById(passedStoreParentId, storeProperties);
         }
 
         throw new StoreNotFoundException(String.format(
                 "The parent of %s cannot be found.", passedStoreParentId));
+    }
+
+    /**
+     * @param storeId the store id
+     * @param storeProperties the {@link StoreProperties} object
+     * @return the {@link Store} object based from the store id passed
+     * @throws StoreNotFoundException
+     */
+    public static Store getStoreById(String storeId, StoreProperties storeProperties)
+            throws StoreNotFoundException {
+
+        List<Store> stores = storeProperties.getStores();
+
+        for (Store store : stores) {
+            if (store.getId().equals(storeId)) {
+                return store;
+            }
+        }
+
+        throw new StoreNotFoundException(String.format("Cannot find the store %s",
+                storeId));
     }
 }
