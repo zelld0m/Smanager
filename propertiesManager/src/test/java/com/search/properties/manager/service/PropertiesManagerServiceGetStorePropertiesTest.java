@@ -47,14 +47,14 @@ public class PropertiesManagerServiceGetStorePropertiesTest {
         List<Store> stores = storeProperties.getStores();
 
         Store pcmallBDStore = stores.get(0);
-        assertEquals(pcmallBDStore.getId(), "pcmallbd");
+        assertEquals(pcmallBDStore.getId(), "pcmallcap");
 
         Store pcmallStore = stores.get(1);
         assertEquals(pcmallStore.getId(), "pcmall");
 
         List<Module> pcmallModules = pcmallStore.getModules();
-        Module storeSettingsModule = pcmallModules.get(0);
-        assertEquals(storeSettingsModule.getName(), "store-settings");
+        Module storeSettingsModule = pcmallModules.get(1);
+        assertEquals(storeSettingsModule.getName(), "settings");
         
         List<Group> storeSettingsGroups = storeSettingsModule.getGroups();
         Group bannerAdsFeatureGroup = storeSettingsGroups.get(0);

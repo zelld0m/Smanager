@@ -31,18 +31,19 @@ public class PropertiesManagerUtilTest {
     private PropertiesManagerService propertiesManagerService;
     @Autowired
     private PropertiesManager propertiesManager;
-
+    private StoreProperties storeProperties;
+    
     @Before
     public void setup() {
         assertNotNull(propertiesManagerService);
         assertNotNull(propertiesManager);
+        storeProperties = propertiesManagerService.getStoreProperties();
         propertiesManager.setStorePropertiesLocation(
                 "src/test/resources/home/solr/conf/store-properties.xml");
     }
 
     @Test
     public void testHasParent_Argument_Has_Parent() {
-        StoreProperties storeProperties = propertiesManagerService.getStoreProperties();
         List<Store> stores = storeProperties.getStores();
         Store pcmallBDStore = stores.get(0);
         assertEquals(PropertiesManagerUtil.hasParent(pcmallBDStore), true);
@@ -50,7 +51,6 @@ public class PropertiesManagerUtilTest {
 
     @Test
     public void testHasParent_Argument_Has_No_Parent() {
-        StoreProperties storeProperties = propertiesManagerService.getStoreProperties();
         List<Store> stores = storeProperties.getStores();
         Store pcmallStore = stores.get(1);
         assertEquals(PropertiesManagerUtil.hasParent(pcmallStore), false);
@@ -58,20 +58,29 @@ public class PropertiesManagerUtilTest {
 
     @Test
     public void testGetParent_Store_Parent_Exists() {
-        StoreProperties storeProperties = propertiesManagerService.getStoreProperties();
         List<Store> stores = storeProperties.getStores();
         Store pcmallBDStore = stores.get(0);
         Store pcmallStore = stores.get(1);
 
-        assertEquals(PropertiesManagerUtil.getParent(storeProperties, pcmallBDStore),
+        assertEquals(PropertiesManagerUtil.getParent(pcmallBDStore, storeProperties),
                 pcmallStore);
     }
 
     @Test(expected = StoreNotFoundException.class)
     public void testGetParent_Store_Parent_Does_Not_Exists_Throw_StoreNotFoundException() {
-        StoreProperties storeProperties = propertiesManagerService.getStoreProperties();
         List<Store> stores = storeProperties.getStores();
         Store pcmallStore = stores.get(1);
-        PropertiesManagerUtil.getParent(storeProperties, pcmallStore);
+        PropertiesManagerUtil.getParent(pcmallStore, storeProperties);
+    }
+    
+    @Test
+    public void testGetStoreById_StoreId_Exists() {
+        Store pcmallStore = PropertiesManagerUtil.getStoreById("pcmall", storeProperties);
+        assertEquals(pcmallStore.getId(), "pcmall");
+    }
+    
+    @Test(expected = StoreNotFoundException.class)
+    public void testGetStoreById_StoreId_Does_Not_Exists_Throw_StoreNotFoundException() {
+        PropertiesManagerUtil.getStoreById("macmall", storeProperties);
     }
 }
