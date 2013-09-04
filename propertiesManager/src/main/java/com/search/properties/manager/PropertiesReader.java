@@ -42,10 +42,10 @@ public class PropertiesReader {
         List<StorePropertiesFile> storePropertiesFiles = Lists.newArrayList();
 
         for (Module module : modules) {
-            String fileName = String.format("%s%s%s.%s.properties",
+            String filePath = String.format("%s%s%s.%s.properties",
                     propertiesManager.getStorePropertiesSaveLocation(), File.separator,
                     storeId, module.getName());
-            File file = new File(fileName);
+            File file = new File(filePath);
             Properties propertiesObj = new Properties();
 
             if (file.exists()) {
@@ -53,7 +53,7 @@ public class PropertiesReader {
                     propertiesObj.load(new FileReader(file));
                 } catch (IOException e) {
                     logger.error(String.format("Unable to read properties file %s",
-                            fileName), e);
+                            filePath), e);
                 }
             }
 
@@ -64,11 +64,11 @@ public class PropertiesReader {
                 String name = moduleProperty.getId();
                 String defaultValue = moduleProperty.getDefaultValue();
                 String propertyValue = propertiesObj.getProperty(name, defaultValue);
-
+                
                 storePropertyList.add(new StoreProperty(name, propertyValue));
             }
 
-            storePropertiesFiles.add(new StorePropertiesFile(storePropertyList));
+            storePropertiesFiles.add(new StorePropertiesFile(filePath, storePropertyList));
 
         }
 

@@ -16,13 +16,23 @@ import org.directwebremoting.convert.BeanConverter;
 public class StorePropertiesFile implements java.io.Serializable {
 
     private static final long serialVersionUID = -4015343634641306977L;
+    private String filePath;
     private List<StoreProperty> storeProperties = Lists.newArrayList();
 
     public StorePropertiesFile() {
     }
 
-    public StorePropertiesFile(List<StoreProperty> storeProperties) {
+    public StorePropertiesFile(String filePath, List<StoreProperty> storeProperties) {
+        this.filePath = filePath;
         this.storeProperties = storeProperties;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public List<StoreProperty> getStoreProperties() {

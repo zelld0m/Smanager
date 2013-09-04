@@ -2,9 +2,14 @@ package com.search.properties.manager.util;
 
 import com.google.common.base.Strings;
 import com.search.properties.manager.PropertiesManager;
+import com.search.properties.manager.exception.ModuleNotFoundException;
 import com.search.properties.manager.exception.StoreNotFoundException;
+import com.search.properties.manager.exception.StorePropertyNotFoundException;
+import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
+import com.search.properties.manager.model.StorePropertiesFile;
+import com.search.properties.manager.model.StoreProperty;
 import java.util.List;
 
 /**
@@ -64,5 +69,51 @@ public class PropertiesManagerUtil {
 
         throw new StoreNotFoundException(String.format("Cannot find the store %s",
                 storeId));
+    }
+
+    /**
+     *
+     * @param name the name of the store property to find
+     * @param storePropertiesFile the {@link StorePropertiesFile} object
+     * @return the {@link StoreProperty} object based from a name
+     * @throws StorePropertyNotFoundException thrown when the store property cannot be
+     * found
+     */
+    public static StoreProperty getStorePropertyByName(String name,
+            StorePropertiesFile storePropertiesFile)
+            throws StorePropertyNotFoundException {
+        List<StoreProperty> storeProperties = storePropertiesFile.getStoreProperties();
+        for (StoreProperty storeProperty : storeProperties) {
+            if (storeProperty.getName().equals(name)) {
+                return storeProperty;
+            }
+        }
+
+        throw new StorePropertyNotFoundException(String.format(
+                "Store property with the name %s not found on neither "
+                + "store-properties.xml nor on the properties file %s", 
+                name, storePropertiesFile.getFilePath()));
+    }
+
+    /**
+     *
+     * @param name the name of the module to find
+     * @param store the {@link Store} object
+     * @return the {@link Module} object based from a name
+     * @throws ModuleNotFoundException thrown when the module with the passed name cannot
+     * be found
+     */
+    public static Module getModuleByName(String name, Store store)
+            throws ModuleNotFoundException {
+
+        List<Module> modules = store.getModules();
+        for (Module module : modules) {
+            if (module.getName().equals(name)) {
+                return module;
+            }
+        }
+
+        throw new ModuleNotFoundException(String.format(
+                "module with the name %s cannot be found on %s", name, store.getId()));
     }
 }
