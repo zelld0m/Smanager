@@ -4,10 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.search.properties.manager.PropertiesManager;
+import com.search.properties.manager.exception.ModuleNotFoundException;
 import com.search.properties.manager.exception.StoreNotFoundException;
+import com.search.properties.manager.exception.StorePropertyNotFoundException;
+import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
+import com.search.properties.manager.model.StorePropertiesFile;
+import com.search.properties.manager.model.StoreProperty;
 import com.search.properties.manager.service.PropertiesManagerService;
+import com.search.properties.manager.service.PropertiesReaderService;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,56 +37,94 @@ public class PropertiesManagerUtilTest {
     private PropertiesManagerService propertiesManagerService;
     @Autowired
     private PropertiesManager propertiesManager;
+    @Autowired
+    private PropertiesReaderService propertiesReaderService;
     private StoreProperties storeProperties;
-    
+    private Store pcmallCapStore;
+    private Store pcmallStore;
+    private List<StorePropertiesFile> storePropertiesFiles;
+
     @Before
     public void setup() {
         assertNotNull(propertiesManagerService);
         assertNotNull(propertiesManager);
-        storeProperties = propertiesManagerService.getStoreProperties();
+        
         propertiesManager.setStorePropertiesLocation(
                 "src/test/resources/home/solr/conf/store-properties.xml");
+        propertiesManager.setStorePropertiesSaveLocation(
+                "src/test/resources/home/solr/conf");
+        
+        storeProperties = propertiesManagerService.getStoreProperties();
+        
+        pcmallCapStore = PropertiesManagerUtil.getStoreById("pcmallcap",
+                storeProperties);
+        pcmallStore = PropertiesManagerUtil.getStoreById("pcmall",
+                storeProperties);
+
+        assertNotNull(propertiesReaderService);
+        storePropertiesFiles = propertiesReaderService.readAllStorePropertiesFiles(
+                "pcmall");
     }
 
     @Test
     public void testHasParent_Argument_Has_Parent() {
-        List<Store> stores = storeProperties.getStores();
-        Store pcmallBDStore = stores.get(0);
-        assertEquals(PropertiesManagerUtil.hasParent(pcmallBDStore), true);
+        assertEquals(PropertiesManagerUtil.hasParent(pcmallCapStore), true);
     }
 
     @Test
     public void testHasParent_Argument_Has_No_Parent() {
-        List<Store> stores = storeProperties.getStores();
-        Store pcmallStore = stores.get(1);
         assertEquals(PropertiesManagerUtil.hasParent(pcmallStore), false);
     }
 
     @Test
     public void testGetParent_Store_Parent_Exists() {
-        List<Store> stores = storeProperties.getStores();
-        Store pcmallBDStore = stores.get(0);
-        Store pcmallStore = stores.get(1);
-
-        assertEquals(PropertiesManagerUtil.getParent(pcmallBDStore, storeProperties),
+        assertEquals(PropertiesManagerUtil.getParent(pcmallCapStore, storeProperties),
                 pcmallStore);
     }
 
     @Test(expected = StoreNotFoundException.class)
     public void testGetParent_Store_Parent_Does_Not_Exists_Throw_StoreNotFoundException() {
-        List<Store> stores = storeProperties.getStores();
-        Store pcmallStore = stores.get(1);
         PropertiesManagerUtil.getParent(pcmallStore, storeProperties);
     }
-    
+
     @Test
     public void testGetStoreById_StoreId_Exists() {
-        Store pcmallStore = PropertiesManagerUtil.getStoreById("pcmall", storeProperties);
         assertEquals(pcmallStore.getId(), "pcmall");
     }
-    
+
     @Test(expected = StoreNotFoundException.class)
     public void testGetStoreById_StoreId_Does_Not_Exists_Throw_StoreNotFoundException() {
         PropertiesManagerUtil.getStoreById("macmall", storeProperties);
+    }
+
+    @Test
+    public void testGetStorePropertyByName() {
+        StorePropertiesFile pcmallSettingsStorePropertiesFile = storePropertiesFiles.get(
+                1);
+        StoreProperty siteDomainStoreProperty = PropertiesManagerUtil.
+                getStorePropertyByName("site_domain", pcmallSettingsStorePropertiesFile);
+        assertEquals(siteDomainStoreProperty.getName(), "site_domain");
+        assertEquals(siteDomainStoreProperty.getValue(), "pcm.com");
+    }
+
+    @Test(expected = StorePropertyNotFoundException.class)
+    public void testGetStorePropertyByName_StoreName_Does_Not_Exists_Throw_StorePropertyNotFoundException() {
+        StorePropertiesFile pcmallSettingsStorePropertiesFile = storePropertiesFiles.get(
+                1);
+        PropertiesManagerUtil.getStorePropertyByName("hoopla", 
+                pcmallSettingsStorePropertiesFile);
+    }
+
+    @Test
+    public void testGetModuleByName() {
+        Module settingsModule = PropertiesManagerUtil.getModuleByName("settings", 
+                pcmallStore);
+        assertEquals(settingsModule.getName(), "settings");
+        assertEquals(settingsModule.getTitle(), "Settings");
+    }
+    
+    @Test(expected = ModuleNotFoundException.class)
+    public void testGetModuleByName_Module_Name_Does_Not_Exists_Throw_ModuleNotFoundException() {
+        PropertiesManagerUtil.getModuleByName("potato", pcmallStore);
     }
 }

@@ -94,6 +94,10 @@
                     <validator>STORE</validator>
                     <defaultValue>pcmallcap,pcmgbd</defaultValue>
                 </property>
+                <property id="for_testing" type="String">
+                    <label>For Testing</label>
+                    <defaultValue>This is a test</defaultValue>
+                </property>
             </properties>
         </module>
     </store>

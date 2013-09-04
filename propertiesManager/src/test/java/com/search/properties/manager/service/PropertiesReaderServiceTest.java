@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import com.search.properties.manager.PropertiesManager;
 import com.search.properties.manager.model.StorePropertiesFile;
 import com.search.properties.manager.model.StoreProperty;
+import com.search.properties.manager.util.PropertiesManagerUtil;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,43 +30,45 @@ public class PropertiesReaderServiceTest {
     @Autowired
     private PropertiesManager propertiesManager;
     private List<StorePropertiesFile> storePropertiesFiles;
-    
+
     @Before
     public void setup() {
         assertNotNull(propertiesReaderService);
         assertNotNull(propertiesManager);
-        storePropertiesFiles = propertiesReaderService.readAllStorePropertiesFiles(
-                "pcmall");
+
         propertiesManager.setStorePropertiesLocation(
                 "src/test/resources/home/solr/conf/store-properties.xml");
         propertiesManager.setStorePropertiesSaveLocation(
                 "src/test/resources/home/solr/conf");
+
+        storePropertiesFiles = propertiesReaderService.readAllStorePropertiesFiles(
+                "pcmall");
     }
 
     @Test
     public void testReadAllStorePropertiesFiles() {
         StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(1);
-        List<StoreProperty> storeProperties = settingsPropertiesFile.getStoreProperties();
-        
-        StoreProperty siteDomainStoreProperty = storeProperties.get(0);
+
+        StoreProperty siteDomainStoreProperty = PropertiesManagerUtil.
+                getStorePropertyByName("site_domain", settingsPropertiesFile);
         assertEquals(siteDomainStoreProperty.getName(), "site_domain");
         assertEquals(siteDomainStoreProperty.getValue(), "pcm.com");
     }
-    
+
     @Test
     public void testReadAllStorePropertiesFile_Property_Does_Not_Exist() {
         StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(1);
-        List<StoreProperty> storeProperties = settingsPropertiesFile.getStoreProperties();
-        StoreProperty autoExportStoreProperty = storeProperties.get(1);
-        assertEquals(autoExportStoreProperty.getName(), "default_banner_linkpath_protocol");
-        assertEquals(autoExportStoreProperty.getValue(), "http");
+        StoreProperty forTestingStoreProperty = PropertiesManagerUtil.
+                getStorePropertyByName("for_testing", settingsPropertiesFile);
+        assertEquals(forTestingStoreProperty.getName(), "for_testing");
+        assertEquals(forTestingStoreProperty.getValue(), "This is a test");
     }
-    
+
     @Test
     public void testReadAllStorePropertiesFiles_Properties_File_Does_Not_Exist() {
         StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(0);
-        List<StoreProperty> storeProperties = settingsPropertiesFile.getStoreProperties();
-        StoreProperty pendingNotification = storeProperties.get(0);
+        StoreProperty pendingNotification = PropertiesManagerUtil.getStorePropertyByName(
+                "pendingNotification", settingsPropertiesFile);
         assertEquals(pendingNotification.getName(), "pendingNotification");
         assertEquals(pendingNotification.getValue(), "true");
     }
