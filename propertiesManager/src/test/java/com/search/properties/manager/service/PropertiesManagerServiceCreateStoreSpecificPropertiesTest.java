@@ -13,12 +13,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @version 1.0
  */
 @RunWith(PowerMockRunner.class)
-public class PropertiesManagerServiceSaveStorePropertiesTest {
+public class PropertiesManagerServiceCreateStoreSpecificPropertiesTest {
     @Mock
     private PropertiesManager propertiesManager;
     
     @Test
-    public void testSaveStoreProperties() {
-        propertiesManager.saveStoreProperties();
+    public void testCreateStoreSpecificProperties() {
+        propertiesManager.createStoreSpecificProperties();
     }
 }
