@@ -30,11 +30,17 @@
 
     <div class="clearB"></div>
 
-    <div style="width:95%" class="dashboard marT20 mar0">
+    <div id="store_config" style="width:95%" class="dashboard marT20 mar0">
         <div id="store_tabs" class="tabs">
             <ul>
-              <!-- Dynamic tabs to be added here! -->  
+                <!-- Dynamic tabs to be added here! -->  
             </ul>
+        </div>
+
+        <div align="right" class="padR15 marT10">
+            <a id="settingsSaveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">
+                <div class="buttons fontBold">Save</div>
+            </a>
         </div>
     </div>
 

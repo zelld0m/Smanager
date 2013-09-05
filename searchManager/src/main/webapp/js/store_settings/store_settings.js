@@ -4,6 +4,29 @@ $(function() {
     var tabContentFieldTemplate = "<tr><td>#{label}&nbsp;</td><td>#{field}</td></tr>";
     var stringFieldTemplate = "<input type='text' class='w240' id='#{id}'/>";
     var booleanFieldTemplate = "<input id='#{id}' type='checkbox' class='firerift-style-checkbox on-off'/>";
+    var tabObjects = new Array();
+    var storePropertiesFilesArray;
+
+    var Field = function(id, type) {
+        this.id = id;
+        this.type = type;
+    };
+
+    var TabObject = function(name, fields) {
+        this.name = name;
+        this.fields = fields;
+    };
+
+    var StorePropertiesFile = function(moduleName, filePath, storeProperties) {
+        this.moduleName = moduleName;
+        this.filePath = filePath;
+        this.storeProperties = storeProperties;
+    };
+
+    var StoreProperty = function(name, value) {
+        this.name = name;
+        this.value = value;
+    };
 
     /**
      *  Generate tabs based from the Module object passed
@@ -15,8 +38,10 @@ $(function() {
 
         for (var i = 0, len = modules.length; i < len; i++) {
             var module = modules[i];
+            var moduleName = module.name;
+            var moduleTitle = module.title;
 
-            storeTabsTab.tabs('add', '#' + module.name, module.title);
+            storeTabsTab.tabs('add', '#' + moduleName, moduleTitle);
         }
     };
 
@@ -48,6 +73,8 @@ $(function() {
                         content.append(groupNameHeader);
                     }
 
+                    var fields = new Array();
+
                     for (var k = 0; k < members.length; k++) {
                         var member = members[k];
                         var propertyId = member.propertyId;
@@ -73,8 +100,13 @@ $(function() {
                             }
 
                             content.append(fieldToAppend);
+
+                            fields.push(new Field(propertyId, type));
                         }
                     }
+
+                    // add the module name and it's fields to tabObjects array
+                    addToTabObjectArray(module.name, fields);
 
                     content.append("</table>");
                 }
@@ -86,6 +118,25 @@ $(function() {
         }
 
         $("#store_tabs").append(builder.toString());
+    };
+
+    var addToTabObjectArray = function(moduleName, fields) {
+        var tabObject = findTabObjectByModuleName(moduleName);
+
+        if (tabObject === null) {
+            tabObjects.push(new TabObject(moduleName, fields));
+        }
+    };
+
+    var findTabObjectByModuleName = function(moduleName) {
+        for (var i = 0; i < tabObjects.length; i++) {
+            var tabObject = tabObjects[i];
+            if (tabObject.name === moduleName) {
+                return tabObject;
+            }
+        }
+
+        return null;
     };
 
     var populateFields = function(modules, storePropertiesFiles) {
@@ -174,10 +225,63 @@ $(function() {
         return null;
     };
 
+    var generateStoreProperties = function(fields) {
+        var storeProperties = new Array();
+
+        for (var i = 0; i < fields.length; i++) {
+            var field = fields[i];
+            var fieldId = field.id;
+            var fieldType = field.type;
+            var fieldValue = null;
+            var fieldComponent = $("#" + fieldId);
+
+            switch (fieldType) {
+                case "String":
+                    fieldValue = fieldComponent.val();
+                    break;
+                case "Boolean":
+                    fieldValue = fieldComponent.prop("checked");
+                    break;
+            }
+
+            storeProperties.push(new StoreProperty(fieldId, fieldValue));
+        }
+
+        return storeProperties;
+    };
+
+    var findStorePropertiesFileByModuleName = function(moduleName) {
+        for (var i = 0; i < storePropertiesFilesArray.length; i++) {
+            var storePropertiesFile = storePropertiesFilesArray[i];
+
+            if (storePropertiesFile.moduleName === moduleName) {
+                return storePropertiesFile;
+            }
+        }
+
+        return null;
+    };
+
     var store_settings = {
+        prepareTabContent: function() {
+            var storeConfig = $("#store_config");
+
+            if (!$("div.circlePreloader").is(":visible")) {
+                $('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo(storeConfig);
+            }
+
+            storeConfig.find('table.tblItems, div#actionBtn').hide();
+            storeConfig.find("div#ruleCount").html("");
+        },
+        cleanUpTabContent: function() {
+            $('div.circlePreloader').remove();
+        },
         init: function() {
             PropertiesManagerServiceJS.getStoreProperties(function(data) {
                 var stores = data.stores;
+
+                // show the loading icon
+                store_settings.prepareTabContent();
 
                 // for generating the labels and fields
                 UtilityServiceJS.getStoreId(function(id) {
@@ -186,36 +290,48 @@ $(function() {
 
                         if (store.id === id) {
                             var modules = store.modules;
+
+                            // generate the tab contents
                             generateTabContents(modules);
+
+                            // generate the tabs
                             generateTabs(modules);
 
                             // for populating the fields 
                             PropertiesReaderServiceJS.readAllStorePropertiesFiles(id,
                                     function(storePropertiesFiles) {
-//                                        getStorePropertyByName("", modules[0], storePropertiesFiles);
+                                        // populate the fields
                                         populateFields(modules, storePropertiesFiles);
-//                                        for (var i = 0; i < storePropertiesFiles.length; i++) {
-//                                            var storePropertiesFile = storePropertiesFiles[i];
-//                                            var storeProperties = storePropertiesFile.storeProperties;
-//
-//                                            for (var j = 0; j < storeProperties.length; j++) {
-//                                                var storeProperty = storeProperties[j];
-//                                                var name = storeProperty.name;
-//                                                var value = storeProperty.value;
-//
-//                                                $("#" + name).val(value);
-//                                            }
-//                                        }
+
+                                        storePropertiesFilesArray = storePropertiesFiles;
+
+                                        // remove the loading icon
+                                        store_settings.cleanUpTabContent();
                                     }
                             );
                         }
                     }
-
-
                 });
             });
 
+            $("#settingsSaveBtn").click(function() {
+                for (var i = 0; i < tabObjects.length; i++) {
+                    var tabObject = tabObjects[i];
+                    var tabName = tabObject.name;
+                    var fields = tabObject.fields;
 
+                    var storeProperties = generateStoreProperties(fields);
+
+                    var storePropertiesFile = findStorePropertiesFileByModuleName(tabName);
+                    storePropertiesFile.storeProperties = storeProperties;
+                }
+
+                PropertiesManagerServiceJS.saveStoreProperties(storePropertiesFilesArray,
+                        function(result) {
+                            jAlert("Store settings saved", "Saved");
+                        }
+                );
+            });
         }
     };
 
