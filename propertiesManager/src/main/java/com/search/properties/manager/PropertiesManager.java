@@ -8,6 +8,8 @@ import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Property;
 import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
+import com.search.properties.manager.model.StorePropertiesFile;
+import com.search.properties.manager.model.StoreProperty;
 import com.search.properties.manager.util.PropertiesManagerUtil;
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,12 +83,32 @@ public class PropertiesManager {
     }
 
     /**
-     * Saves the store properties to the appropriate directory
+     * Saves the store properties to their designated store specific properties file
+     *
+     * @param storePropertiesFiles the store properties to save
+     */
+    public void saveStoreProperties(List<StorePropertiesFile> storePropertiesFiles) {
+        for (StorePropertiesFile storePropertiesFile : storePropertiesFiles) {
+            List<StoreProperty> storeProperties = storePropertiesFile.
+                    getStoreProperties();
+            Properties properties = new Properties();
+            
+            for (StoreProperty storeProperty : storeProperties) {
+                properties.setProperty(storeProperty.getName(), storeProperty.getValue());
+            }
+            
+            // save the properties file
+            savePropertiesFile(properties, storePropertiesFile.getFilePath());
+        }
+    }
+
+    /**
+     * Creates the store properties to the appropriate directory
      *
      * @throws NotDirectoryException thrown when the <i>storePropertiesSaveLocation</i>
      * provided in the beans configuration is not a directory
      */
-    public void saveStoreProperties() throws NotDirectoryException {
+    public void createStoreSpecificProperties() throws NotDirectoryException {
 
         File file = new File(storePropertiesSaveLocation);
         if (!file.isDirectory()) {
@@ -102,7 +124,7 @@ public class PropertiesManager {
             boolean overrideProperties = false;
 
             if (PropertiesManagerUtil.hasParent(store)) {
-                Store parentStore = PropertiesManagerUtil.getParent(store, 
+                Store parentStore = PropertiesManagerUtil.getParent(store,
                         storeProperties);
                 // load and save the store modules of the parent store
                 loadAndSaveStoreModules(parentStore.getModules(), storeId);

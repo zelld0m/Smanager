@@ -2,6 +2,8 @@ package com.search.properties.manager.service;
 
 import com.search.properties.manager.PropertiesManager;
 import com.search.properties.manager.model.StoreProperties;
+import com.search.properties.manager.model.StorePropertiesFile;
+import java.util.List;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
@@ -34,10 +36,18 @@ public class PropertiesManagerService {
     }
 
     /**
-     * Saves the store properties defined in store-properties.xml to the provided store
+     * Stores the properties in their specific properties file
+     * @param storePropertiesFile the properties file to save
+     */
+    public void saveStoreProperties(List<StorePropertiesFile> storePropertiesFile) {
+        propertiesManager.saveStoreProperties(storePropertiesFile);
+    }
+    
+    /**
+     * Creates the store properties defined in store-properties.xml to the provided store
      * properties folder
      */
-    public void saveStoreProperties() {
-        propertiesManager.saveStoreProperties();
+    public void createStoreSpecificProperties() {
+        propertiesManager.createStoreSpecificProperties();
     }
 }
