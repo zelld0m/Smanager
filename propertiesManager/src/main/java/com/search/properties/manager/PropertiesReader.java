@@ -42,9 +42,10 @@ public class PropertiesReader {
         List<StorePropertiesFile> storePropertiesFiles = Lists.newArrayList();
 
         for (Module module : modules) {
+            String moduleName = module.getName();
             String filePath = String.format("%s%s%s.%s.properties",
                     propertiesManager.getStorePropertiesSaveLocation(), File.separator,
-                    storeId, module.getName());
+                    storeId, moduleName);
             File file = new File(filePath);
             Properties propertiesObj = new Properties();
 
@@ -68,8 +69,8 @@ public class PropertiesReader {
                 storePropertyList.add(new StoreProperty(name, propertyValue));
             }
 
-            storePropertiesFiles.add(new StorePropertiesFile(filePath, storePropertyList));
-
+            storePropertiesFiles.add(new StorePropertiesFile(moduleName, filePath, 
+                    storePropertyList));
         }
 
         return storePropertiesFiles;
