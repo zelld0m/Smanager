@@ -7,6 +7,7 @@ import com.search.properties.manager.PropertiesManager;
 import com.search.properties.manager.model.StorePropertiesFile;
 import com.search.properties.manager.model.StoreProperty;
 import com.search.properties.manager.util.PropertiesManagerUtil;
+import java.io.File;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,10 +50,21 @@ public class PropertiesReaderServiceTest {
     public void testReadAllStorePropertiesFiles() {
         StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(1);
 
+        String filePath = String.format("%s%s%s", "src/test/resources/home/solr/conf",
+                File.separator, "pcmall.settings.properties");
+        assertEquals(filePath, settingsPropertiesFile.getFilePath());
+
+        assertEquals("settings", settingsPropertiesFile.getModuleName());
+
         StoreProperty siteDomainStoreProperty = PropertiesManagerUtil.
                 getStorePropertyByName("site_domain", settingsPropertiesFile);
-        assertEquals(siteDomainStoreProperty.getName(), "site_domain");
-        assertEquals(siteDomainStoreProperty.getValue(), "pcm.com");
+        assertEquals("site_domain", siteDomainStoreProperty.getName());
+        assertEquals("pcm.com", siteDomainStoreProperty.getValue());
+
+        StoreProperty exportTargetStoreProperty = PropertiesManagerUtil.
+                getStorePropertyByName("export_target", settingsPropertiesFile);
+        assertEquals("export_target", exportTargetStoreProperty.getName());
+        assertEquals("pcmallcap,pcmgbd", exportTargetStoreProperty.getValue());
     }
 
     @Test
@@ -60,8 +72,8 @@ public class PropertiesReaderServiceTest {
         StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(1);
         StoreProperty forTestingStoreProperty = PropertiesManagerUtil.
                 getStorePropertyByName("for_testing", settingsPropertiesFile);
-        assertEquals(forTestingStoreProperty.getName(), "for_testing");
-        assertEquals(forTestingStoreProperty.getValue(), "This is a test");
+        assertEquals("for_testing", forTestingStoreProperty.getName());
+        assertEquals("This is a test", forTestingStoreProperty.getValue());
     }
 
     @Test
@@ -69,7 +81,7 @@ public class PropertiesReaderServiceTest {
         StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(0);
         StoreProperty pendingNotification = PropertiesManagerUtil.getStorePropertyByName(
                 "pendingNotification", settingsPropertiesFile);
-        assertEquals(pendingNotification.getName(), "pendingNotification");
-        assertEquals(pendingNotification.getValue(), "true");
+        assertEquals("pendingNotification", pendingNotification.getName());
+        assertEquals("true", pendingNotification.getValue());
     }
 }

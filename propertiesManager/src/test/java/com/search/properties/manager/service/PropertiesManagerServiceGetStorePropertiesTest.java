@@ -47,27 +47,27 @@ public class PropertiesManagerServiceGetStorePropertiesTest {
         List<Store> stores = storeProperties.getStores();
 
         Store pcmallBDStore = stores.get(0);
-        assertEquals(pcmallBDStore.getId(), "pcmallcap");
+        assertEquals("pcmallcap", pcmallBDStore.getId());
 
         Store pcmallStore = stores.get(1);
-        assertEquals(pcmallStore.getId(), "pcmall");
+        assertEquals("pcmall", pcmallStore.getId());
 
         List<Module> pcmallModules = pcmallStore.getModules();
         Module storeSettingsModule = pcmallModules.get(1);
-        assertEquals(storeSettingsModule.getName(), "settings");
+        assertEquals("settings", storeSettingsModule.getName());
         
         List<Group> storeSettingsGroups = storeSettingsModule.getGroups();
         Group bannerAdsFeatureGroup = storeSettingsGroups.get(0);
-        assertEquals(bannerAdsFeatureGroup.getName(), "Banner Ads Feature");
+        assertEquals("Banner Ads Feature", bannerAdsFeatureGroup.getName());
         
         List<Member> bannerAdsFeatureMembers = bannerAdsFeatureGroup.getMembers();
         Member siteDomainMember = bannerAdsFeatureMembers.get(0);
-        assertEquals(siteDomainMember.getPropertyId(), "site_domain");
+        assertEquals("site_domain", siteDomainMember.getPropertyId());
         
         List<Property> storeSettingsProperties = storeSettingsModule.getProperties();
         Property siteDomainProperty = storeSettingsProperties.get(0);
-        assertEquals(siteDomainProperty.getLabel(), "Site Domain");
-        assertEquals(siteDomainProperty.getDescription(), "Domain of managed site.");
-        assertEquals(siteDomainProperty.getDefaultValue(), "pcm.com");
+        assertEquals("Site Domain", siteDomainProperty.getLabel());
+        assertEquals("Domain of managed site.", siteDomainProperty.getDescription());
+        assertEquals("pcm.com", siteDomainProperty.getDefaultValue());
     }
 }

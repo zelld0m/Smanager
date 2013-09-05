@@ -68,18 +68,18 @@ public class PropertiesManagerUtilTest {
 
     @Test
     public void testHasParent_Argument_Has_Parent() {
-        assertEquals(PropertiesManagerUtil.hasParent(pcmallCapStore), true);
+        assertEquals(true, PropertiesManagerUtil.hasParent(pcmallCapStore));
     }
 
     @Test
     public void testHasParent_Argument_Has_No_Parent() {
-        assertEquals(PropertiesManagerUtil.hasParent(pcmallStore), false);
+        assertEquals(false, PropertiesManagerUtil.hasParent(pcmallStore));
     }
 
     @Test
     public void testGetParent_Store_Parent_Exists() {
-        assertEquals(PropertiesManagerUtil.getParent(pcmallCapStore, storeProperties),
-                pcmallStore);
+        assertEquals(pcmallStore, PropertiesManagerUtil.getParent(pcmallCapStore, 
+                storeProperties));
     }
 
     @Test(expected = StoreNotFoundException.class)
@@ -89,7 +89,7 @@ public class PropertiesManagerUtilTest {
 
     @Test
     public void testGetStoreById_StoreId_Exists() {
-        assertEquals(pcmallStore.getId(), "pcmall");
+        assertEquals("pcmall", pcmallStore.getId());
     }
 
     @Test(expected = StoreNotFoundException.class)
@@ -103,8 +103,8 @@ public class PropertiesManagerUtilTest {
                 1);
         StoreProperty siteDomainStoreProperty = PropertiesManagerUtil.
                 getStorePropertyByName("site_domain", pcmallSettingsStorePropertiesFile);
-        assertEquals(siteDomainStoreProperty.getName(), "site_domain");
-        assertEquals(siteDomainStoreProperty.getValue(), "pcm.com");
+        assertEquals("site_domain", siteDomainStoreProperty.getName());
+        assertEquals("pcm.com", siteDomainStoreProperty.getValue());
     }
 
     @Test(expected = StorePropertyNotFoundException.class)
@@ -119,8 +119,8 @@ public class PropertiesManagerUtilTest {
     public void testGetModuleByName() {
         Module settingsModule = PropertiesManagerUtil.getModuleByName("settings", 
                 pcmallStore);
-        assertEquals(settingsModule.getName(), "settings");
-        assertEquals(settingsModule.getTitle(), "Settings");
+        assertEquals("settings", settingsModule.getName());
+        assertEquals("Settings", settingsModule.getTitle());
     }
     
     @Test(expected = ModuleNotFoundException.class)
