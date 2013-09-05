@@ -6,6 +6,7 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <script type="text/javascript" src="<spring:url value="/dwr/interface/PropertiesManagerServiceJS.js"/>"></script>
+<script type="text/javascript" src="<spring:url value="/dwr/interface/PropertiesReaderServiceJS.js"/>"></script>
 <script type="text/javascript" src="<spring:url value="/js/util/StringBuilder.js"/>"></script>
 <script type="text/javascript" src="<spring:url value="/js/store_settings/store_settings.js"/>"></script>
 
