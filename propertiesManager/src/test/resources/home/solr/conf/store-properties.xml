@@ -19,7 +19,7 @@
     <store id="pcmall">
         <module name="mail" title="Mail">
             <groups>
-                <group>
+                <group name="Notifications">
                     <member property-id="pendingNotification"/>
                     <member property-id="approvalNotification"/>
                     <member property-id="pushToProdNotification"/>
