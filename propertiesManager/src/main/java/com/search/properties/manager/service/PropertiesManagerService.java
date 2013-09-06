@@ -43,11 +43,11 @@ public class PropertiesManagerService {
         propertiesManager.saveStoreProperties(storePropertiesFile);
     }
     
-    /**
-     * Creates the store properties defined in store-properties.xml to the provided store
-     * properties folder
-     */
-    public void createStoreSpecificProperties() {
-        propertiesManager.createStoreSpecificProperties();
-    }
+//    /**
+//     * Creates the store properties defined in store-properties.xml to the provided store
+//     * properties folder
+//     */
+//    public void createStoreSpecificProperties() {
+//        propertiesManager.createStoreSpecificProperties();
+//    }
 }

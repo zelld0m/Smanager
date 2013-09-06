@@ -64,6 +64,14 @@ public class Store implements java.io.Serializable {
         this.modules = modules;
     }
 
+    public void addModule(Module module) {
+        modules.add(module);
+    }
+    
+    public void addModule(int position, Module module) {
+        modules.add(position, module);
+    }
+    
     @Override
     public String toString() {
         return Objects.toStringHelper(this).

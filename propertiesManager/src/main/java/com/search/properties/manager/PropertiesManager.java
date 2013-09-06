@@ -1,6 +1,6 @@
 package com.search.properties.manager;
 
-import com.search.properties.manager.exception.NotDirectoryException;
+import com.search.properties.manager.exception.ModuleNotFoundException;
 import com.search.properties.manager.exception.StorePropertiesXmlNotLoadedException;
 import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Member;
@@ -12,7 +12,6 @@ import com.search.properties.manager.model.StorePropertiesFile;
 import com.search.properties.manager.model.StoreProperty;
 import com.search.properties.manager.util.PropertiesManagerUtil;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -66,6 +65,30 @@ public class PropertiesManager {
      */
     public StoreProperties getStoreProperties()
             throws StorePropertiesXmlNotLoadedException {
+        StoreProperties storeProperties = getStorePropertiesFromXML();
+        List<Store> stores = storeProperties.getStores();
+
+        for (Store store : stores) {
+            if (PropertiesManagerUtil.hasParent(store)) {
+                Store parentStore = PropertiesManagerUtil.getParent(store,
+                        storeProperties);
+
+                // add the parent store modules
+                addParentStoreModules(parentStore, store);
+            }
+
+        }
+
+        return storeProperties;
+    }
+
+    /**
+     * @return a {@link StoreProperties} object read from store-properties.xml
+     * @throws StorePropertiesXmlNotLoadedException thrown when store-properties.xml is
+     * invalid
+     */
+    public StoreProperties getStorePropertiesFromXML()
+            throws StorePropertiesXmlNotLoadedException {
         try {
             File file = new File(storePropertiesLocation);
             JAXBContext context = JAXBContext.newInstance(
@@ -92,79 +115,13 @@ public class PropertiesManager {
             List<StoreProperty> storeProperties = storePropertiesFile.
                     getStoreProperties();
             Properties properties = new Properties();
-            
+
             for (StoreProperty storeProperty : storeProperties) {
                 properties.setProperty(storeProperty.getName(), storeProperty.getValue());
             }
-            
+
             // save the properties file
             savePropertiesFile(properties, storePropertiesFile.getFilePath());
-        }
-    }
-
-    /**
-     * Creates the store properties to the appropriate directory
-     *
-     * @throws NotDirectoryException thrown when the <i>storePropertiesSaveLocation</i>
-     * provided in the beans configuration is not a directory
-     */
-    public void createStoreSpecificProperties() throws NotDirectoryException {
-
-        File file = new File(storePropertiesSaveLocation);
-        if (!file.isDirectory()) {
-            throw new NotDirectoryException(String.format("%s is not a directory",
-                    storePropertiesSaveLocation));
-        }
-
-        StoreProperties storeProperties = getStoreProperties();
-        List<Store> stores = storeProperties.getStores();
-
-        for (Store store : stores) {
-            String storeId = store.getId();
-            boolean overrideProperties = false;
-
-            if (PropertiesManagerUtil.hasParent(store)) {
-                Store parentStore = PropertiesManagerUtil.getParent(store,
-                        storeProperties);
-                // load and save the store modules of the parent store
-                loadAndSaveStoreModules(parentStore.getModules(), storeId);
-
-                overrideProperties = true;
-            }
-
-            // load and save the store modules of the store
-            loadAndSaveStoreModules(store.getModules(), storeId, overrideProperties);
-        }
-    }
-
-    /**
-     * Helper method for formatting the properties file file path
-     *
-     * @param store the store object
-     * @param module the module object
-     * @return the formatted file path of the properties file
-     */
-    private String getFormattedPropertiesFilePath(String storeId, Module module) {
-        String moduleName = module.getName();
-        return String.format("%s%s%s.%s.properties", storePropertiesSaveLocation,
-                File.separator, storeId, moduleName);
-    }
-
-    /**
-     * Helper method for loading the properties file
-     *
-     * @param properties the properties object
-     * @param filePath the filePath of the properties file
-     */
-    private void loadPropertiesFile(Properties properties, String filePath) {
-        File fileNameFile = new File(filePath);
-
-        if (fileNameFile.exists()) {
-            try {
-                properties.load(new FileInputStream(filePath));
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
         }
     }
 
@@ -183,60 +140,63 @@ public class PropertiesManager {
     }
 
     /**
-     * Adds the properties file read from store-properties.xml to the properties object.
+     * Helper method for adding the parent store modules to a store
      *
-     * @param propertyList the list of {@link Property} objects
-     * @param properties the properties object to save on
-     * @param overrideProperties determines if the properties should be overridden if
-     * already existing
+     * @param parentStore the parent store
+     * @param childStore the child store
      */
-    private void addEachProperty(List<Property> propertyList, Properties properties,
-            boolean overrideProperties) {
-        for (Property property : propertyList) {
-            String id = property.getId();
-            String defaultValue = property.getDefaultValue();
+    private void addParentStoreModules(Store parentStore, Store childStore) {
+        List<Module> parentStoreModules = parentStore.getModules();
 
-            if (overrideProperties || properties.getProperty(id) == null) {
-                properties.setProperty(id, defaultValue);
+        for (Module parentModule : parentStoreModules) {
+            if (!PropertiesManagerUtil.containsModule(parentModule, childStore)) {
+                childStore.addModule(0, parentModule);
+                continue;
             }
+
+            // add the parent store groups
+            addParentStoreGroups(parentModule, childStore);
+
+            // add the parent store properties
+            addParentStoreProperties(parentModule, childStore);
         }
     }
 
     /**
-     * Loads and saves the store modules
+     * Adds the parent store groups to a child store
      *
-     * @param modules the {@link Store} object
-     * @param storeId the store id
+     * @param parentModule the parent module
+     * @param childStore the child store
      */
-    private void loadAndSaveStoreModules(List<Module> modules, String storeId) {
-        loadAndSaveStoreModules(modules, storeId, false);
+    private void addParentStoreGroups(Module parentModule, Store childStore) {
+        if (PropertiesManagerUtil.containsModule(parentModule, childStore)) {
+            Module module = PropertiesManagerUtil.getModuleByName(parentModule.getName(),
+                    childStore);
+            module.addAllGroups(parentModule.getGroups());
+        }
     }
 
     /**
-     * Loads and saves the store modules
+     * Adds the parent store properties to a child store
      *
-     * @param modules the {@link Store} object
-     * @param storeId the store id
-     * @param overrideProperties determines if the properties should be overridden if
-     * already existing
+     * @param parentModule the parent module
+     * @param childStore the child store
      */
-    private void loadAndSaveStoreModules(List<Module> modules, String storeId,
-            boolean overrideProperties) {
+    private void addParentStoreProperties(Module parentModule, Store childStore) {
+        List<Property> parentProperties = parentModule.getProperties();
 
-        for (Module module : modules) {
-            List<Property> propertyList = module.getProperties();
-            String filePath = getFormattedPropertiesFilePath(storeId, module);
+        for (Property parentProperty : parentProperties) {
+            try {
+                Module childModule = PropertiesManagerUtil.getModuleByName(
+                        parentModule.getName(), childStore);
 
-            Properties properties = new Properties();
-
-            // load the properties file
-            loadPropertiesFile(properties, filePath);
-
-            // save each property file in store-properties.xml
-            addEachProperty(propertyList, properties, overrideProperties);
-
-            // save the properties file
-            savePropertiesFile(properties, filePath);
+                if (!PropertiesManagerUtil.containsProperty(parentProperty,
+                        childModule)) {
+                    childModule.addProperty(parentProperty);
+                }
+            } catch (ModuleNotFoundException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 }

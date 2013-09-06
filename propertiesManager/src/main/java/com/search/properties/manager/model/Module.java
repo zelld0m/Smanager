@@ -2,6 +2,7 @@ package com.search.properties.manager.model;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,7 +40,7 @@ public class Module implements java.io.Serializable {
     public Module() {
     }
 
-    public Module(String name, String title, List<Group> groups, List<Property> properties) {
+    public Module(String name, String title, LinkedList<Group> groups, List<Property> properties) {
         this.name = name;
         this.title = title;
         this.groups = groups;
@@ -66,7 +67,7 @@ public class Module implements java.io.Serializable {
         return groups;
     }
 
-    public void setGroups(List<Group> groups) {
+    public void setGroups(LinkedList<Group> groups) {
         this.groups = groups;
     }
 
@@ -77,7 +78,23 @@ public class Module implements java.io.Serializable {
     public void setProperties(List<Property> properties) {
         this.properties = properties;
     }
-
+    
+    public void addGroup(Group group) {
+        groups.add(group);
+    }
+    
+    public void addAllGroups(List<Group> groupsToAdd) {
+        groups.addAll(0, groupsToAdd);
+    }
+    
+    public void addProperty(Property property) {
+        properties.add(property);
+    }
+    
+    public void addAllProperties(List<Property> properties) {
+        properties.addAll(properties);
+    }
+    
     @Override
     public String toString() {
         return Objects.toStringHelper(this).
