@@ -187,24 +187,36 @@
 		});		
 
 	
-		var dates = $("#startDate, #endDate").prop({readonly: true}).datepicker({
-			defaultDate: "+1w",
-			showOn: "both",
-			buttonImage: "../images/icon_calendar.png",
-			buttonImageOnly: true,
+		// Select a date range
+		$("#startDate").prop({readonly: true}).datepicker({
+			defaultDate: GLOBAL_currentDate,
 			changeMonth: true,
-		    changeYear: true,
-			onSelect: function(selectedDate) {
-				var option = (this.id === "startDate") ? "minDate" : "maxDate",
-						instance = $(this).data("datepicker"),
-						date = $.datepicker.parseDate(
-								instance.settings.dateFormat ||
-								$.datepicker._defaults.dateFormat,
-								selectedDate, instance.settings);
-				dates.not(this).datepicker("option", option, date);
+			changeYear: true,
+			showOn: "both",
+			buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
+			buttonImageOnly: true,
+			buttonText: "Select start date",
+			onClose: function(selectedDate) {
+				$("#endDate").datepicker("option", "minDate", selectedDate);
 			}
 		});
-
+		
+		$("#endDate").prop({readonly: true}).datepicker({
+			minDate: $("#startDate").datepicker("getDate"),
+			defaultDate: GLOBAL_currentDate,
+			changeMonth: true,
+			changeYear: true,
+			showOn: "both",
+			buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
+			buttonImageOnly: true,
+			buttonText: "Select end date",
+			onClose: function(selectedDate) {
+				if($("#startDate").datepicker("isDisabled")) {
+					$("$startDate").datepicker("option", "maxDate", selectedDate);
+				}
+			}
+		});
+		
 		$("#goBtn").click(function() {
 			var strDate = $.trim($("#startDate").val());
 			var endDate = $.trim($("#endDate").val());
