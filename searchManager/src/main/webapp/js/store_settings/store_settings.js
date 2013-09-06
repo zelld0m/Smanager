@@ -7,8 +7,9 @@ $(function() {
     var tabObjects = new Array();
     var storePropertiesFilesArray;
 
-    var Field = function(id, type) {
+    var Field = function(id, propertyId, type) {
         this.id = id;
+        this.propertyId = propertyId;
         this.type = type;
     };
 
@@ -36,7 +37,7 @@ $(function() {
     var generateTabs = function(modules) {
         var storeTabsTab = $("#store_tabs");
 
-        for (var i = 0, len = modules.length; i < len; i++) {
+        for (var i = 0; i < modules.length; i++) {
             var module = modules[i];
             var moduleName = module.name;
             var moduleTitle = module.title;
@@ -47,14 +48,14 @@ $(function() {
 
     /**
      *  Generate tab contents based from the Module object passed
-     * @param {type} modules the Module object to generate from
-     * @returns {@exp;tabStr@call;toString} the generated tab contents
+     * @param {store} modules the Module object to generate from
      */
     var generateTabContents = function(modules) {
         var builder = new StringBuilder();
 
         for (var i = 0; i < modules.length; i++) {
             var module = modules[i];
+            var moduleName = module.name;
             var groups = module.groups;
 
             if (groups !== null) {
@@ -85,28 +86,28 @@ $(function() {
                             var type = property.type;
                             var fieldToAppend = tabContentFieldTemplate.replace(
                                     /#\{label\}/g, label);
-                            var propertyId = property.id;
+                            var fieldId = moduleName + "_" + propertyId;
 
                             if (type === "String") {
                                 var stringField = stringFieldTemplate.replace(/#\{id\}/g,
-                                        propertyId);
+                                        fieldId);
                                 fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
                                         stringField);
                             } else if (type === "Boolean") {
                                 var booleanField = booleanFieldTemplate.replace(/#\{id\}/g,
-                                        propertyId);
+                                        fieldId);
                                 fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
                                         booleanField);
                             }
 
                             content.append(fieldToAppend);
 
-                            fields.push(new Field(propertyId, type));
+                            fields.push(new Field(fieldId, propertyId, type));
                         }
                     }
 
                     // add the module name and it's fields to tabObjects array
-                    addToTabObjectArray(module.name, fields);
+                    addToTabObjectArray(moduleName, fields);
 
                     content.append("</table>");
                 }
@@ -125,6 +126,11 @@ $(function() {
 
         if (tabObject === null) {
             tabObjects.push(new TabObject(moduleName, fields));
+        } else {
+            for (var i = 0; i < fields.length; i++) {
+                var field = fields[i];
+                tabObject.fields.push(field);
+            }
         }
     };
 
@@ -142,6 +148,7 @@ $(function() {
     var populateFields = function(modules, storePropertiesFiles) {
         for (var i = 0; i < modules.length; i++) {
             var module = modules[i];
+            var moduleName = module.name;
             var groups = module.groups;
 
             if (groups !== null) {
@@ -151,8 +158,9 @@ $(function() {
 
                     for (var k = 0; k < members.length; k++) {
                         var member = members[k];
-                        var propertyId = member.propertyId;
-                        var property = getPropertyById(propertyId, module.properties);
+                        var memberPropertyId = member.propertyId;
+                        var property = getPropertyById(memberPropertyId,
+                                module.properties);
 
                         if (property !== null) {
                             var type = property.type;
@@ -160,17 +168,18 @@ $(function() {
                             var propertyId = property.id;
                             var storeProperty = getStorePropertyByName(propertyId, module,
                                     storePropertiesFiles);
+                            var fieldId = moduleName + "_" + propertyId;
 
                             if (storeProperty !== null) {
                                 switch (type) {
                                     case "String":
-                                        $("#" + propertyId).val(storeProperty.value);
+                                        $("#" + fieldId).val(storeProperty.value);
                                         break;
                                     case "Boolean":
                                         var booleanValue = changeStringToBoolean(
                                                 storeProperty.value);
 
-                                        $("#" + propertyId).prop("checked", booleanValue);
+                                        $("#" + fieldId).prop("checked", booleanValue);
                                         break;
                                 }
                             }
@@ -185,17 +194,18 @@ $(function() {
         switch (booleanStr) {
             case "true":
             case "1":
+            case "on":
             case "yes":
                 return true;
         }
         return false;
     };
 
-    var getPropertyById = function(propertyId, properties) {
+    var getPropertyById = function(id, properties) {
         for (var i = 0; i < properties.length; i++) {
             var property = properties[i];
 
-            if (property.id === propertyId) {
+            if (property.id === id) {
                 return property;
             }
         }
@@ -231,6 +241,7 @@ $(function() {
         for (var i = 0; i < fields.length; i++) {
             var field = fields[i];
             var fieldId = field.id;
+            var fieldPropertyId = field.propertyId;
             var fieldType = field.type;
             var fieldValue = null;
             var fieldComponent = $("#" + fieldId);
@@ -244,7 +255,7 @@ $(function() {
                     break;
             }
 
-            storeProperties.push(new StoreProperty(fieldId, fieldValue));
+            storeProperties.push(new StoreProperty(fieldPropertyId, fieldValue));
         }
 
         return storeProperties;
@@ -279,7 +290,7 @@ $(function() {
         init: function() {
             PropertiesManagerServiceJS.getStoreProperties(function(data) {
                 var stores = data.stores;
-                
+
                 // show the loading icon
                 store_settings.prepareTabContent();
 
@@ -287,10 +298,10 @@ $(function() {
                 UtilityServiceJS.getStoreId(function(id) {
                     for (var i = 0; i < stores.length; i++) {
                         var store = stores[i];
-                                                
+
                         if (store.id === id) {
                             var modules = store.modules;
-                                                        
+
                             // generate the tab contents
                             generateTabContents(modules);
 
@@ -300,6 +311,7 @@ $(function() {
                             // for populating the fields 
                             PropertiesReaderServiceJS.readAllStorePropertiesFiles(id,
                                     function(storePropertiesFiles) {
+                                        
                                         // populate the fields
                                         populateFields(modules, storePropertiesFiles);
 
