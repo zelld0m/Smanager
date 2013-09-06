@@ -279,7 +279,7 @@ $(function() {
         init: function() {
             PropertiesManagerServiceJS.getStoreProperties(function(data) {
                 var stores = data.stores;
-
+                
                 // show the loading icon
                 store_settings.prepareTabContent();
 
@@ -287,10 +287,10 @@ $(function() {
                 UtilityServiceJS.getStoreId(function(id) {
                     for (var i = 0; i < stores.length; i++) {
                         var store = stores[i];
-
+                                                
                         if (store.id === id) {
                             var modules = store.modules;
-
+                                                        
                             // generate the tab contents
                             generateTabContents(modules);
 

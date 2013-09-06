@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<context:annotation-config />
-	<!-- context:property-placeholder location="config/database.properties" 
-		/> <context:property-placeholder location="config/solr.properties" / -->
-
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>config/database.properties</value>
-				<value>config/solr.properties</value>
-			</list>
-		</property>
-	</bean>
+    <context:annotation-config />
 	
-	<!-- Scans within the base package of the application for @Components to 
-		configure as beans, @Controller, @Service, @Configuration, etc. -->
-	<context:component-scan base-package="com.search.manager.core" />
-
-	<!-- Loads DataSources configuration -->
-	<import resource="spring-datasource.xml" />
-
-	<!-- Loads Search Proxy Solr configuration -->
-	<import resource="search-proxy-context.xml" />
+    <bean id="propertiesManager"
+          class="com.search.properties.manager.PropertiesManager">
+        <constructor-arg name="storePropertiesLocation" 
+                         value="/Users/pgutierr/Desktop/store-properties.xml"/>
+        <constructor-arg name="storePropertiesSaveLocation" 
+                         value="/Users/pgutierr/Desktop"/>
+    </bean>
+    
+    <bean id="propertiesManagerService"
+          class="com.search.properties.manager.service.PropertiesManagerService"/>
+    
+    <!-- Scans within the base package of the application for @Components to 
+    configure as beans, @Controller, @Service, @Configuration, etc. -->
+    <context:component-scan base-package="com.search.manager.core" />
 </beans>
