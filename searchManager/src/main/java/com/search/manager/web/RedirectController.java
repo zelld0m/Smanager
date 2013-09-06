@@ -112,6 +112,7 @@ public class RedirectController {
         String subTitle = "Query Cleaning Rule [" + redirectRule.getRuleName() + "]";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         RedirectRuleReportModel reportModel = new RedirectRuleReportModel(reportHeader, list);
+        reportModel.setShowSubReportHeader(true);
 
         List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
         subReports.add(new KeywordReportModel(null, keywords));

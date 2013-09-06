@@ -181,6 +181,7 @@ public class DownloadService {
 
 	private static int writeHeader(HSSFWorkbook workbook, HSSFSheet worksheet, Map<String, HSSFCellStyle> styleMap,
 			int rowIndex, ReportModel<? extends ReportBean<?>> model) {
+
 		// Create cell style for the report title
 		HSSFCellStyle cellStyleTitle = getCellStyle(workbook, styleMap, "TITLE", createFont(workbook, (short) 12, true), CellStyle.ALIGN_CENTER,
 				CellStyle.VERTICAL_CENTER, true);
@@ -288,14 +289,15 @@ public class DownloadService {
 
 	/**
 	 * Processes the download for Excel format. It does the following steps:
-	 * <pre>1. Create new workbook
-	 * 2. Create new worksheet
-	 * 3. Define starting indices for rows and columns
-	 * 4. Build layout
-	 * 5. Fill report
-	 * 6. Set the HttpServletResponse properties
-	 * 7. Write to the output stream
-	 * </pre>
+	 * <ol>
+	 * <li>Create new workbook</li>
+	 * <li>Create new worksheet</li>
+	 * <li>Define starting indices for rows and columns</li>
+	 * <li>Build layout</li>
+	 * <li>Fill report</li>
+	 * <li>Set the HttpServletResponse properties</li>
+	 * <li>Write to the output stream</li>
+	 * </ol>
 	 */
 	public void downloadXLS(HttpServletResponse response, ReportModel<? extends ReportBean<?>> mainModel,
 			List<ReportModel<? extends ReportBean<?>>> subModels) throws ClassNotFoundException {
@@ -308,7 +310,8 @@ public class DownloadService {
 
 		// 3. prepare worksheet
 		Map<String, HSSFCellStyle> styleMap = new HashMap<String, HSSFCellStyle>();
-		rowIndex = prepareXls(workbook, worksheet, styleMap, rowIndex, mainModel, true, CollectionUtils.isEmpty(subModels));
+		rowIndex = prepareXls(workbook, worksheet, styleMap, rowIndex, mainModel, true,
+				CollectionUtils.isEmpty(subModels) || mainModel.isShowSubReportHeader());
 		String fileName = mainModel.getReportHeader().getFileName() + ".xls";
 
 		if (subModels != null) {
