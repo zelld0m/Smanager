@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -153,7 +154,7 @@ public class DownloadService {
 		return lines;
 	}
 
-	private static int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, Map<String, HSSFCellStyle> styleMap, int rowIndex, ReportModel<? extends ReportBean<?>> model, boolean mainModel, boolean hasDetails) {
+	private static int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, Map<String, HSSFCellStyle> styleMap, int rowIndex, ReportModel<? extends ReportBean<?>> model, boolean mainModel, boolean writeSubHeader) {
 		// Set column widths
 		for (int i = 0; i < model.getColumnCount(); i++) {
 			int colSize = model.getColumn(i).size() * 256;
@@ -213,59 +214,63 @@ public class DownloadService {
 		createRow(worksheet, ++rowIndex, 10f);
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, model.getColumnCount() - 1));
 
-		if (hasDetails) {
-			int recordCount = model.getNumberOfRecords();
+		if (writeSubHeader) {
+			rowIndex = writeSubHeader(workbook, worksheet, styleMap, rowIndex, model);
+		}
 
-			HSSFCellStyle cellStyleHeaderParam = getCellStyle(workbook, styleMap, "SUBREPORT_HEADER_NAME", createFont(workbook, (short) 11, true),
-					null, null, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
-			HSSFCellStyle cellStyleHeaderValue = getCellStyle(workbook, styleMap, "SUBREPORT_HEADER_VALUE", createFont(workbook, (short) 11, false),
-					CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false);
-
-			/* Record Headers */
-			SubReportHeader subReportHeader = model.getSubReportHeader();
-			if (subReportHeader != null && subReportHeader.getRows() != null) {
-				Map<String, String> items = subReportHeader.getRows();
-
-				for (Map.Entry<String, String> entry : items.entrySet()) {
-					HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
-					createCell(rowHeader, 0, cellStyleHeaderParam, entry.getKey());
-					createCell(rowHeader, 1, cellStyleHeaderValue, entry.getValue());
-					worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, model.getColumnCount() - 1));
+		if (model.getNumberOfRecords() > 0) {
+			/* Data */
+			Font bodyFont = createFont(workbook, (short) 10, false);
+			HSSFCellStyle bodyCellStyle = getCellStyle(workbook, styleMap, "COLUMN_VALUE", bodyFont, null, null,
+					CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, null, null);
+			for (int i = 0; i < model.getNumberOfRecords(); i++) {
+				short lines = 1;
+				HSSFRow row = createRow(worksheet, ++rowIndex, 15f);
+				for (int j = 0; j < model.getColumnCount(); j++) {
+					HSSFCell cell = createCell(row, j, bodyCellStyle, model.getCell(i, j));
+					short numLines = getNumberOfLines(cell.getStringCellValue(), worksheet.getColumnWidth(j), bodyFont);
+					if (lines < numLines) {
+						lines = numLines;
+					}
 				}
-			}
-
-			/* Column Headers */
-			HSSFCellStyle headerCellStyle = getCellStyle(workbook, styleMap, "COLUMN_NAME", createFont(workbook, (short) 10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
-					CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_40_PERCENT.index, HSSFCellStyle.SOLID_FOREGROUND);
-			HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
-			for (int i = 0; i < model.getColumnCount(); i++) {
-				createCell(rowHeader, i, headerCellStyle, model.getColumn(i).label());
-			}
-
-			if (recordCount > 0) {
-				/* Data */
-				Font bodyFont = createFont(workbook, (short) 10, false);
-				HSSFCellStyle bodyCellStyle = getCellStyle(workbook, styleMap, "COLUMN_VALUE", bodyFont, null, null,
-						CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, null, null);
-				for (int i = 0; i < model.getNumberOfRecords(); i++) {
-					short lines = 1;
-					HSSFRow row = createRow(worksheet, ++rowIndex, 15f);
-					for (int j = 0; j < model.getColumnCount(); j++) {
-						HSSFCell cell = createCell(row, j, bodyCellStyle, model.getCell(i, j));
-						short numLines = getNumberOfLines(cell.getStringCellValue(), worksheet.getColumnWidth(j), bodyFont);
-						if (lines < numLines) {
-							lines = numLines;
-						}
-					}
-					if (lines > 1) {
-						row.setHeightInPoints(row.getHeightInPoints() * lines);
-					}
+				if (lines > 1) {
+					row.setHeightInPoints(row.getHeightInPoints() * lines);
 				}
 			}
 		}
 
 		return rowIndex;
 	}
+
+	private static int writeSubHeader(HSSFWorkbook workbook, HSSFSheet worksheet, Map<String, HSSFCellStyle> styleMap,
+            int rowIndex, ReportModel<? extends ReportBean<?>> model) {
+	    HSSFCellStyle cellStyleHeaderParam = getCellStyle(workbook, styleMap, "SUBREPORT_HEADER_NAME", createFont(workbook, (short) 11, true),
+				null, null, CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
+		HSSFCellStyle cellStyleHeaderValue = getCellStyle(workbook, styleMap, "SUBREPORT_HEADER_VALUE", createFont(workbook, (short) 11, false),
+				CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false);
+
+		/* Record Headers */
+		SubReportHeader subReportHeader = model.getSubReportHeader();
+		if (subReportHeader != null && subReportHeader.getRows() != null) {
+			Map<String, String> items = subReportHeader.getRows();
+
+			for (Map.Entry<String, String> entry : items.entrySet()) {
+				HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
+				createCell(rowHeader, 0, cellStyleHeaderParam, entry.getKey());
+				createCell(rowHeader, 1, cellStyleHeaderValue, entry.getValue());
+				worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, model.getColumnCount() - 1));
+			}
+		}
+
+		/* Column Headers */
+		HSSFCellStyle headerCellStyle = getCellStyle(workbook, styleMap, "COLUMN_NAME", createFont(workbook, (short) 10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
+				CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_40_PERCENT.index, HSSFCellStyle.SOLID_FOREGROUND);
+		HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
+		for (int i = 0; i < model.getColumnCount(); i++) {
+			createCell(rowHeader, i, headerCellStyle, model.getColumn(i).label());
+		}
+	    return rowIndex;
+    }
 
 	/**
 	 * Processes the download for Excel format. It does the following steps:
@@ -289,7 +294,7 @@ public class DownloadService {
 
 		// 3. prepare worksheet
 		Map<String, HSSFCellStyle> styleMap = new HashMap<String, HSSFCellStyle>();
-		rowIndex = prepareXls(workbook, worksheet, styleMap, rowIndex, mainModel, true, false);
+		rowIndex = prepareXls(workbook, worksheet, styleMap, rowIndex, mainModel, true, CollectionUtils.isEmpty(subModels));
 		String fileName = mainModel.getReportHeader().getFileName() + ".xls";
 
 		if (subModels != null) {
