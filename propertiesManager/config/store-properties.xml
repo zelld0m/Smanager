@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <store-properties>
     <store id="pcmallcap" extends="pcmall">
-        <module name="settings" title="Store Settings">
+        <module name="new_module" title="New">
+            <groups>
+                <group name="New Banner Ads Feature">
+                    <member property-id="site_domain"/>
+                </group>
+                
+                <group>
+                    <member property-id="generate_bananas"/>
+                </group>
+            </groups>
+            
+            <properties>
+                <property id="site_domain" type="String">
+                    <label>New Site Domain</label>
+                    <defaultValue>pcm.com.ph</defaultValue>
+                </property>
+                
+                <property id="generate_bananas" type="Boolean">
+                    <label>Generate Bananas</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+            </properties>
+        </module>
+        <module name="settings" title="Settings">
+            <groups>
+                <group>
+                    <member property-id="test"/>
+                </group>
+            </groups>
             <properties>
                 <property id="test" type="String" required="true">
                     <label>Test</label>
@@ -16,6 +44,11 @@
             </properties>
         </module>
     </store>
+    
+    <store id="macmall" extends="pcmall">
+        
+    </store>
+    
     <store id="pcmall">
         <module name="mail" title="Mail">
             <groups>
@@ -60,7 +93,7 @@
                     <member property-id="export_target"/>
                 </group>
             </groups>
-
+            
             <properties>
                 <property id="site_domain" type="String" required="true">
                     <label>Site Domain</label>
@@ -93,6 +126,10 @@
                     <label>Export Target</label>
                     <validator>STORE</validator>
                     <defaultValue>pcmallcap,pcmgbd</defaultValue>
+                </property>
+                <property id="hoopla" type="String">
+                    <label>Hoopla</label>
+                    <defaultValue>Crabby Patties</defaultValue>
                 </property>
             </properties>
         </module>
