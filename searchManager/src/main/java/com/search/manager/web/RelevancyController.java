@@ -126,6 +126,7 @@ public class RelevancyController {
         String subTitle = "Relevancy Rule [" + relevancy.getRelevancyName() + "]";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<RelevancyReportBean> reportModel = new RelevancyReportModel(reportHeader, list);
+        reportModel.setShowSubReportHeader(true);
 
         List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
         subReports.add(new KeywordReportModel(null, keywords));

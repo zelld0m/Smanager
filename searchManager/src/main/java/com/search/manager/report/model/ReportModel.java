@@ -33,6 +33,8 @@ public class ReportModel<T extends ReportBean<?>> {
     private List<ReportField> reportFields = new ArrayList<ReportField>();
     private Object[][] data;
     private Map<ReportField, Method> methodMap = new HashMap<ReportField, Method>();
+    private boolean showSubReportHeader;
+
     private Comparator<ReportField> reportFieldComparator = new Comparator<ReportField>() {
         @Override
         public int compare(ReportField field1, ReportField field2) {
@@ -162,5 +164,13 @@ public class ReportModel<T extends ReportBean<?>> {
 
     public SubReportHeader getSubReportHeader() {
         return subReportHeader;
+    }
+
+    public boolean isShowSubReportHeader() {
+        return showSubReportHeader;
+    }
+
+    public void setShowSubReportHeader(boolean showSubReportHeader) {
+        this.showSubReportHeader = showSubReportHeader;
     }
 }
