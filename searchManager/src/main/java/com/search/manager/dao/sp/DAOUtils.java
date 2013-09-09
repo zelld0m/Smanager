@@ -1,12 +1,10 @@
 package com.search.manager.dao.sp;
 
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
-import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +15,6 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,22 +85,15 @@ public class DAOUtils {
     }
 
     public static String generateUniqueId() {
-        EthernetAddress nic = EthernetAddress.fromInterface();
-        TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(nic);
-        UUID uuid = uuidGenerator.generate();
-        return uuid.toString();
+        if (MAC == null) {
+            throw new RuntimeException("MAC is unknown. Cannot generate unique id.");
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(MAC) // mac address
+                .append(StringUtils.leftPad(encodeString(Calendar.getInstance().getTimeInMillis()), 8, "0")) // timestamp
+                .append(StringUtils.leftPad(encodeString(random.nextInt(MAX_RANDOM_INT)), 3, "0")); // random int
+        return builder.toString();
     }
-    
-//    public static String generateUniqueId() {
-//        if (MAC == null) {
-//            throw new RuntimeException("MAC is unknown. Cannot generate unique id.");
-//        }
-//        StringBuilder builder = new StringBuilder();
-//        builder.append(MAC) // mac address
-//                .append(StringUtils.leftPad(encodeString(Calendar.getInstance().getTimeInMillis()), 8, "0")) // timestamp
-//                .append(StringUtils.leftPad(encodeString(random.nextInt(MAX_RANDOM_INT)), 3, "0")); // random int
-//        return builder.toString();
-//    }
 
     @SuppressWarnings("unchecked")
     public static int getUpdateCount(Map<String, Object> result) {
