@@ -15,6 +15,9 @@
         <!-- PROPERTIES MANAGER VERSION -->
         <properties.manager.version>1.0-SNAPSHOT</properties.manager.version>
         
+        <!-- FASTERXML VERSION -->
+        <fasterxml.version>3.1.3</fasterxml.version>
+        
         <!-- ASPECTJ VERSION -->
         <aspectj.version>1.6.10</aspectj.version>
 
@@ -109,6 +112,19 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <!-- FASTERXML UUID -->
+        <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>${fasterxml.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- DWR -->
