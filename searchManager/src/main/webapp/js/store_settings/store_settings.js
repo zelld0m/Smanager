@@ -272,7 +272,7 @@ $(function() {
 
         return null;
     };
-    
+
     /**
      * Helper method for hiding the error messages once the store-properties.xml file
      * has been successfully retrieved from the server
@@ -282,7 +282,7 @@ $(function() {
         $("#no_store_message").hide();
         $("#settingsSaveBtnDiv").show();
     };
-    
+
     var store_settings = {
         prepareTabContent: function() {
             var storeConfig = $("#store_config");
@@ -300,10 +300,7 @@ $(function() {
         init: function() {
             PropertiesManagerServiceJS.getStoreProperties(function(data) {
                 var stores = data.stores;
-                
-                // hides the error messages
-                hideErrorMessages();
-                
+
                 // show the loading icon
                 store_settings.prepareTabContent();
 
@@ -324,11 +321,14 @@ $(function() {
                             // for populating the fields 
                             PropertiesReaderServiceJS.readAllStorePropertiesFiles(id,
                                     function(storePropertiesFiles) {
-                                        
+
                                         // populate the fields
                                         populateFields(modules, storePropertiesFiles);
 
                                         storePropertiesFilesArray = storePropertiesFiles;
+
+                                        // hides the error messages
+                                        hideErrorMessages();
 
                                         // remove the loading icon
                                         store_settings.cleanUpTabContent();
@@ -336,6 +336,9 @@ $(function() {
                             );
                         }
                     }
+
+                    // remove the loading icon
+                    store_settings.cleanUpTabContent();
                 });
             });
 
