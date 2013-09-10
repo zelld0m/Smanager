@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.search.properties.manager.PropertiesManager;
+import com.search.properties.manager.exception.NotDirectoryException;
 import com.search.properties.manager.exception.PropertyException;
 import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Module;
@@ -68,6 +69,20 @@ public class PropertiesManagerUtilTest {
         assertNotNull(propertiesReaderService);
         storePropertiesFiles = propertiesReaderService.readAllStorePropertiesFiles(
                 "pcmall");
+    }
+
+    @Test
+    public void testGetFormattedSaveLocation() {
+        String formattedSaveLocation = PropertiesManagerUtil.getFormattedSaveLocation(
+                "/home/solr/conf", "pcmall", "settings");
+        assertEquals("/home/solr/conf/pcmall/pcmall.settings.properties",
+                formattedSaveLocation);
+    }
+
+    @Test(expected = NotDirectoryException.class)
+    public void testGetFormattedSaveLocation_StoreSaveLocation_Not_A_Valid_Directory_Thrown_NotDirectoryException() {
+        PropertiesManagerUtil.getFormattedSaveLocation(
+                "/home/solr/conf/store-properties.xml", "pcmall", "settings");
     }
 
     @Test

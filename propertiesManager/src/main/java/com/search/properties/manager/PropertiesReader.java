@@ -49,9 +49,9 @@ public class PropertiesReader {
 
         for (Module module : modules) {
             String moduleName = module.getName();
-            String filePath = String.format("%s%s%s.%s.properties",
-                    propertiesManager.getStorePropertiesSaveLocation(), File.separator,
-                    storeId, moduleName);
+            String filePath = PropertiesManagerUtil.getFormattedSaveLocation(
+                    propertiesManager.getStorePropertiesSaveLocation(), storeId, 
+                    moduleName);
             File file = new File(filePath);
             Properties propertiesObj = new Properties();
 
