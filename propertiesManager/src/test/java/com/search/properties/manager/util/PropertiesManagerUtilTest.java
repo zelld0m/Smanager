@@ -4,11 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.search.properties.manager.PropertiesManager;
-import com.search.properties.manager.exception.GroupNotFoundException;
-import com.search.properties.manager.exception.ModuleNotFoundException;
-import com.search.properties.manager.exception.PropertyNotFoundException;
-import com.search.properties.manager.exception.StoreNotFoundException;
-import com.search.properties.manager.exception.StorePropertyNotFoundException;
+import com.search.properties.manager.exception.PropertyException;
 import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Property;
@@ -90,8 +86,8 @@ public class PropertiesManagerUtilTest {
                 storeProperties));
     }
 
-    @Test(expected = StoreNotFoundException.class)
-    public void testGetParent_Store_Parent_Does_Not_Exists_Throw_StoreNotFoundException() {
+    @Test(expected = PropertyException.class)
+    public void testGetParent_Store_Parent_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getParent(pcmallStore, storeProperties);
     }
 
@@ -100,8 +96,8 @@ public class PropertiesManagerUtilTest {
         assertEquals("pcmall", pcmallStore.getId());
     }
 
-    @Test(expected = StoreNotFoundException.class)
-    public void testGetStoreById_StoreId_Does_Not_Exists_Throw_StoreNotFoundException() {
+    @Test(expected = PropertyException.class)
+    public void testGetStoreById_StoreId_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getStoreById("macmall", storeProperties);
     }
 
@@ -115,8 +111,8 @@ public class PropertiesManagerUtilTest {
         assertEquals("pcm.com", siteDomainStoreProperty.getValue());
     }
 
-    @Test(expected = StorePropertyNotFoundException.class)
-    public void testGetStorePropertyByName_StoreName_Does_Not_Exists_Throw_StorePropertyNotFoundException() {
+    @Test(expected = PropertyException.class)
+    public void testGetStorePropertyByName_StoreName_Does_Not_Exists_Throw_PropertyException() {
         StorePropertiesFile pcmallSettingsStorePropertiesFile = storePropertiesFiles.get(
                 1);
         PropertiesManagerUtil.getStorePropertyByName("hoopla",
@@ -129,8 +125,8 @@ public class PropertiesManagerUtilTest {
         assertEquals("Settings", settingsModuleOnPCMallStore.getTitle());
     }
 
-    @Test(expected = ModuleNotFoundException.class)
-    public void testGetModuleByName_Module_Name_Does_Not_Exists_Throw_ModuleNotFoundException() {
+    @Test(expected = PropertyException.class)
+    public void testGetModuleByName_Module_Name_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getModuleByName("potato", pcmallStore);
     }
 
@@ -141,8 +137,8 @@ public class PropertiesManagerUtilTest {
         assertEquals("Banner Ads Feature", bannerAdsFeatureGroup.getName());
     }
 
-    @Test(expected = GroupNotFoundException.class)
-    public void testGroupGroupByName_Group_Name_Does_Not_Exists_Throw_GroupNotFoundException() {
+    @Test(expected = PropertyException.class)
+    public void testGroupGroupByName_Group_Name_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getGroupByName("Avalanche", settingsModuleOnPCMallStore);
     }
 
@@ -172,8 +168,8 @@ public class PropertiesManagerUtilTest {
         assertEquals("pcm.com", siteDomainProperty.getDefaultValue());
     }
 
-    @Test(expected = PropertyNotFoundException.class)
-    public void testGetPropertyById_Property_Id_Does_Not_Exists_Throw_PropertyNotFoundException() {
+    @Test(expected = PropertyException.class)
+    public void testGetPropertyById_Property_Id_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getPropertyById("witch_please", settingsModuleOnPCMallStore);
     }
 
