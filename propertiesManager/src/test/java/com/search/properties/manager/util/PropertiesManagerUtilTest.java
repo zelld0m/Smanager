@@ -87,7 +87,7 @@ public class PropertiesManagerUtilTest {
     }
 
     @Test(expected = PropertyException.class)
-    public void testGetParent_Store_Parent_Does_Not_Exists_Throw_StoreNotFoundException() {
+    public void testGetParent_Store_Parent_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getParent(pcmallStore, storeProperties);
     }
 
@@ -97,7 +97,7 @@ public class PropertiesManagerUtilTest {
     }
 
     @Test(expected = PropertyException.class)
-    public void testGetStoreById_StoreId_Does_Not_Exists_Throw_StoreNotFoundException() {
+    public void testGetStoreById_StoreId_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getStoreById("macmall", storeProperties);
     }
 
@@ -112,7 +112,7 @@ public class PropertiesManagerUtilTest {
     }
 
     @Test(expected = PropertyException.class)
-    public void testGetStorePropertyByName_StoreName_Does_Not_Exists_Throw_StorePropertyNotFoundException() {
+    public void testGetStorePropertyByName_StoreName_Does_Not_Exists_Throw_PropertyException() {
         StorePropertiesFile pcmallSettingsStorePropertiesFile = storePropertiesFiles.get(
                 1);
         PropertiesManagerUtil.getStorePropertyByName("hoopla",
@@ -126,7 +126,7 @@ public class PropertiesManagerUtilTest {
     }
 
     @Test(expected = PropertyException.class)
-    public void testGetModuleByName_Module_Name_Does_Not_Exists_Throw_ModuleNotFoundException() {
+    public void testGetModuleByName_Module_Name_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getModuleByName("potato", pcmallStore);
     }
 
@@ -138,7 +138,7 @@ public class PropertiesManagerUtilTest {
     }
 
     @Test(expected = PropertyException.class)
-    public void testGroupGroupByName_Group_Name_Does_Not_Exists_Throw_GroupNotFoundException() {
+    public void testGroupGroupByName_Group_Name_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getGroupByName("Avalanche", settingsModuleOnPCMallStore);
     }
 
@@ -169,7 +169,7 @@ public class PropertiesManagerUtilTest {
     }
 
     @Test(expected = PropertyException.class)
-    public void testGetPropertyById_Property_Id_Does_Not_Exists_Throw_PropertyNotFoundException() {
+    public void testGetPropertyById_Property_Id_Does_Not_Exists_Throw_PropertyException() {
         PropertiesManagerUtil.getPropertyById("witch_please", settingsModuleOnPCMallStore);
     }
 
