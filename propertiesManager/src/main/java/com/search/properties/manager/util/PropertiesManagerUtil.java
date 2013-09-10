@@ -3,11 +3,7 @@ package com.search.properties.manager.util;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.search.properties.manager.PropertiesManager;
-import com.search.properties.manager.exception.GroupNotFoundException;
-import com.search.properties.manager.exception.ModuleNotFoundException;
-import com.search.properties.manager.exception.PropertyNotFoundException;
-import com.search.properties.manager.exception.StoreNotFoundException;
-import com.search.properties.manager.exception.StorePropertyNotFoundException;
+import com.search.properties.manager.exception.PropertyException;
 import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Property;
@@ -40,18 +36,18 @@ public class PropertiesManagerUtil {
      * @param store the {@link Store} object
      * @param storeProperties the {@link StoreProperties} object
      * @return the parent of the {@link Store} object provided
-     * @throws StoreNotFoundException thrown when the parent of the passed {@link Store}
+     * @throws PropertyException thrown when the parent of the passed {@link Store}
      * object cannot be found
      */
     public static Store getParent(Store store, StoreProperties storeProperties)
-            throws StoreNotFoundException {
+            throws PropertyException {
         String passedStoreParentId = store.getParent();
 
         if (hasParent(store)) {
             return getStoreById(passedStoreParentId, storeProperties);
         }
 
-        throw new StoreNotFoundException(String.format(
+        throw new PropertyException(String.format(
                 "The parent of %s cannot be found.", passedStoreParentId));
     }
 
@@ -59,10 +55,10 @@ public class PropertiesManagerUtil {
      * @param storeId the store id
      * @param storeProperties the {@link StoreProperties} object
      * @return the {@link Store} object based from the store id passed
-     * @throws StoreNotFoundException
+     * @throws PropertyException
      */
     public static Store getStoreById(String storeId, StoreProperties storeProperties)
-            throws StoreNotFoundException {
+            throws PropertyException {
 
         List<Store> stores = storeProperties.getStores();
 
@@ -72,7 +68,7 @@ public class PropertiesManagerUtil {
             }
         }
 
-        throw new StoreNotFoundException(String.format("Cannot find the store %s",
+        throw new PropertyException(String.format("Cannot find the store %s",
                 storeId));
     }
 
@@ -81,12 +77,12 @@ public class PropertiesManagerUtil {
      * @param name the name of the store property to find
      * @param storePropertiesFile the {@link StorePropertiesFile} object
      * @return the {@link StoreProperty} object based from a name
-     * @throws StorePropertyNotFoundException thrown when the store property cannot be
+     * @throws PropertyException thrown when the store property cannot be
      * found
      */
     public static StoreProperty getStorePropertyByName(String name,
             StorePropertiesFile storePropertiesFile)
-            throws StorePropertyNotFoundException {
+            throws PropertyException {
         List<StoreProperty> storeProperties = storePropertiesFile.getStoreProperties();
         for (StoreProperty storeProperty : storeProperties) {
             if (storeProperty.getName().equals(name)) {
@@ -94,7 +90,7 @@ public class PropertiesManagerUtil {
             }
         }
 
-        throw new StorePropertyNotFoundException(String.format(
+        throw new PropertyException(String.format(
                 "Store property with the name %s not found on neither "
                 + "store-properties.xml nor on the properties file %s",
                 name, storePropertiesFile.getFilePath()));
@@ -105,11 +101,11 @@ public class PropertiesManagerUtil {
      * @param name the name of the module to find
      * @param store the {@link Store} object
      * @return the {@link Module} object based from a name
-     * @throws ModuleNotFoundException thrown when the module with the passed name cannot
+     * @throws PropertyException thrown when the module with the passed name cannot
      * be found
      */
     public static Module getModuleByName(String name, Store store)
-            throws ModuleNotFoundException {
+            throws PropertyException {
 
         List<Module> modules = store.getModules();
         for (Module module : modules) {
@@ -118,7 +114,7 @@ public class PropertiesManagerUtil {
             }
         }
 
-        throw new ModuleNotFoundException(String.format(
+        throw new PropertyException(String.format(
                 "module with the name %s cannot be found on %s", name, store.getId()));
     }
 
@@ -128,11 +124,11 @@ public class PropertiesManagerUtil {
      * @param name the name of the group
      * @param module the {@link Module} object
      * @return the {@link Group} object with the matching name
-     * @throws GroupNotFoundException thrown when the group with the passed name does not
+     * @throws PropertyException thrown when the group with the passed name does not
      * exists
      */
     public static Group getGroupByName(String name, Module module)
-            throws GroupNotFoundException {
+            throws PropertyException {
         List<Group> groups = module.getGroups();
         for (Group group : groups) {
             String groupName = group.getName();
@@ -142,7 +138,7 @@ public class PropertiesManagerUtil {
             }
         }
 
-        throw new GroupNotFoundException(String.format(
+        throw new PropertyException(String.format(
                 "Group with the name %s cannot be found in the module %s",
                 name, module.getName()));
     }
@@ -179,11 +175,11 @@ public class PropertiesManagerUtil {
      * @param id the id of the property
      * @param module the {@link Module} object
      * @return the {@link Property} object with the matching id
-     * @throws PropertyNotFoundException thrown when the property with the passed id does
+     * @throws PropertyException thrown when the property with the passed id does
      * not exists
      */
     public static Property getPropertyById(String id, Module module)
-            throws PropertyNotFoundException {
+            throws PropertyException {
         List<Property> properties = module.getProperties();
         for (Property property : properties) {
             if (property.getId().equals(id)) {
@@ -191,7 +187,7 @@ public class PropertiesManagerUtil {
             }
         }
 
-        throw new PropertyNotFoundException(String.format(
+        throw new PropertyException(String.format(
                 "Property with the id %s cannot be found in the module %s", id,
                 module.getName()));
     }

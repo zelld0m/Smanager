@@ -1,7 +1,7 @@
 package com.search.properties.manager;
 
 import com.google.common.collect.Lists;
-import com.search.properties.manager.exception.StoreNotFoundException;
+import com.search.properties.manager.exception.PropertyException;
 import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Property;
 import com.search.properties.manager.model.Store;
@@ -33,8 +33,14 @@ public class PropertiesReader {
     @Autowired
     private PropertiesManager propertiesManager;
 
+    /**
+     * Reads all store properties files
+     * @param storeId the store id
+     * @return a {@link List} of {@link StorePropertiesFile} object
+     * @throws PropertyException
+     */
     public List<StorePropertiesFile> readAllStorePropertiesFiles(String storeId)
-            throws StoreNotFoundException {
+            throws PropertyException {
         StoreProperties storeProperties = propertiesManager.getStoreProperties();
 
         Store store = PropertiesManagerUtil.getStoreById(storeId, storeProperties);

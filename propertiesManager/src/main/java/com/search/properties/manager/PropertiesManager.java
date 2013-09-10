@@ -1,7 +1,6 @@
 package com.search.properties.manager;
 
-import com.search.properties.manager.exception.ModuleNotFoundException;
-import com.search.properties.manager.exception.StorePropertiesXmlNotLoadedException;
+import com.search.properties.manager.exception.PropertyException;
 import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Member;
 import com.search.properties.manager.model.Module;
@@ -60,11 +59,10 @@ public class PropertiesManager {
 
     /**
      * @return a {@link StoreProperties} object read from store-properties.xml
-     * @throws StorePropertiesXmlNotLoadedException thrown when store-properties.xml is
+     * @throws PropertyException thrown when store-properties.xml is
      * invalid
      */
-    public StoreProperties getStoreProperties()
-            throws StorePropertiesXmlNotLoadedException {
+    public StoreProperties getStoreProperties() throws PropertyException {
         StoreProperties storeProperties = getStorePropertiesFromXML();
         List<Store> stores = storeProperties.getStores();
 
@@ -84,11 +82,10 @@ public class PropertiesManager {
 
     /**
      * @return a {@link StoreProperties} object read from store-properties.xml
-     * @throws StorePropertiesXmlNotLoadedException thrown when store-properties.xml is
+     * @throws PropertyException thrown when store-properties.xml is
      * invalid
      */
-    public StoreProperties getStorePropertiesFromXML()
-            throws StorePropertiesXmlNotLoadedException {
+    public StoreProperties getStorePropertiesFromXML() throws PropertyException {
         try {
             File file = new File(storePropertiesLocation);
             JAXBContext context = JAXBContext.newInstance(
@@ -101,8 +98,7 @@ public class PropertiesManager {
             logger.error("Unable to unmarshall the XML to an object", e);
         }
 
-        throw new StorePropertiesXmlNotLoadedException(
-                "Store Properties XML cannot be loaded");
+        throw new PropertyException("Store Properties XML cannot be loaded");
     }
 
     /**
@@ -194,7 +190,7 @@ public class PropertiesManager {
                         childModule)) {
                     childModule.addProperty(parentProperty);
                 }
-            } catch (ModuleNotFoundException e) {
+            } catch (PropertyException e) {
                 logger.error(e.getMessage(), e);
             }
         }
