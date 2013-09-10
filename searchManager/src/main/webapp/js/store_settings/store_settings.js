@@ -272,7 +272,17 @@ $(function() {
 
         return null;
     };
-
+    
+    /**
+     * Helper method for hiding the error messages once the store-properties.xml file
+     * has been successfully retrieved from the server
+     * @returns {undefined}
+     */
+    var hideErrorMessages = function() {
+        $("#no_store_message").hide();
+        $("#settingsSaveBtnDiv").show();
+    };
+    
     var store_settings = {
         prepareTabContent: function() {
             var storeConfig = $("#store_config");
@@ -290,7 +300,10 @@ $(function() {
         init: function() {
             PropertiesManagerServiceJS.getStoreProperties(function(data) {
                 var stores = data.stores;
-
+                
+                // hides the error messages
+                hideErrorMessages();
+                
                 // show the loading icon
                 store_settings.prepareTabContent();
 
