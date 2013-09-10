@@ -1,5 +1,18 @@
 package com.search.properties.manager;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.search.properties.manager.exception.PropertyException;
 import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Member;
@@ -10,17 +23,6 @@ import com.search.properties.manager.model.StoreProperties;
 import com.search.properties.manager.model.StorePropertiesFile;
 import com.search.properties.manager.model.StoreProperty;
 import com.search.properties.manager.util.PropertiesManagerUtil;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Controls the loading and reading of the store properties.
