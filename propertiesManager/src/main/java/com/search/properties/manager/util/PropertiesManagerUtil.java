@@ -3,6 +3,7 @@ package com.search.properties.manager.util;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.search.properties.manager.PropertiesManager;
+import com.search.properties.manager.exception.NotDirectoryException;
 import com.search.properties.manager.exception.PropertyException;
 import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Module;
@@ -11,6 +12,7 @@ import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
 import com.search.properties.manager.model.StorePropertiesFile;
 import com.search.properties.manager.model.StoreProperty;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -21,6 +23,28 @@ import java.util.List;
  * @version 1.0
  */
 public class PropertiesManagerUtil {
+
+    /**
+     * @param storeSaveLocation the save store location
+     * @param storeId the store id
+     * @param moduleName the module name
+     * @throws NotDirectoryException thrown when <i>storeSaveLocation</i> is not a
+     * directory
+     * @return the formatted store properties file location based on the parameters passed
+     */
+    public static String getFormattedSaveLocation(String storeSaveLocation,
+            String storeId, String moduleName)
+            throws NotDirectoryException {
+
+        File file = new File(storeSaveLocation);
+        if (!file.isDirectory()) {
+            throw new NotDirectoryException(String.format("%s is not a directory",
+                    storeSaveLocation));
+        }
+
+        return String.format("%s/%s/%2$s.%s.properties", storeSaveLocation, storeId, 
+                moduleName);
+    }
 
     /**
      * Checks if the {@link Store} object has a parent
@@ -36,8 +60,8 @@ public class PropertiesManagerUtil {
      * @param store the {@link Store} object
      * @param storeProperties the {@link StoreProperties} object
      * @return the parent of the {@link Store} object provided
-     * @throws PropertyException thrown when the parent of the passed {@link Store}
-     * object cannot be found
+     * @throws PropertyException thrown when the parent of the passed {@link Store} object
+     * cannot be found
      */
     public static Store getParent(Store store, StoreProperties storeProperties)
             throws PropertyException {
@@ -77,8 +101,7 @@ public class PropertiesManagerUtil {
      * @param name the name of the store property to find
      * @param storePropertiesFile the {@link StorePropertiesFile} object
      * @return the {@link StoreProperty} object based from a name
-     * @throws PropertyException thrown when the store property cannot be
-     * found
+     * @throws PropertyException thrown when the store property cannot be found
      */
     public static StoreProperty getStorePropertyByName(String name,
             StorePropertiesFile storePropertiesFile)
@@ -101,8 +124,8 @@ public class PropertiesManagerUtil {
      * @param name the name of the module to find
      * @param store the {@link Store} object
      * @return the {@link Module} object based from a name
-     * @throws PropertyException thrown when the module with the passed name cannot
-     * be found
+     * @throws PropertyException thrown when the module with the passed name cannot be
+     * found
      */
     public static Module getModuleByName(String name, Store store)
             throws PropertyException {
@@ -132,7 +155,7 @@ public class PropertiesManagerUtil {
         List<Group> groups = module.getGroups();
         for (Group group : groups) {
             String groupName = group.getName();
-            
+
             if (!Strings.isNullOrEmpty(groupName) && groupName.equals(name)) {
                 return group;
             }
@@ -175,8 +198,8 @@ public class PropertiesManagerUtil {
      * @param id the id of the property
      * @param module the {@link Module} object
      * @return the {@link Property} object with the matching id
-     * @throws PropertyException thrown when the property with the passed id does
-     * not exists
+     * @throws PropertyException thrown when the property with the passed id does not
+     * exists
      */
     public static Property getPropertyById(String id, Module module)
             throws PropertyException {
@@ -224,6 +247,7 @@ public class PropertiesManagerUtil {
 
     /**
      * Checks whether a group exists in a module
+     *
      * @param name the name of the group
      * @param module the module to look into
      * @return <pre>true</pre> if the group exists else <pre>false</pre>
@@ -236,12 +260,13 @@ public class PropertiesManagerUtil {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Checks whether at least one group in a module has no name
+     *
      * @param module the module to look into
      * @return <pre>true</pre> if at least one group has no name else <pre>false</pre>
      */
@@ -253,10 +278,10 @@ public class PropertiesManagerUtil {
                 groupsWithoutAName.add(group);
             }
         }
-        
+
         return !groupsWithoutAName.isEmpty();
     }
-    
+
     /**
      * Checks whether a property exists in a module
      *

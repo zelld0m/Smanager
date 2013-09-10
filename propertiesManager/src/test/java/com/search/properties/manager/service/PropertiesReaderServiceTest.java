@@ -50,8 +50,9 @@ public class PropertiesReaderServiceTest {
     public void testReadAllStorePropertiesFiles() {
         StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(1);
 
-        String filePath = String.format("%s%s%s", "src/test/resources/home/solr/conf",
-                File.separator, "pcmall.settings.properties");
+        String filePath = PropertiesManagerUtil.getFormattedSaveLocation(
+                "src/test/resources/home/solr/conf", "pcmall", "settings");
+        
         assertEquals(filePath, settingsPropertiesFile.getFilePath());
 
         assertEquals("settings", settingsPropertiesFile.getModuleName());

@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -59,8 +60,7 @@ public class PropertiesManager {
 
     /**
      * @return a {@link StoreProperties} object read from store-properties.xml
-     * @throws PropertyException thrown when store-properties.xml is
-     * invalid
+     * @throws PropertyException thrown when store-properties.xml is invalid
      */
     public StoreProperties getStoreProperties() throws PropertyException {
         StoreProperties storeProperties = getStorePropertiesFromXML();
@@ -82,8 +82,7 @@ public class PropertiesManager {
 
     /**
      * @return a {@link StoreProperties} object read from store-properties.xml
-     * @throws PropertyException thrown when store-properties.xml is
-     * invalid
+     * @throws PropertyException thrown when store-properties.xml is invalid
      */
     public StoreProperties getStorePropertiesFromXML() throws PropertyException {
         try {
@@ -129,9 +128,35 @@ public class PropertiesManager {
      */
     private void savePropertiesFile(Properties properties, String filePath) {
         try {
+            createDirectoryAndFileIfNotExisting(filePath);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        
+        try {
             properties.store(new FileOutputStream(filePath), null);
         } catch (IOException e) {
-            logger.info(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Helper method for creating a directory and file specified if not existing
+     * @param filePath the file path
+     * @throws IOException when the file path cannot be created
+     */
+    private static void createDirectoryAndFileIfNotExisting(String filePath)
+            throws IOException {
+        File file = new File(filePath);
+
+        if (!file.isDirectory()) {
+            String parent = file.getParent();
+
+            if (parent != null) {
+                new File(parent).mkdirs();
+            }
+
+            file.createNewFile();
         }
     }
 
