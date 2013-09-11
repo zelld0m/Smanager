@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation=" http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        				 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        				 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        				 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+						 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+         <property name="locations">
+         	<list>
+         		<value>file:/home/solr/conf/solr.properties</value>
+         		<value>file:/home/solr/bin/ws/config/database.properties</value>
+         		<value>file:/home/solr/bin/ws/config/mail.properties</value>
+         	</list>
+         </property>
+    </bean>
+    
+    <import resource="./init-app.xml"/>
+    
+    <!-- Scans within the base package of the application for @Components to configure as beans,
+		 @Controller, @Service, @Configuration, etc. -->
+	<context:component-scan base-package="com.search.manager.solr, com.search.service" />
+	
+    <import resource="./mail-app.xml"/>
+	<import resource="./db-app.xml"/>
+	<import resource="./solr-app.xml"/>
+	<import resource="./service-app.xml"/>
+	
+	<bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil" scope="singleton" />
+	
+</beans>

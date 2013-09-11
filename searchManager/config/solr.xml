@@ -27,7 +27,7 @@
     </solr-param-value>    
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>
-    <default-server>search</default-server>
+    <default-server>search43</default-server>
     <default-timezone>Asia/Manila</default-timezone>
     <facet-template>PCMall_FacetTemplate</facet-template>
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
@@ -51,7 +51,7 @@
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>    
-    <default-server>search</default-server>
+    <default-server>search43</default-server>
     <facet-template>xxx</facet-template>
     <facet-template-name>TemplateName</facet-template-name>
     <group-membership>
@@ -75,7 +75,7 @@
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>
-    <default-server>search</default-server>
+    <default-server>search43</default-server>
     <facet-template>PCMall_FacetTemplate</facet-template>
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
     <group-membership>
@@ -89,7 +89,7 @@
   <!-- PCMG -->
   <store id="pcmallgov" name="PCMG">
   	<core>pcmallgov</core>
-  	<store-id-aliases> </store-id-aliases>
+  	<store-id-aliases></store-id-aliases>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
     <facet-name>PCMG</facet-name>
@@ -101,7 +101,7 @@
     </solr-param-value>    
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>
-    <default-server>search</default-server>
+    <default-server>search43</default-server>
     <facet-template>PCMG_FacetTemplate</facet-template>
     <facet-template-name>PCMG_FacetTemplateName</facet-template-name>
     <group-membership>
@@ -151,7 +151,11 @@
     <store></store>
   </server>
 
-  <!-- Atlanta Solr Server Production-->  
+  <!-- Atlanta Solr Server Production-->
+  <server name='search43'>
+    <url>http://afs-pl-schmstr02.afservice.org:9080/solr/(core)/</url>
+    <store>pcmall,macmall,macmallbd,pcmallcap,pcmallgov</store>
+  </server>  
   <server name='search'>
     <url>http://10.17.35.36:8080/solr14/(core)/</url>
     <store>pcmall,macmall,pcmallcap,pcmallgov</store>

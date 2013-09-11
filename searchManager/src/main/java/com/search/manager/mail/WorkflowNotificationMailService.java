@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -34,12 +33,13 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.User;
 import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service("workflowNotificationMailService")
 public class WorkflowNotificationMailService {
 
-	private static final Logger logger = Logger
-			.getLogger(WorkflowNotificationMailService.class);
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowNotificationMailService.class);
 
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern PATTERN = Pattern.compile(EMAIL_PATTERN);
@@ -189,7 +189,7 @@ public class WorkflowNotificationMailService {
 			messageDetails.setBcc(bcc.toArray(new String[bcc.size()]));
 		}
 
-		model.put("store", UtilityService.getStoreId());
+		model.put("store", UtilityService.getStoreName());
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		model.put("ruleType", ruleEntity != null ? ruleEntity.getValues()
 				.get(0) : ruleType);
@@ -263,7 +263,7 @@ public class WorkflowNotificationMailService {
 						model);
 			}
 		} catch (DaoException e) {
-			logger.error(e);
+			logger.error("Error at WorkflowNotificationMailService.sendNotification()", e);
 			flag = false;
 		}
 
@@ -309,5 +309,4 @@ public class WorkflowNotificationMailService {
 
 		return null;
 	}
-
 }

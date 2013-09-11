@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.*;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
@@ -20,23 +19,25 @@ import com.search.manager.mail.TopKeywordMailCommand;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.TopKeyword;
 import com.search.manager.utility.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service(value = "topKeywordService")
-@RemoteProxy(name = "TopKeywordServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "topKeywordService"))
+@RemoteProxy(name = "TopKeywordServiceJS", creator = SpringCreator.class, creatorParams =
+        @Param(name = "beanName", value = "topKeywordService"))
 public class TopKeywordService {
 
-    private static final Logger logger = Logger.getLogger(TopKeywordService.class);
-
+    private static final Logger logger =
+            LoggerFactory.getLogger(TopKeywordService.class);
     @Autowired
     ReportNotificationMailService reportNotificationMailService;
-
     @Autowired
     CommandExecutor commandExecutor;
 
     @RemoteMethod
     public List<String> getFileList() {
         List<String> filenameList = new ArrayList<String>();
-        File dir = new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId());
+        File dir = new File(PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId());
 
         File[] files = dir.listFiles();
 
@@ -65,7 +66,7 @@ public class TopKeywordService {
         BufferedReader reader = null;
         try {
             try {
-                String filePath = PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
+                String filePath = PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
                         + File.separator + filename;
 
                 if (filename.indexOf("-splunk") > 0) {
@@ -113,7 +114,7 @@ public class TopKeywordService {
     }
 
     private File getFile(String filename) {
-        return new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
+        return new File(PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
                 + File.separator + filename);
     }
 
@@ -134,7 +135,7 @@ public class TopKeywordService {
         return FileTransferUtils.downloadCsv(new CsvTransformer<TopKeyword>() {
             @Override
             public String[] toStringArray(TopKeyword t) {
-                return new String[] { String.valueOf(t.getCount()), t.getKeyword() };
+                return new String[]{String.valueOf(t.getCount()), t.getKeyword()};
             }
         }.getCsvStream(topKeywords), getFileHeader("customRangeTopKeywords"), "customRangeTopKeywords", customFilename);
     }

@@ -1,68 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-  version="3.0">
-    
-    <context-param>
-		<param-name>GLOBAL_INIT_PROPERTIES</param-name>
-		<param-value>/home/solr/conf/globalvar.properties</param-value>
-	</context-param>
-	
-	<context-param>
-	    <param-name>log4jConfigLocation</param-name>
-	    <param-value>file:/home/solr/conf/log4j.xml</param-value>
-  	</context-param>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
   	
-	<listener>
-	    <listener-class>
-			org.springframework.web.util.Log4jConfigListener
-		</listener-class>
-	</listener>
+  	<welcome-file-list>
+    	<welcome-file>/</welcome-file>
+    </welcome-file-list>
     
-	<!-- Processes application requests -->
-	<servlet>
-		<servlet-name>searchManager</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>
-				/WEB-INF/spring/spring-servlet.xml
-			</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+    <listener>
+        <listener-class>
+            ch.qos.logback.ext.spring.web.LogbackConfigListener
+        </listener-class>
+    </listener>
+    
+    <!-- Processes application requests -->
+    <servlet>
+        <servlet-name>searchManager</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>
+                /WEB-INF/spring/spring-servlet.xml
+            </param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
-	<!-- Map all requests to the Spring MVC Dispatcher -->
-	<servlet-mapping>
-		<servlet-name>searchManager</servlet-name>
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
+    <!-- Map all requests to the Spring MVC Dispatcher -->
+    <servlet-mapping>
+        <servlet-name>searchManager</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
-	<!-- Map resource exclusions by extension, this overrides the mapping above -->
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.css</url-pattern>
-		<url-pattern>*.js</url-pattern>
-		<url-pattern>*.htm</url-pattern>
-		<url-pattern>*.jpg</url-pattern>
-		<url-pattern>*.png</url-pattern>
-		<url-pattern>*.gif</url-pattern>
-		<url-pattern>/tz/*</url-pattern>
-	</servlet-mapping>
+    <!-- Map resource exclusions by extension, this overrides the mapping above -->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.css</url-pattern>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.htm</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.gif</url-pattern>
+        <url-pattern>/tz/*</url-pattern>
+    </servlet-mapping>
 
-	<!-- Start Security Configuration -->
-	<listener>
-	    <listener-class>
-	      org.springframework.security.web.session.HttpSessionEventPublisher
-	    </listener-class>
-	</listener>
+    <!-- Start Security Configuration -->
+    <listener>
+        <listener-class>
+            org.springframework.security.web.session.HttpSessionEventPublisher
+        </listener-class>
+    </listener>
 
-	<listener>
-	  <listener-class>
-	      org.springframework.web.context.request.RequestContextListener
-	  </listener-class>
-	</listener>
+    <listener>
+        <listener-class>
+            org.springframework.web.context.request.RequestContextListener
+        </listener-class>
+    </listener>
 	
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -75,104 +69,104 @@
         </param-value>
     </context-param>
  
-	<filter>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
 
-	<filter-mapping>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 	
-	<filter>
-		<filter-name>characterEncodingFilter</filter-name>
-		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-		<init-param>
-			<param-name>forceEncoding</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
+    <filter>
+        <filter-name>characterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
 
-	<filter-mapping>
-		<filter-name>characterEncodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>characterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-	<session-config>
-		<session-timeout>-1</session-timeout>
-	</session-config>
+    <session-config>
+        <session-timeout>-1</session-timeout>
+    </session-config>
 
-	<!-- Check if we can remove this -->
-	<servlet>
-		<servlet-name>config</servlet-name>
-		<servlet-class>com.search.ws.ConfigServlet</servlet-class>
-		<init-param>
-			<param-name>config-folder</param-name>
-			<param-value>/home/solr/conf</param-value>
-		</init-param>
-		<init-param>
-			<param-name>config-file</param-name>
-			<param-value>solr.xml</param-value>
-		</init-param>
-		<init-param>
-			<param-name>relevancy-config-file</param-name>
-			<param-value>relevancy.xml</param-value>
-		</init-param>
-		<init-param>
-			<param-name>enterpriseSearch-config-file</param-name>
-			<param-value>enterpriseSearch.xml</param-value>
-		</init-param>
-		<init-param>
-			<param-name>messages-config-file</param-name>
-			<param-value>messages.xml</param-value>
-		</init-param>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
+    <!-- Check if we can remove this -->
+    <servlet>
+        <servlet-name>config</servlet-name>
+        <servlet-class>com.search.ws.ConfigServlet</servlet-class>
+        <init-param>
+            <param-name>config-folder</param-name>
+            <param-value>/home/solr/conf</param-value>
+        </init-param>
+        <init-param>
+            <param-name>config-file</param-name>
+            <param-value>solr.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>relevancy-config-file</param-name>
+            <param-value>relevancy.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>enterpriseSearch-config-file</param-name>
+            <param-value>enterpriseSearch.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>messages-config-file</param-name>
+            <param-value>messages.xml</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
 	
-	<servlet-mapping>
-		<servlet-name>config</servlet-name>
-		<url-pattern>/config</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>config</servlet-name>
+        <url-pattern>/config</url-pattern>
+    </servlet-mapping>
 
-	<!-- Search Web Service -->
-	<servlet>
-		<servlet-name>search</servlet-name>
-		<servlet-class>com.search.ws.SearchServlet</servlet-class>
-	</servlet>
+    <!-- Search Web Service -->
+    <servlet>
+        <servlet-name>search</servlet-name>
+        <servlet-class>com.search.ws.SearchServlet</servlet-class>
+    </servlet>
 	
-	<servlet-mapping>
-		<servlet-name>search</servlet-name>
-		<url-pattern>/search/*</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>search</servlet-name>
+        <url-pattern>/search/*</url-pattern>
+    </servlet-mapping>
 
-	<!-- Enterprise Search Web Service -->
-	<servlet>
-		<servlet-name>enterpriseSearch</servlet-name>
-		<servlet-class>com.search.ws.EnterpriseSearchServlet</servlet-class>
-	</servlet>
+    <!-- Enterprise Search Web Service -->
+    <servlet>
+        <servlet-name>enterpriseSearch</servlet-name>
+        <servlet-class>com.search.ws.EnterpriseSearchServlet</servlet-class>
+    </servlet>
 	
-	<servlet-mapping>
-		<servlet-name>enterpriseSearch</servlet-name>
-		<url-pattern>/enterpriseSearch/*</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>enterpriseSearch</servlet-name>
+        <url-pattern>/enterpriseSearch/*</url-pattern>
+    </servlet-mapping>
 	
-	<!-- DWR Entity -->
-	<servlet>
-		<servlet-name>dwr</servlet-name>
-		<servlet-class>org.directwebremoting.spring.DwrSpringServlet</servlet-class>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</servlet>
+    <!-- DWR Entity -->
+    <servlet>
+        <servlet-name>dwr</servlet-name>
+        <servlet-class>org.directwebremoting.spring.DwrSpringServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
 	
-	<servlet-mapping>
-		<servlet-name>dwr</servlet-name>
-		<url-pattern>/dwr/*</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>dwr</servlet-name>
+        <url-pattern>/dwr/*</url-pattern>
+    </servlet-mapping>
 </web-app>

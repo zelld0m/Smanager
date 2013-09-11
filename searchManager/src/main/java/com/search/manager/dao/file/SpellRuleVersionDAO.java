@@ -2,8 +2,9 @@ package com.search.manager.dao.file;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -19,9 +20,10 @@ import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlUtil;
 
 @Repository("spellRuleVersionDAO")
+@SuppressWarnings("unchecked")
 public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
-	private static Logger logger = Logger.getLogger(SpellRuleVersionDAO.class);
+	private static Logger logger = LoggerFactory.getLogger(SpellRuleVersionDAO.class);
 
 	private static final String MAX_SUGGEST = "maxSuggest";
 
@@ -46,48 +48,48 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 	@Override
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
 		RuleVersionListXml<DBRuleVersion> ruleVersions = RuleVersionUtil.getRuleVersionList(store, entity, ruleId);
-		if (ruleVersions != null) {
-			try {
-				long nextVersion = ruleVersions.getNextVersion();
+        if (ruleVersions != null) {
+            try {
+                long nextVersion = ruleVersions.getNextVersion();
 
-				if (daoService.addSpellRuleVersion(store, (int) nextVersion)) {
-					DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
-					        ruleId, RuleEntity.SPELL);
-					version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
-					ruleVersions.getVersions().add(version);
+                if (daoService.addSpellRuleVersion(store, (int) nextVersion)) {
+                    DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
+                            ruleId, RuleEntity.SPELL);
+                    version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
+                    ruleVersions.getVersions().add(version);
 
-					return RuleVersionUtil.addRuleVersion(store, RuleEntity.SPELL, ruleId, ruleVersions);
-				}
-			} catch (DaoException e) {
-				logger.error("Unable to create new version.", e);
-			}
-		}
+                    return RuleVersionUtil.addRuleVersion(store, RuleEntity.SPELL, ruleId, ruleVersions);
+                }
+            } catch (DaoException e) {
+                logger.error("Unable to create new version.", e);
+            }
+        }
 
-		return false;
+        return false;
 	}
 
 	@Override
 	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
-		RuleVersionListXml<DBRuleVersion> ruleVersions = RuleVersionUtil.getPublishedList(store, entity, ruleId);
+		  RuleVersionListXml<DBRuleVersion> ruleVersions = RuleVersionUtil.getPublishedList(store, entity, ruleId);
 
-		if (ruleVersions != null) {
-			try {
-				long nextVersion = ruleVersions.getNextVersion();
+	        if (ruleVersions != null) {
+	            try {
+	                long nextVersion = ruleVersions.getNextVersion();
 
-				DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
-				        ruleId, RuleEntity.SPELL);
-				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
-				version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
-				version.setRuleStatus(ruleStatus);
-				ruleVersions.getVersions().add(version);
+	                DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
+	                        ruleId, RuleEntity.SPELL);
+	                RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+	                version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
+	                version.setRuleStatus(ruleStatus);
+	                ruleVersions.getVersions().add(version);
 
-				return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersions);
-			} catch (DaoException e) {
-				logger.error("Unable to create new published version.", e);
-			}
-		}
+	                return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersions);
+	            } catch (DaoException e) {
+	                logger.error("Unable to create new published version.", e);
+	            }
+	        }
 
-		return false;
+	        return false;
 	}
 
 	@Override

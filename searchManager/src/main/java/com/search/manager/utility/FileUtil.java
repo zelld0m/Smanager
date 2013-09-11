@@ -11,219 +11,237 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileUtil {
-	
-	public static final String XML_FILE_TYPE = ".xml";
-	public static final String path = PropsUtils.getValue("backuppath");
-	private static Logger logger = Logger.getLogger(FileUtil.class);
 
-	public static void createDirectory(String basePath,String directoryName) throws Exception{
-		try{
-			if(StringUtils.isBlank(basePath)) throw new Exception("basePath is null.");
-			if("".equals(directoryName.trim()) || null == directoryName.trim()) throw new Exception("directoryName is null.");
-			createDirectory(basePath+directoryName);
-		}catch(Exception e){
-			throw new Exception(e);
-		}
-	}
+    public static final String XML_FILE_TYPE = ".xml";
+    public static final String path = PropertiesUtils.getValue("backuppath");
+    private static final Logger logger =
+            LoggerFactory.getLogger(FileUtil.class);
 
-	public static void createDirectory(String directoryName) throws Exception{
-		try{
-			if(StringUtils.isBlank(directoryName)) throw new Exception("directoryName is null.");
-			File newPath = new File(directoryName);
-			if(!newPath.exists()) {
-				newPath.mkdirs();
-			}
-		}catch(Exception e){
-			throw new Exception(e);
-		}
-	}
-	
-	// Put the file into server
-	public static void fileStream(Object obj, String filePath, String fileName) throws Exception{
-		ObjectOutputStream mediaFileOut=null;
-        
-		if(!isDirectoryExist(filePath)){
-			createDirectory(filePath);
-		}
-		
+    public static void createDirectory(String basePath, String directoryName) throws Exception {
         try {
-        	mediaFileOut = new ObjectOutputStream(new FileOutputStream(filePath+File.separator+fileName)); 
-        	mediaFileOut.writeObject(obj);
-        } catch (java.io.FileNotFoundException e) {
-        	throw new Exception(e);
-        } catch (java.io.IOException e) {
-        	throw new Exception(e);
-        } finally {
-             mediaFileOut.flush();
-             mediaFileOut.close();
+            if (StringUtils.isBlank(basePath)) {
+                throw new Exception("basePath is null.");
+            }
+            if ("".equals(directoryName.trim()) || null == directoryName.trim()) {
+                throw new Exception("directoryName is null.");
+            }
+            createDirectory(basePath + directoryName);
+        } catch (Exception e) {
+            throw new Exception(e);
         }
-	}
-	
-	// Get file from server
-	public static Object fileStream(String filePath) throws Exception{
-		ObjectInputStream mediaFileIn = null;
-		try{
-			mediaFileIn = new ObjectInputStream(new FileInputStream(filePath));
-			return mediaFileIn.readObject();
-		}catch(Exception e){
-			mediaFileIn.close();
-			throw new Exception(e);
-		}finally {
+    }
+
+    public static void createDirectory(String directoryName) throws Exception {
+        try {
+            if (StringUtils.isBlank(directoryName)) {
+                throw new Exception("directoryName is null.");
+            }
+            File newPath = new File(directoryName);
+            if (!newPath.exists()) {
+                newPath.mkdirs();
+            }
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
+    // Put the file into server
+    public static void fileStream(Object obj, String filePath, String fileName) throws Exception {
+        ObjectOutputStream mediaFileOut = null;
+
+        if (!isDirectoryExist(filePath)) {
+            createDirectory(filePath);
+        }
+
+        try {
+            mediaFileOut = new ObjectOutputStream(new FileOutputStream(filePath + File.separator + fileName));
+            mediaFileOut.writeObject(obj);
+        } catch (java.io.FileNotFoundException e) {
+            throw new Exception(e);
+        } catch (java.io.IOException e) {
+            throw new Exception(e);
+        } finally {
+            mediaFileOut.flush();
+            mediaFileOut.close();
+        }
+    }
+
+    // Get file from server
+    public static Object fileStream(String filePath) throws Exception {
+        ObjectInputStream mediaFileIn = null;
+        try {
+            mediaFileIn = new ObjectInputStream(new FileInputStream(filePath));
+            return mediaFileIn.readObject();
+        } catch (Exception e) {
             mediaFileIn.close();
-       }
-	}
+            throw new Exception(e);
+        } finally {
+            mediaFileIn.close();
+        }
+    }
 
-	public static boolean isFileExists(String filePath) throws Exception{
-		
-		boolean retVal=false;
-		FileInputStream fis = null;
-		try {
-			File fileHandler = new File(filePath);
-			fis = new FileInputStream(fileHandler);
-			retVal=fis!=null;
-			}catch(Exception e){
-				throw new Exception(e);
-			} finally {
-				if (fis != null) fis.close();
-			}
-		return retVal;
-	}
-	
-	public static boolean isExist(String file) throws Exception{
-		File fileHandler = new File(file);
-		return fileHandler.exists();
-	}
-	
-	public static boolean isDirectoryExist(String dir){
-		File file = new File(dir);
+    public static boolean isFileExists(String filePath) throws Exception {
 
-		if(file.isDirectory())
-			return true;
-		else
-			return false;
-	}
+        boolean retVal = false;
+        FileInputStream fis = null;
+        try {
+            File fileHandler = new File(filePath);
+            fis = new FileInputStream(fileHandler);
+            retVal = fis != null;
+        } catch (Exception e) {
+            throw new Exception(e);
+        } finally {
+            if (fis != null) {
+                fis.close();
+            }
+        }
+        return retVal;
+    }
 
-	public static void deleteFile(String filepath) throws IOException{
-		File file = new File(filepath);
+    public static boolean isExist(String file) throws Exception {
+        File fileHandler = new File(file);
+        return fileHandler.exists();
+    }
 
-		if(file.exists()){
-			File dir = file.getParentFile();
+    public static boolean isDirectoryExist(String dir) {
+        File file = new File(dir);
 
-			if(!file.delete()){
-				file.deleteOnExit();
-			}
+        if (file.isDirectory()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-			if(dir.isDirectory()){
-				if(!dir.delete()){
-					dir.deleteOnExit();
-				}
-			}
-			
-			if(!dir.exists())
-				logger.info("File "+filepath+" has been deleted.");
-			else{
-				String newDir = dir.getPath()+".trash."+new Date().getTime();
-				dir.renameTo(new File(newDir));
-			}
-		}
-	}
-	
-	public static void deleteDir(String dir) throws IOException{
-		new File(dir).deleteOnExit();
-	}
-	
-	// Check allowable file count
-	public static boolean isValidFileCount(int validCnt, int curCnt){
-		if(curCnt > validCnt)
-			return false;
-		else
-			return true;
-	}
-	
-	public static Date getLastModefied(String filePath){
-		try {
-			File fileHandler = new File(filePath);
-			if(fileHandler.exists())
-				return new Date(fileHandler.lastModified());
+    public static void deleteFile(String filepath) throws IOException {
+        File file = new File(filepath);
 
-			}catch(Exception e){}
-		return null;
-	}
-	
-	public static Long getSizeKiloBytes(String filePath){
-		try {
-			File fileHandler = new File(filePath);
-			
-			if(fileHandler.exists())
-				return (fileHandler.length() / 1024);		
+        if (file.exists()) {
+            File dir = file.getParentFile();
 
-		}catch(Exception e){}
-		return 0L;
-	}
-	
-	public static Long getSizeBytes(String filePath){
-		try {
-			File fileHandler = new File(filePath);
-			
-			if(fileHandler.exists())
-				return fileHandler.length();		
+            if (!file.delete()) {
+                file.deleteOnExit();
+            }
 
-		}catch(Exception e){}
-		return 0L;
-	}
-	
-	public static String getFilePath(String type ,String file, String xtn){
-		StringBuilder filePath = new StringBuilder(getFileDirectory(type, file)).append(File.separator).append(file+xtn);
-		return filePath.toString();
-	}
-	
-	public static String getFilePath(String type ,String file, String child, String xtn){
-		StringBuilder filePath = new StringBuilder(getFileDirectory(type, file, child)).append(File.separator).append(file+xtn);
-		return filePath.toString();
-	}
-	
-	public static String getFileDirectory(String type ,String file){
-		StringBuilder dir = new StringBuilder();
-		dir.append(path).append(File.separator).append(type).append(File.separator).append(file);
-		return dir.toString();
-	}
-	
-	public static String getFileDirectory(String type ,String file, String child){
-		StringBuilder dir = new StringBuilder();
-		dir.append(path).append(File.separator).append(type).append(File.separator).append(file).append(File.separator).append(child);
-		return dir.toString();
-	}
-	
-	private static Object[] getFileExtentions(){
-		List<String> extList = new ArrayList<String>();
-		extList.add("doc");
-		extList.add("docx");
-		extList.add("docm");
-		extList.add("dotx");
-		extList.add("dotm");
-		extList.add("cvs");
-		extList.add("xls");
-		extList.add("xlsx");
-		extList.add("xlsm");
-		extList.add("xltx");
-		extList.add("xltm");
-		extList.add("xlsb");
-		extList.add("xlam");
-		extList.add("ppt");
-		extList.add("pptx");
-		extList.add("pptm");
-		extList.add("potx");
-		extList.add("potm");
-		extList.add("ppam");
-		extList.add("ppsx");
-		extList.add("ppsm");
-		extList.add("sldx");
-		extList.add("sldm");
-		extList.add("thmx");
-		extList.add("pdf");
-		return extList.toArray();
-	}
+            if (dir.isDirectory()) {
+                if (!dir.delete()) {
+                    dir.deleteOnExit();
+                }
+            }
+
+            if (!dir.exists()) {
+                logger.info("File " + filepath + " has been deleted.");
+            } else {
+                String newDir = dir.getPath() + ".trash." + new Date().getTime();
+                dir.renameTo(new File(newDir));
+            }
+        }
+    }
+
+    public static void deleteDir(String dir) throws IOException {
+        new File(dir).deleteOnExit();
+    }
+
+    // Check allowable file count
+    public static boolean isValidFileCount(int validCnt, int curCnt) {
+        if (curCnt > validCnt) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static Date getLastModefied(String filePath) {
+        try {
+            File fileHandler = new File(filePath);
+            if (fileHandler.exists()) {
+                return new Date(fileHandler.lastModified());
+            }
+
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public static Long getSizeKiloBytes(String filePath) {
+        try {
+            File fileHandler = new File(filePath);
+
+            if (fileHandler.exists()) {
+                return (fileHandler.length() / 1024);
+            }
+
+        } catch (Exception e) {
+        }
+        return 0L;
+    }
+
+    public static Long getSizeBytes(String filePath) {
+        try {
+            File fileHandler = new File(filePath);
+
+            if (fileHandler.exists()) {
+                return fileHandler.length();
+            }
+
+        } catch (Exception e) {
+        }
+        return 0L;
+    }
+
+    public static String getFilePath(String type, String file, String xtn) {
+        StringBuilder filePath = new StringBuilder(getFileDirectory(type, file)).append(File.separator).append(file + xtn);
+        return filePath.toString();
+    }
+
+    public static String getFilePath(String type, String file, String child, String xtn) {
+        StringBuilder filePath = new StringBuilder(getFileDirectory(type, file, child)).append(File.separator).append(file + xtn);
+        return filePath.toString();
+    }
+
+    public static String getFileDirectory(String type, String file) {
+        StringBuilder dir = new StringBuilder();
+        dir.append(path).append(File.separator).append(type).append(File.separator).append(file);
+        return dir.toString();
+    }
+
+    public static String getFileDirectory(String type, String file, String child) {
+        StringBuilder dir = new StringBuilder();
+        dir.append(path).append(File.separator).append(type).append(File.separator).append(file).append(File.separator).append(child);
+        return dir.toString();
+    }
+
+    private static Object[] getFileExtentions() {
+        List<String> extList = new ArrayList<String>();
+        extList.add("doc");
+        extList.add("docx");
+        extList.add("docm");
+        extList.add("dotx");
+        extList.add("dotm");
+        extList.add("cvs");
+        extList.add("xls");
+        extList.add("xlsx");
+        extList.add("xlsm");
+        extList.add("xltx");
+        extList.add("xltm");
+        extList.add("xlsb");
+        extList.add("xlam");
+        extList.add("ppt");
+        extList.add("pptx");
+        extList.add("pptm");
+        extList.add("potx");
+        extList.add("potm");
+        extList.add("ppam");
+        extList.add("ppsx");
+        extList.add("ppsm");
+        extList.add("sldx");
+        extList.add("sldm");
+        extList.add("thmx");
+        extList.add("pdf");
+        return extList.toArray();
+    }
 }

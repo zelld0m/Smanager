@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+        
+    <beans:bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
+       <beans:property name="driverClassName" value="${driverClassName.prod}"/>
+       <beans:property name="url" value="${url.prod}"/>
+       <beans:property name="username" value="${username.prod}"/>
+       <beans:property name="password" value="${password.prod}"/>
+       <beans:property name="validationQuery" value="select 1"/>
+  	   <beans:property name="testOnBorrow" value="true"/>
+  	   <beans:property name="testOnReturn" value="false"/>
+    </beans:bean>
+    
+     <beans:bean id="dataSource_solr_stg" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
+       <beans:property name="driverClassName" value="${driverClassName.stg}"/>
+       <beans:property name="url" value="${url.stg}"/>
+       <beans:property name="username" value="${username.stg}"/>
+       <beans:property name="password" value="${password.stg}"/>
+       <beans:property name="validationQuery" value="select 1"/>
+  	   <beans:property name="testOnBorrow" value="true"/>
+  	   <beans:property name="testOnReturn" value="false"/>
+    </beans:bean>
+	
+	<!--  dao services prod-->	
+	<beans:bean name="jdbcTemplate" id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" scope="singleton">
+		<beans:constructor-arg ref="dataSource_solr" />
+	</beans:bean>
+	<beans:bean name="elevateDao" id="elevateDAO" class="com.search.manager.dao.sp.ElevateDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="excludeDao" id="excludeDAO" class="com.search.manager.dao.sp.ExcludeDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="demoteDao" id="demoteDAO" class="com.search.manager.dao.sp.DemoteDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="facetSortDao" id="facetSortDAO" class="com.search.manager.dao.sp.FacetSortDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="keywordDao" id="keywordDAO" class="com.search.manager.dao.sp.KeywordDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="storeKeywordDao" id="storeKeywordDAO" class="com.search.manager.dao.sp.StoreKeywordDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="relevancyDao" id="relevancyDAO" class="com.search.manager.dao.sp.RelevancyDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="redirectRuleDao" id="redirectRuleDAO" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="auditTrailDao" id="auditTrailDAO" class="com.search.manager.dao.sp.AuditTrailDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="bannerDao" id="bannerDAO" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="ruleStatusDao" id="ruleStatusDAO" class="com.search.manager.dao.sp.RuleStatusDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="commentDao" id="commentDAO" class="com.search.manager.dao.sp.CommentDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="usersDao" id="usersDAO" class="com.search.manager.dao.sp.UsersDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="groupsDAO" id="groupsDAO" class="com.search.manager.dao.sp.GroupsDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="spellRuleDAO" id="spellRuleDAO" class="com.search.manager.dao.sp.SpellRuleDAO" scope="singleton" init-method="init">
+        <beans:property name="jdbcTemplate" ref="jdbcTemplate" />
+        <beans:property name="daoService" ref="daoService" />
+	</beans:bean>
+    <beans:bean name="spellRuleVersionDAO" id="spellRuleVersionDAO" class="com.search.manager.dao.file.SpellRuleVersionDAO" scope="singleton" >
+        <beans:property name="daoService" ref="daoService" />
+    </beans:bean>
+
+	<beans:bean name="elevateVersionDAO" id="elevateVersionDAO" class="com.search.manager.dao.file.ElevateVersionDAO" scope="singleton" />
+	<beans:bean name="excludeVersionDAO" id="excludeVersionDAO" class="com.search.manager.dao.file.ExcludeVersionDAO" scope="singleton" />
+	<beans:bean name="demoteVersionDAO" id="demoteVersionDAO" class="com.search.manager.dao.file.DemoteVersionDAO" scope="singleton" />
+	<beans:bean name="facetSortVersionDAO" id="facetSortVersionDAO" class="com.search.manager.dao.file.FacetSortVersionDAO" scope="singleton" />
+	<beans:bean name="queryCleaningVersionDAO" id="queryCleaningVersionDAO" class="com.search.manager.dao.file.RedirectRuleVersionDAO" scope="singleton" />
+	<beans:bean name="rankingRuleVersionDAO" id="rankingRuleVersionDAO" class="com.search.manager.dao.file.RankingRuleVersionDAO" scope="singleton" />
+	<beans:bean name="exportRuleMapDAO" id="exportRuleMapDAO" class="com.search.manager.dao.sp.ExportRuleMapDAO" scope="singleton" />
+	<beans:bean name="bannerVersionDAO" id="bannerVersionDAO" class="com.search.manager.dao.file.BannerVersionDAO" scope="singleton" />
+	
+	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.internal.DaoServiceImpl" scope="singleton">
+		<beans:property name="elevateDAO" ref="elevateDAO"/>
+		<beans:property name="excludeDAO" ref="excludeDAO"/>
+		<beans:property name="demoteDAO" ref="demoteDAO"/>
+		<beans:property name="facetSortDAO" ref="facetSortDAO"/>
+		<beans:property name="keywordDAO" ref="keywordDAO"/>
+		<beans:property name="storeKeywordDAO" ref="storeKeywordDAO"/>	
+		<beans:property name="relevancyDAO" ref="relevancyDAO"/>
+		<beans:property name="redirectRuleDAO" ref="redirectRuleDAO"/>
+		<beans:property name="auditTrailDAO" ref="auditTrailDAO"/>
+		<beans:property name="bannerDAO" ref="bannerDAO"/>
+		<beans:property name="ruleStatusDAO" ref="ruleStatusDAO"/>
+		<beans:property name="commentDAO" ref="commentDAO"/>
+		<beans:property name="usersDAO" ref="usersDAO"/>
+		<beans:property name="groupsDAO" ref="groupsDAO"/>
+		<beans:property name="spellRuleDAO" ref="spellRuleDAO"/>
+        <beans:property name="spellRuleVersionDAO" ref="spellRuleVersionDAO"/>
+    </beans:bean>
+    
+    <!--  dao services stg-->	
+    <beans:bean name="jdbcTemplateStg" id="jdbcTemplateStg" class="org.springframework.jdbc.core.JdbcTemplate" scope="singleton">
+		<beans:constructor-arg ref="dataSource_solr_stg" />
+	</beans:bean>
+	<beans:bean name="elevateDaoStg" id="elevateDAOStg" class="com.search.manager.dao.sp.ElevateDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="excludeDaoStg" id="excludeDAOStg" class="com.search.manager.dao.sp.ExcludeDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="demoteDaoStg" id="demoteDAOStg" class="com.search.manager.dao.sp.DemoteDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="facetSortDaoStg" id="facetSortDAOStg" class="com.search.manager.dao.sp.FacetSortDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="keywordDaoStg" id="keywordDAOStg" class="com.search.manager.dao.sp.KeywordDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="storeKeywordDaoStg" id="storeKeywordDAOStg" class="com.search.manager.dao.sp.StoreKeywordDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="relevancyDaoStg" id="relevancyDAOStg" class="com.search.manager.dao.sp.RelevancyDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="redirectRuleDaoStg" id="redirectRuleDAOStg" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="auditTrailDaoStg" id="auditTrailDAOStg" class="com.search.manager.dao.sp.AuditTrailDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="bannerDaoStg" id="bannerDAOStg" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="ruleStatusDaoStg" id="ruleStatusDAOStg" class="com.search.manager.dao.sp.RuleStatusDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="commentDaoStg" id="commentDAOStg" class="com.search.manager.dao.sp.CommentDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="usersDaoStg" id="usersDAOStg" class="com.search.manager.dao.sp.UsersDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="groupsDAOStg" id="groupsDAOStg" class="com.search.manager.dao.sp.GroupsDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="spellRuleDAOStg" id="spellRuleDAOStg" class="com.search.manager.dao.sp.SpellRuleDAO" scope="singleton" init-method="init">
+        <beans:property name="jdbcTemplate" ref="jdbcTemplateStg" />
+        <beans:property name="daoService" ref="daoServiceStg" />
+	</beans:bean>
+    <beans:bean name="spellRuleVersionDAOStg" id="spellRuleVersionDAOStg" class="com.search.manager.dao.file.SpellRuleVersionDAO" scope="singleton">
+        <beans:property name="daoService" ref="daoServiceStg" />
+    </beans:bean>   
+
+	<beans:bean name="daoServiceStg" id="daoServiceStg" class="com.search.manager.dao.internal.DaoServiceImpl" scope="singleton">
+		<beans:property name="elevateDAO" ref="elevateDAOStg"/>
+		<beans:property name="excludeDAO" ref="excludeDAOStg"/>
+		<beans:property name="demoteDAO" ref="demoteDaoStg"/>
+		<beans:property name="facetSortDAO" ref="facetSortDAOStg"/>
+		<beans:property name="keywordDAO" ref="keywordDAOStg"/>
+		<beans:property name="storeKeywordDAO" ref="storeKeywordDAOStg"/>	
+		<beans:property name="relevancyDAO" ref="relevancyDAOStg"/>
+		<beans:property name="redirectRuleDAO" ref="redirectRuleDAOStg"/>
+		<beans:property name="auditTrailDAO" ref="auditTrailDAOStg"/>
+		<beans:property name="bannerDAO" ref="bannerDAOStg"/>
+		<beans:property name="ruleStatusDAO" ref="ruleStatusDAOStg"/>
+		<beans:property name="commentDAO" ref="commentDAOStg"/>
+		<beans:property name="usersDAO" ref="usersDAOStg"/>
+		<beans:property name="groupsDAO" ref="groupsDAOStg"/>
+		<beans:property name="spellRuleDAO" ref="spellRuleDAOStg"/>
+        <beans:property name="spellRuleVersionDAO" ref="spellRuleVersionDAOStg"/>
+    </beans:bean>
+    
+</beans:beans>

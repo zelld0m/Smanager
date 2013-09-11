@@ -41,7 +41,7 @@ public class BeanUtil {
   private static Method getReadMethod(String name, Object instance) 
     throws IllegalArgumentException, IntrospectionException {
     String id = instance.getClass() + "#" + name;
-    Method read = (Method) map.get(id);
+    Method read = map.get(id);
     if (read == null) {
       BeanInfo info = Introspector.getBeanInfo(
         instance.getClass(),Introspector.USE_ALL_BEANINFO);

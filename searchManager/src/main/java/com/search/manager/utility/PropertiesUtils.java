@@ -1,10 +1,15 @@
 package com.search.manager.utility;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads the globalvar.properties file
@@ -14,17 +19,46 @@ import org.apache.commons.configuration.PropertiesConfiguration;
  */
 public class PropertiesUtils {
 
-    private static final Logger logger = Logger.getLogger(PropertiesUtils.class.getName());
+    private static final Logger logger =
+            LoggerFactory.getLogger(PropertiesUtils.class);
+    
     private static PropertiesConfiguration config;
 
-    static {
-        String filePath = "/home/solr/conf/globalvar.properties";
-
+    public static void initPropertiesConfig(String path) {
         try {
-            config = new PropertiesConfiguration(filePath);
+            config = new PropertiesConfiguration(path);
+            config.setReloadingStrategy(new FileChangedReloadingStrategy());
         } catch (ConfigurationException e) {
-            logger.log(Level.SEVERE, String.format("Unable to load file %s", filePath), e);
+            logger.error(String.format("Unable to load file %s", path), e);
         }
+    }
+
+    @Deprecated
+    public static Properties load(String propsName) throws Exception {
+        Properties props = new Properties();
+        FileInputStream fis = new FileInputStream(new File(propsName));
+        props.load(fis);
+        fis.close();
+        return props;
+    }
+
+    @Deprecated
+    public static Properties load(File propsFile) throws IOException {
+        Properties props = new Properties();
+        FileInputStream fis = new FileInputStream(propsFile);
+        props.load(fis);
+        fis.close();
+
+        return props;
+    }
+
+    @Deprecated
+    public static Properties getProperties(String propsName) {
+        try {
+            return load(getValue(propsName));
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     /**

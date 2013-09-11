@@ -24,9 +24,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -36,12 +36,14 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SolrXmlResponseParser extends SolrResponseParser {
 
 	// TODO: create a threadpool for this?
-	private static Logger logger = Logger.getLogger(SolrXmlResponseParser.class);
-
+	private static final Logger logger =
+			LoggerFactory.getLogger(SolrXmlResponseParser.class);
 	// Belongs to initial Solr XML response which will be used to generate the HTTP Response
 	private Document mainDoc = null;
 	private Node resultNode = null;
@@ -50,13 +52,11 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	private Node responseHeaderParamsNode = null;
 	private Node placeHolderNode = null;
 	private Node facetFieldsNode = null;
-
 	private List<Node> demotedEntries = new ArrayList<Node>();
 	private List<Node> elevatedEntries = new ArrayList<Node>();
-
 	private Node spellcheckNode = null;
 	private List<Node> spellCheckParams = new ArrayList<Node>();
-	
+
 	private static Node locateElementNode(Node startingNode, String nodeName) throws SearchException {
 		return locateElementNode(startingNode, nodeName, null);
 	}
@@ -75,8 +75,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			if (currentNode.getNodeType() == Node.ELEMENT_NODE && nodeName.equalsIgnoreCase(currentNode.getNodeName())) {
 				if (attributeNameValue == null) {
 					return currentNode;
-				}
-				else {
+				} else {
 					atributeNode = currentNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME);
 					if (atributeNode != null && attributeNameValue.equalsIgnoreCase(atributeNode.getNodeValue())) {
 						return currentNode;
@@ -90,19 +89,18 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	public int getCount(List<NameValuePair> requestParams) throws SearchException {
 		int numFound = -1;
-		HttpClient client  = null;
+		HttpClient client = null;
 		HttpPost post = null;
 		HttpResponse solrResponse = null;
 		InputStream in = null;
-		
+
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
 			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
 			post.addHeader("Connection", "close");
 			if (logger.isDebugEnabled()) {
-				logger.debug("URL: " + post.getURI());
-				logger.debug("Parameter: " + requestParams);
+				logger.debug("URL: {} Parameter: {}", post.getURI(), requestParams);
 			}
 			solrResponse = client.execute(post);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -114,9 +112,14 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		} catch (Exception e) {
 			String error = "Error occured while trying to get number of items";
 			logSolrError(post, error, e);
-			throw new SearchException(error ,e);
+			throw new SearchException(error, e);
 		} finally {
-			try { if (in != null) in.close();  } catch (IOException e) { }
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
 			if (post != null) {
 				if (solrResponse != null) {
 					EntityUtils.consumeQuietly(solrResponse.getEntity());
@@ -134,21 +137,20 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		Node tagNode = null;
 		if (result instanceof ElevateResult) {
 			tagNode = parentDocument.createElement(SolrConstants.TAG_ELEVATE);
-			tagNode.appendChild(parentDocument.createTextNode(String.valueOf(((ElevateResult)result).getLocation())));
-		}
-		else if (result instanceof DemoteResult) {
+			tagNode.appendChild(parentDocument.createTextNode(String.valueOf(((ElevateResult) result).getLocation())));
+		} else if (result instanceof DemoteResult) {
 			tagNode = parentDocument.createElement(SolrConstants.TAG_DEMOTE);
-			tagNode.appendChild(parentDocument.createTextNode(String.valueOf(((DemoteResult)result).getLocation())));
+			tagNode.appendChild(parentDocument.createTextNode(String.valueOf(((DemoteResult) result).getLocation())));
 		}
 		if (tagNode != null) {
-			resultNode.appendChild(tagNode);			
+			resultNode.appendChild(tagNode);
 		}
 	}
-	
+
 	@Override
 	protected int getFacet(List<NameValuePair> requestParams, SearchResult facet) throws SearchException {
 		int addedRecords = 0;
-		HttpClient client  = null;
+		HttpClient client = null;
 		HttpPost post = null;
 		InputStream in = null;
 		HttpResponse solrResponse = null;
@@ -165,12 +167,12 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			solrResponse = client.execute(post);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			in = solrResponse.getEntity().getContent();
-			Document currentDoc  = docBuilder.parse(in);
-			
+			Document currentDoc = docBuilder.parse(in);
+
 			// <result> tag that is parent node for all the <doc> tags
 			Node tmpResultNode = locateElementNode(locateElementNode(currentDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_RESULT, SolrConstants.ATTR_NAME_VALUE_RESPONSE);
-			
+
 			Node currentExplainNode = locateElementNode(locateElementNode(locateElementNode(currentDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_DEBUG),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
@@ -184,8 +186,8 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					NodeList docNodes = docNode.getChildNodes();
 					for (int k = 0, kSize = docNodes.getLength(); k < kSize; k++) {
 						Node kNode = docNodes.item(k);
-						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT) &&
-								kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
+						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT)
+								&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
 								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
 							String edp = kNode.getTextContent();
 							tagSearchResult(currentDoc, docNode, facet);
@@ -194,8 +196,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 							}
 							if (facet instanceof ElevateResult) {
 								elevatedEntries.add(mainDoc.importNode(docNode, true));
-							}
-							else if (facet instanceof DemoteResult) {
+							} else if (facet instanceof DemoteResult) {
 								demotedEntries.add(mainDoc.importNode(docNode, true));
 							}
 							addedRecords++;
@@ -209,9 +210,14 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		} catch (Exception e) {
 			String error = "Error occured while trying to get items";
 			logSolrError(post, error, e);
-			throw new SearchException(error ,e);
+			throw new SearchException(error, e);
 		} finally {
-			try { if (in != null) in.close();  } catch (IOException e) { }
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
 			if (post != null) {
 				if (solrResponse != null) {
 					EntityUtils.consumeQuietly(solrResponse.getEntity());
@@ -228,7 +234,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	protected int getEdps(List<NameValuePair> requestParams, List<? extends SearchResult> edpList, int startRow, int requestedRows) throws SearchException {
 		int addedRecords = 0;
-		HttpClient client  = null;
+		HttpClient client = null;
 		HttpPost post = null;
 		HttpResponse solrResponse = null;
 		InputStream in = null;
@@ -260,8 +266,8 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					NodeList docNodes = docNode.getChildNodes();
 					for (int k = 0, kSize = docNodes.getLength(); k < kSize; k++) {
 						Node kNode = docNodes.item(k);
-						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT) &&
-								kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
+						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT)
+								&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
 								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
 							String edp = kNode.getTextContent();
 							if (!includeEDP) {
@@ -277,10 +283,10 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			Node currentExplainNode = locateElementNode(locateElementNode(locateElementNode(currentDocument, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_DEBUG),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
-			
+
 			// sort the edps
 			int currRow = 0;
-			for (SearchResult result: edpList) {
+			for (SearchResult result : edpList) {
 				String edp = result.getEdp();
 				Node node = resultDocuments.get(edp);
 				if (node != null) {
@@ -294,8 +300,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					tagSearchResult(currentDocument, node, result);
 					if (result instanceof ElevateResult) {
 						elevatedEntries.add(mainDoc.importNode(node, true));
-					}
-					else if (result instanceof DemoteResult) {
+					} else if (result instanceof DemoteResult) {
 						demotedEntries.add(mainDoc.importNode(node, true));
 					}
 					if (explainNode != null) {
@@ -306,9 +311,14 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		} catch (Exception e) {
 			String error = "Error occured while trying to get items";
 			logSolrError(post, error, e);
-			throw new SearchException(error ,e);
+			throw new SearchException(error, e);
 		} finally {
-			try { if (in != null) in.close();  } catch (IOException e) { }
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
 			if (post != null) {
 				if (solrResponse != null) {
 					EntityUtils.consumeQuietly(solrResponse.getEntity());
@@ -321,15 +331,15 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		}
 		return addedRecords;
 	}
-	
+
 	@Override
 	public int getNonElevatedItems(List<NameValuePair> requestParams) throws SearchException {
 		int addedRecords = 0;
-		HttpClient client  = null;
+		HttpClient client = null;
 		HttpPost post = null;
 		HttpResponse solrResponse = null;
 		InputStream in = null;
-		
+
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
@@ -386,9 +396,14 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		} catch (Exception e) {
 			String error = "Error occured while trying to get Non-Elevated items";
 			logSolrError(post, error, e);
-			throw new SearchException(error ,e);
+			throw new SearchException(error, e);
 		} finally {
-			try { if (in != null) in.close();  } catch (IOException e) { }
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
 			if (post != null) {
 				if (solrResponse != null) {
 					EntityUtils.consumeQuietly(solrResponse.getEntity());
@@ -405,11 +420,11 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	public int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
 		int numFound = -1;
-		HttpClient client  = null;
+		HttpClient client = null;
 		HttpPost post = null;
 		HttpResponse solrResponse = null;
 		InputStream in = null;
-		
+
 		try {
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			client = new DefaultHttpClient();
@@ -432,7 +447,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
 			facetFieldsNode = locateElementNode(locateElementNode(locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS), SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS);
-			
+
 			// insert a temp node, that will separate elevated items from non-elevated items
 			placeHolderNode = mainDoc.createElement("tmp-node");
 			resultNode.appendChild(placeHolderNode);
@@ -448,62 +463,67 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					mainDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
 
-			if(redirectRule != null && redirectRule.isRedirectChangeKeyword()) {
+			if (redirectRule != null && redirectRule.isRedirectChangeKeyword()) {
 				Node redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
 				Node origKeywordNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_ORIGINAL_KEYWORD);
 				Node replacementKeywordNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_KEYWORD);
 				Node replacementTypeNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_TYPE);
 				Node customTextNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_CUSTOM_TEXT);
-				
-				if(StringUtils.isNotBlank(originalKeyword)) {
+
+				if (StringUtils.isNotBlank(originalKeyword)) {
 					origKeywordNode.appendChild(mainDoc.createTextNode(originalKeyword));
 					redirectNode.appendChild(origKeywordNode);
 				}
-				if(StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
+				if (StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
 					replacementKeywordNode.appendChild(mainDoc.createTextNode(redirectRule.getChangeKeyword()));
 					redirectNode.appendChild(replacementKeywordNode);
 				}
-				if(redirectRule.getReplaceKeywordMessageType() != null) {
-					replacementTypeNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageType()+""));
+				if (redirectRule.getReplaceKeywordMessageType() != null) {
+					replacementTypeNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageType() + ""));
 					redirectNode.appendChild(replacementTypeNode);
 				}
-				if(StringUtils.isNotBlank(redirectRule.getReplaceKeywordMessageCustomText())) {
+				if (StringUtils.isNotBlank(redirectRule.getReplaceKeywordMessageCustomText())) {
 					customTextNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageCustomText()));
 					redirectNode.appendChild(customTextNode);
 				}
-				
+
 				responseHeaderNode.appendChild(redirectNode);
 			}
-			
+
 			if (activeRules != null) {
 				Node activeRuleNode = mainDoc.createElement(SolrConstants.TAG_SEARCH_RULES);
-				for (Map<String, String> rule: activeRules) {
+				for (Map<String, String> rule : activeRules) {
 					Node ruleNode = mainDoc.createElement(SolrConstants.TAG_RULE);
-					for (String key: rule.keySet()) {
+					for (String key : rule.keySet()) {
 						Node ruleParamNode = mainDoc.createElement(key);
 						if (StringUtils.isNotBlank(rule.get(key))) {
-							ruleParamNode.appendChild(mainDoc.createTextNode(rule.get(key)));							
+							ruleParamNode.appendChild(mainDoc.createTextNode(rule.get(key)));
 						}
 						ruleNode.appendChild(ruleParamNode);
 					}
 					activeRuleNode.appendChild(ruleNode);
 				}
 				responseHeaderNode.appendChild(activeRuleNode);
-			}		
-			
+			}
+
 			responseHeaderParamsNode = locateElementNode(responseHeaderNode,
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_PARAMS);
-			locateElementNode(responseHeaderParamsNode,SolrConstants.TAG_STR, SolrConstants.SOLR_PARAM_ROWS)
-					.setTextContent(String.valueOf(requestedRows));
-			locateElementNode(responseHeaderParamsNode,SolrConstants.TAG_STR, SolrConstants.SOLR_PARAM_START)
-					.setTextContent(String.valueOf(startRow));
-			qtimeNode = locateElementNode(responseHeaderNode,SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_QTIME);
+			locateElementNode(responseHeaderParamsNode, SolrConstants.TAG_STR, SolrConstants.SOLR_PARAM_ROWS)
+			.setTextContent(String.valueOf(requestedRows));
+			locateElementNode(responseHeaderParamsNode, SolrConstants.TAG_STR, SolrConstants.SOLR_PARAM_START)
+			.setTextContent(String.valueOf(startRow));
+			qtimeNode = locateElementNode(responseHeaderNode, SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_QTIME);
 		} catch (Exception e) {
 			String error = "Error occured while trying to get template counts";
 			logSolrError(post, error, e);
-			throw new SearchException(error ,e);
+			throw new SearchException(error, e);
 		} finally {
-			try { if (in != null) in.close();  } catch (IOException e) { }
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
 			if (post != null) {
 				if (solrResponse != null) {
 					EntityUtils.consumeQuietly(solrResponse.getEntity());
@@ -533,7 +553,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			TransformerFactory.newInstance().newTransformer().transform(source, new StreamResult(response.getOutputStream()));
 			success = true;
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to send Http response" ,e);
+			throw new SearchException("Error occured while trying to send Http response", e);
 		}
 		return success;
 	}
@@ -541,34 +561,34 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	private void addBanners() {
 		Node bannersNode = mainDoc.createElement(SolrConstants.TAG_BANNERS);
 		try {
-			if(CollectionUtils.isNotEmpty(bannerList)) {
-				for (BannerRuleItem rule: bannerList) {
+			if (CollectionUtils.isNotEmpty(bannerList)) {
+				for (BannerRuleItem rule : bannerList) {
 					Node ruleNode = mainDoc.createElement(SolrConstants.TAG_BANNER_RULE);
-					
+
 					Node memberId = mainDoc.createElement(SolrConstants.TAG_BANNER_MEMBER_ID);
 					memberId.appendChild(mainDoc.createTextNode(rule.getMemberId() + ""));
 					ruleNode.appendChild(memberId);
-					
+
 					Node size = mainDoc.createElement(SolrConstants.TAG_BANNER_SIZE);
 					size.appendChild(mainDoc.createTextNode(rule.getImagePath().getSize() + ""));
 					ruleNode.appendChild(size);
-					
+
 					Node newWindow = mainDoc.createElement(SolrConstants.TAG_BANNER_OPEN_NEW_WINDOW);
 					newWindow.appendChild(mainDoc.createTextNode(rule.getOpenNewWindow() + ""));
 					ruleNode.appendChild(newWindow);
-					
+
 					Node imageAlt = mainDoc.createElement(SolrConstants.TAG_BANNER_IMAGE_ALT);
 					imageAlt.appendChild(mainDoc.createTextNode(rule.getImageAlt()));
 					ruleNode.appendChild(imageAlt);
-					
+
 					Node linkPath = mainDoc.createElement(SolrConstants.TAG_BANNER_LINK_PATH);
 					linkPath.appendChild(mainDoc.createTextNode(rule.getLinkPath()));
 					ruleNode.appendChild(linkPath);
-					
+
 					Node imagePath = mainDoc.createElement(SolrConstants.TAG_BANNER_IMAGE_PATH);
 					imagePath.appendChild(mainDoc.createTextNode(rule.getImagePath().getPath()));
 					ruleNode.appendChild(imagePath);
-					
+
 					bannersNode.appendChild(ruleNode);
 				}
 			}
@@ -577,137 +597,138 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			logger.error("Error occured during banner creation. ", e);
 		}
 	}
-	
+
 	private void addElevatedEntries() {
-		for (Node node: elevatedEntries) {
-        	resultNode.insertBefore(node, placeHolderNode);
+		for (Node node : elevatedEntries) {
+			resultNode.insertBefore(node, placeHolderNode);
 		}
 	}
 
 	private void addDemotedEntries() {
-		for (Node node: demotedEntries) {
+		for (Node node : demotedEntries) {
 			resultNode.appendChild(node);
 		}
 	}
 
-    private void addSpellcheckEntries() throws SearchException {
-        int count = 0;
+	private void addSpellcheckEntries() throws SearchException {
+		int count = 0;
 
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.newDocument();
-            List<String> suggestedKeywords = new ArrayList<String>();
-            String[] ruleSuggestions = spellRule == null ? new String[0] : spellRule.getSuggestions();
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.newDocument();
+			List<String> suggestedKeywords = new ArrayList<String>();
+			String[] ruleSuggestions = spellRule == null ? new String[0] : spellRule.getSuggestions();
 
-            // create spellcheck element
-            Element spellcheck = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
-            doc.appendChild(spellcheck);
+			// create spellcheck element
+			Element spellcheck = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
+			doc.appendChild(spellcheck);
 
-            // create suggestions element
-            Element suggestions = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
-            spellcheck.appendChild(suggestions);
+			// create suggestions element
+			Element suggestions = createLstElement(doc, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
+			spellcheck.appendChild(suggestions);
 
-            // create suggestion element for original keyword
-            Element origKeyword = createLstElement(doc, originalKeyword);
-            Element suggestionArray = createElement(doc, SolrConstants.TAG_ARR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
-            Element origStartOffset = createElement(doc, SolrConstants.TAG_INT,
-                    SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET, "0");
-            Element origEndOffset = createElement(doc, SolrConstants.TAG_INT,
-                    SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, String.valueOf(originalKeyword.length()));
+			// create suggestion element for original keyword
+			Element origKeyword = createLstElement(doc, originalKeyword);
+			Element suggestionArray = createElement(doc, SolrConstants.TAG_ARR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+			Element origStartOffset = createElement(doc, SolrConstants.TAG_INT,
+					SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_START_OFFSET, "0");
+			Element origEndOffset = createElement(doc, SolrConstants.TAG_INT,
+					SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_END_OFFSET, String.valueOf(originalKeyword.length()));
 
-            for (String suggestion: ruleSuggestions) {
-                suggestionArray.appendChild(createUnnamedElement(doc, SolrConstants.TAG_STR, suggestion));
-                suggestedKeywords.add(suggestion);
-            	if (++count >= maxSuggestCount) {
-            		break;
-            	}
-            }
+			for (String suggestion : ruleSuggestions) {
+				suggestionArray.appendChild(createUnnamedElement(doc, SolrConstants.TAG_STR, suggestion));
+				suggestedKeywords.add(suggestion);
+				if (++count >= maxSuggestCount) {
+					break;
+				}
+			}
 
-            if (count < maxSuggestCount && spellcheckNode != null) {
-                // retrieve solr spellcheck results
-                Node solrSuggestions = locateElementNode(spellcheckNode, SolrConstants.TAG_LIST,
-                        SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
+			if (count < maxSuggestCount && spellcheckNode != null) {
+				// retrieve solr spellcheck results
+				Node solrSuggestions = locateElementNode(spellcheckNode, SolrConstants.TAG_LIST,
+						SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTIONS);
 
-                // prioritize collation suggestion before per term suggestion
-                Node collation = solrSuggestions != null ? locateElementNode(solrSuggestions,
-                        SolrConstants.TAG_STR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION) : null;
-                String collationString = collation == null ? null : collation.getTextContent();
+				// prioritize collation suggestion before per term suggestion
+				Node collation = solrSuggestions != null ? locateElementNode(solrSuggestions,
+						SolrConstants.TAG_STR, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION) : null;
+				String collationString = collation == null ? null : collation.getTextContent();
 
-                if (collationString != null && !suggestedKeywords.contains(collationString)) {
-                    Element e = createUnnamedElement(doc, SolrConstants.TAG_STR, collationString);
-                    suggestionArray.appendChild(e);
-                    suggestedKeywords.add(collationString);
-                    count++;
-                }
+				if (collationString != null && !suggestedKeywords.contains(collationString)) {
+					Element e = createUnnamedElement(doc, SolrConstants.TAG_STR, collationString);
+					suggestionArray.appendChild(e);
+					suggestedKeywords.add(collationString);
+					count++;
+				}
 
-                Node solrSuggestion = solrSuggestions != null ? solrSuggestions.getFirstChild() : null;
+				Node solrSuggestion = solrSuggestions != null ? solrSuggestions.getFirstChild() : null;
 
-                while (solrSuggestion != null && count < maxSuggestCount) {
-                    String name = solrSuggestion.getAttributes().getNamedItem(SolrConstants.ATTR_NAME)
-                            .getTextContent();
+				while (solrSuggestion != null && count < maxSuggestCount) {
+					String name = solrSuggestion.getAttributes().getNamedItem(SolrConstants.ATTR_NAME)
+							.getTextContent();
 
-                    if (SolrConstants.TAG_STR.equals(solrSuggestion.getNodeName())
-                            && SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(name)) {
-                        solrSuggestion = solrSuggestion.getNextSibling();
-                        continue;
-                    }
+					if (SolrConstants.TAG_STR.equals(solrSuggestion.getNodeName())
+							&& SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_COLLATION.equals(name)) {
+						solrSuggestion = solrSuggestion.getNextSibling();
+						continue;
+					}
 
-                    Node solrkw = locateElementNode(solrSuggestion, SolrConstants.TAG_ARR,
-                            SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
-                    NodeList children = solrkw.getChildNodes();
+					Node solrkw = locateElementNode(solrSuggestion, SolrConstants.TAG_ARR,
+							SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+					NodeList children = solrkw.getChildNodes();
 
-                    for (int i = 0; i < children.getLength(); i++) {
-                        Node n = children.item(i);
-                        String s = n.getTextContent();
+					for (int i = 0; i < children.getLength(); i++) {
+						Node n = children.item(i);
+						String s = n.getTextContent();
 
-                        if (!suggestedKeywords.contains(s)) {
-                        	suggestionArray.appendChild(doc.importNode(n, true));
-                            suggestedKeywords.add(s);
-                            count++;
-                        }
+						if (!suggestedKeywords.contains(s)) {
+							suggestionArray.appendChild(doc.importNode(n, true));
+							suggestedKeywords.add(s);
+							count++;
+						}
 
-                        if (count >= maxSuggestCount)
-                            break;
-                    }
+						if (count >= maxSuggestCount) {
+							break;
+						}
+					}
 
-                    solrSuggestion = solrSuggestion.getNextSibling();
-                }
-            }
+					solrSuggestion = solrSuggestion.getNextSibling();
+				}
+			}
 
-            NodeList childNodes = suggestionArray.getChildNodes();
-            if (childNodes.getLength() > 0) {
-            	origKeyword.appendChild(createElement(doc, SolrConstants.TAG_INT,
-                        SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_NUMFOUND,
-                        String.valueOf(childNodes.getLength())));
-            	origKeyword.appendChild(origStartOffset);
-            	origKeyword.appendChild(origEndOffset);
-            	origKeyword.appendChild(suggestionArray);
+			NodeList childNodes = suggestionArray.getChildNodes();
+			if (childNodes.getLength() > 0) {
+				origKeyword.appendChild(createElement(doc, SolrConstants.TAG_INT,
+						SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_NUMFOUND,
+						String.valueOf(childNodes.getLength())));
+				origKeyword.appendChild(origStartOffset);
+				origKeyword.appendChild(origEndOffset);
+				origKeyword.appendChild(suggestionArray);
 
-                suggestions.appendChild(origKeyword);
-            }
-            locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE)
-                    .appendChild(mainDoc.importNode(spellcheck, true));
-            
-        } catch (ParserConfigurationException pce) {
-            count = 0;
-            logger.error("Error occured during spelling document creation. Reverting to solr results.", pce);
-        }
+				suggestions.appendChild(origKeyword);
+			}
+			locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE)
+			.appendChild(mainDoc.importNode(spellcheck, true));
 
-        for (Node node : spellCheckParams) {
-            responseHeaderParamsNode.appendChild(mainDoc.importNode(node, true));
-        }
-    }
-	
+		} catch (ParserConfigurationException pce) {
+			count = 0;
+			logger.error("Error occured during spelling document creation. Reverting to solr results.", pce);
+		}
+
+		for (Node node : spellCheckParams) {
+			responseHeaderParamsNode.appendChild(mainDoc.importNode(node, true));
+		}
+	}
+
 	private void applyFacetSort() {
 		if (facetSortRule == null || facetFieldsNode == null) {
 			return;
 		}
-		
+
 		ConfigManager cm = ConfigManager.getInstance();
 
-		for (String key: facetSortRule.getItems().keySet()) {
-			
+		for (String key : facetSortRule.getItems().keySet()) {
+
 			boolean isFacetTemplate = false;
 			SortType sortType = facetSortRule.getGroupSortType().get(key);
 			if (sortType == null) {
@@ -723,19 +744,24 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			NodeList children = facetFieldsNode.getChildNodes();
 			for (int i = 0, size = children.getLength(); i < size; i++) {
 				Node currentNode = children.item(i);
-				if (currentNode.getNodeType() == Node.ELEMENT_NODE && StringUtils.equals(key, 
+				if (currentNode.getNodeType() == Node.ELEMENT_NODE && StringUtils.equals(key,
 						currentNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue())) {
-					
+
 					List<FacetEntry> entries = new ArrayList<FacetEntry>();
 					NodeList facetFieldValues = currentNode.getChildNodes();
-					
+
 					Map<String, Node> nodeMap = new HashMap<String, Node>();
 					for (int j = 0; j < facetFieldValues.getLength(); j++) {
 						Node facetFieldValue = facetFieldValues.item(j);
-						String name = facetFieldValue.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
-						String count = facetFieldValue.getTextContent();
-						entries.add(new FacetEntry(name, Long.parseLong(count)));
-						nodeMap.put(name, facetFieldValue);
+						if (facetFieldValue!=null){
+							NamedNodeMap attribs = facetFieldValue.getAttributes();
+							if(attribs!=null){
+								String name = attribs.getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
+								String count = facetFieldValue.getTextContent();
+								entries.add(new FacetEntry(name, Long.parseLong(count)));
+								nodeMap.put(name, facetFieldValue);
+							}
+						}
 					}
 
 					// clear everything
@@ -748,13 +774,12 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					// sort
 					if (isFacetTemplate) {
 						FacetEntry.sortFacetTemplateEntries(entries, sortType, elevatedValues);
-					}
-					else {
+					} else {
 						FacetEntry.sortEntries(entries, sortType, elevatedValues);
 					}
-					
+
 					// insert everything in sorted order
-					for (FacetEntry entry: entries) {
+					for (FacetEntry entry : entries) {
 						currentNode.appendChild(mainDoc.importNode(nodeMap.get(entry.getLabel()), true));
 					}
 					break;
@@ -762,15 +787,15 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 		}
 	}
-	
+
 	@Override
 	public String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException {
 		String templateName = "";
 		HttpPost post = null;
-		HttpClient client  = null;
+		HttpClient client = null;
 		HttpResponse solrResponse = null;
 		InputStream in = null;
-		
+
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
@@ -785,17 +810,22 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			in = solrResponse.getEntity().getContent();
 			Document document = docBuilder.parse(in);
 			NodeList templateNames = locateElementNode(locateElementNode(locateElementNode(locateElementNode(document, SolrConstants.TAG_RESPONSE),
-							SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS), SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS),
-							SolrConstants.TAG_LIST, templateNameField).getChildNodes();
+					SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS), SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS),
+					SolrConstants.TAG_LIST, templateNameField).getChildNodes();
 			if (templateNames.getLength() == 1) {
 				templateName = templateNames.item(0).getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
 			}
 		} catch (Exception e) {
 			String error = "Error occured while trying to get common template name";
 			logSolrError(post, error, e);
-			throw new SearchException(error ,e);
+			throw new SearchException(error, e);
 		} finally {
-			try { if (in != null) in.close();  } catch (IOException e) { }
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
 			if (post != null) {
 				if (solrResponse != null) {
 					EntityUtils.consumeQuietly(solrResponse.getEntity());
@@ -809,89 +839,90 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		return templateName;
 	}
 
-    @Override
-    public void getSpellingSuggestion(List<NameValuePair> requestParams) throws SearchException {
-        HttpClient client = null;
-        HttpPost post = null;
-        InputStream in = null;
-        HttpResponse solrResponse = null;
+	@Override
+	public void getSpellingSuggestion(List<NameValuePair> requestParams) throws SearchException {
+		HttpClient client = null;
+		HttpPost post = null;
+		InputStream in = null;
+		HttpResponse solrResponse = null;
 
-        try {
-            client = new DefaultHttpClient();
-            post = new HttpPost(getSpellCheckRequestPath());
-            post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
-            post.addHeader("Connection", "close");
-            if (logger.isDebugEnabled()) {
-                logger.debug("URL: " + post.getURI());
-                logger.debug("Parameter: " + requestParams);
-            }
-            solrResponse = client.execute(post);
-            DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            in = solrResponse.getEntity().getContent();
-            Document currentDoc = docBuilder.parse(in);
+		try {
+			client = new DefaultHttpClient();
+			post = new HttpPost(getSpellCheckRequestPath());
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			solrResponse = client.execute(post);
+			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			in = solrResponse.getEntity().getContent();
+			Document currentDoc = docBuilder.parse(in);
 
-            Node responseNode = locateElementNode(currentDoc, SolrConstants.TAG_RESPONSE);
-            spellcheckNode = locateElementNode(responseNode, SolrConstants.TAG_LIST,
-                    SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
+			Node responseNode = locateElementNode(currentDoc, SolrConstants.TAG_RESPONSE);
+			spellcheckNode = locateElementNode(responseNode, SolrConstants.TAG_LIST,
+					SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
 
-            NodeList paramNodes = locateElementNode(
-                    locateElementNode(responseNode, SolrConstants.TAG_LIST,
-                            SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER), SolrConstants.TAG_LIST,
-                    SolrConstants.ATTR_NAME_VALUE_PARAMS).getChildNodes();
-            for (int i = 0, size = paramNodes.getLength(); i < size; i++) {
-                Node kNode = paramNodes.item(i);
-                if (kNode.getNodeType() == Node.ELEMENT_NODE
-                        && kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_STR)
-                        && kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
-                                .startsWith(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK)) {
-                    spellCheckParams.add(kNode);
-                }
-            }
+			NodeList paramNodes = locateElementNode(
+					locateElementNode(responseNode, SolrConstants.TAG_LIST,
+							SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER), SolrConstants.TAG_LIST,
+							SolrConstants.ATTR_NAME_VALUE_PARAMS).getChildNodes();
+			for (int i = 0, size = paramNodes.getLength(); i < size; i++) {
+				Node kNode = paramNodes.item(i);
+				if (kNode.getNodeType() == Node.ELEMENT_NODE
+						&& kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_STR)
+						&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
+						.startsWith(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK)) {
+					spellCheckParams.add(kNode);
+				}
+			}
 
-        } catch (Exception e) {
-            String error = "Error occured while trying to get spelling suggestion";
-            logSolrError(post, error, e);
-            throw new SearchException(error, e);
-        } finally {
-            try {
-                if (in != null)
-                    in.close();
-            } catch (IOException e) {
-            }
-            if (post != null) {
-                if (solrResponse != null) {
-                    EntityUtils.consumeQuietly(solrResponse.getEntity());
-                }
-                post.releaseConnection();
-            }
-            if (client != null) {
-                client.getConnectionManager().shutdown();
-            }
-        }
-    }
+		} catch (Exception e) {
+			String error = "Error occured while trying to get spelling suggestion";
+			logSolrError(post, error, e);
+			throw new SearchException(error, e);
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
+			if (post != null) {
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
+				post.releaseConnection();
+			}
+			if (client != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}
+	}
 
-    private Element createLstElement(Document doc, String nameValue) {
-        Element el = doc.createElement(SolrConstants.TAG_LIST);
-        el.setAttribute(SolrConstants.ATTR_NAME, nameValue);
-        return el;
-    }
+	private Element createLstElement(Document doc, String nameValue) {
+		Element el = doc.createElement(SolrConstants.TAG_LIST);
+		el.setAttribute(SolrConstants.ATTR_NAME, nameValue);
+		return el;
+	}
 
-    private Element createElement(Document doc, String tag, String name, String value) {
-        Element el = doc.createElement(tag);
-        el.setAttribute(SolrConstants.ATTR_NAME, name);
-        el.setTextContent(value);
-        return el;
-    }
+	private Element createElement(Document doc, String tag, String name, String value) {
+		Element el = doc.createElement(tag);
+		el.setAttribute(SolrConstants.ATTR_NAME, name);
+		el.setTextContent(value);
+		return el;
+	}
 
-    private Element createUnnamedElement(Document doc, String tag, String value) {
-        Element el = doc.createElement(tag);
-        el.setTextContent(value);
-        return el;
-    }
+	private Element createUnnamedElement(Document doc, String tag, String value) {
+		Element el = doc.createElement(tag);
+		el.setTextContent(value);
+		return el;
+	}
 
-    private Element createElement(Document doc, String tag, String name) {
-        Element el = doc.createElement(tag);
-        el.setAttribute(SolrConstants.ATTR_NAME, name);
-        return el;
-    }
+	private Element createElement(Document doc, String tag, String name) {
+		Element el = doc.createElement(tag);
+		el.setAttribute(SolrConstants.ATTR_NAME, name);
+		return el;
+	}
 }

@@ -73,6 +73,6 @@ public class MinimumToMatchModel implements VerifiableModel {
 	}
 	
 	public boolean getIsSingleRule(){
-		return CollectionUtils.isNotEmpty(parameters) && parameters.size() == 1 && ((MinimumToMatch)parameters.get(0)) instanceof FixedMatch;
+		return CollectionUtils.isNotEmpty(parameters) && parameters.size() == 1 && (parameters.get(0)) instanceof FixedMatch;
 	}
 }

@@ -13,12 +13,12 @@ public class SubQuery implements VerifiableModel {
 	private static final long serialVersionUID = 1L;
 
 	private Field field;
-	private Expression expression;
+	private Expression<SubQuery, SubQuery> expression;
 	
 	public SubQuery() {
 	}
 	
-	public SubQuery(Field field, Expression expression) {
+	public SubQuery(Field field, Expression<SubQuery, SubQuery> expression) {
 		this.field = field;
 		this.expression = expression;
 	}
@@ -37,7 +37,7 @@ public class SubQuery implements VerifiableModel {
 		return field;
 	}
 
-	public void setExpression(Expression expression) {
+	public void setExpression(Expression<SubQuery, SubQuery> expression) {
 		this.expression = expression;
 	}
 

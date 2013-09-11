@@ -6,19 +6,22 @@ import java.text.ParseException;
 import java.util.*;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.*;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.model.KeywordStats;
 import com.search.manager.utility.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service(value = "keywordTrendsService")
-@RemoteProxy(name = "KeywordTrendsServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "keywordTrendsService"))
+@RemoteProxy(name = "KeywordTrendsServiceJS", creator = SpringCreator.class, creatorParams =
+        @Param(name = "beanName", value = "keywordTrendsService"))
 public class KeywordTrendsService {
 
-    private static final Logger logger = Logger.getLogger(KeywordTrendsService.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(KeywordTrendsService.class);
 
     @RemoteMethod
     public List<KeywordStats> getStats(List<String> keywords, Date fromDate, Date toDate, String collation) {
@@ -51,7 +54,7 @@ public class KeywordTrendsService {
 
     @RemoteMethod
     public Date getMostRecentStatsDate() {
-        File dir = new File(PropsUtils.getValue("splunkdir") + File.separator + UtilityService.getStoreId());
+        File dir = new File(PropertiesUtils.getValue("splunkdir") + File.separator + UtilityService.getStoreId());
         File[] files = dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -94,15 +97,11 @@ public class KeywordTrendsService {
     }
 
     /**
-     * Retrieve stats of the given list of keywords for the specified date
-     * range.
-     * 
-     * @param list
-     *            List of keywords
-     * @param fromDate
-     *            start of date range
-     * @param toDate
-     *            end of date range
+     * Retrieve stats of the given list of keywords for the specified date range.
+     *
+     * @param list List of keywords
+     * @param fromDate start of date range
+     * @param toDate end of date range
      */
     private void retrieveStats(List<KeywordStats> list, Date fromDate, Date toDate, String collation) {
         Date date = DateAndTimeUtils.asUTC(fromDate);

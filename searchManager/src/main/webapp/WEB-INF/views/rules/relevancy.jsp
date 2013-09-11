@@ -150,7 +150,7 @@
 			<!-- Menu fields -->
 			<div id="fieldListing" class="fieldListing floatL w240 minHeight300">			
 				<h3 class="borderB fsize14 fbold padB4 mar0 marT15">Schema Fields<span id="sfCount" class="txtAR fsize11 floatR"></span></h3>
-				<input id="searchBoxField" name="searchBoxField" type="text" class="farial fsize12 fgray searchBoxIconBg w233">
+				<input id="searchBoxField" name="searchBoxField" type="text" class="farial fsize12 fgray searchBoxIconBg w218">
 				<div class="borderT marT8"></div>
 				
 				<div id="preloader" class="marT30 txtAC"><img src="../images/preloader30x30Trans.gif"></div>
@@ -246,7 +246,7 @@
 			<!-- Menu fields -->
 			<div id="fieldListing" class="fieldListing floatL w240 minHeight200">				
 				<h3 class="borderB fsize14 fbold padB4 mar0 marT5">Schema Fields<span id="sfCount" class="txtAR fsize11 floatR"></span></h3>
-				<input id="searchBoxField" name="searchBoxField" type="text" class="farial fsize12 fgray searchBoxIconBg w233">
+				<input id="searchBoxField" name="searchBoxField" type="text" class="farial fsize12 fgray searchBoxIconBg w218">
 				<div class="borderT marT8"></div>
 				
 				<div id="preloader" class="marT30 txtAC"><img src="../images/preloader30x30Trans.gif"></div>

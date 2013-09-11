@@ -489,7 +489,7 @@
 	
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 								$tr.find("td#type").html(list[i]["updateStatus"]);
-								$tr.find("td#requested > p#requestedBy").html(list[i]["lastModifiedBy"]);
+								$tr.find("td#requested > p#requestedBy").html(list[i]["requestBy"]);
 								$tr.find("td#requested > p#requestedDate").html(requestedDate);
 								$tr.appendTo($table);
 							}

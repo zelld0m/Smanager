@@ -12,7 +12,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,11 +38,14 @@ import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Repository("spellRuleDAO")
 public class SpellRuleDAO {
 
-    private static Logger logger = Logger.getLogger(SpellRuleDAO.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(SpellRuleDAO.class);
 
     @Autowired
     private DaoService daoService;
