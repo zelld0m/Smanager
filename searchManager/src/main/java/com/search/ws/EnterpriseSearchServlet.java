@@ -169,7 +169,12 @@ public class EnterpriseSearchServlet extends SearchServlet {
         // Enterprise Search does not need banners
         return null;
     }
-
+    
+    @Override
+    protected String getDefType(String storeId) throws DaoException {
+    	 return enterpriseSearchConfigManager.getDefType(storeId);
+    }
+    
     protected Relevancy getDefaultRelevancy(String storeId) {
         return enterpriseSearchConfigManager.getRelevancy(storeId);
     }

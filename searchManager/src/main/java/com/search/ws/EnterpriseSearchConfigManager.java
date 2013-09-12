@@ -53,8 +53,12 @@ public class EnterpriseSearchConfigManager {
         public String getDismax() {
             return dismax;
         }
+        
+        public String getDefType() {
+			return defType;
+		}
 
-        public Relevancy getDefaultRelevancy() {
+		public Relevancy getDefaultRelevancy() {
             return defaultRelevancy;
         }
 
@@ -70,6 +74,7 @@ public class EnterpriseSearchConfigManager {
             return fieldOverrides;
         }
         private String dismax;
+        private String defType;
         private Relevancy defaultRelevancy;
         private String searchRuleOverride;
         private String storeSpecificFieldsOverride;
@@ -84,10 +89,11 @@ public class EnterpriseSearchConfigManager {
             return (activeRules.get(searchRule) != null ? activeRules.get(searchRule).overrideWith : "");
         }
 
-        public SearchConfiguration(String catalog, String storeFlag, String dismax, String facetTemplate, String productName,
+        public SearchConfiguration(String catalog, String storeFlag, String dismax, String defType, String facetTemplate, String productName,
                 String productDescription, String popularity, String searchRuleOverride, String storeSpecificFieldsOverride) {
             this.catalog = catalog;
             this.dismax = dismax;
+            this.defType = defType;
             this.storeFlag = storeFlag;
             fieldOverrides[0] = facetTemplate;
             fieldOverrides[1] = productName;
@@ -100,8 +106,8 @@ public class EnterpriseSearchConfigManager {
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(String.format("catalog: %s\nstoreFlag: %s\ndismax: %s\nfacetTemplate: %s\nproductName: %s\nproductDescription: %s\npopularity: %s\nsearchRuleOverride: %s\nstoreSpecificFieldsOverride: %s\n",
-                    catalog, storeFlag, dismax,
+            builder.append(String.format("catalog: %s\nstoreFlag: %s\ndismax: %s\ndefType: %s\nfacetTemplate: %s\nproductName: %s\nproductDescription: %s\npopularity: %s\nsearchRuleOverride: %s\nstoreSpecificFieldsOverride: %s\n",
+                    catalog, storeFlag, dismax, defType,
                     fieldOverrides[0], fieldOverrides[1], fieldOverrides[2], fieldOverrides[3], searchRuleOverride, storeSpecificFieldsOverride));
             if (defaultRelevancy != null) {
                 builder.append("default relevancy: \n");
@@ -202,6 +208,12 @@ public class EnterpriseSearchConfigManager {
         SearchConfiguration sc = getSearchConfiguration(storeName);
         return (sc != null) ? sc.getStoreFlag() : null;
     }
+    
+    public String getDefType(String storeName) {
+        checkReloadNeeded();
+        SearchConfiguration sc = getSearchConfiguration(storeName);
+        return (sc != null) ? sc.getDefType() : null;
+    }
 
     public Relevancy getRelevancy(String storeName) {
         checkReloadNeeded();
@@ -237,6 +249,7 @@ public class EnterpriseSearchConfigManager {
                         config.getString("catalog"),
                         config.getString("store-flag"),
                         config.getString("dismax"),
+                        config.getString("defType"),
                         config.getString("store-specific-fields/facet-template"),
                         config.getString("store-specific-fields/product-name"),
                         config.getString("store-specific-fields/product-description"),
@@ -372,7 +385,7 @@ public class EnterpriseSearchConfigManager {
         logger.info(strCondition);
 
 
-
+        logger.info(configManager.getDefType("pcoe"));
 //		try {
 //			System.in.read();
 //		} catch (IOException e) {
