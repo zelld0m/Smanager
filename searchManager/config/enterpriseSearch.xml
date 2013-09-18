@@ -8,6 +8,7 @@
 		<store-flag>eCOST_StoreFlag</store-flag>
 		
 		<dismax>dismaxecostrelevancy</dismax>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<default-relevancy>
                 	<mm>3&lt;-1 5&lt;90%</mm>
                 	<pf></pf>
@@ -26,28 +27,31 @@
 			<popularity>eCOST_Popularity</popularity>
 		</store-specific-fields>
 		
-		<search-rule>
-			<redirect override='pcmall'/>
-		</search-rule>
+		<search-rule override='pcmall'/>
 	</store>
 	<store name="ecoe">
 		<catalog>eCOST Order Entry</catalog>
 		<store-flag>eCOST_OrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="ecost" />
 		<search-rule override="ecost"/>
 	</store>
-
+	
 	<!-- MacMall -->
 	<store name="macmall">
 		<catalog>MacMall Web</catalog>
 		<store-flag>MacMall_StoreFlag</store-flag>
 		<dismax>dismaxmacmallrelevancy</dismax>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields>
 			<facet-template>MacMall_FacetTemplate</facet-template>
 			<product-name>MacMall_Name</product-name>
 			<product-description>MacMall_Description</product-description>
 			<popularity>MacMall_Popularity</popularity>
 		</store-specific-fields>
+<!--
+		<search-rule override="pcmall"/>
+-->
 		<search-rule>
 			<elevate/>
 			<exclude/>
@@ -71,21 +75,24 @@
 	<store name="mmoe">
 		<catalog>MacMall Order Entry</catalog>
 		<store-flag>MacMall_OrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="macmall" />
 		<search-rule override="macmall"/>
 	</store>
 	<store name="mmrt">
 		<catalog>MacMall Retail</catalog>
 		<store-flag>MacMallRetail_StoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="macmall"/>
 		<search-rule override="macmall"/>
 	</store>
-
+	
 	<!-- OnSale -->
 	<store name="onsale">
 		<catalog>OnSale Web</catalog>
 		<store-flag>OnSale_StoreFlag</store-flag>
 		<dismax>dismaxonsalerelevancy</dismax>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields>
 			<facet-template>OnSale_FacetTemplate</facet-template>
 			<product-name>OnSale_Name</product-name>
@@ -110,15 +117,17 @@
 	<store name="osoe">
 		<catalog>OnSale Order Entry</catalog>
 		<store-flag>OnSale_OrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="onsale"/>
 		<search-rule override="onsale"/>
 	</store>
-
+	
 	<!-- PC Mall -->
 	<store name="pcmall">
 		<catalog>PC Mall Web</catalog>
 		<dismax>dismaxpcmallrelevancy</dismax>
 		<store-flag>PcMall_StoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<default-relevancy>
                 	<mm>3&lt;-1 5&lt;90%</mm>
                 	<pf></pf>
@@ -148,6 +157,7 @@
 	<store name="pcoe">
 		<catalog>PC Mall Order Entry</catalog>
 		<store-flag>PCMall_OrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="pcmall"/>
 		<search-rule override="pcmall"/>
 	</store>
@@ -156,6 +166,7 @@
 	<store name="pcmallgov">
 		<catalog>PCMG Open eCommerce</catalog>
 		<store-flag>PCMG_OpenStoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields>
 			<facet-template>PCMG_FacetTemplate</facet-template>
 			<product-name>PCMG_Name</product-name>
@@ -167,6 +178,7 @@
 	<store name="pcmgoe">
 		<catalog>PCMG Open Order Entry</catalog>
 		<store-flag>PCMG_OpenOrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="pcmallgov"/>
 		<search-rule override="pcmall"/>
 	</store>
@@ -175,6 +187,7 @@
 	<store name="pcmgfed">
 		<catalog>PCMG Federal Government eCommerce</catalog>
 		<store-flag>PCMG_FedGovStoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields>
 			<facet-template>PCMG_FacetTemplate</facet-template>
 			<product-name>PCMG_Name</product-name>
@@ -186,6 +199,7 @@
 	<store name="pcmgfedoe">
 		<catalog>PCMG Federal Government Order Entry</catalog>
 		<store-flag>PCMG_FedGovOrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="pcmgfed"/>
 		<search-rule override="pcmall"/>
 	</store>
@@ -194,6 +208,7 @@
 	<store name="pcmgsl">
 		<catalog>PCMG State/Local Government eCommerce</catalog>
 		<store-flag>PCMG_SNLGovStoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields>
 			<facet-template>PCMG_FacetTemplate</facet-template>
 			<product-name>PCMG_Name</product-name>
@@ -205,6 +220,7 @@
 	<store name="pcmgsloe">
 		<catalog>PCMG State/Local Government Order Entry</catalog>
 		<store-flag>PCMG_SNLGovOrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="pcmgsl"/>
 		<search-rule override="pcmall"/>
 	</store>
@@ -213,6 +229,7 @@
 	<store name="pcmgedk12">
 		<catalog>PCMG K12 Educational eCommerce</catalog>
 		<store-flag>PCMG_K12ACAStoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields>
 			<facet-template>PCMG_FacetTemplate</facet-template>
 			<product-name>PCMG_Name</product-name>
@@ -224,6 +241,7 @@
 	<store name="pcmgedk12oe">
 		<catalog>PCMG K12 Educational Order Entry</catalog>
 		<store-flag>PCMG_K12ACAOrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="pcmgedk12"/>
 		<search-rule override="pcmall"/>
 	</store>
@@ -232,6 +250,7 @@
 	<store name="pcmgedhe">
 		<catalog>PCMG Higher Educational eCommerce</catalog>
 		<store-flag>PCMG_HEACAStoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields>
 			<facet-template>PCMG_FacetTemplate</facet-template>
 			<product-name>PCMG_Name</product-name>
@@ -243,6 +262,7 @@
 	<store name="pcmgedheoe">
 		<catalog>PCMG Higher Educational Order Entry</catalog>
 		<store-flag>PCMG_HEACAOrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="pcmgedhe"/>
 		<search-rule override="pcmall"/>
 	</store>
@@ -251,6 +271,7 @@
 	<store name="sbn">
 		<catalog>SBN Web</catalog>
 		<store-flag>SBN_StoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<default-relevancy>
                 	<mm>3&lt;-1 5&lt;90%</mm>
                 	<pf></pf>
@@ -280,6 +301,7 @@
 	<store name="sbnoe">
 		<catalog>SBN Order Entry</catalog>
 		<store-flag>SBN_OrderEntryFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 		<store-specific-fields override="sbn"/>
 		<search-rule override="sbn"/>
 	</store>
