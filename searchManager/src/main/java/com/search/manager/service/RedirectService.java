@@ -167,6 +167,24 @@ public class RedirectService extends RuleService {
     }
 
     @RemoteMethod
+    public int updateRedirectUrl(String ruleId, String redirectUrl) {
+    	int result = -1;
+    	
+    	try {
+    		redirectUrl = StringUtils.trimToEmpty(redirectUrl);
+    		RedirectRule rule = new RedirectRule();
+    		rule.setRuleId(ruleId);
+    		rule.setStoreId(UtilityService.getStoreId());
+            rule.setRedirectUrl(redirectUrl);
+            rule.setLastModifiedBy(UtilityService.getUsername());
+            result = daoService.updateRedirectRule(rule);
+    	} catch (DaoException e) {
+    		logger.error("Failed during setRedirectUrl", e);
+    	}
+    	return result;
+    }
+    
+    @RemoteMethod
     public int deleteRule(String ruleId) {
         int result = -1;
         try {
