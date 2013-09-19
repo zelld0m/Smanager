@@ -213,7 +213,7 @@
 						});
 
 						$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
-
+						
 						$("div#keyword").find("#changeKeywordBtn").off().on({
 							mouseenter: showHoverInfo,
 							click: function(evt){
@@ -221,6 +221,16 @@
 									$('div#keyword').find('#activerules').hide();
 									$('div#keyword').find('#activerules > .alert > #rules').empty();
 									self.updateChangeKeyword();
+								}
+							}
+						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+						
+						$("div#page").find('input[type="text"]#redirectUrl').val($.trim(self.selectedRule["redirectUrl"]));
+						$("div#page").find("#redirectUrlBtn").off().on({
+							mouseenter: showHoverInfo,
+							click: function(evt){
+								if (!evt.data.locked){
+									self.updateRedirectUrl();
 								}
 							}
 						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
@@ -514,6 +524,15 @@
 					});
 			},
 
+			getRedirectToPage : function() {
+				var self = this;
+				var $input = $("div#page").find('input[type="text"]#redirectUrl');
+				
+				if($.isNotBlank($input.val())) {
+					$input.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
+				}
+			},
+			
 			updateChangeKeyword : function(){
 				var self = this;
 				var $input = $("div#keyword").find('input[type="text"]#changeKeyword');
@@ -535,6 +554,26 @@
 						$preloader.hide();
 						$input.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
 						self.getChangeKeywordActiveRules();
+					}
+				});
+			},
+			
+			updateRedirectUrl : function() {
+				var self = this;
+				var $input = $("div#page").find('input[type="text"]#redirectUrl');
+				RedirectServiceJS.updateRedirectUrl(self.selectedRule["ruleId"], $.trim($input.val()), {
+					callback: function(data) {
+						if(data>0) {
+							self.selectedRule["redirectUrl"] = $.trim($input.val());
+						} else {
+							$input.val(self.selectedRule["redirectUrl"]);
+						}
+					},
+					preHook: function() {
+						$input.prop({disabled:true});
+					},
+					postHook: function(){
+						$input.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
 					}
 				});
 			},
@@ -1953,6 +1992,7 @@
 						switch(self.tabSelectedTypeId){
 						case 1: self.showRuleCondition(); self.setIncludeKeyword(); break;
 						case 2: self.getChangeKeywordActiveRules(); break;
+						case 3: self.getRedirectToPage(); break;
 						}
 					}
 				});

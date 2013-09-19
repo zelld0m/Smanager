@@ -77,6 +77,15 @@
     			<div class="landingCont bgboxGray w96p50p floatL marB10">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
+    			<div class="landingCont bgboxGray w96p50p floatL marB10">
+	    			<div class="fsize14 txtAL borderB padB4 marB8 fbold">
+							Redirect URL
+					</div>
+					<input type="text" class="floatL w500" id="redirectUrl">
+					<div class="floatL marL5 posRel topn1">
+						<a id="redirectUrlBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a>
+					</div>
+				</div>
     			<div class="clearB"></div>
     		</div>
 			
