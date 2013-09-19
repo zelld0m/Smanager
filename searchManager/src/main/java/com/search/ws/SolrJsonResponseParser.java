@@ -147,24 +147,35 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             // put back rows in header
             responseHeader = initialJson.getJSONObject(SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
 
-            if (redirectRule != null && redirectRule.isRedirectChangeKeyword()) {
+            if (redirectRule != null) {
                 JSONObject redirectObject = new JSONObject();
                 Map<String, String> fields = new HashMap<String, String>();
-
+                String element = null;
+                
                 if (StringUtils.isNotBlank(originalKeyword)) {
                     fields.put(SolrConstants.TAG_REDIRECT_ORIGINAL_KEYWORD, originalKeyword);
                 }
                 if (StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
                     fields.put(SolrConstants.TAG_REDIRECT_REPLACEMENT_KEYWORD, redirectRule.getChangeKeyword());
                 }
-                if (redirectRule.getReplaceKeywordMessageType() != null) {
-                    fields.put(SolrConstants.TAG_REDIRECT_REPLACEMENT_TYPE, redirectRule.getReplaceKeywordMessageType() + "");
+                
+                if(redirectRule.isRedirectChangeKeyword()) {
+                	element = SolrConstants.TAG_REDIRECT;
+                    if (redirectRule.getReplaceKeywordMessageType() != null) {
+                        fields.put(SolrConstants.TAG_REDIRECT_REPLACEMENT_TYPE, redirectRule.getReplaceKeywordMessageType() + "");
+                    }
+                    if (StringUtils.isNotBlank(redirectRule.getReplaceKeywordMessageCustomText())) {
+                        fields.put(SolrConstants.TAG_REDIRECT_CUSTOM_TEXT, redirectRule.getReplaceKeywordMessageCustomText());
+                    }
+                } else if (redirectRule.isRedirectToPage()) {
+                	element = SolrConstants.TAG_REDIRECT_DIRECT_HIT;
+                	if (StringUtils.isNotBlank(redirectRule.getRedirectUrl())) {
+                    	fields.put(SolrConstants.TAG_REDIRECT_REDIRECT_URL, redirectRule.getRedirectUrl());
+                    }
                 }
-                if (StringUtils.isNotBlank(redirectRule.getReplaceKeywordMessageCustomText())) {
-                    fields.put(SolrConstants.TAG_REDIRECT_CUSTOM_TEXT, redirectRule.getReplaceKeywordMessageCustomText());
-                }
+                
                 redirectObject.putAll(fields);
-                responseHeader.element(SolrConstants.TAG_REDIRECT, redirectObject);
+                responseHeader.element(element, redirectObject);
             }
 
             // TODO: make this get value from solr.xml

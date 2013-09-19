@@ -463,30 +463,48 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					mainDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
 
-			if (redirectRule != null && redirectRule.isRedirectChangeKeyword()) {
-				Node redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
+			if (redirectRule != null) {
+				Node redirectNode = null;
 				Node origKeywordNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_ORIGINAL_KEYWORD);
 				Node replacementKeywordNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_KEYWORD);
-				Node replacementTypeNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_TYPE);
-				Node customTextNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_CUSTOM_TEXT);
-
-				if (StringUtils.isNotBlank(originalKeyword)) {
-					origKeywordNode.appendChild(mainDoc.createTextNode(originalKeyword));
-					redirectNode.appendChild(origKeywordNode);
+				
+				if (redirectRule.isRedirectChangeKeyword()) {
+					redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
+					Node replacementTypeNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_TYPE);
+					Node customTextNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_CUSTOM_TEXT);	
+					if (StringUtils.isNotBlank(originalKeyword)) {
+						origKeywordNode.appendChild(mainDoc.createTextNode(originalKeyword));
+						redirectNode.appendChild(origKeywordNode);
+					}
+					if (StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
+						replacementKeywordNode.appendChild(mainDoc.createTextNode(redirectRule.getChangeKeyword()));
+						redirectNode.appendChild(replacementKeywordNode);
+					}
+					if (redirectRule.getReplaceKeywordMessageType() != null) {
+						replacementTypeNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageType() + ""));
+						redirectNode.appendChild(replacementTypeNode);
+					}
+					if (StringUtils.isNotBlank(redirectRule.getReplaceKeywordMessageCustomText())) {
+						customTextNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageCustomText()));
+						redirectNode.appendChild(customTextNode);
+					}
+				} else if (redirectRule.isRedirectToPage()) {
+					redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_DIRECT_HIT);
+					Node redirectUrlNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REDIRECT_URL);
+					if (StringUtils.isNotBlank(originalKeyword)) {
+						origKeywordNode.appendChild(mainDoc.createTextNode(originalKeyword));
+						redirectNode.appendChild(origKeywordNode);
+					}
+					if (StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
+						replacementKeywordNode.appendChild(mainDoc.createTextNode(redirectRule.getChangeKeyword()));
+						redirectNode.appendChild(replacementKeywordNode);
+					}
+					if (StringUtils.isNotBlank(redirectRule.getRedirectUrl())) {
+						redirectUrlNode.appendChild(mainDoc.createTextNode(redirectRule.getRedirectUrl()));
+						redirectNode.appendChild(redirectUrlNode);
+					}
 				}
-				if (StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
-					replacementKeywordNode.appendChild(mainDoc.createTextNode(redirectRule.getChangeKeyword()));
-					redirectNode.appendChild(replacementKeywordNode);
-				}
-				if (redirectRule.getReplaceKeywordMessageType() != null) {
-					replacementTypeNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageType() + ""));
-					redirectNode.appendChild(replacementTypeNode);
-				}
-				if (StringUtils.isNotBlank(redirectRule.getReplaceKeywordMessageCustomText())) {
-					customTextNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageCustomText()));
-					redirectNode.appendChild(customTextNode);
-				}
-
+				
 				responseHeaderNode.appendChild(redirectNode);
 			}
 
