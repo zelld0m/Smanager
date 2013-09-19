@@ -244,7 +244,7 @@ public class RedirectRule extends ModelBean {
 	}
 	
 	public String getRedirectToPage() {
-		return StringUtils.trimToEmpty(condition);
+		return StringUtils.trimToEmpty(redirectUrl);
 	}
 	
 	public List<String> getSearchTerms() {
