@@ -79,6 +79,10 @@
 	var GLOBAL_storeAllowedBannerSizes = GLOBAL_storeParameters["storeAllowedBannerSizes"];
 	var GLOBAL_storeDefaultBannerLinkPathProtocol = GLOBAL_storeParameters["storeDefaultBannerLinkPathProtocol"];
 	
+        // FOR REDIRECT PAGE
+        var GLOBAL_storeRedirectSelfDomain = GLOBAL_storeParameters["storeRedirectSelfDomain"];
+        var GLOBAL_storeRedirectRelativePath = GLOBAL_storeParameters["storeRedirectRelativePath"];
+        
 	var GLOBAL_storeGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
 	var GLOBAL_storeGroupTotal = GLOBAL_storeGroupMembership.length;
 	
