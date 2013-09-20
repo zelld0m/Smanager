@@ -6,21 +6,30 @@
  * @augments AjaxSolr.AbstractManager
  */
 AjaxSolr.Manager = AjaxSolr.AbstractManager.extend(
-  /** @lends AjaxSolr.Manager.prototype */
-  {
-  executeRequest: function (servlet) {
-    var self = this;
-    if (this.proxyUrl) {
-      jQuery.post(this.proxyUrl, { query: this.store.string() }, function (data) { self.handleResponse(data); }, 'json');
-    }
-    else {
-      jQuery.getJSON(this.solrUrl + servlet + '?' + this.store.string() + '&wt=json&json.wrf=?', 
-    		  		{}, 
-    		  		function (data) { 
-    		  			self.handleResponse(data); 
-    		  		}).error(function(data){
-    		  			self.handleResponse(data); 
-    		  		});
-    }
-  }
-});
+        /** @lends AjaxSolr.Manager.prototype */
+                {
+                    executeRequest: function(servlet) {
+                        var self = this;
+                        if (this.proxyUrl) {
+                            jQuery.post(this.proxyUrl, {query: this.store.string()}, function(data) {
+                                self.handleResponse(data);
+                            }, 'json');
+                        }
+                        else {
+                            var isEnableRedirectToPage = $("#enableRedirectToPage").is(":checked");
+                            var toAppend = "";
+                            
+                            if (isEnableRedirectToPage) {
+                                toAppend = "&enableRedirectToPage=true";
+                            }
+                            
+                            jQuery.getJSON(this.solrUrl + servlet + '?' + this.store.string() + '&wt=json&json.wrf=?' + toAppend,
+                                    {},
+                                    function(data) {
+                                        self.handleResponse(data);
+                                    }).error(function(data) {
+                                self.handleResponse(data);
+                            });
+                        }
+                    }
+                });
