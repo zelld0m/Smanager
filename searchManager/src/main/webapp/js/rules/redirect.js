@@ -556,13 +556,12 @@
             var redirectUrlVal = redirectUrl.val();
 
             if ($.isNotBlank(redirectUrlVal)) {
-                if (!$.startsWith(redirectUrlVal, GLOBAL_storeDefaultBannerLinkPathProtocol)) {
-                    jAlert("Link path value must start with " + 
-                            GLOBAL_storeDefaultBannerLinkPathProtocol, "Query Cleaning");
+                if (!$.startsWith(redirectUrlVal, "//")) {
+                    jAlert("Link path value must start with //", "Query Cleaning");
                     return false;
                 }
 
-                if (!$.isValidURL(redirectUrlVal)) {
+                if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + ":" + redirectUrlVal)) {
                     jAlert("Please specify a valid redirect url", "Query Cleaning");
                     return false;
                 }
