@@ -294,6 +294,10 @@
 							$content.find("div#ruleChange").find("#replaceKeywordVal").html(data["changeKeyword"]);
 						}
 
+						if ($.isNotBlank(data["redirectUrl"])){
+							$content.find("div#rulePage").find("#redirectUrlVal").html(data["redirectUrl"]);
+						}
+						
 						$content.find("div#ruleChange").find("#searchHeaderTextOpt").text(
 								data["replaceKeywordMessageType"]["intValue"] == 3 ? 
 										data["replaceKeywordMessageCustomText"] :
@@ -668,9 +672,18 @@
 				template += '		<li><a href="#ruleKeyword"><span>Keyword</span></a></li>';
 				template += '		<li><a href="#ruleFilter"><span>Filter</span></a></li>';
 				template += '		<li><a href="#ruleChange"><span>Replace KW</span></a></li>';
+				template += '		<li><a href="#rulePage"><span>Direct Hit</span></a></li>';
 				template += '	</ul>';
 				template += '	<div class="clearB"></div>';
 
+				template += '	<div id="rulePage" class="rulePage marB10 w602">';
+				template += '		<div id="replaceKeyword" class="txtAL border bgf6f6f6 pad5 mar10">';
+				template += '			<span>Redirect URL:</span>';
+				template += '			<span id="redirectUrlVal" class="fbold">None</span>';
+				template += '		</div>';
+				template += '		<div class="clearB"></div>';
+				template += '	</div>';
+				
 				template += '	<div id="ruleChange" class="ruleChange marB10 w602">';
 				template += '		<div id="replaceKeyword" class="txtAL border bgf6f6f6 pad5 mar10">';
 				template += '			<span>Replacement Keyword:</span>';
