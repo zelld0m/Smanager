@@ -378,7 +378,7 @@ public class UtilityService {
     public static List<String> getStoreDomains(String storeId) {
         return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_SITE_DOMAIN);
     }
-
+    
     public static String getStoreDefaultBannerSize(String storeId) {
         return StringUtils.defaultIfBlank(UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_DEFAULT_BANNER_SIZE), "728x90");
     }
@@ -423,4 +423,13 @@ public class UtilityService {
     public static String getStoreDateTimeFormat() {
         return ConfigManager.getInstance().getStoreParameter(getStoreId(), "datetime-format");
     }
+    
+    public static List<String> getStoreSelfDomains(String storeId) {
+    	return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_SELF_DOMAIN);
+    }
+    
+    public static List<String> getStoreRelativePath(String storeId) {
+    	return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_RELATIVE_PATH);
+    }
+    
 }
