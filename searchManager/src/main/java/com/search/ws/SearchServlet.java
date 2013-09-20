@@ -825,7 +825,7 @@ public class SearchServlet extends HttpServlet {
 			boolean disableRedirect = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT) != null;
 			boolean disableRedirectIdPresent = StringUtils.isNotBlank(request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT));
 			String disableRedirectId = disableRedirect ? request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT) : "";
-			boolean disableRedirectToPage = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT_TO_PAGE) == null;
+			boolean enableRedirectToPage = request.getParameter(SolrConstants.SOLR_PARAM_ENABLE_REDIRECT_TO_PAGE) != null;
 			boolean isRedirectToPage = false;
 			
 			boolean disableRelevancy = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
@@ -928,8 +928,14 @@ public class SearchServlet extends HttpServlet {
 						appliedRedirect = redirect;
 						
 						if (redirect.isRedirectToPage()) { // Direct Hit
-							if(disableRedirectToPage) {
-								logger.warn("Direct hit is disabled. Reverting to original keyword.");
+							if(enableRedirectToPage) {
+								nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
+								nameValuePairs.add(nvp);
+								originalRedirect = redirect;
+								isRedirectToPage = true;
+								// TODO redirect to page with q parameter validation
+							} else {
+								logger.warn("Direct hit(Redirect to Page) is disabled. Reverting to original keyword.");
 								redirect = null;
 								appliedRedirect = null;
 								keyword = originalKeyword;
@@ -940,12 +946,6 @@ public class SearchServlet extends HttpServlet {
 								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
 									nameValuePairs.add(nvp);
 								}
-							} else {
-								nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
-								nameValuePairs.add(nvp);
-								originalRedirect = redirect;
-								isRedirectToPage = true;
-								// TODO redirect to page with q parameter validation
 							}
 						} else if (redirect.isRedirectFilter()) { // Filter
 							StringBuilder builder = new StringBuilder();

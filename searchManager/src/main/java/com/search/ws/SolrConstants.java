@@ -120,7 +120,7 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_DISABLE_BANNER = "disableBanner";
 	public final static String SOLR_PARAM_SIMULATE_DATE = "simCurrDate";
 	
-	public final static String SOLR_PARAM_DISABLE_REDIRECT_TO_PAGE = "disableRedirectToPage";
+	public final static String SOLR_PARAM_ENABLE_REDIRECT_TO_PAGE = "enableRedirectToPage";
 	
 	public final static String SOLR_PARAM_FACET_NAME 			= "facet-name";
 	public final static String SOLR_PARAM_FACET_TEMPLATE 		= "facet-template";
