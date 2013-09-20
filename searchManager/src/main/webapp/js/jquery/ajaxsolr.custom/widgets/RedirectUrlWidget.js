@@ -10,7 +10,7 @@
                 
                 redirectUrlDivIFrame.attr("src", redirectUrlParam);
                 
-                $("#redirectUrlTextDiv").append(redirectUrlParam);
+                $("#redirectUrlTextDiv").html(redirectUrlParam);
                 
                 $("#redirectUrlDiv").dialog({
                     title: "Redirected to Page",
