@@ -16,14 +16,7 @@ AjaxSolr.Manager = AjaxSolr.AbstractManager.extend(
                             }, 'json');
                         }
                         else {
-                            var isEnableRedirectToPage = $("#enableRedirectToPage").is(":checked");
-                            var toAppend = "";
-                            
-                            if (isEnableRedirectToPage) {
-                                toAppend = "&enableRedirectToPage=true";
-                            }
-                            
-                            jQuery.getJSON(this.solrUrl + servlet + '?' + this.store.string() + '&wt=json&json.wrf=?' + toAppend,
+                            jQuery.getJSON(this.solrUrl + servlet + '?' + this.store.string() + '&wt=json&json.wrf=?',
                                     {},
                                     function(data) {
                                         self.handleResponse(data);

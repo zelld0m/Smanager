@@ -1,12 +1,13 @@
 (function($) {
     AjaxSolr.RedirectUrlToggleWidget = AjaxSolr.AbstractWidget.extend({
-        init: function() {
-
-        },
         beforeRequest: function() {
-        },
-        afterRequest: function() {
-
+            var self = this;
+            
+            var isEnableRedirectToPage = $("#enableRedirectToPage").is(":checked");
+            
+            if (isEnableRedirectToPage) {
+                self.manager.store.addByValue('enableRedirectToPage', 'true');
+            }
         }
     });
 })(jQuery);
