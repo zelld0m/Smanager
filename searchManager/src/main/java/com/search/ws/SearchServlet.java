@@ -54,6 +54,7 @@ import com.search.manager.model.SearchResult;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.SearchLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -680,6 +681,45 @@ public class SearchServlet extends HttpServlet {
 		doGet(request, response);
 	}
 
+	protected boolean isSameDomain(String storeId, String url) {
+		// relative path
+		List<String> relativePath = UtilityService.getStoreRelativePath(storeId);
+		for(String path : relativePath) {
+			if(url.startsWith(path)) {
+				return true;
+			}
+		}
+		
+		// configured domain
+		List<String> domains = UtilityService.getStoreSelfDomains(storeId);
+		for(String domain: domains) {
+			if(url.contains(domain)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public String getQueryKeyword(String url) {
+		String query = null;
+		String[] params = url.split("&");
+		try {
+			for(String param: params) {
+				if(param.contains("q=")) {
+					if(param.split("=").length > 1) {
+						query = param.split("=")[1];
+					}
+					break;
+				}
+			}
+		} catch(Exception e) {
+			logger.warn("Error parsing q for redirect to page url: " + url, e);
+		}
+		
+		return query;
+	}
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: support for json if json.nl != map
 
@@ -928,20 +968,40 @@ public class SearchServlet extends HttpServlet {
 						appliedRedirect = redirect;
 						
 						if (redirect.isRedirectToPage()) { // Direct Hit
+							boolean validRedirect = true;
+							
 							if(enableRedirectToPage) {
 								nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
-								nameValuePairs.add(nvp);
+								if(addNameValuePairToMap(paramMap, SolrConstants.REDIRECT_URL, nvp)) {
+									nameValuePairs.add(nvp);
+								}
 								originalRedirect = redirect;
 								isRedirectToPage = true;
 								// TODO redirect to page with q parameter validation
+								String url = redirect.getRedirectUrl();
+								if(StringUtils.isNotEmpty(url) && isSameDomain(storeId, url) && url.contains("q=")) {
+									String sKeyword = getQueryKeyword(url);
+									if(StringUtils.isNotBlank(sKeyword) && keywordHistory.contains(StringUtils.lowerCase(sKeyword))) {
+										logger.warn("Loop in redirect to page detected. Reverting to original keyword.");
+										validRedirect = false;
+									}
+								}
 							} else {
-								logger.warn("Direct hit(Redirect to Page) is disabled. Reverting to original keyword.");
+								logger.warn("Redirect To Page is disabled. Reverting to original keyword.");
+								validRedirect = false;
+							}
+
+							if(!validRedirect) {
+								isRedirectToPage = false;
 								redirect = null;
 								appliedRedirect = null;
+								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
+								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.REDIRECT_URL));
+								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+								paramMap.remove(SolrConstants.REDIRECT_URL);
+								
 								keyword = originalKeyword;
 								sk.setKeyword(new Keyword(keyword));
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
-								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
 								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
 								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
 									nameValuePairs.add(nvp);
