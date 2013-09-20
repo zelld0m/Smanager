@@ -93,6 +93,7 @@
 <div class="floatL w730 marL10 marT27" style="min-height:550px">
     <!-- Redirect Url Widget -->
     <div id="redirectUrlDiv" style="display: none; overflow: auto;">
+        <div class="floatL w150 padT5" style="width: 100%;">URL:&nbsp;<span id="redirectUrlTextDiv"></span></div>
         <iframe id="redirectUrlDivIFrame" style="border: 0px; width: 100%; height: 100%" 
                 src="about:blank" scrolling="no"></iframe>
     </div>
@@ -117,7 +118,7 @@
                 <select id="rankingRule" class="w178 marT5"></select>
             </div>	        	
         </div>
-        <div id="redirectUrlToggle" class="floatL w350 dropdownArea">
+        <div id="redirectUrlToggle" class="floatL w350">
             <div class="floatL w150 padT5">Query Cleaning:</div>
             <div class="floatL w200 padT5">
                 <input id="enableRedirectToPage" type="checkbox"/>&nbsp;Enable Redirect To Page

@@ -2,15 +2,18 @@
     AjaxSolr.RedirectUrlWidget = AjaxSolr.AbstractWidget.extend({
         afterRequest: function() {
             var self = this;
-            var redirectUrlParam = self.manager.response.responseHeader.params["redirectUrl"];
+            var direct_hit = self.manager.response.responseHeader.direct_hit;
             
-            if (redirectUrlParam !== undefined) {
+            if (direct_hit !== undefined) {
                 var redirectUrlDivIFrame = $("#redirectUrlDivIFrame");
+                var redirectUrlParam = direct_hit["redirect_url"];
                 
                 redirectUrlDivIFrame.attr("src", redirectUrlParam);
                 
+                $("#redirectUrlTextDiv").append(redirectUrlParam);
+                
                 $("#redirectUrlDiv").dialog({
-                    title: "Redirected to " + redirectUrlParam,
+                    title: "Redirected to Page",
                     width: 800,
                     height: 600,
                     modal: true,
