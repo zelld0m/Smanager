@@ -90,13 +90,15 @@
 
                     if (rule["active"] === "loop") {
                     	$(self.target).find("#hasLoop").show();
+                    } else if (rule["active"] === "disabledRedirectToPage") {
+                    	$(self.target).find("#disabledRedirectToPage").show();
                     }
                     
                     $li.find('.select > input[type="checkbox"]').prop({
                         "id": checkboxId
                     }).val(rule["id"]).slidecheckbox({
                         id: checkboxId,
-                        initOn: rule["active"] === "true" || rule["active"] === "loop",
+                        initOn: rule["active"] === "true" || rule["active"] === "loop" || rule["active"] === "disabledRedirectToPage",
                         locked: false, //TODO:
                         changeStatusCallback: function(base, dt) {
                             var cid = dt.id;
@@ -227,7 +229,12 @@
             output += '		</div>';
             output += '		<div id="hasLoop" style="display:none">';
             output += '			<div class="alert w655 marL20 marB10">';
-            output += '				Loop in Query Cleanning, No Query Cleaning rules applied.';
+            output += '				Loop in Query Cleanning, No Query Cleaning applied.';
+            output += '			</div>';
+            output += '		</div>';
+            output += '		<div id="disabledRedirectToPage" style="display:none">';
+            output += '			<div class="alert w655 marL20 marB10">';
+            output += '				Disabled Redirect To Page, No Query Cleaning applied.';
             output += '			</div>';
             output += '		</div>';
             output += '	</div>';

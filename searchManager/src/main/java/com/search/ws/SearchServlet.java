@@ -1002,6 +1002,12 @@ public class SearchServlet extends HttpServlet {
 								}
 							} else {
 								logger.warn("Redirect To Page is disabled. Reverting to original keyword.");
+								// tag active redirect rule as loop
+								for(Map<String, String> activeRule : activeRules) {
+									if(activeRule.containsValue(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT)) {
+										activeRule.put(SolrConstants.TAG_RULE_ACTIVE, "disabledRedirectToPage");
+									}
+								}
 								validRedirect = false;
 							}
 
