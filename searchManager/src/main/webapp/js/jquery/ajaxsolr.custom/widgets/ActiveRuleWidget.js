@@ -88,11 +88,15 @@
                             break;
                     }
 
+                    if (rule["active"] === "loop") {
+                    	$(self.target).find("#hasLoop").show();
+                    }
+                    
                     $li.find('.select > input[type="checkbox"]').prop({
                         "id": checkboxId
                     }).val(rule["id"]).slidecheckbox({
                         id: checkboxId,
-                        initOn: rule["active"] === "true",
+                        initOn: rule["active"] === "true" || rule["active"] === "loop",
                         locked: false, //TODO:
                         changeStatusCallback: function(base, dt) {
                             var cid = dt.id;
@@ -106,7 +110,7 @@
                             self.manager.doRequest();
                         }
                     });
-
+	                    
                     $li.find(".ruleType").text(rule["type"]);
                     $li.find(".name").text(rule["name"]);
 
@@ -219,6 +223,11 @@
             output += '			<div class="alert w655 marL20 marB10">';
             output += '				Search results displayed are for';
             output += '				<span id="replacement" class="fbold fred"></span>';
+            output += '			</div>';
+            output += '		</div>';
+            output += '		<div id="hasLoop" style="display:none">';
+            output += '			<div class="alert w655 marL20 marB10">';
+            output += '				Loop in Query Cleanning, No Query Cleaning rules applied.';
             output += '			</div>';
             output += '		</div>';
             output += '	</div>';
