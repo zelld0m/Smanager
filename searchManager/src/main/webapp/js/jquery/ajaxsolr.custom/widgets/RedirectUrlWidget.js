@@ -40,6 +40,7 @@
                     height: 600,
                     modal: true,
                     close: function() {
+                        $("#enableRedirectToPage").prop("checked", false);
                         redirectUrlDivIFrame.attr("src", "about:blank");
                     }
                 });
