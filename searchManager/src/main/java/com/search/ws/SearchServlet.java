@@ -958,6 +958,12 @@ public class SearchServlet extends HttpServlet {
 								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
 									nameValuePairs.add(nvp);
 								}
+								// tag active redirect rule as loop
+								for(Map<String, String> activeRule : activeRules) {
+									if(activeRule.containsValue(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT)) {
+										activeRule.put(SolrConstants.TAG_RULE_ACTIVE, "loop");
+									}
+								}
 								break;
 							}
 						}
@@ -977,12 +983,20 @@ public class SearchServlet extends HttpServlet {
 								}
 								originalRedirect = redirect;
 								isRedirectToPage = true;
-								// TODO redirect to page with q parameter validation
+								// validate redirect to page with q parameter
 								String url = redirect.getRedirectUrl();
 								if(StringUtils.isNotEmpty(url) && isSameDomain(storeId, url) && url.contains("q=")) {
 									String sKeyword = getQueryKeyword(url);
 									if(StringUtils.isNotBlank(sKeyword) && keywordHistory.contains(StringUtils.lowerCase(sKeyword))) {
 										logger.warn("Loop in redirect to page detected. Reverting to original keyword.");
+										
+										// tag active redirect rule as loop
+										for(Map<String, String> activeRule : activeRules) {
+											if(activeRule.containsValue(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT)) {
+												activeRule.put(SolrConstants.TAG_RULE_ACTIVE, "loop");
+											}
+										}
+										
 										validRedirect = false;
 									}
 								}
