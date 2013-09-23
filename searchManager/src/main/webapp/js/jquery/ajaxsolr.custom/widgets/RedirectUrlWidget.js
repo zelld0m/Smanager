@@ -29,6 +29,7 @@
                             + GLOBAL_storeParameters.storeDomains[0] + urlVal;
                 }
 
+                $("#redirectUrlLoading").show();
                 redirectUrlDivIFrame.attr("src", urlVal);
 
                 $("#redirectUrlTextDiv").html(urlVal);
