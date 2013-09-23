@@ -550,43 +550,38 @@
                 }
             });
         },
+        checkRelativeRedirectUrl: function(redirectUrlVal) {
+            for (var i = 0; i < GLOBAL_storeRedirectRelativePath.length; i++) {
+                var prefix = GLOBAL_storeRedirectRelativePath[i];
+                if ($.startsWith(redirectUrlVal, prefix)) {
+                    return true;
+                }
+            }
+            
+            return false;
+        },
         validateRedirectUrl: function() {
-//            var validURL = false;
             var redirectUrl = $("#redirectUrl");
             var redirectUrlVal = redirectUrl.val();
-
+            var isRelativePath = false;
+                        
             if ($.isNotBlank(redirectUrlVal)) {
-                if (!$.startsWith(redirectUrlVal, "//")) {
-                    jAlert("Link path value must start with //", "Query Cleaning");
+                if (!$.startsWith(redirectUrlVal, "//") && !$.startsWith(redirectUrlVal, "/")) {
+                    jAlert("Link path value must either start with // or /", "Query Cleaning");
                     return false;
                 }
-
-                if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + ":" + redirectUrlVal)) {
+                
+                isRelativePath = this.checkRelativeRedirectUrl(redirectUrlVal);
+                                
+                if (isRelativePath) {                    
+                    if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + "://" 
+                            + GLOBAL_storeParameters.storeDomains[0] + redirectUrlVal)) {
+                        jAlert("Please specify a valid relative path redirect url", "Query Cleaning");
+                    }
+                } else if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + ":" + redirectUrlVal)) {
                     jAlert("Please specify a valid redirect url", "Query Cleaning");
                     return false;
                 }
-
-//                var $a = $('<a/>');
-//                $a.attr("href", url);
-//                var hostname = $a[0]["hostname"];
-//
-//                for (var i = 0; i < GLOBAL_storeDomains.length; i++) {
-//                    if ($.isNotBlank(GLOBAL_storeDomains[i]) && $.endsWith(hostname, GLOBAL_storeDomains[i])) {
-//                        var hostnamePrefix = hostname.replace(GLOBAL_storeDomains[i], '');
-//                        validURL = validURL || $.isBlank(hostnamePrefix);
-//
-//                        if ($.isNotBlank(hostnamePrefix) && hostnamePrefix !== hostname) {
-//                            validURL = validURL || /([A-Z0-9]*\.){0,1}/i.test(hostnamePrefix);
-//                        }
-//                    }
-//                }
-//
-//                redirectUrl.attr("data-valid", validURL);
-//
-//                if (!validURL) {
-//                    redirectUrl.attr("data-valid", "domain");
-//                    jAlert("Only the following domain are allowed value in link path: " + GLOBAL_storeDomains.join(','), "Banner");
-//                }
 
             } else {
                 jAlert("Please specify a redirect url", "Query Cleaning");
