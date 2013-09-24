@@ -87,12 +87,6 @@
                             checkboxId = "disableBanner";
                             break;
                     }
-
-                    if (rule["active"] === "loop") {
-                    	$(self.target).find("#hasLoop").show();
-                    } else if (rule["active"] === "disabledRedirectToPage") {
-                    	$(self.target).find("#disabledRedirectToPage").show();
-                    }
                     
                     $li.find('.select > input[type="checkbox"]').prop({
                         "id": checkboxId
@@ -132,6 +126,14 @@
                         }
                     });
 
+                    if (rule["active"] === "loop") {
+                    	$(self.target).find("#hasLoop").show();
+                    	$li.find(".alertStatus").text("Loop").show();
+                    } else if (rule["active"] === "disabledRedirectToPage") {
+                    	$(self.target).find("#disabledRedirectToPage").show();
+                    	$li.find(".alertStatus").text("Disabled Redirect To Page").show();
+                    }
+                    
                     $li.show();
                     self.getRuleStatus($li, rule);
                     $ul.append($li);
@@ -199,6 +201,7 @@
             output += '			<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
             output += '				<div class="floatL marT6">';
             output += '					<label class="select floatL w80 posRel topn3"><input type="checkbox" class="firerift-style-checkbox on-off ruleControl"></label>';
+            output += '					<div class="alertStatus alert w100 marT20" style="display:none"></div>';
             output += '				</div>';
             output += '				<div class="floatR w300">';
             output += '					<div class="w300">';
@@ -229,7 +232,7 @@
             output += '		</div>';
             output += '		<div id="hasLoop" style="display:none">';
             output += '			<div class="alert w655 marL20 marB10">';
-            output += '				Loop in Query Cleanning, No Query Cleaning applied.';
+            output += '				Loop in Query Cleaning, No Query Cleaning applied.';
             output += '			</div>';
             output += '		</div>';
             output += '		<div id="disabledRedirectToPage" style="display:none">';
