@@ -93,9 +93,14 @@
 <div class="floatL w730 marL10 marT27" style="min-height:550px">
     <!-- Redirect Url Widget -->
     <div id="redirectUrlDiv" style="display: none; overflow: auto;">
-        <div class="floatL w150 padT5" style="width: 100%;">URL:&nbsp;<span id="redirectUrlTextDiv"></span></div>
+        <div class="floatL w150 padT5" style="width: 100%;">
+            URL:&nbsp;<span id="redirectUrlTextDiv"></span>
+            <span id="redirectUrlLoading" class="circlePreloader" style="display:none">
+                <img src="<spring:url value="/images/ajax-loader-rect.gif" />">
+            </span>
+        </div>
         <iframe id="redirectUrlDivIFrame" style="border: 0px; width: 100%; height: 100%" 
-                src="about:blank" scrolling="no"></iframe>
+                src="about:blank" scrolling="no" onload="$('#redirectUrlLoading').hide();"></iframe>
     </div>
 
     <!-- Text Widget -->

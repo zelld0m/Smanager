@@ -29,6 +29,7 @@
                             + GLOBAL_storeParameters.storeDomains[0] + urlVal;
                 }
 
+                $("#redirectUrlLoading").show();
                 redirectUrlDivIFrame.attr("src", urlVal);
 
                 $("#redirectUrlTextDiv").html(urlVal);
@@ -39,7 +40,9 @@
                     height: 600,
                     modal: true,
                     close: function() {
+                        $("#enableRedirectToPage").prop("checked", false);
                         redirectUrlDivIFrame.attr("src", "about:blank");
+                        self.manager.store.remove('enableRedirectToPage');
                     }
                 });
             }

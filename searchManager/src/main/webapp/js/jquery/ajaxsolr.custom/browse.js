@@ -33,7 +33,8 @@
         
         Manager.addWidget(new AjaxSolr.RedirectUrlToggleWidget({
             id: WIDGET_ID_redirectUrlToggle,
-            target: WIDGET_TARGET_redirectUrlToggle
+            target: WIDGET_TARGET_redirectUrlToggle,
+            minCharRequired: 2
         }));
         
         Manager.addWidget(new AjaxSolr.SearchWithinWidget({
