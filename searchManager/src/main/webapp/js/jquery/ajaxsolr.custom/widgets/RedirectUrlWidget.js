@@ -43,6 +43,7 @@
                         $("#enableRedirectToPage").prop("checked", false);
                         redirectUrlDivIFrame.attr("src", "about:blank");
                         self.manager.store.remove('enableRedirectToPage');
+                        self.manager.doRequest();
                     }
                 });
             }
