@@ -67,6 +67,7 @@
 				<value>pcmallcap</value>
 				<value>macmallbd</value>
 				<value>pcmallgov</value>
+				<value>ecost</value>
 			</list>
 		</constructor-arg>
 		<constructor-arg>
