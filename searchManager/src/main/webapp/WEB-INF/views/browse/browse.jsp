@@ -12,7 +12,6 @@
     var WIDGET_ID_searchResult = 'searchResult';
     var WIDGET_ID_cnetFacet = 'cnetFacet';
     var WIDGET_ID_pager = 'pager';
-
     var WIDGET_TARGET_redirectUrl = '#redirectUrl';
     var WIDGET_TARGET_redirectUrlToggle = '#redirectUrlToggle';
     var WIDGET_TARGET_searchWithin = '#searchWithin';
@@ -20,10 +19,8 @@
     var WIDGET_TARGET_searchKeyword = '#searchKeyword';
     var WIDGET_TARGET_cnetFacet = '#cnetFacets';
     var WIDGET_TARGET_pager = '#top-pager,#bottom-pager';
-
     var WIDGET_TEXTDEFAULT_searchKeyword = 'Enter Keyword';
-    var WIDGET_TEXTDEFAULT_searchWithin = 'Search Within';
-</script>
+    var WIDGET_TEXTDEFAULT_searchWithin = 'Search Within';</script>
 <script type="text/javascript" src="<spring:url value="/js/dwr/browse.js" />"></script>
 
 <!-- AdRotator Plugin -->
@@ -99,7 +96,12 @@
                 <img src="<spring:url value="/images/ajax-loader-rect.gif" />">
             </span>
         </div>
-        <iframe id="redirectUrlDivIFrame" style="border: 0px; width: 100%; height: 100%" 
+
+        <div id="IframeWrapper" style="position: relative;">
+            <div id="iframeBlocker" style="position: absolute; top: 0; left: 0; width: 800px; height: 700px;">
+            </div>
+        </div>
+        <iframe id="redirectUrlDivIFrame" style="border: 0px; width: 800px; height: 600px;" 
                 src="about:blank" scrolling="no" onload="$('#redirectUrlLoading').hide();"></iframe>
     </div>
 
