@@ -572,11 +572,14 @@
                 }
                 
                 isRelativePath = this.checkRelativeRedirectUrl(redirectUrlVal);
-                                
+                
+                redirectUrlVal = redirectUrlVal.replace(/ /g, '+');
+                
                 if (isRelativePath) {                    
                     if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + "://" 
                             + GLOBAL_storeParameters.storeDomains[0] + redirectUrlVal)) {
                         jAlert("Please specify a valid relative path redirect url", "Query Cleaning");
+                        return false;
                     }
                 } else if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + ":" + redirectUrlVal)) {
                     jAlert("Please specify a valid redirect url", "Query Cleaning");
