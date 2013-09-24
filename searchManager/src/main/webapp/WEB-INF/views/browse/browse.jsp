@@ -98,7 +98,7 @@
         </div>
 
         <div id="IframeWrapper" style="position: relative;">
-            <div id="iframeBlocker" style="position: absolute; top: 0; left: 0; width: 800px; height: 700px;">
+            <div id="iframeBlocker" style="position: absolute; top: 0; left: 0; width: 800px; height: 700px; background-color: white; opacity: 0.0;">
             </div>
         </div>
         <iframe id="redirectUrlDivIFrame" style="border: 0px; width: 800px; height: 600px;" 
