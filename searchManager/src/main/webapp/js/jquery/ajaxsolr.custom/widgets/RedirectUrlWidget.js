@@ -36,8 +36,8 @@
 
                 $("#redirectUrlDiv").dialog({
                     title: "Redirected to Page",
-                    width: 800,
-                    height: 600,
+                    width: 780,
+                    height: 545,
                     modal: true,
                     close: function() {
                         $("#enableRedirectToPage").prop("checked", false);
