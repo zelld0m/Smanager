@@ -22,12 +22,14 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.search.ws.ConfigManager;
 
-public class SearchWithinRequestProcessor implements RequestProcessor {
-	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SearchWithinRequestProcessor.class);
+public class SearchWithinRequestProcessor extends RequestProcessorUtil implements RequestProcessor {
+	private static final Logger logger = LoggerFactory.getLogger(SearchWithinRequestProcessor.class);
 	private ConfigManager cm;
 	private String storeId;
 	
@@ -104,7 +106,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 			sbAllType.append(StringUtils.join(perTypeQueryArr, String.format(" %s ", getTypeOperator())));
 
 			if(logger.isDebugEnabled()){
-				logger.debug("SW Solr Filter: {}", sbAllType.toString());
+				logger.debug("Solr Filter: {}", sbAllType.toString());
 			}
 		}
 
@@ -121,22 +123,22 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		String swValues = ""; 
 
 		if(logger.isDebugEnabled()){
-			logger.debug("SW Enabled: {}", isEnabled());
-			logger.debug("SW Request Params: {}", ArrayUtils.getLength(paramValues));
+			logger.debug("Enabled: {}", isEnabled());
+			logger.debug("Request Params: {}", ArrayUtils.getLength(paramValues));
 		}
 
 		if(!isEnabled() ||  ArrayUtils.getLength(paramValues)==0 || StringUtils.isBlank(swValues = paramValues[paramValues.length-1])){
-			logger.debug("SW Skipped: Enabled? {}, Empty params? {}", BooleanUtils.toStringYesNo(isEnabled()),BooleanUtils.toStringYesNo(StringUtils.isBlank(swValues)));
+			logger.debug("Skipped: Enabled? {}, Empty params? {}", BooleanUtils.toStringYesNo(isEnabled()),BooleanUtils.toStringYesNo(StringUtils.isBlank(swValues)));
 			return;
 		}
 
 		if(CollectionUtils.isEmpty(solrFieldToSearchList = getFields()) || CollectionUtils.isEmpty(getSearchWithinType())){
-			logger.debug("SW Skipped: Empty search fields? {} , Empty allowed params? {}", BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(solrFieldToSearchList)), BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(getSearchWithinType())));
+			logger.debug("Skipped: Empty search fields? {} , Empty allowed params? {}", BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(solrFieldToSearchList)), BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(getSearchWithinType())));
 			return;
 		}
 
 		if(logger.isDebugEnabled()){
-			logger.debug("SW Solr Fields: {}", StringUtils.join(solrFieldToSearchList,", "));
+			logger.debug("Solr Fields: {}", StringUtils.join(solrFieldToSearchList,", "));
 		}
 
 		try {
@@ -157,21 +159,24 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 			}
 
 			if(MapUtils.isEmpty(swParamsMap)){
-				logger.debug("SW Skipped: Empty processed request param");
+				logger.debug("Skipped: Empty processed request param");
 				return;
 			}
 
 			if(logger.isDebugEnabled()){
-				logger.debug("SW Map Request Params: {}", ObjectUtils.toString(swParamsMap));
+				logger.debug("Map Request Params: {}", ObjectUtils.toString(swParamsMap));
 			}
 		} catch (JSONException e) {
-			logger.error("SW Skipped: {}", e.getMessage());
+			logger.error("Skipped: {}", e.getMessage());
 			return;
 		} catch (Exception e){
-			logger.error("SW Skipped: {}", e.getMessage());
+			logger.error("Skipped: {}", e.getMessage());
 			return;
 		}		
 
 		StringBuilder solrFq = toSolrFq(swParamsMap);
+		if(solrFq.length()>0){
+			RequestProcessorUtil.addNameValuePairToMap(paramMap, "fq", new BasicNameValuePair("fq", solrFq.toString()));
+		}
 	}
 }
