@@ -85,13 +85,14 @@ public class SearchWithinRequestProcessor extends RequestProcessorUtil implement
 		if(CollectionUtils.isNotEmpty(fields) && MapUtils.isNotEmpty(swProcessedParams)){
 			String swKeywordTemplate = new String();
 
-			swKeywordTemplate = String.format("(%s)", StringUtils.join(fields, ":%%keyword%% %%operator%% ") + ":%%keyword%%");
 			Set<String> keySet = swProcessedParams.keySet();
 			String[] perTypeQueryArr = new String[keySet.size()];
 			int iteration = 0;
 
 			for(String swType: keySet){
 				sbType = new StringBuilder();
+				swKeywordTemplate = String.format(CollectionUtils.size(fields)==1 || CollectionUtils.size(swProcessedParams.get(swType))==1 ? "%s":"(%s)", StringUtils.join(fields, ":%%keyword%% %%operator%% ") + ":%%keyword%%");
+				
 				for(String swKeyword: swProcessedParams.get(swType)){
 					sbType.append(sbType.length()>0? String.format(" %s ", getKeywordOperator(swType)): "");
 					sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{swKeyword, getSolrFieldOperator(swType)}));
@@ -123,8 +124,9 @@ public class SearchWithinRequestProcessor extends RequestProcessorUtil implement
 		String swValues = ""; 
 
 		if(logger.isDebugEnabled()){
-			logger.debug("Enabled: {}", isEnabled());
-			logger.debug("Request Params: {}", ArrayUtils.getLength(paramValues));
+			logger.debug("Enabled: {}", BooleanUtils.toStringYesNo(isEnabled()));
+			logger.debug("Request Param Name: {}", getRequestParamName());
+			logger.debug("Request Param Name Count: {}", ArrayUtils.getLength(paramValues));
 		}
 
 		if(!isEnabled() ||  ArrayUtils.getLength(paramValues)==0 || StringUtils.isBlank(swValues = paramValues[paramValues.length-1])){
@@ -176,7 +178,9 @@ public class SearchWithinRequestProcessor extends RequestProcessorUtil implement
 
 		StringBuilder solrFq = toSolrFq(swParamsMap);
 		if(solrFq.length()>0){
+			logger.debug("Pre-processing: {}", paramMap);
 			RequestProcessorUtil.addNameValuePairToMap(paramMap, "fq", new BasicNameValuePair("fq", solrFq.toString()));
+			logger.debug("Post-processing: {}", paramMap);
 		}
 	}
 }
