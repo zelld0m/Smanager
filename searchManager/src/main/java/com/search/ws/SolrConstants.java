@@ -62,6 +62,8 @@ public class SolrConstants {
 	public final static String TAG_REDIRECT_CUSTOM_TEXT = "custom_text";
 	public final static String TAG_REDIRECT_DIRECT_HIT = "direct_hit";
 	public final static String TAG_REDIRECT_REDIRECT_URL = "redirect_url";
+	public final static String TAG_REDIRECT_FILTER = "redirect_filter";
+	public final static String TAG_REDIRECT_CONDITION = "condition";
 	
 	public final static String TAG_BANNER = "Banner";
 	public final static String TAG_REDIRECT_ID = "Redirect_Id";

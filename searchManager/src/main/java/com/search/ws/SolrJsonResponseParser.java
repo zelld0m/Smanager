@@ -172,10 +172,17 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 	if (StringUtils.isNotBlank(redirectRule.getRedirectUrl())) {
                     	fields.put(SolrConstants.TAG_REDIRECT_REDIRECT_URL, redirectRule.getRedirectUrl());
                     }
+                } else if (redirectRule.isRedirectFilter()) { // not used
+                	element = SolrConstants.TAG_REDIRECT_FILTER;
+                	if(StringUtils.isNotBlank(redirectRule.getCondition())) {
+                		fields.put(SolrConstants.TAG_REDIRECT_CONDITION, redirectRule.getCondition());
+                	}
                 }
                 
-                redirectObject.putAll(fields);
-                responseHeader.element(element, redirectObject);
+                if(element != null) {
+                	redirectObject.putAll(fields);
+                	responseHeader.element(element, redirectObject);
+                }
             }
 
             // TODO: make this get value from solr.xml

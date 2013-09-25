@@ -472,14 +472,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
 					Node replacementTypeNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_TYPE);
 					Node customTextNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_CUSTOM_TEXT);	
-					if (StringUtils.isNotBlank(originalKeyword)) {
-						origKeywordNode.appendChild(mainDoc.createTextNode(originalKeyword));
-						redirectNode.appendChild(origKeywordNode);
-					}
-					if (StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
-						replacementKeywordNode.appendChild(mainDoc.createTextNode(redirectRule.getChangeKeyword()));
-						redirectNode.appendChild(replacementKeywordNode);
-					}
+					
 					if (redirectRule.getReplaceKeywordMessageType() != null) {
 						replacementTypeNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageType() + ""));
 						redirectNode.appendChild(replacementTypeNode);
@@ -491,6 +484,22 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				} else if (redirectRule.isRedirectToPage()) {
 					redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_DIRECT_HIT);
 					Node redirectUrlNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REDIRECT_URL);
+					
+					if (StringUtils.isNotBlank(redirectRule.getRedirectUrl())) {
+						redirectUrlNode.appendChild(mainDoc.createTextNode(redirectRule.getRedirectUrl()));
+						redirectNode.appendChild(redirectUrlNode);
+					}
+				} else if (redirectRule.isRedirectFilter()) { // not used
+					redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_FILTER);
+					Node redirectCondition = mainDoc.createElement(SolrConstants.TAG_REDIRECT_CONDITION);
+
+					if (StringUtils.isNotBlank(redirectRule.getCondition())) {
+						redirectCondition.appendChild(mainDoc.createTextNode(redirectRule.getCondition()));
+						redirectNode.appendChild(redirectCondition);
+					}
+				}
+				
+				if(redirectNode != null) {
 					if (StringUtils.isNotBlank(originalKeyword)) {
 						origKeywordNode.appendChild(mainDoc.createTextNode(originalKeyword));
 						redirectNode.appendChild(origKeywordNode);
@@ -499,13 +508,8 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						replacementKeywordNode.appendChild(mainDoc.createTextNode(redirectRule.getChangeKeyword()));
 						redirectNode.appendChild(replacementKeywordNode);
 					}
-					if (StringUtils.isNotBlank(redirectRule.getRedirectUrl())) {
-						redirectUrlNode.appendChild(mainDoc.createTextNode(redirectRule.getRedirectUrl()));
-						redirectNode.appendChild(redirectUrlNode);
-					}
+					responseHeaderNode.appendChild(redirectNode);
 				}
-				
-				responseHeaderNode.appendChild(redirectNode);
 			}
 
 			if (activeRules != null) {
