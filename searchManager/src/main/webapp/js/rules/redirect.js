@@ -557,26 +557,26 @@
                     return true;
                 }
             }
-
+            
             return false;
         },
         validateRedirectUrl: function() {
             var redirectUrl = $("#redirectUrl");
             var redirectUrlVal = redirectUrl.val();
             var isRelativePath = false;
-
+                        
             if ($.isNotBlank(redirectUrlVal)) {
                 if (!$.startsWith(redirectUrlVal, "//") && !$.startsWith(redirectUrlVal, "/")) {
                     jAlert("Link path value must either start with // or /", "Query Cleaning");
                     return false;
                 }
-
+                
                 isRelativePath = this.checkRelativeRedirectUrl(redirectUrlVal);
-
+                
                 redirectUrlVal = redirectUrlVal.replace(/ /g, '+');
-
-                if (isRelativePath) {
-                    if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + "://"
+                
+                if (isRelativePath) {                    
+                    if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + "://" 
                             + GLOBAL_storeParameters.storeDomains[0] + redirectUrlVal)) {
                         jAlert("Please specify a valid relative path redirect url", "Query Cleaning");
                         return false;
@@ -593,36 +593,11 @@
 
             return true;
         },
-        encodeAmpersand: function(str) {
-            var strArr = str.split(/&\w+=/g);
-            var strMatchArr = str.match(/\w+=/g);
-            var output = "";
-
-            for (var i = 0; i < strArr.length; i++) {
-                var strVal = strArr[i];
-
-                if (strVal.indexOf("&") !== -1) {
-                    strVal = strVal.replace("&", "%26");
-                }
-
-                if (i > 0) {
-                    output += strMatchArr[i - 1];
-                }
-                
-                output += strVal;
-
-                if (i < strArr.length - 1) {
-                    output += "&";
-                }
-            }
-
-            return output;
-        },
         updateRedirectUrl: function() {
             var self = this;
             var $input = $("div#page").find('input[type="text"]#redirectUrl');
-            var inputVal = self.encodeAmpersand($.trim($input.val()));
-
+            var inputVal = $.trim($input.val());
+            
             RedirectServiceJS.updateRedirectUrl(self.selectedRule["ruleId"], inputVal, {
                 callback: function(data) {
                     if (data > 0) {
