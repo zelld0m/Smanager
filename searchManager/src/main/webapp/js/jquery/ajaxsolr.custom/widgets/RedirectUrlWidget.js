@@ -39,6 +39,7 @@
                     width: 780,
                     height: 545,
                     modal: true,
+                    resizable: false,
                     close: function() {
                         $("#enableRedirectToPage").prop("checked", false);
                         redirectUrlDivIFrame.attr("src", "about:blank");
