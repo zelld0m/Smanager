@@ -71,6 +71,10 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		return cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.prefixTypeOperator", swType));
 	}
 
+	public boolean isQuoteKeyword(String swType){
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.quoteKeyword",swType)), "false"));
+	}
+	
 	@Override
 	public boolean isEnabled(){
 		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.enable"), "false"));
@@ -92,10 +96,10 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 			for(String swType: keySet){
 				sbType = new StringBuilder();
 				swKeywordTemplate = String.format(CollectionUtils.size(fields)==1 || CollectionUtils.size(swProcessedParams.get(swType))==1 ? "%s":"(%s)", StringUtils.join(fields, ":%%keyword%% %%operator%% ") + ":%%keyword%%");
-				
+				String keywordTemplate = isQuoteKeyword(swType)? "\"%s\"": "%s";
 				for(String swKeyword: swProcessedParams.get(swType)){
 					sbType.append(sbType.length()>0? String.format(" %s ", getKeywordOperator(swType)): "");
-					sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{swKeyword, getSolrFieldOperator(swType)}));
+					sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{String.format(keywordTemplate, swKeyword), getSolrFieldOperator(swType)}));
 				}
 				
 				String prefixOperator = getPrefixOperator(swType);
