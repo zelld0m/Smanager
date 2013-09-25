@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.search.ws.ConfigManager;
 
-public class SearchWithinRequestProcessor extends RequestProcessorUtil implements RequestProcessor {
+public class SearchWithinRequestProcessor implements RequestProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(SearchWithinRequestProcessor.class);
 	private ConfigManager cm;
 	private String storeId;
