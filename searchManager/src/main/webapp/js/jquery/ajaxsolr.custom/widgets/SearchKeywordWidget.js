@@ -45,7 +45,15 @@
 
 			$(self.target).find('input').prop("disabled", false);
 
-			if ($.isBlank(keyword)) $(self.target).find('div#refinementHolder').hide();
+			if ($.isBlank(keyword)) {
+			    $(self.target).find('div#refinementHolder').hide();
+			}
+			else if (self.manager.store.values('fq').length || GLOBAL_searchWithinEnabled
+			        && !self.manager.widgets[WIDGET_ID_searchWithin].isEmpty()) {
+			    $('#refinementHolder').attr("style", "display:float");
+			} else {
+			    $('#refinementHolder').attr("style", "display:none");
+			}
 
 			$(self.target).find('input').val(keyword);
 			$(self.target).find('input').focus();
@@ -66,7 +74,11 @@
 					self.manager.store.remove('disableRelevancy');
 					self.manager.store.remove('disableDidYouMean');
 					self.manager.store.remove('disableBanner');
-					self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
+					if (GLOBAL_searchWithinEnabled) {
+						self.manager.widgets[WIDGET_ID_searchWithin].clear();
+					} else {
+						self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
+					}
 				}
 
 				self.searchKeyword = keyword;
