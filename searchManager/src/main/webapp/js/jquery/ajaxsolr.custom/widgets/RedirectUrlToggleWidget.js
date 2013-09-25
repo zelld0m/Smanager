@@ -29,23 +29,15 @@
             var self = this;
 
             if (validateGeneric("Keyword", keyword, self.minCharRequired)) {
-                var isKeepChecked = $('input[name="keepRefinement"]').is(':checked');
-
-                if (!isKeepChecked) {
-                    self.manager.store.remove('fq');
-                    self.manager.store.remove('disableElevate');
-                    self.manager.store.remove('disableExclude');
-                    self.manager.store.remove('disableDemote');
-                    self.manager.store.remove('disableFacetSort');
-                    self.manager.store.remove('disableRedirect');
-                    self.manager.store.remove('disableRelevancy');
-                    self.manager.store.remove('disableDidYouMean');
-                    self.manager.store.remove('disableBanner');
-                    self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
+                var keywordFromStore = $.trim(self.manager.store.values('q'));
+                
+                // add keyword as a store value if it doesn't exist yet or it is not
+                // the same as the current store value
+                if (keywordFromStore === null || keywordFromStore === undefined || 
+                    keywordFromStore.toLowerCase() !== keyword.toLowerCase()) {
+                    self.manager.store.addByValue('q', $.trim(keyword));
                 }
-
-                self.searchKeyword = keyword;
-                self.manager.store.addByValue('q', $.trim(keyword));
+                
                 self.manager.doRequest(0);
             } else {
                 $("#enableRedirectToPage").prop("checked", false);
