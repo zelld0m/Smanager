@@ -38,6 +38,7 @@ public class ConfigManager {
     private Map<String, PropertiesConfiguration> serverSettingsMap = new HashMap<String, PropertiesConfiguration>();
     private Map<String, PropertiesConfiguration> linguisticSettingsMap = new HashMap<String, PropertiesConfiguration>();
     private Map<String, PropertiesConfiguration> mailSettingsMap = new HashMap<String, PropertiesConfiguration>();
+    private Map<String, PropertiesConfiguration> searchWithinSettingsMap = new HashMap<String, PropertiesConfiguration>();
 
     private ConfigManager() {
         // do nothing...
@@ -96,7 +97,7 @@ public class ConfigManager {
                     try {
                         file.createNewFile();
                     } catch (IOException e) {
-                        logger.error("Unable to create mail property file: " + f.getAbsolutePath(), e);
+                        logger.error("Unable to create mail property file: " + file.getAbsolutePath(), e);
                     }
                 }
                 if (file.exists()) {
@@ -105,6 +106,23 @@ public class ConfigManager {
                     propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
                     mailSettingsMap.put(storeId, propConfig);
                     logger.info("Mail property file for " + storeId + ": " + propConfig.getFileName());
+                }
+                
+                // search within properties
+                File searchWithinFile = new File(String.format("%s%s%s.searchwithin.properties", configFolder, File.separator, storeId));
+                if (!searchWithinFile.exists()) {
+                    try {
+                    	searchWithinFile.createNewFile();
+                    } catch (IOException e) {
+                        logger.error("Unable to create mail property file: " + searchWithinFile.getAbsolutePath(), e);
+                    }
+                }
+                if (searchWithinFile.exists()) {
+                    PropertiesConfiguration propConfig = new PropertiesConfiguration(searchWithinFile.getAbsolutePath());
+                    propConfig.setAutoSave(true);
+                    propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+                    searchWithinSettingsMap.put(storeId, propConfig);
+                    logger.info("search within property file for {}: {}",storeId, propConfig.getFileName());
                 }
             }
 
@@ -408,6 +426,27 @@ public class ConfigManager {
     @SuppressWarnings("unchecked")
     public List<String> getListMailProperty(String storeId, String field) {
         PropertiesConfiguration config = mailSettingsMap.get(storeId);
+        if (config != null) {
+            synchronized (config) {
+                return config.getList(field);
+            }
+        }
+        return new ArrayList<String>();
+    }
+    
+    public String getSearchWithinProperty(String storeId, String field) {
+        PropertiesConfiguration config = searchWithinSettingsMap.get(storeId);
+        if (config != null) {
+            synchronized (config) {
+                return config.getString(field);
+            }
+        }
+        return "";
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getListSearchWithinProperty(String storeId, String field) {
+        PropertiesConfiguration config = searchWithinSettingsMap.get(storeId);
         if (config != null) {
             synchronized (config) {
                 return config.getList(field);

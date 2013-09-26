@@ -22,6 +22,8 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.search.manager.authentication.dao.internal.UserDetailsImpl;
+import com.search.manager.core.SearchWithinRequestProcessor;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
@@ -40,8 +43,6 @@ import com.search.manager.schema.model.Schema;
 import com.search.manager.utility.PropertiesUtils;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "utilityService")
 @RemoteProxy(
@@ -220,8 +221,9 @@ public class UtilityService {
 
     @RemoteMethod
     public static String getStoreParameters() {
-        JSONObject json = new JSONObject();
         String storeId = getStoreId();
+        SearchWithinRequestProcessor processor = new SearchWithinRequestProcessor(storeId);
+        JSONObject json = new JSONObject();
         json.put("username", getUsername());
         json.put("solrSelectorParam", getSolrSelectorParam());
         json.put("storeId", storeId);
@@ -238,7 +240,9 @@ public class UtilityService {
         json.put("storeDefaultBannerLinkPathProtocol", getStoreDefaultBannerLinkPathProtocol(storeId));
         json.put("storeRedirectSelfDomain", getStoreRedirectSelfDomain(storeId));
         json.put("storeRedirectRelativePath", getStoreRedirectRelativePath(storeId));
-        
+        json.put("searchWithinEnabled", processor.isEnabled());
+        json.put("searchWithinTypes", processor.getSearchWithinType());
+        json.put("searchWithinParamName", processor.getRequestParamName());
         return json.toString();
     }
 

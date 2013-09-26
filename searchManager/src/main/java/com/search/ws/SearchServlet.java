@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.search.manager.core.SearchWithinRequestProcessor;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
@@ -817,7 +818,10 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 			}
-
+			
+			//Integrate Search Within Request
+			new SearchWithinRequestProcessor(storeId).process(request, paramMap, nameValuePairs);
+			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 			addDefaultParameters(storeId, nameValuePairs, paramMap);
 
@@ -1599,7 +1603,7 @@ public class SearchServlet extends HttpServlet {
 					tasks--;
 				}
 			}
-
+			
 			/* Generate response */
 			Long qtime = new Date().getTime() - start;
 			solrHelper.generateServletResponse(response, qtime);

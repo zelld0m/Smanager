@@ -78,6 +78,9 @@
 	var GLOBAL_storeDefaultBannerSize = GLOBAL_storeParameters["storeDefaultBannerSize"];
 	var GLOBAL_storeAllowedBannerSizes = GLOBAL_storeParameters["storeAllowedBannerSizes"];
 	var GLOBAL_storeDefaultBannerLinkPathProtocol = GLOBAL_storeParameters["storeDefaultBannerLinkPathProtocol"];
+	var GLOBAL_searchWithinEnabled = GLOBAL_storeParameters["searchWithinEnabled"];
+	var GLOBAL_searchWithinTypes = GLOBAL_storeParameters["searchWithinTypes"];
+	var GLOBAL_searchWithinParamName = GLOBAL_storeParameters["searchWithinParamName"];
 	
         // FOR REDIRECT PAGE
         var GLOBAL_storeRedirectSelfDomain = GLOBAL_storeParameters["storeRedirectSelfDomain"];

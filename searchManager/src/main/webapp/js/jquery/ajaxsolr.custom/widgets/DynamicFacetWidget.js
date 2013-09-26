@@ -9,7 +9,6 @@
 			$(this.target).empty();
 
 			if($.isNotBlank(self.manager.store.values('q'))){
-				$('#refinementHolder').attr("style", self.manager.store.values('fq').length > 0 ? "display:float" : "display:none");
 				if (self.manager.store.values('fq').length > 0) $('input#keepRefinement').prop("checked", true);
 				
 				if (self.manager.response.response.docs.length > 0){
