@@ -9,28 +9,27 @@
         BUTTON_ID = "#searchBtn",
 
         // data id
-        SEARCH_WITHIN_DATA ="searchWithin",
         SEARCH_WITHIN_PARAM = GLOBAL_searchWithinParamName,
         SEARCH_KEYWORD = "q",
 
         // filter types
         FILTER_TYPES = GLOBAL_searchWithinTypes,
-
+        
         TEMPLATE = '<div class="h27">'
                  + '  <div class="floatL">'
-                 + '     <select id="searchWithinType" class="marT4">'
-                 + '     </select>'
-                 + '     <div class="w155 marT4 marR5" style="display: inline-block">'
-                 + '       <span><input type="text" id="searchWithin" name="searchWithin" class="w120 farial fsize12 fgray pad3"></span>'
-                 + '       <a href="javascript:void(0)" id="searchBtn">'
-                 + '         <div class="btnFilter"></div>'
-                 + '       </a>'
-                 + '     </div>'
+                 + '    <div class="marT4" style="display:inline-block">'
+                 + '      <span><select id="searchWithinType" class="farial fsize12"></select></span>'
+                 + '    </div>'
+                 + '    <div class="w155 marT4 marR5" style="display:inline-block">'
+                 + '      <span><input type="text" id="searchWithin" name="searchWithin" class="w120 farial fsize12 fgray pad3"></span>'
+                 + '      <a href="javascript:void(0)" id="searchBtn"><div class="btnFilter"></div></a>'
+                 + '    </div>'
                  + '  </div>'
                  + '</div>';
 
     AjaxSolr.MultiSearchWithinWidget = AjaxSolr.AbstractWidget.extend({
         params : {},
+        type   : "",
 
         init: function() {
             var self = this;
@@ -48,6 +47,7 @@
 
             $container.find(TEXT_INPUT_ID).prop("disabled",true);
             $container.find(SELECT_INPUT_ID).prop("disabled", true);
+            this.type = $container.find(SELECT_INPUT_ID).val();
         },
 
         afterRequest: function() {
@@ -70,6 +70,8 @@
                 $.each(self.params, function(idx) {
                     $select.append($("<option value=\"" + idx + "\">" + self.getLabel(idx) + "</option>"));
                 });
+
+                self.type && $select.val(self.type);
 
                 $text.off().on({
                     focusin: function(e) {
