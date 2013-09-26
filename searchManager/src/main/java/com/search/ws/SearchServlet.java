@@ -782,7 +782,7 @@ public class SearchServlet extends HttpServlet {
 			}
 			
 			//Integrate Search Within Request
-			new SearchWithinRequestProcessor(storeId).process(request, paramMap);
+			new SearchWithinRequestProcessor(storeId).process(request, paramMap, nameValuePairs);
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 			addDefaultParameters(storeId, nameValuePairs, paramMap);

@@ -32,17 +32,17 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(SearchWithinRequestProcessor.class);
 	private ConfigManager cm;
 	private String storeId;
-	
+
 	private SearchWithinRequestProcessor(){
 		super();
 	}
-	
+
 	public SearchWithinRequestProcessor(String storeId){
 		this();
 		this.cm = ConfigManager.getInstance();
 		this.storeId = storeId;
 	}
-	
+
 	public List<String> getFields(){
 		return cm.getListSearchWithinProperty(storeId, "searchwithin.solrfieldlist");
 	}
@@ -54,19 +54,19 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 	public String getRequestParamName(){
 		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.paramname"),"searchwithin");
 	}
-	
+
 	public String getKeywordOperator(String swType){
 		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.keywordOperator",swType)),"OR");
 	}
-	
+
 	public String getSolrFieldOperator(String swType){
 		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.solrFieldOperator",swType)),"OR");
 	}
-	
+
 	public String getTypeOperator(){
 		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.typeOperator"),"OR");
 	}
-	
+
 	public String getPrefixOperator(String swType){
 		return cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.prefixTypeOperator", swType));
 	}
@@ -74,44 +74,50 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 	public boolean isQuoteKeyword(String swType){
 		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.quoteKeyword",swType)), "false"));
 	}
-	
+
 	@Override
 	public boolean isEnabled(){
 		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.enable"), "false"));
 	}
 
-	public StringBuilder toSolrFq(Map<String, List<String>> swProcessedParams){
+	public StringBuilder toSolrFq(Map<String, List<String>> swProcessedParams) throws Throwable{
 		StringBuilder sbAllType = new StringBuilder();
 		StringBuilder sbType = new StringBuilder();
 		List<String> fields = getFields();
 
 		// Generate template Keyword to Solr fields
 		if(CollectionUtils.isNotEmpty(fields) && MapUtils.isNotEmpty(swProcessedParams)){
-			String swKeywordTemplate = new String();
+			try {
+				String swKeywordTemplate = new String();
 
-			Set<String> keySet = swProcessedParams.keySet();
-			String[] perTypeQueryArr = new String[keySet.size()];
-			int iteration = 0;
+				Set<String> keySet = swProcessedParams.keySet();
+				String[] perTypeQueryArr = new String[keySet.size()];
+				int iteration = 0;
 
-			for(String swType: keySet){
-				sbType = new StringBuilder();
-				swKeywordTemplate = String.format(CollectionUtils.size(fields)==1 || CollectionUtils.size(swProcessedParams.get(swType))==1 ? "%s":"(%s)", StringUtils.join(fields, ":%%keyword%% %%operator%% ") + ":%%keyword%%");
-				String keywordTemplate = isQuoteKeyword(swType)? "\"%s\"": "%s";
-				for(String swKeyword: swProcessedParams.get(swType)){
-					sbType.append(sbType.length()>0? String.format(" %s ", getKeywordOperator(swType)): "");
-					sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{String.format(keywordTemplate, swKeyword), getSolrFieldOperator(swType)}));
+				for(String swType: keySet){
+					sbType = new StringBuilder();
+					swKeywordTemplate = String.format(CollectionUtils.size(fields)==1 || CollectionUtils.size(swProcessedParams.get(swType))==1 ? "%s":"(%s)", StringUtils.join(fields, ":%%keyword%% %%operator%% ") + ":%%keyword%%");
+					String keywordTemplate = isQuoteKeyword(swType)? "\"%s\"": "%s";
+					for(String swKeyword: swProcessedParams.get(swType)){
+						sbType.append(sbType.length()>0? String.format(" %s ", getKeywordOperator(swType)): "");
+						sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{String.format(keywordTemplate, swKeyword), getSolrFieldOperator(swType)}));
+					}
+
+					String prefixOperator = getPrefixOperator(swType);
+					String perTypeTemplate = String.format("(%s)", StringUtils.isNotBlank(prefixOperator)? StringUtils.trim(prefixOperator) + "(%s)" : "%s");
+
+					perTypeQueryArr[iteration++] = String.format(perTypeTemplate, sbType.toString());
 				}
-				
-				String prefixOperator = getPrefixOperator(swType);
-				String perTypeTemplate = String.format("(%s)", StringUtils.isNotBlank(prefixOperator)? StringUtils.trim(prefixOperator) + "(%s)" : "%s");
-				
-				perTypeQueryArr[iteration++] = String.format(perTypeTemplate, sbType.toString());
-			}
 
-			sbAllType.append(StringUtils.join(perTypeQueryArr, String.format(" %s ", getTypeOperator())));
+				sbAllType.append(StringUtils.join(perTypeQueryArr, String.format(" %s ", getTypeOperator())));
 
-			if(logger.isDebugEnabled()){
-				logger.debug("Solr Filter: {}", sbAllType.toString());
+				if(logger.isDebugEnabled()){
+					logger.debug("Solr Filter: {}", sbAllType.toString());
+				}
+			} catch (Exception e) {
+				throw e;
+			} catch (Throwable t){
+				throw t;
 			}
 		}
 
@@ -120,8 +126,9 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void process(HttpServletRequest request, Map<String, List<NameValuePair>> paramMap) {
+	public void process(HttpServletRequest request, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
 		Map<String, List<String>> swParamsMap = new HashMap<String, List<String>>();
+		StringBuilder solrFq = new StringBuilder();
 		String[] paramValues= request.getParameterValues(getRequestParamName());
 		JsonSlurper slurper = new JsonSlurper();
 		List<String> solrFieldToSearchList = null; 
@@ -172,19 +179,30 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 			if(logger.isDebugEnabled()){
 				logger.debug("Map Request Params: {}", ObjectUtils.toString(swParamsMap));
 			}
+
+			solrFq = toSolrFq(swParamsMap);
 		} catch (JSONException e) {
-			logger.error("Skipped: {}", e.getMessage());
+			logger.debug("Skipped: {}", e.getMessage());
 			return;
 		} catch (Exception e){
-			logger.error("Skipped: {}", e.getMessage());
-			return;
-		}		
-
-		StringBuilder solrFq = toSolrFq(swParamsMap);
-		if(solrFq.length()>0){
-			logger.debug("Pre-processing: {}", paramMap);
-			RequestProcessorUtil.addNameValuePairToMap(paramMap, "fq", new BasicNameValuePair("fq", solrFq.toString()));
-			logger.debug("Post-processing: {}", paramMap);
+			logger.error(e.getMessage());
+		} catch (Throwable t) {
+			logger.error(t.getMessage());
+			logger.debug("Skipped: {}", t.getMessage());
+		} finally{
+			if(solrFq.length()>0){
+				BasicNameValuePair nameValuePair = new BasicNameValuePair("fq", solrFq.toString());
+				logger.debug("Pre-processing: {}", paramMap);
+				RequestProcessorUtil.addNameValuePairToMap(paramMap, "fq", nameValuePair);
+				logger.debug("Post-processing: {}", paramMap);
+				
+				logger.debug("Pre-processing: {}", CollectionUtils.size(nameValuePairs));
+				nameValuePairs.add(nameValuePair);
+				logger.debug("Post-processing: {}", CollectionUtils.size(nameValuePairs));
+				nameValuePairs.remove(new BasicNameValuePair(getRequestParamName(), swValues));
+			}else{
+				logger.error("No search within applied for {}={}", getRequestParamName(), swValues);
+			}
 		}
 	}
 }

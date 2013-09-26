@@ -27,6 +27,8 @@
 			<security:intercept-url pattern="/ajaxsolr/**" access="permitAll" />
 			
 			<!-- Exclude web service and entry point from authentication -->
+			<security:intercept-url pattern="/search/**" access="permitAll" />
+			<security:intercept-url pattern="/enterpriseSearch/**" access="permitAll" />
 			<security:intercept-url pattern="/login.jsp*" access="permitAll" />
 			<security:intercept-url pattern="/**" access="isAuthenticated()"/>
 

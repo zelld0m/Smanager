@@ -9,5 +9,5 @@ import org.apache.http.NameValuePair;
 
 public interface RequestProcessor {
 	public boolean isEnabled();
-	public void process(HttpServletRequest request, Map<String, List<NameValuePair>> paramMap);
+	public void process(HttpServletRequest request, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs);
 }
