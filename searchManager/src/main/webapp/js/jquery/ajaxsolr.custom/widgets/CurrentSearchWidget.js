@@ -33,7 +33,7 @@
 			links.push(AjaxSolr.theme('createLink', "Search keyword: " + keyword, self.removeKeyword(keyword)));
 			
 			var fq = self.manager.store.values('fq');
-			var searchWithin = self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"];
+			var searchWithin = GLOBAL_searchWithinEnabled || self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"];
 			var dynamicAttr = self.manager.widgets['dynamicAttribute'].attribMap;
 			
 			for (var i = 0, l = fq.length; i < l; i++) {
@@ -48,7 +48,7 @@
 				!$.isEmptyObject(pcmgSelector) && pcmgSelector.length > 0;
 				
 				
-				if (facetValue === searchWithin){
+				if (!GLOBAL_searchWithinEnabled && facetValue === searchWithin){
 					links.push(AjaxSolr.theme('createLink', "Search Within: " + facetValue  , self.removeFacetTemplate(facetValue), "single"));
 				}else if(GLOBAL_storeFacetTemplate === filterFieldName){ // Facet Hierarchical display
 					var facetTempVal = facetValue.substr(GLOBAL_storeFacetTemplate.length + 1);
@@ -130,6 +130,21 @@
 				}
 			}
 
+			var multiSearchWithin = GLOBAL_searchWithinEnabled && self.manager.widgets[WIDGET_ID_searchWithin];
+
+			if (multiSearchWithin && !multiSearchWithin.isEmpty()) {
+				links.push(AjaxSolr.theme('createLink', "Search Within", self.removeSearchWithin(), "removeMultiple"));
+
+				$.each(multiSearchWithin.params, function(idx) {
+					if (this.length > 0) {
+						links.push(AjaxSolr.theme('createLink', multiSearchWithin.getLabel(idx), self.removeSearchWithin(idx), "level1"));
+						$.each(this, function(){
+							links.push(AjaxSolr.theme('createLink', this.toString(), self.removeSearchWithin(idx, this.toString()), "level2"));
+						});
+					}
+				});
+			}
+
 			if(links.length > 0){
 				$(self.target).append(AjaxSolr.theme('createFacetHolder', "Current Selection", self.id));
 
@@ -168,7 +183,7 @@
 			var self = this;
 			return function () {
 				if (self.manager.store.removeByValue('fq', facetValue)) {
-					if (facetValue === self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"]) {
+					if (!GLOBAL_searchWithinEnabled && facetValue === self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"]) {
 						self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
 					}
 					self.manager.doRequest(0);
@@ -203,7 +218,12 @@
 			var self = this;
 			return function () {
 				if (self.manager.store.removeByValue('q', keyword)) {
-					self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
+					if (GLOBAL_searchWithinEnabled) {
+						self.manager.widgets[WIDGET_ID_searchWithin].clear();
+						self.manager.store.remove(self.manager.widgets[WIDGET_ID_searchWithin].paramName);
+					} else {
+						self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
+					}
 					self.manager.store.remove('fq');
 					self.manager.doRequest(0);
 				}
@@ -214,6 +234,12 @@
 		removeAllFilters: function() { 
 			var self = this;
 			return function () {
+				if (GLOBAL_searchWithinEnabled) {
+					self.manager.widgets[WIDGET_ID_searchWithin].clear();
+					self.manager.store.remove(self.manager.widgets[WIDGET_ID_searchWithin].paramName);
+				} else {
+					self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
+				}
 				self.manager.store.remove('fq');
 				self.manager.doRequest(0);
 				return false;
@@ -229,7 +255,23 @@
 				self.manager.doRequest(0);
 				return false;
 			};
-		} 
+		},
+
+		// Use only for multi search within version
+		removeSearchWithin: function(type, text) {
+			return function() {
+				if (GLOBAL_searchWithinEnabled) {
+					var widget = this.manager.widgets[WIDGET_ID_searchWithin];
+					this.manager.store.remove(widget.paramName);
+
+					widget.clear(type, text);
+					widget.isEmpty() || this.manager.store.addByValue(widget.paramName, widget.paramsAsString());
+
+					this.manager.doRequest(0);
+				}
+				return false;
+			}.bind(this);
+		}
 	});
 
 })(jQuery);

@@ -5,18 +5,20 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 	<script type="text/javascript">
+	 	var WIDGET_ID_redirectUrl = 'redirectUrl';
+        var WIDGET_ID_redirectUrlToggle = 'redirectUrlToggle';
 		var WIDGET_ID_searchWithin = 'searchWithin';
 		var WIDGET_ID_searchKeyword = 'searchKeyword';
 		var WIDGET_ID_searchResult = 'searchResult';
 		var WIDGET_ID_cnetFacet = 'cnetFacet';
 		var WIDGET_ID_pager = 'pager';
-	
+		var WIDGET_TARGET_redirectUrl = '#redirectUrl';
+        var WIDGET_TARGET_redirectUrlToggle = '#redirectUrlToggle';
 		var WIDGET_TARGET_searchWithin = '#searchWithin';
 		var WIDGET_TARGET_searchResult = '#docs';
 		var WIDGET_TARGET_searchKeyword = '#searchKeyword';
 		var WIDGET_TARGET_cnetFacet = '#cnetFacets';
 		var WIDGET_TARGET_pager = '#top-pager,#bottom-pager';
-	
 		var WIDGET_TEXTDEFAULT_searchKeyword = 'Enter Keyword';
 		var WIDGET_TEXTDEFAULT_searchWithin = 'Search Within';
 	</script>
@@ -53,6 +55,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/AdRotatorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicAttributeWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/MultiSearchWithinWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchWithinWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/ProductConditionSelectorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/ProductAttributeFilterWidget.js" />" ></script>
@@ -60,6 +63,8 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/AnimatedTagCloudWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/RuleSelectorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CNETFacetWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/RedirectUrlWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/RedirectUrlToggleWidget.js" />" ></script>
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.js" />" ></script>
   
@@ -86,6 +91,23 @@
 	
     <!-- Start Right Side -->	  
 	<div class="floatL w730 marL10 marT27" style="min-height:550px">
+		   <!-- Redirect Url Widget -->
+    <div id="redirectUrlDiv" style="display: none; overflow: auto;">
+        <div class="floatL w150 padT5" style="width: 100%;">
+            URL:&nbsp;<span id="redirectUrlTextDiv"></span>
+            <span id="redirectUrlLoading" class="circlePreloader" style="display:none">
+                <img src="<spring:url value="/images/ajax-loader-rect.gif" />">
+            </span>
+        </div>
+
+        <div id="IframeWrapper" style="position: relative;">
+            <div id="iframeBlocker" style="position: absolute; top: 0; left: 0; width: 750px; height: 500px; background-color: white; opacity: 0.0;">
+            </div>
+        </div>
+        <iframe id="redirectUrlDivIFrame" style="border: 0px; width: 750px; height: 450px;" 
+                src="about:blank" scrolling="no" onload="$('#redirectUrlLoading').hide();"></iframe>
+    </div>
+    
 		  <!-- Text Widget -->
 		  <div id="search" class="floatL w730 titlePlacer marB10">
 			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>
@@ -95,7 +117,7 @@
 			</div>			         	
 		  </div>
            
-		   <!-- Rule Selector Widget -->
+		   <!-- Rule Selector Widget && Redirect URL Toggle Widget  -->
 		   <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
 		   		<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR">
 	        	 	<div id="searchKeyword"></div>		        	
@@ -106,6 +128,12 @@
 			        	<select id="rankingRule" class="w178 marT5"></select>
 		        	</div>	        	
 			  	</div>
+			  	<div id="redirectUrlToggle" class="floatL w350">
+            <div class="floatL w150 padT5">Query Cleaning:</div>
+            <div class="floatL w200 padT5">
+                <input id="enableRedirectToPage" type="checkbox"/>&nbsp;Enable Redirect To Page
+            </div>
+        </div>
 	      </div>
 		  
 		  <!-- Active Rule Widget -->
@@ -171,5 +199,5 @@
 		  </div>
  </div>
 <!-- End Right Side -->	  
-	
+
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

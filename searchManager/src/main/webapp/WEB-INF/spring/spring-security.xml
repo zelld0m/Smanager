@@ -8,23 +8,29 @@
         					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<!-- This is where we configure Spring-Security -->
-	<security:http auto-config="false" use-expressions="true" access-denied-page="/denied/" entry-point-ref="authenticationEntryPoint">
+	<security:http  auto-config="false" 
+					use-expressions="true"
+					access-denied-page="/denied/" 
+					entry-point-ref="authenticationEntryPoint">
 
-		<!-- Role-dependent pages -->
-		<security:intercept-url pattern="/production/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
-    	<security:intercept-url pattern="/approval/**" access="isAuthenticated() and hasRole('APPROVE_RULE')" />
-    	<security:intercept-url pattern="/import/**" access="isAuthenticated() and hasRole('CREATE_RULE')" />
-    	<security:intercept-url pattern="/export/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
-    	<security:intercept-url pattern="/security/**" access="isAuthenticated() and hasRole('MANAGE_USER')" />
-		<!-- Make CSS and image resources to unsecured -->
-		<security:intercept-url pattern="/css/**" access="permitAll" />
-		<security:intercept-url pattern="/images/**" access="permitAll" />
-		<security:intercept-url pattern="/tz/**" access="permitAll" />
-		<security:intercept-url pattern="/ajaxsolr/**" access="permitAll" />
-		<!-- Exclude web service and entry point from authentication -->
-		<security:intercept-url pattern="/search/**" access="permitAll" />
-		<security:intercept-url pattern="/login.jsp*" access="permitAll" />
-		<security:intercept-url pattern="/**" access="isAuthenticated()"/>
+			<!-- Role-dependent pages -->
+			<security:intercept-url pattern="/production/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
+			<security:intercept-url pattern="/approval/**" access="isAuthenticated() and hasRole('APPROVE_RULE')" />
+			<security:intercept-url pattern="/import/**" access="isAuthenticated() and hasRole('CREATE_RULE')" />
+			<security:intercept-url pattern="/export/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
+			<security:intercept-url pattern="/security/**" access="isAuthenticated() and hasRole('MANAGE_USER')" />
+			
+			<!-- Make CSS and image resources to unsecured -->
+			<security:intercept-url pattern="/css/**" access="permitAll" />
+			<security:intercept-url pattern="/images/**" access="permitAll" />
+			<security:intercept-url pattern="/tz/**" access="permitAll" />
+			<security:intercept-url pattern="/ajaxsolr/**" access="permitAll" />
+			
+			<!-- Exclude web service and entry point from authentication -->
+			<security:intercept-url pattern="/search/**" access="permitAll" />
+			<security:intercept-url pattern="/enterpriseSearch/**" access="permitAll" />
+			<security:intercept-url pattern="/login.jsp*" access="permitAll" />
+			<security:intercept-url pattern="/**" access="isAuthenticated()"/>
 
 		<security:logout invalidate-session="true" logout-success-url="/login.jsp" logout-url="/logout" />
 

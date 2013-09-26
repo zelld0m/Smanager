@@ -26,7 +26,18 @@
 			}));
 		}
 
-		Manager.addWidget(new AjaxSolr.SearchWithinWidget({
+		Manager.addWidget(new AjaxSolr.RedirectUrlWidget({
+            id: WIDGET_ID_redirectUrl,
+            target: WIDGET_TARGET_redirectUrl
+        }));
+        
+        Manager.addWidget(new AjaxSolr.RedirectUrlToggleWidget({
+            id: WIDGET_ID_redirectUrlToggle,
+            target: WIDGET_TARGET_redirectUrlToggle,
+            minCharRequired: 2
+        }));
+        
+		Manager.addWidget(new AjaxSolr[GLOBAL_searchWithinEnabled ? "MultiSearchWithinWidget" : "SearchWithinWidget"]({
 			id: WIDGET_ID_searchWithin,
 			target: WIDGET_TARGET_searchWithin,
 			defaultText: WIDGET_TEXTDEFAULT_searchWithin,

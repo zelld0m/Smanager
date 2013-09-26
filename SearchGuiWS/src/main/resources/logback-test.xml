@@ -1,64 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-		<resetJUL>true</resetJUL>
-	</contextListener>
-
-	<!-- To enable JMX Management -->
-	<jmxConfigurator />
-
-    <!-- SMTP -->
-	<appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
-		<smtpHost>ADDRESS-OF-YOUR-SMTP-HOST</smtpHost>
-		<to>SearchManagerDevTeam@pcm.com</to>
-		<to>ANOTHER_EMAIL_DESTINATION</to> <!-- additional destinations are possible -->
-		<from>searchteam@pcm.com</from>
-		<subject>TESTING: %logger{20} - %m</subject>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %.-1level | %c{0}:%L | %m%n</pattern>
-		</layout>
-	</appender>
-  
-    <!-- CONSOLE -->
-	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %.-1level | %c{0}:%L | %m%n</pattern>
-		</encoder>
-	</appender>
-
-	<!-- FILE -->
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+ 
+    <!-- To enable JMX Management -->
+    <jmxConfigurator/>
+    
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
 		<file>SearchGUIWS.log</file>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- daily rollover -->
 			<fileNamePattern>%d{yyyy-MM-dd}.SearchGUIWS.log</fileNamePattern>
-	
 			<!-- keep 30 days' worth of history -->
 			<maxHistory>15</maxHistory>
 		</rollingPolicy>
-	
 		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %.-1level | %c{0}:%L | %m%n</pattern>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
 		</encoder>
-	</appender> 
-
-	<!-- START LOGGING -->	
-	<logger name="org.springframework" additivity="false" level="info">
-		<appender-ref ref="CONSOLE" />
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<logger name="org.springframework.beans" additivity="false" level="debug">
-		<appender-ref ref="CONSOLE" />
-	</logger>
-
-	<logger name="com.search" additivity="false" level="debug">
-		<appender-ref ref="CONSOLE" />
-		<appender-ref ref="FILE" />
-	</logger>
-
-	<root level="warn">
-		<appender-ref ref="FILE" />
-	</root>
-	<!-- END LOGGING -->	
+	</appender>
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+		</encoder>
+	</appender>
+ 
+    <root level="trace">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
 </configuration>

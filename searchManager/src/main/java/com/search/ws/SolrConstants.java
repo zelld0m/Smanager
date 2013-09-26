@@ -60,6 +60,10 @@ public class SolrConstants {
 	public final static String TAG_REDIRECT_REPLACEMENT_KEYWORD = "replacement_keyword";
 	public final static String TAG_REDIRECT_REPLACEMENT_TYPE = "message_type";
 	public final static String TAG_REDIRECT_CUSTOM_TEXT = "custom_text";
+	public final static String TAG_REDIRECT_DIRECT_HIT = "direct_hit";
+	public final static String TAG_REDIRECT_REDIRECT_URL = "redirect_url";
+	public final static String TAG_REDIRECT_FILTER = "redirect_filter";
+	public final static String TAG_REDIRECT_CONDITION = "condition";
 	
 	public final static String TAG_BANNER = "Banner";
 	public final static String TAG_REDIRECT_ID = "Redirect_Id";
@@ -117,6 +121,8 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_DISABLE_DID_YOU_MEAN = "disableDidYouMean";
 	public final static String SOLR_PARAM_DISABLE_BANNER = "disableBanner";
 	public final static String SOLR_PARAM_SIMULATE_DATE = "simCurrDate";
+	
+	public final static String SOLR_PARAM_ENABLE_REDIRECT_TO_PAGE = "enableRedirectToPage";
 	
 	public final static String SOLR_PARAM_FACET_NAME 			= "facet-name";
 	public final static String SOLR_PARAM_FACET_TEMPLATE 		= "facet-template";
