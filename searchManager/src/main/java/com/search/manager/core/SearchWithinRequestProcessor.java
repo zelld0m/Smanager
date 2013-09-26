@@ -156,12 +156,11 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 
 		try {
 			JSONObject swJSONParam = (JSONObject)slurper.parseText(swValues);
-
 			for(String allowedSWParam: getSearchWithinType()){
 				if(StringUtils.isNotBlank(allowedSWParam)){
 					List<String> swParamList = new ArrayList<String>();
-					JSONArray jsonArray = null; 
-					if(swJSONParam.containsKey(allowedSWParam) && !JSONUtils.isNull(jsonArray=swJSONParam.getJSONArray(allowedSWParam))){
+					JSONArray jsonArray = swJSONParam.getJSONArray(allowedSWParam); 
+					if(swJSONParam.containsKey(allowedSWParam) && !JSONUtils.isNull(jsonArray) && !jsonArray.isEmpty()){
 						swParamList = (List<String>) JSONSerializer.toJava(jsonArray);
 					}
 
