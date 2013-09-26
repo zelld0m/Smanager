@@ -26,7 +26,7 @@
 			}));
 		}
 
-		Manager.addWidget(new AjaxSolr.SearchWithinWidget({
+		Manager.addWidget(new AjaxSolr[GLOBAL_searchWithinEnabled ? "MultiSearchWithinWidget" : "SearchWithinWidget"]({
 			id: WIDGET_ID_searchWithin,
 			target: WIDGET_TARGET_searchWithin,
 			defaultText: WIDGET_TEXTDEFAULT_searchWithin,

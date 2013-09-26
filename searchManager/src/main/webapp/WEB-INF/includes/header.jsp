@@ -78,6 +78,9 @@
 	var GLOBAL_storeDefaultBannerSize = GLOBAL_storeParameters["storeDefaultBannerSize"];
 	var GLOBAL_storeAllowedBannerSizes = GLOBAL_storeParameters["storeAllowedBannerSizes"];
 	var GLOBAL_storeDefaultBannerLinkPathProtocol = GLOBAL_storeParameters["storeDefaultBannerLinkPathProtocol"];
+	var GLOBAL_searchWithinEnabled = GLOBAL_storeParameters["searchWithinEnabled"];
+	var GLOBAL_searchWithinTypes = GLOBAL_storeParameters["searchWithinTypes"];
+	var GLOBAL_searchWithinParamName = GLOBAL_storeParameters["searchWithinParamName"];
 	
 	var GLOBAL_storeGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
 	var GLOBAL_storeGroupTotal = GLOBAL_storeGroupMembership.length;
