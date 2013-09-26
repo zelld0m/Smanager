@@ -255,7 +255,7 @@
 				self.manager.doRequest(0);
 				return false;
 			};
-		} 
+		},
 
 		// Use only for multi search within version
 		removeSearchWithin: function(type, text) {
