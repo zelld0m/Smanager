@@ -133,5 +133,8 @@
                 </property>
             </properties>
         </module>
+        <module name="searchwithin" title="Search Within">
+            
+        </module>
     </store>
 </store-properties>

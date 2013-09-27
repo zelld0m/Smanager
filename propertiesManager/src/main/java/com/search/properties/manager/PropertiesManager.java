@@ -1,5 +1,6 @@
 package com.search.properties.manager;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import com.search.properties.manager.model.StoreProperties;
 import com.search.properties.manager.model.StorePropertiesFile;
 import com.search.properties.manager.model.StoreProperty;
 import com.search.properties.manager.util.PropertiesManagerUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Controls the loading and reading of the store properties.
@@ -35,6 +37,8 @@ public class PropertiesManager {
 
     private static final Logger logger =
             LoggerFactory.getLogger(PropertiesManager.class);
+    @Autowired
+    private SolrXmlReader solrXmlReader;
     private String storePropertiesLocation;
     private String storePropertiesSaveLocation;
 
@@ -67,7 +71,10 @@ public class PropertiesManager {
     public StoreProperties getStoreProperties() throws PropertyException {
         StoreProperties storeProperties = getStorePropertiesFromXML();
         List<Store> stores = storeProperties.getStores();
-
+        
+        // removes the unexisting store in the StoreProperties object
+        removeUnexistingStoreById(storeProperties);
+        
         for (Store store : stores) {
             if (PropertiesManagerUtil.hasParent(store)) {
                 Store parentStore = PropertiesManagerUtil.getParent(store,
@@ -76,10 +83,31 @@ public class PropertiesManager {
                 // add the parent store modules
                 addParentStoreModules(parentStore, store);
             }
-
         }
 
         return storeProperties;
+    }
+
+    /**
+     * This helper method removes the store that is not on the store ids passed
+     *
+     * @param storeProperties the {@link StoreProperties} object
+     */
+    private void removeUnexistingStoreById(StoreProperties storeProperties) {
+        List<Store> revisedStoreList = Lists.newArrayList();
+        List<String> storeIds = solrXmlReader.getStoreIds();
+
+        for (String storeId : storeIds) {
+            try {
+                Store store = PropertiesManagerUtil.getStoreById(storeId,
+                        storeProperties);
+                revisedStoreList.add(store);
+            } catch (PropertyException e) {
+                // NOTHING TO DO HERE!
+            }
+        }
+
+        storeProperties.setStores(revisedStoreList);
     }
 
     /**
@@ -134,7 +162,7 @@ public class PropertiesManager {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
-        
+
         try {
             properties.store(new FileOutputStream(filePath), null);
         } catch (IOException e) {
@@ -144,6 +172,7 @@ public class PropertiesManager {
 
     /**
      * Helper method for creating a directory and file specified if not existing
+     *
      * @param filePath the file path
      * @throws IOException when the file path cannot be created
      */
