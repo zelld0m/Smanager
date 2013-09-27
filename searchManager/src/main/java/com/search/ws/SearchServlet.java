@@ -1,6 +1,7 @@
 package com.search.ws;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,8 +29,11 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -56,8 +60,6 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.SearchLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SearchServlet extends HttpServlet {
 
@@ -702,22 +704,17 @@ public class SearchServlet extends HttpServlet {
 	}
 	
 	public String getQueryKeyword(String url) {
-		String query = null;
-		String[] params = url.split("&");
 		try {
-			for(String param: params) {
-				if(param.contains("q=")) {
-					if(param.split("=").length > 1) {
-						query = param.split("=")[1];
-					}
-					break;
+			List<NameValuePair> args = URLEncodedUtils.parse(url, Charset.defaultCharset());
+			for(NameValuePair arg : args) {
+				if (arg.getName().equalsIgnoreCase("q")) {
+					return arg.getValue();
 				}
 			}
 		} catch(Exception e) {
 			logger.warn("Error parsing q for redirect to page url: " + url, e);
 		}
-		
-		return query;
+		return null;
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -1010,8 +1007,32 @@ public class SearchServlet extends HttpServlet {
 								}
 								validRedirect = false;
 							}
-
-							if(!validRedirect) {
+							
+							if (validRedirect) {
+								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS));
+								paramMap.remove(SolrConstants.SOLR_PARAM_ROWS);
+								
+								// set number of requested rows to 0
+								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0");
+								addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
+								nameValuePairs.add(nvp);
+								
+								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_FACET));
+								paramMap.remove(SolrConstants.SOLR_PARAM_FACET);
+								
+								// set facet to false
+								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FACET, "false");
+								addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_FACET, nvp);
+								nameValuePairs.add(nvp);
+								
+								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DEBUG_QUERY));
+								paramMap.remove(SolrConstants.SOLR_PARAM_DEBUG_QUERY);
+								
+								// set debugQuery to false
+								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_DEBUG_QUERY, "false");
+								addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_DEBUG_QUERY, nvp);
+								nameValuePairs.add(nvp);
+							} else {
 								isRedirectToPage = false;
 								redirect = null;
 								appliedRedirect = null;
