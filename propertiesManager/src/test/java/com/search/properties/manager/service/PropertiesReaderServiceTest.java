@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version 1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/spring-context.xml")
+@ContextConfiguration("/spring-context-test.xml")
 public class PropertiesReaderServiceTest {
 
     @Autowired
@@ -36,11 +36,6 @@ public class PropertiesReaderServiceTest {
     public void setup() {
         assertNotNull(propertiesReaderService);
         assertNotNull(propertiesManager);
-
-        propertiesManager.setStorePropertiesLocation(
-                "src/test/resources/home/solr/conf/store-properties.xml");
-        propertiesManager.setStorePropertiesSaveLocation(
-                "src/test/resources/home/solr/conf");
 
         storePropertiesFiles = propertiesReaderService.readAllStorePropertiesFiles(
                 "pcmall");

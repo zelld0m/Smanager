@@ -2,6 +2,7 @@ package com.search.properties.manager;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 import org.junit.Test;
@@ -17,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version 1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/spring-context.xml")
+@ContextConfiguration("/spring-context-test.xml")
 public class SolrXmlReaderTest {
     @Autowired
     private SolrXmlReader solrXmlReader;
@@ -29,6 +30,6 @@ public class SolrXmlReaderTest {
         assertNotNull(storeIds);
         
         assertTrue(storeIds.contains("pcmall"));
-        assertTrue(storeIds.contains("macmall"));
+        assertFalse(storeIds.contains("macmall"));
     }
 }

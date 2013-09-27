@@ -101,4 +101,6 @@
             </properties>
         </module>
     </store>
+    
+    <store id="macmall" extends="pcmall"/>
 </store-properties>
