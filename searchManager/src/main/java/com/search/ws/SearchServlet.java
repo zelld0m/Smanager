@@ -136,7 +136,26 @@ public class SearchServlet extends HttpServlet {
 
 		return null;
 	}
+	
+	protected static boolean resetNameValuePairFromMapAndList(HashMap<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs, 
+			String paramterName, String value) {
+		nameValuePairs.remove(getNameValuePairFromMap(paramMap, paramterName));
+		paramMap.remove(paramterName);
+		BasicNameValuePair nvp = new BasicNameValuePair(paramterName, value);
+		
+		if (addNameValuePairToMap(paramMap, paramterName, nvp)) {
+			return nameValuePairs.add(nvp);
+		}
+		
+		return false;
+	}
 
+	protected void removeNameValuePairFromMapAndList(HashMap<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs, 
+			String paramterName) {
+		nameValuePairs.remove(getNameValuePairFromMap(paramMap, paramterName));
+		paramMap.remove(paramterName);
+	}
+	
 	protected void setFacetTemplateValues(RedirectRuleCondition condition, Map<String, String> facetMap) {
 		if (condition != null) {
 			condition.setFacetPrefix(facetMap.get(SolrConstants.SOLR_PARAM_FACET_NAME));
@@ -930,8 +949,7 @@ public class SearchServlet extends HttpServlet {
 						keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
 						sk.setKeyword(new Keyword(keyword));
 						// remove the original keyword
-						nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
-						paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+						removeNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_KEYWORD);
 
 						if (StringUtils.isEmpty(keyword)) {
 							sk.setKeyword(null);
@@ -949,12 +967,10 @@ public class SearchServlet extends HttpServlet {
 								appliedRedirect = null;
 								keyword = originalKeyword;
 								sk.setKeyword(new Keyword(keyword));
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
-								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
-								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
-								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
-									nameValuePairs.add(nvp);
-								}
+								
+								// set q to original keyword
+								resetNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_KEYWORD, keyword);
+								
 								// tag active redirect rule as loop
 								for(Map<String, String> activeRule : activeRules) {
 									if(activeRule.containsValue(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT)) {
@@ -971,7 +987,7 @@ public class SearchServlet extends HttpServlet {
 						appliedRedirect = redirect;
 						
 						if (redirect.isRedirectToPage()) { // Direct Hit
-							boolean validRedirect = true;
+							boolean validRedirectToPage = true;
 							
 							if(enableRedirectToPage) {
 								nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
@@ -994,7 +1010,7 @@ public class SearchServlet extends HttpServlet {
 											}
 										}
 										
-										validRedirect = false;
+										validRedirectToPage = false;
 									}
 								}
 							} else {
@@ -1005,48 +1021,28 @@ public class SearchServlet extends HttpServlet {
 										activeRule.put(SolrConstants.TAG_RULE_ACTIVE, "disabledRedirectToPage");
 									}
 								}
-								validRedirect = false;
+								validRedirectToPage = false;
 							}
 							
-							if (validRedirect) {
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS));
-								paramMap.remove(SolrConstants.SOLR_PARAM_ROWS);
-								
+							if (validRedirectToPage) {
+								isRedirectToPage = true;
 								// set number of requested rows to 0
-								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0");
-								addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
-								nameValuePairs.add(nvp);
-								
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_FACET));
-								paramMap.remove(SolrConstants.SOLR_PARAM_FACET);
-								
+								resetNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_ROWS, "0");
 								// set facet to false
-								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FACET, "false");
-								addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_FACET, nvp);
-								nameValuePairs.add(nvp);
-								
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DEBUG_QUERY));
-								paramMap.remove(SolrConstants.SOLR_PARAM_DEBUG_QUERY);
-								
+								resetNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_FACET, "false");
 								// set debugQuery to false
-								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_DEBUG_QUERY, "false");
-								addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_DEBUG_QUERY, nvp);
-								nameValuePairs.add(nvp);
+								resetNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_DEBUG_QUERY, "false");
 							} else {
 								isRedirectToPage = false;
 								redirect = null;
 								appliedRedirect = null;
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.REDIRECT_URL));
-								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
-								paramMap.remove(SolrConstants.REDIRECT_URL);
+								removeNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.REDIRECT_URL);
 								
 								keyword = originalKeyword;
 								sk.setKeyword(new Keyword(keyword));
-								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
-								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
-									nameValuePairs.add(nvp);
-								}
+								
+								// set q to original keyword
+								resetNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_KEYWORD, keyword);
 							}
 						} else if (redirect.isRedirectFilter()) { // Filter
 							StringBuilder builder = new StringBuilder();
@@ -1066,8 +1062,7 @@ public class SearchServlet extends HttpServlet {
 								nameValuePairs.add(redirectFqNvp);
 							}
 							if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
-								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+								removeNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_KEYWORD);
 							}
 						}
 					}
@@ -1085,8 +1080,8 @@ public class SearchServlet extends HttpServlet {
 				logger.error("Failed to get redirect for keyword: {} {}", originalKeyword, e);
 			}
 			
-			// RELEVANCY
 			if(!isRedirectToPage) {
+				// RELEVANCY
 				if (isActiveSearchRule(storeId, RuleEntity.RANKING_RULE)) {
 					// set relevancy filters if any was specified
 					String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
@@ -1300,8 +1295,7 @@ public class SearchServlet extends HttpServlet {
 			String tmp = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_START);
 			if (StringUtils.isNotEmpty(tmp)) {
 				startRow = Integer.valueOf(tmp);
-				nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_START));
-				paramMap.remove(SolrConstants.SOLR_PARAM_START);
+				removeNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_START);
 			}
 			nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, "0");
 			addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_START, nvp);
@@ -1310,15 +1304,10 @@ public class SearchServlet extends HttpServlet {
 			// get number of requested rows
 			tmp = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_ROWS);
 			int requestedRows = StringUtils.isNotEmpty(tmp) && StringUtils.isNumeric(tmp)? Integer.valueOf(tmp) : 25;
-			
-			nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS));
-			paramMap.remove(SolrConstants.SOLR_PARAM_ROWS);
 			solrHelper.setRequestRows(startRow, requestedRows);
-
+			
 			// set number of requested rows to 0
-			nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0");
-			addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
-			nameValuePairs.add(nvp);
+			resetNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_ROWS, "0");
 
 			// collate exclude list
 			if (excludeList != null && !excludeList.isEmpty()) {
