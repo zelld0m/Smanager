@@ -75,7 +75,7 @@ public class PropertiesManagerServiceTest {
     }
 
     @Test(expected = PropertyException.class)
-    public void testGetStoreProperties_No_Macmall_Store_Throw_PropertiesException() {
+    public void testGetStoreProperties_No_Macmall_Store_Throw_PropertyException() {
         PropertiesManagerUtil.getStoreById("macmall", storeProperties);
     }
 }
