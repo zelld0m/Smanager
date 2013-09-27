@@ -9,14 +9,18 @@
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
-        <constructor-arg name="storePropertiesLocation" value="/home/solr/store-properties.xml"/>
-        <constructor-arg name="storePropertiesSaveLocation" value="/home/solr/conf"/>
-    </bean>
-
     <context:annotation-config />
 
     <!-- Scans within the base package of the application for @Components to 
     configure as beans, @Controller, @Service, @Configuration, etc. -->
     <context:component-scan base-package="com.search.properties.manager" />
+    
+    <bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
+        <constructor-arg name="storePropertiesLocation" value="/home/solr/store-properties.xml"/>
+        <constructor-arg name="storePropertiesSaveLocation" value="/home/solr/conf"/>
+    </bean>
+    
+    <bean id="solrXmlReader" class="com.search.properties.manager.SolrXmlReader">
+        <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
+    </bean>
 </beans>
