@@ -18,7 +18,9 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_SORT = "sort";
 	public final static String SOLR_PARAM_QUERY_TYPE = "qt";
 	public final static String SOLR_PARAM_FACET_FIELD = "facet.field";
-
+	public final static String SOLR_PARAM_FACET = "facet";
+	public final static String SOLR_PARAM_DEBUG_QUERY = "debugQuery";
+	
 	public final static String SOLR_PARAM_GUI = "gui";
 
 	public final static String SOLR_PARAM_VALUE_JSON = "json";
