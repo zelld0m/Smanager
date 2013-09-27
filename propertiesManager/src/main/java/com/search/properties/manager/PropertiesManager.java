@@ -1,6 +1,7 @@
 package com.search.properties.manager;
 
 import com.google.common.collect.Lists;
+import com.search.properties.manager.exception.NotDirectoryException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -71,10 +72,10 @@ public class PropertiesManager {
     public StoreProperties getStoreProperties() throws PropertyException {
         StoreProperties storeProperties = getStorePropertiesFromXML();
         List<Store> stores = storeProperties.getStores();
-        
+
         // removes the unexisting store in the StoreProperties object
         removeUnexistingStoreById(storeProperties);
-        
+
         for (Store store : stores) {
             if (PropertiesManagerUtil.hasParent(store)) {
                 Store parentStore = PropertiesManagerUtil.getParent(store,
@@ -131,23 +132,102 @@ public class PropertiesManager {
     }
 
     /**
+     * Creates the appropriate properties files if not existing yet with initial
+     * properties from store-properties.xml
+     */
+    public void saveStoreProperties() {
+        StoreProperties storeProperties = getStoreProperties();
+        List<Store> stores = storeProperties.getStores();
+
+        for (Store store : stores) {
+            // save the store properties by store modules
+            savePropertiesByModule(store);
+        }
+    }
+
+    /**
+     * Saves the store properties files based from the {@link Module} objects of a
+     * {@link Store}
+     *
+     * @param store the {@link Store} object
+     */
+    private void savePropertiesByModule(Store store) {
+        String storeId = store.getId();
+        List<Module> modules = store.getModules();
+
+        for (Module module : modules) {
+            Properties properties = getPropertiesByModule(module, storeId);
+            String moduleName = module.getName();
+            
+            try {
+                String filePath = PropertiesManagerUtil.getFormattedSaveLocation(
+                        getStorePropertiesSaveLocation(), storeId, moduleName);
+
+                // save the properties file to the appropriate directory
+                savePropertiesFile(properties, filePath);
+            } catch (NotDirectoryException e) {
+                logger.error(String.format("%s is not a valid file path", 
+                        e.getFile().getPath()), e);
+            }
+        }
+    }
+
+    /**
+     * Helper method for creating a {@link Properties} object based from a {@link Module}
+     * object
+     *
+     * @param module the {@link Module} object
+     * @param storeId the store id
+     * @return {@link Properties} object populated with the properties of a {@link Module}
+     * object
+     */
+    private Properties getPropertiesByModule(Module module, String storeId) {
+        Properties properties = new Properties();
+
+        List<Property> moduleProperties = module.getProperties();
+        for (Property property : moduleProperties) {
+            String propertyId = property.getId();
+            String propertyDefaultValue = property.getDefaultValue();
+
+            properties.put(propertyId, propertyDefaultValue);
+        }
+
+        return properties;
+    }
+
+    /**
      * Saves the store properties to their designated store specific properties file
      *
      * @param storePropertiesFiles the store properties to save
      */
     public void saveStoreProperties(List<StorePropertiesFile> storePropertiesFiles) {
         for (StorePropertiesFile storePropertiesFile : storePropertiesFiles) {
-            List<StoreProperty> storeProperties = storePropertiesFile.
-                    getStoreProperties();
-            Properties properties = new Properties();
-
-            for (StoreProperty storeProperty : storeProperties) {
-                properties.setProperty(storeProperty.getName(), storeProperty.getValue());
-            }
+            Properties properties = getPropertiesByStorePropertiesFile(
+                    storePropertiesFile);
 
             // save the properties file
             savePropertiesFile(properties, storePropertiesFile.getFilePath());
         }
+    }
+
+    /**
+     * Helper method for creating a {@link Properties} object based from the
+     * {@link Property} objects of a {@link StorePropertiesFile} object
+     *
+     * @param storePropertiesFile the {@link StorePropertiesFile} object
+     * @return {@link Properties} object populated with the properties of a
+     * {@link StorePropertiesFile} object
+     */
+    private Properties getPropertiesByStorePropertiesFile(
+            StorePropertiesFile storePropertiesFile) {
+        Properties properties = new Properties();
+        List<StoreProperty> storeProperties = storePropertiesFile.getStoreProperties();
+
+        for (StoreProperty storeProperty : storeProperties) {
+            properties.setProperty(storeProperty.getName(), storeProperty.getValue());
+        }
+
+        return properties;
     }
 
     /**

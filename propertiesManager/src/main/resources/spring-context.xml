@@ -16,7 +16,7 @@
     <context:component-scan base-package="com.search.properties.manager" />
     
     <bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
-        <constructor-arg name="storePropertiesLocation" value="/home/solr/store-properties.xml"/>
+        <constructor-arg name="storePropertiesLocation" value="/home/solr/conf/store-properties.xml"/>
         <constructor-arg name="storePropertiesSaveLocation" value="/home/solr/conf"/>
     </bean>
     

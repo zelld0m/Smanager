@@ -34,7 +34,15 @@ public class PropertiesManagerService {
     public StoreProperties getStoreProperties() {
         return propertiesManager.getStoreProperties();
     }
-
+    
+    /**
+     * Creates the appropriate properties files if not existing yet with initial
+     * properties from store-properties.xml
+     */
+    public void saveStoreProperties() {
+        propertiesManager.saveStoreProperties();
+    }
+    
     /**
      * Stores the properties in their specific properties file
      * @param storePropertiesFile the properties file to save
@@ -42,12 +50,4 @@ public class PropertiesManagerService {
     public void saveStoreProperties(List<StorePropertiesFile> storePropertiesFile) {
         propertiesManager.saveStoreProperties(storePropertiesFile);
     }
-    
-//    /**
-//     * Creates the store properties defined in store-properties.xml to the provided store
-//     * properties folder
-//     */
-//    public void createStoreSpecificProperties() {
-//        propertiesManager.createStoreSpecificProperties();
-//    }
 }

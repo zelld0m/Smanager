@@ -38,7 +38,7 @@ public class PropertiesManagerUtil {
 
         File file = new File(storeSaveLocation);
         if (!file.isDirectory()) {
-            throw new NotDirectoryException(String.format("%s is not a directory",
+            throw new NotDirectoryException(file, String.format("%s is not a directory",
                     storeSaveLocation));
         }
 
