@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <store-properties>
+    <store id="ecost" extends="pcmall">
+        <properties>
+            <property id="site_domain" type="String">
+                <label>New Site Domain</label>
+                <defaultValue>ecost.com</defaultValue>
+            </property>
+            <property id="redirect_self_domain" type="String">
+                <label>Redirect Self Domain</label>
+                <defaultValue>ecost.com</defaultValue>
+            </property>
+        </properties>
+    </store>
     <store id="pcmallcap" extends="pcmall">
         <module name="new_module" title="New">
             <groups>
