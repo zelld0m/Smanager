@@ -15,9 +15,12 @@
             <properties>
                 <property id="site_domain" type="String">
                     <label>New Site Domain</label>
-                    <defaultValue>pcm.com.ph</defaultValue>
+                    <defaultValue>pcmbd.com</defaultValue>
                 </property>
-                
+                <property id="redirect_self_domain" type="String">
+                    <label>Redirect Self Domain</label>
+                    <defaultValue>pcmbd.com</defaultValue>
+                </property>
                 <property id="generate_bananas" type="Boolean">
                     <label>Generate Bananas</label>
                     <defaultValue>true</defaultValue>
@@ -46,7 +49,17 @@
     </store>
     
     <store id="macmall" extends="pcmall">
-        
+        <properties>
+            <property id="site_domain" type="String" required="true">
+                <label>Site Domain</label>
+                <description>Domain of managed site.</description>
+                <defaultValue>macmall.com</defaultValue>
+            </property>
+            <property id="redirect_self_domain" type="String">
+                <label>Redirect Self Domain</label>
+                <defaultValue>macmall.com</defaultValue>
+            </property>
+        </properties>
     </store>
     
     <store id="pcmall">
@@ -92,6 +105,10 @@
                 <group name="Export Feature">
                     <member property-id="export_target"/>
                 </group>
+                <group name="Redirect URL">
+                    <member property-id="redirect_self_domain"/>
+                    <member property-id="redirect_relative_path"/>
+                </group>
             </groups>
             
             <properties>
@@ -126,6 +143,14 @@
                     <label>Export Target</label>
                     <validator>STORE</validator>
                     <defaultValue>pcmallcap,pcmgbd</defaultValue>
+                </property>
+                <property id="redirect_self_domain" type="String">
+                    <label>Redirect Self Domain</label>
+                    <defaultValue>pcm.com</defaultValue>
+                </property>
+                <property id="redirect_relative_path" type="String" multiValued="true">
+                    <label>Redirect Relative Path</label>
+                    <defaultValue>/s, /c, /n, /th, /o, /p, /m, /t, /home</defaultValue>
                 </property>
                 <property id="hoopla" type="String">
                     <label>Hoopla</label>
