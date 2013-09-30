@@ -55,12 +55,22 @@
         </property>
     </bean>
         
+    <bean id="configManager" class="com.search.ws.ConfigManager"
+             factory-method="getInstance">
+        <constructor-arg name="configPath"
+                         value="/home/solr/conf/solr.xml"/>
+    </bean>
+        
     <bean id="propertiesManager"
-              class="com.search.properties.manager.PropertiesManager">
+          class="com.search.properties.manager.PropertiesManager">
         <constructor-arg name="storePropertiesLocation" 
                          value="/home/solr/conf/store-properties.xml"/>
         <constructor-arg name="storePropertiesSaveLocation" 
                          value="/home/solr/conf"/>
+    </bean>
+        
+    <bean id="solrXmlReader" class="com.search.properties.manager.SolrXmlReader">
+        <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
     </bean>
         
     <!--        <util:properties id="globalVarConfig" location="/home/solr/conf/globalvar.properties"/>
