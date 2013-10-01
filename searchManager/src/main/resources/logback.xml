@@ -6,37 +6,135 @@
  
     <!-- To enable JMX Management -->
     <jmxConfigurator/>
- 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-		<file>SearchManager.log</file>
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<level>DEBUG</level>
-			<onMatch>ACCEPT</onMatch>
-			<onMismatch>DENY</onMismatch>
-		</filter>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!-- daily rollover -->
-			<fileNamePattern>%d{yyyy-MM-dd}.SearchManager.log</fileNamePattern>
-			<!-- keep 30 days' worth of history -->
-			<maxHistory>15</maxHistory>
-		</rollingPolicy>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
-		</encoder>
-	</appender>
-	
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<level>INFO</level>
-			<onMatch>ACCEPT</onMatch>
-			<onMismatch>DENY</onMismatch>
-		</filter>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
-		</encoder>
-	</appender>
- 
-    <root level="trace">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
+
+    <!--
+      ============================================================
+      ======================= APPENDERS ==========================
+      ============================================================
+    -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="searchManager-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/tomcat/logs/searchManager.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>searchManager.log.%i.tgz</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>200MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="audit-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/tomcat/logs/audit.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${user.home}/tomcat/logs/audit.log.%i.tgz</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>2MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="security-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/tomcat/logs/security.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${user.home}/tomcat/logs/security.log.%i.tgz</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>2MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="search-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/tomcat/logs/search.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${user.home}/tomcat/logs/search.log.%i.tgz</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>2MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="customRangeEmail-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/tomcat/logs/customRangeEmail.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${user.home}/tomcat/logs/customRangeEmail.log.%i.tgz</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>50MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--
+      ============================================================
+      ======================== LOGGERS ===========================
+      ============================================================
+    -->
+    <logger name="com.search" additivity="false">
+        <appender-ref ref="searchManager-file"/>
+    </logger>
+
+    <logger name="com.search.manager.authentication.session" additivity="false">
+        <appender-ref ref="searchManager-file"/>
+    </logger>
+
+    <logger name="org" additivity="false">
+        <appender-ref ref="searchManager-file"/>
+    </logger>
+
+    <logger name="com.search.manager.aop.LoginInterceptor" additivity="false">
+        <appender-ref ref="audit-file" />
+    </logger>
+
+    <logger name="org.springframework.security.web.authentication" additivity="false">
+        <appender-ref ref="security-file" />
+    </logger>
+
+     <logger name="com.search.manager.utility.SearchLogger" additivity="false">
+        <appender-ref ref="search-file" />
+    </logger>
+
+    <logger name="com.search.manager.mail.SolrSearchRequest" level="TRACE" additivity="false">
+        <appender-ref ref="customRangeEmail-file" />
+    </logger>
+
+    <logger name="com.search.manager.mail.TopKeywordMailCommand" level="TRACE" additivity="false">
+        <appender-ref ref="customRangeEmail-file" />
+    </logger>
+
+    <logger name="com.search.manager.utility.CommandExecutor" additivity="false">
+        <appender-ref ref="customRangeEmail-file" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="searchManager-file" />
     </root>
 </configuration>

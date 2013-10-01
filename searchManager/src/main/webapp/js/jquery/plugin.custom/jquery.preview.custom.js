@@ -366,7 +366,7 @@
 					callback: function(response){
 						if (response.status == 0) {
 							var $tr = $content.find("tr#itemPattern").clone();
-							var data = status.data;
+							var data = response.data;
 							
 							var list1 = data["searchTerms"];
 							for(var i=0; i<list1.length; i++) {
