@@ -218,91 +218,91 @@
             </groups>
             <properties>
                 <property id="searchwithin.enable" type="Boolean">
-                    <label>Search Within Enable</label>
+                    <label>Enabled</label>
                     <defaultValue>true</defaultValue>
                 </property>
                 <property id="searchwithin.paramname" type="String">
-                    <label>Search Within Param Name</label>
+                    <label>Param Name</label>
                     <defaultValue>searchwithin</defaultValue>
                 </property>
                 <property id="searchwithin.type" type="String" multiValued="true">
-                    <label>Search Within Type</label>
+                    <label>Type</label>
                     <defaultValue>includeAll,includeSome,includeExact,excludeAll</defaultValue>
                 </property>
                 <property id="searchwithin.solrfieldlist" type="String" multiValued="true">
-                    <label>Search Within Solr Field List</label>
+                    <label>Solr Field List</label>
                     <defaultValue>PcMall_Name,Description</defaultValue>
                 </property>
                 <property id="searchwithin.typeOperator" type="String">
-                    <label>Search Within Solr Field List</label>
+                    <label>Type Operator</label>
                     <defaultValue>AND</defaultValue>
                 </property>
                 
                 <property id="searchwithin.includeAll.solrFieldOperator" type="String">
-                    <label>Search Within Include All Solr Field Operator</label>
+                    <label>Solr Field Operator</label>
                     <defaultValue>OR</defaultValue>
                 </property>
                 <property id="searchwithin.includeAll.keywordOperator" type="String">
-                    <label>Search Within Include All Keyword Operator</label>
+                    <label>Keyword Operator</label>
                     <defaultValue>AND</defaultValue>
                 </property>
                 <property id="searchwithin.includeAll.quoteKeyword" type="Boolean">
-                    <label>Search Within Include All Quote Keyword</label>
+                    <label>Quote Keyword</label>
                     <defaultValue>false</defaultValue>
                 </property>
                 <property id="searchwithin.includeAll.prefixTypeOperator" type="String">
-                    <label>Search Within Include All Prefix Type Operator</label>
+                    <label>Prefix Type Operator</label>
                     <defaultValue></defaultValue>
                 </property>
                 
                 <property id="searchwithin.includeSome.solrFieldOperator" type="String">
-                    <label>Search Within Include Some Solr Field Operator</label>
+                    <label>Solr Field Operator</label>
                     <defaultValue>OR</defaultValue>
                 </property>
                 <property id="searchwithin.includeSome.keywordOperator" type="String">
-                    <label>Search Within Include Some Keyword Operator</label>
+                    <label>Keyword Operator</label>
                     <defaultValue>OR</defaultValue>
                 </property>
                 <property id="searchwithin.includeSome.quoteKeyword" type="Boolean">
-                    <label>Search Within Include Some Keyword Operator</label>
+                    <label>Quote Keyword</label>
                     <defaultValue>false</defaultValue>
                 </property>
                 <property id="searchwithin.includeSome.prefixTypeOperator" type="String">
-                    <label>Search Within Include Some Keyword Operator</label>
+                    <label>Prefix Type Operator</label>
                     <defaultValue></defaultValue>
                 </property>
                 
                 <property id="searchwithin.includeExact.solrFieldOperator" type="String">
-                    <label>Search Within Include Exact Solr Field Operator</label>
+                    <label>Solr Field Operator</label>
                     <defaultValue>OR</defaultValue>
                 </property>
                 <property id="searchwithin.includeExact.keywordOperator" type="String">
-                    <label>Search Within Include Exact Keyword Operator</label>
+                    <label>Keyword Operator</label>
                     <defaultValue>OR</defaultValue>
                 </property>
                 <property id="searchwithin.includeExact.quoteKeyword" type="Boolean">
-                    <label>Search Within Include Exact Keyword Operator</label>
+                    <label>Quote Keyword</label>
                     <defaultValue>false</defaultValue>
                 </property>
                 <property id="searchwithin.includeExact.prefixTypeOperator" type="String">
-                    <label>Search Within Include Exact Keyword Operator</label>
+                    <label>Prefix Type Operator</label>
                     <defaultValue></defaultValue>
                 </property>
                 
                 <property id="searchwithin.excludeAll.solrFieldOperator" type="String">
-                    <label>Search Within Exclude All Solr Field Operator</label>
+                    <label>Solr Field Operator</label>
                     <defaultValue>OR</defaultValue>
                 </property>
                 <property id="searchwithin.excludeAll.keywordOperator" type="String">
-                    <label>Search Within Exclude All Keyword Operator</label>
+                    <label>Keyword Operator</label>
                     <defaultValue>OR</defaultValue>
                 </property>
                 <property id="searchwithin.excludeAll.quoteKeyword" type="Boolean">
-                    <label>Search Within Exclude All Keyword Operator</label>
+                    <label>Quote Keyword</label>
                     <defaultValue>true</defaultValue>
                 </property>
                 <property id="searchwithin.excludeAll.prefixTypeOperator" type="String">
-                    <label>Search Within Exclude All Keyword Operator</label>
+                    <label>Prefix Type Operator</label>
                     <defaultValue>-</defaultValue>
                 </property>
             </properties>
