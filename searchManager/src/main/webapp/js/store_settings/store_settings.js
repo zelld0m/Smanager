@@ -86,7 +86,7 @@ $(function() {
                             var type = property.type;
                             var fieldToAppend = tabContentFieldTemplate.replace(
                                     /#\{label\}/g, label);
-                            var fieldId = moduleName + "_" + propertyId;
+                            var fieldId = moduleName + "_" + propertyId.replace(/\./g, "_");
 
                             if (type === "String") {
                                 var stringField = stringFieldTemplate.replace(/#\{id\}/g,
@@ -168,7 +168,7 @@ $(function() {
                             var propertyId = property.id;
                             var storeProperty = getStorePropertyByName(propertyId, module,
                                     storePropertiesFiles);
-                            var fieldId = moduleName + "_" + propertyId;
+                            var fieldId = moduleName + "_" + propertyId.replace(/\./g, "_");
 
                             if (storeProperty !== null) {
                                 switch (type) {
