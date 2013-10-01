@@ -1,6 +1,7 @@
 package com.search.manager.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,9 +76,38 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.quoteKeyword",swType)), "false"));
 	}
 
+	public boolean isSplit(String swType){
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.split",swType)), "false"));
+	}
+	
+	public String getSplitRegex(String swType){
+		return cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.splitRegex", swType));
+	}
+	
 	@Override
 	public boolean isEnabled(){
 		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.enable"), "false"));
+	}
+	
+	public List<String> getProcessedKeyword(List<String> keywords, String allowedSwParam){
+		List<String> processedKeywords = new ArrayList<String>();
+		
+		if(isQuoteKeyword(allowedSwParam) || !isSplit(allowedSwParam)){
+			return keywords;
+		}
+		
+		for(String keyword: keywords){
+			if(StringUtils.isNotBlank(keyword) && !(StringUtils.startsWith(keyword, "\"") && StringUtils.endsWith(keyword, "\""))){
+				String[] tokens = keyword.split(getSplitRegex(allowedSwParam));
+				logger.debug("Processing keyword: {}", keyword);
+				logger.debug("Tokens using {}: {}", getSplitRegex(allowedSwParam), StringUtils.join(tokens, "|"));
+				if (ArrayUtils.isNotEmpty(tokens) && tokens.length>0){
+					processedKeywords.addAll(Arrays.asList(tokens));
+				}
+			}
+		}
+		
+		return processedKeywords;
 	}
 
 	public StringBuilder toSolrFq(Map<String, List<String>> swProcessedParams) throws Throwable{
@@ -171,7 +201,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 					}
 
 					if(CollectionUtils.isNotEmpty(swParamList)){
-						swParamsMap.put(allowedSWParam, swParamList);
+						swParamsMap.put(allowedSWParam, getProcessedKeyword(swParamList, allowedSWParam));
 					}
 				}
 			}
