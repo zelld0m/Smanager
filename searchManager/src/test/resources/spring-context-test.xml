@@ -35,6 +35,8 @@
     <bean id="configManager" class="com.search.ws.ConfigManager"
           factory-method="getInstance">
         <constructor-arg name="configPath"
-                         value="/home/solr/conf/solr.xml"/>
+                         value="src/test/resources/home/solr/conf/solr.xml"/>
+        <constructor-arg name="pm"
+                         ref="propertiesManager"/>
     </bean>
 </beans>
