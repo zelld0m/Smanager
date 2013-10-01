@@ -34,13 +34,11 @@ import com.search.properties.manager.model.StoreProperties;
 import com.search.properties.manager.util.PropertiesManagerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ConfigManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
-    private PropertiesManager propertiesManager;
+    private static PropertiesManager propertiesManager;
     private XMLConfiguration xmlConfig;
     private static ConfigManager instance;
     //TODO: will eventually move out if settings is migrated to DB instead of file
@@ -62,16 +60,12 @@ public class ConfigManager {
             xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
             logger.debug("Search Config Folder: " + xmlConfig.getFile().getAbsolutePath());
 
-            ApplicationContext context = new ClassPathXmlApplicationContext("/spring-context.xml");
-            propertiesManager = context.getBean(PropertiesManager.class);
-
             // create the store specific properties if not existing yet
             propertiesManager.saveStoreProperties();
 
-            StoreProperties storeProperties = propertiesManager.getStoreProperties();
-
             // loads the store settings to their respective map
-            loadStoreSettingsToMapFromStoreProperties(storeProperties);
+            loadStoreSettingsToMapFromStoreProperties(propertiesManager.
+                    getStoreProperties());
 
             // server settings
             for (String storeId : getStoreIds()) {
@@ -341,6 +335,12 @@ public class ConfigManager {
             instance = new ConfigManager(configPath);
         }
         return instance;
+    }
+
+    public synchronized static ConfigManager getInstance(String configPath,
+            PropertiesManager pm) {
+        propertiesManager = pm;
+        return getInstance(configPath);
     }
 
     public void setInstance(String configPath) {
