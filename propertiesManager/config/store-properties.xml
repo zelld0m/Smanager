@@ -2,6 +2,10 @@
 <store-properties>
     <store id="ecost" extends="pcmall">
         <properties>
+            <property id="auto_export" type="Boolean">
+                <label>Auto Export</label>
+                <defaultValue>false</defaultValue>
+            </property>
             <property id="site_domain" type="String">
                 <label>New Site Domain</label>
                 <defaultValue>ecost.com</defaultValue>
