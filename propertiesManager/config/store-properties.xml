@@ -90,6 +90,48 @@
                     <member property-id="approvalNotification"/>
                     <member property-id="pushToProdNotification"/>
                 </group>
+                
+                <group name="Mail Workflow">
+                    <member property-id="mail.workflow.cc"/>
+                    <member property-id="mail.workflow.bcc"/>
+                </group>
+                
+                <group>
+                    <member property-id="mail.workflow.approver.group"/>
+                </group>
+                
+                <group name="Pending">
+                    <member property-id="mail.workflow.pendingCc"/>
+                    <member property-id="mail.workflow.pendingBcc"/>
+                </group>
+
+                <group name="Approved">
+                    <member property-id="mail.workflow.approvedCc"/>
+                    <member property-id="mail.workflow.approvedBcc"/>
+                </group>
+                
+                <group name="Rejected">
+                    <member property-id="mail.workflow.rejectedCc"/>
+                    <member property-id="mail.workflow.rejectedBcc"/>
+                </group>
+                
+                <group name="Published">
+                    <member property-id="mail.workflow.publishedCc"/>
+                    <member property-id="mail.workflow.publishedBcc"/>
+                </group>
+                
+                <group name="Unpublished">
+                    <member property-id="mail.workflow.unpublishedCc"/>
+                    <member property-id="mail.workflow.unpublishedBcc"/>
+                </group>
+                
+                <group name="Subject">
+                    <member property-id="mail.workflow.pendingSubject"/>
+                    <member property-id="mail.workflow.approvedSubject"/>
+                    <member property-id="mail.workflow.rejectedSubject"/>
+                    <member property-id="mail.workflow.publishedSubject"/>
+                    <member property-id="mail.workflow.unpublishedSubject"/>
+                </group>
             </groups>
             
             <properties>
@@ -107,6 +149,86 @@
                     <label>Push To Prod Notification</label>
                     <description>Push To Prod Notification</description>
                     <defaultValue>true</defaultValue>
+                </property>
+                
+                <property id="mail.workflow.cc" type="Boolean">
+                    <label>CC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                <property id="mail.workflow.bcc" type="Boolean">
+                    <label>bcc</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="mail.workflow.approver.group" type="Boolean">
+                    <label>Approver Group</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="mail.workflow.pendingCc" type="Boolean">
+                    <label>Pending CC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                <property id="mail.workflow.pendingBcc" type="Boolean">
+                    <label>Pending BCC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="mail.workflow.approvedCc" type="Boolean">
+                    <label>Approved CC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                <property id="mail.workflow.approvedBcc" type="Boolean">
+                    <label>Approved BCC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="mail.workflow.rejectedCc" type="Boolean">
+                    <label>Rejected CC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                <property id="mail.workflow.rejectedBcc" type="Boolean">
+                    <label>Rejected BCC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="mail.workflow.publishedCc" type="Boolean">
+                    <label>Published CC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                <property id="mail.workflow.publishedBcc" type="Boolean">
+                    <label>Published BCC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="mail.workflow.unpublishedCc" type="Boolean">
+                    <label>Unpublished CC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                <property id="mail.workflow.unpublishedBcc" type="Boolean">
+                    <label>Unpublished BCC</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="mail.workflow.pendingSubject" type="Boolean">
+                    <label>Unpublished CC</label>
+                    <defaultValue>Search Manager: Rules Submitted For Approval</defaultValue>
+                </property>
+                <property id="mail.workflow.approvedSubject" type="Boolean">
+                    <label>Unpublished BCC</label>
+                    <defaultValue>Search Manager: Approved Rules</defaultValue>
+                </property>
+                <property id="mail.workflow.rejectedSubject" type="Boolean">
+                    <label>Unpublished CC</label>
+                    <defaultValue>Search Manager: Rejected Rules</defaultValue>
+                </property>
+                <property id="mail.workflow.publishedSubject" type="Boolean">
+                    <label>Unpublished BCC</label>
+                    <defaultValue>Search Manager: Published Rules</defaultValue>
+                </property>
+                <property id="mail.workflow.unpublishedSubject" type="Boolean">
+                    <label>Unpublished BCC</label>
+                    <defaultValue>Search Manager: Un-published Rules</defaultValue>
                 </property>
             </properties>
         </module>
