@@ -158,15 +158,15 @@ public class PropertiesManager {
         for (Module module : modules) {
             Properties properties = getPropertiesByModule(module, storeId);
             String moduleName = module.getName();
-            
+
             try {
                 String filePath = PropertiesManagerUtil.getFormattedSaveLocation(
                         getStorePropertiesSaveLocation(), storeId, moduleName);
 
                 // save the properties file to the appropriate directory
-                savePropertiesFile(properties, filePath);
+                savePropertiesFile(properties, filePath, false);
             } catch (NotDirectoryException e) {
-                logger.error(String.format("%s is not a valid file path", 
+                logger.error(String.format("%s is not a valid file path",
                         e.getFile().getPath()), e);
             }
         }
@@ -231,22 +231,45 @@ public class PropertiesManager {
     }
 
     /**
+     * <p>
      * Save the properties file
+     * </p>
+     * <p>
+     * Note: By default, this overrides the properties file
+     * </p>
      *
      * @param properties the properties file object containing the properties to save
      * @param filePath the file path of the properties file
      */
     private void savePropertiesFile(Properties properties, String filePath) {
+        savePropertiesFile(properties, filePath, true);
+    }
+
+    /**
+     * <p>
+     * Save the properties file
+     * </p>
+     *
+     *  @param properties the properties file object containing the properties to save
+     * @param filePath the file path of the properties file
+     * @param overridePropertiesFile whether to override the properties file or not
+     */
+    private void savePropertiesFile(Properties properties, String filePath,
+            boolean overridePropertiesFile) {
+        boolean isNewFile = false;
+        
         try {
-            createDirectoryAndFileIfNotExisting(filePath);
+            isNewFile = createDirectoryAndFileIfNotExisting(filePath);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
 
-        try {
-            properties.store(new FileOutputStream(filePath), null);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+        if (isNewFile || overridePropertiesFile) {
+            try {
+                properties.store(new FileOutputStream(filePath), null);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 
@@ -256,7 +279,7 @@ public class PropertiesManager {
      * @param filePath the file path
      * @throws IOException when the file path cannot be created
      */
-    private static void createDirectoryAndFileIfNotExisting(String filePath)
+    private static boolean createDirectoryAndFileIfNotExisting(String filePath)
             throws IOException {
         File file = new File(filePath);
 
@@ -266,9 +289,9 @@ public class PropertiesManager {
             if (parent != null) {
                 new File(parent).mkdirs();
             }
-
-            file.createNewFile();
         }
+
+        return file.createNewFile();
     }
 
     /**
