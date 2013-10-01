@@ -21,7 +21,7 @@
     <appender name="searchManager-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${user.home}/tomcat/logs/searchManager.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>searchManager.log.%i.tgz</fileNamePattern>
+            <fileNamePattern>${user.home}/tomcat/logs/searchManager.log.%i.gz</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>5</maxIndex>
         </rollingPolicy>
@@ -36,7 +36,7 @@
     <appender name="audit-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${user.home}/tomcat/logs/audit.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${user.home}/tomcat/logs/audit.log.%i.tgz</fileNamePattern>
+            <fileNamePattern>${user.home}/tomcat/logs/audit.log.%i.gz</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>5</maxIndex>
         </rollingPolicy>
@@ -51,7 +51,7 @@
     <appender name="security-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${user.home}/tomcat/logs/security.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${user.home}/tomcat/logs/security.log.%i.tgz</fileNamePattern>
+            <fileNamePattern>${user.home}/tomcat/logs/security.log.%i.gz</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>5</maxIndex>
         </rollingPolicy>
@@ -66,7 +66,7 @@
     <appender name="search-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${user.home}/tomcat/logs/search.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${user.home}/tomcat/logs/search.log.%i.tgz</fileNamePattern>
+            <fileNamePattern>${user.home}/tomcat/logs/search.log.%i.gz</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>5</maxIndex>
         </rollingPolicy>
@@ -81,7 +81,7 @@
     <appender name="customRangeEmail-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${user.home}/tomcat/logs/customRangeEmail.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${user.home}/tomcat/logs/customRangeEmail.log.%i.tgz</fileNamePattern>
+            <fileNamePattern>${user.home}/tomcat/logs/customRangeEmail.log.%i.gz</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>5</maxIndex>
         </rollingPolicy>
