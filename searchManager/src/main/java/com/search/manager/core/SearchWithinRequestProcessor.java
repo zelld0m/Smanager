@@ -2,7 +2,6 @@ package com.search.manager.core;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +80,10 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		return cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.splitRegex", swType));
 	}
 	
+	public int getMinLength(){
+		return Integer.parseInt(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.minLength"),"3"));
+	}
+	
 	@Override
 	public boolean isEnabled(){
 		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.enable"), "false"));
@@ -99,11 +102,18 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 				logger.info("Processing keyword for {}: {}", StringUtils.capitalize(allowedSwParam), keyword);
 				logger.info("Tokens using {}: {}", getSplitRegex(allowedSwParam), StringUtils.join(tokens, "|"));
 				if (ArrayUtils.isNotEmpty(tokens) && tokens.length>0){
-					processedKeywords.addAll(Arrays.asList(tokens));
+					for(String token: tokens){
+						if((StringUtils.length(StringUtils.trimToEmpty(token)) < getMinLength()) && !StringUtils.isAlphanumeric(StringUtils.trimToEmpty(token))){
+							logger.info("UnQualified token: {}", token);
+							continue;
+						}
+						processedKeywords.add(token);
+					}
 				}
 			}
 		}
 		
+		logger.info("Qualified tokens: {}", StringUtils.join(processedKeywords,"|"));
 		return processedKeywords;
 	}
 
