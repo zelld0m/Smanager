@@ -1257,9 +1257,11 @@
             }
         },
         changeSelectedImportType: function() {
-            $("#rule select#importTypeList option[value=2]").each(function() {
-               this.selected = "selected";
-            });
+            $("table#rule tbody tr td select#importTypeList option[value=\"2\"]").each(
+                    function() {
+                        this.selected = "selected";
+                    }
+            );
         },
         init: function() {
             var self = this;
