@@ -1112,6 +1112,7 @@
                 postHook: function() {
                     self.cleanUpTabContent();
                     self.changeSelectedImportType();
+                    self.setSelectAllImportCheckbox();
                 }
             });
         },
@@ -1245,6 +1246,8 @@
             } else {
                 $('div#' + id + '.approve_btn').removeClass('approve_active').addClass('approve_gray');
             }
+            
+            $("#selectAllCheckbox").attr("checked", false);
         },
         untoggleRejectCheckbox: function(id) {
             $('input[type="checkbox"]#' + id + '.reject').attr('checked', false);
@@ -1263,13 +1266,71 @@
                     }
             );
         },
+        selectAllToggleReject: function(rejectBtn, rejectCheckbox) {
+            rejectCheckbox.each(function() {
+                $(this).attr("checked", true);
+            });
+
+            rejectBtn.each(function() {
+                $(this).removeClass("reject_gray");
+                $(this).addClass("reject_active");
+            });
+        },
+        selectAllUntoggleReject: function(rejectBtn, rejectCheckbox) {
+            rejectCheckbox.each(function() {
+                $(this).removeAttr("checked");
+            });
+
+            rejectBtn.each(function() {
+                $(this).removeClass("reject_active");
+                $(this).addClass("reject_gray");
+            });
+        },
+        selectAllToggleImport: function(approveBtn, approveCheckbox) {
+            approveCheckbox.each(function() {
+                $(this).attr("checked", true);
+            });
+
+            approveBtn.each(function() {
+                $(this).removeClass("approve_gray");
+                $(this).addClass("approve_active");
+            });
+        },
+        selectAllUntoggleImport: function(approveBtn, approveCheckbox) {
+            approveCheckbox.each(function() {
+                $(this).removeAttr("checked");
+            });
+
+            approveBtn.each(function() {
+                $(this).removeClass("approve_active");
+                $(this).addClass("approve_gray");
+            });
+        },
+        setSelectAllImportCheckbox: function() {
+            var self = this;
+
+            $("input#selectAllCheckbox").off().on("change", function() {
+                var approveBtn = $("td#select div.approve_btn");
+                var approveCheckbox = $('input[type="checkbox"].import');
+
+                var rejectBtn = $("td#select div.reject_btn");
+                var rejectCheckbox = $('input[type="checkbox"].reject');
+
+                if ($(this).is(":checked")) {
+                    self.selectAllToggleImport(approveBtn, approveCheckbox);
+                } else {
+                    self.selectAllUntoggleImport(approveBtn, approveCheckbox);
+                }
+
+                self.selectAllUntoggleReject(rejectBtn, rejectCheckbox);
+            });
+        },
         init: function() {
             var self = this;
             $("#titleText").html(self.moduleName);
             self.getRuleEntityList();
             self.filterContent();
             self.populateTabContent();
-            self.changeSelectedImportType();
         }
     };
 
