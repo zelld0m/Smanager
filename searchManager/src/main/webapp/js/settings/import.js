@@ -1246,7 +1246,7 @@
             } else {
                 $('div#' + id + '.approve_btn').removeClass('approve_active').addClass('approve_gray');
             }
-            
+
             $("#selectAllCheckbox").attr("checked", false);
         },
         untoggleRejectCheckbox: function(id) {
@@ -1262,7 +1262,7 @@
         changeSelectedImportType: function() {
             $("table#rule tbody tr td select#importTypeList option[value=\"2\"]").each(
                     function() {
-                        this.selected = "selected";
+                        $(this).attr("selected", "selected");
                     }
             );
         },
