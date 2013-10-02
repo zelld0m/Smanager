@@ -64,10 +64,6 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.solrFieldOperator",swType)),"OR");
 	}
 
-	public String getTypeOperator(){
-		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.typeOperator"),"OR");
-	}
-
 	public String getPrefixOperator(String swType){
 		return cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.prefixTypeOperator", swType));
 	}
@@ -99,8 +95,8 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		for(String keyword: keywords){
 			if(StringUtils.isNotBlank(keyword) && !(StringUtils.startsWith(keyword, "\"") && StringUtils.endsWith(keyword, "\""))){
 				String[] tokens = keyword.split(getSplitRegex(allowedSwParam));
-				logger.debug("Processing keyword: {}", keyword);
-				logger.debug("Tokens using {}: {}", getSplitRegex(allowedSwParam), StringUtils.join(tokens, "|"));
+				logger.info("Processing keyword for {}: {}", StringUtils.capitalize(allowedSwParam), keyword);
+				logger.info("Tokens using {}: {}", getSplitRegex(allowedSwParam), StringUtils.join(tokens, "|"));
 				if (ArrayUtils.isNotEmpty(tokens) && tokens.length>0){
 					processedKeywords.addAll(Arrays.asList(tokens));
 				}
@@ -110,20 +106,18 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		return processedKeywords;
 	}
 
-	public StringBuilder toSolrFq(Map<String, List<String>> swProcessedParams) throws Throwable{
-		StringBuilder sbAllType = new StringBuilder();
+	public String[] toSolrFq(Map<String, List<String>> swProcessedParams) throws Throwable{
 		StringBuilder sbType = new StringBuilder();
 		List<String> fields = getFields();
 
 		// Generate template Keyword to Solr fields
 		if(CollectionUtils.isNotEmpty(fields) && MapUtils.isNotEmpty(swProcessedParams)){
+			String swKeywordTemplate = new String();
+			Set<String> keySet = swProcessedParams.keySet();
+			String[] perTypeQueryArr = new String[keySet.size()];
+			int iteration = 0;
+
 			try {
-				String swKeywordTemplate = new String();
-
-				Set<String> keySet = swProcessedParams.keySet();
-				String[] perTypeQueryArr = new String[keySet.size()];
-				int iteration = 0;
-
 				for(String swType: keySet){
 					sbType = new StringBuilder();
 					swKeywordTemplate = String.format(CollectionUtils.size(fields)==1 || CollectionUtils.size(swProcessedParams.get(swType))==1 ? "%s":"(%s)", StringUtils.join(fields, ":%%keyword%% %%operator%% ") + ":%%keyword%%");
@@ -139,11 +133,11 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 					perTypeQueryArr[iteration++] = String.format(perTypeTemplate, sbType.toString());
 				}
 
-				sbAllType.append(StringUtils.join(perTypeQueryArr, String.format(" %s ", getTypeOperator())));
-
-				if(logger.isDebugEnabled()){
-					logger.debug("Solr Filter: {}", sbAllType.toString());
+				if(logger.isInfoEnabled()){
+					logger.info("Solr Filter: fq={}", StringUtils.join(perTypeQueryArr, String.format("%s", "&fq=")));
 				}
+				
+				if (ArrayUtils.isNotEmpty(perTypeQueryArr)) return perTypeQueryArr;
 			} catch (Exception e) {
 				throw e;
 			} catch (Throwable t){
@@ -151,90 +145,92 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 			}
 		}
 
-		return sbAllType;
+		return null;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public void process(HttpServletRequest request, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
 		Map<String, List<String>> swParamsMap = new HashMap<String, List<String>>();
-		StringBuilder solrFq = new StringBuilder();
+		List<String> swTypeList= new ArrayList<String>();
 		String[] paramValues= request.getParameterValues(getRequestParamName());
 		JsonSlurper slurper = new JsonSlurper();
 		List<String> solrFieldToSearchList = null; 
 		String swValues = ""; 
 
-		if(logger.isDebugEnabled()){
-			logger.debug("Enabled: {}", BooleanUtils.toStringYesNo(isEnabled()));
-			logger.debug("Request Param Name: {}", getRequestParamName());
-			logger.debug("Request Param Name Count: {}", ArrayUtils.getLength(paramValues));
+		if(logger.isInfoEnabled()){
+			logger.info("Enabled: {}", BooleanUtils.toStringYesNo(isEnabled()));
+			logger.info("Request Param Name: {}", getRequestParamName());
+			logger.info("Request Param Name Count: {}", ArrayUtils.getLength(paramValues));
 		}
 
 		if(!isEnabled() ||  ArrayUtils.getLength(paramValues)==0 || StringUtils.isBlank(swValues = paramValues[paramValues.length-1])){
-			logger.debug("Skipped: Enabled? {}, Empty params? {}", BooleanUtils.toStringYesNo(isEnabled()),BooleanUtils.toStringYesNo(StringUtils.isBlank(swValues)));
+			logger.info("Skipped: Enabled? {}, Empty params? {}", BooleanUtils.toStringYesNo(isEnabled()),BooleanUtils.toStringYesNo(StringUtils.isBlank(swValues)));
 			return;
 		}
 
-		if(CollectionUtils.isEmpty(solrFieldToSearchList = getFields()) || CollectionUtils.isEmpty(getSearchWithinType())){
-			logger.debug("Skipped: Empty search fields? {} , Empty allowed params? {}", BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(solrFieldToSearchList)), BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(getSearchWithinType())));
+		if(CollectionUtils.isEmpty(solrFieldToSearchList = getFields()) || CollectionUtils.isEmpty(swTypeList = getSearchWithinType())){
+			logger.info("Skipped: Empty search fields? {} , Empty allowed params? {}", BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(solrFieldToSearchList)), BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(getSearchWithinType())));
 			return;
 		}
 
-		if(logger.isDebugEnabled()){
-			logger.debug("Solr Fields: {}", StringUtils.join(solrFieldToSearchList,", "));
+		if(logger.isInfoEnabled()){
+			logger.info("Solr Fields: {}", StringUtils.join(solrFieldToSearchList,", "));
 		}
+
+		String[] solrFqArr = new String[CollectionUtils.size(swTypeList)];
 
 		try {
 			JSONObject swJSONParam = (JSONObject)slurper.parseText(swValues);
 
 			if(JSONUtils.isNull(swJSONParam)){
-				logger.debug("Skipped: Field to convert to JSON using param {}", swValues);
+				logger.info("Skipped: Field to convert to JSON using param {}", swValues);
 				return;
 			}
 
-			for(String allowedSWParam: getSearchWithinType()){
-				if(StringUtils.isNotBlank(allowedSWParam)){
+			for(String swType: swTypeList){
+				if(StringUtils.isNotBlank(swType)){
 					List<String> swParamList = new ArrayList<String>();
 					JSONArray jsonArray = null; 
-					if(swJSONParam.containsKey(allowedSWParam) && !JSONUtils.isNull(jsonArray = swJSONParam.getJSONArray(allowedSWParam))){
+					if(swJSONParam.containsKey(swType) && !JSONUtils.isNull(jsonArray = swJSONParam.getJSONArray(swType))){
 						swParamList = (List<String>) JSONSerializer.toJava(jsonArray);
 					}
 
 					if(CollectionUtils.isNotEmpty(swParamList)){
-						swParamsMap.put(allowedSWParam, getProcessedKeyword(swParamList, allowedSWParam));
+						swParamsMap.put(swType, getProcessedKeyword(swParamList, swType));
 					}
 				}
 			}
 
 			if(MapUtils.isEmpty(swParamsMap)){
-				logger.debug("Skipped: Empty processed request param");
+				logger.info("Skipped: Empty processed request param");
 				return;
 			}
 
-			if(logger.isDebugEnabled()){
-				logger.debug("Map Request Params: {}", ObjectUtils.toString(swParamsMap));
+			if(logger.isInfoEnabled()){
+				logger.info("Map Request Params: {}", ObjectUtils.toString(swParamsMap));
 			}
 
-			solrFq = toSolrFq(swParamsMap);
+			solrFqArr = toSolrFq(swParamsMap);
 		} catch (JSONException e) {
-			logger.debug("Skipped: {}", e.getMessage());
+			logger.info("Skipped: {}", e.getMessage());
 			return;
 		} catch (Exception e){
 			logger.error(e.getMessage());
 		} catch (Throwable t) {
 			logger.error(t.getMessage());
-			logger.debug("Skipped: {}", t.getMessage());
+			logger.info("Skipped: {}", t.getMessage());
 		} finally{
-			if(solrFq.length()>0){
-				BasicNameValuePair nameValuePair = new BasicNameValuePair("fq", solrFq.toString());
-				logger.debug("Pre-processing: {}", paramMap);
-				RequestProcessorUtil.addNameValuePairToMap(paramMap, "fq", nameValuePair);
-				logger.debug("Post-processing: {}", paramMap);
+			if(ArrayUtils.getLength(solrFqArr)>0){
 				
-				logger.debug("Pre-processing: {}", CollectionUtils.size(nameValuePairs));
-				nameValuePairs.add(nameValuePair);
-				logger.debug("Post-processing: {}", CollectionUtils.size(nameValuePairs));
-				nameValuePairs.remove(new BasicNameValuePair(getRequestParamName(), swValues));
+				logger.info("Pre-processing Map: {} List: {}", paramMap, CollectionUtils.size(nameValuePairs));
+				for (String solrFq: solrFqArr){
+					BasicNameValuePair nameValuePair = new BasicNameValuePair("fq", solrFq);
+					RequestProcessorUtil.addNameValuePairToMap(paramMap, "fq", nameValuePair);
+					nameValuePairs.add(nameValuePair);
+					nameValuePairs.remove(new BasicNameValuePair(getRequestParamName(), swValues));
+				}
+				logger.info("Post-processing Map: {} List: {}", paramMap, CollectionUtils.size(nameValuePairs));
 			}else{
 				logger.error("No search within applied for {}={}", getRequestParamName(), swValues);
 			}
