@@ -1,5 +1,6 @@
 package com.search.manager.core;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -124,7 +125,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 					String keywordTemplate = isQuoteKeyword(swType)? "\"%s\"": "%s";
 					for(String swKeyword: swProcessedParams.get(swType)){
 						sbType.append(sbType.length()>0? String.format(" %s ", getKeywordOperator(swType)): "");
-						sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{String.format(keywordTemplate, swKeyword), getSolrFieldOperator(swType)}));
+						sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{String.format(keywordTemplate, URLEncoder.encode(swKeyword,"UTF-8")), getSolrFieldOperator(swType)}));
 					}
 
 					String prefixOperator = getPrefixOperator(swType);
