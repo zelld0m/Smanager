@@ -71,11 +71,7 @@
 					self.manager.store.remove('disableRelevancy');
 					self.manager.store.remove('disableDidYouMean');
 					self.manager.store.remove('disableBanner');
-					if (GLOBAL_searchWithinEnabled) {
-						self.manager.widgets[WIDGET_ID_searchWithin].clear();
-					} else {
-						self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
-					}
+					self.manager.widgets[WIDGET_ID_searchWithin].clear();
 				}
 
 				self.searchKeyword = keyword;

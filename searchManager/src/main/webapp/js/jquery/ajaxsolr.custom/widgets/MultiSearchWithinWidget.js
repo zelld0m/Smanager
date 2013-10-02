@@ -48,6 +48,9 @@
             $container.find(TEXT_INPUT_ID).prop("disabled",true);
             $container.find(SELECT_INPUT_ID).prop("disabled", true);
             this.type = $container.find(SELECT_INPUT_ID).val();
+
+            this.manager.store.remove(SEARCH_WITHIN_PARAM);
+            this.isEmpty() || this.manager.store.addByValue(SEARCH_WITHIN_PARAM, this.paramsAsString());
         },
 
         afterRequest: function() {
@@ -101,10 +104,7 @@
 
         makeRequest: function(type, text) {
             if(validateGeneric(WIDGET_LABEL, text, this.minCharRequired) && $.inArray(text, this.params[type]) < 0) {
-                this.manager.store.remove(SEARCH_WITHIN_PARAM);
                 this.params[type].push(text);
-
-                this.manager.store.addByValue(SEARCH_WITHIN_PARAM, this.paramsAsString());
                 this.manager.doRequest(0);
             }
         },

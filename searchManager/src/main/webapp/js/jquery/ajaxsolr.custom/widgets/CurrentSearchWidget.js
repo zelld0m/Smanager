@@ -218,12 +218,7 @@
 			var self = this;
 			return function () {
 				if (self.manager.store.removeByValue('q', keyword)) {
-					if (GLOBAL_searchWithinEnabled) {
-						self.manager.widgets[WIDGET_ID_searchWithin].clear();
-						self.manager.store.remove(self.manager.widgets[WIDGET_ID_searchWithin].paramName);
-					} else {
-						self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
-					}
+					self.manager.widgets[WIDGET_ID_searchWithin].clear();
 					self.manager.store.remove('fq');
 					self.manager.doRequest(0);
 				}
@@ -234,12 +229,7 @@
 		removeAllFilters: function() { 
 			var self = this;
 			return function () {
-				if (GLOBAL_searchWithinEnabled) {
-					self.manager.widgets[WIDGET_ID_searchWithin].clear();
-					self.manager.store.remove(self.manager.widgets[WIDGET_ID_searchWithin].paramName);
-				} else {
-					self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
-				}
+				self.manager.widgets[WIDGET_ID_searchWithin].clear();
 				self.manager.store.remove('fq');
 				self.manager.doRequest(0);
 				return false;
@@ -261,12 +251,7 @@
 		removeSearchWithin: function(type, text) {
 			return function() {
 				if (GLOBAL_searchWithinEnabled) {
-					var widget = this.manager.widgets[WIDGET_ID_searchWithin];
-					this.manager.store.remove(widget.paramName);
-
-					widget.clear(type, text);
-					widget.isEmpty() || this.manager.store.addByValue(widget.paramName, widget.paramsAsString());
-
+					this.manager.widgets[WIDGET_ID_searchWithin].clear(type, text);
 					this.manager.doRequest(0);
 				}
 				return false;
