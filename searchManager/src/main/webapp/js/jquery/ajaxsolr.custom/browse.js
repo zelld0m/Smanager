@@ -138,14 +138,16 @@
 
         Manager.init();
 
-        // Set Solr request parameters 
-        // TODO: Make this dynamic
+        // default IMS
         var facetTemplate = ['Category', 'Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
-
-        if (GLOBAL_PCMGroup) {
+        
+		if (GLOBAL_storeFacetTemplateType === 'IMS') {
+        	// IMS
+        	facetTemplate = ['Category', 'Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
+        } else if(GLOBAL_storeFacetTemplateType === 'CNET') {
+        	// CNET
             facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
         }
-        ;
 
         var params = {
             'facet': true,

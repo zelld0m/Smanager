@@ -121,9 +121,9 @@ public class CategoryService {
     public static List<String> getTemplateNamesByStore(String storeId) throws DataException {
     	
     	try {
-    		if(UtilityService.getFacetTemplate(storeId).equalsIgnoreCase("IMS")) {
+    		if(UtilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("IMS")) {
     			return getIMSTemplateNames();
-    		} else if(UtilityService.getFacetTemplate(storeId).equalsIgnoreCase("CNET")) {
+    		} else if(UtilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("CNET")) {
     			return getCNETTemplateNames();
     		}
     	} catch(Exception e) {
@@ -132,7 +132,7 @@ public class CategoryService {
     	
     	return null;
     }
-
+    
     @RemoteMethod
     public static List<String> getIMSTemplateNames() throws DataException {
         return CatCodeUtil.getAllIMSTemplates();

@@ -104,6 +104,7 @@
 	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
 	
 	var GLOBAL_storeFacetTemplateNameField = GLOBAL_PCMGroup ? "FacetTemplateName" : "TemplateName";
+	var GLOBAL_storeFacetTemplateType = GLOBAL_storeParameters["storeFacetTemplateType"];
   </script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">

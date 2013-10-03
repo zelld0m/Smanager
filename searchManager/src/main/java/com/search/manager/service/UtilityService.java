@@ -238,7 +238,7 @@ public class UtilityService {
         json.put("storeDefaultBannerLinkPathProtocol", getStoreDefaultBannerLinkPathProtocol(storeId));
         json.put("storeRedirectSelfDomain", getStoreRedirectSelfDomain(storeId));
         json.put("storeRedirectRelativePath", getStoreRedirectRelativePath(storeId));
-        
+        json.put("storeFacetTemplateType", getStoreFacetTemplateType(storeId));
         return json.toString();
     }
 
@@ -445,7 +445,7 @@ public class UtilityService {
     	return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_RELATIVE_PATH);
     }
     
-    public static String getFacetTemplate(String storeId) {
+    public static String getStoreFacetTemplateType(String storeId) {
     	return UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_FACET_TEMPLATE);
     }
     
