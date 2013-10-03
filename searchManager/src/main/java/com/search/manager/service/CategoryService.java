@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
         @Param(name = "beanName", value = "categoryService"))
 public class CategoryService {
 
-    @SuppressWarnings("unused")
-    private static final Logger logger =
+	private static final Logger logger =
             LoggerFactory.getLogger(CategoryService.class);
 
     @RemoteMethod
@@ -120,17 +119,20 @@ public class CategoryService {
 
     @RemoteMethod
     public static List<String> getTemplateNamesByStore(String storeId) throws DataException {
-        if ("macmall".equalsIgnoreCase(storeId)) {
-            return getIMSTemplateNames();
-        } else if ("pcmall".equalsIgnoreCase(storeId) || "pcmallcap".equalsIgnoreCase(storeId) || "pcmgbd".equalsIgnoreCase(storeId)) {
-            return getCNETTemplateNames();
-        } else if ("onsale".equalsIgnoreCase(storeId)) {
-            return null;
-        } else {
-            throw new DataException("Unrecognized Store: " + storeId);
-        }
+    	
+    	try {
+    		if(UtilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("IMS")) {
+    			return getIMSTemplateNames();
+    		} else if(UtilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("CNET")) {
+    			return getCNETTemplateNames();
+    		}
+    	} catch(Exception e) {
+    		logger.error("Error in getTemplateNamesByStore(): " + e + ". store = " + storeId);
+    	}
+    	
+    	return null;
     }
-
+    
     @RemoteMethod
     public static List<String> getIMSTemplateNames() throws DataException {
         return CatCodeUtil.getAllIMSTemplates();

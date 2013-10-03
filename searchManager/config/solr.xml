@@ -146,7 +146,7 @@
     </group-membership>
   </store>
   
-  <!-- ECOST BD Release vx.x.x -->
+  <!-- ECOST BD Release v1.3.0 -->
   <store id="ecost" name="eCOST">
     <core>ecost</core>
 	<store-id-aliases>ecost</store-id-aliases>
@@ -164,8 +164,8 @@
     <datetime-format>MM/dd/yyyy hh:mm aa</datetime-format>
     <default-timezone>America/Los_Angeles</default-timezone>
     <default-server>search</default-server>
-    <facet-template>eCOST_FacetTemplate</facet-template>
-    <facet-template-name>eCOST_FacetTemplateName</facet-template-name>
+    <facet-template>xxx</facet-template>
+    <facet-template-name>TemplateName</facet-template-name>
     <group-membership>
     	<group>Store</group>
     	<group>MacMall</group>
