@@ -4,8 +4,16 @@ $(function() {
     var tabContentFieldTemplate = "<tr><td>#{label}&nbsp;</td><td>#{field}</td></tr>";
     var stringFieldTemplate = "<input type='text' class='w240' id='#{id}'/>";
     var booleanFieldTemplate = "<input id='#{id}' type='checkbox' class='firerift-style-checkbox on-off'/>";
+    var accountRoleFieldTemplate = "<select class=\"w240p mar0\" id=\"#{id}\" style=\"cursor:pointer\">" +
+            "<option value=\"\">All Roles</option></select>";
     var tabObjects = new Array();
     var storePropertiesFilesArray;
+    var accountRoleArray = new Array();
+
+    var AccountRole = function(name, value) {
+        this.name = name;
+        this.value = value;
+    };
 
     var Field = function(id, propertyId, type) {
         this.id = id;
@@ -88,16 +96,25 @@ $(function() {
                                     /#\{label\}/g, label);
                             var fieldId = moduleName + "_" + propertyId.replace(/\./g, "_");
 
-                            if (type === "String") {
-                                var stringField = stringFieldTemplate.replace(/#\{id\}/g,
-                                        fieldId);
-                                fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
-                                        stringField);
-                            } else if (type === "Boolean") {
-                                var booleanField = booleanFieldTemplate.replace(/#\{id\}/g,
-                                        fieldId);
-                                fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
-                                        booleanField);
+                            switch (type) {
+                                case "String":
+                                    var stringField = stringFieldTemplate.replace(
+                                            /#\{id\}/g, fieldId);
+                                    fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
+                                            stringField);
+                                    break;
+                                case "Boolean":
+                                    var booleanField = booleanFieldTemplate.replace(
+                                            /#\{id\}/g, fieldId);
+                                    fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
+                                            booleanField);
+                                    break;
+                                case "AccountRole":
+                                    var accountRoleField = accountRoleFieldTemplate.replace(
+                                            /#\{id\}/g, fieldId);
+                                    fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
+                                            accountRoleField);
+                                    break;
                             }
 
                             content.append(fieldToAppend);
@@ -168,7 +185,8 @@ $(function() {
                             var propertyId = property.id;
                             var storeProperty = getStorePropertyByName(propertyId, module,
                                     storePropertiesFiles);
-                            var fieldId = moduleName + "_" + propertyId.replace(/\./g, "_");
+                            var fieldId = moduleName + "_" + propertyId.replace(
+                                    /\./g, "_");
 
                             if (storeProperty !== null) {
                                 switch (type) {
@@ -181,6 +199,14 @@ $(function() {
 
                                         $("#" + fieldId).prop("checked", booleanValue);
                                         break;
+                                    case "AccountRole":
+                                        // populate the account role field
+                                        populateAccountRoleField(fieldId);
+
+                                        // set the selected option by store property value
+                                        setSelectedOptionByValue(fieldId,
+                                                storeProperty.value);
+                                        break;
                                 }
                             }
                         }
@@ -188,6 +214,26 @@ $(function() {
                 }
             }
         }
+    };
+
+    var populateAccountRoleField = function(fieldId) {
+        for (var i = 0; i < accountRoleArray.length; i++)
+        {
+            var accountRole = accountRoleArray[i];
+            $("select#" + fieldId).append(
+                    $("<option>",
+                    {value: accountRole.value}).
+                    text(accountRole.name));
+        }
+    };
+
+    var setSelectedOptionByValue = function(fieldId, fieldValue) {
+        $("#" + fieldId + " option").each(function() {
+            if ($(this).text() === fieldValue) {
+                $(this).prop("selected", true);
+                return false; // break the foreach
+            }
+        });
     };
 
     var changeStringToBoolean = function(booleanStr) {
@@ -248,6 +294,7 @@ $(function() {
 
             switch (fieldType) {
                 case "String":
+                case "AccountRole":
                     fieldValue = fieldComponent.val();
                     break;
                 case "Boolean":
@@ -305,40 +352,62 @@ $(function() {
                 store_settings.prepareTabContent();
 
                 // for generating the labels and fields
-                UtilityServiceJS.getStoreId(function(id) {
-                    for (var i = 0; i < stores.length; i++) {
-                        var store = stores[i];
+                UtilityServiceJS.getStoreId({
+                    callback: function(id) {
+                        for (var i = 0; i < stores.length; i++) {
+                            var store = stores[i];
 
-                        if (store.id === id) {
-                            var modules = store.modules;
+                            if (store.id === id) {
+                                var modules = store.modules;
 
-                            // generate the tab contents
-                            generateTabContents(modules);
+                                // generate the tab contents
+                                generateTabContents(modules);
 
-                            // generate the tabs
-                            generateTabs(modules);
+                                // generate the tabs
+                                generateTabs(modules);
 
-                            // for populating the fields 
-                            PropertiesReaderServiceJS.readAllStorePropertiesFiles(id,
-                                    function(storePropertiesFiles) {
+                                SecurityServiceJS.getRoleList({
+                                    callback: function(data) {
+                                        roleList = data;
+                                        var list = data.list;
 
-                                        // populate the fields
-                                        populateFields(modules, storePropertiesFiles);
+                                        if (list.length > 0) {
+                                            for (var i = 0; i < list.length; i++) {
+                                                var listValue = list[i];
+                                                var id = listValue["id"];
+                                                var roleName = listValue["rolename"];
 
-                                        storePropertiesFilesArray = storePropertiesFiles;
+                                                accountRoleArray.push(
+                                                        new AccountRole(id, roleName));
+                                            }
+                                        }
+                                    },
+                                    postHook: function() {
+                                        // for populating the fields 
+                                        PropertiesReaderServiceJS.
+                                                readAllStorePropertiesFiles(id,
+                                                function(storePropertiesFiles) {
 
-                                        // hides the error messages
-                                        hideErrorMessages();
+                                                    // populate the fields
+                                                    populateFields(modules,
+                                                            storePropertiesFiles);
 
-                                        // remove the loading icon
-                                        store_settings.cleanUpTabContent();
+                                                    storePropertiesFilesArray =
+                                                            storePropertiesFiles;
+
+                                                    // hides the error messages
+                                                    hideErrorMessages();
+                                                }
+                                        );
                                     }
-                            );
+                                });
+                            }
                         }
+                    },
+                    postHook: function() {
+                        // remove the loading icon
+                        store_settings.cleanUpTabContent();
                     }
-
-                    // remove the loading icon
-                    store_settings.cleanUpTabContent();
                 });
             });
 
