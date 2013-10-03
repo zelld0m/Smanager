@@ -1,6 +1,5 @@
 package com.search.manager.core;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -135,7 +135,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 					String keywordTemplate = isQuoteKeyword(swType)? "\"%s\"": "%s";
 					for(String swKeyword: swProcessedParams.get(swType)){
 						sbType.append(sbType.length()>0? String.format(" %s ", getKeywordOperator(swType)): "");
-						sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{String.format(keywordTemplate, URLEncoder.encode(swKeyword,"UTF-8")), getSolrFieldOperator(swType)}));
+						sbType.append(StringUtils.replaceEach(swKeywordTemplate, new String[]{"%%keyword%%", "%%operator%%"}, new String[]{String.format(keywordTemplate, StringEscapeUtils.escapeJavaScript(swKeyword)), getSolrFieldOperator(swType)}));
 					}
 
 					String prefixOperator = getPrefixOperator(swType);
@@ -232,16 +232,15 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 			logger.error(t.getMessage());
 			logger.info("Skipped: {}", t.getMessage());
 		} finally{
+			nameValuePairs.remove(new BasicNameValuePair(getRequestParamName(), swValues));
 			if(ArrayUtils.getLength(solrFqArr)>0){
-				
-				logger.info("Pre-processing Map: {} List: {}", paramMap, CollectionUtils.size(nameValuePairs));
+				logger.info("Pre-processing List: {} Map: {}", CollectionUtils.size(nameValuePairs), paramMap);
 				for (String solrFq: solrFqArr){
 					BasicNameValuePair nameValuePair = new BasicNameValuePair("fq", solrFq);
 					RequestProcessorUtil.addNameValuePairToMap(paramMap, "fq", nameValuePair);
 					nameValuePairs.add(nameValuePair);
-					nameValuePairs.remove(new BasicNameValuePair(getRequestParamName(), swValues));
 				}
-				logger.info("Post-processing Map: {} List: {}", paramMap, CollectionUtils.size(nameValuePairs));
+				logger.info("Post-processing List: {} Map: {}", CollectionUtils.size(nameValuePairs), paramMap);
 			}else{
 				logger.error("No search within applied for {}={}", getRequestParamName(), swValues);
 			}
