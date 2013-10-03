@@ -151,82 +151,82 @@
                     <defaultValue>true</defaultValue>
                 </property>
                 
-                <property id="mail.workflow.cc" type="Boolean">
+                <property id="mail.workflow.cc" type="String">
                     <label>CC</label>
                     <defaultValue></defaultValue>
                 </property>
-                <property id="mail.workflow.bcc" type="Boolean">
-                    <label>bcc</label>
+                <property id="mail.workflow.bcc" type="String">
+                    <label>BCC</label>
                     <defaultValue></defaultValue>
                 </property>
                 
-                <property id="mail.workflow.approver.group" type="Boolean">
+                <property id="mail.workflow.approver.group" type="AccountRole">
                     <label>Approver Group</label>
-                    <defaultValue></defaultValue>
+                    <defaultValue>APPROVER</defaultValue>
                 </property>
                 
-                <property id="mail.workflow.pendingCc" type="Boolean">
+                <property id="mail.workflow.pendingCc" type="String">
                     <label>Pending CC</label>
                     <defaultValue></defaultValue>
                 </property>
-                <property id="mail.workflow.pendingBcc" type="Boolean">
+                <property id="mail.workflow.pendingBcc" type="String">
                     <label>Pending BCC</label>
                     <defaultValue></defaultValue>
                 </property>
                 
-                <property id="mail.workflow.approvedCc" type="Boolean">
+                <property id="mail.workflow.approvedCc" type="String">
                     <label>Approved CC</label>
                     <defaultValue></defaultValue>
                 </property>
-                <property id="mail.workflow.approvedBcc" type="Boolean">
+                <property id="mail.workflow.approvedBcc" type="String">
                     <label>Approved BCC</label>
                     <defaultValue></defaultValue>
                 </property>
                 
-                <property id="mail.workflow.rejectedCc" type="Boolean">
+                <property id="mail.workflow.rejectedCc" type="String">
                     <label>Rejected CC</label>
                     <defaultValue></defaultValue>
                 </property>
-                <property id="mail.workflow.rejectedBcc" type="Boolean">
+                <property id="mail.workflow.rejectedBcc" type="String">
                     <label>Rejected BCC</label>
                     <defaultValue></defaultValue>
                 </property>
                 
-                <property id="mail.workflow.publishedCc" type="Boolean">
+                <property id="mail.workflow.publishedCc" type="String">
                     <label>Published CC</label>
                     <defaultValue></defaultValue>
                 </property>
-                <property id="mail.workflow.publishedBcc" type="Boolean">
+                <property id="mail.workflow.publishedBcc" type="String">
                     <label>Published BCC</label>
                     <defaultValue></defaultValue>
                 </property>
                 
-                <property id="mail.workflow.unpublishedCc" type="Boolean">
+                <property id="mail.workflow.unpublishedCc" type="String">
                     <label>Unpublished CC</label>
                     <defaultValue></defaultValue>
                 </property>
-                <property id="mail.workflow.unpublishedBcc" type="Boolean">
+                <property id="mail.workflow.unpublishedBcc" type="String">
                     <label>Unpublished BCC</label>
                     <defaultValue></defaultValue>
                 </property>
                 
-                <property id="mail.workflow.pendingSubject" type="Boolean">
+                <property id="mail.workflow.pendingSubject" type="String">
                     <label>Unpublished CC</label>
                     <defaultValue>Search Manager: Rules Submitted For Approval</defaultValue>
                 </property>
-                <property id="mail.workflow.approvedSubject" type="Boolean">
+                <property id="mail.workflow.approvedSubject" type="String">
                     <label>Unpublished BCC</label>
                     <defaultValue>Search Manager: Approved Rules</defaultValue>
                 </property>
-                <property id="mail.workflow.rejectedSubject" type="Boolean">
+                <property id="mail.workflow.rejectedSubject" type="String">
                     <label>Unpublished CC</label>
                     <defaultValue>Search Manager: Rejected Rules</defaultValue>
                 </property>
-                <property id="mail.workflow.publishedSubject" type="Boolean">
+                <property id="mail.workflow.publishedSubject" type="String">
                     <label>Unpublished BCC</label>
                     <defaultValue>Search Manager: Published Rules</defaultValue>
                 </property>
-                <property id="mail.workflow.unpublishedSubject" type="Boolean">
+                <property id="mail.workflow.unpublishedSubject" type="String">
                     <label>Unpublished BCC</label>
                     <defaultValue>Search Manager: Un-published Rules</defaultValue>
                 </property>
