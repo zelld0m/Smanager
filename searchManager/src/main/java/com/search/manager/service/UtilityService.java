@@ -402,9 +402,7 @@ public class UtilityService {
     public static List<String> getStoreRedirectRelativePath(String storeId) {
         List<String> redirectRelativePathList = UtilityService.getStoreSettings(storeId, 
                                              DAOConstants.SETTINGS_REDIRECT_RELATIVE_PATH);
-        return redirectRelativePathList != null && !redirectRelativePathList.isEmpty() ?
-                redirectRelativePathList : Arrays.asList("/s","/c", "/n", "/th", "/o", 
-                "/p", "/m", "/t", "/home");
+        return redirectRelativePathList;
     }
      
     public static void setFacetTemplateValues(RedirectRuleCondition condition) {
@@ -445,6 +443,10 @@ public class UtilityService {
     
     public static List<String> getStoreRelativePath(String storeId) {
     	return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_RELATIVE_PATH);
+    }
+    
+    public static String getFacetTemplate(String storeId) {
+    	return UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_FACET_TEMPLATE);
     }
     
 }
