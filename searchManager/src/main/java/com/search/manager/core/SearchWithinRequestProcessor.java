@@ -89,8 +89,9 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.enable"), "false"));
 	}
 	
-	public List<String> getProcessedKeyword(List<String> keywords, String allowedSwParam){
-		List<String> processedKeywords = new ArrayList<String>();
+	public List<String> getTokenizedKeyword(List<String> keywords, String allowedSwParam){
+		List<String> qualifiedTokens = new ArrayList<String>();
+		List<String> unQualifiedTokens = new ArrayList<String>();
 		
 		if(isQuoteKeyword(allowedSwParam) || !isSplit(allowedSwParam)){
 			return keywords;
@@ -104,17 +105,18 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 				if (ArrayUtils.isNotEmpty(tokens) && tokens.length>0){
 					for(String token: tokens){
 						if((StringUtils.length(StringUtils.trimToEmpty(token)) < getMinLength()) && !StringUtils.isAlphanumeric(StringUtils.trimToEmpty(token))){
-							logger.info("UnQualified token: {}", token);
+							unQualifiedTokens.add(token);
 							continue;
 						}
-						processedKeywords.add(token);
+						qualifiedTokens.add(token);
 					}
 				}
 			}
 		}
 		
-		logger.info("Qualified tokens: {}", StringUtils.join(processedKeywords,"|"));
-		return processedKeywords;
+		logger.info("UnQualified tokens: {}", StringUtils.join(unQualifiedTokens,"|"));
+		logger.info("Qualified tokens: {}", StringUtils.join(qualifiedTokens,"|"));
+		return qualifiedTokens;
 	}
 
 	public String[] toSolrFq(Map<String, List<String>> swProcessedParams) throws Throwable{
@@ -145,7 +147,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 				}
 
 				if(logger.isInfoEnabled()){
-					logger.info("Solr Filter: fq={}", StringUtils.join(perTypeQueryArr, String.format("%s", "&fq=")));
+					logger.info("Generated Solr Filter: fq={}", StringUtils.join(perTypeQueryArr, String.format("%s", "&fq=")));
 				}
 				
 				if (ArrayUtils.isNotEmpty(perTypeQueryArr)) return perTypeQueryArr;
@@ -171,8 +173,8 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 
 		if(logger.isInfoEnabled()){
 			logger.info("Enabled: {}", BooleanUtils.toStringYesNo(isEnabled()));
-			logger.info("Request Param Name: {}", getRequestParamName());
-			logger.info("Request Param Name Count: {}", ArrayUtils.getLength(paramValues));
+			logger.info("Param name {} exists? {}", getRequestParamName(), BooleanUtils.toStringYesNo(ArrayUtils.getLength(paramValues)>0));
+			logger.info("Values for {} param name: {}", ArrayUtils.getLength(paramValues), StringUtils.join(paramValues,"|"));
 		}
 
 		if(!isEnabled() ||  ArrayUtils.getLength(paramValues)==0 || StringUtils.isBlank(swValues = paramValues[paramValues.length-1])){
@@ -208,7 +210,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 					}
 
 					if(CollectionUtils.isNotEmpty(swParamList)){
-						swParamsMap.put(swType, getProcessedKeyword(swParamList, swType));
+						swParamsMap.put(swType, getTokenizedKeyword(swParamList, swType));
 					}
 				}
 			}
