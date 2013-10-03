@@ -197,7 +197,10 @@ $(function() {
                                         var booleanValue = changeStringToBoolean(
                                                 storeProperty.value);
 
-                                        $("#" + fieldId).prop("checked", booleanValue);
+                                        $("#" + fieldId).slidecheckbox({
+                                            initOn: booleanValue,
+                                            locked: false
+                                        });
                                         break;
                                     case "AccountRole":
                                         // populate the account role field
