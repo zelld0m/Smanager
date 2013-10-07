@@ -61,22 +61,4 @@ public class PropertiesReaderServiceTest {
         assertEquals("export_target", exportTargetStoreProperty.getName());
         assertEquals("pcmallcap,pcmgbd", exportTargetStoreProperty.getValue());
     }
-
-    @Test
-    public void testReadAllStorePropertiesFile_Property_Does_Not_Exist() {
-        StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(1);
-        StoreProperty exportTargetStoreProperty = Stores.getStorePropertyByName(
-                "export_target", settingsPropertiesFile);
-        assertEquals("export_target", exportTargetStoreProperty.getName());
-        assertEquals("pcmallcap,pcmgbd", exportTargetStoreProperty.getValue());
-    }
-
-    @Test
-    public void testReadAllStorePropertiesFiles_Properties_File_Does_Not_Exist() {
-        StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(0);
-        StoreProperty pendingNotification = Stores.getStorePropertyByName(
-                "pendingNotification", settingsPropertiesFile);
-        assertEquals("pendingNotification", pendingNotification.getName());
-        assertEquals("true", pendingNotification.getValue());
-    }
 }
