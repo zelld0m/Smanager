@@ -40,12 +40,13 @@ public class Groups {
      * @param module the module to look into
      * @return <pre>true</pre> if at least one group has no name else <pre>false</pre>
      */
-    public static boolean containsAtLeastAGroupWithoutAName(Module module) {
+    public static boolean containsAGroupWithoutAName(Module module) {
         List<Group> groupsWithoutAName = Lists.newArrayList();
         List<Group> groups = module.getGroups();
         for (Group group : groups) {
             if (Strings.isNullOrEmpty(group.getName())) {
                 groupsWithoutAName.add(group);
+                break;
             }
         }
 
