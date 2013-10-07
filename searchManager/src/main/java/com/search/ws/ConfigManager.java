@@ -31,7 +31,7 @@ import com.search.properties.manager.exception.NotDirectoryException;
 import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
-import com.search.properties.manager.util.PropertiesManagerUtil;
+import com.search.properties.manager.util.Stores;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +119,7 @@ public class ConfigManager {
             for (Module module : modules) {
                 String moduleName = module.getName();
                 try {
-                    String filePath = PropertiesManagerUtil.getFormattedSaveLocation(
+                    String filePath = Stores.getFormattedSaveLocation(
                             propertiesManager.getStorePropertiesSaveLocation(), storeId,
                             moduleName);
 
