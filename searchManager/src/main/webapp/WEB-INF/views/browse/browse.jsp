@@ -7,6 +7,7 @@
 <script type="text/javascript">
     var WIDGET_ID_redirectUrl = 'redirectUrl';
     var WIDGET_ID_redirectUrlToggle = 'redirectUrlToggle';
+    var WIDGET_ID_searchRuleMode = 'searchRuleMode';
     var WIDGET_ID_searchWithin = 'searchWithin';
     var WIDGET_ID_searchKeyword = 'searchKeyword';
     var WIDGET_ID_searchResult = 'searchResult';
@@ -14,6 +15,7 @@
     var WIDGET_ID_pager = 'pager';
     var WIDGET_TARGET_redirectUrl = '#redirectUrl';
     var WIDGET_TARGET_redirectUrlToggle = '#redirectUrlToggle';
+    var WIDGET_TARGET_searchRuleMode = '#searchRuleMode';
     var WIDGET_TARGET_searchWithin = '#searchWithin';
     var WIDGET_TARGET_searchResult = '#docs';
     var WIDGET_TARGET_searchKeyword = '#searchKeyword';
@@ -62,6 +64,7 @@
 <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CNETFacetWidget.js" />" ></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/RedirectUrlWidget.js" />" ></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/RedirectUrlToggleWidget.js" />" ></script>
+<script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchRuleModeWidget.js" />" ></script>
 
 <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.js" />" ></script>
 
@@ -116,8 +119,12 @@
 
     <!-- Rule Selector Widget && Redirect URL Toggle Widget -->
     <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
-        <div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR">
-            <div id="searchKeyword"></div>		        	
+        <div id="searchRuleMode" class="floatR">
+        	<div id="searchRuleModeIcon" class="disabled" ></div>
+	        <input id="enableProductionMode" type="checkbox" />
+	    </div>    
+        <div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w300 txtAR">
+            <div id="searchKeyword"></div>
         </div>
         <div class="floatL w350 dropdownArea">
             <div class="floatL w150 padT5">Select Ranking Rule:</div>

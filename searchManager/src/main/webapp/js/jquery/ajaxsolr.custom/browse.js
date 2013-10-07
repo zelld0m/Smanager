@@ -31,6 +31,11 @@
             target: WIDGET_TARGET_redirectUrl
         }));
         
+        Manager.addWidget(new AjaxSolr.SearchRuleModeWidget({
+        	id: WIDGET_ID_searchRuleMode,
+        	target: WIDGET_TARGET_searchRuleMode
+        }));
+        
         Manager.addWidget(new AjaxSolr.RedirectUrlToggleWidget({
             id: WIDGET_ID_redirectUrlToggle,
             target: WIDGET_TARGET_redirectUrlToggle,

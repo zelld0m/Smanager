@@ -15,9 +15,9 @@
 	
 	AjaxSolr.theme.prototype.searchKeyword = function(){
 		var template = '';
-		template += '<a id="statisticIcon" href="javascript:void(0);">';
-		template += '	<img align="absmiddle" class="marR3 marT5 floatR  posRel" src="' + GLOBAL_contextPath + '/images/icon_statistics.png">';
-		template += '</a>'; 
+//		template += '<a id="statisticIcon" href="javascript:void(0);">';
+//		template += '	<img align="absmiddle" class="marR3 marT5 floatR  posRel" src="' + GLOBAL_contextPath + '/images/icon_statistics.png">';
+//		template += '</a>'; 
 		template += '<a id="searchBtn" href="javascript:void(0);">';
 		template += '	<img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="' + AjaxSolr.theme('getAbsoluteLoc', "images/btn_GO.png") + '">';
 		template += '</a> '; 
