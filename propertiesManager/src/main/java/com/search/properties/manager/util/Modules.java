@@ -1,9 +1,6 @@
 package com.search.properties.manager.util;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.search.properties.manager.exception.PropertyException;
-import com.search.properties.manager.model.Group;
 import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Store;
 import java.util.List;

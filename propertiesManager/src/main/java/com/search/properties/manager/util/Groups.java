@@ -14,7 +14,8 @@ import java.util.List;
  * @version 1.0
  */
 public class Groups {
-/**
+
+    /**
      * Checks whether a group exists in a module
      *
      * @param name the name of the group
@@ -50,8 +51,6 @@ public class Groups {
 
         return !groupsWithoutAName.isEmpty();
     }
-    
-    
 
     /**
      * Searches for a group by name
