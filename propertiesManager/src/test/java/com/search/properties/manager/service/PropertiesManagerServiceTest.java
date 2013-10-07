@@ -11,7 +11,7 @@ import com.search.properties.manager.model.Module;
 import com.search.properties.manager.model.Property;
 import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
-import com.search.properties.manager.util.PropertiesManagerUtil;
+import com.search.properties.manager.util.Stores;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,12 +47,10 @@ public class PropertiesManagerServiceTest {
     @Test
     public void testGetStoreProperties() {
 
-        Store pcmallBDStore = PropertiesManagerUtil.getStoreById("pcmallcap",
-                storeProperties);
+        Store pcmallBDStore = Stores.getStoreById("pcmallcap", storeProperties);
         assertEquals("pcmallcap", pcmallBDStore.getId());
 
-        Store pcmallStore = PropertiesManagerUtil.getStoreById("pcmall",
-                storeProperties);
+        Store pcmallStore = Stores.getStoreById("pcmall", storeProperties);
         assertEquals("pcmall", pcmallStore.getId());
 
         List<Module> pcmallModules = pcmallStore.getModules();
@@ -76,6 +74,6 @@ public class PropertiesManagerServiceTest {
 
     @Test(expected = PropertyException.class)
     public void testGetStoreProperties_No_Macmall_Store_Throw_PropertyException() {
-        PropertiesManagerUtil.getStoreById("macmall", storeProperties);
+        Stores.getStoreById("macmall", storeProperties);
     }
 }
