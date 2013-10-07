@@ -8,7 +8,7 @@ import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
 import com.search.properties.manager.model.StorePropertiesFile;
 import com.search.properties.manager.model.StoreProperty;
-import com.search.properties.manager.util.PropertiesManagerUtil;
+import com.search.properties.manager.util.Stores;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -43,13 +43,13 @@ public class PropertiesReader {
             throws PropertyException {
         StoreProperties storeProperties = propertiesManager.getStoreProperties();
 
-        Store store = PropertiesManagerUtil.getStoreById(storeId, storeProperties);
+        Store store = Stores.getStoreById(storeId, storeProperties);
         List<Module> modules = store.getModules();
         List<StorePropertiesFile> storePropertiesFiles = Lists.newArrayList();
 
         for (Module module : modules) {
             String moduleName = module.getName();
-            String filePath = PropertiesManagerUtil.getFormattedSaveLocation(
+            String filePath = Stores.getFormattedSaveLocation(
                     propertiesManager.getStorePropertiesSaveLocation(), storeId, 
                     moduleName);
             File file = new File(filePath);

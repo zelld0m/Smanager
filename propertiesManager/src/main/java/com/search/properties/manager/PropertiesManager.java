@@ -24,7 +24,9 @@ import com.search.properties.manager.model.Store;
 import com.search.properties.manager.model.StoreProperties;
 import com.search.properties.manager.model.StorePropertiesFile;
 import com.search.properties.manager.model.StoreProperty;
-import com.search.properties.manager.util.PropertiesManagerUtil;
+import com.search.properties.manager.util.Modules;
+import com.search.properties.manager.util.Propertys;
+import com.search.properties.manager.util.Stores;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -77,8 +79,8 @@ public class PropertiesManager {
         removeUnexistingStoreById(storeProperties);
 
         for (Store store : stores) {
-            if (PropertiesManagerUtil.hasParent(store)) {
-                Store parentStore = PropertiesManagerUtil.getParent(store,
+            if (Stores.hasParent(store)) {
+                Store parentStore = Stores.getParent(store,
                         storeProperties);
 
                 // add the parent store modules
@@ -100,7 +102,7 @@ public class PropertiesManager {
 
         for (String storeId : storeIds) {
             try {
-                Store store = PropertiesManagerUtil.getStoreById(storeId,
+                Store store = Stores.getStoreById(storeId,
                         storeProperties);
                 revisedStoreList.add(store);
             } catch (PropertyException e) {
@@ -160,7 +162,7 @@ public class PropertiesManager {
             String moduleName = module.getName();
 
             try {
-                String filePath = PropertiesManagerUtil.getFormattedSaveLocation(
+                String filePath = Stores.getFormattedSaveLocation(
                         getStorePropertiesSaveLocation(), storeId, moduleName);
 
                 // save the properties file to the appropriate directory
@@ -304,7 +306,7 @@ public class PropertiesManager {
         List<Module> parentStoreModules = parentStore.getModules();
 
         for (Module parentModule : parentStoreModules) {
-            if (!PropertiesManagerUtil.containsModule(parentModule, childStore)) {
+            if (!Modules.containsModule(parentModule, childStore)) {
                 childStore.addModule(0, parentModule);
                 continue;
             }
@@ -324,8 +326,8 @@ public class PropertiesManager {
      * @param childStore the child store
      */
     private void addParentStoreGroups(Module parentModule, Store childStore) {
-        if (PropertiesManagerUtil.containsModule(parentModule, childStore)) {
-            Module module = PropertiesManagerUtil.getModuleByName(parentModule.getName(),
+        if (Modules.containsModule(parentModule, childStore)) {
+            Module module = Modules.getModuleByName(parentModule.getName(),
                     childStore);
             module.addAllGroups(parentModule.getGroups());
         }
@@ -342,10 +344,10 @@ public class PropertiesManager {
 
         for (Property parentProperty : parentProperties) {
             try {
-                Module childModule = PropertiesManagerUtil.getModuleByName(
+                Module childModule = Modules.getModuleByName(
                         parentModule.getName(), childStore);
 
-                if (!PropertiesManagerUtil.containsProperty(parentProperty,
+                if (!Propertys.containsProperty(parentProperty,
                         childModule)) {
                     childModule.addProperty(parentProperty);
                 }
