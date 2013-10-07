@@ -65,10 +65,10 @@ public class PropertiesReaderServiceTest {
     @Test
     public void testReadAllStorePropertiesFile_Property_Does_Not_Exist() {
         StorePropertiesFile settingsPropertiesFile = storePropertiesFiles.get(1);
-        StoreProperty forTestingStoreProperty = Stores.getStorePropertyByName(
-                "for_testing", settingsPropertiesFile);
-        assertEquals("for_testing", forTestingStoreProperty.getName());
-        assertEquals("This is a test", forTestingStoreProperty.getValue());
+        StoreProperty exportTargetStoreProperty = Stores.getStorePropertyByName(
+                "export_target", settingsPropertiesFile);
+        assertEquals("export_target", exportTargetStoreProperty.getName());
+        assertEquals("pcmallcap,pcmgbd", exportTargetStoreProperty.getValue());
     }
 
     @Test

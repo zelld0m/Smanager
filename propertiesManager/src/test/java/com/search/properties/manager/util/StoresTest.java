@@ -112,8 +112,8 @@ public class StoresTest {
 
     @Test(expected = PropertyException.class)
     public void testGetStorePropertyByName_StoreName_Does_Not_Exists_Throw_PropertyException() {
-        StorePropertiesFile pcmallSettingsStorePropertiesFile = storePropertiesFiles.get(
-                1);
+        StorePropertiesFile pcmallSettingsStorePropertiesFile = 
+                storePropertiesFiles.get(0);
         Stores.getStorePropertyByName("hoopla", pcmallSettingsStorePropertiesFile);
     }
 }

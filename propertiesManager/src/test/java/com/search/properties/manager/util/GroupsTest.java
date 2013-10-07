@@ -52,6 +52,12 @@ public class GroupsTest {
 
         assertNotNull(propertiesReaderService);
     }
+    
+    @Test
+    public void testContainsAGroupWithoutAName() {
+        assertEquals(true, Groups.containsAGroupWithoutAName(
+                settingsModuleOnPCMallStore));
+    }
 
     @Test
     public void testGetGroupByName() {
@@ -61,7 +67,7 @@ public class GroupsTest {
     }
 
     @Test(expected = PropertyException.class)
-    public void testGroupGroupByName_Group_Name_Does_Not_Exists_Throw_PropertyException() {
+    public void testGetGroupByName_Group_Name_Does_Not_Exists_Throw_PropertyException() {
         Groups.getGroupByName("Avalanche", settingsModuleOnPCMallStore);
     }
 
@@ -77,7 +83,7 @@ public class GroupsTest {
     public void testGroupAllGroupsWithoutAName_No_Empty_Group_Return_Empty_ArrayList() {
         Module mailModule = Modules.getModuleByName("mail", pcmallStore);
         List<Group> allGroupsWithoutAName = Groups.getAllGroupsWithoutAName(mailModule);
-        assertEquals(0, allGroupsWithoutAName.size());
+        assertEquals(2, allGroupsWithoutAName.size());
         assertEquals(java.util.ArrayList.class, allGroupsWithoutAName.getClass());
     }
 }
