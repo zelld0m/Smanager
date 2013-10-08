@@ -100,7 +100,6 @@
     -->
     <logger name="com.search" additivity="false">
         <appender-ref ref="searchManager-file"/>
-        <appender-ref ref="console"/>
     </logger>
 
     <logger name="com.search.manager.authentication.session" additivity="false">
