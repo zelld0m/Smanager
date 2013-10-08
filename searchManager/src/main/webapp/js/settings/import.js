@@ -1260,7 +1260,7 @@
             }
         },
         changeSelectedImportType: function() {
-            $("table#rule tbody tr td select#importTypeList option[value=\"2\"]").each(
+            $("table#rule tbody tr td select#importTypeList option[value=\"3\"]").each(
                     function() {
                         $(this).attr("selected", "selected");
                     }
