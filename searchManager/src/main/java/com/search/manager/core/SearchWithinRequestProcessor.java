@@ -81,7 +81,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 	}
 	
 	public int getMinLength(){
-		return Integer.parseInt(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.minLength"),"3"));
+		return Integer.parseInt(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.minLength"),"2"));
 	}
 	
 	@Override
@@ -104,11 +104,11 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 				logger.info("Tokens using {}: {}", getSplitRegex(allowedSwParam), StringUtils.join(tokens, "|"));
 				if (ArrayUtils.isNotEmpty(tokens) && tokens.length>0){
 					for(String token: tokens){
-						if((StringUtils.length(StringUtils.trimToEmpty(token)) < getMinLength()) && !StringUtils.isAlphanumeric(StringUtils.trimToEmpty(token))){
-							unQualifiedTokens.add(token);
+						if(StringUtils.length(StringUtils.trimToEmpty(token)) >= getMinLength()){
+							qualifiedTokens.add(token);
 							continue;
 						}
-						qualifiedTokens.add(token);
+						unQualifiedTokens.add(token);
 					}
 				}
 			}
