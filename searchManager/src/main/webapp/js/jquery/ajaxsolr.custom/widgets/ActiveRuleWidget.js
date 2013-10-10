@@ -201,7 +201,8 @@
             output += '			<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
             output += '				<div class="floatL marT6">';
             output += '					<label class="select floatL w80 posRel topn3"><input type="checkbox" class="firerift-style-checkbox on-off ruleControl"></label>';
-            output += '					<div class="alertStatus alert marT20" style="display:none"></div>';
+            output += '					<div class="clearB"></div>';
+            output += '					<div class="alertStatus alert" style="display:none"></div>';
             output += '				</div>';
             output += '				<div class="floatR w300">';
             output += '					<div class="w300">';
