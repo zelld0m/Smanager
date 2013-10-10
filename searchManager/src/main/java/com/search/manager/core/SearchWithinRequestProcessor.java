@@ -98,7 +98,17 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		}
 		
 		for(String keyword: keywords){
-			if(StringUtils.isNotBlank(keyword) && !(StringUtils.startsWith(keyword, "\"") && StringUtils.endsWith(keyword, "\""))){
+			String trimmedKeyword = StringUtils.trimToEmpty(keyword);
+			
+			if(StringUtils.isNotBlank(trimmedKeyword)){
+				int numberOfQuotes = StringUtils.countMatches(trimmedKeyword, "\"");
+				
+				if(numberOfQuotes > 0 && (numberOfQuotes % 2) == 0 && StringUtils.startsWith(trimmedKeyword, "\"") && StringUtils.endsWith(trimmedKeyword, "\"")){
+					logger.info("Qualified token: {}", trimmedKeyword);
+					qualifiedTokens.add(trimmedKeyword);
+					continue;
+				}
+				
 				String[] tokens = keyword.split(getSplitRegex(allowedSwParam));
 				logger.info("Processing keyword for {}: {}", StringUtils.capitalize(allowedSwParam), keyword);
 				logger.info("Tokens using {}: {}", getSplitRegex(allowedSwParam), StringUtils.join(tokens, "|"));
@@ -174,7 +184,9 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		if(logger.isInfoEnabled()){
 			logger.info("Enabled: {}", BooleanUtils.toStringYesNo(isEnabled()));
 			logger.info("Param name {} exists? {}", getRequestParamName(), BooleanUtils.toStringYesNo(ArrayUtils.getLength(paramValues)>0));
-			logger.info("Values for {} param name: {}", ArrayUtils.getLength(paramValues), StringUtils.join(paramValues,"|"));
+			if (ArrayUtils.getLength(paramValues)>0){
+				logger.info("Values for {} param name: {}", ArrayUtils.getLength(paramValues), StringUtils.join(paramValues,"|"));
+			}
 		}
 
 		if(!isEnabled() ||  ArrayUtils.getLength(paramValues)==0 || StringUtils.isBlank(swValues = paramValues[paramValues.length-1])){
@@ -209,8 +221,9 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 						swParamList = (List<String>) JSONSerializer.toJava(jsonArray);
 					}
 
-					if(CollectionUtils.isNotEmpty(swParamList)){
-						swParamsMap.put(swType, getTokenizedKeyword(swParamList, swType));
+					List<String> tokensList = new ArrayList<String>();
+					if(CollectionUtils.isNotEmpty(swParamList) && CollectionUtils.isNotEmpty(tokensList = getTokenizedKeyword(swParamList, swType))){
+						swParamsMap.put(swType, tokensList);
 					}
 				}
 			}
