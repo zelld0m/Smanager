@@ -178,12 +178,9 @@ public class ReportsManager {
         List<KeywordReport> keywordReports = ruleReport.getKeywordReports();
         for (KeywordReport keywordReport : keywordReports) {
             List<Report> reports = keywordReport.getReports();
-            List<Report> cleanedReports = Lists.newArrayList();
 
-            // remove the empty reports
-            cleanReports(reports, cleanedReports);
-
-            keywordReport.setReports(cleanedReports);
+            // remove empty reports and set it to the keyword report
+            keywordReport.setReports(cleanReports(reports));
         }
     }
 
@@ -193,11 +190,15 @@ public class ReportsManager {
      * @param reports
      * @param cleanedReports
      */
-    private void cleanReports(List<Report> reports, List<Report> cleanedReports) {
+    private List<Report> cleanReports(List<Report> reports) {
+        List<Report> cleanedReports = Lists.newArrayList();
+        
         for (Report report : reports) {
             if (!Reports.isReportObjectEmpty(report)) {
                 cleanedReports.add(report);
             }
         }
+        
+        return cleanedReports;
     }
 }
