@@ -1,7 +1,8 @@
 package com.search.reports.manager.model;
 
 import com.google.common.base.Objects;
-import java.util.Date;
+import com.google.common.collect.Lists;
+import java.util.List;
 
 /**
  *
@@ -10,35 +11,18 @@ import java.util.Date;
  * @version 1.0
  */
 public class KeywordReport implements java.io.Serializable {
-    
-    private static final long serialVersionUID = -510158258308693508L;
-    private String ruleName;
+
+    private static final long serialVersionUID = -7846144638747029778L;
     private String keyword;
-    private String rank;
-    private String sku;
-    private String name;
-    private Date expiration;
+    private List<Report> reports = Lists.newArrayList();
 
     public KeywordReport() {
         // NOTHING
     }
 
-    public KeywordReport(String ruleName, String keyword, String rank, String sku,
-            String name, Date expiration) {
-        this.ruleName = ruleName;
+    public KeywordReport(String keyword, List<Report> reports) {
         this.keyword = keyword;
-        this.rank = rank;
-        this.sku = sku;
-        this.name = name;
-        this.expiration = expiration;
-    }
-
-    public String getRuleName() {
-        return ruleName;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
+        this.reports = reports;
     }
 
     public String getKeyword() {
@@ -49,46 +33,23 @@ public class KeywordReport implements java.io.Serializable {
         this.keyword = keyword;
     }
 
-    public String getRank() {
-        return rank;
+    public List<Report> getReports() {
+        return reports;
     }
 
-    public void setRank(String rank) {
-        this.rank = rank;
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
     }
-
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Date getExpiration() {
-        return expiration;
-    }
-
-    public void setExpiration(Date expiration) {
-        this.expiration = expiration;
+    
+    public void addReport(Report report) {
+        reports.add(report);
     }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this).
-                add("ruleName", ruleName).
-                add("rank", rank).
-                add("sku", sku).
-                add("name", name).
-                add("expiration", expiration).
+                add("keyword", keyword).
+                add("reports", reports).
                 toString();
     }
 }
