@@ -1,6 +1,5 @@
-package com.search.reports.manager.service;
+package com.search.reports.manager;
 
-import com.search.reports.manager.ReportsManager;
 import com.search.reports.manager.model.RuleReport;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ public class ReportsManagerService {
     @Autowired
     private ReportsManager reportsManager;
     
-    public List<RuleReport> uploadRuleReports(String... excelFilePaths) {
-        return reportsManager.uploadRuleReports(excelFilePaths);
+    public List<RuleReport> uploadRuleReports(String... excelFilePath) {
+        return reportsManager.uploadRuleReports(excelFilePath);
     } 
 }
