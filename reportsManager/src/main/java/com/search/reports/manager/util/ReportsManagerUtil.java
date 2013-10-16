@@ -62,7 +62,7 @@ public class ReportsManagerUtil {
         try {
             return Double.parseDouble(numberAsString) == 0.0 ? true : false;
         } catch (NumberFormatException e) {
-            return true;
+            return false;
         }
     }
 }

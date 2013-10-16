@@ -37,7 +37,6 @@ public class ReportsManagerUtilTest {
         assertEquals(true, ReportsManagerUtil.isReportObjectEmpty(report));
     }
 
-    @Test
     public void testIsReportObjectEmpty_Rank_Is_Not_A_Number_Return_True() {
         Report report = ReportBuilder.create().rank("0a").build();
         assertEquals(true, ReportsManagerUtil.isReportObjectEmpty(report));
