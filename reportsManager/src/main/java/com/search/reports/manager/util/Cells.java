@@ -11,13 +11,6 @@ import org.apache.poi.ss.usermodel.Cell;
  */
 public class Cells {
 
-    /**
-     * Reads a cell either as numeric or string value
-     *
-     * @param cell the {@link Cell} object to read
-     * @return the {@link String} value of the cell
-     * @throws ReportsException thrown when the cell neither numeric nor string
-     */
     public static String getEitherNumericOrStringValueAsString(Cell cell)
             throws ReportsException {
         int cellType = cell.getCellType();

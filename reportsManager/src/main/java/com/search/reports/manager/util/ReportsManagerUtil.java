@@ -2,6 +2,7 @@ package com.search.reports.manager.util;
 
 import com.google.common.base.Strings;
 import com.search.reports.manager.model.Report;
+import com.search.reports.manager.model.ReportHeader;
 import java.util.Date;
 
 /**
@@ -10,7 +11,19 @@ import java.util.Date;
  * @since Oct 11, 2013
  * @version 1.0
  */
-public class Reports {
+public class ReportsManagerUtil {
+
+    /**
+     * Checks whether a value is a report header
+     *
+     * @see ReportHeader
+     * @param value the value
+     * @return <i>true</i> if the value is a report header, else <i>false</i>
+     */
+    public static boolean isAReportHeader(String value) {
+        return ReportHeader.isAReportHeader(value);
+    }
+
     /**
      * <p>
      * Checks whether a {@link Report} object is empty or not.
