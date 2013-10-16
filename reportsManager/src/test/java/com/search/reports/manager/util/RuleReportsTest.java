@@ -7,7 +7,6 @@ import com.search.reports.manager.model.builder.ReportBuilder;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 /**

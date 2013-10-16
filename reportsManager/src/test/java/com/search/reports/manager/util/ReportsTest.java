@@ -3,7 +3,6 @@ package com.search.reports.manager.util;
 import com.search.reports.manager.model.Report;
 import com.search.reports.manager.model.builder.ReportBuilder;
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 /**
