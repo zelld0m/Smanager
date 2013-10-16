@@ -142,7 +142,6 @@
     <modules>
         <module>searchManager</module>
         <module>SearchGuiWS</module>
-        <module>reportsManager</module>
     </modules>
     <dependencies>
     	<dependency>
