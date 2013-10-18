@@ -1,16 +1,16 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="setting"/>
+<c:set var="topmenu" value="workflow"/>
 <c:set var="submenu" value="import"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-<script type="text/javascript" src="<spring:url value="/js/settings/import.js" />"></script>
+<script type="text/javascript" src="<spring:url value="/js/workflow/import.js" />"></script>
 
 <script>
     var hasPublishRule = <%= request.isUserInRole("PUBLISH_RULE")%>;
 </script>
 
-<link type="text/css" rel="stylesheet" href="<spring:url value="/css/settings/settings.css" />">
+<link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
