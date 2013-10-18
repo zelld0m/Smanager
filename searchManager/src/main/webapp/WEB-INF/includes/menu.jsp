@@ -23,9 +23,13 @@
               </sec:authorize>
               <li ${topmenu eq 'statistic'? 'class="active"': ''}><span><a href="<spring:url value="/topkeyword/"/>${storeId}">Statistics</a></span></li>
               <li ${topmenu eq 'lexicon'? 'class="active"': ''}><span><a href="<spring:url value="/synonym/"/>${storeId}">Linguistics</a></span></li>
-              <li class="icon-only ${topmenu eq 'setting'? 'active': ''}"><span><a href="<spring:url value="/audit/"/>${storeId}">
-                  <img src="<spring:url value="/images/settings-icon.png"/>" title="Settings">
-              </a></span></li>
+              <li class="icon-only ${topmenu eq 'setting'? 'active': ''}">
+                <span>
+                  <a href="<spring:url value="/audit/"/>${storeId}" title="Settings">
+                    <div class="icon-container"></div>
+                  </a>
+                </span>
+              </li>
               <!-- li ${topmenu eq 'migrator'? 'class="active"': ''}><a href="<spring:url value="/migrator/"/>${storeId}">Migrator</a></li -->
       </ul>
       </div>

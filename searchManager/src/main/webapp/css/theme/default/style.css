@@ -68,8 +68,9 @@ img.ui-datepicker-trigger { cursor:pointer }
 .mnuHeader .active a:visited	{ color:#d4eaff }
 .mnuHeader .active a:hover		{ color:#d4eaff }
 
-.mnuHeader li.icon-only         { padding-left: 0px; padding-right: 0px }
-.mnuHeader li.icon-only img     { position: relative; top: -4px; }
+.mnuHeader li.icon-only         { padding-left: 0px; padding-right: 0px; float: right; }
+.mnuHeader li.icon-only .icon-container     { position: relative; top: -4px; width: 24px; height: 24px; background-image: url(images/icon-settings.png); }
+.mnuHeader li.icon-only a:hover .icon-container     { background-position: 0px 24px; }
 
 
 /* pagination */
