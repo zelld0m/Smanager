@@ -1,4 +1,4 @@
-package com.search.manager.core;
+package com.search.manager.core.processor;
 
 import java.util.List;
 import java.util.Map;
