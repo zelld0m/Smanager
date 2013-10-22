@@ -179,7 +179,7 @@
 					<type>Date</type>
 				</arg>
 				<arg position="2">
-					<type>Date</type>
+					<type>Field</type>
 				</arg>
 			</constraints>
 		</function>
