@@ -76,21 +76,12 @@
             </groups>
             
             <properties>
-                <property id="site_domain" type="String">
+                <property id="site_domain" type="String" required="true">
                     <label>New Site Domain</label>
                     <defaultValue>pcmbd.com</defaultValue>
                 </property>
                 <property id="redirect_self_domain" type="String">
                     <label>Redirect Self Domain</label>
-                    <defaultValue>pcmbd.com</defaultValue>
-                </property>
-            </properties>
-        </module>
-        <module name="settings" title="Settings">
-            <properties>
-                <property id="site_domain" type="String" required="true">
-                    <label>Site Domain</label>
-                    <description>Domain of the main site.</description>
                     <defaultValue>pcmbd.com</defaultValue>
                 </property>
             </properties>
