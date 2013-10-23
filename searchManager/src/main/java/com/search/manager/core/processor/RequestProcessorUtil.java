@@ -9,8 +9,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.SearchDaoService;
@@ -21,12 +19,9 @@ import com.search.ws.SolrConstants;
 @Component
 public class RequestProcessorUtil {
 	private static final Logger logger = LoggerFactory.getLogger(RequestProcessorUtil.class);
-	@Autowired
-	@Qualifier("daoService")
-	public static SearchDaoService daoService;
-	@Autowired
-	@Qualifier("solrService")
-	public static SearchDaoService solrService;
+
+	private static SearchDaoService daoService;
+	private static SearchDaoService solrService;
 	
 	private static final String[] uniqueFields = {
 		SolrConstants.SOLR_PARAM_ROWS,
@@ -34,7 +29,12 @@ public class RequestProcessorUtil {
 		SolrConstants.SOLR_PARAM_WRITER_TYPE,
 		SolrConstants.SOLR_PARAM_START
 	};
-	
+
+	public static final void initialize(SearchDaoService daoService, SearchDaoService solrService) {
+		RequestProcessorUtil.daoService = daoService;
+		RequestProcessorUtil.solrService = solrService;
+	}
+
 	public static boolean addNameValuePairToMap(Map<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
 		boolean added = false;
 		if (ArrayUtils.contains(uniqueFields, paramName) && map.containsKey(paramName)) {

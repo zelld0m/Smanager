@@ -54,6 +54,17 @@
             </list>
         </property>
     </bean>
+
+    <!-- RequestProcessorUtil -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="com.search.manager.core.processor.RequestProcessorUtil.initialize"/>
+        <property name="arguments">
+            <list>
+                <ref bean="daoService"/>
+                <ref bean="solrService"/>
+            </list>
+        </property>
+    </bean>
         
     <!--        <util:properties id="globalVarConfig" location="/home/solr/conf/globalvar.properties"/>
     <bean id="propsUtils" class="com.search.manager.utility.PropertiesUtils">
