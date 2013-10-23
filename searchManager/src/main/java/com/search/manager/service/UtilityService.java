@@ -32,7 +32,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.search.manager.authentication.dao.internal.UserDetailsImpl;
-import com.search.manager.core.SearchWithinRequestProcessor;
+import com.search.manager.core.processor.RequestPropertyBean;
+import com.search.manager.core.processor.SearchWithinRequestProcessor;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
@@ -222,7 +223,7 @@ public class UtilityService {
     @RemoteMethod
     public static String getStoreParameters() {
         String storeId = getStoreId();
-        SearchWithinRequestProcessor processor = new SearchWithinRequestProcessor(storeId);
+        SearchWithinRequestProcessor processor = new SearchWithinRequestProcessor(new RequestPropertyBean(storeId));
         JSONObject json = new JSONObject();
         json.put("username", getUsername());
         json.put("solrSelectorParam", getSolrSelectorParam());

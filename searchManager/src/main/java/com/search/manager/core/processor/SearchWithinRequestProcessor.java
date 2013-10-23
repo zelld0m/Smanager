@@ -26,67 +26,69 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.search.ws.ConfigManager;
+import com.search.ws.SolrResponseParser;
 
+@Component
 public class SearchWithinRequestProcessor implements RequestProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(SearchWithinRequestProcessor.class);
-	private ConfigManager cm;
-	private String storeId;
-
+	private ConfigManager cm =  ConfigManager.getInstance();
+	private RequestPropertyBean requestPropertyBean;
+	
 	private SearchWithinRequestProcessor(){
 		super();
 	}
 
-	public SearchWithinRequestProcessor(String storeId){
+	public SearchWithinRequestProcessor(RequestPropertyBean requestPropertyBean){
 		this();
-		this.cm = ConfigManager.getInstance();
-		this.storeId = storeId;
+		this.requestPropertyBean = requestPropertyBean;
 	}
 
 	public List<String> getFields(){
-		return cm.getListSearchWithinProperty(storeId, "searchwithin.solrfieldlist");
+		return cm.getListSearchWithinProperty(requestPropertyBean.getStoreId(), "searchwithin.solrfieldlist");
 	}
 
 	public List<String> getSearchWithinType(){
-		return cm.getListSearchWithinProperty(storeId, "searchwithin.type");
+		return cm.getListSearchWithinProperty(requestPropertyBean.getStoreId(), "searchwithin.type");
 	}
 
 	public String getRequestParamName(){
-		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.paramname"),"searchwithin");
+		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), "searchwithin.paramname"),"searchWithin");
 	}
 
 	public String getKeywordOperator(String swType){
-		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.keywordOperator",swType)),"OR");
+		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), String.format("searchwithin.%s.keywordOperator",swType)),"OR");
 	}
 
 	public String getSolrFieldOperator(String swType){
-		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.solrFieldOperator",swType)),"OR");
+		return StringUtils.defaultIfBlank(cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), String.format("searchwithin.%s.solrFieldOperator",swType)),"OR");
 	}
 
 	public String getPrefixOperator(String swType){
-		return cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.prefixTypeOperator", swType));
+		return cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), String.format("searchwithin.%s.prefixTypeOperator", swType));
 	}
 
 	public boolean isQuoteKeyword(String swType){
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.quoteKeyword",swType)), "false"));
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), String.format("searchwithin.%s.quoteKeyword",swType)), "false"));
 	}
 
 	public boolean isSplit(String swType){
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.split",swType)), "false"));
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), String.format("searchwithin.%s.split",swType)), "false"));
 	}
 	
 	public String getSplitRegex(String swType){
-		return cm.getSearchWithinProperty(storeId, String.format("searchwithin.%s.splitRegex", swType));
+		return cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), String.format("searchwithin.%s.splitRegex", swType));
 	}
 	
 	public int getMinLength(){
-		return Integer.parseInt(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.minLength"),"2"));
+		return Integer.parseInt(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), "searchwithin.minLength"),"2"));
 	}
 	
 	@Override
 	public boolean isEnabled(){
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(storeId, "searchwithin.enable"), "false"));
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getSearchWithinProperty(requestPropertyBean.getStoreId(), "searchwithin.enable"), "false"));
 	}
 	
 	public List<String> getTokenizedKeyword(List<String> keywords, String allowedSwParam){
@@ -173,7 +175,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void process(HttpServletRequest request, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
+	public void process(HttpServletRequest request, SolrResponseParser solrHelper, List<Map<String, String>> activeRules, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
 		Map<String, List<String>> swParamsMap = new HashMap<String, List<String>>();
 		List<String> swTypeList= new ArrayList<String>();
 		String[] paramValues= request.getParameterValues(getRequestParamName());
@@ -182,10 +184,9 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 		String swValues = ""; 
 
 		if(logger.isInfoEnabled()){
-			logger.info("Enabled: {}", BooleanUtils.toStringYesNo(isEnabled()));
-			logger.info("Param name {} exists? {}", getRequestParamName(), BooleanUtils.toStringYesNo(ArrayUtils.getLength(paramValues)>0));
+			logger.info(String.format("%s Enabled? %s, Param exists? %s", getRequestParamName(), BooleanUtils.toStringYesNo(isEnabled()), BooleanUtils.toStringYesNo(ArrayUtils.getLength(paramValues)>0)));
 			if (ArrayUtils.getLength(paramValues)>0){
-				logger.info("Values for {} param name: {}", ArrayUtils.getLength(paramValues), StringUtils.join(paramValues,"|"));
+				logger.info(String.format("Param count? %s Value read: %s", ArrayUtils.getLength(paramValues), StringUtils.join(paramValues,"|")));
 			}
 		}
 

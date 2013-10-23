@@ -39,6 +39,7 @@ public class ConfigManager {
     private Map<String, PropertiesConfiguration> linguisticSettingsMap = new HashMap<String, PropertiesConfiguration>();
     private Map<String, PropertiesConfiguration> mailSettingsMap = new HashMap<String, PropertiesConfiguration>();
     private Map<String, PropertiesConfiguration> searchWithinSettingsMap = new HashMap<String, PropertiesConfiguration>();
+    private Map<String, PropertiesConfiguration> facetSortSettingsMap = new HashMap<String, PropertiesConfiguration>();
 
     private ConfigManager() {
         // do nothing...
@@ -114,7 +115,7 @@ public class ConfigManager {
                     try {
                     	searchWithinFile.createNewFile();
                     } catch (IOException e) {
-                        logger.error("Unable to create mail property file: " + searchWithinFile.getAbsolutePath(), e);
+                        logger.error("Unable to create search within property file: " + searchWithinFile.getAbsolutePath(), e);
                     }
                 }
                 if (searchWithinFile.exists()) {
@@ -123,6 +124,23 @@ public class ConfigManager {
                     propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
                     searchWithinSettingsMap.put(storeId, propConfig);
                     logger.info("search within property file for {}: {}",storeId, propConfig.getFileName());
+                }
+                
+                // facet sort properties
+                File facetSortFile = new File(String.format("%s%s%s.facetsort.properties", configFolder, File.separator, storeId));
+                if (!facetSortFile.exists()) {
+                    try {
+                    	facetSortFile.createNewFile();
+                    } catch (IOException e) {
+                        logger.error("Unable to create facet sort property file: " + searchWithinFile.getAbsolutePath(), e);
+                    }
+                }
+                if (facetSortFile.exists()) {
+                    PropertiesConfiguration propConfig = new PropertiesConfiguration(facetSortFile.getAbsolutePath());
+                    propConfig.setAutoSave(true);
+                    propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+                    facetSortSettingsMap.put(storeId, propConfig);
+                    logger.info("facet sort property file for {}: {}",storeId, propConfig.getFileName());
                 }
             }
 
@@ -446,6 +464,27 @@ public class ConfigManager {
 
     @SuppressWarnings("unchecked")
     public List<String> getListSearchWithinProperty(String storeId, String field) {
+        PropertiesConfiguration config = searchWithinSettingsMap.get(storeId);
+        if (config != null) {
+            synchronized (config) {
+                return config.getList(field);
+            }
+        }
+        return new ArrayList<String>();
+    }
+    
+    public String getFacetSortProperty(String storeId, String field) {
+        PropertiesConfiguration config = searchWithinSettingsMap.get(storeId);
+        if (config != null) {
+            synchronized (config) {
+                return config.getString(field);
+            }
+        }
+        return "";
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getListFacetSortProperty(String storeId, String field) {
         PropertiesConfiguration config = searchWithinSettingsMap.get(storeId);
         if (config != null) {
             synchronized (config) {
