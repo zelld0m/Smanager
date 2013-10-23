@@ -3,64 +3,35 @@
     <store id="ecost" extends="pcmall">
         <module name="settings" title="Settings">
             <properties>
+                <property id="site_domain" type="String">
+                    <label>New Site Domain</label>
+                    <defaultValue>ecost.com</defaultValue>
+                </property>
+                <property id="autoprefix_banner_linkpath_protocol" type="Boolean">
+                    <label>Autoprefix Banner Link Path Protocol</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="allowed_banner_sizes" type="String" multiValued="true">
+                    <label>Allowed Banner Sizes</label>
+                    <validator>WxH</validator>
+                    <defaultValue>180x150,728x90,300x250,605x150</defaultValue>
+                </property>
                 <property id="auto_export" type="Boolean">
                     <label>Auto Export</label>
                     <defaultValue>false</defaultValue>
                 </property>
-                <property id="site_domain" type="String">
-                    <label>New Site Domain</label>
-                    <defaultValue>ecost.com</defaultValue>
+                <property id="export_target" type="String" multiValued="true">
+                    <label>Export Target</label>
+                    <validator>STORE</validator>
+                    <defaultValue></defaultValue>
                 </property>
                 <property id="redirect_self_domain" type="String">
                     <label>Redirect Self Domain</label>
                     <defaultValue>ecost.com</defaultValue>
                 </property>
-            </properties>
-        </module>
-    </store>
-    <store id="pcmallcap" extends="pcmall">
-        <module name="new_module" title="New">
-            <groups>
-                <group name="New Banner Ads Feature">
-                    <member property-id="site_domain"/>
-                </group>
-                
-                <group>
-                    <member property-id="generate_bananas"/>
-                </group>
-            </groups>
-            
-            <properties>
-                <property id="site_domain" type="String">
-                    <label>New Site Domain</label>
-                    <defaultValue>pcmbd.com</defaultValue>
-                </property>
-                <property id="redirect_self_domain" type="String">
-                    <label>Redirect Self Domain</label>
-                    <defaultValue>pcmbd.com</defaultValue>
-                </property>
-                <property id="generate_bananas" type="Boolean">
-                    <label>Generate Bananas</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-            </properties>
-        </module>
-        <module name="settings" title="Settings">
-            <groups>
-                <group>
-                    <member property-id="test"/>
-                </group>
-            </groups>
-            <properties>
-                <property id="test" type="String" required="true">
-                    <label>Test</label>
-                    <description>This is a test.</description>
-                    <defaultValue>A test</defaultValue>
-                </property>
-                <property id="site_domain" type="String" required="true">
-                    <label>Site Domain</label>
-                    <description>Domain of the main site.</description>
-                    <defaultValue>pcmbd.com</defaultValue>
+                <property id="facet_template" type="String">
+                    <label>Facet Template</label>
+                    <defaultValue>IMS</defaultValue>
                 </property>
             </properties>
         </module>
@@ -74,9 +45,74 @@
                     <description>Domain of managed site.</description>
                     <defaultValue>macmall.com</defaultValue>
                 </property>
+                <property id="allowed_banner_sizes" type="String" multiValued="true">
+                    <label>Allowed Banner Sizes</label>
+                    <validator>WxH</validator>
+                    <defaultValue>180x150,728x90,300x250,605x150</defaultValue>
+                </property>
+                <property id="export_target" type="String" multiValued="true">
+                    <label>Export Target</label>
+                    <validator>STORE</validator>
+                    <defaultValue>macmallbd</defaultValue>
+                </property>
                 <property id="redirect_self_domain" type="String">
                     <label>Redirect Self Domain</label>
                     <defaultValue>macmall.com</defaultValue>
+                </property>
+                <property id="facet_template" type="String">
+                    <label>Facet Template</label>
+                    <defaultValue>IMS</defaultValue>
+                </property>
+            </properties>
+        </module>
+    </store>
+    
+    <store id="pcmallcap" extends="pcmall">
+        <module name="settings" title="Settings">
+            <groups>
+                <group name="New Banner Ads Feature">
+                    <member property-id="site_domain"/>
+                </group>
+            </groups>
+            
+            <properties>
+                <property id="site_domain" type="String">
+                    <label>New Site Domain</label>
+                    <defaultValue>pcmbd.com</defaultValue>
+                </property>
+                <property id="redirect_self_domain" type="String">
+                    <label>Redirect Self Domain</label>
+                    <defaultValue>pcmbd.com</defaultValue>
+                </property>
+            </properties>
+        </module>
+        <module name="settings" title="Settings">
+            <properties>
+                <property id="site_domain" type="String" required="true">
+                    <label>Site Domain</label>
+                    <description>Domain of the main site.</description>
+                    <defaultValue>pcmbd.com</defaultValue>
+                </property>
+            </properties>
+        </module>
+    </store>
+    
+    <store id="pcmallgov" extends="pcmall">
+        <module name="settings" title="Settings">
+            <properties>
+                <property id="site_domain" type="String" required="true">
+                    <label>Site Domain</label>
+                    <description>Domain of the main site.</description>
+                    <defaultValue>pcmg.com</defaultValue>
+                </property>
+                <property id="export_target" type="String" multiValued="true">
+                    <label>Export Target</label>
+                    <validator>STORE</validator>
+                    <defaultValue>pcmgbd</defaultValue>
+                </property>
+                <property id="redirect_self_domain" type="String">
+                    <label>Redirect Self Domain</label>
+                    <defaultValue>pcmg.com</defaultValue>
                 </property>
             </properties>
         </module>
@@ -251,6 +287,9 @@
                     <member property-id="redirect_self_domain"/>
                     <member property-id="redirect_relative_path"/>
                 </group>
+                <group>
+                    <member property-id="facet_template"/>
+                </group>
             </groups>
             
             <properties>
@@ -265,7 +304,7 @@
                 </property>
                 <property id="autoprefix_banner_linkpath_protocol" type="Boolean">
                     <label>Autoprefix Banner Link Path Protocol</label>
-                    <defaultValue>true</defaultValue>
+                    <defaultValue>false</defaultValue>
                 </property>
                 <property id="default_banner_size" type="String" required="true">
                     <label>Default Banner Size</label>
@@ -294,9 +333,9 @@
                     <label>Redirect Relative Path</label>
                     <defaultValue>/s, /c, /n, /th, /o, /p, /m, /t, /home</defaultValue>
                 </property>
-                <property id="hoopla" type="String">
-                    <label>Hoopla</label>
-                    <defaultValue>Crabby Patties</defaultValue>
+                <property id="facet_template" type="String">
+                    <label>Facet Template</label>
+                    <defaultValue>CNET</defaultValue>
                 </property>
             </properties>
         </module>
