@@ -221,6 +221,7 @@ public class UtilityService {
 
     @RemoteMethod
     public static String getStoreParameters() {
+    	ConfigManager configManager = ConfigManager.getInstance();
         String storeId = getStoreId();
         SearchWithinRequestProcessor processor = new SearchWithinRequestProcessor(storeId);
         JSONObject json = new JSONObject();
@@ -231,6 +232,7 @@ public class UtilityService {
         json.put("storeName", getStoreName());
         json.put("storeDomains", getStoreDomains(storeId));
         json.put("storeFacetName", getStoreFacetName());
+        json.put("storeSort", configManager.getStoreParameter(storeId, "sort"));
         json.put("storeFacetTemplate", getStoreFacetTemplate());
         json.put("storeFacetTemplateName", getStoreFacetTemplateName());
         json.put("storeGroupMembership", getStoreGroupMembership());

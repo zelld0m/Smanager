@@ -69,6 +69,7 @@
 	var GLOBAL_storeCore = GLOBAL_storeParameters["storeCore"];
 	var GLOBAL_storeName = GLOBAL_storeParameters["storeName"];
 	var GLOBAL_storeDomains = $.makeArray(GLOBAL_storeParameters["storeDomains"]);
+	var GLOBAL_storeSort = GLOBAL_storeParameters["storeSort"];
 	var GLOBAL_storeFacetName = GLOBAL_storeParameters["storeFacetName"];
 	var GLOBAL_storeFacetTemplate = GLOBAL_storeParameters["storeFacetTemplate"];
 	var GLOBAL_storeFacetTemplateName = GLOBAL_storeParameters["storeFacetTemplateName"];
