@@ -459,5 +459,18 @@
                 </property>
             </properties>
         </module>
+        <module name="facetsort" title="Facet Sort">
+            <groups>
+                <group>
+                    <member property-id="facetsort.enabled"/>
+                </group>
+            </groups>
+            <properties>
+                <property id="facetsort.enabled" type="Boolean">
+                    <label>Facet Sort Enabled</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+            </properties>
+        </module>
     </store>
 </store-properties>
