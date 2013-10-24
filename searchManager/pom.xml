@@ -294,6 +294,13 @@
             <artifactId>jsch</artifactId>
             <version>${jsch.version}</version>
         </dependency>
+        
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-test</artifactId>
+        	<version>${spring.version}</version>
+        	<scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
