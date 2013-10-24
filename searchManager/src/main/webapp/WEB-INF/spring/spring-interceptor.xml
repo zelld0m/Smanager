@@ -12,7 +12,7 @@
 	<!-- Configures Handler Interceptors -->
 	<mvc:interceptors>
         <bean id="pageRequestInterceptors" class="com.search.manager.interceptor.PageRequestInterceptor">
-            <property name="exclusions">
+            <property name="excludes">
                 <list>
                     <value>/search/**</value>
                     <value>/enterpriseSearch/**</value>

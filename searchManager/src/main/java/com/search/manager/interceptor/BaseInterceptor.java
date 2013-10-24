@@ -7,55 +7,48 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-public class BaseInterceptor extends HandlerInterceptorAdapter {
+public class BaseInterceptor implements HandlerInterceptor {
 
-    private AntPathMatcher matcher = new AntPathMatcher();
+    private final AntPathMatcher matcher = new AntPathMatcher();
+    private final String key = this.getClass().getName() + "$" + this.hashCode();
 
-    private List<String> inclusions;
+    private List<String> includes;
 
-    private List<String> exclusions;
+    private List<String> excludes;
 
-    public void setInclusions(List<String> inclusions) {
-        this.inclusions = inclusions;
+    public void setIncludes(List<String> includes) {
+        this.includes = includes;
     }
 
-    public void setExclusions(List<String> exclusions) {
-        this.exclusions = exclusions;
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 
-    private boolean isIncluded(String context, String uri) {
-        if (CollectionUtils.isEmpty(inclusions)) {
-            return true;
-        } else {
-            return match(context, uri, inclusions);
-        }
+    private boolean isIncluded(HttpServletRequest request) {
+        return CollectionUtils.isEmpty(includes) || match(request, includes);
     }
 
-    private boolean isExcluded(String context, String uri) {
-        if (CollectionUtils.isEmpty(exclusions)) {
-            return false;
-        } else {
-            return match(context, uri, exclusions);
-        }
+    private boolean isExcluded(HttpServletRequest request) {
+        return CollectionUtils.isNotEmpty(excludes) && match(request, excludes);
     }
 
     /**
-     * This method assumes both parameters are not null and patterns is not
-     * empty
+     * This method assumes both parameters are not null and patterns is not empty.
      * 
-     * @param str
-     *            String to be matched
-     * @param patterns
-     *            List of patterns
+     * @param request Request to be matched
+     * @param patterns List of patterns
      * 
      * @return true if at least one of patterns match str
      */
-    private boolean match(String context, String str, List<String> patterns) {
+    private boolean match(HttpServletRequest request, List<String> patterns) {
+        String uri = request.getRequestURI();
+        String context = request.getContextPath();
+
         for (String pattern : patterns) {
-            if (matcher.match(context + pattern, str))
+            if (matcher.match(context + pattern, uri))
                 return true;
         }
 
@@ -63,14 +56,15 @@ public class BaseInterceptor extends HandlerInterceptorAdapter {
     }
 
     private boolean canHandle(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        String context = request.getContextPath();
+        if (request.getAttribute(key) == null) {
+            // Store result as request attribute to minimize computation.
+            request.setAttribute(key, !isExcluded(request) && isIncluded(request));
+        }
 
-        return isIncluded(context, uri) && !isExcluded(context, uri);
+        return (Boolean) request.getAttribute(key);
     }
 
-    @Override
-    public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         return canHandle(request) ? before(request, response, handler) : true;
     }
