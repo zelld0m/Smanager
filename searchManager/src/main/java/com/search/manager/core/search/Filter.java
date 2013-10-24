@@ -1,108 +1,93 @@
 package com.search.manager.core.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Filter {
+public class Filter implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String property;
 	private Object value;
-	private int operator;
+	private FilterOperator operator;
 
-	// TODO convert to enum
-	public static final int OP_EQUAL = 0;
-	public static final int OP_NOT_EQUAL = 1;
-	public static final int OP_LESS_THAN = 2;
-	public static final int OP_GREATER_THAN = 3;
-	public static final int OP_LESS_OR_EQUAL = 4;
-	public static final int OP_GREATER_OR_EQUAL = 5;
-	public static final int OP_LIKE = 6;
-	public static final int OP_IN = 8;
-	public static final int OP_NOT_IN = 9;
-	public static final int OP_NULL = 10;
-	public static final int OP_NOT_NULL = 11;
-	public static final int OP_EMPTY = 12;
-	public static final int OP_NOT_EMPTY = 13;
-	public static final int OP_AND = 100;
-	public static final int OP_OR = 101;
-	public static final int OP_NOT = 102;
-	public static final int OP_SOME = 200;
-	public static final int OP_ALL = 201;
-	public static final int OP_NONE = 202;
-	public static final int OP_CUSTOM = 999;
+	public enum FilterOperator {
+		EQUAL, NOT_EQUAL, LESS_THAN, GREATER_THAN, LESS_OR_EQUAL, GREATER_OR_EQUAL, LIKE, IN, NOT_IN, NULL, NOT_NULL, EMPTY, NOT_EMPTY, AND, OR, NOT, SOME, ALL, NONE, CUSTOM;
+	}
 
 	@SuppressWarnings("unused")
 	private Filter() {
-
+		// do nothing...
 	}
 
 	public Filter(String property, Object value) {
 		this.property = property;
 		this.value = value;
-		this.operator = OP_EQUAL;
+		this.operator = FilterOperator.EQUAL;
 	}
 
-	public Filter(String property, Object value, int operator) {
+	public Filter(String property, Object value, FilterOperator operator) {
 		this.property = property;
 		this.value = value;
 		this.operator = operator;
 	}
 
 	public static Filter equal(String property, Object value) {
-		return new Filter(property, value, OP_EQUAL);
+		return new Filter(property, value, FilterOperator.EQUAL);
 	}
 
 	public static Filter lessThan(String property, Object value) {
-		return new Filter(property, value, OP_LESS_THAN);
+		return new Filter(property, value, FilterOperator.LESS_THAN);
 	}
 
 	public static Filter greaterThan(String property, Object value) {
-		return new Filter(property, value, OP_GREATER_THAN);
+		return new Filter(property, value, FilterOperator.GREATER_THAN);
 	}
 
 	public static Filter lessOrEqual(String property, Object value) {
-		return new Filter(property, value, OP_LESS_OR_EQUAL);
+		return new Filter(property, value, FilterOperator.LESS_OR_EQUAL);
 	}
 
 	public static Filter greaterOrEqual(String property, Object value) {
-		return new Filter(property, value, OP_GREATER_OR_EQUAL);
+		return new Filter(property, value, FilterOperator.GREATER_OR_EQUAL);
 	}
 
 	public static Filter in(String property, Collection<?> value) {
-		return new Filter(property, value, OP_IN);
+		return new Filter(property, value, FilterOperator.IN);
 	}
 
 	public static Filter notIn(String property, Collection<?> value) {
-		return new Filter(property, value, OP_NOT_IN);
+		return new Filter(property, value, FilterOperator.NOT_IN);
 	}
 
 	public static Filter like(String property, String value) {
-		return new Filter(property, value, OP_LIKE);
+		return new Filter(property, value, FilterOperator.LIKE);
 	}
 
 	public static Filter notEqual(String property, Object value) {
-		return new Filter(property, value, OP_NOT_EQUAL);
+		return new Filter(property, value, FilterOperator.NOT_EQUAL);
 	}
 
 	public static Filter isNull(String property) {
-		return new Filter(property, true, OP_NULL);
+		return new Filter(property, true, FilterOperator.NULL);
 	}
 
 	public static Filter isNotNull(String property) {
-		return new Filter(property, true, OP_NOT_NULL);
+		return new Filter(property, true, FilterOperator.NOT_NULL);
 	}
 
 	public static Filter isEmpty(String property) {
-		return new Filter(property, true, OP_EMPTY);
+		return new Filter(property, true, FilterOperator.EMPTY);
 	}
 
 	public static Filter isNotEmpty(String property) {
-		return new Filter(property, true, OP_NOT_EMPTY);
+		return new Filter(property, true, FilterOperator.NOT_EMPTY);
 	}
 
 	public static Filter and(Filter... filters) {
-		Filter filter = new Filter("AND", null, OP_AND);
+		Filter filter = new Filter("AND", null, FilterOperator.AND);
 		for (Filter f : filters) {
 			filter.add(f);
 		}
@@ -112,24 +97,24 @@ public class Filter {
 	public static Filter or(Filter... filters) {
 		Filter filter = and(filters);
 		filter.property = "OR";
-		filter.operator = OP_OR;
+		filter.operator = FilterOperator.OR;
 		return filter;
 	}
 
 	public static Filter not(Filter filter) {
-		return new Filter("NOT", filter, OP_NOT);
+		return new Filter("NOT", filter, FilterOperator.NOT);
 	}
 
 	public static Filter some(String property, Filter filter) {
-		return new Filter(property, filter, OP_SOME);
+		return new Filter(property, filter, FilterOperator.SOME);
 	}
 
 	public static Filter all(String property, Filter filter) {
-		return new Filter(property, filter, OP_ALL);
+		return new Filter(property, filter, FilterOperator.ALL);
 	}
 
 	public static Filter none(String property, Filter filter) {
-		return new Filter(property, filter, OP_NONE);
+		return new Filter(property, filter, FilterOperator.NONE);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -164,12 +149,108 @@ public class Filter {
 		this.value = value;
 	}
 
-	public int getOperator() {
+	public FilterOperator getOperator() {
 		return operator;
 	}
 
-	public void setOperator(int operator) {
+	public void setOperator(FilterOperator operator) {
 		this.operator = operator;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public String toString() {
+		switch (operator) {
+		case EQUAL:
+			return "`" + property + "` = "
+					+ SearchUtil.paramDisplayString(value);
+		case NOT_EQUAL:
+			return "`" + property + "` != "
+					+ SearchUtil.paramDisplayString(value);
+		case LESS_THAN:
+			return "`" + property + "` < "
+					+ SearchUtil.paramDisplayString(value);
+		case GREATER_THAN:
+			return "`" + property + "` > "
+					+ SearchUtil.paramDisplayString(value);
+		case LESS_OR_EQUAL:
+			return "`" + property + "` <= "
+					+ SearchUtil.paramDisplayString(value);
+		case GREATER_OR_EQUAL:
+			return "`" + property + "` >= "
+					+ SearchUtil.paramDisplayString(value);
+		case LIKE:
+			return "`" + property + "` LIKE "
+					+ SearchUtil.paramDisplayString(value);
+		case IN:
+			return "`" + property + "` IN ("
+					+ SearchUtil.paramDisplayString(value) + ")";
+		case NOT_IN:
+			return "`" + property + "` NOT IN ("
+					+ SearchUtil.paramDisplayString(value) + ")";
+		case NULL:
+			return "`" + property + "` IS NULL";
+		case NOT_NULL:
+			return "`" + property + "` IS NOT NULL";
+		case EMPTY:
+			return "`" + property + "` IS EMPTY";
+		case NOT_EMPTY:
+			return "`" + property + "` IS NOT EMPTY";
+		case AND:
+		case OR:
+			if (!(value instanceof List)) {
+				return (operator == FilterOperator.AND ? "AND: " : "OR: ")
+						+ "Invalid value - NOT a List: (" + value + ")";
+			}
+			String op = operator == FilterOperator.AND ? " AND " : " OR ";
+			StringBuilder sb = new StringBuilder("(");
+			boolean first = true;
+			for (Object o : ((List) value)) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(op);
+				}
+				if (o instanceof Filter) {
+					sb.append(o.toString());
+				} else {
+					sb.append("Invalid value - NOT a Filter: (" + o + ").");
+				}
+			}
+
+			if (first) {
+				return (operator == FilterOperator.AND ? "AND: " : "OR: ")
+						+ " Invalid value - null/empty List.";
+			} else {
+				sb.append(")");
+				return sb.toString();
+			}
+		case NOT:
+			if (!(value instanceof Filter)) {
+				return "NOT: Invalid value - NOT a Filter: (" + value + ").";
+			}
+			return "NOT " + value.toString();
+		case SOME:
+			if (!(value instanceof Filter)) {
+				return "SOME: Invalid value - NOT a Filter: (" + value + ").";
+			}
+			return "SOME `" + property + "` {" + value.toString() + "}";
+		case ALL:
+			if (!(value instanceof Filter)) {
+				return "ALL: Invalid value - NOT a Filter: (" + value + ").";
+			}
+			return "ALL `" + property + "` {" + value.toString() + "}";
+		case NONE:
+			if (!(value instanceof Filter)) {
+				return "NONE: Invalid value - NOT a Filter: (" + value + ").";
+			}
+			return "NONE `" + property + "` {" + value.toString() + "}";
+		case CUSTOM:
+			// TODO
+		default:
+			return "Invalid filter Operator: " + operator + " Value: "
+					+ SearchUtil.paramDisplayString(value);
+		}
 	}
 
 }
