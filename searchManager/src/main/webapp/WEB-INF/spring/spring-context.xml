@@ -19,8 +19,8 @@
     This means that we can apply overrides to binding messages which aren't very 
     nice -->
     <bean id="messageSource"
-              class="org.springframework.context.support.ResourceBundleMessageSource"
-              scope="singleton">
+          class="org.springframework.context.support.ResourceBundleMessageSource"
+          scope="singleton">
         <!-- Custom conversion error messages. -->
         <property name="basenames">
             <list>
@@ -59,6 +59,27 @@
             </list>
         </property>
     </bean>
+        
+    <bean id="configManager" class="com.search.ws.ConfigManager" factory-method="getInstance">
+        <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
+        <constructor-arg name="pm" ref="propertiesManager"/>
+    </bean>
+        
+    <bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
+        <constructor-arg name="storePropertiesLocation" value="/home/solr/conf/store-properties.xml"/>
+        <constructor-arg name="storePropertiesSaveLocation" value="/home/solr/conf"/>
+    </bean>
+        
+    <bean id="solrXmlReader" class="com.search.properties.manager.SolrXmlReader">
+        <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
+    </bean>
+        
+    <!--        <util:properties id="globalVarConfig" location="/home/solr/conf/globalvar.properties"/>
+    <bean id="propsUtils" class="com.search.manager.utility.PropertiesUtils">
+        <constructor-arg name="globalVarConfig" ref="globalVarConfig"/>
+    </bean>-->
+    <!-- <bean id="propsUtils" class="com.search.manager.utility.PropsUtils"> 
+    <property name="localCacheService" ref="localCacheService" /> </bean> -->
 
     <bean id="userPreferences" class="com.search.manager.model.UserPreferences" scope="session" />
 
@@ -66,7 +87,7 @@
 
     <!-- Scans within the base package of the application for @Components to 
     configure as beans, @Controller, @Service, @Configuration, etc. -->
-    <context:component-scan base-package="com.search.manager" />
+    <context:component-scan base-package="com.search" />
 
     <!-- Enables the Spring MVC @Controller programming model. -->
     <mvc:annotation-driven />
@@ -99,7 +120,7 @@
 
     <!-- Enables our custom @ActiveUser annotation. -->
     <bean id="annotationMethodHandlerAdapter" name="annotationMethodHandlerAdapter"
-              class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+          class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
         <property name="customArgumentResolver" ref="activeUserResolver" />
     </bean>
 
@@ -108,12 +129,11 @@
     </bean>
 
     <bean id="commandExecutor" class="com.search.manager.utility.CommandExecutor"
-              init-method="init" destroy-method="destroy" scope="singleton">
+          init-method="init" destroy-method="destroy" scope="singleton">
         <!-- maximum length of command queue -->
         <property name="maxCount" value="1000" />
         <property name="interval" value="1000" />
     </bean>
 
-    <bean id="catCodeUtil" class="com.search.manager.utility.CatCodeUtil"
-              init-method="init" lazy-init="false" />
+    <bean id="catCodeUtil" class="com.search.manager.utility.CatCodeUtil" init-method="init" lazy-init="false" />
 </beans>

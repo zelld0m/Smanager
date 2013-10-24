@@ -1456,5 +1456,4 @@ public abstract class AbstractSearchController implements InitializingBean {
 			throw new ServletException(t);
 		}
 	}
-
 }

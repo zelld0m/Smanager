@@ -26,12 +26,19 @@ import org.joda.time.DateTimeZone;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.utility.PropertiesUtils;
+import com.search.properties.manager.PropertiesManager;
+import com.search.properties.manager.exception.NotDirectoryException;
+import com.search.properties.manager.model.Module;
+import com.search.properties.manager.model.Store;
+import com.search.properties.manager.model.StoreProperties;
+import com.search.properties.manager.util.Stores;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigManager {
 
-    private static final org.slf4j.Logger logger =
-            LoggerFactory.getLogger(ConfigManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
+    private static PropertiesManager propertiesManager;
     private XMLConfiguration xmlConfig;
     private static ConfigManager instance;
     //TODO: will eventually move out if settings is migrated to DB instead of file
@@ -53,102 +60,110 @@ public class ConfigManager {
             xmlConfig.load(configPath);
             xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
             logger.debug("Search Config Folder: " + xmlConfig.getFile().getAbsolutePath());
-            String configFolder = xmlConfig.getFile().getParent();
+
+            // create the store specific properties if not existing yet
+            propertiesManager.saveStoreProperties();
+
+            // loads the store settings to their respective map
+            loadStoreSettingsToMapFromStoreProperties(propertiesManager.
+                    getStoreProperties());
 
             // server settings
             for (String storeId : getStoreIds()) {
-                File f = new File(String.format("%s%s%s.settings.properties", configFolder, File.separator, storeId));
-                if (!f.exists()) {
-                    try {
-                        f.createNewFile();
-                    } catch (IOException e) {
-                        logger.error("Unable to create settings file: " + f.getAbsolutePath(), e);
-                    }
-                }
-                if (f.exists()) {
-                    PropertiesConfiguration propConfig = new PropertiesConfiguration(f.getAbsolutePath());
-                    propConfig.setAutoSave(true);
-                    propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-                    serverSettingsMap.put(storeId, propConfig);
-                    logger.info("Settings file for " + storeId + ": " + propConfig.getFileName());
-                }
-
                 // did you mean
                 String fileName = PropertiesUtils.getValue("publishedfilepath");
                 if (StringUtils.isNotBlank(fileName)) {
-                    fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.properties";
+                    fileName += File.separator + storeId + File.separator
+                            + RuleEntity.getValue(RuleEntity.SPELL.getCode())
+                            + File.separator + "spell.properties";
                     File spellFile = new File(fileName);
                     if (!spellFile.exists()) {
                         spellFile.getParentFile().mkdirs();
                         try {
                             spellFile.createNewFile();
                         } catch (IOException e) {
-                            logger.error("No spell file detected and unable to create spell file", e);
+                            logger.error("No spell file detected and unable to create "
+                                    + "spell file", e);
                         }
                     }
+
                     PropertiesConfiguration propConfig = new PropertiesConfiguration(spellFile.getAbsolutePath());
                     propConfig.setAutoSave(true);
                     propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
                     linguisticSettingsMap.put(storeId, propConfig);
                 }
-
-                // mail properties
-                File file = new File(String.format("%s%s%s.mail.properties", configFolder, File.separator, storeId));
-                if (!file.exists()) {
-                    try {
-                        file.createNewFile();
-                    } catch (IOException e) {
-                        logger.error("Unable to create mail property file: " + file.getAbsolutePath(), e);
-                    }
-                }
-                if (file.exists()) {
-                    PropertiesConfiguration propConfig = new PropertiesConfiguration(file.getAbsolutePath());
-                    propConfig.setAutoSave(true);
-                    propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-                    mailSettingsMap.put(storeId, propConfig);
-                    logger.info("Mail property file for " + storeId + ": " + propConfig.getFileName());
-                }
-                
-                // search within properties
-                File searchWithinFile = new File(String.format("%s%s%s.searchwithin.properties", configFolder, File.separator, storeId));
-                if (!searchWithinFile.exists()) {
-                    try {
-                    	searchWithinFile.createNewFile();
-                    } catch (IOException e) {
-                        logger.error("Unable to create search within property file: " + searchWithinFile.getAbsolutePath(), e);
-                    }
-                }
-                if (searchWithinFile.exists()) {
-                    PropertiesConfiguration propConfig = new PropertiesConfiguration(searchWithinFile.getAbsolutePath());
-                    propConfig.setAutoSave(true);
-                    propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-                    searchWithinSettingsMap.put(storeId, propConfig);
-                    logger.info("search within property file for {}: {}",storeId, propConfig.getFileName());
-                }
-                
-                // facet sort properties
-                File facetSortFile = new File(String.format("%s%s%s.facetsort.properties", configFolder, File.separator, storeId));
-                if (!facetSortFile.exists()) {
-                    try {
-                    	facetSortFile.createNewFile();
-                    } catch (IOException e) {
-                        logger.error("Unable to create facet sort property file: " + searchWithinFile.getAbsolutePath(), e);
-                    }
-                }
-                if (facetSortFile.exists()) {
-                    PropertiesConfiguration propConfig = new PropertiesConfiguration(facetSortFile.getAbsolutePath());
-                    propConfig.setAutoSave(true);
-                    propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-                    facetSortSettingsMap.put(storeId, propConfig);
-                    logger.info("facet sort property file for {}: {}",storeId, propConfig.getFileName());
-                }
             }
 
+            // initialize the timezone
             initTimezone();
 
         } catch (ConfigurationException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
             logger.error(ex.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * loads the store settings to their respective map
+     *
+     * @param storeProperties the {@link StoreProperties} object
+     */
+    private void loadStoreSettingsToMapFromStoreProperties(
+            StoreProperties storeProperties) {
+        List<Store> stores = storeProperties.getStores();
+
+        for (Store store : stores) {
+            String storeId = store.getId();
+            List<Module> modules = store.getModules();
+
+            for (Module module : modules) {
+                String moduleName = module.getName();
+                try {
+                    String filePath = Stores.getFormattedSaveLocation(
+                            propertiesManager.getStorePropertiesSaveLocation(), storeId,
+                            moduleName);
+
+                    if (moduleName.equals("settings")) {
+                        // load the store settings
+                        loadStoreSettingsToMap("settings", serverSettingsMap, storeId,
+                                filePath);
+                    } else if (moduleName.equals("mail")) {
+                        // load the mail settings
+                        loadStoreSettingsToMap("mail", mailSettingsMap, storeId, filePath);
+                    } else if (moduleName.equals("searchwithin")) {
+                        // load the searchwithin settings
+                        loadStoreSettingsToMap("searchwithin", searchWithinSettingsMap,
+                                storeId, filePath);
+                    }
+                } catch (NotDirectoryException e) {
+                    logger.error(String.format("%s is not a valid directory",
+                            e.getFile().getPath()), e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper method for loading store settings to a {@link Map}
+     *
+     * @param moduleName the module name (used for logging purposes only)
+     * @param storeSettingsMap the {@link Map} to store the store settings
+     * @param storeId the store id
+     * @param filePath the file path of the store settings
+     */
+    private void loadStoreSettingsToMap(String moduleName,
+            Map<String, PropertiesConfiguration> storeSettingsMap, String storeId,
+            String filePath) {
+        try {
+            PropertiesConfiguration propConfig = new PropertiesConfiguration(filePath);
+            propConfig.setAutoSave(true);
+            propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+            storeSettingsMap.put(storeId, propConfig);
+            logger.info(String.format("%s property file for %s: %s", moduleName, storeId,
+                    propConfig.getFileName()));
+        } catch (ConfigurationException e) {
+            logger.error(String.format("Unable to load the store configuration for %s",
+                    moduleName), e);
         }
     }
 
@@ -168,13 +183,12 @@ public class ConfigManager {
 
         /* Joda timezone*/
         DateTimeZone defaultJodaTimeZone = DateTimeZone.getDefault();
-        DateTimeZone jodaTimeZone = DateTimeZone.getDefault();
 
         if (defaultJodaTimeZone.getID().equalsIgnoreCase(systemTimeZoneId)) {
             logger.info(String.format("-DTZ- Joda timezone and system timezone are equals: %s", systemTimeZoneId));
         } else {
             try {
-                jodaTimeZone = DateTimeZone.forID(systemTimeZoneId);
+                DateTimeZone jodaTimeZone = DateTimeZone.forID(systemTimeZoneId);
 
                 try {
                     DateTimeZone.setDefault(jodaTimeZone);
@@ -192,7 +206,7 @@ public class ConfigManager {
         return getStoreAttributes("name", false);
     }
 
-    public List<String> getStoreIds() {
+    private List<String> getStoreIds() {
         return getStoreAttributes("id", false);
     }
 
@@ -323,6 +337,12 @@ public class ConfigManager {
         return instance;
     }
 
+    public synchronized static ConfigManager getInstance(String configPath,
+            PropertiesManager pm) {
+        propertiesManager = pm;
+        return getInstance(configPath);
+    }
+
     public void setInstance(String configPath) {
         getInstance(configPath);
     }
@@ -345,7 +365,7 @@ public class ConfigManager {
     /**
      * For a property that has multiple values, getString() will return the first value of
      * the list
-	 *
+     *
      */
     public String getStoreSetting(String storeId, String field) {
         PropertiesConfiguration config = serverSettingsMap.get(storeId);
@@ -371,7 +391,7 @@ public class ConfigManager {
     /**
      * For a property that has multiple values, getString() will return the first value of
      * the list
-	 *
+     *
      */
     public String getPublishedStoreLinguisticSetting(String storeId, String field) {
         PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
@@ -384,8 +404,8 @@ public class ConfigManager {
     }
 
     /**
-     * For a property that has multiple values, getList() will return the complete list 
-	 *
+     * For a property that has multiple values, getList() will return the complete list
+     *
      */
     @SuppressWarnings("unchecked")
     public List<String> getStoreSettings(String storeId, String field) {
@@ -451,7 +471,7 @@ public class ConfigManager {
         }
         return new ArrayList<String>();
     }
-    
+
     public String getSearchWithinProperty(String storeId, String field) {
         PropertiesConfiguration config = searchWithinSettingsMap.get(storeId);
         if (config != null) {

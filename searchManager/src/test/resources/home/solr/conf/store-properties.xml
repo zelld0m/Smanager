@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<store-properties>
+    <store id="pcmallcap" extends="pcmall">
+        <module name="new_module" title="New">
+            <groups>
+                <group name="New Banner Ads Feature">
+                    <member property-id="site_domain"/>
+                </group>
+                
+                <group>
+                    <member property-id="generate_bananas"/>
+                </group>
+            </groups>
+            
+            <properties>
+                <property id="site_domain" type="String">
+                    <label>New Site Domain</label>
+                    <defaultValue>pcm.com.ph</defaultValue>
+                </property>
+                
+                <property id="generate_bananas" type="Boolean">
+                    <label>Generate Bananas</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+            </properties>
+        </module>
+        <module name="settings" title="Settings">
+            <groups>
+                <group>
+                    <member property-id="test"/>
+                </group>
+            </groups>
+            <properties>
+                <property id="test" type="String" required="true">
+                    <label>Test</label>
+                    <description>This is a test.</description>
+                    <defaultValue>A test</defaultValue>
+                </property>
+                <property id="site_domain" type="String" required="true">
+                    <label>Site Domain</label>
+                    <description>Domain of the main site.</description>
+                    <defaultValue>pcmbd.com</defaultValue>
+                </property>
+            </properties>
+        </module>
+    </store>
+    
+    <store id="macmall" extends="pcmall">
+        
+    </store>
+    
+    <store id="pcmall">
+        <module name="mail" title="Mail">
+            <groups>
+                <group>
+                    <member property-id="pendingNotification"/>
+                    <member property-id="approvalNotification"/>
+                    <member property-id="pushToProdNotification"/>
+                </group>
+            </groups>
+            
+            <properties>
+                <property id="pendingNotification" type="Boolean">
+                    <label>Pending Notification</label>
+                    <description>Pending Notification</description>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="approvalNotification" type="Boolean">
+                    <label>Approval Notification</label>
+                    <description>Approval Notification</description>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="pushToProdNotification" type="Boolean">
+                    <label>Push To Prod Notification</label>
+                    <description>Push To Prod Notification</description>
+                    <defaultValue>true</defaultValue>
+                </property>
+            </properties>
+        </module>
+        <module name="settings" title="Settings">
+            <groups>
+                <group name="Banner Ads Feature">
+                    <member property-id="site_domain"/>
+                    <member property-id="default_banner_linkpath_protocol"/>
+                    <member property-id="autoprefix_banner_linkpath_protocol"/>
+                    <member property-id="default_banner_size"/>
+                    <member property-id="allowed_banner_sizes"/>
+                </group>
+                <group>
+                    <member property-id="auto_export"/>
+                </group>
+                <group name="Export Feature">
+                    <member property-id="export_target"/>
+                </group>
+            </groups>
+            
+            <properties>
+                <property id="site_domain" type="String" required="true">
+                    <label>Site Domain</label>
+                    <description>Domain of managed site.</description>
+                    <defaultValue>pcm.com</defaultValue>
+                </property>
+                <property id="default_banner_linkpath_protocol" type="String">
+                    <label>Default Banner Link Path Protocol</label>
+                    <defaultValue>http</defaultValue>
+                </property>
+                <property id="autoprefix_banner_linkpath_protocol" type="Boolean">
+                    <label>Autoprefix Banner Link Path Protocol</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="default_banner_size" type="String" required="true">
+                    <label>Default Banner Size</label>
+                    <validator>WxH</validator>
+                    <defaultValue>728x90</defaultValue>
+                </property>
+                <property id="allowed_banner_sizes" type="String" multiValued="true">
+                    <label>Allowed Banner Sizes</label>
+                    <validator>WxH</validator>
+                    <defaultValue>180x150,728x90,300x250,728x150</defaultValue>
+                </property>
+                <property id="auto_export" type="Boolean">
+                    <label>Auto Export</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="export_target" type="String" multiValued="true">
+                    <label>Export Target</label>
+                    <validator>STORE</validator>
+                    <defaultValue>pcmallcap,pcmgbd</defaultValue>
+                </property>
+                <property id="hoopla" type="String">
+                    <label>Hoopla</label>
+                    <defaultValue>Crabby Patties</defaultValue>
+                </property>
+            </properties>
+        </module>
+        <module name="searchwithin" title="Search Within">
+            
+        </module>
+    </store>
+</store-properties>
