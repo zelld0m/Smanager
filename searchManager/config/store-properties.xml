@@ -67,6 +67,36 @@
         </module>
     </store>
     
+    <store id="macmallbd" extends="pcmall">
+        <module name="settings" title="Settings">
+            <properties>
+                <property id="site_domain" type="String" required="true">
+                    <label>Site Domain</label>
+                    <description>Domain of managed site.</description>
+                    <defaultValue>macmallbd.com</defaultValue>
+                </property>
+                <property id="allowed_banner_sizes" type="String" multiValued="true">
+                    <label>Allowed Banner Sizes</label>
+                    <validator>WxH</validator>
+                    <defaultValue>180x150,728x90,300x250,605x150</defaultValue>
+                </property>
+                <property id="export_target" type="String" multiValued="true">
+                    <label>Export Target</label>
+                    <validator>STORE</validator>
+                    <defaultValue></defaultValue>
+                </property>
+                <property id="redirect_self_domain" type="String">
+                    <label>Redirect Self Domain</label>
+                    <defaultValue>macmallbd.com</defaultValue>
+                </property>
+                <property id="facet_template" type="String">
+                    <label>Facet Template</label>
+                    <defaultValue>IMS</defaultValue>
+                </property>
+            </properties>
+        </module>
+    </store>
+    
     <store id="pcmallcap" extends="pcmall">
         <module name="settings" title="Settings">
             <groups>
