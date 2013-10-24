@@ -40,6 +40,26 @@
         </property>
     </bean>
 
+	<bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
+        <constructor-arg name="storePropertiesLocation" value="/home/solr/conf/store-properties.xml"/>
+        <constructor-arg name="storePropertiesSaveLocation" value="/home/solr/conf"/>
+    </bean>
+
+    <bean id="configManager" class="com.search.ws.ConfigManager" factory-method="getInstance">
+        <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
+        <constructor-arg name="pm" ref="propertiesManager"/>
+    </bean>
+    
+    <!-- PropertiesUtils -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="com.search.manager.utility.PropertiesUtils.initPropertiesConfig"/>
+        <property name="arguments">
+            <list>
+                <value>/home/solr/conf/globalvar.properties</value>
+            </list>
+        </property>
+    </bean>
+        
     <!-- Initialize Utility Classes -->
     <bean class="com.search.manager.utility.UtilityInitializer" scope="singleton" lazy-init="false" init-method="initialize">
         <property name="globalVarFile"              value="/home/solr/conf/globalvar.properties" />
@@ -60,16 +80,7 @@
         </property>
     </bean>
         
-    <bean id="configManager" class="com.search.ws.ConfigManager" factory-method="getInstance">
-        <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
-        <constructor-arg name="pm" ref="propertiesManager"/>
-    </bean>
-        
-    <bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
-        <constructor-arg name="storePropertiesLocation" value="/home/solr/conf/store-properties.xml"/>
-        <constructor-arg name="storePropertiesSaveLocation" value="/home/solr/conf"/>
-    </bean>
-        
+  
     <bean id="solrXmlReader" class="com.search.properties.manager.SolrXmlReader">
         <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
     </bean>
