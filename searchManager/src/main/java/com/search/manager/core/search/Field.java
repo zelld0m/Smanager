@@ -2,18 +2,13 @@ package com.search.manager.core.search;
 
 public class Field {
 
-	protected String property;
-	protected String key;
-	protected int operator = 0;
+	private String property;
+	private String key;
+	private FieldOperator operator = FieldOperator.PROPERTY; // default no operator
 
-	public static final int OP_PROPERTY = 0;
-	public static final int OP_COUNT = 1;
-	public static final int OP_COUNT_DISTINCT = 2;
-	public static final int OP_MAX = 3;
-	public static final int OP_MIN = 4;
-	public static final int OP_SUM = 5;
-	public static final int OP_AVG = 6;
-	public static final int OP_CUSTOM = 999;
+	public enum FieldOperator {
+		PROPERTY, AVG, COUNT, COUNT_DISTINCT, MAX, MIN, SUM, CUSTOM;
+	}
 
 	@SuppressWarnings("unused")
 	private Field() {
@@ -29,12 +24,12 @@ public class Field {
 		this.key = key;
 	}
 
-	public Field(String property, int operator) {
+	public Field(String property, FieldOperator operator) {
 		this.property = property;
 		this.operator = operator;
 	}
 
-	public Field(String property, int operator, String key) {
+	public Field(String property, FieldOperator operator, String key) {
 		this.property = property;
 		this.operator = operator;
 		this.key = key;
@@ -56,11 +51,11 @@ public class Field {
 		this.key = key;
 	}
 
-	public int getOperator() {
+	public FieldOperator getOperator() {
 		return operator;
 	}
 
-	public void setOperator(int operator) {
+	public void setOperator(FieldOperator operator) {
 		this.operator = operator;
 	}
 
@@ -68,34 +63,35 @@ public class Field {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		boolean parens = true;
+
 		switch (operator) {
-		case OP_AVG:
-			sb.append("AVG(");
-			break;
-		case OP_COUNT:
-			sb.append("COUNT(");
-			break;
-		case OP_COUNT_DISTINCT:
-			sb.append("COUNT_DISTINCT(");
-			break;
-		case OP_MAX:
-			sb.append("MAX(");
-			break;
-		case OP_MIN:
-			sb.append("MIN(");
-			break;
-		case OP_PROPERTY:
+		case PROPERTY:
 			parens = false;
 			break;
-		case OP_SUM:
+		case AVG:
+			sb.append("AVG(");
+			break;
+		case COUNT:
+			sb.append("COUNT(");
+			break;
+		case COUNT_DISTINCT:
+			sb.append("COUNT_DISTINCT(");
+			break;
+		case MAX:
+			sb.append("MAX(");
+			break;
+		case MIN:
+			sb.append("MIN(");
+			break;
+		case SUM:
 			sb.append("SUM(");
 			break;
-		case OP_CUSTOM:
+		case CUSTOM:
 			sb.append("CUSTOM: ");
 			parens = false;
 			break;
 		default:
-			sb.append("**INVALID OPERATOR: (" + operator + ")** ");
+			sb.append("Invalid field operator: " + operator);
 			parens = false;
 			break;
 		}
@@ -119,45 +115,4 @@ public class Field {
 		return sb.toString();
 	}
 
-	public String toStringSolr() {
-		StringBuilder sb = new StringBuilder();
-		boolean parens = true;
-		
-		switch (operator) {
-		case OP_AVG:
-			// Unknown function count in FunctionQuery
-			break;
-		case OP_COUNT:
-			// Unknown function count in FunctionQuery
-			break;
-		case OP_COUNT_DISTINCT:
-			// Unknown function count in FunctionQuery
-			break;
-		case OP_MAX:
-			break;
-		case OP_MIN:
-			break;
-		case OP_PROPERTY:
-			parens = false;
-			break;
-		case OP_SUM:
-			break;
-		case OP_CUSTOM:
-			parens = false;
-			break;
-		default:
-			sb.append("**INVALID OPERATOR: (" + operator + ")** ");
-			parens = false;
-			break;
-		}
-		if (property == null) {
-			
- 		} else {
- 			sb.append(property);
- 		}
-		if (parens) {
-			
-		}
-		return sb.toString();
-	}
 }
