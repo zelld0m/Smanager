@@ -20,6 +20,7 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.ws.ConfigManager;
+import com.search.ws.ConfigManager.PropertyFileType;
 import com.search.ws.SearchException;
 import com.search.ws.SolrConstants;
 import com.search.ws.SolrResponseParser;
@@ -41,7 +42,7 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 	@Override
 	public boolean isEnabled() {
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getFacetSortProperty(requestPropertyBean.getStoreId(), "facetsort.enable"), "false"));
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getProperty(PropertyFileType.FACETSORT, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
 	}
 
 	private FacetSort getFacetSortRule(StoreKeyword storeKeyword) throws DaoException {
@@ -98,7 +99,6 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 			facetTemplateName = facetMap.get(SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
 		}
 
-		logger.info("Processing Facet Rule");
 		final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
 		final StoreKeyword sk = RequestProcessorUtil.getStoreKeywordOverride(storeId, keyword);
 
@@ -122,7 +122,7 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 		FacetSort facetSort = null;
 		// Get facet rule based on keyword
 		try {
-			logger.info("Attempting to apply facet rule using keyword {}", keyword);
+			logger.info("Attempting to apply rule using keyword: {}", keyword);
 			facetSort = requestPropertyBean.isKeywordPresent()? getFacetSortRule(sk) : null;
 			if (facetSort != null) {
 				activeRules.add(RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_FACET_SORT, facetSort.getRuleId(), facetSort.getRuleName(), !requestPropertyBean.isDisableRule()));
@@ -140,7 +140,6 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 		// Get facet rule based on template
 		if (facetSort == null) {
-			logger.info("Attempting to apply facet rule using template name {}", facetTemplateName);
 			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET, "true"));
 			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
 			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
@@ -148,6 +147,7 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 			try {
 				facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
+				logger.info("Attempting to apply rule using template name: {}", facetTemplateName);
 				if (StringUtils.isNotBlank(facetTemplateName)) {
 					facetSort = getFacetSortRule(sk.getStore(), facetTemplateName);
 				}

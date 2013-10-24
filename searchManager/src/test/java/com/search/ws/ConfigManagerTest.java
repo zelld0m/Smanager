@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.search.ws.ConfigManager.PropertyFileType;
+
 /**
  *
  * @author Philip Mark Gutierrez
@@ -39,19 +41,19 @@ public class ConfigManagerTest {
 
     @Test
     public void testGetListMailProperty() {
-        assertEquals(Arrays.asList("true"), configManager.getListMailProperty("pcmall",
+        assertEquals(Arrays.asList("true"), configManager.getPropertyList(PropertyFileType.MAIL,"pcmall",
                 "pushToProdNotification"));
     }
 
     @Test
     public void testGetListSearchwithinProperty() {
-        assertEquals(Arrays.asList("true"), configManager.getListSearchWithinProperty(
+        assertEquals(Arrays.asList("true"), configManager.getPropertyList(PropertyFileType.SEARCHWITHIN,
                 "pcmall", "searchwithin.enable"));
     }
 
     @Test
     public void testGetMailProperty() {
-        assertEquals("true", configManager.getMailProperty("pcmall",
+        assertEquals("true", configManager.getPropertyList(PropertyFileType.MAIL,"pcmall",
                 "approvalNotification"));
     }
 
@@ -72,7 +74,7 @@ public class ConfigManagerTest {
 //    }
     @Test
     public void testGetSearchWithinProperty() {
-        assertEquals("searchwithin", configManager.getSearchWithinProperty(
+        assertEquals("searchwithin", configManager.getPropertyList(PropertyFileType.SEARCHWITHIN,
                 "pcmall", "searchwithin.paramname"));
     }
 
@@ -147,14 +149,14 @@ public class ConfigManagerTest {
     
     @Test
     public void testGetStoreSetting() {
-        assertEquals("pcm.com", configManager.getStoreSetting("pcmall", "site_domain"));
-        assertEquals("true", configManager.getStoreSetting("pcmall", "auto_export"));
+        assertEquals("pcm.com", configManager.getProperty(PropertyFileType.SETTINGS, "pcmall", "site_domain"));
+        assertEquals("true", configManager.getProperty(PropertyFileType.SETTINGS, "pcmall", "auto_export"));
     }
 
     @Test
     public void testGetStoreSettings() {
         assertEquals(Arrays.asList("180x150", "728x90", "300x250", "728x150"),
-                configManager.getStoreSettings("pcmall", "allowed_banner_sizes"));
+                configManager.getPropertyList(PropertyFileType.SETTINGS, "pcmall", "allowed_banner_sizes"));
     }
     
     @Test
@@ -176,6 +178,24 @@ public class ConfigManagerTest {
     public void testIsSharedCore() {
         assertEquals(true, configManager.isSharedCore());
     }
+    
+    //concurrency
+//	for (int i =0; i < 20; i++) {
+	//			(new Thread() {
+	//				public void run() {
+	//					for (int i = 1; i < 50; i++) {
+	//						try {
+	//							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
+	//							System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+	//							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
+	//							System.out.println( configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+	//							Thread.sleep(100);
+	//						} catch (InterruptedException e) {
+	//						}
+	//					}
+	//				}
+	//			}).start();
+	//		}
     
 //    @Test
 //    public void testIsSolrImplOnly() {
