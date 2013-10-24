@@ -30,8 +30,7 @@
         </property>
     </bean>
 
-    <bean id="propertyConfigurer"
-              class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
                 <value>file:/home/solr/conf/solr.properties</value>
@@ -41,18 +40,13 @@
         </property>
     </bean>
 
-    <!-- <bean id="webAppInitLoader" class="com.search.manager.utility.AppInitLoader" 
-    init-method="run" lazy-init="false"> <property name="localCacheService" ref="localCacheService" 
-    /> </bean> -->
-        
-    <!-- PropertiesUtils -->
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="staticMethod" value="com.search.manager.utility.PropertiesUtils.initPropertiesConfig"/>
-        <property name="arguments">
-            <list>
-                <value>/home/solr/conf/globalvar.properties</value>
-            </list>
-        </property>
+    <!-- Initialize Utility Classes -->
+    <bean class="com.search.manager.utility.UtilityInitializer" scope="singleton" lazy-init="false" init-method="initialize">
+        <property name="globalVarFile"              value="/home/solr/conf/globalvar.properties" />
+        <property name="configFile"                 value="/home/solr/conf/solr.xml" />
+        <property name="enterpriseSearchConfigFile" value="/home/solr/conf/enterpriseSearch.xml" />
+        <property name="relevancyConfigFile"        value="/home/solr/conf/relevancy.xml" />
+        <property name="messagesConfigFile"         value="/home/solr/conf/messages.xml" />
     </bean>
 
     <!-- RequestProcessorUtil -->
@@ -65,16 +59,8 @@
             </list>
         </property>
     </bean>
-        
-    <!--        <util:properties id="globalVarConfig" location="/home/solr/conf/globalvar.properties"/>
-    <bean id="propsUtils" class="com.search.manager.utility.PropertiesUtils">
-        <constructor-arg name="globalVarConfig" ref="globalVarConfig"/>
-    </bean>-->
-    <!-- <bean id="propsUtils" class="com.search.manager.utility.PropsUtils"> 
-    <property name="localCacheService" ref="localCacheService" /> </bean> -->
 
-    <bean id="userPreferences" class="com.search.manager.model.UserPreferences"
-              scope="session" />
+    <bean id="userPreferences" class="com.search.manager.model.UserPreferences" scope="session" />
 
     <context:annotation-config />
 
@@ -107,8 +93,7 @@
     <import resource="search-proxy-context.xml" />
 
     <!-- Velocity integration for template -->
-    <bean id="velocityEngine"
-              class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
         <property name="configLocation" value="file:/home/solr/conf/velocity.properties" />
     </bean>
 

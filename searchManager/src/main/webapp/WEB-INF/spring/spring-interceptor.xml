@@ -11,14 +11,13 @@
 
 	<!-- Configures Handler Interceptors -->
 	<mvc:interceptors>
-
-		<!-- This bit of XML will intercept all URLs - which is what you want in 
-			a web app -->
-		<bean id="pageRequestInterceptors" class="com.search.manager.interceptor.PageRequestInterceptor" />
-
-		<!-- This bit of XML will apply certain URLs to certain interceptors -->
-		<!-- <mvc:interceptor> <mvc:mapping path="/gb/shop/**"/> <bean class="marin.interceptor.RequestInitializeInterceptor" 
-			/> </mvc:interceptor> -->
-
+        <bean id="pageRequestInterceptors" class="com.search.manager.interceptor.PageRequestInterceptor">
+            <property name="exclusions">
+                <list>
+                    <value>/search/**</value>
+                    <value>/enterpriseSearch/**</value>
+                </list>
+            </property>
+        </bean>
 	</mvc:interceptors>
 </beans>

@@ -1,13 +1,14 @@
-package com.search.ws;
+package com.search.manager.web;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +16,10 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
@@ -23,15 +28,18 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.Relevancy.Parameter;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.search.manager.utility.ParameterUtils;
+import com.search.ws.EnterpriseSearchConfigManager;
+import com.search.ws.SolrConstants;
+import com.search.ws.SolrResponseParser;
 
-public class EnterpriseSearchServlet extends SearchServlet {
+@Controller
+public class EnterpriseSearchController extends AbstractSearchController {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger logger =
-            LoggerFactory.getLogger(EnterpriseSearchServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(EnterpriseSearchController.class);
+
     private EnterpriseSearchConfigManager enterpriseSearchConfigManager;
+
     // TODO: transfer to config file
     private final static String[] supportedCores = {
         "pcmall",
@@ -41,12 +49,15 @@ public class EnterpriseSearchServlet extends SearchServlet {
         "enterpriseSearch"
     };
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+    public void afterPropertiesSet() {
+    	super.afterPropertiesSet();
         enterpriseSearchConfigManager = EnterpriseSearchConfigManager.getInstance();
     }
 
+    @RequestMapping("/enterpriseSearch/**")
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	super.handleRequest(request, response);
+    }
     @SuppressWarnings("unchecked")
     @Override
     public String applyValueOverride(String value, HttpServletRequest request, RuleEntity ruleEntity) {
@@ -65,7 +76,7 @@ public class EnterpriseSearchServlet extends SearchServlet {
         String storeFlag = enterpriseSearchConfigManager.getStoreFlag(storeId);
         if (StringUtils.isNotBlank(storeFlag)) {
             NameValuePair nvp = new BasicNameValuePair("fq", String.format("%s:true", storeFlag));
-            if (addNameValuePairToMap(paramMap, "fq", nvp)) {
+            if (ParameterUtils.addNameValuePairToMap(paramMap, "fq", nvp, uniqueFields)) {
                 nameValuePairs.add(nvp);
             }
         }
@@ -186,4 +197,10 @@ public class EnterpriseSearchServlet extends SearchServlet {
         }
         return relevancy;
     }
+
+	protected String getRequestPath(HttpServletRequest request) {
+		String start = request.getContextPath() + "/enterpriseSearch";
+		int idx = request.getRequestURI().indexOf(start);
+		return "http:/" + request.getRequestURI().substring(start.length() + idx);
+	}
 }

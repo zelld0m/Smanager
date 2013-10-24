@@ -37,6 +37,8 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
+import com.search.manager.utility.ParameterUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +67,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
     }
 
     public void setSolrQueryParameters(HashMap<String, List<NameValuePair>> paramMap) throws SearchException {
-        wrf = SearchServlet.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION);
+        wrf = ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION);
     }
 
     private static JSONObject parseJsonResponse(JsonSlurper slurper, HttpResponse response) {
