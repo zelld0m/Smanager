@@ -31,6 +31,7 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.solr.search.SolrQueryParser;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -742,6 +743,7 @@ public class SearchServlet extends HttpServlet {
 
 		ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
 		int tasks = 0;
+		boolean validated = false;
 		DateTime currentDate = DateTime.now();
 
 		try {
@@ -1382,6 +1384,13 @@ public class SearchServlet extends HttpServlet {
 					getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
 					getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
 
+					if (!isValidQuery(solrHelper, getTemplateNameParams)) {
+						response.sendError(400, "Invalid solr query.");
+						return;
+					} else {
+						validated = true;
+					}
+
 					try {
 						facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
 						if (StringUtils.isNotBlank(facetTemplateName)) {
@@ -1398,6 +1407,11 @@ public class SearchServlet extends HttpServlet {
 						solrHelper.setFacetSortRule(facetSort);
 					}
 				}
+			}
+
+			if (!validated && !isValidQuery(solrHelper, nameValuePairs)) {
+				response.sendError(400, "Invalid solr query.");
+				return;
 			}
 
 			Future<Integer> getTemplateCount = null;
@@ -1623,4 +1637,9 @@ public class SearchServlet extends HttpServlet {
 			throw new ServletException(t);
 		}
 	}
+
+	private boolean isValidQuery(SolrResponseParser solrHelper, List<NameValuePair> nameValuePairs) {
+		SolrQueryParser parser = null;
+	    return true;
+    }
 }
