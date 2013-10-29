@@ -100,6 +100,13 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 
+	@Override
+	public void destroy() {
+		QueryValidator.shutdown();
+		super.destroy();
+	}
+
+
 	protected static boolean addNameValuePairToMap(Map<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
 		boolean added = true;
 		if (ArrayUtils.contains(uniqueFields, paramName) && map.containsKey(paramName)) {
@@ -659,6 +666,27 @@ public class SearchServlet extends HttpServlet {
 		return storeId;
 	}
 
+	/**
+	 * Return Error Message if invalid else return null;
+	 */
+	protected String getCoreName(HttpServletRequest request) throws HttpException {
+		// get the server name, solr path, core name and do mapping for the store name to use for the search
+		Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
+		String requestPath = getRequestPath(request);
+
+		if (StringUtils.isBlank(requestPath)) {
+			throw new HttpException("Invalid request");
+		}
+
+		Matcher matcher = pathPattern.matcher(requestPath);
+
+		if (!matcher.matches()) {
+			throw new HttpException("Invalid request");
+		}
+
+		return matcher.group(3);
+	}
+
 	protected SolrResponseParser getParser(HttpServletRequest request) throws HttpException {
 		// get expected resultformat
 		String writerType = request.getParameter(SolrConstants.SOLR_PARAM_WRITER_TYPE);
@@ -766,7 +794,7 @@ public class SearchServlet extends HttpServlet {
 				return;
 			}
 			
-			if (!QueryValidator.accept(storeId, request.getParameterMap())) {
+			if (!QueryValidator.accept(getCoreName(request), request)) {
 				response.sendError(400, "Invalid solr query.");
 				return;
 			}
