@@ -2,8 +2,6 @@
 
 	AjaxSolr.SortResultWidget = AjaxSolr.AbstractWidget.extend({
 		priceSuffix: "_CartPrice",
-		sortOrder: "%s %sO, score desc, Popularity desc",
-		
 		beforeRequest: function () {
 			var self = this;
 			$(self.target).find("select").prop("disabled", true);
@@ -28,7 +26,9 @@
 					self.priceSuffix = "_ACACartPrice";
 					break; 	
 				}
-				self.manager.store.addByValue('sort', self.sortOrder.replace("%s", GLOBAL_storeFacetName + self.priceSuffix).replace("%sO", priceBySortOrder));
+				
+				var priceSorting = GLOBAL_storeFacetName + self.priceSuffix;
+				self.manager.store.addByValue('sort', $.isNotBlank(GLOBAL_storeSort)? priceSorting.concat(" ",priceBySortOrder,", ", GLOBAL_storeSort): priceSorting.concat(" ", priceBySortOrder));
 			}
 		},
 		
@@ -41,7 +41,7 @@
 				var defaultPageInterval = 5;
 				var totalResults = this.manager.response.response.numFound;
 
-				var solrSortBest = self.sortOrder.replace("%s","CatCodeOrder").replace("%sO", "asc");
+				var solrSortBest = GLOBAL_storeSort;
 				
 				if(GLOBAL_storeId==="pcmallgov"){
 					switch(GLOBAL_PCMGCatalog.toLowerCase()){
@@ -58,8 +58,8 @@
 				}
 				
 				var priceSorting = GLOBAL_storeFacetName + self.priceSuffix;
-				var solrSortLowest = self.sortOrder.replace("%s",priceSorting).replace("%sO", "asc");;
-				var solrSortHighest = self.sortOrder.replace("%s",priceSorting).replace("%sO", "desc");	
+				var solrSortLowest = $.isNotBlank(GLOBAL_storeSort)? priceSorting.concat(" asc, ", GLOBAL_storeSort): priceSorting.concat(" asc");
+				var solrSortHighest = $.isNotBlank(GLOBAL_storeSort)? priceSorting.concat(" desc, ", GLOBAL_storeSort): priceSorting.concat(" desc");	
 
 				var sort = {
 						best: 'Best Match',
