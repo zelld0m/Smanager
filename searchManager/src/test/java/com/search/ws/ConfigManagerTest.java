@@ -53,7 +53,7 @@ public class ConfigManagerTest {
 
     @Test
     public void testGetMailProperty() {
-        assertEquals("true", configManager.getPropertyList(PropertyFileType.MAIL,"pcmall",
+        assertEquals("true", configManager.getProperty(PropertyFileType.MAIL,"pcmall",
                 "approvalNotification"));
     }
 
@@ -74,7 +74,7 @@ public class ConfigManagerTest {
 //    }
     @Test
     public void testGetSearchWithinProperty() {
-        assertEquals("searchwithin", configManager.getPropertyList(PropertyFileType.SEARCHWITHIN,
+        assertEquals("searchwithin", configManager.getProperty(PropertyFileType.SEARCHWITHIN,
                 "pcmall", "searchwithin.paramname"));
     }
 
