@@ -1,6 +1,7 @@
 package com.search.manager.core.dao;
 
-import com.search.manager.model.BannerRule;
+import com.search.manager.core.model.BannerRule;
+
 
 public interface BannerRuleDao extends GenericDao<BannerRule> {
 
