@@ -6,6 +6,11 @@ public class Sort {
 	protected boolean desc = false;
 	protected boolean ignoreCase = false;
 
+	@SuppressWarnings("unused")
+	private Sort() {
+		// do nothing...
+	}
+
 	public Sort(String property, boolean desc, boolean ignoreCase) {
 		this.property = property;
 		this.desc = desc;
@@ -59,5 +64,21 @@ public class Sort {
 
 	public void setIgnoreCase(boolean ignoreCase) {
 		this.ignoreCase = ignoreCase;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		if (property == null) {
+			sb.append("null");
+		} else {
+			sb.append("`");
+			sb.append(property);
+			sb.append("`");
+		}
+		sb.append(desc ? " desc" : " asc");
+
+		return sb.toString();
 	}
 }
