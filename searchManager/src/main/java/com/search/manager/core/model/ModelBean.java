@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.joda.time.DateTime;
 
+import com.search.manager.core.util.JsonUtil;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
@@ -82,4 +83,8 @@ public class ModelBean implements Serializable {
 				JodaPatternType.DATE);
 	}
 
+	public String toJson() {
+		return JsonUtil.toJson(this);
+	}
+	
 }
