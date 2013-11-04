@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.SolrCore;
+import com.search.manager.core.exception.CoreSearchException;
 import com.search.manager.core.search.BaseSearchProcessor;
 import com.search.manager.core.search.Field;
 import com.search.manager.core.search.Field.FieldOperator;
@@ -43,7 +44,8 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public SearchResult<?> processSearch(Search search) throws Exception {
+	public SearchResult<?> processSearch(Search search)
+			throws CoreSearchException {
 		SearchResult searchResult = new SearchResult();
 		QueryResponse queryResponse = null;
 		SolrServer solrServer = null;
@@ -104,14 +106,14 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 				}
 			}
 		} catch (Exception e) {
-			throw new Exception(e);
+			throw new CoreSearchException(e);
 		}
 
 		return searchResult;
 	}
 
 	@Override
-	public String generateStrQuery(Search search) throws Exception {
+	public String generateStrQuery(Search search) throws CoreSearchException {
 		String select = generateSelectClause(search);
 		String from = generateFromClause(search);
 		String where = generateWhereClause(search);
@@ -133,7 +135,8 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 
 	// Select Clause
 	@Override
-	protected String generateSelectClause(Search search) throws Exception {
+	protected String generateSelectClause(Search search)
+			throws CoreSearchException {
 		List<Field> fields = checkAndCleanFields(search.getFields());
 		StringBuilder sb = null;
 		boolean first = true;
@@ -141,7 +144,7 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 		if (fields != null && fields.size() > 0) {
 			for (Field field : fields) {
 				if (field.getOperator() != FieldOperator.PROPERTY) {
-					throw new Exception(
+					throw new CoreSearchException(
 							"Field operation not supported in solr.");
 				}
 				if (first) {
@@ -162,7 +165,8 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 
 	// From Clause
 	@Override
-	protected String generateFromClause(Search search) throws Exception {
+	protected String generateFromClause(Search search)
+			throws CoreSearchException {
 		SolrCore solrCore = (SolrCore) search.getSearchClass().getAnnotation(
 				SolrCore.class);
 
@@ -175,7 +179,8 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 
 	// Where Clause
 	@Override
-	protected String generateWhereClause(Search search) throws Exception {
+	protected String generateWhereClause(Search search)
+			throws CoreSearchException {
 		List<Filter> filters = checkAndCleanFilters(search.getFilters());
 		boolean isDisjunction = search.isDisjunction();
 		String whereClause = "";
@@ -195,7 +200,8 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 
 	// Order By Clause
 	@Override
-	protected String generateOrderByClause(Search search) throws Exception {
+	protected String generateOrderByClause(Search search)
+			throws CoreSearchException {
 		List<Sort> sorts = checkAndCleanSorts(search.getSorts());
 
 		if (sorts == null) {
@@ -337,20 +343,21 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 
 	@Override
 	protected List<Field> checkAndCleanFields(List<Field> fields)
-			throws Exception {
+			throws CoreSearchException {
 		// TODO Auto-generated method stub
 		return fields;
 	}
 
 	@Override
 	protected List<Filter> checkAndCleanFilters(List<Filter> filters)
-			throws Exception {
+			throws CoreSearchException {
 		// TODO Auto-generated method stub
 		return filters;
 	}
 
 	@Override
-	protected List<Sort> checkAndCleanSorts(List<Sort> sorts) throws Exception {
+	protected List<Sort> checkAndCleanSorts(List<Sort> sorts)
+			throws CoreSearchException {
 		// TODO Auto-generated method stub
 		return sorts;
 	}
