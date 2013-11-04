@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.search.manager.core.BaseIntegrationTest;
 import com.search.manager.core.dao.BannerRuleItemDao;
+import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.ImagePath;
@@ -77,14 +78,14 @@ public class BannerRuleItemDaoSolrImplTest extends BaseIntegrationTest {
 	}
 
 	@Test
-	public void addTest() throws Exception {
+	public void addTest() throws CoreDaoException {
 		BannerRuleItem addedBannerRuleItem = bannerRuleItemDao
 				.add(bannerRuleItem);
 		assertNotNull(addedBannerRuleItem);
 	}
 
 	@Test
-	public void updateTest() throws Exception {
+	public void updateTest() throws CoreDaoException {
 		// bannerRule.setStoreId("pcmall");
 		// bannerRule.setRuleId("ruleId1234");
 		bannerRule.setRuleName("ruleName - updated");
@@ -113,7 +114,7 @@ public class BannerRuleItemDaoSolrImplTest extends BaseIntegrationTest {
 	}
 
 	@Test
-	public void deleteTest() throws Exception {
+	public void deleteTest() throws CoreDaoException, InterruptedException {
 		BannerRule bannerRule = new BannerRule();
 		bannerRule = new BannerRule();
 		bannerRule.setStoreId("pcmall");
@@ -170,7 +171,7 @@ public class BannerRuleItemDaoSolrImplTest extends BaseIntegrationTest {
 	}
 
 	@Test
-	public void searchTest() throws Exception {
+	public void searchTest() throws CoreDaoException {
 		Search search = new Search(BannerRuleItem.class);
 		SearchResult<BannerRuleItem> bannerRuleItems = bannerRuleItemDao
 				.search(search);
@@ -185,7 +186,7 @@ public class BannerRuleItemDaoSolrImplTest extends BaseIntegrationTest {
 	}
 
 	@Test
-	public void searchWithFilterTest() throws Exception {
+	public void searchWithFilterTest() throws CoreDaoException {
 		Search search = new Search(BannerRuleItem.class);
 
 		bannerRuleItem.setRule(bannerRule);
