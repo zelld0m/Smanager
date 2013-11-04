@@ -2,6 +2,9 @@ package com.search.manager.dao.sp;
 
 public class DAOConstants {
 
+	/* Generated ID */
+	public static final String MODEL_ID = "model_id";
+	
     /* Result Set identifier */
     public static final String RESULT_SET_1 = "#result-set-1";
     public static final String RESULT_SET_2 = "#result-set-2";
