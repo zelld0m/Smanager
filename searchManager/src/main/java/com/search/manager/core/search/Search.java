@@ -1,10 +1,13 @@
 package com.search.manager.core.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Search {
-
+public class Search implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
 	protected int firstResult = -1;
 	protected int maxResult = -1;
 	protected int page = -1;
@@ -17,7 +20,7 @@ public class Search {
 
 	@SuppressWarnings("unused")
 	private Search() {
-
+		// do nothing...
 	}
 
 	public Search(Class<?> searchClass) {
@@ -26,6 +29,30 @@ public class Search {
 
 	// Getter and Setter
 
+	public int getFirstResult() {
+		return firstResult;
+	}
+
+	public void setFirstResult(int firstResult) {
+		this.firstResult = firstResult;
+	}
+
+	public int getMaxResult() {
+		return maxResult;
+	}
+
+	public void setMaxResult(int maxResult) {
+		this.maxResult = maxResult;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+	
 	public void setSearchClass(Class<?> searchClass) {
 		this.searchClass = searchClass;
 	}
@@ -57,7 +84,7 @@ public class Search {
 	public List<Field> getFields() {
 		return fields;
 	}
-	
+
 	public boolean isDistinct() {
 		return distinct;
 	}
@@ -73,7 +100,7 @@ public class Search {
 	public void setDisjunction(boolean disjunction) {
 		this.disjunction = disjunction;
 	}
-	
+
 	// Filters
 	public Search addFilter(Filter filter) {
 		SearchUtil.addFilter(this, filter);
