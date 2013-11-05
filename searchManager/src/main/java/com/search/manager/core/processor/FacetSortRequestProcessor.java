@@ -120,10 +120,36 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 		}
 
 		FacetSort facetSort = null;
-		// Get facet rule based on keyword
 		try {
-			logger.info("Attempting to apply rule using keyword: {}", keyword);
+			// Get facet rule based on keyword
 			facetSort = requestPropertyBean.isKeywordPresent()? getFacetSortRule(sk) : null;
+			logger.info("Retrieved rule using keyword: {}? {}", keyword, BooleanUtils.toStringYesNo(facetSort!=null));
+		
+			// Get facet rule based on template
+			if (facetSort == null) {
+				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET, "true"));
+				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
+				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
+				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
+
+				try {
+					facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
+					logger.info("Retrieved common template name: {}", facetTemplateName, BooleanUtils.toStringYesNo(StringUtils.isNotBlank(facetTemplateName)));
+					if (StringUtils.isNotBlank(facetTemplateName)) {
+						facetSort = getFacetSortRule(sk.getStore(), facetTemplateName);
+						logger.info("Retrieved rule using template name: {}? {}", facetTemplateName, BooleanUtils.toStringYesNo(facetSort!=null));
+					}
+				}catch (DaoException e) {
+					logger.error("Failed to retrieve facet rule using template name {}", e);
+					throw e;
+				}catch (SearchException e) {
+					throw e;
+				}catch (Exception e) {
+					logger.error("Failed to get template name {}", e);
+					throw e;
+				}
+			}
+			
 			if (facetSort != null) {
 				activeRules.add(RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_FACET_SORT, facetSort.getRuleId(), facetSort.getRuleName(), !requestPropertyBean.isDisableRule()));
 				if (!requestPropertyBean.isDisableRule() && applyRule) {
@@ -132,28 +158,13 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 			}
 		} catch (DaoException e) {
 			facetSort = null;
-			logger.error("Failed to retrieved facet sort rule {}", e);
+			logger.error("Failed to retrieve facet sort rule {}", e);
 		} catch (SearchException e) {
 			logger.error("Failed to apply facet sort rule {}", e);
 			return;
-		}
-
-		// Get facet rule based on template
-		if (facetSort == null) {
-			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET, "true"));
-			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
-			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
-			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
-
-			try {
-				facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
-				logger.info("Attempting to apply rule using template name: {}", facetTemplateName);
-				if (StringUtils.isNotBlank(facetTemplateName)) {
-					facetSort = getFacetSortRule(sk.getStore(), facetTemplateName);
-				}
-			} catch (Exception e) {
-				logger.error("Failed to get template name {}", e);
-			}
+		}catch (Exception e) {
+			logger.error("Error encountered {}", e);
+			return;
 		}
 	}
 }
