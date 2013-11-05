@@ -2,6 +2,8 @@ package com.search.manager.utility;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +22,7 @@ public class QueryValidator {
     private static final String DEFAULT_HANDLER = "select";
     private static final String DEFAULT_SOLR_DIR = "/home/solr/solrworks/solr4";
     private static final String DEFAULT_SOLR_CONF = "solr.xml";
+    private static final String[] defType = new String[] {"edismax"};
 
     private static CoreContainer container;
 
@@ -49,7 +52,12 @@ public class QueryValidator {
             if (container != null) {
                 try {
                     SolrCore core = container.getCore(storeId);
-                    LocalSolrQueryRequest request = new LocalSolrQueryRequest(core, originalRequest.getParameterMap());
+                    Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+
+                    parameterMap.putAll(originalRequest.getParameterMap());
+                    parameterMap.put("defType", defType);
+                    
+                    LocalSolrQueryRequest request = new LocalSolrQueryRequest(core, parameterMap);
                     SolrQueryResponse response = new SolrQueryResponse();
                     String handler = PropertiesUtils.getValue("queryValidatorHandler");
 
