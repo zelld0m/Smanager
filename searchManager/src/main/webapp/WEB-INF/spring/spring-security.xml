@@ -30,6 +30,7 @@
 			<security:intercept-url pattern="/search/**" access="permitAll" />
 			<security:intercept-url pattern="/enterpriseSearch/**" access="permitAll" />
 			<security:intercept-url pattern="/login.jsp*" access="permitAll" />
+			<security:intercept-url pattern="/health.jsp" access="permitAll" />
 			<security:intercept-url pattern="/**" access="isAuthenticated()"/>
 
 		<security:logout invalidate-session="true" logout-success-url="/login.jsp" logout-url="/logout" />
