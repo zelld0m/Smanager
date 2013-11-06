@@ -1,23 +1,30 @@
 package com.search.manager.core.dao.sp;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.core.dao.ImagePathDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.ImagePath;
+import com.search.manager.core.model.ImagePathType;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.dao.sp.GetStoredProcedure;
 
 @Repository("imagePathDaoSp")
 public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
@@ -27,18 +34,19 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 	private UpdateStoredProcedure updateSp;
 	@SuppressWarnings("unused")
 	private DeleteStoredProcedure deleteSp;
-
-	// private SearchStoredProcedure searchSp;
+	private SearchStoredProcedure searchSp;
 
 	@SuppressWarnings("unused")
 	private ImagePathDaoSpImpl() {
 		// do nothing...
 	}
 
+	@Autowired(required = true)
 	public ImagePathDaoSpImpl(JdbcTemplate jdbcTemplate) {
 		addSp = new AddStoredProcedure(jdbcTemplate);
 		updateSp = new UpdateStoredProcedure(jdbcTemplate);
 		deleteSp = new DeleteStoredProcedure(jdbcTemplate);
+		searchSp = new SearchStoredProcedure(jdbcTemplate);
 	}
 
 	private class AddStoredProcedure extends CUDStoredProcedure {
@@ -95,9 +103,56 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 		@Override
 		protected void declareParameters() {
 			// TODO Auto-generated method stub
+		}
+	}
 
+	private class SearchStoredProcedure extends GetStoredProcedure {
+
+		public SearchStoredProcedure(JdbcTemplate jdbcTemplate) {
+			super(jdbcTemplate, DAOConstants.SP_GET_BANNER_IMAGE_PATH);
 		}
 
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ID,
+					Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID,
+					Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH,
+					Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE,
+					Types.VARCHAR));
+			declareParameter(new SqlParameter(
+					DAOConstants.PARAM_IMAGE_PATH_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(
+					DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW,
+					Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW,
+					Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1,
+					new RowMapper<ImagePath>() {
+						public ImagePath mapRow(ResultSet rs, int rowNum)
+								throws SQLException {
+							ImagePath imagePath = new ImagePath(
+									rs.getString(DAOConstants.COLUMN_STORE_ID),
+									rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID),
+									rs.getString(DAOConstants.COLUMN_IMAGE_PATH),
+									rs.getString(DAOConstants.COLUMN_IMAGE_SIZE),
+									ImagePathType.get(rs
+											.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)),
+									rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS),
+									rs.getString(DAOConstants.COLUMN_CREATED_BY),
+									rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+
+							return imagePath;
+						}
+					}));
+		}
 	}
 
 	@Override
@@ -120,8 +175,7 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 	@Override
 	protected StoredProcedure getSearchStoredProcedure()
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		return searchSp;
 	}
 
 	@Override
@@ -138,6 +192,7 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 				imagePathId = DAOUtils.generateUniqueId();
 			}
 
+			inputs.put(DAOConstants.MODEL_ID, imagePathId);
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId);
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH, model.getPath());
@@ -158,6 +213,7 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 		if (model != null) {
 			inputs = new HashMap<String, Object>();
 
+			inputs.put(DAOConstants.MODEL_ID, model.getId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, model.getId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, model.getAlias());
@@ -171,21 +227,31 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 	@Override
 	protected Map<String, Object> generateDeleteInput(ImagePath model)
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new CoreDaoException("Unimplemented method.");
 	}
 
 	@Override
-	protected Search generateSearchById(String id) {
+	protected Search generateSearchById(String id, String storeId) {
 		Search search = new Search(ImagePath.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID, id));
+		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		return search;
 	}
 
 	@Override
 	protected Map<String, Object> getDefaultInParam() throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> inParam = new HashMap<String, Object>();
+
+		inParam.put(DAOConstants.PARAM_IMAGE_PATH_ID, null);
+		inParam.put(DAOConstants.PARAM_STORE_ID, null);
+		inParam.put(DAOConstants.PARAM_IMAGE_PATH, null);
+		inParam.put(DAOConstants.PARAM_IMAGE_SIZE, null);
+		inParam.put(DAOConstants.PARAM_IMAGE_PATH_TYPE, null);
+		inParam.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, null);
+		inParam.put(DAOConstants.PARAM_START_ROW, 0);
+		inParam.put(DAOConstants.PARAM_END_ROW, 0);
+
+		return inParam;
 	}
 
 }
