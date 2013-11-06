@@ -43,7 +43,7 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 	protected abstract Map<String, Object> getDefaultInParam()
 			throws CoreDaoException;
 
-	protected abstract Search generateSearchById(String id);
+	protected abstract Search generateSearchById(String id, String storeId);
 
 	@SuppressWarnings("unchecked")
 	public GenericDaoSpImpl() {
@@ -64,8 +64,9 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 					.execute(inParams));
 			if (status > 0) {
 				// TODO return added model in sp level
-				SearchResult<T> searchResult = search(generateSearchById(inParams
-						.get(DAOConstants.MODEL_ID).toString()));
+				SearchResult<T> searchResult = search(generateSearchById(
+						inParams.get(DAOConstants.MODEL_ID).toString(),
+						inParams.get(DAOConstants.PARAM_STORE_ID).toString()));
 				if (searchResult.getTotalCount() > 0) {
 					return searchResult.getResult().get(0);
 				}
@@ -84,8 +85,9 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 					.execute(inParams));
 			if (status > 0) {
 				// TODO return updated model in sp level
-				SearchResult<T> searchResult = search(generateSearchById(inParams
-						.get(DAOConstants.MODEL_ID).toString()));
+				SearchResult<T> searchResult = search(generateSearchById(
+						inParams.get(DAOConstants.MODEL_ID).toString(),
+						inParams.get(DAOConstants.PARAM_STORE_ID).toString()));
 				if (searchResult.getTotalCount() > 0) {
 					return searchResult.getResult().get(0);
 				}
