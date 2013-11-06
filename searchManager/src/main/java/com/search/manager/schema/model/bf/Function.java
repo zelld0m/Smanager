@@ -16,7 +16,7 @@ public class Function implements Serializable {
 	@DataTransferObject(converter = EnumConverter.class)
 	public enum ArgumentConstraint {
 		NORMAL, 			// can be a NumericField, Function, or NumericConstant
-//		FIELD, 				// should be a field
+		FIELD, 				// should be a field
 //		FUNCTION, 			// should be another function
 //		DATE_FIELD, 		// should be a date field
 //		NUMERIC_FIELD, 		// should be a numeric field

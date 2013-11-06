@@ -285,6 +285,25 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.search</groupId>
+            <artifactId>macmallmod</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.search</groupId>
+            <artifactId>pcm-plugin</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.search</groupId>
+            <artifactId>pcmallFilters</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-lgpl</artifactId>
             <version>${jackson.version}</version>

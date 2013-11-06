@@ -157,7 +157,7 @@
             'rows': sortWidget.perPageInterval,
             'facet.mincount': 1,
             'start': 0,
-            'sort': 'CatCodeOrder asc, score desc, Popularity desc',
+            'sort': GLOBAL_storeSort,
             'relevancyId': '',
             'spellcheck': true,
             'spellcheck.count': 3,
