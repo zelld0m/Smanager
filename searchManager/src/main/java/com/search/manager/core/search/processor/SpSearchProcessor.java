@@ -51,9 +51,8 @@ public class SpSearchProcessor implements SearchProcessor {
 				inParams.put(filter.getProperty(), filter.getValue());
 				break;
 			default:
-				throw new CoreSearchException(
-						"Unsupported filter operator in sp: "
-								+ filter.getOperator());
+				throw new CoreSearchException("Unsupported filter operation: "
+						+ filter.getOperator());
 
 			}
 		}
@@ -63,7 +62,6 @@ public class SpSearchProcessor implements SearchProcessor {
 
 	@Override
 	public String generateStrQuery(Search search) throws CoreSearchException {
-		// TODO Auto-generated method stub
 		throw new CoreSearchException("Unimplemeted method.");
 	}
 
