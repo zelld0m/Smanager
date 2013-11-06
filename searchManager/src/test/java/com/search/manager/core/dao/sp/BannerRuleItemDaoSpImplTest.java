@@ -88,7 +88,7 @@ public class BannerRuleItemDaoSpImplTest extends BaseIntegrationTest {
 				bannerRuleItem.getDescription());
 		Assert.assertTrue(true == bannerRuleItem.getDisabled());
 
-		// Revert field
+		// Revert
 		bannerRuleItem = bannerRuleItemDao.update(BannerRuleItemTestData
 				.getExistingBannerRuleItem());
 
