@@ -889,6 +889,18 @@
                     <groupId>com.jcraft</groupId>
                     <artifactId>jsch</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.search</groupId>
+                    <artifactId>macmallmod</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.search</groupId>
+                    <artifactId>pcmallFilters</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.search</groupId>
+                    <artifactId>pcm-plugin</artifactId>
+                </exclusion>
             </exclusions>
             <classifier>classes</classifier>
         </dependency>

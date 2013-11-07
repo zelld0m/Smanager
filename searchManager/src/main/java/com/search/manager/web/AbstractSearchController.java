@@ -31,6 +31,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,6 +61,7 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.ParameterUtils;
+import com.search.manager.utility.QueryValidator;
 import com.search.manager.utility.SearchLogger;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
@@ -67,7 +69,7 @@ import com.search.ws.SolrJsonResponseParser;
 import com.search.ws.SolrResponseParser;
 import com.search.ws.SolrXmlResponseParser;
 
-public abstract class AbstractSearchController implements InitializingBean {
+public abstract class AbstractSearchController implements InitializingBean, DisposableBean {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractSearchController.class);
 
@@ -95,8 +97,14 @@ public abstract class AbstractSearchController implements InitializingBean {
 	}
 
 	@Override
-	public void afterPropertiesSet() {
+	public void afterPropertiesSet() throws Exception {
 		configManager = ConfigManager.getInstance();
+		QueryValidator.init();
+	}
+
+	@Override
+	public void destroy() {
+		QueryValidator.shutdown();
 	}
 
 	protected void setFacetTemplateValues(RedirectRuleCondition condition, Map<String, String> facetMap) {
@@ -617,6 +625,27 @@ public abstract class AbstractSearchController implements InitializingBean {
 		return null;
 	}
 
+	/**
+	 * Return Error Message if invalid else return null;
+	 */
+	protected String getCoreName(HttpServletRequest request) throws HttpException {
+		// get the server name, solr path, core name and do mapping for the store name to use for the search
+		Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
+		String requestPath = getRequestPath(request);
+
+		if (StringUtils.isBlank(requestPath)) {
+			throw new HttpException("Invalid request");
+		}
+
+		Matcher matcher = pathPattern.matcher(requestPath);
+
+		if (!matcher.matches()) {
+			throw new HttpException("Invalid request");
+		}
+
+		return matcher.group(3);
+	}
+
 	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: support for json if json.nl != map
 
@@ -638,7 +667,12 @@ public abstract class AbstractSearchController implements InitializingBean {
 				response.sendError(400, ex.getMessage());
 				return;
 			}
-			
+
+			if (!QueryValidator.accept(getCoreName(request), request)) {
+				response.sendError(400, "Invalid solr query.");
+				return;
+			}
+
 			NameValuePair defTypeNVP = new BasicNameValuePair("defType", getDefType(storeId));
 			String storeName = configManager.getStoreName(storeId);
 			initFieldOverrideMaps(request, solrHelper, storeId);

@@ -49,7 +49,7 @@ public class EnterpriseSearchController extends AbstractSearchController {
         "enterpriseSearch"
     };
 
-    public void afterPropertiesSet() {
+    public void afterPropertiesSet() throws Exception {
     	super.afterPropertiesSet();
         enterpriseSearchConfigManager = EnterpriseSearchConfigManager.getInstance();
     }
