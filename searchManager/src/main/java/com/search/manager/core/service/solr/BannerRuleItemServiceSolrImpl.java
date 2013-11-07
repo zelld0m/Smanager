@@ -12,7 +12,7 @@ import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.BannerRuleItemService;
 
-@Service("bannerRuleItemServiceSolrImpl")
+@Service("bannerRuleItemServiceSolr")
 public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 
 	@Autowired
