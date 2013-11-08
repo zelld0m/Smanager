@@ -19,7 +19,7 @@ import com.search.manager.dao.sp.DAOConstants;
 public class SpSearchProcessor implements SearchProcessor {
 
 	private StoredProcedure storedProcedure;
-	private Map<String, Object> inParam;
+	private Map<String, Object> inParams;
 
 	@SuppressWarnings("unused")
 	private SpSearchProcessor() {
@@ -27,16 +27,62 @@ public class SpSearchProcessor implements SearchProcessor {
 	}
 
 	public SpSearchProcessor(StoredProcedure storedProcedure,
-			Map<String, Object> inParam) {
+			Map<String, Object> inParams) {
 		this.storedProcedure = storedProcedure;
-		this.inParam = inParam;
+		this.inParams = inParams;
 	}
 
 	@Override
 	public SearchResult<?> processSearch(Search search)
 			throws CoreSearchException {
-		Map<String, Object> inParams = new HashMap<String, Object>(inParam);
+		Map<String, Object> thisInParams = new HashMap<String, Object>(inParams);
 
+		List<Filter> filters = search.getFilters();
+
+		for (Filter filter : filters) {
+
+			if (filter.getProperty().equals(DAOConstants.PARAM_MATCH_TYPE)) {
+				thisInParams.put(DAOConstants.PARAM_MATCH_TYPE, filter.getValue());
+				continue;
+			}
+
+			switch (filter.getOperator()) {
+			case EQUAL:
+				thisInParams.put(filter.getProperty(), filter.getValue());
+				break;
+			default:
+				throw new CoreSearchException("Unsupported filter operation: "
+						+ filter.getOperator());
+
+			}
+		}
+
+		if (search.getPageNumber() > -1 && search.getMaxRowCount() > -1) {
+			Integer startRow = null;
+			if (search.getPageNumber() == 0 && search.getMaxRowCount() == 0) {
+				startRow = 0;
+			} else {
+				startRow = (search.getPageNumber() - 1)
+						* search.getMaxRowCount() + 1;
+			}
+			thisInParams.put(DAOConstants.PARAM_START_ROW, startRow);
+
+			Integer endRow = null;
+			if (search.getPageNumber() == 0 && search.getMaxRowCount() == 0) {
+				endRow = 0;
+			} else {
+				endRow = search.getPageNumber() * search.getMaxRowCount();
+			}
+			thisInParams.put(DAOConstants.PARAM_END_ROW, endRow);
+		}
+
+		return getSearchResult(storedProcedure.execute(thisInParams));
+	}
+
+	@Override
+	public String generateStrQuery(Search search) throws CoreSearchException {
+		// TODO
+		StringBuilder query = new StringBuilder();
 		List<Filter> filters = search.getFilters();
 
 		for (Filter filter : filters) {
@@ -56,12 +102,7 @@ public class SpSearchProcessor implements SearchProcessor {
 
 			}
 		}
-
-		return getSearchResult(storedProcedure.execute(inParams));
-	}
-
-	@Override
-	public String generateStrQuery(Search search) throws CoreSearchException {
+		
 		throw new CoreSearchException("Unimplemeted method.");
 	}
 
