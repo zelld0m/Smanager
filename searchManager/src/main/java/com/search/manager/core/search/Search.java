@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Search implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
-	
-	protected int firstResult = -1;
-	protected int maxResult = -1;
-	protected int page = -1;
+
+	protected int maxRowCount = -1;
+	protected int pageNumber = -1;
 	protected Class<?> searchClass;
 	protected List<Filter> filters = new ArrayList<Filter>();
 	protected List<Sort> sorts = new ArrayList<Sort>();
@@ -29,30 +28,22 @@ public class Search implements Serializable {
 
 	// Getter and Setter
 
-	public int getFirstResult() {
-		return firstResult;
+	public int getMaxRowCount() {
+		return maxRowCount;
 	}
 
-	public void setFirstResult(int firstResult) {
-		this.firstResult = firstResult;
+	public void setMaxRowCount(int maxRowCount) {
+		this.maxRowCount = maxRowCount;
 	}
 
-	public int getMaxResult() {
-		return maxResult;
+	public int getPageNumber() {
+		return pageNumber;
 	}
 
-	public void setMaxResult(int maxResult) {
-		this.maxResult = maxResult;
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
 	}
 
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-	
 	public void setSearchClass(Class<?> searchClass) {
 		this.searchClass = searchClass;
 	}
