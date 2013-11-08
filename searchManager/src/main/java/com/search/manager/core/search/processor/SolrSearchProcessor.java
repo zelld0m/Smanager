@@ -91,18 +91,26 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 								sort.isDesc() ? ORDER.desc : ORDER.asc);
 					}
 
-					if (solrQuery != null) {
-						queryResponse = solrServer.query(solrQuery);
-
-						if (queryResponse != null
-								&& queryResponse.getStatus() == 0) {
-							searchResult.setResult(queryResponse
-									.getBeans(search.getSearchClass()));
-							searchResult.setTotalCount(queryResponse.getBeans(
-									search.getSearchClass()).size());
-							return searchResult;
-						}
+					// start
+					if (search.getPageNumber() > -1) {
+						solrQuery.setStart(search.getPageNumber());
 					}
+					
+					// rows
+					if (search.getMaxRowCount() > -1) {
+						solrQuery.setRows(search.getMaxRowCount());
+					}
+					
+					queryResponse = solrServer.query(solrQuery);
+
+					if (queryResponse != null && queryResponse.getStatus() == 0) {
+						searchResult.setResult(queryResponse.getBeans(search
+								.getSearchClass()));
+						searchResult.setTotalCount(queryResponse.getBeans(
+								search.getSearchClass()).size());
+						return searchResult;
+					}
+
 				}
 			}
 		} catch (Exception e) {
@@ -128,6 +136,14 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 		}
 		if (StringUtils.isNotEmpty(orderBy)) {
 			query.append("&" + orderBy);
+		}
+
+		if (search.getMaxRowCount() > -1) {
+			query.append("&rows=" + search.getMaxRowCount());
+		}
+
+		if (search.getPageNumber() > -1) {
+			query.append("&start=" + search.getPageNumber());
 		}
 
 		return query.toString();
