@@ -1,63 +1,73 @@
 package com.search.manager.core.search;
 
+import junit.framework.Assert;
+
+import org.junit.Test;
+
 import com.search.manager.core.search.Field.FieldOperator;
 
 public class FieldTest {
 
-	public static void main (String[] args) {
+	@Test
+	public void sqlFormat() {
 		String columnName = "price";
-		
+
 		// PROPERTY
 		Field field = new Field(columnName);
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("`price`", field.toString());
+
 		// AVG
 		field = new Field(columnName, FieldOperator.AVG);
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("AVG(`price`)", field.toString());
+
 		field = new Field(columnName, FieldOperator.AVG, "ave_price");
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("AVG(`price`) as `ave_price`", field.toString());
+
 		// COUNT
 		field = new Field(columnName, FieldOperator.COUNT);
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("COUNT(`price`)", field.toString());
+
 		field = new Field(columnName, FieldOperator.COUNT, "count_price");
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("COUNT(`price`) as `count_price`", field.toString());
+
 		// COUNT_DISTINCT
 		field = new Field(columnName, FieldOperator.COUNT_DISTINCT);
-		System.out.println("sql = " + field);
-		
-		field = new Field(columnName, FieldOperator.COUNT_DISTINCT, "count_distinct_price");
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("COUNT_DISTINCT(`price`)", field.toString());
+
+		field = new Field(columnName, FieldOperator.COUNT_DISTINCT,
+				"count_distinct_price");
+		Assert.assertEquals(
+				"COUNT_DISTINCT(`price`) as `count_distinct_price`",
+				field.toString());
+
 		// MAX
 		field = new Field(columnName, FieldOperator.MAX);
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("MAX(`price`)", field.toString());
+
 		field = new Field(columnName, FieldOperator.MAX, "max_price");
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("MAX(`price`) as `max_price`", field.toString());
+
 		// MIN
 		field = new Field(columnName, FieldOperator.MIN);
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("MIN(`price`)", field.toString());
+
 		field = new Field(columnName, FieldOperator.MIN, "min_price");
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("MIN(`price`) as `min_price`", field.toString());
+
 		// SUM
 		field = new Field(columnName, FieldOperator.SUM);
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("SUM(`price`)", field.toString());
+
 		field = new Field(columnName, FieldOperator.SUM, "total_price");
-		System.out.println("sql = " + field);
-		
+		Assert.assertEquals("SUM(`price`) as `total_price`", field.toString());
+
 		// CUSTOM
 		field = new Field("my_" + columnName, FieldOperator.CUSTOM);
-		System.out.println("sql = " + field);
-		
-		field = new Field("my_"+ columnName, FieldOperator.CUSTOM, "my_custom_price");
-		System.out.println("sql = " + field);
+		// TODO Assert.assertEquals("CUSTOM: `my_price`", field.toString());
+
+		field = new Field("my_" + columnName, FieldOperator.CUSTOM,
+				"my_custom_price");
+		// TODO Assert.assertEquals("CUSTOM: `my_price` as `my_custom_price`",
+		// field.toString());
 	}
 }
