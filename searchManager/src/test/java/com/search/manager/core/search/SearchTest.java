@@ -19,8 +19,8 @@ public class SearchTest {
 		search.addFields(fields);
 		
 		// Paging
-		search.setMaxResult(15);
-		search.setPage(3);
+		search.setMaxRowCount(15);
+		search.setPageNumber(3);
 		
 		// Sort
 		search.addSort(new Sort("priority"));
