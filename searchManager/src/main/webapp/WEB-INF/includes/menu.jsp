@@ -73,8 +73,7 @@
 	      
 	      <c:if test="${topmenu eq 'setting'}">
 		       <ul class="subMenu floatL txtAL">
-		      		<li ${submenu eq 'audit'? 'class="active"': ''}><a href="<spring:url value="/audit/"/>${storeId}">Audit Trail</a></li>
-		      		<li ${submenu eq 'setting'? 'class="active"': ''}><a href="<spring:url value="/setting/"/>${storeId}">User Setting</a></li>	  
+		      		<li ${submenu eq 'audit'? 'class="active"': ''}><a href="<spring:url value="/audit/"/>${storeId}">Audit Trail</a></li>	  
 		      		<sec:authorize access="hasRole('MANAGE_USER')">    		
 		      			<li ${submenu eq 'security'? 'class="active"': ''}><a href="<spring:url value="/security/"/>${storeId}">Security</a></li>
 		      		</sec:authorize>	      		
