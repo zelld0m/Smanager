@@ -67,8 +67,8 @@ public class BaseInterceptorTest {
         final Capture<String> getKey = new Capture<String>();
 
         mockRequest.setAttribute(and(capture(setKey), isA(String.class)), and(capture(setValue), isA(Object.class)));
-        expectLastCall().andAnswer(new IAnswer<Object>() {
-            public Object answer() throws Throwable {
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            public Void answer() throws Throwable {
                 attributes.put(setKey.getValue(), setValue.getValue());
                 return null;
             }
@@ -84,43 +84,43 @@ public class BaseInterceptorTest {
     }
 
     @Test
-    public void testWhenNoIncludesAndNoExcludes() throws Exception {
+    public void methodsShouldExecuteWhenNoRulesWereGiven() {
         prepare(SEARCH_URL, empty, empty);
         verify(true);
     }
 
     @Test
-    public void testWhenURLisIncluded() throws Exception {
+    public void methodsShouldExecuteWhenPathIsIncluded() {
         prepare(DWR_URL, paths, empty);
         verify(true);
     }
 
     @Test
-    public void testWhenURLisNotIncluded() throws Exception {
+    public void methodsShouldNotExecuteWhenPathIsNotIncluded() {
         prepare(SEARCH_URL, paths, empty);
         verify(false);
     }
 
     @Test
-    public void testWhenURLisExcluded() throws Exception {
+    public void methodsShouldNotExecuteWhenPathIsExcluded() {
         prepare(DWR_URL, empty, paths);
         verify(false);
     }
 
     @Test
-    public void testWhenURLisNotExcluded() throws Exception {
+    public void methodsShouldExecuteWhenPathIsNotExcluded() {
         prepare(SEARCH_URL, empty, paths);
         verify(true);
     }
 
     @Test
-    public void testWhenURLisIncludedAndExcluded() {
+    public void methodsShouldNotExecuteWhenPathIsIncludedAndExcludedAtTheSameTime() {
         prepare(DWR_URL, paths, paths);
         verify(false);
     }
 
     @Test
-    public void testWhenURLisNotIncludedAndNotExcluded() {
+    public void methodsShouldNotExecuteWhenPathIsNotExcludedButAlsoNotIncluded() {
         prepare(SEARCH_URL, paths, paths);
         verify(false);
     }
@@ -136,13 +136,13 @@ public class BaseInterceptorTest {
     private void verify(boolean accepted) {
         try {
             interceptor.preHandle(mockRequest, null, null);
-            assertEquals(accepted, beforeCalled);
+            assertEquals("'before' method execution", accepted, beforeCalled);
 
             interceptor.postHandle(mockRequest, null, null, null);
-            assertEquals(accepted, afterCalled);
+            assertEquals("'after' method execution", accepted, afterCalled);
 
             interceptor.afterCompletion(mockRequest, null, null, null);
-            assertEquals(accepted, completeCalled);
+            assertEquals("'complete' method execution.", accepted, completeCalled);
 
             EasyMock.verify(mockRequest);
         } catch (Exception e) {
