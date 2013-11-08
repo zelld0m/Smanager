@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
+@DataTransferObject(converter = BeanConverter.class)
 public class SearchResult<T> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
