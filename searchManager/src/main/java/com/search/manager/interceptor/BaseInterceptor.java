@@ -64,7 +64,7 @@ public class BaseInterceptor implements HandlerInterceptor {
         return (Boolean) request.getAttribute(key);
     }
 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         return canHandle(request) ? before(request, response, handler) : true;
     }
