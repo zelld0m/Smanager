@@ -19,6 +19,7 @@ import com.search.manager.core.dao.BannerRuleDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.search.Filter;
+import com.search.manager.core.search.Filter.MatchType;
 import com.search.manager.core.search.Search;
 import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
@@ -227,16 +228,17 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
 		inParam.put(DAOConstants.PARAM_IMAGE_PATH_ID, null);
 		inParam.put(DAOConstants.PARAM_START_ROW, 0);
 		inParam.put(DAOConstants.PARAM_END_ROW, 0);
-		
+
 		return inParam;
 	}
-	
+
 	@Override
 	protected Search generateSearchById(String id, String storeId) {
 		Search search = new Search(BannerRule.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, id));
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, 2));
+		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
+				MatchType.MATCH_ID.getIntValue()));
 		return search;
 	}
 

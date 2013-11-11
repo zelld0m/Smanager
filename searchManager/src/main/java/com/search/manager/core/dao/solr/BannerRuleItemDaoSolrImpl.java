@@ -19,6 +19,7 @@ public class BannerRuleItemDaoSolrImpl extends
 
 	@Override
 	protected Search generateQuery(BannerRuleItem model) {
+		// TODO if possible via solrj annotated field
 		if (model != null) {
 			Search search = new Search(BannerRuleItem.class);
 			List<Filter> filters = new ArrayList<Filter>();
@@ -85,5 +86,7 @@ public class BannerRuleItemDaoSolrImpl extends
 		}
 		return null;
 	}
+
+	// Add BannerRuleItemDao specific method solr implementation here...
 
 }

@@ -346,7 +346,7 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem>
 	@Override
 	protected Map<String, Object> generateDeleteInput(BannerRuleItem model)
 			throws CoreDaoException {
-		Map<String, Object> inputs = new HashMap<String, Object>();
+		Map<String, Object> inputs = null;
 
 		if (model != null) {
 			inputs = new HashMap<String, Object>();
