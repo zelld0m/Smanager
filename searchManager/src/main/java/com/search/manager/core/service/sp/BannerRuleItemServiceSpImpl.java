@@ -1,5 +1,6 @@
 package com.search.manager.core.service.sp;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -24,6 +25,7 @@ import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.BannerRuleItemService;
+import com.search.manager.core.service.BannerRuleService;
 import com.search.manager.core.service.ImagePathService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -45,16 +47,45 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	@Autowired
 	@Qualifier("imagePathServiceSp")
 	private ImagePathService imagePathService;
+	@Autowired
+	@Qualifier("bannerRuleServiceSp")
+	private BannerRuleService bannerRuleService;
 
 	@RemoteMethod
 	@Override
 	public BannerRuleItem add(BannerRuleItem model) throws CoreServiceException {
+		// TODO add Spring transaction propagation
 		try {
 			// TODO validation here...
-			return bannerRuleItemDao.add(model);
+
+			// Validate required fields.
+
+			BannerRule bannerRule = model.getRule();
+			ImagePath imagePath = model.getImagePath();
+
+			if (StringUtils.isBlank(model.getRule().getRuleId())) {
+				bannerRule = bannerRuleService.add(model.getRule());
+			}
+			if (StringUtils.isBlank(model.getImagePath().getId())) {
+				imagePath = imagePathService.add(model.getImagePath());
+			}
+
+			// Set CreatedBy and CreatedDate
+			if (StringUtils.isBlank(model.getCreatedBy())) {
+				model.setCreatedBy(UtilityService.getUsername());
+			}
+			if (model.getCreatedDate() == null) {
+				model.setCreatedDate(new DateTime());
+			}
+
+			if (bannerRule != null && imagePath != null) {
+				return bannerRuleItemDao.add(model);
+			}
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
+
+		return null;
 	}
 
 	@RemoteMethod
@@ -63,6 +94,17 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 			throws CoreServiceException {
 		try {
 			// TODO validation here...
+
+			// Validate required field for update.
+
+			// Set LastModifiedBy and LastModifiedDate
+			if (StringUtils.isBlank(model.getLastModifiedBy())) {
+				model.setLastModifiedBy(UtilityService.getUsername());
+			}
+			if (model.getLastModifiedDate() == null) {
+				model.setLastModifiedDate(new DateTime());
+			}
+
 			return bannerRuleItemDao.update(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
@@ -74,6 +116,9 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	public boolean delete(BannerRuleItem model) throws CoreServiceException {
 		try {
 			// TODO validation here...
+
+			// Validate required field for deletion.
+
 			return bannerRuleItemDao.delete(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
@@ -92,7 +137,42 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		}
 	}
 
+	@Override
+	public BannerRuleItem searchById(String storeId, String id)
+			throws CoreServiceException {
+		// TODO Auto-generated method stub
+
+		return null;
+	}
+
 	// BannerRuleItemService specific method here...
+
+	@Override
+	public List<BannerRuleItem> getActiveBannerRuleItems(String storeId,
+			String keyword, DateTime currentDate) throws CoreServiceException {
+
+		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(keyword)
+				|| currentDate == null) {
+			return null;
+		}
+
+		Search search = new Search(BannerRuleItem.class);
+		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+		search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, keyword));
+		search.addFilter(new Filter(DAOConstants.PARAM_DISABLED, 0));
+		search.addFilter(new Filter(DAOConstants.PARAM_START_DATE,
+				JodaDateTimeUtil.toSqlDate(currentDate)));
+		search.addFilter(new Filter(DAOConstants.PARAM_START_DATE,
+				JodaDateTimeUtil.toSqlDate(currentDate)));
+
+		SearchResult<BannerRuleItem> searchResult = search(search);
+
+		if (searchResult.getTotalCount() > 0) {
+			return searchResult.getResult();
+		}
+
+		return null;
+	}
 
 	@RemoteMethod
 	@Override
@@ -144,8 +224,6 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		BannerRuleItem bannerRuleItem = new BannerRuleItem(rule, null,
 				priority, startDT, endDT, imageAlt, linkPath, description,
 				newImagePath, disable, openNewWindow);
-
-		bannerRuleItem.setCreatedBy(UtilityService.getUsername());
 
 		try {
 			bannerRuleItem = bannerRuleItemDao.add(bannerRuleItem);
@@ -220,9 +298,14 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		Search search = new Search(BannerRuleItem.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
-		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_SIZE, imageSize));
-		search.addFilter(new Filter(DAOConstants.PARAM_DISABLED, disabled));
-		// TODO date filter: startDate and endDate
+		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_SIZE, StringUtils
+				.isNotBlank(imageSize) ? imageSize : null));
+		search.addFilter(new Filter(DAOConstants.PARAM_DISABLED, BooleanUtils
+				.toIntegerObject(disabled, 1, 0, null)));
+		search.addFilter(new Filter(DAOConstants.PARAM_START_DATE,
+				JodaDateTimeUtil.toSqlDate(startDate)));
+		search.addFilter(new Filter(DAOConstants.PARAM_END_DATE,
+				JodaDateTimeUtil.toSqlDate(endDate)));
 		search.setPageNumber(page);
 		search.setMaxRowCount(pageSize);
 

@@ -1,10 +1,12 @@
 package com.search.manager.core.service.sp;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,17 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	public ImagePath add(ImagePath model) throws CoreServiceException {
 		try {
 			// TODO validation here...
+
+			// Validate required fields.
+
+			// Set CreatedBy and CreatedDate
+			if (StringUtils.isBlank(model.getCreatedBy())) {
+				model.setCreatedBy(UtilityService.getUsername());
+			}
+			if (model.getCreatedDate() == null) {
+				model.setCreatedDate(new DateTime());
+			}
+
 			return imagePathDao.add(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
@@ -50,6 +63,17 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	public ImagePath update(ImagePath model) throws CoreServiceException {
 		try {
 			// TODO validation here...
+
+			// Validate required field for update.
+
+			// Set LastModifiedBy and LastModifiedDate
+			if (StringUtils.isBlank(model.getLastModifiedBy())) {
+				model.setLastModifiedBy(UtilityService.getUsername());
+			}
+			if (model.getLastModifiedDate() == null) {
+				model.setLastModifiedDate(new DateTime());
+			}
+
 			return imagePathDao.update(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
@@ -77,6 +101,29 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
+	}
+
+	@Override
+	public ImagePath searchById(String storeId, String id)
+			throws CoreServiceException {
+		// TODO Auto-generated method stub
+
+		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(id)) {
+			return null;
+		}
+
+		Search search = new Search(ImagePath.class);
+		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID, id));
+		search.setPageNumber(1);
+		search.setMaxRowCount(1);
+
+		SearchResult<ImagePath> searchResult = search(search);
+		if (searchResult.getTotalCount() > 0) {
+			return (ImagePath) CollectionUtils.get(searchResult.getResult(), 0);
+		}
+
+		return null;
 	}
 
 	// ImagePathService specific method here...
@@ -145,8 +192,7 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 
 		Search search = new Search(ImagePath.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		// TODO imageUrl?
-		search.addFilter(new Filter("", imageUrl));
+		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH, imageUrl));
 		search.setPageNumber(1);
 		search.setMaxRowCount(1);
 

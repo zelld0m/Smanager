@@ -1,14 +1,17 @@
 package com.search.manager.core.service.sp;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -19,16 +22,19 @@ import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.search.Filter;
+import com.search.manager.core.search.Filter.MatchType;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.BannerRuleItemService;
 import com.search.manager.core.service.BannerRuleService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
-import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.report.statistics.model.BannerStatistics;
+import com.search.manager.report.statistics.util.BannerStatisticsUtil;
 import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.DeploymentService;
 import com.search.manager.service.UtilityService;
@@ -51,7 +57,7 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 	@Autowired
 	@Qualifier("bannerRuleItemServiceSp")
 	private BannerRuleItemService bannerRuleItemService;
-	// TODO @Autowired
+	@Autowired
 	private DeploymentService deploymentService;
 
 	@RemoteMethod
@@ -59,6 +65,17 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 	public BannerRule add(BannerRule model) throws CoreServiceException {
 		try {
 			// TODO validation here...
+
+			// Validate required fields.
+
+			// Set CreatedBy and CreatedDate
+			if (StringUtils.isBlank(model.getCreatedBy())) {
+				model.setCreatedBy(UtilityService.getUsername());
+			}
+			if (model.getCreatedDate() == null) {
+				model.setCreatedDate(new DateTime());
+			}
+
 			return bannerRuleDao.add(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
@@ -70,6 +87,17 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 	public BannerRule update(BannerRule model) throws CoreServiceException {
 		try {
 			// TODO validation here...
+
+			// Validate required field for update.
+
+			// Set LastModifiedBy and LastModifiedDate
+			if (StringUtils.isBlank(model.getLastModifiedBy())) {
+				model.setLastModifiedBy(UtilityService.getUsername());
+			}
+			if (model.getLastModifiedDate() == null) {
+				model.setLastModifiedDate(new DateTime());
+			}
+
 			return bannerRuleDao.update(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
@@ -97,6 +125,32 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
+	}
+
+	@Override
+	public BannerRule searchById(String storeId, String id)
+			throws CoreServiceException {
+
+		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(id)) {
+			return null;
+		}
+
+		Search search = new Search(BannerRule.class);
+		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, id));
+		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
+				MatchType.MATCH_ID.getIntValue()));
+		search.setPageNumber(1);
+		search.setMaxRowCount(1);
+
+		SearchResult<BannerRule> searchResult = search(search);
+
+		if (searchResult.getTotalCount() > 0) {
+			return (BannerRule) CollectionUtils
+					.get(searchResult.getResult(), 0);
+		}
+
+		return null;
 	}
 
 	// BannerRuleService specific method here...
@@ -133,11 +187,11 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		ServiceResponse<SearchResult<BannerRule>> serviceResponse = new ServiceResponse<SearchResult<BannerRule>>();
 
 		Search search = new Search(BannerRule.class);
-		// TODO Remove DAOConstants and MatchType
+		// TODO Remove DAOConstants
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_SEARCH_TEXT, searchText));
 		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
-				MatchType.LIKE_NAME));
+				MatchType.LIKE_NAME.getIntValue()));
 		search.setPageNumber(page);
 		search.setMaxRowCount(pageSize);
 
@@ -281,21 +335,61 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 
 	// Banner statistic
 
-	@Override
-	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByMemberId(
-			String storeId, String memberId, String startDateText,
-			String endDateText) throws CoreServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	@RemoteMethod
 	@Override
 	public ServiceResponse<RecordSet<BannerStatistics>> getBannerStats(
 			String storeId, String keyword, String memberId,
 			String startDateText, String endDateText, boolean aggregate)
 			throws CoreServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		ServiceResponse<RecordSet<BannerStatistics>> serviceResponse = new ServiceResponse<RecordSet<BannerStatistics>>();
+
+		DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(
+				storeId, startDateText, JodaPatternType.DATE);
+		DateTime endDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(
+				storeId, endDateText, JodaPatternType.DATE);
+
+		if (startDateTime == null && endDateTime == null) {
+			endDateTime = startDateTime = DateTime.now();
+		}
+
+		List<BannerStatistics> list = new ArrayList<BannerStatistics>();
+
+		try {
+			list = StringUtils.isNotBlank(keyword) ? BannerStatisticsUtil
+					.getStatsPerBannerByKeyword(storeId, keyword,
+							startDateTime.toDate(), endDateTime.toDate(),
+							aggregate) : BannerStatisticsUtil
+					.getStatsPerKeywordByMemberId(storeId, memberId,
+							startDateTime.toDate(), endDateTime.toDate());
+
+			RecordSet<BannerStatistics> rs = new RecordSet<BannerStatistics>(
+					list, (Integer) CollectionUtils.size(list));
+			serviceResponse.success(rs);
+		} catch (FileNotFoundException e) {
+			serviceResponse.error("File not found for getStatsPerKeyword", e);
+		} catch (Exception e) {
+			serviceResponse.error("Exception for getStatsPerKeyword", e);
+		}
+
+		return serviceResponse;
+	}
+
+	@RemoteMethod
+	@Override
+	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByKeyword(
+			String storeId, String keyword, String startDateText,
+			String endDateText, boolean aggregate) throws CoreServiceException {
+		return getBannerStats(storeId, keyword, null, startDateText,
+				endDateText, aggregate);
+	}
+
+	@RemoteMethod
+	@Override
+	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByMemberId(
+			String storeId, String memberId, String startDateText,
+			String endDateText) throws CoreServiceException {
+		return getBannerStats(storeId, null, memberId, startDateText,
+				endDateText, false);
 	}
 
 }
