@@ -1,9 +1,9 @@
 package com.search.manager.utility;
 
 import com.google.common.base.Function;
-import com.search.manager.model.BannerRuleItem;
-import com.search.manager.model.ImagePath;
-import com.search.manager.model.ImagePathType;
+import com.search.manager.core.model.BannerRuleItem;
+import com.search.manager.core.model.ImagePath;
+import com.search.manager.core.model.ImagePathType;
 import com.search.manager.report.model.xml.BannerItemXml;
 
 public class Transformers {
