@@ -2,7 +2,7 @@ package com.search.manager.report.model;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.search.manager.model.BannerRuleItem;
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.report.annotation.ReportField;
 
 public class BannerReportBean extends ReportBean<BannerRuleItem> {
