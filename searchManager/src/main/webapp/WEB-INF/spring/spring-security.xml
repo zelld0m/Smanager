@@ -30,18 +30,16 @@
 			<security:intercept-url pattern="/search/**" access="permitAll" />
 			<security:intercept-url pattern="/enterpriseSearch/**" access="permitAll" />
 			<security:intercept-url pattern="/login.jsp*" access="permitAll" />
+			<security:intercept-url pattern="/health.jsp" access="permitAll" />
 			<security:intercept-url pattern="/**" access="isAuthenticated()"/>
 
 		<security:logout invalidate-session="true" logout-success-url="/login.jsp" logout-url="/logout" />
 
 		<!-- Querying the SessionRegistry for currently authenticated users and 
 			their sessions http://static.springsource.org/spring-security/site/docs/3.1.x/reference/session-mgmt.html#list-authenticated-principals -->
-		<security:custom-filter ref="authenticationFilter"
-			position="FORM_LOGIN_FILTER" />
-		<security:custom-filter ref="concurrencyFilter"
-			position="CONCURRENT_SESSION_FILTER" />
-		<security:session-management
-			session-authentication-strategy-ref="sessionAuthenticationStrategy" />
+		<security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
+		<security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER" />
+		<security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
 	</security:http>
 
 	<bean id="authenticationFilter"
@@ -80,5 +78,4 @@
 	<bean id="concurrencyFilter"
 		class="org.springframework.security.web.session.ConcurrentSessionFilter"
 		p:sessionRegistry-ref="sessionRegistry" p:expiredUrl="/login.jsp?login_error=expiredsession" />
-
 </beans>

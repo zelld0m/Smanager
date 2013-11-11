@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.search</groupId>
     <artifactId>searchManager-parent</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <repositories>
@@ -28,7 +27,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.6</java.version>
-        <project.version>1.1.0-SNAPSHOT</project.version>
 
         <!-- Test Dependencies -->
         <junit.version>4.11</junit.version>
@@ -70,6 +68,9 @@
         <!-- LOGBACK -->
         <logback.version>1.0.13</logback.version>
         <logback.ext.version>0.1.1</logback.ext.version>
+        
+        <!-- LOGGING VERSIONS -->
+        <slf4j.version>1.6.6</slf4j.version>
         
         <!-- SOLR VERSION -->
         <solr.version>4.3.0</solr.version>
@@ -142,33 +143,41 @@
     <modules>
         <module>searchManager</module>
         <module>SearchGuiWS</module>
+        <module>propertiesManager</module>
     </modules>
+    
     <dependencies>
-    	<dependency>
-    		<groupId>junit</groupId>
-    		<artifactId>junit</artifactId>
-    		<version>${junit.version}</version>
-    		<scope>test</scope>
-    	</dependency>
-    	<dependency>
-    		<groupId>org.easymock</groupId>
-    		<artifactId>easymock</artifactId>
-    		<version>${easymock.version}</version>
-    		<scope>test</scope>
-    	</dependency>
-    	<dependency>
-    		<groupId>org.powermock</groupId>
-    		<artifactId>powermock-api-easymock</artifactId>
-    		<version>${powermock.version}</version>
-    		<scope>test</scope>
-    	</dependency>
-    	<dependency>
-    		<groupId>org.powermock</groupId>
-    		<artifactId>powermock-module-junit4</artifactId>
-    		<version>${powermock.version}</version>
-    		<scope>test</scope>
-    	</dependency>
-
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>${easymock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-easymock</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
         <!-- APACHE AXIS -->
         <dependency>
             <groupId>org.apache.axis</groupId>
@@ -274,6 +283,18 @@
             <groupId>org.logback-extensions</groupId>
             <artifactId>logback-ext-spring</artifactId>
             <version>${logback.ext.version}</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- Solr -->

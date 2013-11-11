@@ -33,6 +33,8 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.User;
 import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
+import com.search.ws.ConfigManager.PropertyFileType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,9 +66,9 @@ public class WorkflowNotificationMailService {
 		Set<String> cc = new HashSet<String>();
 		Set<String> bcc = new HashSet<String>();
 
-		cc.addAll(ConfigManager.getInstance().getListMailProperty(
+		cc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL,
 				UtilityService.getStoreId(), "mail.workflow.cc"));
-		bcc.addAll(ConfigManager.getInstance().getListMailProperty(
+		bcc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL,
 				UtilityService.getStoreId(), "mail.workflow.bcc"));
 
 		try {
@@ -84,14 +86,14 @@ public class WorkflowNotificationMailService {
 		switch (status) {
 		case PENDING:
 			String pendingSubject = ConfigManager.getInstance()
-					.getMailProperty(UtilityService.getStoreId(),
+					.getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(),
 							"mail.workflow.pendingSubject");
 			subject = (StringUtils.isNotBlank(pendingSubject)) ? pendingSubject
 					: "Search Manager: Rule Submitted For Approval";
 			templateLocation = "default-submitted-for-approval.vm";
-			cc.addAll(ConfigManager.getInstance().getListMailProperty(
+			cc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL,
 					UtilityService.getStoreId(), "mail.workflow.pendingCc"));
-			bcc.addAll(ConfigManager.getInstance().getListMailProperty(
+			bcc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL,
 					UtilityService.getStoreId(), "mail.workflow.pendingBcc"));
 
 			try {
@@ -124,52 +126,52 @@ public class WorkflowNotificationMailService {
 			break;
 		case APPROVED:
 			String approvedSubject = ConfigManager.getInstance()
-					.getMailProperty(UtilityService.getStoreId(),
+					.getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(),
 							"mail.workflow.approvedSubject");
 			subject = (StringUtils.isNotBlank(approvedSubject)) ? approvedSubject
 					: "Search Manager: Approved Rule(s)";
 			templateLocation = "default-approval-approve.vm";
-			cc.addAll(ConfigManager.getInstance().getListMailProperty(
+			cc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL, 
 					UtilityService.getStoreId(), "mail.workflow.approvedCc"));
-			bcc.addAll(ConfigManager.getInstance().getListMailProperty(
+			bcc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL, 
 					UtilityService.getStoreId(), "mail.workflow.approvedBcc"));
 			break;
 		case REJECTED:
 			String rejectedSubject = ConfigManager.getInstance()
-					.getMailProperty(UtilityService.getStoreId(),
+					.getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(),
 							"mail.workflow.rejectedSubject");
 			subject = (StringUtils.isNotBlank(rejectedSubject)) ? rejectedSubject
 					: "Search Manager: Rejected Rule(s)";
 			templateLocation = "default-approval-reject.vm";
-			cc.addAll(ConfigManager.getInstance().getListMailProperty(
+			cc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL, 
 					UtilityService.getStoreId(), "mail.workflow.rejectedCc"));
-			bcc.addAll(ConfigManager.getInstance().getListMailProperty(
+			bcc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL, 
 					UtilityService.getStoreId(), "mail.workflow.rejectedBcc"));
 			break;
 		case PUBLISHED:
 			String publishedSubject = ConfigManager.getInstance()
-					.getMailProperty(UtilityService.getStoreId(),
+					.getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(),
 							"mail.workflow.publishedSubject");
 			subject = (StringUtils.isNotBlank(publishedSubject)) ? publishedSubject
 					: "Search Manager: Published Rule(s)";
 			templateLocation = "default-pushtoprod-publish.vm";
-			cc.addAll(ConfigManager.getInstance().getListMailProperty(
+			cc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL, 
 					UtilityService.getStoreId(), "mail.workflow.publishedCc"));
-			bcc.addAll(ConfigManager.getInstance().getListMailProperty(
+			bcc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL, 
 					UtilityService.getStoreId(), "mail.workflow.publishedBcc"));
 			break;
 		case UNPUBLISHED:
 			String unpublishedSubject = ConfigManager.getInstance()
-					.getMailProperty(UtilityService.getStoreId(),
+					.getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(),
 							"mail.workflow.unpublishedSubject");
 
 			subject = (StringUtils.isNotBlank(unpublishedSubject)) ? unpublishedSubject
 					: "Search Manager: Un-published Rule(s)";
 			templateLocation = "default-pushtoprod-unpublish.vm";
-			cc.addAll(ConfigManager.getInstance().getListMailProperty(
+			cc.addAll(ConfigManager.getInstance().getPropertyList(PropertyFileType.MAIL, 
 					UtilityService.getStoreId(), "mail.workflow.unpublishedCc"));
 			bcc.addAll(ConfigManager.getInstance()
-					.getListMailProperty(UtilityService.getStoreId(),
+					.getPropertyList(PropertyFileType.MAIL, UtilityService.getStoreId(),
 							"mail.workflow.unpublishedBcc"));
 			break;
 		default:
@@ -286,9 +288,9 @@ public class WorkflowNotificationMailService {
 		User userFilter = new User();
 		userFilter.setStoreId(storeId);
 		userFilter.setGroupId((StringUtils.isNotBlank(ConfigManager
-				.getInstance().getMailProperty(UtilityService.getStoreId(),
+				.getInstance().getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(),
 						"mail.workflow.approver.group"))) ? ConfigManager
-				.getInstance().getMailProperty(UtilityService.getStoreId(),
+				.getInstance().getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(),
 						"mail.workflow.approver.group") : "APPROVER");
 		userFilter.setAccountNonExpired(true);
 		userFilter.setAccountNonLocked(true);

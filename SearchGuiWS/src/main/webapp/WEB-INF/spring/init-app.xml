@@ -8,18 +8,9 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <!-- PropertiesUtils -->
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="staticMethod" value="com.search.manager.utility.PropertiesUtils.initPropertiesConfig"/>
-        <property name="arguments">
-            <list>
-                <value>/home/solr/bin/ws/config/globalvar.properties</value>
-            </list>
-        </property>
+    <!-- Initialize Utility Classes -->
+    <bean class="com.search.manager.utility.UtilityInitializer" scope="singleton" lazy-init="false" init-method="initialize">
+        <property name="globalVarFile"              value="/home/solr/bin/ws/config/globalvar.properties" />
+        <property name="configFile"                 value="${solr.configPath}" />
     </bean>
-
-	<bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
-	     <property name="instance" value="${solr.configPath}" />
-	</bean>
-	
 </beans>

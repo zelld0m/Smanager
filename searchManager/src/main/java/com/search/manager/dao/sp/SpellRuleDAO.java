@@ -38,6 +38,8 @@ import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
+import com.search.ws.ConfigManager.PropertyFileType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -229,7 +231,7 @@ public class SpellRuleDAO {
 
     public Integer getMaxSuggest(String store) {
         return Integer.parseInt(StringUtils.defaultIfBlank(
-                ConfigManager.getInstance().getStoreSetting(store, "maxSpellSuggestions"), "3"));
+                ConfigManager.getInstance().getProperty(PropertyFileType.SETTINGS, store, "maxSpellSuggestions"), "3"));
     }
 
     @Audit(entity = Entity.spell, operation = Operation.updateSetting)
