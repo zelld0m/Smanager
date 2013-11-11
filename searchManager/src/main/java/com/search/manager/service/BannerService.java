@@ -36,9 +36,10 @@ import com.search.manager.response.ServiceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Service(value = "bannerService")
-@RemoteProxy(name = "BannerServiceJS", creator = SpringCreator.class, creatorParams =
-        @Param(name = "beanName", value = "bannerService"))
+//@Service(value = "bannerService")
+//@RemoteProxy(name = "BannerServiceJS", creator = SpringCreator.class, creatorParams =
+//        @Param(name = "beanName", value = "bannerService"))
+@Deprecated
 public class BannerService extends RuleService {
 
     private static final Logger logger = LoggerFactory.getLogger(BannerService.class);
