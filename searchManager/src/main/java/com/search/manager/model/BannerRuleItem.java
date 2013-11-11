@@ -11,6 +11,7 @@ import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
+@Deprecated
 public class BannerRuleItem extends ModelBean{
 	private static final long serialVersionUID = -2552014783905379956L;
 

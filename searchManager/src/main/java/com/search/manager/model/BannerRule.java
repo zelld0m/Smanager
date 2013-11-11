@@ -6,6 +6,7 @@ import org.directwebremoting.convert.BeanConverter;
 import com.search.manager.report.model.xml.BannerRuleXml;
 
 @DataTransferObject(converter = BeanConverter.class)
+@Deprecated
 public class BannerRule extends ModelBean {
 
 	private static final long serialVersionUID = 1L;

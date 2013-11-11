@@ -9,6 +9,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.EnumConverter;
 
 @DataTransferObject(converter = EnumConverter.class)
+@Deprecated
 public enum ImagePathType {
 	IMAGE_LINK("IMAGE_LINK"),
 	UPLOAD_LINK("IMAGE_UPLOAD");

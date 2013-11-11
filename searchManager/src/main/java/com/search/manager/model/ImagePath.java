@@ -4,6 +4,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 @DataTransferObject(converter = BeanConverter.class)
+@Deprecated
 public class ImagePath extends ModelBean {
 	private static final long serialVersionUID = 716880772182956579L;
 
