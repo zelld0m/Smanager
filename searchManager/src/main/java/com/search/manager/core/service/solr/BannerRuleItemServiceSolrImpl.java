@@ -1,7 +1,9 @@
 package com.search.manager.core.service.solr;
 
+import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,8 @@ import com.search.manager.core.dao.BannerRuleItemDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRuleItem;
+import com.search.manager.core.search.Filter;
+import com.search.manager.core.search.Filter.FilterOperator;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.BannerRuleItemService;
@@ -60,7 +64,43 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 		}
 	}
 
+	@Override
+	public BannerRuleItem searchById(String storeId, String id)
+			throws CoreServiceException {
+		Search search = new Search(BannerRuleItem.class);
+		search.addFilter(new Filter("store", storeId));
+		search.addFilter(new Filter("memberId", id));
+
+		SearchResult<BannerRuleItem> searchResult = search(search);
+		
+		if (searchResult.getTotalCount() > 0) {
+			return searchResult.getResult().get(0);
+		}
+		
+		return null;
+	}
+
 	// BannerRuleItemService specific method here...
+
+	@Override
+	public List<BannerRuleItem> getActiveBannerRuleItems(String storeId,
+			String keyword, DateTime currentDate) throws CoreServiceException {
+		// TODO test date filter...
+		Search search = new Search(BannerRuleItem.class);
+		search.addFilter(new Filter("store", storeId));
+		search.addFilter(new Filter("ruleName1", keyword));
+		search.addFilter(new Filter("disabled", false));
+		search.addFilter(new Filter("startDate", currentDate,
+				FilterOperator.LESS_OR_EQUAL));
+		search.addFilter(new Filter("endDate", currentDate,
+				FilterOperator.GREATER_THAN));
+
+		SearchResult<BannerRuleItem> searchResult = search(search);
+		if (searchResult.getTotalCount() > 0) {
+			return searchResult.getResult();
+		}
+		return null;
+	}
 
 	@Override
 	public ServiceResponse<BannerRuleItem> addRuleItem(String storeId,
