@@ -28,6 +28,7 @@ import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 @Repository(value = "bannerDAO")
+@Deprecated
 public class BannerDAO {
 
 	public BannerDAO() {
