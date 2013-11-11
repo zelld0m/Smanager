@@ -81,25 +81,39 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException;
 	public RecordSet<RedirectRule> searchRedirectRuleKeyword(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType,
 			ExactMatch keywordExactMatch) throws DaoException;
-	
+
 	/* Banners */
+	@Deprecated
 	public int addBannerRule(BannerRule rule) throws DaoException;
+	@Deprecated
 	public int deleteBannerRule(BannerRule rule) throws DaoException;
+	@Deprecated
 	public BannerRule getBannerRule(BannerRule rule) throws DaoException;
+	@Deprecated
 	public BannerRule getBannerRuleById(String storeId, String ruleId) throws DaoException;
+	@Deprecated
 	public RecordSet<BannerRule> searchBannerRule(SearchCriteria<BannerRule> criteria) throws DaoException;
 	
+	@Deprecated
 	public int addBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
+	@Deprecated
 	public int updateBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
+	@Deprecated
 	public int deleteBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
+	@Deprecated
 	public BannerRuleItem getBannerRuleItem(BannerRuleItem ruleItem) throws DaoException;
+	@Deprecated
 	public RecordSet<BannerRuleItem> searchBannerRuleItem(SearchCriteria<BannerRuleItem> criteria) throws DaoException;
 	
+	@Deprecated
 	public int addBannerImagePath(ImagePath imagePath) throws DaoException;
+	@Deprecated
 	public int updateBannerImagePathAlias(ImagePath imagePath) throws DaoException;
+	@Deprecated
 	public ImagePath getBannerImagePath(ImagePath imagePath) throws DaoException;
+	@Deprecated
 	public RecordSet<ImagePath> searchBannerImagePath(SearchCriteria<ImagePath> criteria) throws DaoException;
-		
+
 	/* Elevate */
 	public int addElevateResult(ElevateResult elevate) throws DaoException;
 	public int updateElevateResult(ElevateResult elevate) throws DaoException;

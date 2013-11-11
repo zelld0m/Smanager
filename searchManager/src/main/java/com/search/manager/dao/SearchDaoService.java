@@ -63,7 +63,7 @@ public interface SearchDaoService {
 	public Integer getMaxSuggest(String storeId) throws DaoException;
 
 	/* Banner */
-
+	@Deprecated
 	public List<BannerRuleItem> getActiveBannerRuleItems(Store store,
 			String keyword, DateTime currentDate) throws DaoException;
 
