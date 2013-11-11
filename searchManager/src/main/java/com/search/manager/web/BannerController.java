@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.search.manager.core.service.BannerRuleService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.BannerReportBean;
 import com.search.manager.report.model.BannerReportModel;
@@ -24,13 +27,10 @@ import com.search.manager.report.model.ReportModel;
 import com.search.manager.report.model.xml.BannerItemXml;
 import com.search.manager.report.model.xml.BannerRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.service.BannerService;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.utility.Transformers;
 import com.search.manager.xml.file.RuleXmlReportUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/banner")
@@ -40,7 +40,7 @@ public class BannerController {
     private static final Logger logger =
             LoggerFactory.getLogger(BannerController.class);
     @Autowired
-    private BannerService bannerService;
+    private BannerRuleService bannerService;
     @Autowired
     private RuleVersionService ruleVersionService;
     @Autowired
