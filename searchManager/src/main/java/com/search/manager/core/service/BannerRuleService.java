@@ -39,11 +39,16 @@ public interface BannerRuleService extends GenericService<BannerRule> {
 
 	// Banner statistic
 
+	ServiceResponse<RecordSet<BannerStatistics>> getBannerStats(String storeId,
+			String keyword, String memberId, String startDateText,
+			String endDateText, boolean aggregate) throws CoreServiceException;
+
+	ServiceResponse<RecordSet<BannerStatistics>> getStatsByKeyword(
+			String storeId, String keyword, String startDateText,
+			String endDateText, boolean aggregate) throws CoreServiceException;
+
 	ServiceResponse<RecordSet<BannerStatistics>> getStatsByMemberId(
 			String storeId, String memberId, String startDateText,
 			String endDateText) throws CoreServiceException;
 
-	ServiceResponse<RecordSet<BannerStatistics>> getBannerStats(String storeId,
-			String keyword, String memberId, String startDateText,
-			String endDateText, boolean aggregate) throws CoreServiceException;
 }
