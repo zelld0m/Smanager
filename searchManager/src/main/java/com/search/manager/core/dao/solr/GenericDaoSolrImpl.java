@@ -2,6 +2,8 @@ package com.search.manager.core.dao.solr;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
@@ -47,7 +49,8 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 		if (solrCore != null) {
 			core = solrCore.name();
 			try {
-				return solrServerFactory.getCoreInstance(core).getHttpSolrServer();
+				return solrServerFactory.getCoreInstance(core)
+						.getHttpSolrServer();
 			} catch (SolrServerException e) {
 				throw new CoreDaoException(e);
 			}
@@ -59,7 +62,8 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 	@Override
 	public T add(T model) throws CoreDaoException {
 		try {
-			getSolrServer().addBean(model, 10000);
+			getSolrServer().addBean(model);
+			getSolrServer().commit();
 		} catch (IOException e) {
 			throw new CoreDaoException(e);
 		} catch (SolrServerException e) {
@@ -68,6 +72,30 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 			throw new CoreDaoException(e);
 		}
 		return model;
+	}
+
+	@Override
+	public List<T> add(Collection<T> models) throws CoreDaoException {
+		if (models != null) {
+			for (T model : models) {
+				try {
+					getSolrServer().addBean(model);
+				} catch (IOException e) {
+					throw new CoreDaoException(e);
+				} catch (SolrServerException e) {
+					throw new CoreDaoException(e);
+				}
+			}
+
+			try {
+				getSolrServer().commit();
+			} catch (SolrServerException e) {
+				throw new CoreDaoException(e);
+			} catch (IOException e) {
+				throw new CoreDaoException(e);
+			}
+		}
+		return (List<T>) models;
 	}
 
 	@Override
@@ -90,10 +118,10 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 			if (StringUtils.isNotBlank(query)) {
 				// deleteByQuery features of solr don't support filter queries
 				query = query.replace("q=*:*&fq=", "");
-				
+
 				try {
-					UpdateResponse updateResponse = getSolrServer().deleteByQuery(
-							query);
+					UpdateResponse updateResponse = getSolrServer()
+							.deleteByQuery(query);
 					getSolrServer().commit();
 					return updateResponse.getStatus() == 0 ? true : false;
 				} catch (SolrServerException e) {
@@ -101,7 +129,7 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 				} catch (IOException e) {
 					throw new CoreDaoException(e);
 				}
-				
+
 			}
 		}
 

@@ -1,6 +1,9 @@
 package com.search.manager.core.dao.sp;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.object.StoredProcedure;
@@ -74,6 +77,18 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<T> add(Collection<T> models) throws CoreDaoException {
+		List<T> addedModels = new ArrayList<T>();
+		for (T model : models) {
+			model = add(model);
+			if (model != null) {
+				addedModels.add(model);
+			}
+		}
+		return addedModels;
 	}
 
 	@Override

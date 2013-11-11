@@ -1,5 +1,7 @@
 package com.search.manager.core.dao;
 
+import java.util.Collection;
+
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
@@ -10,6 +12,8 @@ public interface GenericDao<T> {
 
 	T add(T model) throws CoreDaoException;
 
+	Collection<T> add(Collection<T> models) throws CoreDaoException;
+	
 	T update(T model) throws CoreDaoException;
 
 	boolean delete(T model) throws CoreDaoException;
