@@ -1,6 +1,9 @@
 package com.search.manager.core.service;
 
+import java.util.List;
 import java.util.Map;
+
+import org.joda.time.DateTime;
 
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRuleItem;
@@ -10,6 +13,9 @@ import com.search.manager.response.ServiceResponse;
 public interface BannerRuleItemService extends GenericService<BannerRuleItem> {
 
 	// Add BannerRuleItemService specific method here...
+
+	List<BannerRuleItem> getActiveBannerRuleItems(String storeId,
+			String keyword, DateTime currentDate) throws CoreServiceException;
 
 	ServiceResponse<BannerRuleItem> addRuleItem(String storeId,
 			Map<String, String> params) throws CoreServiceException;
