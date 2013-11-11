@@ -30,7 +30,8 @@ import com.search.manager.solr.model.BannerRuleItemSolr;
 import com.search.manager.solr.util.SolrDocUtil;
 import com.search.manager.solr.util.SolrResultUtil;
 
-@Repository("bannerRuleItemDaoSolr")
+//@Repository("bannerRuleItemDaoSolr")
+@Deprecated
 public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 		BannerRuleItemDao {
 
