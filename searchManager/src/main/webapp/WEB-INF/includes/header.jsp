@@ -175,7 +175,6 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.rk-message-type-1.0.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.editable.custom.js" />" ></script>
   
-  
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/1.0/jquery.rulestatusbar.custom.css" />">
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/1.0/jquery.rulestatusbar.custom.js" />" ></script>
 
@@ -226,6 +225,10 @@
 		});
 	</script>	
 
+ <!--  update user profile -->
+ <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/updateprofile/1.0/jquery.updateprofile.custom.js" />" ></script> 
+ <script type="text/javascript" src="<spring:url value="/js/common/header.js" />" ></script>
+ 
   <!-- jQuery alert  -->
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.js" />" ></script>
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.css" />" />
@@ -253,7 +256,7 @@
         <tr>
           <td align="left" class="padTB5">
           	<div class="clearB floatL farial fsize12 fLgray2">
-	          	<img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" style="margin-bottom:-3px"> Welcome <span class="fbold"><sec:authentication property="principal.username" /></span> <span class="fsize10">|</span>
+	          	<img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" style="margin-bottom:-3px"> Welcome <span id="username" class="fbold"><a href="javascript:void(0);"><sec:authentication property="principal.username" /></a></span> <span class="fsize10">|</span>
 	          	<span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href=""> help</a></span> <span class="fsize10">|</span>
 			    <span class="fLALink fdecoNone fsize11 txtCapitalize"><a href="<spring:url value="/logout" />">Logout</a></span>
 		    </div>
