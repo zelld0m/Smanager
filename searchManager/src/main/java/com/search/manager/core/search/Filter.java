@@ -17,6 +17,22 @@ public class Filter implements Serializable {
 		EQUAL, NOT_EQUAL, LESS_THAN, GREATER_THAN, LESS_OR_EQUAL, GREATER_OR_EQUAL, LIKE, IN, NOT_IN, NULL, NOT_NULL, EMPTY, NOT_EMPTY, AND, OR, NOT, SOME, ALL, NONE, CUSTOM;
 	}
 
+	public enum MatchType {
+		MATCH_NAME, LIKE_NAME, MATCH_ID;
+
+		public int getIntValue() {
+			switch (this) {
+			case LIKE_NAME:
+			default:
+				return 0;
+			case MATCH_NAME:
+				return 1;
+			case MATCH_ID:
+				return 2;
+			}
+		}
+	}
+
 	@SuppressWarnings("unused")
 	private Filter() {
 		// do nothing...
