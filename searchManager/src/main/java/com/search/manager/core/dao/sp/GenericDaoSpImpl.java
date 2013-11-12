@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.jdbc.object.StoredProcedure;
 
+import com.search.manager.core.annotation.AuditableMethod;
 import com.search.manager.core.dao.GenericDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreSearchException;
@@ -17,6 +18,7 @@ import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.search.processor.SpSearchProcessor;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 
@@ -58,6 +60,7 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 		return this.modelClass;
 	}
 
+	@AuditableMethod(operation = Operation.add)
 	@Override
 	public T add(T model) throws CoreDaoException {
 		Map<String, Object> inParams = generateAddInput(model);
@@ -79,6 +82,7 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 		return null;
 	}
 
+	@AuditableMethod(operation = Operation.add)
 	@Override
 	public List<T> add(Collection<T> models) throws CoreDaoException {
 		List<T> addedModels = new ArrayList<T>();
@@ -91,6 +95,7 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 		return addedModels;
 	}
 
+	@AuditableMethod(operation = Operation.update)
 	@Override
 	public T update(T model) throws CoreDaoException {
 		Map<String, Object> inParams = generateUpdateInput(model);
@@ -112,6 +117,7 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 		return null;
 	}
 
+	@AuditableMethod(operation = Operation.delete)
 	@Override
 	public boolean delete(T model) throws CoreDaoException {
 		Map<String, Object> inParams = generateDeleteInput(model);

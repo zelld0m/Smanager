@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.annotation.Auditable;
 import com.search.manager.core.dao.ImagePathDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.ImagePath;
@@ -25,7 +26,9 @@ import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
 
+@Auditable(entity = Entity.imagePath)
 @Repository("imagePathDaoSp")
 public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 		ImagePathDao {

@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.annotation.Auditable;
 import com.search.manager.core.dao.BannerRuleItemDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.BannerRule;
@@ -29,7 +30,9 @@ import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
 import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
 
+@Auditable(entity = Entity.bannerRuleItem)
 @Repository("bannerRuleItemDaoSp")
 public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem>
 		implements BannerRuleItemDao {
