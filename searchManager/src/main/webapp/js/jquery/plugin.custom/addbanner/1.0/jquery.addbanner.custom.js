@@ -385,7 +385,7 @@
 					base.previewImage(imagePath);
 					jAlert("Only the following sizes are allowed: " + GLOBAL_storeAllowedBannerSizes.join(','), "Banner Size");
 				}else{
-					BannerServiceJS.getImagePath(GLOBAL_storeId, imagePath, {
+					ImagePathServiceJS.getImagePath(GLOBAL_storeId, imagePath, {
 						callback: function(sr){
 							if (sr!=null && sr["data"]!=null){
 								var iPath = sr["data"];
