@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 
 public class RelevancyConfig {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(RelevancyConfig.class);
-    
+    private static final Logger logger
+            = LoggerFactory.getLogger(RelevancyConfig.class);
+
     // TODO: integrate ehCache
     private static Map<String, Function> functionMap = new HashMap<String, Function>();
     private static Map<String, AnalyzerComponent> filterMap = new HashMap<String, AnalyzerComponent>();
@@ -149,8 +149,15 @@ public class RelevancyConfig {
                     if (c.containsKey("constraints/arg[" + i + "]/@position")) {
                         String position = c.getString("constraints/arg[" + i + "]/@position");
                         String type = c.getString("constraints/arg[" + i + "]/type");
-                        ArgumentConstraint constraint = ("NumericConstant".equalsIgnoreCase(type)) ? ArgumentConstraint.NUMERIC_CONSTANT
-                                : ("Date".equalsIgnoreCase(type)) ? ArgumentConstraint.DATE : ArgumentConstraint.NORMAL;
+                        ArgumentConstraint constraint
+                                = ("NumericConstant".equalsIgnoreCase(type))
+                                ? ArgumentConstraint.NUMERIC_CONSTANT
+                                : ("Date".equalsIgnoreCase(type))
+                                ? ArgumentConstraint.DATE
+                                : "Field".equalsIgnoreCase(type)
+                                ? ArgumentConstraint.FIELD
+                                : ArgumentConstraint.NORMAL;
+
                         for (String pos : position.split(",")) {
                             logger.debug("Constraint for argument #" + pos + " is " + constraint);
                             function.setArgumentConstraint(Integer.parseInt(pos), constraint);

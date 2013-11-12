@@ -1,32 +1,32 @@
-(function($) {
+(function ($) {
 
-    $(document).ready(function() {
-        // Initialize manager
-        var Manager = new AjaxSolr.Manager({
-            solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/'
-        });
+	$(document).ready(function() {
+		// Initialize manager
+		var Manager = new AjaxSolr.Manager({
+			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/'
+		});
 
-        // Install component widgets
-        Manager.addWidget(new AjaxSolr.SearchKeywordWidget({
-            id: WIDGET_ID_searchKeyword,
-            target: WIDGET_TARGET_searchKeyword,
-            defaultText: WIDGET_TEXTDEFAULT_searchKeyword,
-            minCharRequired: 2
-        }));
+		// Install component widgets
+		Manager.addWidget(new AjaxSolr.SearchKeywordWidget({
+			id: WIDGET_ID_searchKeyword,
+			target: WIDGET_TARGET_searchKeyword,
+			defaultText: WIDGET_TEXTDEFAULT_searchKeyword,
+			minCharRequired: 2
+		}));
+		
+		Manager.addWidget(new AjaxSolr.CurrentDateWidget({
+			id: 'currentDate',
+			target: '#currentDate'
+		}));
+		
+		if(GLOBAL_storeId === "pcmallgov"){
+			Manager.addWidget(new AjaxSolr.PCMGSingleSelectorWidget({
+				id: "pcmgSelector",
+				target: "#pcmgSelector"
+			}));
+		}
 
-        Manager.addWidget(new AjaxSolr.CurrentDateWidget({
-            id: 'currentDate',
-            target: '#currentDate'
-        }));
-
-        if (GLOBAL_storeId === "pcmallgov") {
-            Manager.addWidget(new AjaxSolr.PCMGSingleSelectorWidget({
-                id: "pcmgSelector",
-                target: "#pcmgSelector"
-            }));
-        }
-
-        Manager.addWidget(new AjaxSolr.RedirectUrlWidget({
+		Manager.addWidget(new AjaxSolr.RedirectUrlWidget({
             id: WIDGET_ID_redirectUrl,
             target: WIDGET_TARGET_redirectUrl
         }));
@@ -42,8 +42,8 @@
             minCharRequired: 2
         }));
         
-        Manager.addWidget(new AjaxSolr.SearchWithinWidget({
-            id: WIDGET_ID_searchWithin,
+       Manager.addWidget(new AjaxSolr[GLOBAL_searchWithinEnabled ? "MultiSearchWithinWidget" : "SearchWithinWidget"]({
+		    id: WIDGET_ID_searchWithin,
             target: WIDGET_TARGET_searchWithin,
             defaultText: WIDGET_TEXTDEFAULT_searchWithin,
             minCharRequired: 2
@@ -162,7 +162,7 @@
             'rows': sortWidget.perPageInterval,
             'facet.mincount': 1,
             'start': 0,
-            'sort': 'CatCodeOrder asc, score desc, Popularity desc',
+            'sort': GLOBAL_storeSort,
             'relevancyId': '',
             'spellcheck': true,
             'spellcheck.count': 3,

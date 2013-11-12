@@ -69,6 +69,7 @@
 	var GLOBAL_storeCore = GLOBAL_storeParameters["storeCore"];
 	var GLOBAL_storeName = GLOBAL_storeParameters["storeName"];
 	var GLOBAL_storeDomains = $.makeArray(GLOBAL_storeParameters["storeDomains"]);
+	var GLOBAL_storeSort = GLOBAL_storeParameters["storeSort"];
 	var GLOBAL_storeFacetName = GLOBAL_storeParameters["storeFacetName"];
 	var GLOBAL_storeFacetTemplate = GLOBAL_storeParameters["storeFacetTemplate"];
 	var GLOBAL_storeFacetTemplateName = GLOBAL_storeParameters["storeFacetTemplateName"];
@@ -78,6 +79,9 @@
 	var GLOBAL_storeDefaultBannerSize = GLOBAL_storeParameters["storeDefaultBannerSize"];
 	var GLOBAL_storeAllowedBannerSizes = GLOBAL_storeParameters["storeAllowedBannerSizes"];
 	var GLOBAL_storeDefaultBannerLinkPathProtocol = GLOBAL_storeParameters["storeDefaultBannerLinkPathProtocol"];
+	var GLOBAL_searchWithinEnabled = GLOBAL_storeParameters["searchWithinEnabled"];
+	var GLOBAL_searchWithinTypes = GLOBAL_storeParameters["searchWithinTypes"];
+	var GLOBAL_searchWithinParamName = GLOBAL_storeParameters["searchWithinParamName"];
 	
         // FOR REDIRECT PAGE
         var GLOBAL_storeRedirectSelfDomain = GLOBAL_storeParameters["storeRedirectSelfDomain"];

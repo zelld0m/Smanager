@@ -49,6 +49,9 @@
                 self.manager.store.addByValue('fq', searchWithin);
                 self.manager.doRequest(0);
             }
+        },
+        clear: function() {
+            this.searchWithin = "";
         }
     });
 })(jQuery);

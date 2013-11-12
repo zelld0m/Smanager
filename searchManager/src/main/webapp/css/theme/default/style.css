@@ -179,7 +179,9 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.btnClearDel		 { background-position: -1px -518px; height: 16px; width: 16px; padding:0; cursor:pointer; }
 .cssReset a div.btnClearDel:hover{ background-position: -18px -518px;  }
 
-
+.cssReset a div.btnFilter        { display: inline-block; background:url(images/add-filter.png); background-size:14px 14px; background-repeat:no-repeat; width: 14px; height: 14px; vertical-align: middle; background-color: #DEDEDE; border: 1px solid #C4C4C4; padding: 2px; background-position: 2px 3px; border-radius: 2px; }
+.cssReset a div.btnFilter:hover  { background-color: #EEEEEE; }
+.cssReset a:active div.btnFilter:hover {background-color: #CCCCCC; border-color: #A9A9A9; }
 
 .cssReset a.btnBackUp			{ background-position: -3px -540px; height: 16px; width: 83px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnBackUp:hover		{ background-position: -3px -558px;  }

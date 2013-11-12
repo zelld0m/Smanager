@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.search.manager.core.SearchWithinRequestProcessor;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
@@ -62,6 +63,7 @@ import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.QueryValidator;
 import com.search.manager.utility.SearchLogger;
 
 public class SearchServlet extends HttpServlet {
@@ -100,7 +102,20 @@ public class SearchServlet extends HttpServlet {
 		SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
 		super.init(config);
 		configManager = ConfigManager.getInstance();
+
+		try {
+			QueryValidator.init();
+		} catch (IOException e) {
+			throw new ServletException(e);
+		}
 	}
+
+	@Override
+	public void destroy() {
+		QueryValidator.shutdown();
+		super.destroy();
+	}
+
 
 	protected static boolean addNameValuePairToMap(Map<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
 		boolean added = true;
@@ -668,6 +683,27 @@ public class SearchServlet extends HttpServlet {
 		return storeId;
 	}
 
+	/**
+	 * Return Error Message if invalid else return null;
+	 */
+	protected String getCoreName(HttpServletRequest request) throws HttpException {
+		// get the server name, solr path, core name and do mapping for the store name to use for the search
+		Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
+		String requestPath = getRequestPath(request);
+
+		if (StringUtils.isBlank(requestPath)) {
+			throw new HttpException("Invalid request");
+		}
+
+		Matcher matcher = pathPattern.matcher(requestPath);
+
+		if (!matcher.matches()) {
+			throw new HttpException("Invalid request");
+		}
+
+		return matcher.group(3);
+	}
+
 	protected SolrResponseParser getParser(HttpServletRequest request) throws HttpException {
 		// get expected resultformat
 		String writerType = request.getParameter(SolrConstants.SOLR_PARAM_WRITER_TYPE);
@@ -775,6 +811,11 @@ public class SearchServlet extends HttpServlet {
 				return;
 			}
 			
+			if (!QueryValidator.accept(getCoreName(request), request)) {
+				response.sendError(400, "Invalid solr query.");
+				return;
+			}
+			
 			NameValuePair defTypeNVP = new BasicNameValuePair("defType", getDefType(storeId));
 			String storeName = configManager.getStoreName(storeId);
 			initFieldOverrideMaps(request, solrHelper, storeId);
@@ -850,7 +891,10 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 			}
-
+			
+			//Integrate Search Within Request
+			new SearchWithinRequestProcessor(storeId).process(request, paramMap, nameValuePairs);
+			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 			addDefaultParameters(storeId, nameValuePairs, paramMap);
 
@@ -1626,7 +1670,7 @@ public class SearchServlet extends HttpServlet {
 					tasks--;
 				}
 			}
-
+			
 			/* Generate response */
 			Long qtime = new Date().getTime() - start;
 			solrHelper.generateServletResponse(response, qtime);
