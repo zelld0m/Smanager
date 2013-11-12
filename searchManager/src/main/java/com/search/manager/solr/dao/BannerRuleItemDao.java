@@ -8,6 +8,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Store;
 
+@Deprecated
 public interface BannerRuleItemDao {
 
 	Collection<BannerRuleItem> getBannerRuleItems(Store store)
