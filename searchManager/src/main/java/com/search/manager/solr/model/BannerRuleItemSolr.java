@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.solr.client.solrj.beans.Field;
 
+@Deprecated
 public class BannerRuleItemSolr {
 
 	@Field
