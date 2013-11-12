@@ -45,7 +45,10 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
-import com.search.manager.model.BannerRuleItem;
+import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.BannerRuleItem;
+import com.search.manager.core.service.BannerRuleItemService;
+//import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -69,6 +72,13 @@ public class SearchServlet extends HttpServlet {
 	@Autowired
 	@Qualifier("solrService")
 	SearchDaoService solrService;
+	@Autowired
+	@Qualifier("bannerRuleItemServiceSp")
+	BannerRuleItemService bannerRuleItemServiceSp;
+	@Autowired
+	@Qualifier("bannerRuleItemServiceSolr")
+	BannerRuleItemService bannerRuleItemServiceSolr;
+	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(SearchServlet.class);
 	protected ConfigManager configManager;
@@ -559,13 +569,20 @@ public class SearchServlet extends HttpServlet {
 
 	protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws DaoException {
 		try {
-			return getDaoService(fromSearchGui).getActiveBannerRuleItems(store, keyword, currentDate);
-		} catch (DaoException e) {
+//			return getDaoService(fromSearchGui).getActiveBannerRuleItems(store, keyword, currentDate);
+			
+			if (fromSearchGui) {
+				return bannerRuleItemServiceSp.getActiveBannerRuleItems(store.getStoreId(), keyword, currentDate);
+			} else {
+				return bannerRuleItemServiceSolr.getActiveBannerRuleItems(store.getStoreId(), keyword, currentDate);
+			}
+		} catch (CoreServiceException e) {
 			if (!fromSearchGui) {
 				if (!configManager.isSolrImplOnly()) {
 					try {
-						return daoService.getActiveBannerRuleItems(store, keyword, currentDate);
-					} catch (DaoException e1) {
+//						return daoService.getActiveBannerRuleItems(store, keyword, currentDate);
+						return bannerRuleItemServiceSp.getActiveBannerRuleItems(store.getStoreId(), keyword, currentDate);
+					} catch (CoreServiceException e1) {
 						logger.error("Failed to get active bannerRuleItems {}", e1);
 						return null;
 					}
@@ -573,7 +590,7 @@ public class SearchServlet extends HttpServlet {
 					return null;
 				}
 			}
-			throw e;
+			throw new DaoException(e.getMessage());
 		}
 	}
 
