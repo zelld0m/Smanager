@@ -24,20 +24,20 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.enums.SortType;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SolrXmlResponseParser extends SolrResponseParser {
 

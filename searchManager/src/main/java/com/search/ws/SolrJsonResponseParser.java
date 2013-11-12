@@ -28,17 +28,17 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.SortType;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.CNetFacetTemplate;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SolrJsonResponseParser extends SolrResponseParser {
 

@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.search.manager.enums.MemberTypeEntity;
-import com.search.manager.model.BannerRuleItem;
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetSort;

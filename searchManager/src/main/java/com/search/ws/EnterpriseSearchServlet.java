@@ -15,16 +15,16 @@ import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.Relevancy.Parameter;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EnterpriseSearchServlet extends SearchServlet {
 
