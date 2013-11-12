@@ -3,7 +3,9 @@ package com.search.manager.core.service.sp;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Assert;
@@ -186,9 +188,55 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 
 	/* BannerRuleItemService Specific Method Test */
 
+	@Ignore
+	@Test
 	public void addRuleItemTest() throws CoreServiceException {
-		// TODO
-		// bannerRuleItemService.addRuleItem(storeId, params);
+		// TODO mock UtilityService ->
+		// RequestContextHolder.currentRequestAttributes()
+		Map<String, String> params = new HashMap<String, String>();
+
+		params.put("ruleId", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getRule().getRuleId());
+		params.put("ruleName", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getRule().getRuleName());
+		params.put("priority", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getPriority() + "");
+		params.put("startDate", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getStartDate().toString());
+		params.put("endDate", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getEndDate().toString());
+		params.put("imageAlt", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getImageAlt());
+		params.put("linkPath", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getLinkPath());
+		params.put("description", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getDescription());
+		params.put("imagePathId", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getImagePath().getId());
+		params.put("imagePath", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getImagePath().getPath());
+		params.put("imageSize", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getImagePath().getSize());
+		params.put("imageAlias", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getImagePath().getAlias());
+		params.put("disable", BannerRuleItemTestData.getNewBannerRuleItem()
+				.getDisabled() + "");
+		params.put("openNewWindow", BannerRuleItemTestData
+				.getNewBannerRuleItem().getOpenNewWindow() + "");
+
+		ServiceResponse<BannerRuleItem> serviceResponse = bannerRuleItemService
+				.addRuleItem(BannerRuleItemTestData.getNewBannerRuleItem()
+						.getRule().getStoreId(), params);
+		assertNotNull(serviceResponse);
+
+		// Test successful add
+		assertNotNull(serviceResponse.getData());
+		assertNotNull(serviceResponse.getData().getMemberId());
+		assertNotNull(serviceResponse.getData().getCreatedDate());
+
+		// Remove added rule item
+		Assert.assertTrue(bannerRuleItemService.delete(serviceResponse
+				.getData()));
 	}
 
 	@Test
@@ -202,21 +250,39 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		Assert.assertTrue(serviceResponse.getData() > 0);
 	}
 
+	@Ignore
+	@Test
 	public void getRuleItemsByFilterTest() throws CoreServiceException {
-		// TODO
-		// bannerRuleItemService.getRuleItemsByFilter(storeId, ruleId, filter,
-		// dateFilter, imageSize, page, pageSize);
+		// TODO date filter: startDate and endDate
+		// filter: active, expired, disabled and date
+		String filter = "active";
+		String dateFilter = "";
+		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService
+				.getRuleItemsByFilter(BannerRuleItemTestData
+						.getExistingBannerRuleItem().getRule().getStoreId(),
+						BannerRuleItemTestData.getExistingBannerRuleItem()
+								.getRule().getRuleId(), filter, dateFilter,
+						BannerRuleItemTestData.getExistingBannerRuleItem()
+								.getImagePath().getSize(), 1, 10);
+		assertNotNull(serviceResponse);
+		assertNotNull(serviceResponse.getData());
+		Assert.assertTrue(serviceResponse.getData().getTotalCount() > 0);
 	}
 
+	@Test
 	public void getRuleItemsByImageIdTest() throws CoreServiceException {
-		// TODO
-		// bannerRuleItemService.getRuleItemsByImageId(storeId, imageId, page,
-		// pageSize);
+		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService
+				.getRuleItemsByImageId(BannerRuleItemTestData
+						.getExistingBannerRuleItem().getRule().getStoreId(),
+						BannerRuleItemTestData.getExistingBannerRuleItem()
+								.getImagePath().getId(), 1, 10);
+		assertNotNull(serviceResponse);
+		assertNotNull(serviceResponse.getData());
+		Assert.assertTrue(serviceResponse.getData().getTotalCount() > 0);
 	}
 
 	@Test
 	public void getRuleItemsByRuleIdTest() throws CoreServiceException {
-		// TODO
 		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService
 				.getRuleItemsByRuleId(BannerRuleItemTestData
 						.getExistingBannerRuleItem().getRule().getStoreId(),
@@ -265,15 +331,57 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		// bannerRuleItemService.updateRuleItem(storeId, params);
 	}
 
+	@Ignore
+	@Test
 	public void deleteRuleItemsByImageSizeTest() throws CoreServiceException {
-		// TODO
-		// bannerRuleItemService.deleteRuleItemsByImageSize(storeId, ruleId,
-		// imageSize);
+		// TODO check method behavior
+		// Add new bannerRuleItem
+		BannerRuleItem bannerRuleItem = BannerRuleItemTestData
+				.getNewBannerRuleItem();
+		bannerRuleItem = bannerRuleItemService.add(bannerRuleItem);
+
+		// Test successfully added.
+		assertNotNull(bannerRuleItem);
+		assertNotNull(bannerRuleItem.getMemberId());
+		assertNotNull(bannerRuleItem.getCreatedDate());
+
+		// Test delete by image size.
+		ServiceResponse<Boolean> serviceResponse = bannerRuleItemService
+				.deleteRuleItemsByImageSize(bannerRuleItem.getRule()
+						.getStoreId(), bannerRuleItem.getRule().getRuleId(),
+						bannerRuleItem.getImagePath().getSize());
+		assertNotNull(serviceResponse);
+		assertNotNull(serviceResponse.getData());
+		Assert.assertTrue(serviceResponse.getData());
 	}
 
+	@Ignore
+	@Test
 	public void deleteRuleItemByMemberIdTest() throws CoreServiceException {
 		// TODO
-		// bannerRuleItemService.deleteRuleItemByMemberId(storeId, ruleId,
-		// memberId, alias, imageSize);
+		// Add new bannerRuleItem
+		BannerRuleItem bannerRuleItem = BannerRuleItemTestData
+				.getNewBannerRuleItem();
+		bannerRuleItem = bannerRuleItemService.add(bannerRuleItem);
+
+		// Test successfully added.
+		assertNotNull(bannerRuleItem);
+		assertNotNull(bannerRuleItem.getMemberId());
+		assertNotNull(bannerRuleItem.getCreatedDate());
+
+		// Delete
+		ServiceResponse<Boolean> serviceResponse = bannerRuleItemService
+				.deleteRuleItemByMemberId(
+						bannerRuleItem.getRule().getStoreId(), bannerRuleItem
+								.getRule().getRuleId(), bannerRuleItem
+								.getMemberId(), bannerRuleItem.getImagePath()
+								.getAlias(), bannerRuleItem.getImagePath()
+								.getSize());
+
+		// Test successful delete
+		assertNotNull(serviceResponse);
+		assertNotNull(serviceResponse.getData());
+		Assert.assertTrue(serviceResponse.getData());
 	}
+	
 }
