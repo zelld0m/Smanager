@@ -49,6 +49,34 @@ public class BannerRuleItemDaoSolrImplTest extends BaseIntegrationTest {
 	}
 
 	@Test
+	public void addCollectionTest() throws CoreDaoException, InterruptedException {
+		List<BannerRuleItem> bannerRuleItems = new ArrayList<BannerRuleItem>();
+		// create 10 bannerRuleItems
+		for (int i=0; i<10; i++) {
+			BannerRuleItem bannerRuleItem = BannerRuleItemTestData.getExistingBannerRuleItem();
+			bannerRuleItem.setMemberId("memberId" + i);
+			bannerRuleItems.add(bannerRuleItem);
+		}
+		
+		List<BannerRuleItem> addedBannerRuleItems = (List<BannerRuleItem>) bannerRuleItemDao.add(bannerRuleItems);
+		assertNotNull(addedBannerRuleItems);
+		
+		Thread.sleep(12000);
+		
+		// Revert
+		for (int i=0; i<10; i++) {
+			BannerRuleItem bannerRuleItem = BannerRuleItemTestData.getExistingBannerRuleItem();
+			bannerRuleItem.setMemberId("memberId" + i);
+			// Ignore startDate and endDate
+			bannerRuleItem.setStartDate(null);
+			bannerRuleItem.setEndDate(null);
+			bannerRuleItemDao.delete(bannerRuleItem);
+		}
+		
+		Thread.sleep(12000);
+	}
+	
+	@Test
 	public void updateTest() throws CoreDaoException, InterruptedException {
 		BannerRuleItem bannerRuleItem = BannerRuleItemTestData
 				.getExistingBannerRuleItem();
