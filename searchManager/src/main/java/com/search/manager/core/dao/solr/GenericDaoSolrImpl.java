@@ -12,7 +12,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.search.manager.core.SolrCore;
+import com.search.manager.core.annotation.SolrCore;
 import com.search.manager.core.dao.GenericDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.search.Search;
