@@ -10,7 +10,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import com.search.manager.core.SolrCore;
+import com.search.manager.core.annotation.SolrCore;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
@@ -166,6 +166,9 @@ public class BannerRuleItem extends ModelBean {
 	}
 
 	public ImagePath getImagePath() {
+		// TODO from solr: 
+		// check SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL
+		// check SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL 
 		return imagePath;
 	}
 
