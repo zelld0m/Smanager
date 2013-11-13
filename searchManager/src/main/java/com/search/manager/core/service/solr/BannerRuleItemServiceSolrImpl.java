@@ -1,8 +1,10 @@
 package com.search.manager.core.service.solr;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.directwebremoting.annotations.RemoteMethod;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +32,17 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 	public BannerRuleItem add(BannerRuleItem model) throws CoreServiceException {
 		try {
 			return bannerRuleItemDao.add(model);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@RemoteMethod
+	@Override
+	public List<BannerRuleItem> add(Collection<BannerRuleItem> models)
+			throws CoreServiceException {
+		try {
+			return (List<BannerRuleItem>) bannerRuleItemDao.add(models);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
@@ -72,11 +85,11 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 		search.addFilter(new Filter("memberId", id));
 
 		SearchResult<BannerRuleItem> searchResult = search(search);
-		
+
 		if (searchResult.getTotalCount() > 0) {
 			return searchResult.getResult().get(0);
 		}
-		
+
 		return null;
 	}
 

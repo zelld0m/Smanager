@@ -1,5 +1,8 @@
 package com.search.manager.core.service.sp;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
@@ -28,6 +31,7 @@ import com.search.manager.service.UtilityService;
 @RemoteProxy(name = "ImagePathServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "imagePathService"))
 public class ImagePathServiceSpImpl implements ImagePathService {
 
+	// TODO Transfer to message configuration file
 	private static final String MSG_FAILED_UPDATE_IMAGE_ALIAS = "Failed to update image alias to %s";
 	private static final String MSG_FAILED_ADD_IMAGE = "Failed to add image link %s : %s";
 	private static final String MSG_FAILED_GET_IMAGE = "Failed to retrieve record for %s";
@@ -53,6 +57,16 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 			}
 
 			return imagePathDao.add(model);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
+	public List<ImagePath> add(Collection<ImagePath> models)
+			throws CoreServiceException {
+		try {
+			return (List<ImagePath>) imagePathDao.add(models);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}

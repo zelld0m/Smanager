@@ -2,6 +2,7 @@ package com.search.manager.core.service.sp;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +78,18 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 			}
 
 			return bannerRuleDao.add(model);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@RemoteMethod
+	@Override
+	public List<BannerRule> add(Collection<BannerRule> models)
+			throws CoreServiceException {
+		// TODO Auto-generated method stub
+		try {
+			return (List<BannerRule>) bannerRuleDao.add(models);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}

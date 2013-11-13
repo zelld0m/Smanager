@@ -1,5 +1,6 @@
 package com.search.manager.core.service.sp;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import com.search.manager.service.UtilityService;
 @RemoteProxy(name = "BannerRuleItemServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "bannerRuleItemService"))
 public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 
+	// TODO Transfer to message configuration file
 	private static final String MSG_FAILED_ADD_RULE_ITEM = "Failed to add banner rule item %s";
 	private static final String MSG_FAILED_ADD_IMAGE = "Failed to add image link %s : %s";
 	private static final String MSG_FAILED_UPDATE_RULE_ITEM = "Failed to update banner item %s in %s";
@@ -86,6 +88,18 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<BannerRuleItem> add(Collection<BannerRuleItem> models)
+			throws CoreServiceException {
+		try {
+			// TODO validation here...
+
+			return (List<BannerRuleItem>) bannerRuleItemDao.add(models);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
 	}
 
 	@RemoteMethod
@@ -140,7 +154,20 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	@Override
 	public BannerRuleItem searchById(String storeId, String id)
 			throws CoreServiceException {
-		// TODO Auto-generated method stub
+		// TODO validation here...
+
+		Search search = new Search(BannerRuleItem.class);
+		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+		search.addFilter(new Filter(DAOConstants.PARAM_MEMBER_ID, id));
+		search.setPageNumber(1);
+		search.setMaxRowCount(1);
+
+		SearchResult<BannerRuleItem> searchResult = search(search);
+
+		if (searchResult.getTotalCount() > 0) {
+			return (BannerRuleItem) CollectionUtils.get(
+					searchResult.getResult(), 0);
+		}
 
 		return null;
 	}
