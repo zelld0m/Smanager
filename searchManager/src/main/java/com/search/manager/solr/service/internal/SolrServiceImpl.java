@@ -63,8 +63,8 @@ public class SolrServiceImpl implements SolrService {
     @Autowired
     @Qualifier("spellRuleDaoSolr")
     private SpellRuleDao spellRuleDao;
-    @Autowired
-    @Qualifier("bannerRuleItemDaoSolr")
+    //@Autowired
+    //@Qualifier("bannerRuleItemDaoSolr")
     private BannerRuleItemDao bannerRuleItemDao;
     private static final Logger logger =
             LoggerFactory.getLogger(SolrServiceImpl.class);
