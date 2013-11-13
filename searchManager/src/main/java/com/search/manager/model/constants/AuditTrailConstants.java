@@ -20,7 +20,11 @@ public class AuditTrailConstants {
 		ruleStatus,
 		security,
 		facetSort,
-		spell
+		spell,
+		
+		bannerRule,
+		bannerRuleItem,
+		imagePath
 	}
 	
 	public enum Operation {
