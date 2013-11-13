@@ -13,7 +13,7 @@ import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.core.SolrCore;
+import com.search.manager.core.annotation.SolrCore;
 import com.search.manager.core.exception.CoreSearchException;
 import com.search.manager.core.search.BaseSearchProcessor;
 import com.search.manager.core.search.Field;
