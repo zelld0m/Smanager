@@ -10,7 +10,7 @@ import org.joda.time.DateTimeZone;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.SortType;
-import com.search.manager.model.BannerRuleItem;
+//import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -68,12 +68,13 @@ public class SolrDocUtil {
             for (FacetSort facetSort : facetSorts) {
                 solrInputDocuments.add(composeSolrDoc(facetSort));
             }
-        } else if (results.get(0) instanceof BannerRuleItem) {
-            List<BannerRuleItem> bannerRuleItems = (List<BannerRuleItem>) results;
-            for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
-                solrInputDocuments.add(composeSolrDoc(bannerRuleItem));
-            }
-        }
+        } 
+//        else if (results.get(0) instanceof BannerRuleItem) {
+//            List<BannerRuleItem> bannerRuleItems = (List<BannerRuleItem>) results;
+//            for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
+//                solrInputDocuments.add(composeSolrDoc(bannerRuleItem));
+//            }
+//        }
 
         return solrInputDocuments;
     }
@@ -379,6 +380,7 @@ public class SolrDocUtil {
     }
 
     /* For Banner Rule */
+    /*
     public static SolrInputDocument composeSolrDoc(BannerRuleItem bannerRuleItem)
             throws Exception {
         if (bannerRuleItem == null) {
@@ -437,4 +439,5 @@ public class SolrDocUtil {
 
         return solrInputDocument;
     }
+    */
 }

@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
+//import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleType;
-import com.search.manager.model.BannerRuleItem;
+//import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -26,7 +26,7 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.solr.dao.BannerRuleItemDao;
+//import com.search.manager.solr.dao.BannerRuleItemDao;
 import com.search.manager.solr.dao.DemoteDao;
 import com.search.manager.solr.dao.ElevateDao;
 import com.search.manager.solr.dao.ExcludeDao;
@@ -63,9 +63,9 @@ public class SolrServiceImpl implements SolrService {
     @Autowired
     @Qualifier("spellRuleDaoSolr")
     private SpellRuleDao spellRuleDao;
-    //@Autowired
-    //@Qualifier("bannerRuleItemDaoSolr")
-    private BannerRuleItemDao bannerRuleItemDao;
+//    @Autowired
+//    @Qualifier("bannerRuleItemDaoSolr")
+//    private BannerRuleItemDao bannerRuleItemDao;
     private static final Logger logger =
             LoggerFactory.getLogger(SolrServiceImpl.class);
 
@@ -735,6 +735,7 @@ public class SolrServiceImpl implements SolrService {
         return spellRuleDao.commitSpellRule();
     }
 
+    /*
     @Override
     public List<BannerRuleItem> getBannerRuleItems(Store store)
             throws DaoException {
@@ -852,4 +853,5 @@ public class SolrServiceImpl implements SolrService {
                 .getActiveBannerRuleItemsByRuleName(store, keyword,
                 currentDate, currentDate);
     }
+    */
 }

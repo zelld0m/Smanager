@@ -6,7 +6,7 @@ import java.util.Map;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.SearchDaoService;
 import com.search.manager.enums.RuleType;
-import com.search.manager.model.BannerRuleItem;
+//import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -231,7 +231,7 @@ public interface SolrService extends SearchDaoService {
 	boolean commitSpellRule() throws DaoException;
 
 	/* Banner */
-
+	/*
 	Collection<BannerRuleItem> getBannerRuleItems(Store store)
 			throws DaoException;
 
@@ -281,5 +281,5 @@ public interface SolrService extends SearchDaoService {
 			throws DaoException;
 
 	boolean commitBannerRuleItem() throws DaoException;
-
+	*/
 }
