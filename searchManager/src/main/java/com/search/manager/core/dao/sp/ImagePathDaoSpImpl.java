@@ -234,11 +234,51 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 	}
 
 	@Override
-	protected Search generateSearchById(String id, String storeId) {
-		Search search = new Search(ImagePath.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID, id));
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		return search;
+	protected Search generateSearchInput(ImagePath model)
+			throws CoreDaoException {
+		if (model != null) {
+			Search search = new Search(ImagePath.class);
+
+			if (StringUtils.isNotBlank(model.getId())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID,
+						model.getId()));
+			}
+			if (StringUtils.isNotBlank(model.getStoreId())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, model
+						.getStoreId()));
+			}
+			if (StringUtils.isNotBlank(model.getPath())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH,
+						model.getPath()));
+			}
+			if (StringUtils.isNotBlank(model.getSize())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_SIZE,
+						model.getSize()));
+			}
+			if (StringUtils.isNotBlank(model.getPathType().toString())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_TYPE,
+						model.getPathType().toString()));
+			}
+			if (StringUtils.isNotBlank(model.getAlias())) {
+				search.addFilter(new Filter(
+						DAOConstants.PARAM_IMAGE_PATH_ALIAS, model.getAlias()));
+			}
+			return search;
+		}
+		return null;
+	}
+
+	@Override
+	protected Search generateSearchById(String id, String storeId)
+			throws CoreDaoException {
+		if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(storeId)) {
+			ImagePath imagePath = new ImagePath();
+			imagePath.setStoreId(storeId);
+			imagePath.setId(id);
+			return generateSearchInput(imagePath);
+		}
+
+		return null;
 	}
 
 	@Override

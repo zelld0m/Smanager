@@ -59,9 +59,29 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 	}
 
 	@Override
+	public List<BannerRuleItem> update(Collection<BannerRuleItem> models)
+			throws CoreServiceException {
+		try {
+			return (List<BannerRuleItem>) bannerRuleItemDao.update(models);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
 	public boolean delete(BannerRuleItem model) throws CoreServiceException {
 		try {
 			return bannerRuleItemDao.delete(model);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
+	public Map<BannerRuleItem, Boolean> delete(Collection<BannerRuleItem> models)
+			throws CoreServiceException {
+		try {
+			return bannerRuleItemDao.delete(models);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
@@ -72,6 +92,16 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 			throws CoreServiceException {
 		try {
 			return bannerRuleItemDao.search(search);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
+	public SearchResult<BannerRuleItem> search(BannerRuleItem model)
+			throws CoreServiceException {
+		try {
+			return bannerRuleItemDao.search(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}

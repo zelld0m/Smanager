@@ -2,6 +2,7 @@ package com.search.manager.core.service.sp;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -94,12 +95,39 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 		}
 	}
 
+	@Override
+	public Collection<ImagePath> update(Collection<ImagePath> models)
+			throws CoreServiceException {
+		try {
+			// TODO validation here...
+
+			// Validate required field for update.
+
+			// Set LastModifiedBy and LastModifiedDate
+
+			return imagePathDao.update(models);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
 	@RemoteMethod
 	@Override
 	public boolean delete(ImagePath model) throws CoreServiceException {
 		try {
 			// TODO validation here...
 			return imagePathDao.delete(model);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
+	public Map<ImagePath, Boolean> delete(Collection<ImagePath> models)
+			throws CoreServiceException {
+		try {
+			// TODO validation here...
+			return imagePathDao.delete(models);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
@@ -112,6 +140,18 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 		try {
 			// TODO validation here...
 			return imagePathDao.search(search);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@RemoteMethod
+	@Override
+	public SearchResult<ImagePath> search(ImagePath model)
+			throws CoreServiceException {
+		try {
+			// TODO validation here...
+			return imagePathDao.search(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}

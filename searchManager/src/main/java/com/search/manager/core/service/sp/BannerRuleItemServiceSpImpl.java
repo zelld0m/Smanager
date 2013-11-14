@@ -125,6 +125,16 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		}
 	}
 
+	@Override
+	public List<BannerRuleItem> update(Collection<BannerRuleItem> models)
+			throws CoreServiceException {
+		try {
+			return (List<BannerRuleItem>) bannerRuleItemDao.update(models);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
 	@RemoteMethod
 	@Override
 	public boolean delete(BannerRuleItem model) throws CoreServiceException {
@@ -139,6 +149,20 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		}
 	}
 
+	@Override
+	public Map<BannerRuleItem, Boolean> delete(Collection<BannerRuleItem> models)
+			throws CoreServiceException {
+		try {
+			// TODO validation here...
+
+			// Validate required field for deletion.
+
+			return bannerRuleItemDao.delete(models);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
 	@RemoteMethod
 	@Override
 	public SearchResult<BannerRuleItem> search(Search search)
@@ -146,6 +170,17 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		try {
 			// TODO validation here...
 			return bannerRuleItemDao.search(search);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
+	public SearchResult<BannerRuleItem> search(BannerRuleItem model)
+			throws CoreServiceException {
+		try {
+			// TODO validation here...
+			return bannerRuleItemDao.search(model);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}

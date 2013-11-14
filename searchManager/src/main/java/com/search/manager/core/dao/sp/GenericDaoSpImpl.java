@@ -3,6 +3,7 @@ package com.search.manager.core.dao.sp;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,10 +46,14 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 	protected abstract Map<String, Object> generateDeleteInput(T model)
 			throws CoreDaoException;
 
+	protected abstract Search generateSearchInput(T model)
+			throws CoreDaoException;
+
 	protected abstract Map<String, Object> getDefaultInParam()
 			throws CoreDaoException;
 
-	protected abstract Search generateSearchById(String id, String storeId);
+	protected abstract Search generateSearchById(String id, String storeId)
+			throws CoreDaoException;
 
 	@SuppressWarnings("unchecked")
 	public GenericDaoSpImpl() {
@@ -117,6 +122,21 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 		return null;
 	}
 
+	@Override
+	public List<T> update(Collection<T> models) throws CoreDaoException {
+		if (models != null) {
+			List<T> updatedModels = new ArrayList<T>();
+			for (T model : models) {
+				model = update(model);
+				if (model != null) {
+					updatedModels.add(model);
+				}
+			}
+			return updatedModels;
+		}
+		return null;
+	}
+
 	@AuditableMethod(operation = Operation.delete)
 	@Override
 	public boolean delete(T model) throws CoreDaoException {
@@ -131,6 +151,18 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 		return false;
 	}
 
+	@Override
+	public Map<T, Boolean> delete(Collection<T> models) throws CoreDaoException {
+		if (models != null) {
+			Map<T, Boolean> deletedModelStatus = new HashMap<T, Boolean>();
+			for (T model : models) {
+				deletedModelStatus.put(model, delete(model));
+			}
+			return deletedModelStatus;
+		}
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public SearchResult<T> search(Search search) throws CoreDaoException {
@@ -138,6 +170,19 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 			SearchProcessor searchProcessor = new SpSearchProcessor(
 					getSearchStoredProcedure(), getDefaultInParam());
 			return (SearchResult<T>) searchProcessor.processSearch(search);
+		} catch (CoreSearchException e) {
+			throw new CoreDaoException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public SearchResult<T> search(T model) throws CoreDaoException {
+		try {
+			SearchProcessor searchProcessor = new SpSearchProcessor(
+					getSearchStoredProcedure(), getDefaultInParam());
+			return (SearchResult<T>) searchProcessor
+					.processSearch(generateSearchInput(model));
 		} catch (CoreSearchException e) {
 			throw new CoreDaoException(e);
 		}

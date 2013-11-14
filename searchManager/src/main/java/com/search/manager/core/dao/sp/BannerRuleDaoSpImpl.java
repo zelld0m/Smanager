@@ -222,6 +222,48 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
 	}
 
 	@Override
+	protected Search generateSearchInput(BannerRule model)
+			throws CoreDaoException {
+		if (model != null) {
+			Search search = new Search(BannerRule.class);
+
+			if (StringUtils.isNotBlank(model.getStoreId())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, model
+						.getStoreId()));
+			}
+			if (StringUtils.isNotBlank(model.getRuleName())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_SEARCH_TEXT,
+						model.getRuleName()));
+				search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
+						MatchType.MATCH_NAME.getIntValue()));
+			}
+			if (StringUtils.isNotBlank(model.getRuleId())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, model
+						.getRuleId()));
+				search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
+						MatchType.MATCH_ID.getIntValue()));
+			}
+
+			return search;
+		}
+
+		return null;
+	}
+
+	@Override
+	protected Search generateSearchById(String id, String storeId)
+			throws CoreDaoException {
+		if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(storeId)) {
+			BannerRule bannerRule = new BannerRule();
+			bannerRule.setStoreId(storeId);
+			bannerRule.setRuleId(id);
+			return generateSearchInput(bannerRule);
+		}
+
+		return null;
+	}
+
+	@Override
 	protected Map<String, Object> getDefaultInParam() throws CoreDaoException {
 		Map<String, Object> inParam = new HashMap<String, Object>();
 		inParam.put(DAOConstants.PARAM_RULE_ID, null);
@@ -233,16 +275,6 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
 		inParam.put(DAOConstants.PARAM_END_ROW, 0);
 
 		return inParam;
-	}
-
-	@Override
-	protected Search generateSearchById(String id, String storeId) {
-		Search search = new Search(BannerRule.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, id));
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
-				MatchType.MATCH_ID.getIntValue()));
-		return search;
 	}
 
 	// Add BannerRuleDao specific method here...

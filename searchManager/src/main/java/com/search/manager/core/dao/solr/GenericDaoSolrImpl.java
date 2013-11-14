@@ -3,7 +3,9 @@ package com.search.manager.core.dao.solr;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.search.manager.core.annotation.SolrCore;
 import com.search.manager.core.dao.GenericDao;
 import com.search.manager.core.exception.CoreDaoException;
+import com.search.manager.core.exception.CoreSearchException;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchProcessor;
 import com.search.manager.core.search.SearchResult;
@@ -104,36 +107,79 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 	}
 
 	@Override
-	public boolean delete(T model) throws CoreDaoException {
-		Search search = generateQuery(model);
-		if (search != null) {
-			String query;
-			try {
-				query = searchProcessor.generateStrQuery(search);
-			} catch (Exception e) {
-				throw new CoreDaoException(e);
-			}
-			// remove ../select?
-			query = query.substring(query.indexOf('?') + 1, query.length());
-			if (StringUtils.isNotBlank(query)) {
-				// deleteByQuery features of solr don't support filter queries
-				query = query.replace("q=*:*&fq=", "");
+	public List<T> update(Collection<T> models) throws CoreDaoException {
+		return add(models);
+	}
 
+	@Override
+	public boolean delete(T model) throws CoreDaoException {
+		if (model != null) {
+			Search search = generateQuery(model);
+			if (search != null) {
 				try {
-					UpdateResponse updateResponse = getSolrServer()
-							.deleteByQuery(query);
-					getSolrServer().commit();
-					return updateResponse.getStatus() == 0 ? true : false;
-				} catch (SolrServerException e) {
-					throw new CoreDaoException(e);
-				} catch (IOException e) {
+					String query = formatQuery(searchProcessor
+							.generateStrQuery(search));
+					if (StringUtils.isNotBlank(query)) {
+						try {
+							getSolrServer().deleteByQuery(query);
+							UpdateResponse updateResponse = getSolrServer()
+									.commit();
+							return updateResponse.getStatus() == 0 ? true
+									: false;
+						} catch (SolrServerException e) {
+							throw new CoreDaoException(e);
+						} catch (IOException e) {
+							throw new CoreDaoException(e);
+						}
+					}
+				} catch (CoreSearchException e) {
 					throw new CoreDaoException(e);
 				}
+			}
+		}
+		return false;
+	}
 
+	@Override
+	public Map<T, Boolean> delete(Collection<T> models) throws CoreDaoException {
+		if (models != null) {
+			Map<T, Boolean> deletedModelStatus = new HashMap<T, Boolean>();
+			for (T model : models) {
+				Search search = generateQuery(model);
+				if (search != null) {
+					try {
+						String query = formatQuery(searchProcessor
+								.generateStrQuery(search));
+						if (StringUtils.isNotBlank(query)) {
+							try {
+								UpdateResponse updateResponse = getSolrServer()
+										.deleteByQuery(query);
+								deletedModelStatus.put(model, updateResponse
+										.getStatus() == 0 ? true : false);
+							} catch (SolrServerException e) {
+								throw new CoreDaoException(e);
+							} catch (IOException e) {
+								throw new CoreDaoException(e);
+							}
+						}
+					} catch (Exception e) {
+						throw new CoreDaoException(e);
+					}
+				}
+			}
+
+			try {
+				UpdateResponse updateResponse = getSolrServer().commit();
+				return updateResponse.getStatus() == 0 ? deletedModelStatus
+						: null;
+			} catch (SolrServerException e) {
+				throw new CoreDaoException(e);
+			} catch (IOException e) {
+				throw new CoreDaoException(e);
 			}
 		}
 
-		return false;
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -141,9 +187,30 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 	public SearchResult<T> search(Search search) throws CoreDaoException {
 		try {
 			return (SearchResult<T>) searchProcessor.processSearch(search);
-		} catch (Exception e) {
+		} catch (CoreSearchException e) {
 			throw new CoreDaoException(e);
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public SearchResult<T> search(T model) throws CoreDaoException {
+		try {
+			return (SearchResult<T>) searchProcessor
+					.processSearch(generateQuery(model));
+		} catch (CoreSearchException e) {
+			throw new CoreDaoException(e);
+		}
+	}
+
+	private String formatQuery(String query) {
+		if (StringUtils.isNotBlank(query)) {
+			// remove ../select?
+			query = query.substring(query.indexOf('?') + 1, query.length());
+			// deleteByQuery features of solr don't support filter queries
+			query = query.replace("q=*:*&fq=", "");
+			return query;
+		}
+		return null;
+	}
 }

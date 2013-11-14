@@ -369,11 +369,77 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem>
 	}
 
 	@Override
-	protected Search generateSearchById(String id, String storeId) {
-		Search search = new Search(BannerRuleItem.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_MEMBER_ID, id));
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		return search;
+	protected Search generateSearchInput(BannerRuleItem model)
+			throws CoreDaoException {
+		if (model != null) {
+			Search search = new Search(BannerRuleItem.class);
+			// Banner Rule Field
+			if (model.getRule() != null) {
+				if (StringUtils.isNotBlank(model.getRule().getRuleId())) {
+					search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID,
+							model.getRule().getRuleId()));
+				}
+				if (StringUtils.isNotBlank(model.getRule().getRuleName())) {
+					search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME,
+							model.getRule().getRuleName()));
+				}
+				if (StringUtils.isNotBlank(model.getRule().getStoreId())) {
+					search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID,
+							model.getRule().getStoreId()));
+				}
+			}
+
+			// Banner Rule Item Field
+			if (StringUtils.isNotBlank(model.getMemberId())) {
+				search.addFilter(new Filter(DAOConstants.PARAM_MEMBER_ID, model
+						.getMemberId()));
+			}
+			if (model.getStartDate() != null) {
+				search.addFilter(new Filter(DAOConstants.PARAM_START_DATE,
+						JodaDateTimeUtil.toSqlDate(model.getStartDate())));
+			}
+			if (model.getEndDate() != null) {
+				search.addFilter(new Filter(DAOConstants.PARAM_END_DATE,
+						JodaDateTimeUtil.toSqlDate(model.getEndDate())));
+			}
+			search.addFilter(new Filter(DAOConstants.PARAM_DISABLED,
+					BooleanUtils.toIntegerObject(model.getDisabled(), 1, 0,
+							null)));
+
+			// Image Path
+			if (model.getImagePath() != null) {
+				if (StringUtils.isNotBlank(model.getImagePath().getId())) {
+					search.addFilter(new Filter(
+							DAOConstants.PARAM_IMAGE_PATH_ID, model
+									.getImagePath().getId()));
+				}
+				if (StringUtils.isNotBlank(model.getImagePath().getSize())) {
+					search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_SIZE,
+							model.getImagePath().getSize()));
+				}
+			}
+
+			return search;
+		}
+
+		return null;
+	}
+
+	@Override
+	protected Search generateSearchById(String id, String storeId)
+			throws CoreDaoException {
+		if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(storeId)) {
+			BannerRule bannerRule = new BannerRule();
+			bannerRule.setStoreId(storeId);
+
+			BannerRuleItem bannerRuleItem = new BannerRuleItem();
+			bannerRuleItem.setMemberId(id);
+			bannerRuleItem.setRule(bannerRule);
+
+			return generateSearchInput(bannerRuleItem);
+		}
+
+		return null;
 	}
 
 	@Override
