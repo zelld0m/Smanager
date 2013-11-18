@@ -75,12 +75,17 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 					.execute(inParams));
 			if (status > 0) {
 				// TODO return added model in sp level
-				SearchResult<T> searchResult = search(generateSearchById(
-						inParams.get(DAOConstants.MODEL_ID).toString(),
-						inParams.get(DAOConstants.PARAM_STORE_ID).toString()));
-				if (searchResult.getTotalCount() > 0) {
-					return searchResult.getResult().get(0);
+				// add primary key per model
+				if (inParams.get(DAOConstants.MODEL_ID) != null) {
+					SearchResult<T> searchResult = search(generateSearchById(
+							inParams.get(DAOConstants.MODEL_ID).toString(),
+							inParams.get(DAOConstants.PARAM_STORE_ID)
+									.toString()));
+					if (searchResult.getTotalCount() > 0) {
+						return searchResult.getResult().get(0);
+					}
 				}
+				return model;
 			}
 		}
 
