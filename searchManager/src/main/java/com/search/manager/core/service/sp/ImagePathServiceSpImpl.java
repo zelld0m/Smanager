@@ -41,6 +41,11 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	@Qualifier("imagePathDaoSp")
 	private ImagePathDao imagePathDao;
 
+	// a setter method so that the Spring container can 'inject'
+	public void setImagePathDao(ImagePathDao imagePathDao) {
+		this.imagePathDao = imagePathDao;
+	}
+
 	@RemoteMethod
 	@Override
 	public ImagePath add(ImagePath model) throws CoreServiceException {

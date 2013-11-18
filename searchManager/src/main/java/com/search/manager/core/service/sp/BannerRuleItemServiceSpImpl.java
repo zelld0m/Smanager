@@ -53,6 +53,20 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	@Qualifier("bannerRuleServiceSp")
 	private BannerRuleService bannerRuleService;
 
+
+	// a setter method so that the Spring container can 'inject'
+	public void setBannerRuleItemDao(BannerRuleItemDao bannerRuleItemDao) {
+		this.bannerRuleItemDao = bannerRuleItemDao;
+	}
+
+	public void setImagePathService(ImagePathService imagePathService) {
+		this.imagePathService = imagePathService;
+	}
+
+	public void setBannerRuleService(BannerRuleService bannerRuleService) {
+		this.bannerRuleService = bannerRuleService;
+	}
+
 	@RemoteMethod
 	@Override
 	public BannerRuleItem add(BannerRuleItem model) throws CoreServiceException {
