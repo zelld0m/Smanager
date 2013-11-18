@@ -22,22 +22,23 @@ import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Filter.MatchType;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.BannerRuleItemService;
 import com.search.manager.core.service.BannerRuleService;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.report.statistics.model.BannerStatistics;
 import com.search.manager.report.statistics.util.BannerStatisticsUtil;
 import com.search.manager.response.ServiceResponse;
-import com.search.manager.service.DeploymentService;
 import com.search.manager.service.UtilityService;
 
 @Service("bannerRuleServiceSp")
@@ -59,25 +60,55 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 	@Qualifier("bannerRuleItemServiceSp")
 	private BannerRuleItemService bannerRuleItemService;
 	@Autowired
-	private DeploymentService deploymentService;
+	@Qualifier("ruleStatusServiceSp")
+	private RuleStatusService ruleStatusService;
+
+	// a setter method so that the Spring container can 'inject'
+	public void setBannerRuleDao(BannerRuleDao bannerRuleDao) {
+		this.bannerRuleDao = bannerRuleDao;
+	}
+
+	public void setBannerRuleItemService(
+			BannerRuleItemService bannerRuleItemService) {
+		this.bannerRuleItemService = bannerRuleItemService;
+	}
+
+	public void setRuleStatusService(RuleStatusService ruleStatusService) {
+		this.ruleStatusService = ruleStatusService;
+	}
 
 	@RemoteMethod
 	@Override
 	public BannerRule add(BannerRule model) throws CoreServiceException {
 		try {
 			// TODO validation here...
-
+			// TODO add spring transaction...
 			// Validate required fields.
 
 			// Set CreatedBy and CreatedDate
+			DateTime createdDate = new DateTime();
 			if (StringUtils.isBlank(model.getCreatedBy())) {
 				model.setCreatedBy(UtilityService.getUsername());
 			}
 			if (model.getCreatedDate() == null) {
-				model.setCreatedDate(new DateTime());
+				model.setCreatedDate(createdDate);
 			}
 
-			return bannerRuleDao.add(model);
+			model = bannerRuleDao.add(model);
+
+			if (model != null) {
+				// Add rule status
+				RuleStatus ruleStatus = new RuleStatus(RuleEntity.BANNER,
+						UtilityService.getStoreId(), model.getRuleId(),
+						model.getRuleName(), UtilityService.getUsername(),
+						UtilityService.getUsername(), RuleStatusEntity.ADD,
+						RuleStatusEntity.UNPUBLISHED);
+				ruleStatus.setCreatedBy(UtilityService.getUsername());
+				ruleStatus.setCreatedDate(createdDate);
+				ruleStatusService.add(ruleStatus);
+			}
+
+			return model;
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
@@ -353,13 +384,14 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		List<String> copiedToKeywordList = new ArrayList<String>();
 
 		for (String ruleName : keywords) {
+			// check if exist
 			addRule(ruleName);
 			ServiceResponse<BannerRule> searviceResponse = getRuleByName(
 					storeId, ruleName);
 			BannerRule bannerRule = searviceResponse.getData();
 
 			if (bannerRule != null) {
-				RuleStatus ruleStatus = deploymentService.getRuleStatus(
+				RuleStatus ruleStatus = ruleStatusService.getRuleStatus(
 						RuleEntity.getValue(RuleEntity.BANNER.getCode()),
 						bannerRule.getRuleId());
 
