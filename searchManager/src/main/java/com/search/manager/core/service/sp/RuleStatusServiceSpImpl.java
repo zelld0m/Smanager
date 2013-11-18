@@ -33,6 +33,11 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
 	@Qualifier("ruleStatusDaoSp")
 	private RuleStatusDao ruleStatusDao;
 
+	// a setter method so that the Spring container can 'inject'
+	public void setRuleStatusDao(RuleStatusDao ruleStatusDao) {
+		this.ruleStatusDao = ruleStatusDao;
+	}
+
 	@Override
 	public RuleStatus add(RuleStatus model) throws CoreServiceException {
 		try {
