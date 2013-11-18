@@ -82,8 +82,9 @@ public class ModelBean implements Serializable {
 		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(),
 				JodaPatternType.DATE);
 	}
-
-	public String toJson() {
+	
+	@Override
+	public String toString() {
 		return JsonUtil.toJson(this);
 	}
 	
