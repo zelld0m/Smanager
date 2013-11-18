@@ -1,14 +1,12 @@
 package com.search.manager.core.dao.solr;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.core.dao.BannerRuleItemDao;
-import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.ImagePath;
