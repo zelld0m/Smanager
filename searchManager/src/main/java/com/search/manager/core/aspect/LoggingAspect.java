@@ -33,7 +33,7 @@ public class LoggingAspect {
 		String methodName = joinPoint.getSignature().getName();
 
 		if (result != null) {
-			logger.info("RESULT: " + result.getClass().getSimpleName() + "="
+			logger.info("RESULT: " + result.getClass().getSimpleName() + " = "
 					+ result);
 		} else {
 			logger.info("RESULT: " + "NULL");
