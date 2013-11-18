@@ -28,6 +28,11 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 	@Qualifier("bannerRuleItemDaoSolr")
 	private BannerRuleItemDao bannerRuleItemDao;
 
+	// a setter method so that the Spring container can 'inject'
+	public void setBannerRuleItemDao(BannerRuleItemDao bannerRuleItemDao) {
+		this.bannerRuleItemDao = bannerRuleItemDao;
+	}
+
 	@Override
 	public BannerRuleItem add(BannerRuleItem model) throws CoreServiceException {
 		try {
