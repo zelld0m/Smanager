@@ -40,15 +40,21 @@ public class SearchResult<T> implements Serializable {
 	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;
 	}
-	
-	// for javascript 
-	
+
+	// for javascript
+
 	public List<T> getList() {
 		return result;
 	}
-	
+
 	public int getTotalSize() {
 		return totalCount;
 	}
-	
+
+	@Override
+	public String toString() {
+		return totalCount
+				+ ((totalCount > 0) ? " " + this.result.toString() : "");
+	}
+
 }
