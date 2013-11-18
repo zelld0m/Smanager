@@ -255,7 +255,7 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 				search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_SIZE,
 						model.getSize()));
 			}
-			if (StringUtils.isNotBlank(model.getPathType().toString())) {
+			if (model.getPathType() != null) {
 				search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_TYPE,
 						model.getPathType().toString()));
 			}
