@@ -10,17 +10,19 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.search.manager.core.annotation.AuditableMethod;
 import com.search.manager.core.annotation.Auditable;
+import com.search.manager.core.annotation.AuditableMethod;
+import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.AuditTrail;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.ImagePath;
-import com.search.manager.dao.sp.AuditTrailDAO;
+import com.search.manager.core.service.AuditTrailService;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
-import com.search.manager.model.AuditTrail;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.service.UtilityService;
 
@@ -32,15 +34,21 @@ public class CoreAuditAspect {
 			.getLogger(CoreAuditAspect.class);
 
 	@Autowired
-	private AuditTrailDAO auditTrailDAO;
+	@Qualifier("auditTrailServiceSp")
+	private AuditTrailService auditTrailService;
 
 	@Before(value = "@annotation(auditableMethod)")
 	public void performAudit(JoinPoint joinPoint,
 			AuditableMethod auditableMethod) {
 		String className = joinPoint.getTarget().getClass().getSimpleName();
 		String methodName = joinPoint.getSignature().getName();
-		logger.info("BEGIN AUDIT: " + className + "." + methodName + "()");
-		logger.info("OPERATION: " + auditableMethod.operation());
+		Auditable auditable = joinPoint.getTarget().getClass()
+				.getAnnotation(Auditable.class);
+		if (auditable != null) {
+			logger.info("BEGIN AUDIT: " + className + "." + methodName + "()");
+			logger.info("AUDIT: " + auditable.entity());
+			logger.info("OPERATION: " + auditableMethod.operation());
+		}
 	}
 
 	@AfterReturning(value = "@annotation(auditableMethod)", returning = "result")
@@ -51,13 +59,13 @@ public class CoreAuditAspect {
 		Auditable auditable = joinPoint.getTarget().getClass()
 				.getAnnotation(Auditable.class);
 
-		AuditTrail auditTrail = new AuditTrail();
-		auditTrail.setEntity(auditable.entity().toString());
-		auditTrail.setOperation(auditableMethod.operation().toString());
-		auditTrail.setCreatedDate(new DateTime());
-		auditTrail.setUsername(UtilityService.getUsername());
-
 		if (auditable != null) {
+			AuditTrail auditTrail = new AuditTrail();
+			auditTrail.setEntity(auditable.entity().toString());
+			auditTrail.setOperation(auditableMethod.operation().toString());
+			auditTrail.setCreatedDate(new DateTime());
+			auditTrail.setUsername(UtilityService.getUsername());
+
 			switch (auditable.entity()) {
 			case bannerRule:
 				logBannerRule(joinPoint, auditableMethod, auditTrail);
@@ -69,13 +77,16 @@ public class CoreAuditAspect {
 				logImagePath(joinPoint, auditableMethod, auditTrail);
 				break;
 			}
+			logger.info("END AUDIT: " + className + "." + methodName + "()");
 		}
-
-		logger.info("END AUDIT: " + className + "." + methodName + "()");
 	}
 
 	private void logAuditTrail(AuditTrail auditTrail) {
-		auditTrailDAO.addAuditTrail(auditTrail);
+		try {
+			auditTrailService.add(auditTrail);
+		} catch (CoreServiceException e) {
+			logger.error(e.getMessage());
+		}
 	}
 
 	private void logBannerRule(JoinPoint joinPoint,
