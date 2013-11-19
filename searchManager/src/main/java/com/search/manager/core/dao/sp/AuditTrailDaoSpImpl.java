@@ -143,13 +143,13 @@ public class AuditTrailDaoSpImpl extends GenericDaoSpImpl<AuditTrail> implements
 	@Override
 	protected StoredProcedure getUpdateStoredProcedure()
 			throws CoreDaoException {
-		throw new CoreDaoException("Unimplemented method.");
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override
 	protected StoredProcedure getDeleteStoredProcedure()
 			throws CoreDaoException {
-		throw new CoreDaoException("Unimplemented method.");
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override
@@ -181,15 +181,13 @@ public class AuditTrailDaoSpImpl extends GenericDaoSpImpl<AuditTrail> implements
 	@Override
 	protected Map<String, Object> generateUpdateInput(AuditTrail model)
 			throws CoreDaoException {
-		// Not supported operation
-		return null;
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override
 	protected Map<String, Object> generateDeleteInput(AuditTrail model)
 			throws CoreDaoException {
-		// Not supported operation 
-		return null;
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override

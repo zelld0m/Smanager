@@ -151,7 +151,7 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
 	@Override
 	protected StoredProcedure getUpdateStoredProcedure()
 			throws CoreDaoException {
-		throw new CoreDaoException("Unimplemented method.");
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override

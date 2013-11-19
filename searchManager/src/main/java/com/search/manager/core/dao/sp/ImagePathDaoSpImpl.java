@@ -172,7 +172,7 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 	@Override
 	protected StoredProcedure getDeleteStoredProcedure()
 			throws CoreDaoException {
-		throw new CoreDaoException("Unimplemented method...");
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override
@@ -230,7 +230,7 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements
 	@Override
 	protected Map<String, Object> generateDeleteInput(ImagePath model)
 			throws CoreDaoException {
-		throw new CoreDaoException("Unimplemented method.");
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override
