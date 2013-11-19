@@ -1,14 +1,12 @@
-package com.search.manager.web;
+package com.search.manager.web.controller.rules;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -18,38 +16,34 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.FacetGroup;
-import com.search.manager.model.FacetSort;
+import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.RecordSet;
-import com.search.manager.report.model.FacetSortReportBean;
-import com.search.manager.report.model.FacetSortReportModel;
+import com.search.manager.report.model.ElevateReportBean;
+import com.search.manager.report.model.ElevateReportModel;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.report.model.SubReportHeader;
-import com.search.manager.report.model.xml.FacetSortRuleXml;
-import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.DownloadService;
-import com.search.manager.service.FacetSortService;
+import com.search.manager.service.ElevateService;
 import com.search.manager.service.RuleVersionService;
-import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-@RequestMapping("/facet")
+@RequestMapping("/elevate")
 @Scope(value = "prototype")
-public class FacetSortController {
+public class ElevateController {
 
     private static final Logger logger =
-            LoggerFactory.getLogger(FacetSortController.class);
-    private static final String RULE_TYPE = RuleEntity.FACET_SORT.toString();
+            LoggerFactory.getLogger(ElevateController.class);
+    private static final String RULE_TYPE = RuleEntity.ELEVATE.toString();
     @Autowired
-    private FacetSortService facetSortService;
+    private ElevateService elevateService;
     @Autowired
     private DownloadService downloadService;
     @Autowired
@@ -59,7 +53,7 @@ public class FacetSortController {
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
 
-        return "rules/facet";
+        return "rules/elevate";
     }
 
     /**
@@ -73,92 +67,93 @@ public class FacetSortController {
     // TODO: change to POST, retrieve filter type
     public void getXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
 
-        String ruleId = request.getParameter("id");
-        String filename = request.getParameter("filename");
+        String keyword = request.getParameter("keyword");
         String type = request.getParameter("type");
+        String filter = request.getParameter("filter");
+        String page = request.getParameter("page");
+        String filename = request.getParameter("filename");
+        String itemsPerPage = request.getParameter("itemperpage");
         long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
 
         Date headerDate = new Date(clientTimezone);
 
-        logger.debug(String.format("Received request to download report as an XLS: %s %s", ruleId, filename));
+
+        logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
 
         if (StringUtils.isBlank(filename)) {
-            filename = "sort facet rule";
+            filename = "elevate";
         }
 
-        FacetSort facetSortRule = facetSortService.getRuleById(ruleId);
-        RecordSet<FacetGroup> groups = facetSortService.getAllFacetGroup(facetSortRule.getId());
-        Map<String, List<String>> items = facetSortRule.getItems();
-
-        List<FacetSortReportBean> list = new ArrayList<FacetSortReportBean>();
-
-        for (FacetGroup group : groups.getList()) {
-            StringBuilder sb = new StringBuilder();
-            List<String> facets = items.get(group.getName());
-
-            if (CollectionUtils.isNotEmpty(facets)) {
-                for (int i = 0; i < facets.size(); i++) {
-                    sb.append((i + 1) + " - " + facets.get(i) + (char) 10);
-                }
+        int nPage = 0;
+        int nItemsPerPage = 0;
+        if (!"all".equalsIgnoreCase(page)) {
+            try {
+                nPage = Integer.parseInt(page);
+            } catch (Exception e) {
+                logger.error("Error parsing page: " + page, e);
             }
-
-            String highlightedFacets = sb.toString();
-            if (StringUtils.isNotBlank(highlightedFacets)) {
-                highlightedFacets = highlightedFacets.substring(0, highlightedFacets.length() - 1);
-            } else {
-                highlightedFacets = "No Highlighted Facets";
+            try {
+                nItemsPerPage = Integer.parseInt(itemsPerPage);
+            } catch (Exception e) {
             }
+        }
+        RecordSet<ElevateProduct> elevateProducts = elevateService.getProducts(filter, keyword, nPage, nItemsPerPage);
 
-            if (group.getSortType() == null) {
-                group.setSortType(facetSortRule.getSortType());
-            }
-
-            FacetSortReportBean reportBean = new FacetSortReportBean(group, highlightedFacets);
-            list.add(reportBean);
+        List<ElevateReportBean> list = new ArrayList<ElevateReportBean>();
+        for (ElevateProduct p : elevateProducts.getList()) {
+            list.add(new ElevateReportBean(p));
         }
 
+        String subTitle = "List of %%Filter%%Elevated Items for [" + keyword + "]";
+        if ("active".equalsIgnoreCase(filter)) {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
+        } else if ("expired".equalsIgnoreCase(filter)) {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Expired ");
+        } else {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
+        }
 
-
-        String subTitle = "Facet Sort Rule [" + facetSortRule.getRuleName() + "] \n Type: " + facetSortRule.getRuleType().getDisplayText();
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
-        FacetSortReportModel reportModel = new FacetSortReportModel(reportHeader, list);
-
-        List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
-        //TODO subReports.add();
+        ReportModel<ElevateReportBean> reportModel = new ElevateReportModel(reportHeader, list);
 
         // Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
         if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
-            downloadService.downloadXLS(response, reportModel, subReports);
+            downloadService.downloadXLS(response, reportModel, null);
         }
     }
 
-    @SuppressWarnings("rawtypes")
     @RequestMapping(value = "/{store}/version/xls", method = RequestMethod.GET)
     // TODO: change to POST, retrieve filter type
     public void getVersionXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
-        String ruleId = request.getParameter("id");
+        String keyword = request.getParameter("keyword");
         String type = request.getParameter("type");
+        String filter = request.getParameter("filter");
         String filename = request.getParameter("filename");
         long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
         Date headerDate = new Date(clientTimezone);
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        RuleVersionListXml facetSortXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.FACET_SORT, ruleId);
-        String subTitle = String.format("Facet Sort Rule [%s]", facetSortXml != null ? facetSortXml.getRuleName() : "");
+        String subTitle = "List of %%Filter%%Elevated Items for [" + keyword + "]";
+        if ("active".equalsIgnoreCase(filter)) {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
+        } else if ("expired".equalsIgnoreCase(filter)) {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Expired ");
+        } else {
+            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
+        }
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 
-        ReportModel<FacetSortReportBean> reportModel = new FacetSortReportModel(reportHeader, new ArrayList<FacetSortReportBean>());
+        ReportModel<ElevateReportBean> reportModel = new ElevateReportModel(reportHeader, new ArrayList<ElevateReportBean>());
         ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 
-        List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, ruleId);
+        List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, keyword);
         if (rules != null) {
-            for (RuleXml rule : rules) {
-                FacetSortRuleXml xml = (FacetSortRuleXml) rule;
-                if (rule != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.FACET_SORT);
-                    subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getFacetSortReportBeanList(xml)));
+            for (RuleXml xml : rules) {
+                if (xml != null) {
+                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.ELEVATE);
+                    subModels.add(new ElevateReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
                 }
             }
         }
