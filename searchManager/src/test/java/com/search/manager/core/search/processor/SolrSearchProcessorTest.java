@@ -45,7 +45,7 @@ public class SolrSearchProcessorTest extends BaseIntegrationTest {
 				List<BannerRuleItem> bannerRuleItems = searchResult.getResult();
 
 				for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
-					logger.info(bannerRuleItem.toJson());
+					logger.info(bannerRuleItem.toString());
 				}
 			}
 		} catch (Exception e) {

@@ -292,7 +292,7 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		for (BannerRuleItem bannerRuleItem : serviceResponse.getData()
 				.getResult()) {
 			assertNotNull(bannerRuleItem);
-			logger.info(bannerRuleItem.toJson());
+			logger.info(bannerRuleItem.toString());
 		}
 	}
 
@@ -307,7 +307,7 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		for (BannerRuleItem bannerRuleItem : serviceResponse.getData()
 				.getResult()) {
 			assertNotNull(bannerRuleItem);
-			logger.info(bannerRuleItem.toJson());
+			logger.info(bannerRuleItem.toString());
 		}
 	}
 
@@ -323,7 +323,7 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		assertNotNull(serviceResponse.getData());
 		Assert.assertEquals(BannerRuleItemTestData.getExistingBannerRuleItem()
 				.getMemberId(), serviceResponse.getData().getMemberId());
-		logger.info(serviceResponse.getData().toJson());
+		logger.info(serviceResponse.getData().toString());
 	}
 
 	public void updateRuleItemTest() throws CoreServiceException {
