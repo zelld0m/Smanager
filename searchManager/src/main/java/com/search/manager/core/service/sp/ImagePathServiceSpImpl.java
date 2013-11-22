@@ -179,7 +179,7 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 				&& StringUtils.isNotBlank(imagePath.getCreatedBy())
 				&& imagePath.getCreatedDate() == null) {
 			try {
-				imagePathDao.add(imagePath);
+				return imagePathDao.add(imagePath);
 			} catch (CoreDaoException e) {
 				throw new CoreServiceException(e);
 			}
