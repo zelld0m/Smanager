@@ -8,10 +8,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.directwebremoting.annotations.Param;
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
-import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,30 +34,20 @@ import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.report.statistics.model.BannerStatistics;
 import com.search.manager.report.statistics.util.BannerStatisticsUtil;
-import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.UtilityService;
 
 @Service("bannerRuleServiceSp")
-@RemoteProxy(name = "BannerRuleServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "bannerRuleService"))
 public class BannerRuleServiceSpImpl implements BannerRuleService {
-
-	// TODO Transfer to message configuration file
-	private static final String MSG_FAILED_ADD_RULE = "Failed to add banner rule %s";
-	private static final String MSG_FAILED_RETRIVAL = "Unable to retrieve all rules.";
-	private static final String MSG_FAILED_RETRIVAL_BY_NAME = "Failed to retrieve banner rule by name. Name: '%s'";
-	private static final String MSG_FAILED_RETRIVAL_BY_ID = "Failed to retrieve banner rule by id. ID: '%s'";
-	private static final String MSG_FAILED_GET_RULE_WITH_IMAGE = "Failed to retrieve banner rule using '%s'";
-	private static final String MSG_FAILED_COUNT_RETRIVAL_BY_IMAGE_PATH_ID = "Failed to retrieve total banner count by image path.";
 
 	@Autowired
 	@Qualifier("bannerRuleDaoSp")
-	private BannerRuleDao bannerRuleDao;
+	protected BannerRuleDao bannerRuleDao;
 	@Autowired
 	@Qualifier("bannerRuleItemServiceSp")
 	private BannerRuleItemService bannerRuleItemService;
 	@Autowired
 	@Qualifier("ruleStatusServiceSp")
-	private RuleStatusService ruleStatusService;
+	protected RuleStatusService ruleStatusService;
 
 	// a setter method so that the Spring container can 'inject'
 	public void setBannerRuleDao(BannerRuleDao bannerRuleDao) {
@@ -77,7 +63,6 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		this.ruleStatusService = ruleStatusService;
 	}
 
-	@RemoteMethod
 	@Override
 	public BannerRule add(BannerRule model) throws CoreServiceException {
 		try {
@@ -114,7 +99,6 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public List<BannerRule> add(Collection<BannerRule> models)
 			throws CoreServiceException {
@@ -126,7 +110,6 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public BannerRule update(BannerRule model) throws CoreServiceException {
 		try {
@@ -158,7 +141,6 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public boolean delete(BannerRule model) throws CoreServiceException {
 		try {
@@ -180,7 +162,6 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public SearchResult<BannerRule> search(Search search)
 			throws CoreServiceException {
@@ -192,7 +173,6 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public SearchResult<BannerRule> search(BannerRule model)
 			throws CoreServiceException {
@@ -232,39 +212,39 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 
 	// BannerRuleService specific method here...
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<BannerRule> addRule(String ruleName)
+	public BannerRule transfer(BannerRule bannerRule)
 			throws CoreServiceException {
-		String storeId = UtilityService.getStoreId();
-		String username = UtilityService.getUsername();
-		BannerRule bannerRule = new BannerRule(storeId, ruleName, username);
-		ServiceResponse<BannerRule> serviceResponse = new ServiceResponse<BannerRule>();
 
-		try {
-			bannerRule = add(bannerRule);
-			if (bannerRule != null) {
-				serviceResponse.success(bannerRule);
-			} else {
-				serviceResponse.error(String.format(MSG_FAILED_ADD_RULE,
-						ruleName));
+		// Validate required fields for transfer method.
+		if (StringUtils.isNotBlank(bannerRule.getStoreId())
+				&& StringUtils.isNotBlank(bannerRule.getRuleId())
+				&& StringUtils.isNotBlank(bannerRule.getRuleName())
+				&& StringUtils.isNotBlank(bannerRule.getCreatedBy())
+				&& bannerRule.getCreatedDate() != null) {
+			try {
+				bannerRule = bannerRuleDao.add(bannerRule);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
 			}
-		} catch (CoreServiceException e) {
-			serviceResponse.error(String.format(MSG_FAILED_ADD_RULE, ruleName));
 		}
 
-		return serviceResponse;
+		return null;
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<SearchResult<BannerRule>> getAllRules(
-			String storeId, String searchText, int page, int pageSize)
-			throws CoreServiceException {
-		ServiceResponse<SearchResult<BannerRule>> serviceResponse = new ServiceResponse<SearchResult<BannerRule>>();
+	public BannerRule addRule(String ruleName) throws CoreServiceException {
+		BannerRule bannerRule = new BannerRule(UtilityService.getStoreId(),
+				ruleName, UtilityService.getUsername());
 
+		return add(bannerRule);
+	}
+
+	@Override
+	public SearchResult<BannerRule> getAllRules(String storeId,
+			String searchText, int page, int pageSize)
+			throws CoreServiceException {
 		Search search = new Search(BannerRule.class);
-		// TODO Remove DAOConstants
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_SEARCH_TEXT, searchText));
 		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
@@ -272,21 +252,13 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		search.setPageNumber(page);
 		search.setMaxRowCount(pageSize);
 
-		try {
-			serviceResponse.success(search(search));
-		} catch (CoreServiceException e) {
-			serviceResponse.error(MSG_FAILED_RETRIVAL, e);
-		}
-
-		return serviceResponse;
+		return search(search);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<SearchResult<BannerRule>> getRulesByImageId(
-			String storeId, String imagePathId, String imageAlias, int page,
-			int pageSize) throws CoreServiceException {
-		ServiceResponse<SearchResult<BannerRule>> serviceResponse = new ServiceResponse<SearchResult<BannerRule>>();
+	public SearchResult<BannerRule> getRulesByImageId(String storeId,
+			String imagePathId, String imageAlias, int page, int pageSize)
+			throws CoreServiceException {
 		Search search = new Search(BannerRule.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID,
@@ -294,22 +266,12 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 		search.setPageNumber(page);
 		search.setMaxRowCount(pageSize);
 
-		try {
-			serviceResponse.success(search(search));
-		} catch (CoreServiceException e) {
-			serviceResponse.error(
-					String.format(MSG_FAILED_GET_RULE_WITH_IMAGE, imageAlias),
-					e);
-		}
-
-		return serviceResponse;
+		return search(search);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<BannerRule> getRuleByName(String storeId,
-			String ruleName) throws CoreServiceException {
-		ServiceResponse<BannerRule> serviceResponse = new ServiceResponse<BannerRule>();
+	public BannerRule getRuleByName(String storeId, String ruleName)
+			throws CoreServiceException {
 		Search search = new Search(BannerRule.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_SEARCH_TEXT, ruleName));
@@ -317,24 +279,17 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 				MatchType.LIKE_NAME.getIntValue()));
 		search.setPageNumber(1);
 		search.setMaxRowCount(1);
-		try {
-			SearchResult<BannerRule> searchResult = search(search);
-			if (searchResult.getTotalCount() > 0) {
-				serviceResponse.success((BannerRule) CollectionUtils.get(
-						searchResult.getResult(), 0));
-			}
-		} catch (CoreServiceException e) {
-			serviceResponse.error(
-					String.format(MSG_FAILED_RETRIVAL_BY_NAME, ruleName), e);
+		SearchResult<BannerRule> searchResult = search(search);
+		if (searchResult.getTotalCount() > 0) {
+			return (BannerRule) CollectionUtils
+					.get(searchResult.getResult(), 0);
 		}
-		return serviceResponse;
+		return null;
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<BannerRule> getRuleById(String storeId, String ruleId)
+	public BannerRule getRuleById(String storeId, String ruleId)
 			throws CoreServiceException {
-		ServiceResponse<BannerRule> serviceResponse = new ServiceResponse<BannerRule>();
 		Search search = new Search(BannerRule.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
@@ -342,54 +297,39 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 				MatchType.MATCH_ID.getIntValue()));
 		search.setPageNumber(1);
 		search.setMaxRowCount(1);
-
-		try {
-			SearchResult<BannerRule> searchResult = search(search);
-			if (searchResult.getTotalCount() > 0) {
-				serviceResponse.success((BannerRule) CollectionUtils.get(
-						searchResult.getResult(), 0));
-			}
-		} catch (CoreServiceException e) {
-			serviceResponse.error(
-					String.format(MSG_FAILED_RETRIVAL_BY_ID, ruleId), e);
+		SearchResult<BannerRule> searchResult = search(search);
+		if (searchResult.getTotalCount() > 0) {
+			return (BannerRule) CollectionUtils
+					.get(searchResult.getResult(), 0);
 		}
-		return serviceResponse;
+
+		return null;
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<Integer> getTotalRulesByImageId(String storeId,
-			String imagePathId, String imageAlias) throws CoreServiceException {
-		ServiceResponse<Integer> serviceResponse = new ServiceResponse<Integer>();
+	public Integer getTotalRulesByImageId(String storeId, String imagePathId,
+			String imageAlias) throws CoreServiceException {
 		Search search = new Search(BannerRule.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID,
 				imagePathId));
-		try {
-			SearchResult<BannerRule> searchResult = search(search);
-			serviceResponse.success(searchResult.getTotalCount());
-		} catch (CoreServiceException e) {
-			serviceResponse
-					.error(MSG_FAILED_COUNT_RETRIVAL_BY_IMAGE_PATH_ID, e);
-		}
-		return serviceResponse;
+		SearchResult<BannerRule> searchResult = search(search);
+
+		return searchResult.getTotalCount();
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<List<String>> copyToRule(String storeId,
-			String[] keywords, Map<String, String> params)
-			throws CoreServiceException {
-		ServiceResponse<List<String>> serviceResponse = new ServiceResponse<List<String>>();
+	public List<String> copyToRule(String storeId, String[] keywords,
+			Map<String, String> params) throws CoreServiceException {
 		List<String> copiedToKeywordList = new ArrayList<String>();
 
 		for (String ruleName : keywords) {
-			// check if exist
-			addRule(ruleName);
-			ServiceResponse<BannerRule> searviceResponse = getRuleByName(
-					storeId, ruleName);
-			BannerRule bannerRule = searviceResponse.getData();
-
+			try {
+				addRule(ruleName);
+			} catch (CoreServiceException e) {
+				// attempt to add..
+			}
+			BannerRule bannerRule = getRuleByName(storeId, ruleName);
 			if (bannerRule != null) {
 				RuleStatus ruleStatus = ruleStatusService.getRuleStatus(
 						RuleEntity.getValue(RuleEntity.BANNER.getCode()),
@@ -398,28 +338,26 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 				if (ruleStatus != null && !ruleStatus.isLocked()) {
 					params.put("ruleId", bannerRule.getRuleId());
 					params.put("ruleName", bannerRule.getRuleName());
-					ServiceResponse<BannerRuleItem> bannerRuleItem = bannerRuleItemService
+
+					BannerRuleItem bannerRuleItem = bannerRuleItemService
 							.addRuleItem(storeId, params);
-					if (bannerRuleItem.getStatus() == ServiceResponse.SUCCESS) {
+					if (bannerRuleItem != null) {
 						copiedToKeywordList.add(ruleName);
 					}
 				}
 			}
 		}
 
-		serviceResponse.success(copiedToKeywordList);
-		return serviceResponse;
+		return copiedToKeywordList;
 	}
 
 	// Banner statistic
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<RecordSet<BannerStatistics>> getBannerStats(
-			String storeId, String keyword, String memberId,
-			String startDateText, String endDateText, boolean aggregate)
-			throws CoreServiceException {
-		ServiceResponse<RecordSet<BannerStatistics>> serviceResponse = new ServiceResponse<RecordSet<BannerStatistics>>();
+	public RecordSet<BannerStatistics> getBannerStats(String storeId,
+			String keyword, String memberId, String startDateText,
+			String endDateText, boolean aggregate) throws CoreServiceException {
+		RecordSet<BannerStatistics> rs = null;
 
 		DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(
 				storeId, startDateText, JodaPatternType.DATE);
@@ -440,32 +378,31 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 					.getStatsPerKeywordByMemberId(storeId, memberId,
 							startDateTime.toDate(), endDateTime.toDate());
 
-			RecordSet<BannerStatistics> rs = new RecordSet<BannerStatistics>(
-					list, (Integer) CollectionUtils.size(list));
-			serviceResponse.success(rs);
+			rs = new RecordSet<BannerStatistics>(list,
+					(Integer) CollectionUtils.size(list));
 		} catch (FileNotFoundException e) {
-			serviceResponse.error("File not found for getStatsPerKeyword", e);
+			throw new CoreServiceException(
+					"File not found for getStatsPerKeyword", e);
 		} catch (Exception e) {
-			serviceResponse.error("Exception for getStatsPerKeyword", e);
+			throw new CoreServiceException("Exception for getStatsPerKeyword",
+					e);
 		}
 
-		return serviceResponse;
+		return rs;
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByKeyword(
-			String storeId, String keyword, String startDateText,
-			String endDateText, boolean aggregate) throws CoreServiceException {
+	public RecordSet<BannerStatistics> getStatsByKeyword(String storeId,
+			String keyword, String startDateText, String endDateText,
+			boolean aggregate) throws CoreServiceException {
 		return getBannerStats(storeId, keyword, null, startDateText,
 				endDateText, aggregate);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<RecordSet<BannerStatistics>> getStatsByMemberId(
-			String storeId, String memberId, String startDateText,
-			String endDateText) throws CoreServiceException {
+	public RecordSet<BannerStatistics> getStatsByMemberId(String storeId,
+			String memberId, String startDateText, String endDateText)
+			throws CoreServiceException {
 		return getBannerStats(storeId, null, memberId, startDateText,
 				endDateText, false);
 	}

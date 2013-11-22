@@ -7,10 +7,6 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.directwebremoting.annotations.Param;
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
-import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,28 +27,20 @@ import com.search.manager.core.service.ImagePathService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
-import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.UtilityService;
 
 @Service("bannerRuleItemServiceSp")
-@RemoteProxy(name = "BannerRuleItemServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "bannerRuleItemService"))
 public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
-
-	// TODO Transfer to message configuration file
-	private static final String MSG_FAILED_ADD_RULE_ITEM = "Failed to add banner rule item %s";
-	private static final String MSG_FAILED_ADD_IMAGE = "Failed to add image link %s : %s";
-	private static final String MSG_FAILED_UPDATE_RULE_ITEM = "Failed to update banner item %s in %s";
 
 	@Autowired
 	@Qualifier("bannerRuleItemDaoSp")
-	private BannerRuleItemDao bannerRuleItemDao;
+	protected BannerRuleItemDao bannerRuleItemDao;
 	@Autowired
 	@Qualifier("imagePathServiceSp")
-	private ImagePathService imagePathService;
+	protected ImagePathService imagePathService;
 	@Autowired
 	@Qualifier("bannerRuleServiceSp")
-	private BannerRuleService bannerRuleService;
-
+	protected BannerRuleService bannerRuleService;
 
 	// a setter method so that the Spring container can 'inject'
 	public void setBannerRuleItemDao(BannerRuleItemDao bannerRuleItemDao) {
@@ -67,7 +55,6 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		this.bannerRuleService = bannerRuleService;
 	}
 
-	@RemoteMethod
 	@Override
 	public BannerRuleItem add(BannerRuleItem model) throws CoreServiceException {
 		// TODO add Spring transaction propagation
@@ -116,7 +103,6 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public BannerRuleItem update(BannerRuleItem model)
 			throws CoreServiceException {
@@ -149,7 +135,6 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public boolean delete(BannerRuleItem model) throws CoreServiceException {
 		try {
@@ -177,7 +162,6 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public SearchResult<BannerRuleItem> search(Search search)
 			throws CoreServiceException {
@@ -224,9 +208,30 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	// BannerRuleItemService specific method here...
 
 	@Override
+	public BannerRuleItem transfer(BannerRuleItem bannerRuleItem)
+			throws CoreServiceException {
+		BannerRule bannerRule = bannerRuleItem.getRule();
+		ImagePath imagePath = bannerRuleItem.getImagePath();
+		// validation required fields for transfer.
+		if (bannerRule != null && imagePath != null
+				&& StringUtils.isNotBlank(bannerRule.getRuleId())
+				&& StringUtils.isNotBlank(imagePath.getId())
+				&& StringUtils.isNotBlank(bannerRuleItem.getCreatedBy())
+				&& bannerRuleItem.getCreatedDate() == null
+				&& StringUtils.isNotBlank(bannerRuleItem.getMemberId())) {
+			try {
+				return bannerRuleItemDao.add(bannerRuleItem);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
+		}
+
+		return null;
+	}
+
+	@Override
 	public List<BannerRuleItem> getActiveBannerRuleItems(String storeId,
 			String keyword, DateTime currentDate) throws CoreServiceException {
-
 		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(keyword)
 				|| currentDate == null) {
 			return null;
@@ -250,12 +255,9 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		return null;
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<BannerRuleItem> addRuleItem(String storeId,
-			Map<String, String> params) throws CoreServiceException {
-		ServiceResponse<BannerRuleItem> serviceResponse = new ServiceResponse<BannerRuleItem>();
-
+	public BannerRuleItem addRuleItem(String storeId, Map<String, String> params)
+			throws CoreServiceException {
 		String ruleId = params.get("ruleId");
 		String ruleName = params.get("ruleName");
 		Integer priority = Integer.parseInt(params.get("priority"));
@@ -282,70 +284,42 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 				imageSize, null, imageAlias);
 
 		if (StringUtils.isBlank(imagePathId)) {
-			ServiceResponse<ImagePath> serviceResponseImagePath = imagePathService
-					.addImagePathLink(imagePath, imageAlias, imageSize);
+			try {
+				newImagePath = imagePathService.add(newImagePath);
 
-			if (serviceResponseImagePath.getStatus() == ServiceResponse.SUCCESS) {
-				ServiceResponse<ImagePath> srGetImagePath = imagePathService
-						.getImagePath(storeId, imagePath);
-				newImagePath = srGetImagePath.getData();
-			} else {
-				serviceResponse.error(String.format(MSG_FAILED_ADD_IMAGE,
-						imagePath, imageAlias));
-				return serviceResponse;
+				if (newImagePath != null) {
+					newImagePath = imagePathService.getImagePath(storeId,
+							imagePath);
+				} else {
+					throw new CoreServiceException("Failed to add image link.");
+				}
+			} catch (CoreServiceException e) {
+				throw new CoreServiceException("Failed to add image link.");
 			}
-
 		}
 
 		BannerRuleItem bannerRuleItem = new BannerRuleItem(rule, null,
 				priority, startDT, endDT, imageAlt, linkPath, description,
 				newImagePath, disable, openNewWindow);
 
-		try {
-			bannerRuleItem = bannerRuleItemDao.add(bannerRuleItem);
-			if (bannerRuleItem != null) {
-				serviceResponse.success(bannerRuleItem);
-			} else {
-				serviceResponse.error(String.format(MSG_FAILED_ADD_RULE_ITEM,
-						imageAlias));
-			}
-		} catch (Exception e) {
-			serviceResponse.error(
-					String.format(MSG_FAILED_ADD_RULE_ITEM, imageAlias), e);
-		}
-
-		return serviceResponse;
+		return add(bannerRuleItem);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<Integer> getTotalRuleItems(String storeId,
-			String ruleId) throws CoreServiceException {
-		ServiceResponse<Integer> serviceResponse = new ServiceResponse<Integer>();
-
+	public Integer getTotalRuleItems(String storeId, String ruleId)
+			throws CoreServiceException {
 		Search search = new Search(BannerRuleItem.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
+		SearchResult<BannerRuleItem> bannerRuleItems = search(search);
 
-		try {
-			SearchResult<BannerRuleItem> bannerRuleItems = search(search);
-			serviceResponse.success(bannerRuleItems.getTotalCount());
-		} catch (CoreServiceException e) {
-			// TODO create error message.
-			serviceResponse.error("", e);
-		}
-
-		return serviceResponse;
+		return bannerRuleItems.getTotalCount();
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByFilter(
-			String storeId, String ruleId, String filter, String dateFilter,
-			String imageSize, int page, int pageSize)
-			throws CoreServiceException {
-		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = new ServiceResponse<SearchResult<BannerRuleItem>>();
-
+	public SearchResult<BannerRuleItem> getRuleItemsByFilter(String storeId,
+			String ruleId, String filter, String dateFilter, String imageSize,
+			int page, int pageSize) throws CoreServiceException {
 		DateTime now = DateTime.now();
 		DateTime startDate = null;
 		DateTime endDate = null;
@@ -385,99 +359,60 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		search.setPageNumber(page);
 		search.setMaxRowCount(pageSize);
 
-		try {
-			serviceResponse.success(search(search));
-		} catch (CoreServiceException e) {
-			// TODO create error message.
-			serviceResponse.error("", e);
-		}
-
-		return serviceResponse;
+		return search(search);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByImageId(
-			String storeId, String imageId, int page, int pageSize)
-			throws CoreServiceException {
-		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = new ServiceResponse<SearchResult<BannerRuleItem>>();
+	public SearchResult<BannerRuleItem> getRuleItemsByImageId(String storeId,
+			String imageId, int page, int pageSize) throws CoreServiceException {
 		Search search = new Search(BannerRuleItem.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID, imageId));
 		search.setPageNumber(page);
 		search.setMaxRowCount(pageSize);
 
-		try {
-			serviceResponse.success(search(search));
-		} catch (CoreServiceException e) {
-			// TODO create error message.
-			serviceResponse.error("", e);
-		}
-
-		return serviceResponse;
+		return search(search);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByRuleId(
-			String storeId, String ruleId, int page, int pageSize)
-			throws CoreServiceException {
-		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = new ServiceResponse<SearchResult<BannerRuleItem>>();
+	public SearchResult<BannerRuleItem> getRuleItemsByRuleId(String storeId,
+			String ruleId, int page, int pageSize) throws CoreServiceException {
 		Search search = new Search(BannerRuleItem.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
 		search.setPageNumber(page);
 		search.setMaxRowCount(pageSize);
 
-		try {
-			serviceResponse.success(search(search));
-		} catch (CoreServiceException e) {
-			// TODO create error message.
-			serviceResponse.error("", e);
-		}
-
-		return serviceResponse;
+		return search(search);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<SearchResult<BannerRuleItem>> getAllRuleItems(
-			String storeId, String ruleId) throws CoreServiceException {
+	public SearchResult<BannerRuleItem> getAllRuleItems(String storeId,
+			String ruleId) throws CoreServiceException {
 		return getRuleItemsByRuleId(storeId, ruleId, -1, -1);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<BannerRuleItem> getRuleItemByMemberId(
-			String storeId, String ruleId, String memberId)
-			throws CoreServiceException {
-		ServiceResponse<BannerRuleItem> serviceResponse = new ServiceResponse<BannerRuleItem>();
+	public BannerRuleItem getRuleItemByMemberId(String storeId, String ruleId,
+			String memberId) throws CoreServiceException {
 		Search search = new Search(BannerRuleItem.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
 		search.addFilter(new Filter(DAOConstants.PARAM_MEMBER_ID, memberId));
 
-		try {
-			SearchResult<BannerRuleItem> bannerRuleItems = search(search);
-			if (bannerRuleItems.getTotalCount() > 0) {
-				serviceResponse.success((BannerRuleItem) CollectionUtils.get(
-						bannerRuleItems.getResult(), 0));
-			}
-		} catch (CoreServiceException e) {
-			// TODO create error message.
-			serviceResponse.error("", e);
+		SearchResult<BannerRuleItem> bannerRuleItems = search(search);
+		if (bannerRuleItems.getTotalCount() > 0) {
+			return (BannerRuleItem) CollectionUtils.get(
+					bannerRuleItems.getResult(), 0);
 		}
 
-		return serviceResponse;
+		return null;
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<BannerRuleItem> updateRuleItem(String storeId,
+	public BannerRuleItem updateRuleItem(String storeId,
 			Map<String, String> params) throws CoreServiceException {
-		// TODO Auto-generated method stub
 		String username = UtilityService.getUsername();
-		ServiceResponse<BannerRuleItem> serviceResponse = new ServiceResponse<BannerRuleItem>();
 
 		String ruleId = params.get("ruleId");
 		String ruleName = params.get("ruleName");
@@ -501,6 +436,7 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 
 			BannerRule bannerRule = new BannerRule();
 			bannerRule.setRuleId(ruleId);
+			bannerRule.setRuleName(ruleName);
 			bannerRule.setStoreId(storeId);
 
 			DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(
@@ -536,76 +472,44 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 					&& StringUtils.isBlank(imagePath)
 					&& StringUtils.isNotBlank(imageAlias)) {
 				// update alias
-				ServiceResponse<ImagePath> serviceResponseImagePath = new ServiceResponse<ImagePath>();
-				serviceResponseImagePath = imagePathService
+				ImagePath imagePathUpdated = imagePathService
 						.updateImagePathAlias(imagePathId, imageAlias);
 
-				if (serviceResponseImagePath.getStatus() == ServiceResponse.ERROR) {
-					serviceResponse.error(serviceResponseImagePath
-							.getErrorMessage().getMessage());
-					return serviceResponse;
+				if (imagePathUpdated == null) {
+					throw new CoreServiceException(
+							"Error: updateImagePathAlias()");
 				}
 			} else {
 				// Do not update any image path assoc details
 			}
 
 			// Update banner item
-			try {
-				bannerRuleItem = update(bannerRuleItem);
-				if (bannerRuleItem != null) {
-					serviceResponse.success(bannerRuleItem);
-				} else {
-					serviceResponse.error(String.format(
-							MSG_FAILED_UPDATE_RULE_ITEM, imageAlias, ruleName));
-				}
-			} catch (CoreServiceException e) {
-				serviceResponse.error(String.format(
-						MSG_FAILED_UPDATE_RULE_ITEM, imageAlias, ruleName));
-			}
+			return update(bannerRuleItem);
 		}
 
-		return serviceResponse;
+		return null;
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<Boolean> deleteRuleItemsByImageSize(String storeId,
-			String ruleId, String imageSize) throws CoreServiceException {
-		ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
-
+	public Boolean deleteRuleItemsByImageSize(String storeId, String ruleId,
+			String imageSize) throws CoreServiceException {
 		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId);
 		bannerRuleItem.setImagePath(new ImagePath(storeId, null, null,
 				imageSize, null, null));
-		try {
-			serviceResponse.success(delete(bannerRuleItem));
-		} catch (CoreServiceException e) {
-			// TODO create error message.
-			serviceResponse.error("", e);
-		}
 
-		return serviceResponse;
+		return delete(bannerRuleItem);
 	}
 
-	@RemoteMethod
 	@Override
-	public ServiceResponse<Boolean> deleteRuleItemByMemberId(String storeId,
-			String ruleId, String memberId, String alias, String imageSize)
+	public Boolean deleteRuleItemByMemberId(String storeId, String ruleId,
+			String memberId, String alias, String imageSize)
 			throws CoreServiceException {
-		ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
-
 		BannerRuleItem bannerRuleItem = new BannerRuleItem(ruleId, storeId,
 				memberId);
 		bannerRuleItem.setImagePath(new ImagePath(storeId, null, null,
 				imageSize, null, alias));
 
-		try {
-			serviceResponse.success(delete(bannerRuleItem));
-		} catch (CoreServiceException e) {
-			// TODO create error message.
-			serviceResponse.error("", e);
-		}
-
-		return serviceResponse;
+		return delete(bannerRuleItem);
 	}
 
 }
