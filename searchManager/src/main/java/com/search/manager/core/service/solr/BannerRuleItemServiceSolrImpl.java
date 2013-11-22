@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.directwebremoting.annotations.RemoteMethod;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +18,6 @@ import com.search.manager.core.search.Filter.FilterOperator;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.BannerRuleItemService;
-import com.search.manager.response.ServiceResponse;
 
 @Service("bannerRuleItemServiceSolr")
 public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
@@ -42,7 +40,6 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 		}
 	}
 
-	@RemoteMethod
 	@Override
 	public List<BannerRuleItem> add(Collection<BannerRuleItem> models)
 			throws CoreServiceException {
@@ -131,6 +128,12 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 	// BannerRuleItemService specific method here...
 
 	@Override
+	public BannerRuleItem transfer(BannerRuleItem bannerRuleItem)
+			throws CoreServiceException {
+		throw new CoreServiceException("Unsupported Operation.");
+	}
+
+	@Override
 	public List<BannerRuleItem> getActiveBannerRuleItems(String storeId,
 			String keyword, DateTime currentDate) throws CoreServiceException {
 		// TODO test date filter...
@@ -151,76 +154,72 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 	}
 
 	@Override
-	public ServiceResponse<BannerRuleItem> addRuleItem(String storeId,
-			Map<String, String> params) throws CoreServiceException {
+	public BannerRuleItem addRuleItem(String storeId, Map<String, String> params)
+			throws CoreServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ServiceResponse<Integer> getTotalRuleItems(String storeId,
+	public Integer getTotalRuleItems(String storeId, String ruleId)
+			throws CoreServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult<BannerRuleItem> getRuleItemsByFilter(String storeId,
+			String ruleId, String filter, String dateFilter, String imageSize,
+			int page, int pageSize) throws CoreServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult<BannerRuleItem> getRuleItemsByImageId(String storeId,
+			String imageId, int page, int pageSize) throws CoreServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult<BannerRuleItem> getRuleItemsByRuleId(String storeId,
+			String ruleId, int page, int pageSize) throws CoreServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult<BannerRuleItem> getAllRuleItems(String storeId,
 			String ruleId) throws CoreServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByFilter(
-			String storeId, String ruleId, String filter, String dateFilter,
-			String imageSize, int page, int pageSize)
-			throws CoreServiceException {
+	public BannerRuleItem getRuleItemByMemberId(String storeId, String ruleId,
+			String memberId) throws CoreServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByImageId(
-			String storeId, String imageId, int page, int pageSize)
-			throws CoreServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByRuleId(
-			String storeId, String ruleId, int page, int pageSize)
-			throws CoreServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ServiceResponse<SearchResult<BannerRuleItem>> getAllRuleItems(
-			String storeId, String ruleId) throws CoreServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ServiceResponse<BannerRuleItem> getRuleItemByMemberId(
-			String storeId, String ruleId, String memberId)
-			throws CoreServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ServiceResponse<BannerRuleItem> updateRuleItem(String storeId,
+	public BannerRuleItem updateRuleItem(String storeId,
 			Map<String, String> params) throws CoreServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ServiceResponse<Boolean> deleteRuleItemsByImageSize(String storeId,
-			String ruleId, String imageSize) throws CoreServiceException {
+	public Boolean deleteRuleItemsByImageSize(String storeId, String ruleId,
+			String imageSize) throws CoreServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ServiceResponse<Boolean> deleteRuleItemByMemberId(String storeId,
-			String ruleId, String memberId, String alias, String imageSize)
+	public Boolean deleteRuleItemByMemberId(String storeId, String ruleId,
+			String memberId, String alias, String imageSize)
 			throws CoreServiceException {
 		// TODO Auto-generated method stub
 		return null;
