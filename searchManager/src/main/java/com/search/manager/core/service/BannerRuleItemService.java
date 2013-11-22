@@ -8,48 +8,47 @@ import org.joda.time.DateTime;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.search.SearchResult;
-import com.search.manager.response.ServiceResponse;
 
 public interface BannerRuleItemService extends GenericService<BannerRuleItem> {
 
 	// Add BannerRuleItemService specific method here...
+	
+	BannerRuleItem transfer(BannerRuleItem bannerRuleItem)
+			throws CoreServiceException;
 
 	List<BannerRuleItem> getActiveBannerRuleItems(String storeId,
 			String keyword, DateTime currentDate) throws CoreServiceException;
 
-	ServiceResponse<BannerRuleItem> addRuleItem(String storeId,
-			Map<String, String> params) throws CoreServiceException;
-
-	ServiceResponse<Integer> getTotalRuleItems(String storeId, String ruleId)
+	BannerRuleItem addRuleItem(String storeId, Map<String, String> params)
 			throws CoreServiceException;
 
-	ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByFilter(
-			String storeId, String ruleId, String filter, String dateFilter,
-			String imageSize, int page, int pageSize)
+	Integer getTotalRuleItems(String storeId, String ruleId)
 			throws CoreServiceException;
 
-	ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByImageId(
-			String storeId, String imageId, int page, int pageSize)
+	SearchResult<BannerRuleItem> getRuleItemsByFilter(String storeId,
+			String ruleId, String filter, String dateFilter, String imageSize,
+			int page, int pageSize) throws CoreServiceException;
+
+	SearchResult<BannerRuleItem> getRuleItemsByImageId(String storeId,
+			String imageId, int page, int pageSize) throws CoreServiceException;
+
+	SearchResult<BannerRuleItem> getRuleItemsByRuleId(String storeId,
+			String ruleId, int page, int pageSize) throws CoreServiceException;
+
+	SearchResult<BannerRuleItem> getAllRuleItems(String storeId, String ruleId)
 			throws CoreServiceException;
 
-	ServiceResponse<SearchResult<BannerRuleItem>> getRuleItemsByRuleId(
-			String storeId, String ruleId, int page, int pageSize)
+	BannerRuleItem getRuleItemByMemberId(String storeId, String ruleId,
+			String memberId) throws CoreServiceException;
+
+	BannerRuleItem updateRuleItem(String storeId, Map<String, String> params)
 			throws CoreServiceException;
 
-	ServiceResponse<SearchResult<BannerRuleItem>> getAllRuleItems(
-			String storeId, String ruleId) throws CoreServiceException;
+	Boolean deleteRuleItemsByImageSize(String storeId, String ruleId,
+			String imageSize) throws CoreServiceException;
 
-	ServiceResponse<BannerRuleItem> getRuleItemByMemberId(String storeId,
-			String ruleId, String memberId) throws CoreServiceException;
-
-	ServiceResponse<BannerRuleItem> updateRuleItem(String storeId,
-			Map<String, String> params) throws CoreServiceException;
-
-	ServiceResponse<Boolean> deleteRuleItemsByImageSize(String storeId,
-			String ruleId, String imageSize) throws CoreServiceException;
-
-	ServiceResponse<Boolean> deleteRuleItemByMemberId(String storeId,
-			String ruleId, String memberId, String alias, String imageSize)
+	Boolean deleteRuleItemByMemberId(String storeId, String ruleId,
+			String memberId, String alias, String imageSize)
 			throws CoreServiceException;
 
 }
