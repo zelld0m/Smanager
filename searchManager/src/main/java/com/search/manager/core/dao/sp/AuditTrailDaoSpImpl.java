@@ -293,11 +293,13 @@ public class AuditTrailDaoSpImpl extends GenericDaoSpImpl<AuditTrail> implements
 	}
 
 	@Override
-	public List<String> getRefIDs(String ent, String opt, String storeId) {
+	public List<String> getRefIDs(String entity, String operation,
+			String storeId) {
 		String sql = GET_REFID_SQL;
 
 		return searchSp.getJdbcTemplate().query(sql,
-				new String[] { ent, opt, storeId }, new RowMapper<String>() {
+				new String[] { entity, operation, storeId },
+				new RowMapper<String>() {
 					public String mapRow(ResultSet resultSet, int i)
 							throws SQLException {
 						return resultSet.getString(1);
