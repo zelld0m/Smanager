@@ -18,7 +18,6 @@ import com.search.manager.core.service.BannerRuleService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.BannerRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
-import com.search.manager.response.ServiceResponse;
 import com.search.manager.utility.Transformers;
 
 @Component("bannerVersionDAO")
@@ -27,8 +26,6 @@ public class BannerVersionDAO extends AbstractRuleVersionDAO<BannerRuleXml> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(BannerVersionDAO.class);
 
-	// @Autowired
-	// private DaoService daoService;
 	@Autowired
 	@Qualifier("bannerRuleServiceSp")
 	private BannerRuleService bannerRuleService;
@@ -54,32 +51,25 @@ public class BannerVersionDAO extends AbstractRuleVersionDAO<BannerRuleXml> {
 
 			try {
 				// Get all items
-				// SearchCriteria<BannerRuleItem> criteria = new
-				// SearchCriteria<BannerRuleItem>(
-				// new BannerRuleItem(ruleId, store));
+				BannerRule bannerRule = bannerRuleService.searchById(store,
+						ruleId);
+				BannerRuleItem bannerRuleItem = new BannerRuleItem();
+				bannerRuleItem.setRule(bannerRule);
+				SearchResult<BannerRuleItem> searchResult = bannerRuleItemService
+						.search(bannerRuleItem);
 
-				// BannerRule rule = daoService.getBannerRuleById(store,
-				// ruleId);
-				// List<BannerRuleItem> ruleItems = daoService
-				// .searchBannerRuleItem(criteria).getList();
+				List<BannerRuleItem> bannerRuleItems = null;
 
-				BannerRule rule = bannerRuleService.searchById(store, ruleId);
-
-				ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService
-						.getRuleItemsByRuleId(store, ruleId, -1, -1);
-
-				List<BannerRuleItem> ruleItems = null;
-
-				if (serviceResponse != null
-						&& serviceResponse.getData() != null) {
-					ruleItems = serviceResponse.getData().getList();
+				if (searchResult.getTotalCount() > 0) {
+					bannerRuleItems = searchResult.getResult();
 				}
 
-				ruleXmlList.add(new BannerRuleXml(store, ruleId, rule
+				ruleXmlList.add(new BannerRuleXml(store, ruleId, bannerRule
 						.getRuleName(), name, notes, username, Lists.transform(
-						ruleItems, Transformers.bannerItemRuleToXml), version));
+						bannerRuleItems, Transformers.bannerItemRuleToXml),
+						version));
 				ruleVersionListXml.setRuleId(ruleId);
-				ruleVersionListXml.setRuleName(rule.getRuleName());
+				ruleVersionListXml.setRuleName(bannerRule.getRuleName());
 
 				return true;
 			} catch (CoreServiceException e) {
