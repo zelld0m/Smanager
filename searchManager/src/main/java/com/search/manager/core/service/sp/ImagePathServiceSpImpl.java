@@ -176,8 +176,7 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 
 		if (StringUtils.isNotBlank(imagePath.getId())
 				&& StringUtils.isNotBlank(imagePath.getStoreId())
-				&& StringUtils.isNotBlank(imagePath.getCreatedBy())
-				&& imagePath.getCreatedDate() == null) {
+				&& StringUtils.isNotBlank(imagePath.getCreatedBy())) {
 			try {
 				return imagePathDao.add(imagePath);
 			} catch (CoreDaoException e) {

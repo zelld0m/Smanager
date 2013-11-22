@@ -213,11 +213,11 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		BannerRule bannerRule = bannerRuleItem.getRule();
 		ImagePath imagePath = bannerRuleItem.getImagePath();
 		// validation required fields for transfer.
+		
 		if (bannerRule != null && imagePath != null
 				&& StringUtils.isNotBlank(bannerRule.getRuleId())
 				&& StringUtils.isNotBlank(imagePath.getId())
 				&& StringUtils.isNotBlank(bannerRuleItem.getCreatedBy())
-				&& bannerRuleItem.getCreatedDate() == null
 				&& StringUtils.isNotBlank(bannerRuleItem.getMemberId())) {
 			try {
 				return bannerRuleItemDao.add(bannerRuleItem);
