@@ -9,7 +9,7 @@ public interface AuditTrailService extends GenericService<AuditTrail> {
 
 	// Add AuditTrailService specific method here...
 
-	List<String> getRefIDs(String ent, String opt, String storeId)
+	List<String> getRefIDs(String entity, String operation, String storeId)
 			throws CoreServiceException;
 
 	List<String> getDropdownValues(int type, String storeId, boolean adminFlag)
