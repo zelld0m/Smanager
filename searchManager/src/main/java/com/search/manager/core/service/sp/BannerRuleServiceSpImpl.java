@@ -222,7 +222,7 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 				&& StringUtils.isNotBlank(bannerRule.getRuleName())
 				&& StringUtils.isNotBlank(bannerRule.getCreatedBy())) {
 			try {
-				bannerRule = bannerRuleDao.add(bannerRule);
+				return bannerRuleDao.add(bannerRule);
 			} catch (CoreDaoException e) {
 				throw new CoreServiceException(e);
 			}
