@@ -73,7 +73,6 @@ import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropertiesUtils;
 import com.search.manager.utility.StringUtil;
@@ -259,10 +258,10 @@ public class RuleXmlUtil {
                 	// // Old impl: RecordSet<BannerRuleItem> ruleItems = daoService.searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(new BannerRuleItem(ruleId, store), 1, Integer.MAX_VALUE));
                 	BannerRule banner = bannerRuleService.searchById(store, ruleId);
                     List<BannerRuleItem> ruleItems = null;
-                    ServiceResponse<com.search.manager.core.search.SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService.getRuleItemsByRuleId(store, ruleId, 1, Integer.MAX_VALUE);
+                    com.search.manager.core.search.SearchResult<BannerRuleItem> searchResult = bannerRuleItemService.getRuleItemsByRuleId(store, ruleId, 1, Integer.MAX_VALUE);
                     
-                    if(serviceResponse != null && serviceResponse.getData() != null) {
-                    	ruleItems = serviceResponse.getData().getResult();
+                    if(searchResult.getTotalCount() > 0) {
+                    	ruleItems = searchResult.getResult();
                     }
                     
                     BannerRuleXml bRuleXml = new BannerRuleXml(banner);
@@ -950,7 +949,7 @@ public class RuleXmlUtil {
 
             if (crule != null) {
             	// Old impl: citems = daoService.searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(new BannerRuleItem(xml.getRuleId(), store))).getList();
-                citems = bannerRuleItemService.getRuleItemsByRuleId(store, xml.getRuleId(), -1, -1).getData().getList();
+                citems = bannerRuleItemService.getRuleItemsByRuleId(store, xml.getRuleId(), -1, -1).getResult();
                 // create backup first
                 if (createPreRestore) {
                     BannerRuleXml cruleXml = new BannerRuleXml(crule);
