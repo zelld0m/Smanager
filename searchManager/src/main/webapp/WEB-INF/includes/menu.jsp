@@ -36,10 +36,10 @@
 	      
 	      <c:if test="${topmenu eq 'rules'}">
 		       <ul class="subMenu floatL txtAL">
-		      		<li ${submenu eq 'elevate'? 'class="active"': ''}><a href="<spring:url value="/elevate/"/>${storeId}">Elevate</a></li>
-		      		<li ${submenu eq 'exclude'? 'class="active"': ''}><a href="<spring:url value="/exclude/"/>${storeId}">Exclude</a></li>
-		      		<li ${submenu eq 'demote'? 'class="active"': ''}><a href="<spring:url value="/demote/"/>${storeId}">Demote</a></li>
-		      		<li ${submenu eq 'facet'? 'class="active"': ''}><a href="<spring:url value="/facetsort/"/>${storeId}">Facet Sort</a></li>  		      		
+		      		<li ${submenu eq 'elevate'? 'class="active"': ''}><a href="<spring:url value="/elevate/"/>${storeId}">Elevate Rule</a></li>
+		      		<li ${submenu eq 'exclude'? 'class="active"': ''}><a href="<spring:url value="/exclude/"/>${storeId}">Exclude Rule</a></li>
+		      		<li ${submenu eq 'demote'? 'class="active"': ''}><a href="<spring:url value="/demote/"/>${storeId}">Demote Rule</a></li>
+		      		<li ${submenu eq 'facet'? 'class="active"': ''}><a href="<spring:url value="/facetsort/"/>${storeId}">Facet Sort Rule</a></li>  		      		
 <%-- 		      		<li ${submenu eq 'feature'? 'class="active"': ''}><a href="<spring:url value="/feature/"/>${storeId}">Feature</a></li> --%>
 		      		<li ${submenu eq 'redirect'? 'class="active"': ''}><a href="<spring:url value="/redirect/"/>${storeId}">Redirect Rule</a></li>		      		
 		      		<li ${submenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/"/>${storeId}">Relevancy Rule</a></li>
@@ -49,7 +49,7 @@
 	      
 	      <c:if test="${topmenu eq 'ads'}">
 		       <ul class="subMenu floatL txtAL">
-		      		<li ${submenu eq 'banner'? 'class="active"': ''}><a href="<spring:url value="/banner/"/>${storeId}">Banner</a></li>	      		
+		      		<li ${submenu eq 'banner'? 'class="active"': ''}><a href="<spring:url value="/banner/"/>${storeId}">Banner Rule</a></li>	      		
 		       </ul>
 	      </c:if>
 	      
