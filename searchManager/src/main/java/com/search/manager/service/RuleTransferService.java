@@ -39,6 +39,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.rules.FacetSortService;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;

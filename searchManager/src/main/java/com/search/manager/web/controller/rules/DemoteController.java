@@ -1,4 +1,4 @@
-package com.search.manager.web;
+package com.search.manager.web.controller.rules;
 
 import java.util.ArrayList;
 import java.util.Date;
