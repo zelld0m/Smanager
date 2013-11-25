@@ -1,48 +1,50 @@
-package com.search.manager.web;
+package com.search.manager.web.controller.rules;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.DemoteProduct;
+import com.search.manager.model.FacetGroup;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
-import com.search.manager.report.model.DemoteReportBean;
-import com.search.manager.report.model.DemoteReportModel;
+import com.search.manager.report.model.FacetSortReportBean;
+import com.search.manager.report.model.FacetSortReportModel;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.report.model.SubReportHeader;
+import com.search.manager.report.model.xml.FacetSortRuleXml;
+import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.service.DemoteService;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
+import com.search.manager.service.UtilityService;
+import com.search.manager.service.rules.FacetSortService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@Controller
-@RequestMapping("/demote")
-@Scope(value = "prototype")
-public class DemoteController {
+public class FacetSortController {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(DemoteController.class);
-    private static final String RULE_TYPE = RuleEntity.DEMOTE.toString();
+    private static final Logger logger = LoggerFactory.getLogger(FacetSortController.class);
+    private static final String RULE_TYPE = RuleEntity.FACET_SORT.toString();
+    
     @Autowired
-    private DemoteService demoteService;
+    private FacetSortService facetSortService;
     @Autowired
     private DownloadService downloadService;
     @Autowired
@@ -51,8 +53,7 @@ public class DemoteController {
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
-
-        return "rules/demote";
+        return "rules/facetsort";
     }
 
     /**
@@ -66,92 +67,92 @@ public class DemoteController {
     // TODO: change to POST, retrieve filter type
     public void getXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
 
-        String keyword = request.getParameter("keyword");
-        String type = request.getParameter("type");
-        String filter = request.getParameter("filter");
-        String page = request.getParameter("page");
+        String ruleId = request.getParameter("id");
         String filename = request.getParameter("filename");
-        String itemsPerPage = request.getParameter("itemperpage");
+        String type = request.getParameter("type");
         long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
 
         Date headerDate = new Date(clientTimezone);
 
-
-        logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
+        logger.debug(String.format("Received request to download report as an XLS: %s %s", ruleId, filename));
 
         if (StringUtils.isBlank(filename)) {
-            filename = "demote";
+            filename = "sort facet rule";
         }
 
-        int nPage = 0;
-        int nItemsPerPage = 0;
-        if (!"all".equalsIgnoreCase(page)) {
-            try {
-                nPage = Integer.parseInt(page);
-            } catch (Exception e) {
+        FacetSort facetSortRule = facetSortService.getRuleById(ruleId);
+        RecordSet<FacetGroup> groups = facetSortService.getAllFacetGroup(facetSortRule.getId());
+        Map<String, List<String>> items = facetSortRule.getItems();
+
+        List<FacetSortReportBean> list = new ArrayList<FacetSortReportBean>();
+
+        for (FacetGroup group : groups.getList()) {
+            StringBuilder sb = new StringBuilder();
+            List<String> facets = items.get(group.getName());
+
+            if (CollectionUtils.isNotEmpty(facets)) {
+                for (int i = 0; i < facets.size(); i++) {
+                    sb.append((i + 1) + " - " + facets.get(i) + (char) 10);
+                }
             }
-            try {
-                nItemsPerPage = Integer.parseInt(itemsPerPage);
-            } catch (Exception e) {
+
+            String highlightedFacets = sb.toString();
+            if (StringUtils.isNotBlank(highlightedFacets)) {
+                highlightedFacets = highlightedFacets.substring(0, highlightedFacets.length() - 1);
+            } else {
+                highlightedFacets = "No Highlighted Facets";
             }
-        }
-        RecordSet<DemoteProduct> demoteProducts = demoteService.getProducts(filter, keyword, nPage, nItemsPerPage);
 
-        List<DemoteReportBean> list = new ArrayList<DemoteReportBean>();
-        for (DemoteProduct p : demoteProducts.getList()) {
-            list.add(new DemoteReportBean(p));
-        }
+            if (group.getSortType() == null) {
+                group.setSortType(facetSortRule.getSortType());
+            }
 
-        String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
-        if ("active".equalsIgnoreCase(filter)) {
-            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
-        } else if ("expired".equalsIgnoreCase(filter)) {
-            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Expired ");
-        } else {
-            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
+            FacetSortReportBean reportBean = new FacetSortReportBean(group, highlightedFacets);
+            list.add(reportBean);
         }
 
+
+
+        String subTitle = "Facet Sort Rule [" + facetSortRule.getRuleName() + "] \n Type: " + facetSortRule.getRuleType().getDisplayText();
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
-        ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, list);
+        FacetSortReportModel reportModel = new FacetSortReportModel(reportHeader, list);
+
+        List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
+        //TODO subReports.add();
 
         // Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
         if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
-            downloadService.downloadXLS(response, reportModel, null);
+            downloadService.downloadXLS(response, reportModel, subReports);
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @RequestMapping(value = "/{store}/version/xls", method = RequestMethod.GET)
     // TODO: change to POST, retrieve filter type
     public void getVersionXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
-        String keyword = request.getParameter("keyword");
+        String ruleId = request.getParameter("id");
         String type = request.getParameter("type");
-        String filter = request.getParameter("filter");
         String filename = request.getParameter("filename");
         long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
         Date headerDate = new Date(clientTimezone);
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
-        if ("active".equalsIgnoreCase(filter)) {
-            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
-        } else if ("expired".equalsIgnoreCase(filter)) {
-            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Expired ");
-        } else {
-            subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
-        }
+        RuleVersionListXml facetSortXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.FACET_SORT, ruleId);
+        String subTitle = String.format("Facet Sort Rule [%s]", facetSortXml != null ? facetSortXml.getRuleName() : "");
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 
-        ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, new ArrayList<DemoteReportBean>());
+        ReportModel<FacetSortReportBean> reportModel = new FacetSortReportModel(reportHeader, new ArrayList<FacetSortReportBean>());
         ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 
-        List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, keyword);
+        List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, ruleId);
         if (rules != null) {
-            for (RuleXml xml : rules) {
-                if (xml != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.DEMOTE);
-                    subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts(xml)));
+            for (RuleXml rule : rules) {
+                FacetSortRuleXml xml = (FacetSortRuleXml) rule;
+                if (rule != null) {
+                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.FACET_SORT);
+                    subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getFacetSortReportBeanList(xml)));
                 }
             }
         }

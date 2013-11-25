@@ -68,9 +68,9 @@
 
             <div id="redirect-type" class="tabs">
                 <ul>
-                    <li><a href="#filter"><span>Filter</span></a></li>
-                    <li><a href="#keyword"><span>Replace KW</span></a></li>
-                    <li><a href="#page"><span>Direct Hit</span></a></li>
+                    <li><a href="#filter"><span>Set Redirect</span></a></li>
+                    <li><a href="#keyword"><span>Keyword Redirect</span></a></li>
+                    <li><a href="#page"><span>Page Redirect</span></a></li>
                 </ul>
 
                 <div id="page" class="containerRedirect">

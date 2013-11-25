@@ -53,13 +53,13 @@
 
           <c:if test="${topmenu eq 'rules'}">
                <ul class="subMenu floatL txtAL">
-                      <li ${submenu eq 'elevate'? 'class="active"': ''}><a href="<spring:url value="/elevate/"/>${storeId}">Elevate</a></li>
-                      <li ${submenu eq 'exclude'? 'class="active"': ''}><a href="<spring:url value="/exclude/"/>${storeId}">Exclude</a></li>
-                      <li ${submenu eq 'demote'? 'class="active"': ''}><a href="<spring:url value="/demote/"/>${storeId}">Demote</a></li>
-                      <li ${submenu eq 'facet'? 'class="active"': ''}><a href="<spring:url value="/facet/"/>${storeId}">Facet Sort</a></li>
+                      <li ${submenu eq 'elevate'? 'class="active"': ''}><a href="<spring:url value="/elevate/"/>${storeId}">Elevate Rule</a></li>
+                      <li ${submenu eq 'exclude'? 'class="active"': ''}><a href="<spring:url value="/exclude/"/>${storeId}">Exclude Rule</a></li>
+                      <li ${submenu eq 'demote'? 'class="active"': ''}><a href="<spring:url value="/demote/"/>${storeId}">Demote Rule</a></li>
+                      <li ${submenu eq 'facet'? 'class="active"': ''}><a href="<spring:url value="/facet/"/>${storeId}">Facet Sort Rule</a></li>
 <%--                       <li ${submenu eq 'feature'? 'class="active"': ''}><a href="<spring:url value="/feature/"/>${storeId}">Feature</a></li> --%>
-                      <li ${submenu eq 'redirect'? 'class="active"': ''}><a href="<spring:url value="/redirect/"/>${storeId}">Query Cleaning</a></li>
-                      <li ${submenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/"/>${storeId}">Ranking Rule</a></li>
+                      <li ${submenu eq 'redirect'? 'class="active"': ''}><a href="<spring:url value="/redirect/"/>${storeId}">Redirect Rule</a></li>
+                      <li ${submenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/"/>${storeId}">Relevancy Rule</a></li>
 <%--                       <li ${submenu eq 'catalog'? 'class="active"': ''}><a href="<spring:url value="/catalog/"/>${storeId}">Catalog</a></li>                         --%>
                </ul>
           </c:if>

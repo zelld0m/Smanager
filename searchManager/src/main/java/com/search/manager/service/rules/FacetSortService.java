@@ -1,4 +1,4 @@
-package com.search.manager.service;
+package com.search.manager.service.rules;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,6 +31,9 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.service.RuleService;
+import com.search.manager.service.UtilityService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

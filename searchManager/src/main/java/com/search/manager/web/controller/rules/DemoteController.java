@@ -1,4 +1,4 @@
-package com.search.manager.web;
+package com.search.manager.web.controller.rules;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,33 +17,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.ElevateProduct;
+import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.RecordSet;
-import com.search.manager.report.model.ElevateReportBean;
-import com.search.manager.report.model.ElevateReportModel;
+import com.search.manager.report.model.DemoteReportBean;
+import com.search.manager.report.model.DemoteReportModel;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.report.model.SubReportHeader;
-import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.DemoteService;
 import com.search.manager.service.DownloadService;
-import com.search.manager.service.ElevateService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Controller
-@RequestMapping("/elevate")
+@RequestMapping("/demote")
 @Scope(value = "prototype")
-public class ElevateController {
+public class DemoteController {
 
     private static final Logger logger =
-            LoggerFactory.getLogger(ElevateController.class);
-    private static final String RULE_TYPE = RuleEntity.ELEVATE.toString();
+            LoggerFactory.getLogger(DemoteController.class);
+    private static final String RULE_TYPE = RuleEntity.DEMOTE.toString();
     @Autowired
-    private ElevateService elevateService;
+    private DemoteService demoteService;
     @Autowired
     private DownloadService downloadService;
     @Autowired
@@ -53,7 +52,7 @@ public class ElevateController {
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
 
-        return "rules/elevate";
+        return "rules/demote";
     }
 
     /**
@@ -81,7 +80,7 @@ public class ElevateController {
         logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
 
         if (StringUtils.isBlank(filename)) {
-            filename = "elevate";
+            filename = "demote";
         }
 
         int nPage = 0;
@@ -90,21 +89,20 @@ public class ElevateController {
             try {
                 nPage = Integer.parseInt(page);
             } catch (Exception e) {
-                logger.error("Error parsing page: " + page, e);
             }
             try {
                 nItemsPerPage = Integer.parseInt(itemsPerPage);
             } catch (Exception e) {
             }
         }
-        RecordSet<ElevateProduct> elevateProducts = elevateService.getProducts(filter, keyword, nPage, nItemsPerPage);
+        RecordSet<DemoteProduct> demoteProducts = demoteService.getProducts(filter, keyword, nPage, nItemsPerPage);
 
-        List<ElevateReportBean> list = new ArrayList<ElevateReportBean>();
-        for (ElevateProduct p : elevateProducts.getList()) {
-            list.add(new ElevateReportBean(p));
+        List<DemoteReportBean> list = new ArrayList<DemoteReportBean>();
+        for (DemoteProduct p : demoteProducts.getList()) {
+            list.add(new DemoteReportBean(p));
         }
 
-        String subTitle = "List of %%Filter%%Elevated Items for [" + keyword + "]";
+        String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
         if ("active".equalsIgnoreCase(filter)) {
             subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
         } else if ("expired".equalsIgnoreCase(filter)) {
@@ -114,7 +112,7 @@ public class ElevateController {
         }
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
-        ReportModel<ElevateReportBean> reportModel = new ElevateReportModel(reportHeader, list);
+        ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, list);
 
         // Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
         if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
@@ -134,7 +132,7 @@ public class ElevateController {
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        String subTitle = "List of %%Filter%%Elevated Items for [" + keyword + "]";
+        String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
         if ("active".equalsIgnoreCase(filter)) {
             subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
         } else if ("expired".equalsIgnoreCase(filter)) {
@@ -145,15 +143,15 @@ public class ElevateController {
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 
-        ReportModel<ElevateReportBean> reportModel = new ElevateReportModel(reportHeader, new ArrayList<ElevateReportBean>());
+        ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, new ArrayList<DemoteReportBean>());
         ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 
         List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, keyword);
         if (rules != null) {
             for (RuleXml xml : rules) {
                 if (xml != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.ELEVATE);
-                    subModels.add(new ElevateReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
+                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.DEMOTE);
+                    subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts(xml)));
                 }
             }
         }
