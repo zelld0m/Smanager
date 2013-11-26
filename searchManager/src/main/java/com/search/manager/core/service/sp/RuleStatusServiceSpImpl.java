@@ -141,6 +141,17 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
 	}
 
 	@Override
+	public SearchResult<RuleStatus> search(RuleStatus model, int pageNumber,
+			int maxRowCount) throws CoreServiceException {
+		try {
+			// TODO validation here...
+			return ruleStatusDao.search(model, pageNumber, maxRowCount);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
 	public RuleStatus searchById(String storeId, String id)
 			throws CoreServiceException {
 		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(id)) {

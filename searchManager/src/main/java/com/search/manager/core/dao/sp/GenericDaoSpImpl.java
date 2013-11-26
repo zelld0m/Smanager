@@ -180,17 +180,24 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public SearchResult<T> search(T model) throws CoreDaoException {
+		return search(model, -1, -1);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public SearchResult<T> search(T model, int pageNumber, int maxRowCount)
+			throws CoreDaoException {
 		try {
+			Search search = generateSearchInput(model);
+			search.setPageNumber(pageNumber);
+			search.setMaxRowCount(maxRowCount);
 			SearchProcessor searchProcessor = new SpSearchProcessor(
 					getSearchStoredProcedure(), getDefaultInParam());
-			return (SearchResult<T>) searchProcessor
-					.processSearch(generateSearchInput(model));
+			return (SearchResult<T>) searchProcessor.processSearch(search);
 		} catch (CoreSearchException e) {
 			throw new CoreDaoException(e);
 		}
 	}
-
 }

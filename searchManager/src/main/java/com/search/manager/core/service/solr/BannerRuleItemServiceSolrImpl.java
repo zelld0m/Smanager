@@ -110,6 +110,16 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 	}
 
 	@Override
+	public SearchResult<BannerRuleItem> search(BannerRuleItem model,
+			int pageNumber, int maxRowCount) throws CoreServiceException {
+		try {
+			return bannerRuleItemDao.search(model, pageNumber, maxRowCount);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
 	public BannerRuleItem searchById(String storeId, String id)
 			throws CoreServiceException {
 		Search search = new Search(BannerRuleItem.class);

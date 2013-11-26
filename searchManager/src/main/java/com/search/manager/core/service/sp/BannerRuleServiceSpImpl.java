@@ -185,6 +185,17 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 	}
 
 	@Override
+	public SearchResult<BannerRule> search(BannerRule model, int pageNumber,
+			int maxRowCount) throws CoreServiceException {
+		try {
+			// TODO validation here...
+			return bannerRuleDao.search(model, pageNumber, maxRowCount);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
 	public BannerRule searchById(String storeId, String id)
 			throws CoreServiceException {
 

@@ -27,4 +27,7 @@ public interface GenericDao<T> {
 
 	SearchResult<T> search(T model) throws CoreDaoException;
 
+	SearchResult<T> search(T model, int pageNumber, int maxRowCount)
+			throws CoreDaoException;
+
 }

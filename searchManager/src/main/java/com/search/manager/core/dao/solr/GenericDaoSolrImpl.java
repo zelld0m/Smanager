@@ -192,12 +192,20 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public SearchResult<T> search(T model) throws CoreDaoException {
+		return (SearchResult<T>) search(model, -1, -1);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public SearchResult<T> search(T model, int pageNumber, int maxRowCount)
+			throws CoreDaoException {
 		try {
-			return (SearchResult<T>) searchProcessor
-					.processSearch(generateQuery(model));
+			Search search = generateQuery(model);
+			search.setPageNumber(pageNumber);
+			search.setMaxRowCount(maxRowCount);
+			return (SearchResult<T>) searchProcessor.processSearch(search);
 		} catch (CoreSearchException e) {
 			throw new CoreDaoException(e);
 		}

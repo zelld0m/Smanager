@@ -173,6 +173,16 @@ public class AuditTrailServiceSpImpl implements AuditTrailService {
 	}
 
 	@Override
+	public SearchResult<AuditTrail> search(AuditTrail model, int pageNumber,
+			int maxRowCount) throws CoreServiceException {
+		try {
+			return auditTrailDao.search(model, pageNumber, maxRowCount);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
 	public AuditTrail searchById(String storeId, String id)
 			throws CoreServiceException {
 

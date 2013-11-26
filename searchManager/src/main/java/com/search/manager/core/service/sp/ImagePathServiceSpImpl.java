@@ -147,6 +147,17 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	}
 
 	@Override
+	public SearchResult<ImagePath> search(ImagePath model, int pageNumber,
+			int maxRowCount) throws CoreServiceException {
+		try {
+			// TODO validation here...
+			return imagePathDao.search(model, pageNumber, maxRowCount);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
 	public ImagePath searchById(String storeId, String id)
 			throws CoreServiceException {
 		// TODO Auto-generated method stub

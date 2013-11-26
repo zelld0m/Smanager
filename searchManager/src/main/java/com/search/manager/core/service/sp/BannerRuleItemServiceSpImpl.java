@@ -185,6 +185,17 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	}
 
 	@Override
+	public SearchResult<BannerRuleItem> search(BannerRuleItem model,
+			int pageNumber, int maxRowCount) throws CoreServiceException {
+		try {
+			// TODO validation here...
+			return bannerRuleItemDao.search(model, pageNumber, maxRowCount);
+		} catch (CoreDaoException e) {
+			throw new CoreServiceException(e);
+		}
+	}
+
+	@Override
 	public BannerRuleItem searchById(String storeId, String id)
 			throws CoreServiceException {
 		// TODO validation here...
@@ -213,7 +224,7 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 		BannerRule bannerRule = bannerRuleItem.getRule();
 		ImagePath imagePath = bannerRuleItem.getImagePath();
 		// validation required fields for transfer.
-		
+
 		if (bannerRule != null && imagePath != null
 				&& StringUtils.isNotBlank(bannerRule.getRuleId())
 				&& StringUtils.isNotBlank(imagePath.getId())
