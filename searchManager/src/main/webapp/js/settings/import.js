@@ -668,7 +668,7 @@
 
             jConfirm(self.getConfirmationMessage(), "Confirm Import", function(status) {
                 if (status) {
-                    RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
+                    RuleTransferServiceJS.importRejectRules(GLOBAL_storeId, self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
                             self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
                         callback: function(data) {
                             self.postMsg(data, 'all');

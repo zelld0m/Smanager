@@ -1,6 +1,7 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.authentication.dao.internal.UserDetailsImpl;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.mail.AccessNotificationMailService;
@@ -211,6 +213,13 @@ public class SecurityService {
             logger.error("Error in SecurityService.getRoleList " + e, e);
         }
         return new RecordSet<RoleModel>(roleList, roleList.size());
+    }
+    
+    @RemoteMethod
+    public RecordSet<RuleStatusEntity> getRuleEntityList() {
+        List<RuleStatusEntity> statusLIst = Arrays.asList(RuleStatusEntity.values());
+        
+        return new RecordSet<RuleStatusEntity>(statusLIst, statusLIst.size());
     }
 
     @RemoteMethod

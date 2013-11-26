@@ -1,3 +1,6 @@
+
+var callbackCount = 0;
+
 $(function() {
     var tabContentTemplate = "<div id='#{id}'><p>#{content}</p></div>";
     var tabContentHeaderTemplate = "<tr><td colspan='2'><h2 class='padT5'>#{header}</h2></tr></tr>";
@@ -6,15 +9,25 @@ $(function() {
     var booleanFieldTemplate = "<input id='#{id}' type='checkbox' class='firerift-style-checkbox on-off'/>";
     var accountRoleFieldTemplate = "<select class=\"w240p mar0\" id=\"#{id}\" style=\"cursor:pointer\">" +
             "<option value=\"\">All Roles</option></select>";
+    var ruleEntityTemplate = "<select class=\"w240p mar0\" id=\"#{id}\" style=\"cursor:pointer\">" +
+    		"</select>";
+    
+    var dropDownListMap = new Object();
     var tabObjects = new Array();
     var storePropertiesFilesArray;
     var accountRoleArray = new Array();
-
-    var AccountRole = function(name, value) {
+    var ruleEntityArray = new Array();
+    
+    var DropDownOption = function(name, value) {
         this.name = name;
         this.value = value;
     };
-
+    
+    dropDownListMap['mail.workflow.approver.group'] = accountRoleArray;
+    
+    dropDownListMap['status_elevate'] = dropDownListMap['status_exclude'] = dropDownListMap['status_demote'] = dropDownListMap['status_facet_sort'] 
+    = dropDownListMap['status_query_cleaning'] = dropDownListMap['status_did_you_mean'] = dropDownListMap['status_banner'] = ruleEntityArray;
+    
     var Field = function(id, propertyId, type) {
         this.id = id;
         this.propertyId = propertyId;
@@ -24,12 +37,6 @@ $(function() {
     var TabObject = function(name, fields) {
         this.name = name;
         this.fields = fields;
-    };
-
-    var StorePropertiesFile = function(moduleName, filePath, storeProperties) {
-        this.moduleName = moduleName;
-        this.filePath = filePath;
-        this.storeProperties = storeProperties;
     };
 
     var StoreProperty = function(name, value) {
@@ -109,7 +116,7 @@ $(function() {
                                     fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
                                             booleanField);
                                     break;
-                                case "AccountRole":
+                                case "DropDown":
                                     var accountRoleField = accountRoleFieldTemplate.replace(
                                             /#\{id\}/g, fieldId);
                                     fieldToAppend = fieldToAppend.replace(/#\{field\}/g,
@@ -202,10 +209,10 @@ $(function() {
                                             locked: false
                                         });
                                         break;
-                                    case "AccountRole":
-                                        // populate the account role field
-                                        populateAccountRoleField(fieldId);
-
+                                    case "DropDown":
+                                    	// populate the account role field
+                                    	populateDropDownField(fieldId, dropDownListMap[propertyId]);
+                                    	
                                         // set the selected option by store property value
                                         setSelectedOptionByValue(fieldId,
                                                 storeProperty.value);
@@ -219,21 +226,21 @@ $(function() {
         }
     };
 
-    var populateAccountRoleField = function(fieldId) {
-        for (var i = 0; i < accountRoleArray.length; i++)
+    var populateDropDownField = function(fieldId, dropDownList) {
+        for (var i = 0; i < dropDownList.length; i++)
         {
-            var accountRole = accountRoleArray[i];
+            var option = dropDownList[i];
             $("select#" + fieldId).append(
                     $("<option>",
-                    {value: accountRole.value}).
-                    text(accountRole.name));
+                    {value: option.value}).
+                    text(option.name));
         }
     };
 
     var setSelectedOptionByValue = function(fieldId, fieldValue) {
         $("#" + fieldId + " option").each(function() {
-            if ($(this).text() === fieldValue) {
-                $(this).prop("selected", true);
+        	if ($(this).text() === fieldValue) {
+            	$(this).prop("selected", true);
                 return false; // break the foreach
             }
         });
@@ -297,7 +304,7 @@ $(function() {
 
             switch (fieldType) {
                 case "String":
-                case "AccountRole":
+                case "DropDown":
                     fieldValue = fieldComponent.val();
                     break;
                 case "Boolean":
@@ -332,6 +339,28 @@ $(function() {
         $("#no_store_message").hide();
         $("#settingsSaveBtnDiv").show();
     };
+    
+    function loadFieldsFromProperty (id, modules) {
+    	
+    	if(callbackCount < 2) {
+    		this.setTimeout(function() {loadFieldsFromProperty(id, modules);}, 100);
+    	} else {
+    		 PropertiesReaderServiceJS.
+             readAllStorePropertiesFiles(id,
+	             function(storePropertiesFiles) {
+            	 	 // populate the fields
+	                 populateFields(modules,
+	                         storePropertiesFiles);
+	                 storePropertiesFilesArray =
+	                         storePropertiesFiles;
+	                 // hides the error messages
+	                 hideErrorMessages();
+	                 // remove the loading icon
+                     store_settings.cleanUpTabContent();
+	             }
+             );
+    	}
+    }
 
     var store_settings = {
         prepareTabContent: function() {
@@ -381,35 +410,41 @@ $(function() {
                                                 var roleName = listValue["rolename"];
 
                                                 accountRoleArray.push(
-                                                        new AccountRole(id, roleName));
+                                                        new DropDownOption(id, roleName));
                                             }
                                         }
+                                        
+                                        callbackCount++;
                                     },
-                                    postHook: function() {
-                                        // for populating the fields 
-                                        PropertiesReaderServiceJS.
-                                                readAllStorePropertiesFiles(id,
-                                                function(storePropertiesFiles) {
-
-                                                    // populate the fields
-                                                    populateFields(modules,
-                                                            storePropertiesFiles);
-
-                                                    storePropertiesFilesArray =
-                                                            storePropertiesFiles;
-
-                                                    // hides the error messages
-                                                    hideErrorMessages();
-                                                }
-                                        );
+                                    errorHandler: function(errorString, exception) {
+                                    	callbackCount++;
                                     }
                                 });
+                                
+                                SecurityServiceJS.getRuleEntityList({
+                                    callback: function(data) {
+                                        roleList = data;
+                                        var list = data.list;
+
+                                        if (list.length > 0) {
+                                            for (var i = 0; i < list.length; i++) {
+                                                var listValue = list[i];
+                                                var name = listValue["displayText"];
+
+                                                ruleEntityArray.push( new DropDownOption(name, name));
+                                            }
+                                        }
+                                        
+                                        callbackCount++;
+                                    },
+                                    errorHandler: function(errorString, exception) {
+                                    	callbackCount++;
+                                    }
+                                });
+                              loadFieldsFromProperty(id, modules);  
+                             // for populating the fields 
                             }
                         }
-                    },
-                    postHook: function() {
-                        // remove the loading icon
-                        store_settings.cleanUpTabContent();
                     }
                 });
             });
@@ -425,7 +460,7 @@ $(function() {
                     var storePropertiesFile = findStorePropertiesFileByModuleName(tabName);
                     storePropertiesFile.storeProperties = storeProperties;
                 }
-
+               
                 PropertiesManagerServiceJS.saveStoreProperties(storePropertiesFilesArray,
                         function(result) {
                             jAlert("Store settings saved", "Saved");

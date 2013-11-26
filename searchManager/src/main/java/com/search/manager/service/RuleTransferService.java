@@ -368,7 +368,7 @@ public class RuleTransferService {
     }
 
     @RemoteMethod
-    public Map<String, String> importRejectRules(String ruleType,
+    public Map<String, String> importRejectRules(String storeName, String ruleType,
             String[] importRuleRefIdList, String comment,
             String[] importTypeList, String[] importAsRefIdList,
             String[] ruleNameList, String[] rejectRuleRefIdList,
@@ -379,7 +379,6 @@ public class RuleTransferService {
         boolean autoPublish = false;
         boolean obtainedLock = false;
         String userName = UtilityService.getUsername();
-        String storeName = UtilityService.getStoreName();
 
         if (ArrayUtils.isNotEmpty(importTypeList)) {
             for (String importType : importTypeList) {
