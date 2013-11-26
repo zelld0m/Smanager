@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.search.manager.core.exception.CoreServiceException;
@@ -81,6 +82,7 @@ import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 import com.search.ws.SolrConstants;
 
+@Component
 public class RuleXmlUtil {
 
 	private static final Logger logger =
@@ -89,19 +91,18 @@ public class RuleXmlUtil {
     private static final String XML_FILE_TYPE = ".xml";
     private static final String PREIMPORTPATH = PropertiesUtils.getValue("pre-importpath");
     private static final String PRERESTOREPATH = PropertiesUtils.getValue("pre-restorepath");
-    private static RuleXmlUtil instance = null;
     
     @Autowired
-    private static DaoService daoService;
+    private DaoService daoService;
     @Autowired
 	@Qualifier("bannerRuleServiceSp")
-	private static BannerRuleService bannerRuleService;
+	private BannerRuleService bannerRuleService;
 	@Autowired
 	@Qualifier("bannerRuleItemServiceSp")
-	private static BannerRuleItemService bannerRuleItemService;
+	private BannerRuleItemService bannerRuleItemService;
 	@Autowired
 	@Qualifier("imagePathServiceSp")
-	private static ImagePathService imagePathService;
+	private ImagePathService imagePathService;
 	
     protected RuleXmlUtil() {
         //Exists only to defeat instantiation.
@@ -133,17 +134,6 @@ public class RuleXmlUtil {
         }
     }
 
-    public static RuleXmlUtil getInstance() {
-        if (instance == null) {
-            synchronized (RuleXmlUtil.class) {
-                if (instance == null) {
-                    instance = new RuleXmlUtil();
-                }
-            }
-        }
-        return instance;
-    }
-
     public static RuleXml getLatestVersion(List<RuleXml> ruleVersions) {
         RuleXml latestVersion = null;
         if (CollectionUtils.isNotEmpty(ruleVersions)) {
@@ -162,7 +152,7 @@ public class RuleXmlUtil {
         return latestVersion;
     }
 
-    public static RuleXml currentRuleToXml(String store, String ruleType, String ruleId) {
+    public RuleXml currentRuleToXml(String store, String ruleType, String ruleId) {
         RuleXml ruleXml = new RuleXml();
         RuleEntity ruleEntity = RuleEntity.find(ruleType);
         StoreKeyword sk = new StoreKeyword(store, ruleId);
@@ -456,7 +446,7 @@ public class RuleXmlUtil {
         return false;
     }
 
-    private static boolean restoreElevate(String path, RuleXml xml, boolean createPreRestore) {
+    private boolean restoreElevate(String path, RuleXml xml, boolean createPreRestore) {
         ElevateRuleXml eXml = (ElevateRuleXml) xml;
         String store = xml.getStore();
         String ruleId = xml.getRuleId();
@@ -521,7 +511,7 @@ public class RuleXmlUtil {
         }
     }
 
-    private static boolean restoreExclude(String path, RuleXml xml, boolean createPreRestore) {
+    private boolean restoreExclude(String path, RuleXml xml, boolean createPreRestore) {
         ExcludeRuleXml eXml = (ExcludeRuleXml) xml;
         String store = xml.getStore();
         String ruleId = xml.getRuleId();
@@ -587,7 +577,7 @@ public class RuleXmlUtil {
         }
     }
 
-    private static boolean restoreDemote(String path, RuleXml xml, boolean createPreRestore) {
+    private boolean restoreDemote(String path, RuleXml xml, boolean createPreRestore) {
         DemoteRuleXml dXml = (DemoteRuleXml) xml;
         String store = xml.getStore();
         String ruleId = xml.getRuleId();
@@ -652,7 +642,7 @@ public class RuleXmlUtil {
         }
     }
 
-    private static boolean restoreFacetSort(String path, RuleXml xml, boolean createPreRestore) {
+    private boolean restoreFacetSort(String path, RuleXml xml, boolean createPreRestore) {
         FacetSortRuleXml fXml = (FacetSortRuleXml) xml;
         FacetSort restoreVersion = new FacetSort(fXml);
         RuleEntity ruleEntity = xml.getRuleEntity();
@@ -735,7 +725,7 @@ public class RuleXmlUtil {
         return false;
     }
 
-    private static boolean restoreQueryCleaning(String path, RuleXml xml, boolean createPreRestore) {
+    private boolean restoreQueryCleaning(String path, RuleXml xml, boolean createPreRestore) {
         if (xml instanceof RedirectRuleXml) {
             RedirectRuleXml qRXml = (RedirectRuleXml) xml;
             String store = xml.getStore();
@@ -846,7 +836,7 @@ public class RuleXmlUtil {
         return false;
     }
 
-    private static boolean restoreRankingRule(String path, RuleXml xml, boolean createPreRestore) {
+    private boolean restoreRankingRule(String path, RuleXml xml, boolean createPreRestore) {
         RankingRuleXml rRXml = (RankingRuleXml) xml;
         Relevancy restoreVersion = new Relevancy(rRXml);
         String store = DAOUtils.getStoreId(restoreVersion.getStore());
@@ -921,7 +911,7 @@ public class RuleXmlUtil {
         return false;
     }
 
-    private static boolean restoreBannerRule(String path, RuleXml xml, boolean createPreRestore) {
+    private boolean restoreBannerRule(String path, RuleXml xml, boolean createPreRestore) {
         String username = UtilityService.getUsername();
         String store = UtilityService.getStoreId();
 
@@ -1022,15 +1012,15 @@ public class RuleXmlUtil {
         return false;
     }
 
-    public static boolean restoreRule(RuleXml xml) {
-        return RuleXmlUtil.restoreRule(xml, true);
+    public boolean restoreRule(RuleXml xml) {
+        return restoreRule(xml, true);
     }
 
-    public static boolean importRule(RuleXml xml) {
-        return RuleXmlUtil.restoreRule(xml, false);
+    public boolean importRule(RuleXml xml) {
+        return restoreRule(xml, false);
     }
 
-    private static boolean restoreRule(RuleXml xml, boolean isVersion) {
+    private boolean restoreRule(RuleXml xml, boolean isVersion) {
         return restoreRule(xml, isVersion, true);
     }
 
@@ -1064,7 +1054,7 @@ public class RuleXmlUtil {
         return xmlFileToRuleXml(file);
     }
 
-    private static boolean restoreRule(RuleXml xml, boolean isVersion, boolean createPreRestore) {
+    private boolean restoreRule(RuleXml xml, boolean isVersion, boolean createPreRestore) {
         String path = isVersion ? PRERESTOREPATH : PREIMPORTPATH;
         boolean isRestored = false;
 
@@ -1073,19 +1063,19 @@ public class RuleXmlUtil {
         }
 
         if (xml instanceof ElevateRuleXml) {
-            isRestored = RuleXmlUtil.restoreElevate(path, xml, createPreRestore);
+            isRestored = restoreElevate(path, xml, createPreRestore);
         } else if (xml instanceof DemoteRuleXml) {
-            isRestored = RuleXmlUtil.restoreDemote(path, xml, createPreRestore);
+            isRestored = restoreDemote(path, xml, createPreRestore);
         } else if (xml instanceof ExcludeRuleXml) {
-            isRestored = RuleXmlUtil.restoreExclude(path, xml, createPreRestore);
+            isRestored = restoreExclude(path, xml, createPreRestore);
         } else if (xml instanceof FacetSortRuleXml) {
-            isRestored = RuleXmlUtil.restoreFacetSort(path, xml, createPreRestore);
+            isRestored = restoreFacetSort(path, xml, createPreRestore);
         } else if (xml instanceof RedirectRuleXml) {
-            isRestored = RuleXmlUtil.restoreQueryCleaning(path, xml, createPreRestore);
+            isRestored = restoreQueryCleaning(path, xml, createPreRestore);
         } else if (xml instanceof RankingRuleXml) {
-            isRestored = RuleXmlUtil.restoreRankingRule(path, xml, createPreRestore);
+            isRestored = restoreRankingRule(path, xml, createPreRestore);
         } else if (xml instanceof BannerRuleXml) {
-            isRestored = RuleXmlUtil.restoreBannerRule(path, xml, createPreRestore);
+            isRestored = restoreBannerRule(path, xml, createPreRestore);
         }
         return isRestored;
     }
@@ -1153,15 +1143,7 @@ public class RuleXmlUtil {
         return ruleId;
     }
 
-    public DaoService getDaoService() {
-        return daoService;
-    }
-
-    public void setDaoService(DaoService daoService) {
-        RuleXmlUtil.daoService = daoService;
-    }
-
-    public static RuleStatus getRuleStatus(String ruleEntity, String store, String ruleId) {
+    public RuleStatus getRuleStatus(String ruleEntity, String store, String ruleId) {
         RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleEntity), store, ruleId);
         SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
 
