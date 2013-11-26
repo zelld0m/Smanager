@@ -107,10 +107,6 @@
         <property name="customArgumentResolver" ref="activeUserResolver" />
     </bean>
 
-    <bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil">
-        <property name="daoService" ref="daoService" />
-    </bean>
-
     <bean id="commandExecutor" class="com.search.manager.utility.CommandExecutor"
               init-method="init" destroy-method="destroy" scope="singleton">
         <!-- maximum length of command queue -->
