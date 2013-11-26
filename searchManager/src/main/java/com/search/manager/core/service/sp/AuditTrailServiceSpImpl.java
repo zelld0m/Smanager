@@ -1,5 +1,6 @@
 package com.search.manager.core.service.sp;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class AuditTrailServiceSpImpl implements AuditTrailService {
 			throws CoreServiceException {
 		if (models != null) {
 			try {
-				List<AuditTrail> validatedModels = (List<AuditTrail>) models;
+				List<AuditTrail> validatedModels = new ArrayList<AuditTrail>();
 				// Validate required fields.
 				for (AuditTrail auditTrail : models) {
 					if (validateRequiredField(auditTrail, false)) {
@@ -106,7 +107,7 @@ public class AuditTrailServiceSpImpl implements AuditTrailService {
 			throws CoreServiceException {
 		if (models != null) {
 			try {
-				List<AuditTrail> validatedModels = (List<AuditTrail>) models;
+				List<AuditTrail> validatedModels = new ArrayList<AuditTrail>();
 				// Validate required field for update.
 				for (AuditTrail auditTrail : models) {
 					if (validateRequiredField(auditTrail, true)) {
