@@ -18,6 +18,7 @@ import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.ImagePath;
+import com.search.manager.core.model.ImagePathType;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
@@ -292,7 +293,7 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 				JodaPatternType.DATE);
 
 		ImagePath newImagePath = new ImagePath(storeId, imagePathId, imagePath,
-				imageSize, null, imageAlias);
+				imageSize, ImagePathType.IMAGE_LINK, imageAlias);
 
 		if (StringUtils.isBlank(imagePathId)) {
 			try {
