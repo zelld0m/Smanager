@@ -53,14 +53,18 @@ import org.slf4j.LoggerFactory;
         @Param(name = "beanName", value = "ruleTransferService"))
 public class RuleTransferService {
 
+	private static final Logger logger =
+        LoggerFactory.getLogger(RuleTransferService.class);
+	
     @Autowired
     private DeploymentService deploymentService;
     @Autowired
     private DaoService daoService;
     @Autowired
     private FacetSortService facetSortService;
-    private static final Logger logger =
-            LoggerFactory.getLogger(RuleTransferService.class);
+    @Autowired
+    private RuleTransferUtil ruleTransferUtil;
+    
     private static final int CREATE_RULE_STATUS = 0;
     private static final int SUBMIT_FOR_APPROVAL = 1;
     private static final int APPROVE_RULE = 2;
@@ -484,7 +488,7 @@ public class RuleTransferService {
                 ruleXml.setRuleId(importAsRefId);
                 ruleXml.setRuleName(ruleName);
                 ruleXml.setCreatedBy(UtilityService.getUsername());
-                success = RuleTransferUtil.importRule(store, importAsRefId, ruleXml);
+                success = ruleTransferUtil.importRule(store, importAsRefId, ruleXml);
         }
 
         if (success) {
