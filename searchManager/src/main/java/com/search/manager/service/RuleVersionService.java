@@ -31,11 +31,14 @@ public class RuleVersionService {
 
     private static final Logger logger =
             LoggerFactory.getLogger(RuleVersionService.class);
+    
     @Autowired
     private DaoService daoService;
     @Autowired
     private DeploymentService deploymentService;
-
+    @Autowired
+    private RuleXmlUtil ruleXmlUtil;
+    
     @RemoteMethod
     public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
         return daoService.createRuleVersion(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), name, reason);
@@ -109,7 +112,7 @@ public class RuleVersionService {
     @RemoteMethod
     public RuleXml getCurrentRuleXml(String ruleType, String ruleId) {
         String store = UtilityService.getStoreId();
-        RuleXml rXml = RuleXmlUtil.currentRuleToXml(store, ruleType, ruleId);
+        RuleXml rXml = ruleXmlUtil.currentRuleToXml(store, ruleType, ruleId);
 
         if (rXml instanceof ElevateRuleXml) {
             ((ElevateRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
