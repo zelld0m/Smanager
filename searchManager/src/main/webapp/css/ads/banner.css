@@ -30,22 +30,7 @@
 /* page title end */
 
 /* page info start */
-.ban_edit .page_info {
-line-height: 24px;
-    padding: 10px;
-    width: 710px;
-}
-.ban_edit .page_info li {
-	font-size:13px;
-height: 24px;
-    margin-right: 8px;
-    padding-right: 8px;
-}
-.ban_edit .page_info .fRight {
-	padding: 0;
-	margin: 0;
-}
-.ban_edit .page_info .fRight, .ban_edit .page_nav_group .fRight {
+.ban_edit .page_nav_group .fRight {
  font-size: 12px;
 }
 .ban_edit .pagingArrow {padding-top:8px;}
@@ -424,24 +409,14 @@ margin-left: 75px;
 	cursor: pointer;
 	background: transparent url('image/icons_sprite.png') no-repeat 1px -19px;
 }
-.ban_edit .ico_download {
-	height: 17px;
-	width: 14px;
-	display: block;
-	background-position: -101px top;
-}
+
 .ban_edit .ico_download2 {
 	height: 11px;
 	width: 11px;
 	display: block;
 	background-position: 1px -19px;
 }
-.ban_edit .ico_comments {
-	height: 17px;
-	width: 21px;
-	display: block;
-	background-position: 0px 0px;
-}
+
 .ban_edit .ico_history {
 	height: 17px;
 	width: 14px;

@@ -37,7 +37,7 @@
   
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
-	
+	var GLOBAL_allowModification = allowModify;
 	// Request server details
 	var GLOBAL_scheme = "<%=request.getScheme()%>";  
     var GLOBAL_serverName = "<%=request.getServerName()%>";  
