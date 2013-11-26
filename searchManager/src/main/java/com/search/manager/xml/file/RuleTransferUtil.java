@@ -13,6 +13,8 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRuleCondition;
@@ -26,12 +28,16 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropertiesUtils;
 
+@Component
 public class RuleTransferUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(RuleTransferUtil.class);
     public static final Pattern PATTERN = Pattern.compile("__(.*).xml", Pattern.DOTALL);
     private static final String IMPORT_FILE_PATH = PropertiesUtils.getValue("importfilepath");
-
+    
+    @Autowired
+    private RuleXmlUtil ruleXmlUtil;
+    
     public static List<RuleXml> getAllExportedRules(String store, String ruleType) {
         return (ArrayList<RuleXml>) getRules(store, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
     }
@@ -117,9 +123,9 @@ public class RuleTransferUtil {
         return RuleXmlUtil.ruleXmlToFile(targetStore, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
     }
 
-    public static boolean importRule(String store, String ruleId, RuleXml ruleXml) {
+    public boolean importRule(String store, String ruleId, RuleXml ruleXml) {
         logger.info(String.format("Importing rule xml... [store = %s, ruleId = %s]", store, ruleId));
-        return RuleXmlUtil.importRule(ruleXml);
+        return ruleXmlUtil.importRule(ruleXml);
     }
 
     public static String getFilename(String store, RuleEntity ruleEntity, String ruleId) {
