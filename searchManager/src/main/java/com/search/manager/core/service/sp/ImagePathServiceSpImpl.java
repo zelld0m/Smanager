@@ -1,5 +1,6 @@
 package com.search.manager.core.service.sp;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +39,10 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	@Override
 	public ImagePath add(ImagePath model) throws CoreServiceException {
 		try {
-			// TODO validation here...
-
 			// Validate required fields.
+			if (!validateRequiredField(model, false)) {
+				throw new CoreServiceException("Required Field Exception.");
+			}
 
 			// Set CreatedBy and CreatedDate
 			if (StringUtils.isBlank(model.getCreatedBy())) {
@@ -60,7 +62,20 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	public List<ImagePath> add(Collection<ImagePath> models)
 			throws CoreServiceException {
 		try {
-			return (List<ImagePath>) imagePathDao.add(models);
+			List<ImagePath> validatedModels = new ArrayList<ImagePath>();
+			for (ImagePath imagePath : models) {
+				if (validateRequiredField(imagePath, false)) {
+					// Set CreatedBy and CreatedDate
+					if (StringUtils.isBlank(imagePath.getCreatedBy())) {
+						imagePath.setCreatedBy(UtilityService.getUsername());
+					}
+					if (imagePath.getCreatedDate() == null) {
+						imagePath.setCreatedDate(new DateTime());
+					}
+					validatedModels.add(imagePath);
+				}
+			}
+			return (List<ImagePath>) imagePathDao.add(validatedModels);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
@@ -69,9 +84,10 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	@Override
 	public ImagePath update(ImagePath model) throws CoreServiceException {
 		try {
-			// TODO validation here...
-
 			// Validate required field for update.
+			if (!validateRequiredField(model, true)) {
+				throw new CoreServiceException("Required Field Exception.");
+			}
 
 			// Set LastModifiedBy and LastModifiedDate
 			if (StringUtils.isBlank(model.getLastModifiedBy())) {
@@ -91,13 +107,23 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	public Collection<ImagePath> update(Collection<ImagePath> models)
 			throws CoreServiceException {
 		try {
-			// TODO validation here...
-
 			// Validate required field for update.
+			List<ImagePath> validatedModels = new ArrayList<ImagePath>();
+			for (ImagePath imagePath : models) {
+				if (validateRequiredField(imagePath, true)) {
+					// Set LastModifiedBy and LastModifiedDate
+					if (StringUtils.isBlank(imagePath.getLastModifiedBy())) {
+						imagePath.setLastModifiedBy(UtilityService
+								.getUsername());
+					}
+					if (imagePath.getLastModifiedDate() == null) {
+						imagePath.setLastModifiedDate(new DateTime());
+					}
+					validatedModels.add(imagePath);
+				}
+			}
 
-			// Set LastModifiedBy and LastModifiedDate
-
-			return imagePathDao.update(models);
+			return imagePathDao.update(validatedModels);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
 		}
@@ -238,6 +264,24 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 		}
 
 		return null;
+	}
+
+	public boolean validateRequiredField(ImagePath imagePath, boolean updateFlag) {
+		boolean valid = true;
+
+		if (StringUtils.isBlank(imagePath.getPath())
+				|| StringUtils.isBlank(imagePath.getAlias())
+				|| StringUtils.isBlank(imagePath.getStoreId())
+				|| StringUtils.isBlank(imagePath.getSize())
+				|| imagePath.getPathType() == null) {
+			valid = false;
+		}
+
+		if (updateFlag && StringUtils.isBlank(imagePath.getId())) {
+			valid = false;
+		}
+
+		return valid;
 	}
 
 }
