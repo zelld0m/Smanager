@@ -36,12 +36,16 @@ import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRuleVersionDAO<T> {
 
     private static final Logger logger =
             LoggerFactory.getLogger(AbstractRuleVersionDAO.class);
 
+    @Autowired
+    private RuleXmlUtil ruleXmlUtil;
+    
     protected abstract RuleEntity getRuleEntity();
 
     protected abstract boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion);
@@ -79,7 +83,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 
             if (versions != null) {
                 RuleXml latestRuleXml = (RuleXml) versions.get(versions.size() - 1);
-                RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+                RuleStatus ruleStatus = ruleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
 
                 latestRuleXml.setRuleStatus(ruleStatus);
             }
@@ -90,7 +94,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 
     @Override
     public boolean restoreRuleVersion(RuleXml xml) {
-        return RuleXmlUtil.restoreRule(xml);
+        return ruleXmlUtil.restoreRule(xml);
     }
 
     ;

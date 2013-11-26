@@ -31,7 +31,9 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	@Autowired
 	private DaoService daoService;
-
+	@Autowired
+    private RuleXmlUtil ruleXmlUtil;
+	
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
@@ -78,7 +80,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	                DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
 	                        ruleId, RuleEntity.SPELL);
-	                RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+	                RuleStatus ruleStatus = ruleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
 	                version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
 	                version.setRuleStatus(ruleStatus);
 	                ruleVersions.getVersions().add(version);
