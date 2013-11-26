@@ -38,6 +38,8 @@ public class RuleVersionService {
     private DeploymentService deploymentService;
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
     
     @RemoteMethod
     public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
@@ -85,7 +87,7 @@ public class RuleVersionService {
     @RemoteMethod
     public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
         boolean success = false;
-        RuleXml rule = RuleVersionUtil.getRuleVersion(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, version);
+        RuleXml rule = ruleVersionUtil.getRuleVersion(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, version);
         if (rule != null) {
             rule.setCreatedBy(UtilityService.getUsername());
             success = daoService.restoreRuleVersion(rule);
@@ -115,11 +117,11 @@ public class RuleVersionService {
         RuleXml rXml = ruleXmlUtil.currentRuleToXml(store, ruleType, ruleId);
 
         if (rXml instanceof ElevateRuleXml) {
-            ((ElevateRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
+            ((ElevateRuleXml) rXml).setProducts(ruleXmlUtil.getProductDetails(rXml, store));
         } else if (rXml instanceof ExcludeRuleXml) {
-            ((ExcludeRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
+            ((ExcludeRuleXml) rXml).setProducts(ruleXmlUtil.getProductDetails(rXml, store));
         } else if (rXml instanceof DemoteRuleXml) {
-            ((DemoteRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
+            ((DemoteRuleXml) rXml).setProducts(ruleXmlUtil.getProductDetails(rXml, store));
         }
 
         return rXml;

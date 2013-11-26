@@ -12,13 +12,15 @@ public abstract class RuleService {
 
 	@Autowired
 	private RuleXmlUtil ruleXmlUtil;
-
+	@Autowired
+	private RuleVersionUtil ruleVersionUtil;
+	
 	public abstract RuleEntity getRuleEntity();
 
 	@RemoteMethod
 	public boolean restoreRule(String ruleId, int version) {
 		String store = UtilityService.getStoreId();
-		RuleXml ruleXml = RuleVersionUtil.getRuleVersion(store,
+		RuleXml ruleXml = ruleVersionUtil.getRuleVersion(store,
 				getRuleEntity(), ruleId, version);
 
 		if (ruleXml != null) {

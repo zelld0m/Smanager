@@ -108,7 +108,7 @@ public class RuleXmlUtil {
         //Exists only to defeat instantiation.
     }
 
-    protected static void setFacetTemplateValues(String storeId, RedirectRuleCondition condition) {
+    protected void setFacetTemplateValues(String storeId, RedirectRuleCondition condition) {
         ConfigManager configManager = ConfigManager.getInstance();
         if (configManager != null && condition != null) {
             condition.setFacetPrefix(configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
@@ -117,7 +117,7 @@ public class RuleXmlUtil {
         }
     }
 
-    protected static void setFacetTemplateValues(String storeId, List<? extends RuleItemXml> list) {
+    protected void setFacetTemplateValues(String storeId, List<? extends RuleItemXml> list) {
         ConfigManager configManager = ConfigManager.getInstance();
         if (configManager != null && CollectionUtils.isNotEmpty(list)) {
             String facetPrefix = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME);
@@ -134,7 +134,7 @@ public class RuleXmlUtil {
         }
     }
 
-    public static RuleXml getLatestVersion(List<RuleXml> ruleVersions) {
+    public RuleXml getLatestVersion(List<RuleXml> ruleVersions) {
         RuleXml latestVersion = null;
         if (CollectionUtils.isNotEmpty(ruleVersions)) {
             for (RuleXml rule : ruleVersions) {
@@ -266,7 +266,7 @@ public class RuleXmlUtil {
         return ruleXml;
     }
 
-    public static List<Product> getProductDetails(RuleXml ruleXml, String targetStore) {
+    public List<Product> getProductDetails(RuleXml ruleXml, String targetStore) {
 
         LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
         List<Product> productList = new ArrayList<Product>();
@@ -301,7 +301,7 @@ public class RuleXmlUtil {
         return productList;
     }
 
-    private static RuleXml xmlFileToRuleXml(String path) {
+    private RuleXml xmlFileToRuleXml(String path) {
         FileReader reader = null;
 
         try {
@@ -325,10 +325,10 @@ public class RuleXmlUtil {
         }
     }
 
-    private static RuleXml xmlFileToRuleXml(String store, String path, RuleEntity ruleEntity, String ruleId) {
-        String dir = RuleXmlUtil.getRuleFileDirectory(path, store, ruleEntity);
-        String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
-        String filename = RuleXmlUtil.getFilenameByDir(dir, id);
+    private RuleXml xmlFileToRuleXml(String store, String path, RuleEntity ruleEntity, String ruleId) {
+        String dir = getRuleFileDirectory(path, store, ruleEntity);
+        String id = getRuleId(ruleEntity, ruleId);
+        String filename = getFilenameByDir(dir, id);
         File dirFile = new File(dir);
         FileReader reader = null;
 
@@ -404,10 +404,10 @@ public class RuleXmlUtil {
         //		return null;
     }
 
-    public static boolean ruleXmlToFile(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, String path) {
-        String dir = RuleXmlUtil.getRuleFileDirectory(path, store, ruleEntity);
-        String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
-        String filename = RuleXmlUtil.getFilenameByDir(dir, id);
+    public boolean ruleXmlToFile(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, String path) {
+        String dir = getRuleFileDirectory(path, store, ruleEntity);
+        String id = getRuleId(ruleEntity, ruleId);
+        String filename = getFilenameByDir(dir, id);
         FileWriter writer = null;
 
         File dirFile = new File(dir);
@@ -463,7 +463,7 @@ public class RuleXmlUtil {
             if (CollectionUtils.isNotEmpty(preImportlist)) {
                 if (createPreRestore) {
                     //TODO: Save existing rule not the rule to be restored
-                    if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)) {
+                    if (!ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)) {
                         logger.error("Failed to create pre-import rule");
                         return false;
                     };
@@ -528,7 +528,7 @@ public class RuleXmlUtil {
             if (CollectionUtils.isNotEmpty(preImportlist)) {
                 if (createPreRestore) {
                     //TODO: Save existing rule not the rule to be restored
-                    if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)) {
+                    if (!ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)) {
                         logger.error("Failed to create pre-import rule");
                         return false;
                     };
@@ -593,7 +593,7 @@ public class RuleXmlUtil {
             if (CollectionUtils.isNotEmpty(preImportlist)) {
                 if (createPreRestore) {
                     //TODO: Save existing rule not the rule to be restored
-                    if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, dXml, path)) {
+                    if (!ruleXmlToFile(store, ruleEntity, ruleId, dXml, path)) {
                         logger.error("Failed to create pre-import rule");
                         return false;
                     };
@@ -659,7 +659,7 @@ public class RuleXmlUtil {
             if (rule != null) {
                 if (createPreRestore) {
                     //TODO: Save existing rule not the rule to be restored
-                    if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, fXml, path)) {
+                    if (!ruleXmlToFile(store, ruleEntity, ruleId, fXml, path)) {
                         logger.error("Failed to create pre-import rule");
                         return false;
                     };
@@ -741,7 +741,7 @@ public class RuleXmlUtil {
                 if (redirectRule != null) {
                     if (createPreRestore) {
                         //TODO: Save existing rule not the rule to be restored
-                        if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, qRXml, path)) {
+                        if (!ruleXmlToFile(store, ruleEntity, ruleId, qRXml, path)) {
                             logger.error("Failed to create pre-import rule");
                             return false;
                         };
@@ -854,7 +854,7 @@ public class RuleXmlUtil {
             if (rule != null) {
 
                 if (createPreRestore) {
-                    if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, rRXml, path)) {
+                    if (!ruleXmlToFile(store, ruleEntity, ruleId, rRXml, path)) {
                         logger.error("Failed to create pre-import rule");
                         return false;
                     };
@@ -945,7 +945,7 @@ public class RuleXmlUtil {
                     BannerRuleXml cruleXml = new BannerRuleXml(crule);
                     cruleXml.setItemXml(Lists.transform(citems, Transformers.bannerItemRuleToXml));
 
-                    if (!RuleXmlUtil.ruleXmlToFile(store, RuleEntity.BANNER, xml.getRuleId(), cruleXml, path)) {
+                    if (!ruleXmlToFile(store, RuleEntity.BANNER, xml.getRuleId(), cruleXml, path)) {
                         logger.error("Failed to create pre-restore for Banner");
                         return false;
                     }
@@ -1024,7 +1024,7 @@ public class RuleXmlUtil {
         return restoreRule(xml, isVersion, true);
     }
 
-    public static boolean saveRuleXml(RuleXml xml, String location, long version) {
+    public boolean saveRuleXml(RuleXml xml, String location, long version) {
         FileWriter writer = null;
 
         try {
@@ -1050,7 +1050,7 @@ public class RuleXmlUtil {
         }
     }
 
-    public static RuleXml loadVersion(String file) {
+    public RuleXml loadVersion(String file) {
         return xmlFileToRuleXml(file);
     }
 
@@ -1080,7 +1080,7 @@ public class RuleXmlUtil {
         return isRestored;
     }
 
-    public static void deleteFile(String filepath) throws IOException {
+    public void deleteFile(String filepath) throws IOException {
         File file = new File(filepath);
 
         if (file.exists() && !file.delete()) {
@@ -1088,17 +1088,17 @@ public class RuleXmlUtil {
         }
     }
 
-    public static String getFilename(String path, String store, RuleEntity ruleEntity, String ruleId) {
+    public String getFilename(String path, String store, RuleEntity ruleEntity, String ruleId) {
         StringBuilder filePath = new StringBuilder(getRuleFileDirectory(path, store, ruleEntity)).append(File.separator).append(ruleId).append(XML_FILE_TYPE);
         return filePath.toString();
     }
 
-    public static String getFilenameByDir(String dir, String ruleId) {
+    public String getFilenameByDir(String dir, String ruleId) {
         StringBuilder filePath = new StringBuilder(dir).append(File.separator).append(ruleId).append(XML_FILE_TYPE);
         return filePath.toString();
     }
 
-    public static String getRuleFileDirectory(String path, String store, RuleEntity ruleEntity) {
+    public String getRuleFileDirectory(String path, String store, RuleEntity ruleEntity) {
         StringBuilder sb = new StringBuilder();
         List<String> values = ruleEntity.getValues();
         String directory = CollectionUtils.isNotEmpty(values) ? values.get(0) : ruleEntity.name();
@@ -1106,7 +1106,7 @@ public class RuleXmlUtil {
         return sb.toString();
     }
 
-    public static boolean backUpRule(String path, String store, RuleEntity ruleEntity, String ruleId, Object rule) {
+    public boolean backUpRule(String path, String store, RuleEntity ruleEntity, String ruleId, Object rule) {
         String dir = getRuleFileDirectory(path, store, ruleEntity);
         String filename = getFilenameByDir(dir, getRuleId(ruleEntity, ruleId)) + "_backup";
         FileWriter writer = null;
@@ -1133,7 +1133,7 @@ public class RuleXmlUtil {
         }
     }
 
-    public static String getRuleId(RuleEntity ruleEntity, String ruleId) {
+    public String getRuleId(RuleEntity ruleEntity, String ruleId) {
         switch (ruleEntity) {
             case ELEVATE:
             case EXCLUDE:

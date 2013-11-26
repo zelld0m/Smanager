@@ -54,7 +54,9 @@ public class FacetSortController {
     private DownloadService downloadService;
     @Autowired
     private RuleVersionService ruleVersionService;
-
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
@@ -144,7 +146,7 @@ public class FacetSortController {
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        RuleVersionListXml facetSortXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.FACET_SORT, ruleId);
+        RuleVersionListXml facetSortXml = ruleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.FACET_SORT, ruleId);
         String subTitle = String.format("Facet Sort Rule [%s]", facetSortXml != null ? facetSortXml.getRuleName() : "");
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);

@@ -38,21 +38,21 @@ public class RuleTransferUtil {
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
     
-    public static List<RuleXml> getAllExportedRules(String store, String ruleType) {
+    public List<RuleXml> getAllExportedRules(String store, String ruleType) {
         return (ArrayList<RuleXml>) getRules(store, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
     }
 
-    public static RuleXml getRuleToImport(String store, RuleEntity ruleEntity, String ruleId) {
+    public RuleXml getRuleToImport(String store, RuleEntity ruleEntity, String ruleId) {
         return getRule(store, ruleEntity, ruleId, IMPORT_FILE_PATH);
     }
 
     @SuppressWarnings("unchecked")
-    public static RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId, String path) {
+    public RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId, String path) {
         RuleXml ruleXml = getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), path);
 
         if (ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml) {
             ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
-            productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml, store));
+            productDetailsAware.setProducts(ruleXmlUtil.getProductDetails(ruleXml, store));
         
             List<RuleItemXml> ruleItemXmlList = (List<RuleItemXml>) productDetailsAware.getItem();
 
@@ -67,7 +67,7 @@ public class RuleTransferUtil {
         return ruleXml;
     }
 
-    public static RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path) {
+    public RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path) {
         try {
             if (file != null && file.exists()) {
                 JAXBContext context = JAXBContext.newInstance(RuleXml.class);
@@ -82,9 +82,9 @@ public class RuleTransferUtil {
         return null;
     }
 
-    public static List<RuleXml> getRules(String store, RuleEntity ruleEntity, String path) {
+    public List<RuleXml> getRules(String store, RuleEntity ruleEntity, String path) {
         List<RuleXml> ruleXmls = new ArrayList<RuleXml>();
-        String dir = RuleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
+        String dir = ruleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
 
         File dirFile = new File(dir);
 
@@ -107,7 +107,7 @@ public class RuleTransferUtil {
             if (ruleXml != null) {
                 if (ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml) {
                     ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
-                    productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml, store));
+                    productDetailsAware.setProducts(ruleXmlUtil.getProductDetails(ruleXml, store));
                     ruleXmls.add((RuleXml) productDetailsAware);
                 } else {
                     ruleXmls.add(ruleXml);
@@ -118,9 +118,9 @@ public class RuleTransferUtil {
         return ruleXmls;
     }
 
-    public static boolean exportRule(String targetStore, RuleEntity ruleEntity, String ruleId, RuleXml rule) {
+    public boolean exportRule(String targetStore, RuleEntity ruleEntity, String ruleId, RuleXml rule) {
         logger.info(String.format("Exporting rule xml... [store = %s, ruleId = %s, path = %s]", targetStore, ruleId, IMPORT_FILE_PATH));
-        return RuleXmlUtil.ruleXmlToFile(targetStore, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
+        return ruleXmlUtil.ruleXmlToFile(targetStore, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
     }
 
     public boolean importRule(String store, String ruleId, RuleXml ruleXml) {
@@ -128,22 +128,22 @@ public class RuleTransferUtil {
         return ruleXmlUtil.importRule(ruleXml);
     }
 
-    public static String getFilename(String store, RuleEntity ruleEntity, String ruleId) {
-        return RuleXmlUtil.getFilename(IMPORT_FILE_PATH, store, ruleEntity, ruleId);
+    public String getFilename(String store, RuleEntity ruleEntity, String ruleId) {
+        return ruleXmlUtil.getFilename(IMPORT_FILE_PATH, store, ruleEntity, ruleId);
     }
 
-    public static boolean deleteRuleFile(RuleEntity ruleEntity, String store, String ruleId, String comment) {
+    public boolean deleteRuleFile(RuleEntity ruleEntity, String store, String ruleId, String comment) {
         boolean success = false;
-        String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
+        String id = ruleXmlUtil.getRuleId(ruleEntity, ruleId);
         try {
-            String filepath = RuleTransferUtil.getFilename(store, ruleEntity, id);
+            String filepath = getFilename(store, ruleEntity, id);
             File file = new File(filepath);
 
             logger.info(String.format("Trying to delete file [%s]", filepath));
             if (!file.exists()) {
                 logger.info("File to delete not found. Filename = " + filepath);
             } else {
-                RuleXmlUtil.deleteFile(filepath);
+                ruleXmlUtil.deleteFile(filepath);
                 success = true;
                 logger.info(String.format("File [%s] has been deleted.", filepath));
             }

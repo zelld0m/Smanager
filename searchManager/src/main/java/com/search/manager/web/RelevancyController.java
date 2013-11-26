@@ -58,7 +58,9 @@ public class RelevancyController {
     private DownloadService downloadService;
     @Autowired
     private RuleVersionService ruleVersionService;
-
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
 
@@ -150,7 +152,7 @@ public class RelevancyController {
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        RuleVersionListXml listXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.RANKING_RULE, ruleId);
+        RuleVersionListXml listXml = ruleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.RANKING_RULE, ruleId);
         String subTitle = String.format("Ranking Rule [%s]", listXml != null ? listXml.getRuleName() : "");
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);

@@ -52,6 +52,9 @@ public class SpellRuleDAO {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    
+    @Autowired
+    private RuleXmlUtil ruleXmlUtil;
 
     @PostConstruct
     public void init() {
@@ -281,7 +284,7 @@ public class SpellRuleDAO {
             SpellRules spellRulesXml = new SpellRules(store, 0, "Did You Mean", "", UtilityService.getUsername(),
                     new DateTime(), "spell_rule", maxSuggest, Lists.transform(spellRules, SpellRule.transformer));
 
-            RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
+            ruleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
             ConfigManager.getInstance().setPublishedStoreLinguisticSetting(store, "maxSpellSuggestions",
                     String.valueOf(daoService.getMaxSuggest(store)));
             return true;

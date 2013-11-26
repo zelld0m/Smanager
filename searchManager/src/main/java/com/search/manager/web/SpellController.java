@@ -55,7 +55,9 @@ public class SpellController {
     private RuleTransferService ruleTransferService;
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String store) {
@@ -108,7 +110,7 @@ public class SpellController {
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
         ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
         @SuppressWarnings("unchecked")
-        RuleVersionListXml<DBRuleVersion> ruleVersions = RuleVersionUtil.getPublishedList(store, RuleEntity.SPELL,
+        RuleVersionListXml<DBRuleVersion> ruleVersions = ruleVersionUtil.getPublishedList(store, RuleEntity.SPELL,
                 "spell_rule");
 
         try {

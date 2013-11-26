@@ -142,7 +142,11 @@ public class DaoServiceImpl implements DaoService {
     private SpellRuleVersionDAO spellRuleVersionDAO;
     @Autowired
     private BannerVersionDAO bannerVersionDAO;
+    @Autowired
+    private RuleTransferUtil ruleTransferUtil;
+    
     private DaoServiceImpl instance;
+    
     private static final Logger logger =
             LoggerFactory.getLogger(DaoServiceImpl.class);
 
@@ -1648,7 +1652,7 @@ public class DaoServiceImpl implements DaoService {
         }
 
         for (String targetStore : UtilityService.getStoresToExport(store)) {
-            exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
+            exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
             ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
                     targetStore, null, null, ruleEntity);
             exportRuleMap.setExportDateTime(exportDateTime);

@@ -56,7 +56,9 @@ public class DeploymentService {
     private DaoService daoService;
     @Autowired
     private WorkflowNotificationMailService mailService;
-
+    @Autowired
+    private RuleXmlUtil ruleXmlUtil;
+    
     @RemoteMethod
     public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {
         RecordSet<RuleStatus> rSet = null;
@@ -256,7 +258,7 @@ public class DeploymentService {
                     daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
                     logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));
                     if (isAutoExport) {
-                        RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
+                        RuleXml ruleXml = ruleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
                         if (ruleXml != null) {
                             try {
                                 daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.AUTOMATIC, username, "Automatic Export on Publish");

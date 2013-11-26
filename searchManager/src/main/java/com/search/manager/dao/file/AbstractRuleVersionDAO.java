@@ -45,17 +45,19 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
     
     protected abstract RuleEntity getRuleEntity();
 
     protected abstract boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes, boolean isVersion);
 
     protected RuleVersionListXml<?> getRuleVersionList(String store, String ruleId) {
-        return RuleVersionUtil.getRuleVersionList(store, getRuleEntity(), ruleId);
+        return ruleVersionUtil.getRuleVersionList(store, getRuleEntity(), ruleId);
     }
 
     protected RuleVersionListXml<?> getPublishedList(String store, String ruleId) {
-        return RuleVersionUtil.getPublishedList(store, getRuleEntity(), ruleId);
+        return ruleVersionUtil.getPublishedList(store, getRuleEntity(), ruleId);
     }
 
     @Override
@@ -66,7 +68,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
                 return false;
             }
         }
-        return RuleVersionUtil.addRuleVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
+        return ruleVersionUtil.addRuleVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
     }
 
     @Override
@@ -89,7 +91,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
             }
         }
 
-        return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersionListXml);
+        return ruleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersionListXml);
     }
 
     @Override
@@ -100,7 +102,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
     ;
 
 	public String getRuleVersionFilename(String store, String ruleId) {
-        return RuleVersionUtil.getRuleVersionFilename(store, getRuleEntity(), StringUtil.escapeKeyword(ruleId));
+        return ruleVersionUtil.getRuleVersionFilename(store, getRuleEntity(), StringUtil.escapeKeyword(ruleId));
     }
 
     @Override
@@ -167,7 +169,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
                     if (!ruleVersion.isDeleted()) {
                         if (ruleVersion instanceof ElevateRuleXml || ruleVersion instanceof ExcludeRuleXml || ruleVersion instanceof DemoteRuleXml) {
                             ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleVersion;
-                            productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion, UtilityService.getStoreId()));
+                            productDetailsAware.setProducts(ruleXmlUtil.getProductDetails(ruleVersion, UtilityService.getStoreId()));
                             ruleVersionInfoList.add((RuleXml) productDetailsAware);
                         } else {
                             ruleVersionInfoList.add(ruleVersion);
