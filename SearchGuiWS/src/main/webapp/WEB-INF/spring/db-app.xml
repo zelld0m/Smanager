@@ -28,6 +28,7 @@
   	   <beans:property name="testOnReturn" value="false"/>
     </beans:bean>
 	
+	
 	<!--  dao services prod-->	
 	<beans:bean name="jdbcTemplate" id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" scope="singleton">
 		<beans:constructor-arg ref="dataSource_solr" />
@@ -59,9 +60,9 @@
 	<beans:bean name="auditTrailDao" id="auditTrailDAO" class="com.search.manager.dao.sp.AuditTrailDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
-	<beans:bean name="bannerDao" id="bannerDAO" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
+	<!-- beans:bean name="bannerDao" id="bannerDAO" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
-	</beans:bean>
+	</beans:bean -->
 	<beans:bean name="ruleStatusDao" id="ruleStatusDAO" class="com.search.manager.dao.sp.RuleStatusDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
@@ -101,7 +102,7 @@
 		<beans:property name="relevancyDAO" ref="relevancyDAO"/>
 		<beans:property name="redirectRuleDAO" ref="redirectRuleDAO"/>
 		<beans:property name="auditTrailDAO" ref="auditTrailDAO"/>
-		<beans:property name="bannerDAO" ref="bannerDAO"/>
+		<!-- beans:property name="bannerDAO" ref="bannerDAO"/ -->
 		<beans:property name="ruleStatusDAO" ref="ruleStatusDAO"/>
 		<beans:property name="commentDAO" ref="commentDAO"/>
 		<beans:property name="usersDAO" ref="usersDAO"/>
@@ -141,9 +142,9 @@
 	<beans:bean name="auditTrailDaoStg" id="auditTrailDAOStg" class="com.search.manager.dao.sp.AuditTrailDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplateStg" />
 	</beans:bean>
-	<beans:bean name="bannerDaoStg" id="bannerDAOStg" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
+	<!-- beans:bean name="bannerDaoStg" id="bannerDAOStg" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplateStg" />
-	</beans:bean>
+	</beans:bean -->
 	<beans:bean name="ruleStatusDaoStg" id="ruleStatusDAOStg" class="com.search.manager.dao.sp.RuleStatusDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplateStg" />
 	</beans:bean>
@@ -174,7 +175,7 @@
 		<beans:property name="relevancyDAO" ref="relevancyDAOStg"/>
 		<beans:property name="redirectRuleDAO" ref="redirectRuleDAOStg"/>
 		<beans:property name="auditTrailDAO" ref="auditTrailDAOStg"/>
-		<beans:property name="bannerDAO" ref="bannerDAOStg"/>
+		<!-- beans:property name="bannerDAO" ref="bannerDAOStg"/ -->
 		<beans:property name="ruleStatusDAO" ref="ruleStatusDAOStg"/>
 		<beans:property name="commentDAO" ref="commentDAOStg"/>
 		<beans:property name="usersDAO" ref="usersDAOStg"/>
