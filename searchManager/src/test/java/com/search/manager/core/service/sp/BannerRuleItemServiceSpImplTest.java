@@ -27,7 +27,6 @@ import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.BannerRuleItemService;
 import com.search.manager.dao.sp.DAOConstants;
-import com.search.manager.response.ServiceResponse;
 
 public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 
@@ -224,30 +223,28 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		params.put("openNewWindow", BannerRuleItemTestData
 				.getNewBannerRuleItem().getOpenNewWindow() + "");
 
-		ServiceResponse<BannerRuleItem> serviceResponse = bannerRuleItemService
-				.addRuleItem(BannerRuleItemTestData.getNewBannerRuleItem()
-						.getRule().getStoreId(), params);
-		assertNotNull(serviceResponse);
+		BannerRuleItem bannerRuleItem = bannerRuleItemService.addRuleItem(
+				BannerRuleItemTestData.getNewBannerRuleItem().getRule()
+						.getStoreId(), params);
+		assertNotNull(bannerRuleItem);
 
 		// Test successful add
-		assertNotNull(serviceResponse.getData());
-		assertNotNull(serviceResponse.getData().getMemberId());
-		assertNotNull(serviceResponse.getData().getCreatedDate());
+		assertNotNull(bannerRuleItem);
+		assertNotNull(bannerRuleItem.getMemberId());
+		assertNotNull(bannerRuleItem.getCreatedDate());
 
 		// Remove added rule item
-		Assert.assertTrue(bannerRuleItemService.delete(serviceResponse
-				.getData()));
+		Assert.assertTrue(bannerRuleItemService.delete(bannerRuleItem));
 	}
 
 	@Test
 	public void getTotalRuleItemsTest() throws CoreServiceException {
-		ServiceResponse<Integer> serviceResponse = bannerRuleItemService
-				.getTotalRuleItems(BannerRuleItemTestData
-						.getExistingBannerRuleItem().getRule().getStoreId(),
-						BannerRuleItemTestData.getExistingBannerRuleItem()
-								.getRule().getRuleId());
-		assertNotNull(serviceResponse);
-		Assert.assertTrue(serviceResponse.getData() > 0);
+		Integer totalCount = bannerRuleItemService.getTotalRuleItems(
+				BannerRuleItemTestData.getExistingBannerRuleItem().getRule()
+						.getStoreId(), BannerRuleItemTestData
+						.getExistingBannerRuleItem().getRule().getRuleId());
+
+		Assert.assertTrue(totalCount > 0);
 	}
 
 	@Ignore
@@ -257,40 +254,39 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		// filter: active, expired, disabled and date
 		String filter = "active";
 		String dateFilter = "";
-		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService
+		SearchResult<BannerRuleItem> searchResult = bannerRuleItemService
 				.getRuleItemsByFilter(BannerRuleItemTestData
 						.getExistingBannerRuleItem().getRule().getStoreId(),
 						BannerRuleItemTestData.getExistingBannerRuleItem()
 								.getRule().getRuleId(), filter, dateFilter,
 						BannerRuleItemTestData.getExistingBannerRuleItem()
 								.getImagePath().getSize(), 1, 10);
-		assertNotNull(serviceResponse);
-		assertNotNull(serviceResponse.getData());
-		Assert.assertTrue(serviceResponse.getData().getTotalCount() > 0);
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getResult());
+		Assert.assertTrue(searchResult.getTotalCount() > 0);
 	}
 
 	@Test
 	public void getRuleItemsByImageIdTest() throws CoreServiceException {
-		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService
+		SearchResult<BannerRuleItem> searchResult = bannerRuleItemService
 				.getRuleItemsByImageId(BannerRuleItemTestData
 						.getExistingBannerRuleItem().getRule().getStoreId(),
 						BannerRuleItemTestData.getExistingBannerRuleItem()
 								.getImagePath().getId(), 1, 10);
-		assertNotNull(serviceResponse);
-		assertNotNull(serviceResponse.getData());
-		Assert.assertTrue(serviceResponse.getData().getTotalCount() > 0);
+		assertNotNull(searchResult);
+		assertNotNull(searchResult.getResult());
+		Assert.assertTrue(searchResult.getTotalCount() > 0);
 	}
 
 	@Test
 	public void getRuleItemsByRuleIdTest() throws CoreServiceException {
-		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService
+		SearchResult<BannerRuleItem> searchResult = bannerRuleItemService
 				.getRuleItemsByRuleId(BannerRuleItemTestData
 						.getExistingBannerRuleItem().getRule().getStoreId(),
 						BannerRuleItemTestData.getExistingBannerRuleItem()
 								.getRule().getRuleId(), 1, 10);
-		assertNotNull(serviceResponse);
-		for (BannerRuleItem bannerRuleItem : serviceResponse.getData()
-				.getResult()) {
+		assertNotNull(searchResult);
+		for (BannerRuleItem bannerRuleItem : searchResult.getResult()) {
 			assertNotNull(bannerRuleItem);
 			logger.info(bannerRuleItem.toString());
 		}
@@ -298,14 +294,13 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 
 	@Test
 	public void getAllRuleItemsTest() throws CoreServiceException {
-		ServiceResponse<SearchResult<BannerRuleItem>> serviceResponse = bannerRuleItemService
+		SearchResult<BannerRuleItem> searchResult = bannerRuleItemService
 				.getAllRuleItems(BannerRuleItemTestData
 						.getExistingBannerRuleItem().getRule().getStoreId(),
 						BannerRuleItemTestData.getExistingBannerRuleItem()
 								.getRule().getRuleId());
-		assertNotNull(serviceResponse);
-		for (BannerRuleItem bannerRuleItem : serviceResponse.getData()
-				.getResult()) {
+		assertNotNull(searchResult);
+		for (BannerRuleItem bannerRuleItem : searchResult.getResult()) {
 			assertNotNull(bannerRuleItem);
 			logger.info(bannerRuleItem.toString());
 		}
@@ -313,17 +308,17 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 
 	@Test
 	public void getRuleItemByMemberIdTest() throws CoreServiceException {
-		ServiceResponse<BannerRuleItem> serviceResponse = bannerRuleItemService
+		BannerRuleItem bannerRuleItem = bannerRuleItemService
 				.getRuleItemByMemberId(BannerRuleItemTestData
 						.getExistingBannerRuleItem().getRule().getStoreId(),
 						BannerRuleItemTestData.getExistingBannerRuleItem()
 								.getRule().getRuleId(), BannerRuleItemTestData
 								.getExistingBannerRuleItem().getMemberId());
-		assertNotNull(serviceResponse);
-		assertNotNull(serviceResponse.getData());
+		assertNotNull(bannerRuleItem);
 		Assert.assertEquals(BannerRuleItemTestData.getExistingBannerRuleItem()
-				.getMemberId(), serviceResponse.getData().getMemberId());
-		logger.info(serviceResponse.getData().toString());
+				.getMemberId(), bannerRuleItem.getMemberId());
+
+		logger.info(bannerRuleItem.toString());
 	}
 
 	public void updateRuleItemTest() throws CoreServiceException {
@@ -346,13 +341,9 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		assertNotNull(bannerRuleItem.getCreatedDate());
 
 		// Test delete by image size.
-		ServiceResponse<Boolean> serviceResponse = bannerRuleItemService
-				.deleteRuleItemsByImageSize(bannerRuleItem.getRule()
-						.getStoreId(), bannerRuleItem.getRule().getRuleId(),
-						bannerRuleItem.getImagePath().getSize());
-		assertNotNull(serviceResponse);
-		assertNotNull(serviceResponse.getData());
-		Assert.assertTrue(serviceResponse.getData());
+		Assert.assertTrue(bannerRuleItemService.deleteRuleItemsByImageSize(
+				bannerRuleItem.getRule().getStoreId(), bannerRuleItem.getRule()
+						.getRuleId(), bannerRuleItem.getImagePath().getSize()));
 	}
 
 	@Ignore
@@ -370,18 +361,11 @@ public class BannerRuleItemServiceSpImplTest extends BaseIntegrationTest {
 		assertNotNull(bannerRuleItem.getCreatedDate());
 
 		// Delete
-		ServiceResponse<Boolean> serviceResponse = bannerRuleItemService
-				.deleteRuleItemByMemberId(
-						bannerRuleItem.getRule().getStoreId(), bannerRuleItem
-								.getRule().getRuleId(), bannerRuleItem
-								.getMemberId(), bannerRuleItem.getImagePath()
-								.getAlias(), bannerRuleItem.getImagePath()
-								.getSize());
-
-		// Test successful delete
-		assertNotNull(serviceResponse);
-		assertNotNull(serviceResponse.getData());
-		Assert.assertTrue(serviceResponse.getData());
+		Assert.assertTrue(bannerRuleItemService.deleteRuleItemByMemberId(
+				bannerRuleItem.getRule().getStoreId(), bannerRuleItem.getRule()
+						.getRuleId(), bannerRuleItem.getMemberId(),
+				bannerRuleItem.getImagePath().getAlias(), bannerRuleItem
+						.getImagePath().getSize()));
 	}
-	
+
 }
