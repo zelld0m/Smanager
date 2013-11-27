@@ -8,15 +8,23 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.model.BannerRule;
+import com.search.manager.core.model.BannerRuleItem;
+import com.search.manager.core.model.ImagePath;
+import com.search.manager.core.search.SearchResult;
+import com.search.manager.core.service.BannerRuleItemService;
+import com.search.manager.core.service.BannerRuleService;
+import com.search.manager.core.service.ImagePathService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.model.BannerRule;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -35,8 +43,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.service.SolrService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.search.service.solr.BannerRuleItemMigratorService;
 
 @Service("deploymentRuleServiceSolrImpl")
 public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
@@ -55,6 +62,33 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
     @Autowired
     private SimpleMailMessage mailDetails;
 
+    // Production Service
+    @Autowired
+	@Qualifier("bannerRuleItemServiceSp")
+	private BannerRuleItemService bannerRuleItemServiceProd;
+    @Autowired
+	@Qualifier("bannerRuleServiceSp")
+	private BannerRuleService bannerRuleServiceProd;
+    @Autowired
+	@Qualifier("imagePathServiceSp")
+	private ImagePathService imagePathServiceProd;
+    
+    // Staging Service
+	@Autowired
+	@Qualifier("bannerRuleItemServiceSpStg")
+	private BannerRuleItemService bannerRuleItemServiceStg;
+	@Autowired
+	@Qualifier("bannerRuleServiceSpStg")
+	private BannerRuleService bannerRuleServiceStg;
+    @Autowired
+	@Qualifier("imagePathServiceSpStg")
+	private ImagePathService imagePathServiceStg;
+    
+	// Rule Migrator Service
+	@Autowired
+	private BannerRuleItemMigratorService bannerRuleItemMigratorService;
+	
+	
     public void setSolrService(SolrService solrService) {
         this.solrService = solrService;
     }
@@ -596,70 +630,62 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
     public Map<String, Boolean> publishBannerRulesMap(String store,
             List<String> ruleIds) {
         Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleIds);
-
+        List<String> publishedRules = new ArrayList<String>();
+        // TODO test
         try {
-            boolean hasError = false;
             StringBuffer errorMsg = new StringBuffer();
 
             for (String id : ruleIds) {
                 try {
-                    BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
+                    BannerRuleItem bannerRuleItem = new BannerRuleItem();
                     BannerRule bannerRule = new BannerRule();
                     bannerRule.setStoreId(store);
                     bannerRule.setRuleId(id);
-                    bannerRuleItemFilter.setRule(bannerRule);
-
-                    daoService.deleteBannerRuleItem(bannerRuleItemFilter); // prod
-                    daoService.deleteBannerRule(bannerRule); // prod
-
-                    // retrieve staging data then push to prod
-                    SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
-                            bannerRuleItemFilter, 0, 0);
-                    List<BannerRuleItem> bannerRuleItems = daoServiceStg
-                            .searchBannerRuleItem(criteria).getList();
-
-                    if (bannerRuleItems != null && bannerRuleItems.size() > 0) {
-                        daoService.addBannerRule(bannerRuleItems.get(0)
-                                .getRule());
-                        for (BannerRuleItem bannerRuleItem : bannerRuleItems) {
-                            daoService.addBannerImagePath(bannerRuleItem
-                                    .getImagePath());
-                            daoService.addBannerRuleItem(bannerRuleItem);
-                        }
+                    bannerRuleItem.setRule(bannerRule);
+                    
+                    // Delete existing data from production.
+                    bannerRuleItemServiceProd.delete(bannerRuleItem);
+                    bannerRuleServiceProd.delete(bannerRule);
+                    
+                    // Retrieve staging data then push to prod                    	
+                    SearchResult<BannerRuleItem> searchResult = bannerRuleItemServiceStg.search(bannerRuleItem);
+                    if (searchResult.getTotalCount() > 0) {
+                    	List<BannerRuleItem> bannerRuleItems = searchResult.getResult();
+                    	
+                    	// get banner rule details from staging
+                    	SearchResult<BannerRule> bannerRules = bannerRuleServiceStg.search(bannerRuleItems.get(0).getRule());
+                    	if(bannerRules.getTotalCount() > 0) {
+                    		bannerRuleServiceProd.transfer(bannerRules.getResult().get(0));
+                    	}
+                    	for (BannerRuleItem thisBannerRuleItem : bannerRuleItems) {
+                    		// get image path details from staging
+                    		SearchResult<ImagePath> imagePathResults = imagePathServiceStg.search(thisBannerRuleItem.getImagePath());
+                    		if(imagePathResults.getTotalCount() > 0) {
+                    			imagePathServiceProd.transfer(imagePathResults.getResult().get(0));
+                    		}
+                    		bannerRuleItemServiceProd.transfer(thisBannerRuleItem);
+                    	}
                     }
-
-                    try {
-                        solrService.resetBannerRuleItemsByRuleId(new Store(
-                                store), id);
-                    } catch (Exception e) {
-                        errorMsg.append(" - " + id + "\n");
-                        hasError = true;
-                    }
-
+                    
                     keywordStatus.put(id, true);
+                    publishedRules.add(id);
                 } catch (Exception e) {
                     logger.error("Failed to publish banner rule item: " + id, e);
                     keywordStatus.put(id, false);
                 }
             }
 
-            if (hasError) {
-                sendIndexStatus(
+            try {
+            	// Delete existing solr index data, Retrieve production data then index.
+            	bannerRuleItemMigratorService.resetByRuleIds(store, publishedRules);
+            } catch (Exception e) {
+            	for(String id : publishedRules) {
+            		errorMsg.append(" - " + id + "\n");
+            	}
+            	sendIndexStatus(
                         "Failed to index the following banner rule items: \n"
                         + errorMsg.toString(), store);
-            }
-
-            if (!solrService.commitBannerRuleItem()) {
-                StringBuffer msg = new StringBuffer(
-                        "Failed to commit the following imported banner rule items: \n");
-                for (String key : keywordStatus.keySet()) {
-                    boolean status = keywordStatus.get(key);
-                    if (status) {
-                        msg.append(" - " + key + "\n");
-                    }
-                }
-                sendIndexStatus(msg.toString(), store);
-            }
+			}
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -1114,34 +1140,25 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
     public Map<String, Boolean> unpublishBannerRulesMap(String store,
             List<String> ruleIds) {
         Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleIds);
-
+        List<String> unpublishedIds = new ArrayList<String>();
+        // TODO: test
         try {
             if (CollectionUtils.isNotEmpty(ruleIds)) {
-                boolean hasError = false;
                 StringBuffer errorMsg = new StringBuffer();
 
                 for (String id : ruleIds) {
                     try {
-                        BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
+                        BannerRuleItem bannerRuleItem = new BannerRuleItem();
                         BannerRule bannerRule = new BannerRule();
                         bannerRule.setStoreId(store);
                         bannerRule.setRuleId(id);
-                        bannerRuleItemFilter.setRule(bannerRule);
+                        bannerRuleItem.setRule(bannerRule);
+                        
+                        // Delete existing data from production.
+                        bannerRuleItemServiceProd.delete(bannerRuleItem);
+                        bannerRuleServiceProd.delete(bannerRule);
 
-                        daoService.deleteBannerRuleItem(bannerRuleItemFilter); // prod
-                        daoService.deleteBannerRule(bannerRule); // prod
-
-                        try {
-                            if (!solrService.deleteBannerRuleItemsByRuleId(
-                                    new Store(store), id)) {
-                                errorMsg.append(" - " + id + "\n");
-                                hasError = true;
-                            }
-                        } catch (Exception e) {
-                            errorMsg.append(" - " + id + "\n");
-                            hasError = true;
-                        }
-
+                        unpublishedIds.add(id);
                         keywordStatus.put(id, true);
                     } catch (Exception e) {
                         logger.error("Failed to unpublish banner rule: " + id,
@@ -1149,29 +1166,23 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
                         keywordStatus.put(id, false);
                     }
                 }
-
-                if (hasError) {
-                    sendIndexStatus(
+         
+                try {
+                	// Delete existing solr index data.
+                	bannerRuleItemMigratorService.deleteByRuleIds(store, unpublishedIds);
+                } catch(Exception e) {
+                	for (String id : unpublishedIds) {
+                		errorMsg.append(" - " + id + "\n");
+                	}
+                	sendIndexStatus(
                             "Failed to unpublish the following banner rules: \n"
                             + errorMsg.toString(), store);
-                }
-
-                if (!solrService.commitBannerRuleItem()) {
-                    StringBuffer msg = new StringBuffer(
-                            "Failed to commit the following unpublish banner rules: \n");
-                    for (String key : keywordStatus.keySet()) {
-                        boolean status = keywordStatus.get(key);
-                        if (status) {
-                            msg.append(" - " + key + "\n");
-                        }
-                    }
-                    sendIndexStatus(msg.toString(), store);
                 }
             }
         } catch (Exception e) {
             logger.error("", e);
         }
-
+        
         return keywordStatus;
     }
 
