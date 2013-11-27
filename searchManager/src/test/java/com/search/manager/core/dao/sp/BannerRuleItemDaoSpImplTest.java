@@ -16,6 +16,7 @@ import com.search.manager.BannerRuleItemTestData;
 import com.search.manager.BannerRuleTestData;
 import com.search.manager.core.BaseIntegrationTest;
 import com.search.manager.core.dao.BannerRuleItemDao;
+import com.search.manager.core.dao.BasicDaoTest;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
@@ -24,7 +25,8 @@ import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.dao.sp.DAOConstants;
 
-public class BannerRuleItemDaoSpImplTest extends BaseIntegrationTest {
+public class BannerRuleItemDaoSpImplTest extends BaseIntegrationTest implements
+		BasicDaoTest<BannerRuleItem> {
 
 	@Autowired
 	@Qualifier("bannerRuleItemDaoSp")
@@ -37,11 +39,17 @@ public class BannerRuleItemDaoSpImplTest extends BaseIntegrationTest {
 			.getExistingBannerRuleItem().getEndDate();
 
 	@Test
-	public void daoWiringTest() {
+	@Override
+	public void daoWiringTest() throws CoreDaoException {
 		assertNotNull(bannerRuleItemDao);
 	}
 
 	@Test
+	@Override
+	public void addTest() throws CoreDaoException {
+		addDeleteTest();
+	}
+
 	public void addDeleteTest() throws CoreDaoException {
 		BannerRuleItem bannerRuleItem = bannerRuleItemDao
 				.add(BannerRuleItemTestData.getNewBannerRuleItem());
@@ -56,6 +64,7 @@ public class BannerRuleItemDaoSpImplTest extends BaseIntegrationTest {
 	}
 
 	@Test
+	@Override
 	public void updateTest() throws CoreDaoException {
 		BannerRuleItem bannerRuleItem = BannerRuleItemTestData
 				.getExistingBannerRuleItem();
@@ -120,6 +129,7 @@ public class BannerRuleItemDaoSpImplTest extends BaseIntegrationTest {
 	}
 
 	@Test
+	@Override
 	public void searchTest() throws CoreDaoException {
 		Search search = new Search(BannerRuleItem.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID,
@@ -127,12 +137,25 @@ public class BannerRuleItemDaoSpImplTest extends BaseIntegrationTest {
 		SearchResult<BannerRuleItem> bannerRuleItems = bannerRuleItemDao
 				.search(search);
 		assertNotNull(bannerRuleItems);
-		if (bannerRuleItems != null) {
-			Assert.assertTrue(bannerRuleItems.getTotalCount() > 0);
-			for (BannerRuleItem thisBannerRuleItem : bannerRuleItems
-					.getResult()) {
-				assertNotNull(thisBannerRuleItem);
-			}
+		Assert.assertTrue(bannerRuleItems.getTotalCount() > 0);
+		for (BannerRuleItem thisBannerRuleItem : bannerRuleItems.getResult()) {
+			assertNotNull(thisBannerRuleItem);
+		}
+	}
+
+	@Test
+	@Override
+	public void searchModelTest() throws CoreDaoException {
+		BannerRuleItem bannerRuleItem = BannerRuleItemTestData
+				.getExistingBannerRuleItem();
+		bannerRuleItem.setStartDate(null);
+		bannerRuleItem.setEndDate(null);
+		SearchResult<BannerRuleItem> bannerRuleItems = bannerRuleItemDao
+				.search(bannerRuleItem);
+		assertNotNull(bannerRuleItems);
+		Assert.assertTrue(bannerRuleItems.getTotalCount() > 0);
+		for (BannerRuleItem thisBannerRuleItem : bannerRuleItems.getResult()) {
+			assertNotNull(thisBannerRuleItem);
 		}
 	}
 

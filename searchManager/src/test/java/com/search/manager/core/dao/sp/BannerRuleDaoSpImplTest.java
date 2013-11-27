@@ -14,6 +14,7 @@ import org.springframework.test.annotation.ExpectedException;
 import com.search.manager.BannerRuleTestData;
 import com.search.manager.core.BaseIntegrationTest;
 import com.search.manager.core.dao.BannerRuleDao;
+import com.search.manager.core.dao.BasicDaoTest;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.search.Filter;
@@ -21,18 +22,21 @@ import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.dao.sp.DAOConstants;
 
-public class BannerRuleDaoSpImplTest extends BaseIntegrationTest {
+public class BannerRuleDaoSpImplTest extends BaseIntegrationTest implements
+		BasicDaoTest<BannerRule> {
 
 	@Autowired
 	@Qualifier("bannerRuleDaoSp")
 	private BannerRuleDao bannerRuleDao;
 
 	@Test
+	@Override
 	public void daoWiringTest() {
 		assertNotNull(bannerRuleDao);
 	}
-
+	
 	@Test
+	@Override
 	public void addTest() throws CoreDaoException {
 		BannerRule bannerRule = bannerRuleDao.add(BannerRuleTestData
 				.getNewBannerRule());
@@ -45,6 +49,7 @@ public class BannerRuleDaoSpImplTest extends BaseIntegrationTest {
 
 	@Test
 	@ExpectedException(CoreDaoException.class)
+	@Override
 	public void updateTest() throws CoreDaoException {
 		BannerRule bannerRule = BannerRuleTestData.getExistingBannerRule();
 
@@ -70,23 +75,23 @@ public class BannerRuleDaoSpImplTest extends BaseIntegrationTest {
 	}
 
 	@Test
+	@Override
 	public void deleteTest() throws CoreDaoException {
 		Assert.assertTrue(bannerRuleDao.delete(BannerRuleTestData
 				.getNewBannerRule()));
 	}
 
 	@Test
+	@Override
 	public void searchTest() throws CoreDaoException {
 		Search search = new Search(BannerRule.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID,
 				BannerRuleTestData.getExistingBannerRule().getStoreId()));
 		SearchResult<BannerRule> bannerRules = bannerRuleDao.search(search);
 		assertNotNull(bannerRules);
-		if (bannerRules != null) {
-			Assert.assertTrue(bannerRules.getTotalCount() > 0);
-			for (BannerRule thisBannerRule : bannerRules.getResult()) {
-				assertNotNull(thisBannerRule);
-			}
+		Assert.assertTrue(bannerRules.getTotalCount() > 0);
+		for (BannerRule thisBannerRule : bannerRules.getResult()) {
+			assertNotNull(thisBannerRule);
 		}
 	}
 
@@ -114,5 +119,17 @@ public class BannerRuleDaoSpImplTest extends BaseIntegrationTest {
 			assertNotNull(thisBannerRule);
 		}
 
+	}
+
+	@Test
+	@Override
+	public void searchModelTest() throws CoreDaoException {
+		SearchResult<BannerRule> bannerRules = bannerRuleDao
+				.search(BannerRuleTestData.getExistingBannerRule());
+		assertNotNull(bannerRules);
+		Assert.assertTrue(bannerRules.getTotalCount() > 0);
+		for (BannerRule bannerRule : bannerRules.getResult()) {
+			assertNotNull(bannerRule);
+		}
 	}
 }
