@@ -19,6 +19,7 @@ import com.search.manager.enums.RuleType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.service.SolrService;
+import com.search.service.solr.BannerRuleItemMigratorService;
 
 /**
  * Servlet implementation class ForceSolrServlet
@@ -30,6 +31,9 @@ public class ForceSolrServlet extends HttpServlet {
 	@Autowired
 	private SolrService solrService;
 
+	@Autowired
+	private BannerRuleItemMigratorService bannerRuleItemMigratorService;
+	
 	@Override
 	public void init() {
 		WebApplicationContextUtils
@@ -224,7 +228,7 @@ public class ForceSolrServlet extends HttpServlet {
 			} else if (rule.equalsIgnoreCase("spell")) {
 				status = "" + solrService.loadSpellRules(store);
 			} else if (rule.equalsIgnoreCase("banner")) {
-				status = "" + solrService.loadBannerRuleItems(store);
+				status = "" + bannerRuleItemMigratorService.loadByStoreId(store.getStoreId());
 			}
 		} catch (Exception e) {
 			status = "error";
@@ -320,8 +324,7 @@ public class ForceSolrServlet extends HttpServlet {
 				status = "" + solrService.loadRelevancyRuleByName(store, name);
 			} else if (rule.equals("banner")) {
 				status = ""
-						+ solrService
-								.loadBannerRuleItemsByRuleName(store, name);
+						+ bannerRuleItemMigratorService.loadByRuleName(store.getStoreId(), name);
 			}
 		} catch (Exception e) {
 			status = "error";
@@ -365,7 +368,7 @@ public class ForceSolrServlet extends HttpServlet {
 				status = "" + solrService.loadSpellRuleById(store, id);
 			} else if (rule.equalsIgnoreCase("banner")) {
 				status = ""
-						+ solrService.loadBannerRuleItemsByRuleId(store, id);
+						+ bannerRuleItemMigratorService.loadByRuleId(store.getStoreId(), id);
 			}
 		} catch (Exception e) {
 			status = "error";
@@ -408,7 +411,7 @@ public class ForceSolrServlet extends HttpServlet {
 			} else if (rule.equalsIgnoreCase("spell")) {
 				status = "" + solrService.resetSpellRules(store);
 			} else if (rule.equalsIgnoreCase("banner")) {
-				status = "" + solrService.resetBannerRuleItems(store);
+				status = "" + bannerRuleItemMigratorService.resetByStoreId(store.getStoreId());
 			}
 		} catch (Exception e) {
 			status = "error";
@@ -505,7 +508,7 @@ public class ForceSolrServlet extends HttpServlet {
 				status = "" + solrService.resetRelevancyRuleByName(store, name);
 			} else if (rule.equalsIgnoreCase("banner")) {
 				status = ""
-						+ solrService.resetBannerRuleItemsByRuleName(store,
+						+ bannerRuleItemMigratorService.resetByRuleName(store.getStoreId(),
 								name);
 			}
 		} catch (Exception e) {
@@ -549,7 +552,7 @@ public class ForceSolrServlet extends HttpServlet {
 				status = "" + solrService.resetSpellRuleById(store, id);
 			} else if (rule.equalsIgnoreCase("banner")) {
 				status = ""
-						+ solrService.resetBannerRuleItemsByRuleId(store, id);
+						+ bannerRuleItemMigratorService.resetByRuleId(store.getStoreId(), id);
 			}
 		} catch (Exception e) {
 			status = "error";
@@ -592,7 +595,7 @@ public class ForceSolrServlet extends HttpServlet {
 			} else if (rule.equalsIgnoreCase("spell")) {
 				status = "" + solrService.deleteSpellRules(store);
 			} else if (rule.equalsIgnoreCase("banner")) {
-				status = "" + solrService.deleteBannerRuleItems(store);
+				status = "" + bannerRuleItemMigratorService.deleteByStoreId(store.getStoreId());
 			}
 		} catch (Exception e) {
 			status = "error";
@@ -678,7 +681,7 @@ public class ForceSolrServlet extends HttpServlet {
 				status = "" + solrService.deleteSpellRuleById(store, id);
 			} else if (rule.equalsIgnoreCase("banner")) {
 				status = ""
-						+ solrService.deleteBannerRuleItemsByRuleId(store, id);
+						+ bannerRuleItemMigratorService.deleteByRuleId(store.getStoreId(), id);
 			}
 		} catch (Exception e) {
 			status = "error";
@@ -733,7 +736,7 @@ public class ForceSolrServlet extends HttpServlet {
 						+ solrService.deleteRelevancyRuleByName(store, name);
 			} else if (rule.equalsIgnoreCase("banner")) {
 				status = ""
-						+ solrService.deleteBannerRuleItemsByRuleName(store,
+						+ bannerRuleItemMigratorService.deleteByRuleName(store.getStoreId(),
 								name);
 			}
 		} catch (Exception e) {
@@ -777,7 +780,8 @@ public class ForceSolrServlet extends HttpServlet {
 			} else if (rule.equalsIgnoreCase("spell")) {
 				status = "" + solrService.commitSpellRule();
 			} else if (rule.equalsIgnoreCase("banner")) {
-				status = "" + solrService.commitBannerRuleItem();
+				// status = "" + solrService.commitBannerRuleItem();
+				// TODO expose commit method.
 			}
 		} catch (Exception e) {
 			status = "error";
