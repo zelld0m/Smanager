@@ -181,13 +181,13 @@
 					template += '			<a id="backupBtn" class="btn_backup_now btn" href="javascript:void(0);" alt="Backup Rule" title="Backup Rule">Backup Now</a>';
 					template += '		</li>';
 					template += '		<li class="fLeft bRight">';
-					template += '			<div id="downloadVersionIcon" class="ico_download ico" alt="Download Rule Version" title="Download Rule Version"></div>';
+					template += '			<div id="downloadVersionIcon" class="ico_download icon" alt="Download Rule Version" title="Download Rule Version"></div>';
 					template += '		</li>';	
 				}
 			}	
 
 			template += '		<li class="fLeft bRight">';
-			template += '			<div id="commentBtn" class="ico_comments ico" alt="Show Rule Comment" title="Show Rule Comment"></div>';
+			template += '			<div id="commentBtn" class="ico_comments icon" alt="Show Rule Comment" title="Show Rule Comment"></div>';
 			template += '		</li>';	
 			template += '		<li class="fRight">';
 			template += '			<span class="fbold">Published</span>:';
