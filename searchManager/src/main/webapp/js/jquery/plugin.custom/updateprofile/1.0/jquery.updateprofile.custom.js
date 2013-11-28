@@ -1,50 +1,34 @@
 (function($){
 
 			$.updateprofile = function(el, options) {
-				// To avoid scope issues, use 'base' instead of 'this'
-				// to reference this class from internal events and functions.
-				var base = this;
-
-				// Access to jQuery and DOM of element
-				base.$el = $(el);
-				base.el = el;
-
-				// Add a reverse reference to the DOM object
-				base.$el.data("updateprofile", base);
-
-				base.options = $.extend({}, $.updateprofile.defaultOptions, options);
-
-				// Run initializer
-				base.init();
+				this.$el = $(el);
+				this.el = el;
+				this.$el.data("updateprofile", this);
+				this.options = $.extend({}, $.updateprofile.defaultOptions, options);
+				this.init();
 			};
-			
+
 			$.updateprofile.prototype.setId = function(id) {
-				var base= this;
-				var ui = base.$el;
+				var ui = this.$el;
 
 				ui.find("div:first").prop({
-					id: $.isNotBlank(id)? id: "plugin-updateprofile-" + base.options.id
+					id: $.isNotBlank(id)? id: "plugin-updateprofile-" + this.options.id
 				});
 
 			};
-			
+
 			$.updateprofile.prototype.setUser = function(user) {
-				var base= this;
-				var ui = base.$el;
-
-				base.user= user;
-
+				this.user= user;
 			};
-			
+
 			$.updateprofile.prototype.init = function() {
 				var base = this;
-				
+
 				if(base.options.isPopup) {
 					base.$el.qtip({
 						id: "plugin-updateprofile-qtip",
 						content: {
-							text: $('<div/>'),
-							title: {text: "User Setting", button: true }
+							text: $('<div/>')
 						},
 						position:{
 							at: 'bottom center',
@@ -52,7 +36,7 @@
 							target: base.$el
 						},
 						style: {
-							width: 'auto'
+							width: '331px'
 						},
 						events: {
 							render: function(event, api) {
@@ -65,6 +49,14 @@
 								base.setId();
 								base.populateContents.call(base);
 							}
+						},
+						hide: {
+							event: 'unfocus',
+							fixed: true,
+							delay: 300,
+							effect: function() {
+								this.fadeOut(160);
+							}
 						}
 					});
 				} else {
@@ -73,132 +65,164 @@
 					base.populateContents.call(base);
 				}
 			};
-			
+
 			$.updateprofile.prototype.populateContents = function() {
 				var base = this;
 				var ui = base.$el;
-				var user = '';
-				
+
 				UserSettingServiceJS.getUser({
 					callback:function(data){
-						$('.proUser').html(data.username);
-						$('#profull').val(data.fullName);
-						$('#proemail').val(data.email);
+						// display data
+						ui.find("#display #fullname").html(data.fullName);
+						ui.find("#display #email").html(data.email);
+
+						// edit data
+						ui.find("#edit #fullname").val(data.fullName);
+						ui.find("#edit #email").val(data.email);
+
+						ui.find("#display").show();
 						base.setUser(data.username);
 					}
 				});
-				
+
 				base.registerEventListener();
 			};
-			
-			$.updateprofile.prototype.registerEventListener = function(){
-				var base = this;
-				var ui = base.$el;
-				
-				base.addButtonListener();
-			};
-			
-			$.updateprofile.prototype.addButtonListener = function() {
-				var base = this;
-				var ui = base.$el;
-							
-				ui.find("#probut").off().on({
-					click: function(){
-							
-						var profull = $.trim($('#profull').val());
-						var proemail = $.trim($('#proemail').val());
-						var proOld = $.trim($('#proOld').val());
-						var proNew = $.trim($('#proNew').val());
-						var proRe = $.trim($('#proRe').val());
 
-						if(!validateGeneric('Fullname',profull,1))
+			$.updateprofile.prototype.registerEventListener = function() {
+				var base = this;
+				var ui = base.$el;
+
+				ui.find("#updateBtn").off().on({
+					click: function(){
+
+						var profull = $.trim(ui.find('#edit #fullname').val());
+						var proemail = $.trim(ui.find('#edit #email').val());
+						var proOld = $.trim(ui.find('#password-change #password-old').val());
+						var proNew = $.trim(ui.find('#password-change #password-new').val());
+						var proRe = $.trim(ui.find('#password-change #password-repeat').val());
+
+						if(!validateGeneric('Full Name', profull,1))
 							return;
-						else if(!validateEmail('Email',proemail,1))
+						else if(!validateEmail('Email', proemail, 1))
 							return;
-						else if(!validatePassword('Old password',proOld))
+						else if(!validatePassword('Old Password', proOld))
 							return;
 						else if(!$.isBlank(proNew) || !$.isBlank(proRe)){
-							if(!validatePassword('New password',proNew, 8))
+							if(!validatePassword('New Password', proNew, 8))
 								return;
-							else if(!validatePassword('Re-type password',proRe, 8))
+							else if(!validatePassword('Re-type Password', proRe, 8))
 								return;
 							else if(proNew != proRe){
 								jAlert('New and re-type passwords do not match.',"User Setting");
 								return;
 							}
 						}
-						
-						UserSettingServiceJS.updateUser(base.user,profull,proemail,proOld,proNew,{
+
+						UserSettingServiceJS.updateUser(base.user, profull, proemail, proOld, proNew, {
 							callback:function(data){
 								if(data.status == '200'){
 									jAlert(data.message,"User Setting");
-									$('#proOld').val('');
-									$('#proNew').val('');
-									$('#proRe').val('');
+									base.reset();
 								}else{
 									jAlert(data.message,"User Setting");
-								}	
-							}		
+								}
+							}
 						});
 					}});
+
+				ui.find("#cancelBtn").off().on({
+					'click': function() { base.reset(true); }
+				});
+
+				ui.find("#display a").off().on({
+					'click': function() {
+						ui.find("#display").hide('fast');
+						ui.find("#edit").show('fast', function() {
+							ui.find("#password-change").show('fast');
+						});
+					}
+				});
 			};
-			
+
+			$.updateprofile.prototype.reset = function(cancelled) {
+				var ui = this.$el;
+
+				ui.find("#password-change #password-old").val("");
+				ui.find("#password-change #password-new").val("");
+				ui.find("#password-change #password-repeat").val("");
+
+				if (cancelled) {
+					ui.find("#edit #fullname").val(ui.find("#display #fullname").html());
+					ui.find("#edit #email").val(ui.find("#display #email").html());
+				} else {
+					ui.find("#display #fullname").html(ui.find("#edit #fullname").val());
+					ui.find("#display #email").html(ui.find("#edit #email").val());
+				}
+				
+
+                ui.find("#password-change").hide('fast', function() {
+                    ui.find("#edit").hide('fast');
+                    ui.find("#display").show('fast');
+                });
+			};
+
 			$.updateprofile.prototype.getTemplate = function() {
-				var base = this;
 				var template = '';
-				
+
 				template += '<div id="home" class="txtAL padL0 marT0">';
-				template += '<h2 class="txtAL marT10 padL10 borderB">Profile</h2>';
-				template += '<table class="fsize12 marT20 marL20">';
-				template += '<tr>';
-				template +=	'<td><img src="'+ GLOBAL_contextPath + '/images/uploadImage.jpg" class="border marR10" /></td>';
-				template += '<td>';
-				template += '<label class="floatL w70">Username :</label><label class="w135 padL5 fbold proUser"></label><div class="clearB"></div>';
-				template += '<label class="floatL w70 marT5">Fullname :</label><label class="w135 padL5 fbold floatL marT5"><input type="text" id="profull" class="w135"/></label>';
-				template += '</td>';
-				template += '</tr>';
-				template += '<tr>';
-				template += '<td>Email :</td>'
-				template +=	'<td><input type="text" class="w210 " id="proemail"/></td>';
-				template += '</tr>';
-				template += '<tr>';
-				template += '<td></td>';
-				template += '<td class="padT5"></td>';
-				template += '</tr>';
-				template += '</table>';
-					
-				template += '<table class="fsize12 marT10 marL20">';
-				template += '<tr class="borderT">';
-				template += '<td colspan="2"><h2 class="padT5"> Change Password </h2></td>';
-				template += '</tr>';
-				template += '<tr>';
-				template += '<td width="130px">Old Password</td>';
-				template += '<td><input type="password" id="proOld" class="w150"/></td>';
-				template += '</tr>';
-				template += '<tr>';
-				template +=	'<td>New Password</td>';
-				template +=	'<td><input type="password" id="proNew" class="w150"/></td>';
-				template +=	'</tr>';
-				template +=	'<tr>';
-				template +=	'<td>Re-Type Password</td>';
-				template +=	'<td><input type="password" id="proRe" class="w150"/></td>';
-				template +=	'</tr>';
-				template +=	'<tr>';
-				template +=	'<td colspan="2" class="txtAR padT10">';
-				template +=	'<a id="probut" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>';
-				template += '</td>';
-				template +=	'</tr>';
-				template += '</table>';
+				template += '  <table id="profile-info" class="fsize12 marT5 marR5 marL5" style="width:260px;">';
+				template += '    <tr>';
+				template += '      <td><img src="/searchManager/images/uploadImage.jpg" class="border marR5"></td>';
+				template += '      <td style="vertical-align: top;">';
+				template += '        <div id="display" style="display:none;">';
+				template += '          <div id="fullname" class="padT5" style="font-weight:bold;"></div>';
+				template += '          <div id="email" class="padT3"></div>';
+				template += '          <div class="padT5">';
+				template += '            <a href="javascript:void(0)" style="font-style:italic;font-size:11px;text-decoration:none;">Edit</a>';
+				template += '          </div>';
+				template += '        </div>';
+				template += '        <div id="edit" style="display:none">';
+				template += '          <input type="text" id="fullname" class="w135">';
+				template += '          <div class="clearB"></div>';
+				template += '          <input type="text" class="w210" id="email">';
+				template += '        </div>';
+				template += '      </td>';
+				template += '    </tr>';
+				template += '  </table>';
+				template += '  <table id="password-change" class="fsize12 marT5 marL5 marR5" style="display: none;">';
+				template += '    <tr>';
+				template += '      <td width="130px">Old Password</td>';
+				template += '      <td><input type="password" id="password-old" class="w150"></td>';
+				template += '    </tr>';
+				template += '    <tr>';
+				template += '      <td>New Password</td>';
+				template += '      <td><input type="password" id="password-new" class="w150"></td>';
+				template += '    </tr>';
+				template += '    <tr>';
+				template += '      <td>Re-Type Password</td>';
+				template += '      <td><input type="password" id="password-repeat" class="w150"></td>';
+				template += '    </tr>';
+				template += '    <tr>';
+				template += '      <td colspan="2" class="txtAR padT10">';
+                template += '        <a id="cancelBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+                template += '          <div class="buttons fontBold">Cancel</div>';
+                template += '        </a>';
+				template += '        <a id="updateBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '          <div class="buttons fontBold">Update</div>';
+				template += '        </a>';
+				template += '      </td>';
+				template += '    </tr>';
+				template += '  </table>';
 				template += '</div>';
-				
+
 				return template;
 			};
-			
+
 			$.updateprofile.defaultOptions = {
 					id: 1,
 					isPopup: true,
 			};
-			
+
 
 			$.fn.updateprofile = function(options) {
 				if (this.length) {
@@ -207,5 +231,5 @@
 					});
 				};
 			};
-	
+
 })(jQuery);
