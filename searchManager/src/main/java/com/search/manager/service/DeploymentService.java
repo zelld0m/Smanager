@@ -25,6 +25,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.ExportType;
+import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.exception.PublishLockException;
@@ -57,6 +58,8 @@ public class DeploymentService {
     private DaoService daoService;
     @Autowired
     private WorkflowNotificationMailService mailService;
+    @Autowired
+    private RuleTransferService ruleTransferService;
 
     @RemoteMethod
     public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {
@@ -198,8 +201,7 @@ public class DeploymentService {
         return new RecordSet<RuleStatus>(list, approvedRset.getTotalSize() + publishedRset.getTotalSize());
     }
 
-    public RecordSet<DeploymentModel> publishRuleNoLock(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
-        String store = UtilityService.getStoreId();
+    public RecordSet<DeploymentModel> publishRuleNoLock(String store, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
         String username = UtilityService.getUsername();
         boolean isAutoExport = BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
         List<String> approvedRuleList = null;
@@ -211,7 +213,7 @@ public class DeploymentService {
             } else if (ArrayUtils.getLength(ruleRefIdList) != ArrayUtils.getLength(ruleStatusIdList)) {
                 logger.error(String.format("Inconsistent rule id & rule status id count, RuleID: %s, RuleStatusID: %s", StringUtils.join(ruleRefIdList), StringUtils.join(ruleStatusIdList)));
             } else {
-                approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+            	approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
             }
         } catch (DaoException e) {
             logger.error("Failed during retrieval of approved rules list", e);
@@ -235,7 +237,7 @@ public class DeploymentService {
         RuleEntity ruleEntity = null;
         List<String> publishedRuleStatusIdList = new ArrayList<String>();
         String ruleId = "";
-
+           
         //Populate deployment model for all rules queued for publishing
         // The following code generates xml files for published rules required for export.
         // Note that at this point, rules have already been published.
@@ -282,9 +284,10 @@ public class DeploymentService {
         boolean obtainedLock = false;
         String userName = UtilityService.getUsername();
         String storeName = UtilityService.getStoreName();
+        String storeId = UtilityService.getStoreId();
         try {
             obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
-            return publishRuleNoLock(ruleType, ruleRefIdList, comment, ruleStatusIdList);
+            return publishRuleNoLock(storeId, ruleType, ruleRefIdList, comment, ruleStatusIdList);
         } finally {
             if (obtainedLock) {
                 UtilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);

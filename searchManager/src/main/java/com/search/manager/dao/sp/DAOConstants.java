@@ -419,6 +419,7 @@ public class DAOConstants {
     public static final String MEMBER_TYPE_PART = "PART_NUMBER";
     // used by settings
     public static final String SETTINGS_AUTO_EXPORT = "auto_export";
+    public static final String SETTINGS_AUTO_IMPORT = "auto_import";
     public static final String SETTINGS_EXPORT_TARGET = "export_target";
     public static final String SETTINGS_SITE_DOMAIN = "site_domain";
     public static final String SETTINGS_DEFAULT_BANNER_SIZE = "default_banner_size";

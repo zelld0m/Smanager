@@ -199,10 +199,9 @@ public class RuleTransferService {
         return resultMap;
     }
 
-    private Map<String, Integer> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList) {
+    private Map<String, Integer> importRules(String store, String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList) {
         Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
-        String store = UtilityService.getStoreId();
-        RuleEntity ruleEntity = RuleEntity.find(ruleType);
+       RuleEntity ruleEntity = RuleEntity.find(ruleType);
         String userName = UtilityService.getUsername();
 
         AuditTrail auditTrail = new AuditTrail();
@@ -336,7 +335,7 @@ public class RuleTransferService {
                     status = PUBLISH_RULE;
 
                     //publish rule
-                    RecordSet<DeploymentModel> deploymentRS = deploymentService.publishRuleNoLock(ruleType,
+                    RecordSet<DeploymentModel> deploymentRS = deploymentService.publishRuleNoLock(store, ruleType,
                             ruleRefIds, comment, ruleStatusIds);
                     if (deploymentRS == null || CollectionUtils.isEmpty(deploymentRS.getList())
                             || deploymentRS.getList().get(0).getPublished() != 1) {
@@ -368,7 +367,7 @@ public class RuleTransferService {
     }
 
     @RemoteMethod
-    public Map<String, String> importRejectRules(String storeName, String ruleType,
+    public Map<String, String> importRejectRules(String storeId, String storeName, String ruleType,
             String[] importRuleRefIdList, String comment,
             String[] importTypeList, String[] importAsRefIdList,
             String[] ruleNameList, String[] rejectRuleRefIdList,
@@ -394,7 +393,7 @@ public class RuleTransferService {
                 obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
             }
             if (ArrayUtils.isNotEmpty(importRuleRefIdList)) {
-                Map<String, Integer> statusMap = importRules(ruleType, importRuleRefIdList, comment,
+                Map<String, Integer> statusMap = importRules(storeId, ruleType, importRuleRefIdList, comment,
                         importTypeList, importAsRefIdList, ruleNameList);
 
                 for (String key : statusMap.keySet()) {
