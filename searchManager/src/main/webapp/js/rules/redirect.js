@@ -152,7 +152,7 @@
                 return;
             }
 
-            $("#submitForApproval").rulestatus({
+            $("#submitForApproval").rulestatusbar({
                 moduleName: self.moduleName,
                 ruleType: "Query Cleaning",
                 rule: self.selectedRule,

@@ -1205,7 +1205,7 @@
 			return;
 		}
 
-		$("#submitForApproval").rulestatus({
+		$("#submitForApproval").rulestatusbar({
 			moduleName: moduleName,
 			ruleType: "Ranking Rule",
 			rule: selectedRule,
