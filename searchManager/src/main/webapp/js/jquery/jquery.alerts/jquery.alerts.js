@@ -67,11 +67,11 @@
 
 		// Shortcut functions
 		jAlert = function(message, title, callback) {
-			$.alerts._show("alert", title, message, callback);
+			$.alerts._show("alert", title, message, callback || $.alerts.callback);
 		};
 
 		jConfirm = function(message, title, callback) {
-			$.alerts._show("confirm", title, message, callback);
+			$.alerts._show("confirm", title, message, callback || $.alerts.callback);
 		};
 	});
 
