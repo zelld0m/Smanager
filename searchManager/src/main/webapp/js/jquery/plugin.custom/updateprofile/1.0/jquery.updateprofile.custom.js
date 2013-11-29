@@ -28,7 +28,7 @@
 					target: base.ui
 				},
 				style: {
-					width: '331px'
+					width: 'auto'
 				},
 				events: {
 					render: function(event, api) {
@@ -37,9 +37,16 @@
 					},
 
 					show: function(event, api){
-						base.ui.empty().append(base.getTemplate());
-						base.setId();
-						base.populateContents();
+						if (!base.user) {
+							base.ui.empty().append(base.getTemplate());
+							base.setId();
+							base.populateContents();
+						} else {
+							base.reset('redisplay');
+							base.edit.hide();
+							base.passwordChange.hide();
+							base.display.show();
+						}
 					},
 
 					hide: function() {
@@ -57,6 +64,7 @@
 			});
 		} else {
 			base.ui.empty().append(base.getTemplate());
+			base.api = {reposition: function() {}};
 			base.setId();
 			base.populateContents();
 		}
@@ -89,6 +97,9 @@
 
 				base.display.show();
 				base.user = data.username;
+				base.ui.find("#loader").hide();
+				base.ui.find("#profile-info").show();
+				base.api.reposition();
 			}
 		});
 
@@ -135,7 +146,7 @@
 					callback:function(data){
 						if(data.status == '200'){
 							jAlert(data.message,"User Setting");
-							base.reset();
+							base.reset('update');
 						}else{
 							jAlert(data.message,"User Setting");
 						}
@@ -144,27 +155,27 @@
 			}});
 
 		base.passwordChange.find("#cancelBtn").off().on({
-			'click': function() { base.reset(true); }
+			'click': function() { base.reset('cancelled'); }
 		});
 
 		base.display.find("a").off().on({
 			'click': function() {
-				base.display.hide('fast');
-				base.edit.show('fast', function() {
-					base.passwordChange.show('fast');
-				});
+				base.display.fadeOut({complete: function() {
+					base.edit.fadeIn({step: function() {base.api.reposition();}});
+				}});
+				base.passwordChange.slideDown({queue: true, step: function() { base.api.reposition(); }});
 			}
 		});
 	};
 
-	$.updateprofile.prototype.reset = function(cancelled) {
+	$.updateprofile.prototype.reset = function(type) {
 		var base = this;
 
 		base.oldPassword.val("");
 		base.newPassword.val("");
 		base.repeatPassword.val("");
 
-		if (cancelled) {
+		if (type == 'cancelled' || type == 'redisplay') {
 			base.editFullName.val(base.displayFullName.html());
 			base.editEmail.val(base.displayEmail.html());
 		} else {
@@ -172,19 +183,29 @@
 			base.displayEmail.html(base.editEmail.val());
 		}
 
-		base.passwordChange.hide('fast', function() {
-			base.edit.hide('fast');
-			base.display.show('fast');
-		});
+		if (type == 'redisplay') {
+			base.passwordChange.hide();
+			base.edit.hide();
+			base.display.show();
+			base.api.reposition();
+		} else {
+			base.passwordChange.slideUp({step: function() {base.api.reposition();}});
+			base.edit.fadeOut({complete: function() {
+				base.display.fadeIn({step: function() {base.api.reposition();}});
+			}});
+		}
 	};
 
 	$.updateprofile.prototype.getTemplate = function() {
 		var template = '';
 
 		template += '<div id="home" class="txtAL padL0 marT0">';
-		template += '  <table id="profile-info" class="fsize12 marT5 marR5 marL5" style="width:260px;">';
+		template += '  <div id="loader" style="text-align:center;">';
+		template += '    <img src="/searchManager/images/ajax-loader-rect.gif">';
+		template += '  </div>';
+		template += '  <table id="profile-info" class="fsize12 marT5 marR5 marL5" style="display:none;">';
 		template += '    <tr>';
-		template += '      <td><img src="/searchManager/images/uploadImage.jpg" class="border marR5"></td>';
+		template += '      <td style="width: 72px;"><img src="/searchManager/images/uploadImage.jpg" class="border marR5"></td>';
 		template += '      <td style="vertical-align: top;">';
 		template += '        <div id="display" style="display:none;">';
 		template += '          <div id="fullname" class="padT5" style="font-weight:bold;"></div>';
@@ -194,14 +215,14 @@
 		template += '          </div>';
 		template += '        </div>';
 		template += '        <div id="edit" style="display:none">';
-		template += '          <input type="text" id="fullname" class="w135">';
+		template += '          <input type="text" id="fullname" class="w135 marT5">';
 		template += '          <div class="clearB"></div>';
-		template += '          <input type="text" class="w210" id="email">';
+		template += '          <input type="text" class="w210 marT3" id="email">';
 		template += '        </div>';
 		template += '      </td>';
 		template += '    </tr>';
 		template += '  </table>';
-		template += '  <table id="password-change" class="fsize12 marT5 marL5 marR5" style="display: none;">';
+		template += '  <table id="password-change" class="fsize12 marT5 marL5 marR5" style="border-top: 1px solid #CDCDCD; padding-top: 5px; display: none;">';
 		template += '    <tr>';
 		template += '      <td width="130px">Old Password</td>';
 		template += '      <td><input type="password" id="password-old" class="w150"></td>';
