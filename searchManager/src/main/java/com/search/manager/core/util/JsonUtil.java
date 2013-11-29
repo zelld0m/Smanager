@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder;
 public class JsonUtil {
 
 	public static String toJson(Object object) {
-		// Gson gson = new Gson();
 		Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class,
 				new DateTimeTypeConverter()).create();
 
