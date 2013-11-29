@@ -16,11 +16,9 @@ import com.search.manager.core.dao.RuleStatusDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.RuleStatus;
-import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.RuleStatusService;
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
@@ -93,15 +91,16 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
 
 	@Override
 	public boolean delete(RuleStatus model) throws CoreServiceException {
-		try {
-			// TODO validation here...
+		if (model != null) {
+			try {
+				// Validate required fields for delete.
 
-			// Validate required fields for delete.
-
-			return ruleStatusDao.delete(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+				return ruleStatusDao.delete(model);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return false;
 	}
 
 	@Override
@@ -122,7 +121,6 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
 	public SearchResult<RuleStatus> search(Search search)
 			throws CoreServiceException {
 		try {
-			// TODO validation here...
 			return ruleStatusDao.search(search);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
@@ -132,42 +130,44 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
 	@Override
 	public SearchResult<RuleStatus> search(RuleStatus model)
 			throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return ruleStatusDao.search(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return ruleStatusDao.search(model);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override
 	public SearchResult<RuleStatus> search(RuleStatus model, int pageNumber,
 			int maxRowCount) throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return ruleStatusDao.search(model, pageNumber, maxRowCount);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return ruleStatusDao.search(model, pageNumber, maxRowCount);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override
 	public RuleStatus searchById(String storeId, String id)
 			throws CoreServiceException {
-		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(id)) {
-			return null;
-		}
+		if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(id)) {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setStoreId(storeId);
+			// TODO check if ruleRefId or ruleStatusId
+			// ruleStatus.setRuleStatusId(id);
+			ruleStatus.setRuleRefId(id);
 
-		Search search = new Search(RuleStatus.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_REFERENCE_ID, id));
-		search.setPageNumber(1);
-		search.setMaxRowCount(1);
-
-		SearchResult<RuleStatus> searchResult = search(search);
-		if (searchResult.getTotalCount() > 0) {
-			return (RuleStatus) CollectionUtils
-					.get(searchResult.getResult(), 0);
+			SearchResult<RuleStatus> searchResult = search(ruleStatus, 1, 1);
+			if (searchResult.getTotalCount() > 0) {
+				return (RuleStatus) CollectionUtils.get(
+						searchResult.getResult(), 0);
+			}
 		}
 
 		return null;
@@ -285,17 +285,13 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
 					return null;
 				}
 
-				Search search = new Search(RuleStatus.class);
-				search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID,
-						ruleStatus.getStoreId()));
-				search.addFilter(new Filter(DAOConstants.PARAM_RULE_TYPE_ID,
-						ruleStatus.getRuleTypeId()));
-				search.addFilter(new Filter(DAOConstants.PARAM_REFERENCE_ID,
-						ruleStatus.getRuleRefId()));
-				search.setMaxRowCount(1);
-				search.setPageNumber(1);
-				SearchResult<RuleStatus> searchResult = ruleStatusDao
-						.search(search);
+				RuleStatus ruleStatusFilter = new RuleStatus();
+				ruleStatusFilter.setStoreId(ruleStatus.getStoreId());
+				ruleStatusFilter.setRuleTypeId(ruleStatus.getRuleTypeId());
+				ruleStatusFilter.setRuleRefId(ruleStatus.getRuleRefId());
+
+				SearchResult<RuleStatus> searchResult = search(
+						ruleStatusFilter, 1, 1);
 
 				if (searchResult.getTotalCount() > 0) {
 					// existing rule

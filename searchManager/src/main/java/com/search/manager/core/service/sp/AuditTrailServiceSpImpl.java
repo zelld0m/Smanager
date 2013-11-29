@@ -16,11 +16,9 @@ import com.search.manager.core.dao.AuditTrailDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.AuditTrail;
-import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.AuditTrailService;
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.service.UtilityService;
 
 @Service("auditTrailServiceSp")
@@ -188,14 +186,12 @@ public class AuditTrailServiceSpImpl implements AuditTrailService {
 			throws CoreServiceException {
 
 		if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(id)) {
-			Search search = new Search(AuditTrail.class);
-			search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+			AuditTrail auditTrail = new AuditTrail();
+			auditTrail.setStoreId(storeId);
 			// TODO add audit trail id, using reference for temporary only.
-			search.addFilter(new Filter(DAOConstants.PARAM_REFERENCE, id));
-			search.setPageNumber(1);
-			search.setMaxRowCount(1);
+			auditTrail.setReferenceId(id);
 
-			SearchResult<AuditTrail> searchResult = search(search);
+			SearchResult<AuditTrail> searchResult = search(auditTrail, 1, 1);
 
 			if (searchResult.getTotalCount() > 0) {
 				return (AuditTrail) CollectionUtils.get(

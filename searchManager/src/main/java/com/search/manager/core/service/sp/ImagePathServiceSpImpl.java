@@ -17,11 +17,9 @@ import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.ImagePath;
 import com.search.manager.core.model.ImagePathType;
-import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.ImagePathService;
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.service.UtilityService;
 
 @Service("imagePathServiceSp")
@@ -131,30 +129,34 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 
 	@Override
 	public boolean delete(ImagePath model) throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return imagePathDao.delete(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return imagePathDao.delete(model);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+
+		return false;
 	}
 
 	@Override
 	public Map<ImagePath, Boolean> delete(Collection<ImagePath> models)
 			throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return imagePathDao.delete(models);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (models != null) {
+			try {
+				return imagePathDao.delete(models);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override
 	public SearchResult<ImagePath> search(Search search)
 			throws CoreServiceException {
 		try {
-			// TODO validation here...
 			return imagePathDao.search(search);
 		} catch (CoreDaoException e) {
 			throw new CoreServiceException(e);
@@ -164,43 +166,43 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	@Override
 	public SearchResult<ImagePath> search(ImagePath model)
 			throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return imagePathDao.search(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return imagePathDao.search(model);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override
 	public SearchResult<ImagePath> search(ImagePath model, int pageNumber,
 			int maxRowCount) throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return imagePathDao.search(model, pageNumber, maxRowCount);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return imagePathDao.search(model, pageNumber, maxRowCount);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override
 	public ImagePath searchById(String storeId, String id)
 			throws CoreServiceException {
-		// TODO Auto-generated method stub
 
-		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(id)) {
-			return null;
-		}
+		if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(id)) {
+			ImagePath imagePath = new ImagePath();
+			imagePath.setStoreId(storeId);
+			imagePath.setId(id);
 
-		Search search = new Search(ImagePath.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID, id));
-		search.setPageNumber(1);
-		search.setMaxRowCount(1);
-
-		SearchResult<ImagePath> searchResult = search(search);
-		if (searchResult.getTotalCount() > 0) {
-			return (ImagePath) CollectionUtils.get(searchResult.getResult(), 0);
+			SearchResult<ImagePath> searchResult = search(imagePath, 1, 1);
+			if (searchResult.getTotalCount() > 0) {
+				return (ImagePath) CollectionUtils.get(
+						searchResult.getResult(), 0);
+			}
 		}
 
 		return null;
@@ -251,14 +253,11 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 	@Override
 	public ImagePath getImagePath(String storeId, String imageUrl)
 			throws CoreServiceException {
+		ImagePath imagePath = new ImagePath();
+		imagePath.setStoreId(storeId);
+		imagePath.setPath(imageUrl);
 
-		Search search = new Search(ImagePath.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH, imageUrl));
-		search.setPageNumber(1);
-		search.setMaxRowCount(1);
-
-		SearchResult<ImagePath> searchResult = search(search);
+		SearchResult<ImagePath> searchResult = search(imagePath, 1, 1);
 		if (searchResult.getTotalCount() > 0) {
 			return (ImagePath) CollectionUtils.get(searchResult.getResult(), 0);
 		}

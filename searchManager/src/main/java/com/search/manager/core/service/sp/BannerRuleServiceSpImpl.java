@@ -176,23 +176,27 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 	@Override
 	public SearchResult<BannerRule> search(BannerRule model)
 			throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return bannerRuleDao.search(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return bannerRuleDao.search(model);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override
 	public SearchResult<BannerRule> search(BannerRule model, int pageNumber,
 			int maxRowCount) throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return bannerRuleDao.search(model, pageNumber, maxRowCount);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return bannerRuleDao.search(model, pageNumber, maxRowCount);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override

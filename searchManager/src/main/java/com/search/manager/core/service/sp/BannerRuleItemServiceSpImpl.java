@@ -177,43 +177,47 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	@Override
 	public SearchResult<BannerRuleItem> search(BannerRuleItem model)
 			throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return bannerRuleItemDao.search(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return bannerRuleItemDao.search(model);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override
 	public SearchResult<BannerRuleItem> search(BannerRuleItem model,
 			int pageNumber, int maxRowCount) throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return bannerRuleItemDao.search(model, pageNumber, maxRowCount);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
+		if (model != null) {
+			try {
+				return bannerRuleItemDao.search(model, pageNumber, maxRowCount);
+			} catch (CoreDaoException e) {
+				throw new CoreServiceException(e);
+			}
 		}
+		return null;
 	}
 
 	@Override
 	public BannerRuleItem searchById(String storeId, String id)
 			throws CoreServiceException {
-		// TODO validation here...
+		if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(id)) {
+			BannerRuleItem bannerRuleItem = new BannerRuleItem();
+			BannerRule bannerRule = new BannerRule();
+			bannerRule.setStoreId(storeId);
+			bannerRuleItem.setRule(bannerRule);
+			bannerRuleItem.setMemberId(id);
 
-		Search search = new Search(BannerRuleItem.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_MEMBER_ID, id));
-		search.setPageNumber(1);
-		search.setMaxRowCount(1);
+			SearchResult<BannerRuleItem> searchResult = search(bannerRuleItem,
+					1, 1);
 
-		SearchResult<BannerRuleItem> searchResult = search(search);
-
-		if (searchResult.getTotalCount() > 0) {
-			return (BannerRuleItem) CollectionUtils.get(
-					searchResult.getResult(), 0);
+			if (searchResult.getTotalCount() > 0) {
+				return (BannerRuleItem) CollectionUtils.get(
+						searchResult.getResult(), 0);
+			}
 		}
-
 		return null;
 	}
 
@@ -244,24 +248,22 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	@Override
 	public List<BannerRuleItem> getActiveBannerRuleItems(String storeId,
 			String keyword, DateTime currentDate) throws CoreServiceException {
-		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(keyword)
-				|| currentDate == null) {
-			return null;
-		}
+		if (StringUtils.isNotBlank(storeId) || StringUtils.isNotBlank(keyword)
+				|| currentDate != null) {
+			Search search = new Search(BannerRuleItem.class);
+			search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+			search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, keyword));
+			search.addFilter(new Filter(DAOConstants.PARAM_DISABLED, 0));
+			search.addFilter(new Filter(DAOConstants.PARAM_START_DATE,
+					JodaDateTimeUtil.toSqlDate(currentDate)));
+			search.addFilter(new Filter(DAOConstants.PARAM_START_DATE,
+					JodaDateTimeUtil.toSqlDate(currentDate)));
 
-		Search search = new Search(BannerRuleItem.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, keyword));
-		search.addFilter(new Filter(DAOConstants.PARAM_DISABLED, 0));
-		search.addFilter(new Filter(DAOConstants.PARAM_START_DATE,
-				JodaDateTimeUtil.toSqlDate(currentDate)));
-		search.addFilter(new Filter(DAOConstants.PARAM_START_DATE,
-				JodaDateTimeUtil.toSqlDate(currentDate)));
+			SearchResult<BannerRuleItem> searchResult = search(search);
 
-		SearchResult<BannerRuleItem> searchResult = search(search);
-
-		if (searchResult.getTotalCount() > 0) {
-			return searchResult.getResult();
+			if (searchResult.getTotalCount() > 0) {
+				return searchResult.getResult();
+			}
 		}
 
 		return null;
@@ -320,12 +322,18 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	@Override
 	public Integer getTotalRuleItems(String storeId, String ruleId)
 			throws CoreServiceException {
-		Search search = new Search(BannerRuleItem.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
-		SearchResult<BannerRuleItem> bannerRuleItems = search(search);
+		if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(ruleId)) {
+			BannerRuleItem bannerRuleItem = new BannerRuleItem();
+			BannerRule bannerRule = new BannerRule();
+			bannerRule.setStoreId(storeId);
+			bannerRule.setRuleId(ruleId);
+			bannerRuleItem.setRule(bannerRule);
+			SearchResult<BannerRuleItem> bannerRuleItems = search(bannerRuleItem);
 
-		return bannerRuleItems.getTotalCount();
+			return bannerRuleItems.getTotalCount();
+		}
+
+		return 0;
 	}
 
 	@Override
@@ -377,25 +385,30 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	@Override
 	public SearchResult<BannerRuleItem> getRuleItemsByImageId(String storeId,
 			String imageId, int page, int pageSize) throws CoreServiceException {
-		Search search = new Search(BannerRuleItem.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID, imageId));
-		search.setPageNumber(page);
-		search.setMaxRowCount(pageSize);
+		if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(imageId)) {
+			BannerRuleItem bannerRuleItem = new BannerRuleItem();
+			BannerRule bannerRule = new BannerRule();
+			ImagePath imagePath = new ImagePath();
+			bannerRule.setStoreId(storeId);
+			imagePath.setId(imageId);
+			bannerRuleItem.setRule(bannerRule);
+			bannerRuleItem.setImagePath(imagePath);
 
-		return search(search);
+			return search(bannerRuleItem, page, pageSize);
+		}
+		return null;
 	}
 
 	@Override
 	public SearchResult<BannerRuleItem> getRuleItemsByRuleId(String storeId,
 			String ruleId, int page, int pageSize) throws CoreServiceException {
-		Search search = new Search(BannerRuleItem.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
-		search.setPageNumber(page);
-		search.setMaxRowCount(pageSize);
+		BannerRuleItem bannerRuleItem = new BannerRuleItem();
+		BannerRule bannerRule = new BannerRule();
+		bannerRule.setStoreId(storeId);
+		bannerRule.setRuleId(ruleId);
+		bannerRuleItem.setRule(bannerRule);
 
-		return search(search);
+		return search(bannerRuleItem, page, pageSize);
 	}
 
 	@Override
@@ -407,12 +420,14 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
 	@Override
 	public BannerRuleItem getRuleItemByMemberId(String storeId, String ruleId,
 			String memberId) throws CoreServiceException {
-		Search search = new Search(BannerRuleItem.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
-		search.addFilter(new Filter(DAOConstants.PARAM_MEMBER_ID, memberId));
+		BannerRuleItem bannerRuleItem = new BannerRuleItem();
+		BannerRule bannerRule = new BannerRule();
+		bannerRule.setStoreId(storeId);
+		bannerRule.setRuleId(ruleId);
+		bannerRuleItem.setRule(bannerRule);
+		bannerRuleItem.setMemberId(memberId);
 
-		SearchResult<BannerRuleItem> bannerRuleItems = search(search);
+		SearchResult<BannerRuleItem> bannerRuleItems = search(bannerRuleItem);
 		if (bannerRuleItems.getTotalCount() > 0) {
 			return (BannerRuleItem) CollectionUtils.get(
 					bannerRuleItems.getResult(), 0);
