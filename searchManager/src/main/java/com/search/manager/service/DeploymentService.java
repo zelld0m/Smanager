@@ -60,6 +60,8 @@ public class DeploymentService {
     private WorkflowNotificationMailService mailService;
     @Autowired
     private RuleTransferService ruleTransferService;
+    @Autowired
+    private ConfigManager configManager;
 
     @RemoteMethod
     public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {
@@ -237,7 +239,7 @@ public class DeploymentService {
         RuleEntity ruleEntity = null;
         List<String> publishedRuleStatusIdList = new ArrayList<String>();
         String ruleId = "";
-           
+
         //Populate deployment model for all rules queued for publishing
         // The following code generates xml files for published rules required for export.
         // Note that at this point, rules have already been published.
@@ -254,7 +256,7 @@ public class DeploymentService {
                 if (RuleEntity.SPELL.equals(ruleEntity)) {
                     name = "Did You Mean Rules";
                 }
-
+                
                 if (daoService.createPublishedVersion(store, ruleEntity, ruleId, username, name, comment)) {
                     daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
                     logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));
@@ -276,6 +278,7 @@ public class DeploymentService {
 
             publishingResultList.add(deploymentModel);
         }
+                
         return new RecordSet<DeploymentModel>(publishingResultList, publishingResultList.size());
     }
 

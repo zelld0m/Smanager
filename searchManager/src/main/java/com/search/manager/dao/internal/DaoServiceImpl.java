@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import com.search.manager.dao.file.SpellRuleVersionDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CommentDAO;
+import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.DemoteDAO;
 import com.search.manager.dao.sp.ElevateDAO;
@@ -44,10 +46,12 @@ import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
 import com.search.manager.enums.ExportRuleMapSortType;
 import com.search.manager.enums.ExportType;
+import com.search.manager.enums.ImportType;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.enums.RuleType;
+import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.BannerRule;
 import com.search.manager.model.BannerRuleItem;
@@ -90,8 +94,10 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
+import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleTransferUtil;
+import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,6 +153,10 @@ public class DaoServiceImpl implements DaoService {
     private SpellRuleVersionDAO spellRuleVersionDAO;
     @Autowired
     private BannerVersionDAO bannerVersionDAO;
+    @Autowired
+    private RuleTransferService ruleTransferService;
+    @Autowired
+    private ConfigManager configManager;
     private DaoServiceImpl instance;
     private static final Logger logger =
             LoggerFactory.getLogger(DaoServiceImpl.class);
@@ -1630,7 +1640,8 @@ public class DaoServiceImpl implements DaoService {
         // TODO: change return type to Map
         boolean exported = false;
         boolean exportedOnce = false;
-
+        boolean isAutoImport = BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_IMPORT));
+        
         AuditTrail auditTrail = new AuditTrail();
         auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
         auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
@@ -1651,7 +1662,7 @@ public class DaoServiceImpl implements DaoService {
         } catch (DaoException e) {
             logger.error("Failed to retrieve rule status for " + ruleEntity + " : " + ruleId, e);
         }
-
+        
         for (String targetStore : UtilityService.getStoresToExport(store)) {
             exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
             ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
@@ -1665,6 +1676,10 @@ public class DaoServiceImpl implements DaoService {
             exportedOnce |= exported;
             if (!exported) {
                 logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
+            } else {
+            	if(isAutoImport) {
+            		importExportedRule(targetStore, configManager.getStoreName(targetStore), rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), exportRuleMap.getRuleIdTarget() != null ? exportRuleMap.getRuleIdTarget() : DAOUtils.generateUniqueId(), rule.getRuleName());
+            	}
             }
         }
 
@@ -1692,6 +1707,18 @@ public class DaoServiceImpl implements DaoService {
             }
         }
         return exported;
+    }
+    
+    private void importExportedRule(String storeId, String storeName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
+    	String[] importRuleRefIdList = {importRuleRefId};
+    	String[] importTypeList = {importType};
+    	String[] importAsRefIdList = {importAsRefId};
+    	String[] ruleNameList = {ruleName};
+    	try {
+			ruleTransferService.importRejectRules(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
+		} catch (PublishLockException e) {
+			e.printStackTrace();
+		}
     }
 
     /* Used by SearchServlet */
