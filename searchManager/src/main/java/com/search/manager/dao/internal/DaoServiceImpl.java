@@ -99,6 +99,8 @@ import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
+import com.search.ws.ConfigManager.PropertyFileType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1640,8 +1642,7 @@ public class DaoServiceImpl implements DaoService {
         // TODO: change return type to Map
         boolean exported = false;
         boolean exportedOnce = false;
-        boolean isAutoImport = BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_IMPORT));
-        
+                
         AuditTrail auditTrail = new AuditTrail();
         auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
         auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
@@ -1664,6 +1665,7 @@ public class DaoServiceImpl implements DaoService {
         }
         
         for (String targetStore : UtilityService.getStoresToExport(store)) {
+        	boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty(PropertyFileType.SETTINGS, targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
             exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
             ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
                     targetStore, null, null, ruleEntity);

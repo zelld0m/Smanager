@@ -47,6 +47,7 @@ public class ConfigManager {
 	private Map<String, PropertiesConfiguration> mailSettingsMap = new HashMap<String, PropertiesConfiguration>();
 	private Map<String, PropertiesConfiguration> searchWithinSettingsMap = new HashMap<String, PropertiesConfiguration>();
 	private Map<String, PropertiesConfiguration> facetSortSettingsMap = new HashMap<String, PropertiesConfiguration>();
+	private Map<String, PropertiesConfiguration> workflowSettingsMap = new HashMap<String, PropertiesConfiguration>();
 
 	private ConfigManager() {
 		// do nothing...
@@ -133,11 +134,15 @@ public class ConfigManager {
 						// load the searchwithin settings
 						loadStoreSettingsToMap("searchwithin", searchWithinSettingsMap,
 								storeId, filePath);
-					}else if (moduleName.equals("facetsort")) {
+					} else if (moduleName.equals("facetsort")) {
 						// load the searchwithin settings
 						loadStoreSettingsToMap("facetsort", facetSortSettingsMap,
 								storeId, filePath);
-					}
+					} else if (moduleName.equals("workflow")) {
+						// load the workflow settings
+						loadStoreSettingsToMap("workflow", workflowSettingsMap,
+								storeId, filePath);
+					}	
 				} catch (NotDirectoryException e) {
 					logger.error(String.format("%s is not a valid directory",
 							e.getFile().getPath()), e);
@@ -417,7 +422,8 @@ public class ConfigManager {
 		MAIL,
 		SETTINGS,
 		SEARCHWITHIN,
-		FACETSORT
+		FACETSORT,
+		WORKFLOW
 	}
 
 	private PropertiesConfiguration getPropertiesConfiguration(PropertyFileType pft, String storeId){
@@ -428,6 +434,7 @@ public class ConfigManager {
 		case SETTINGS: config = serverSettingsMap.get(storeId); break;
 		case SEARCHWITHIN: config = searchWithinSettingsMap.get(storeId); break;
 		case FACETSORT: config = facetSortSettingsMap.get(storeId); break;
+		case WORKFLOW: config = workflowSettingsMap.get(storeId); break;
 		}
 		
 		return config;

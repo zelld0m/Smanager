@@ -26,6 +26,8 @@ public enum RuleStatusEntity {
 	
 	private static final Map<String,RuleStatusEntity> lookup = new HashMap<String,RuleStatusEntity>();
 
+	public static final RuleStatusEntity[] APPROVAL_STATUS = {PENDING, APPROVED, REJECTED};
+	
 	RuleStatusEntity(String displayText, String description){
 		this.displayText = displayText;
 		this.description = description;
@@ -35,7 +37,7 @@ public enum RuleStatusEntity {
 		for(RuleStatusEntity s : EnumSet.allOf(RuleStatusEntity.class))
 			lookup.put(s.getDisplayText(), s);
 	}
-
+	
 	public String getDisplayText() {
 		return displayText;
 	}

@@ -217,7 +217,7 @@ public class SecurityService {
     
     @RemoteMethod
     public RecordSet<RuleStatusEntity> getRuleEntityList() {
-        List<RuleStatusEntity> statusLIst = Arrays.asList(RuleStatusEntity.values());
+        List<RuleStatusEntity> statusLIst = Arrays.asList(RuleStatusEntity.APPROVAL_STATUS);
         
         return new RecordSet<RuleStatusEntity>(statusLIst, statusLIst.size());
     }
