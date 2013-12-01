@@ -401,6 +401,10 @@ $(function() {
                                         var list = data.list;
 
                                         if (list.length > 0) {
+                                        	
+                                        	accountRoleArray.push(
+                                                    new DropDownOption("All Roles", ""));
+                                        	
                                             for (var i = 0; i < list.length; i++) {
                                                 var listValue = list[i];
                                                 var id = listValue["id"];
