@@ -119,47 +119,46 @@
          <module name="workflow" title="Workflow Settings">
             <groups>
                 <group name="Default Import Status">
-                    <member property-id="status_elevate"/>
-					<member property-id="status_exclude"/>
-					<member property-id="status_demote"/>
-					<member property-id="status_facet_sort"/>
-					<member property-id="status_query_cleaning"/>
-					<member property-id="status_did_you_mean"/>
-					<member property-id="status_banner"/>
+                    <member property-id="status.elevate"/>
+					<member property-id="status.exclude"/>
+					<member property-id="status.demote"/>
+					<member property-id="status.facetSort"/>
+					<member property-id="status.queryCleaning"/>
+					<member property-id="status.didYouMean"/>
+					<member property-id="status.banner"/>
                 </group>
             </groups>
             
             <properties>
-                <property id="status_elevate" type="DropDown" required="true">
+                <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-                <property id="status_exclude" type="DropDown" required="true">
+                <property id="status.exclude" type="DropDown" required="true">
                     <label>Exclude</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_demote" type="DropDown" required="true">
+				<property id="status.demote" type="DropDown" required="true">
                     <label>Demote</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_facet_sort" type="DropDown" required="true">
+				<property id="status.facetSort" type="DropDown" required="true">
                     <label>Facet Sort</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_query_cleaning" type="DropDown" required="true">
+				<property id="status.queryCleaning" type="DropDown" required="true">
                     <label>Query Cleaning</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_did_you_mean" type="DropDown" required="true">
+				<property id="status.didYouMean" type="DropDown" required="true">
                     <label>Did You Mean</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_banner" type="DropDown" required="true">
+				<property id="status.banner" type="DropDown" required="true">
                     <label>Banner</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				
-            </properties>
+			</properties>
         </module>
     </store>
     
@@ -182,50 +181,49 @@
                 </property>
             </properties>
         </module>
-         <module name="workflow" title="Workflow Settings">
+          <module name="workflow" title="Workflow Settings">
             <groups>
                 <group name="Default Import Status">
-                    <member property-id="status_elevate"/>
-					<member property-id="status_exclude"/>
-					<member property-id="status_demote"/>
-					<member property-id="status_facet_sort"/>
-					<member property-id="status_query_cleaning"/>
-					<member property-id="status_did_you_mean"/>
-					<member property-id="status_banner"/>
+                    <member property-id="status.elevate"/>
+					<member property-id="status.exclude"/>
+					<member property-id="status.demote"/>
+					<member property-id="status.facetSort"/>
+					<member property-id="status.queryCleaning"/>
+					<member property-id="status.didYouMean"/>
+					<member property-id="status.banner"/>
                 </group>
             </groups>
             
             <properties>
-                <property id="status_elevate" type="DropDown" required="true">
+                <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-                <property id="status_exclude" type="DropDown" required="true">
+                <property id="status.exclude" type="DropDown" required="true">
                     <label>Exclude</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_demote" type="DropDown" required="true">
+				<property id="status.demote" type="DropDown" required="true">
                     <label>Demote</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_facet_sort" type="DropDown" required="true">
+				<property id="status.facetSort" type="DropDown" required="true">
                     <label>Facet Sort</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_query_cleaning" type="DropDown" required="true">
+				<property id="status.queryCleaning" type="DropDown" required="true">
                     <label>Query Cleaning</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_did_you_mean" type="DropDown" required="true">
+				<property id="status.didYouMean" type="DropDown" required="true">
                     <label>Did You Mean</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				<property id="status_banner" type="DropDown" required="true">
+				<property id="status.banner" type="DropDown" required="true">
                     <label>Banner</label>
                     <defaultValue>Pending Approval</defaultValue>
                 </property>
-				
-            </properties>
+			</properties>
         </module>
     </store>
     

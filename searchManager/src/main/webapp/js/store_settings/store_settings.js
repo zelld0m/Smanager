@@ -25,8 +25,8 @@ $(function() {
     
     dropDownListMap['mail.workflow.approver.group'] = accountRoleArray;
     
-    dropDownListMap['status_elevate'] = dropDownListMap['status_exclude'] = dropDownListMap['status_demote'] = dropDownListMap['status_facet_sort'] 
-    = dropDownListMap['status_query_cleaning'] = dropDownListMap['status_did_you_mean'] = dropDownListMap['status_banner'] = ruleEntityArray;
+    dropDownListMap['status.elevate'] = dropDownListMap['status.exclude'] = dropDownListMap['status.demote'] = dropDownListMap['status.facetSort'] 
+    = dropDownListMap['status.queryCleaning'] = dropDownListMap['status.didYouMean'] = dropDownListMap['status.banner'] = ruleEntityArray;
     
     var Field = function(id, propertyId, type) {
         this.id = id;

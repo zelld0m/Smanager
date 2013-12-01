@@ -36,7 +36,9 @@
 		<dwr:convert type="object"
 			class="org.joda.time.tz.DateTimeZoneBuilder$PrecalculatedZone" />
 		<dwr:convert type="bean" class="org.joda.time.tz.FixedDateTimeZone" />
-		<dwr:convert type="bean" class="com.search.manager.enums.RuleStatusEntity" />
+		<dwr:convert type="bean" class="com.search.manager.enums.RuleStatusEntity" >
+			<dwr:exclude method="declaringClass"/>
+		</dwr:convert>
 	</dwr:configuration>
 	<!-- <dwr:configuration/> -->
 

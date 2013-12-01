@@ -295,7 +295,7 @@ public class RuleTransferService {
 
                     if (ImportType.FOR_APPROVAL == importType || ImportType.AUTO_PUBLISH == importType) {
                         //submit rule for approval
-                        ruleStatus = deploymentService.processRuleStatus(ruleType, importAsId, ruleName, false);
+                        ruleStatus = deploymentService.processRuleStatus(store, ruleType, importAsId, ruleName, false);
                         status++;
 
                         if (ruleStatus != null && ImportType.AUTO_PUBLISH == importType) {
@@ -331,7 +331,7 @@ public class RuleTransferService {
             String[] ruleStatusIds = forPublishingMap.values().toArray(new String[0]);
             try {
                 //approve rule
-                if (CollectionUtils.isNotEmpty(deploymentService.approveRule(ruleType, ruleRefIds, comment, ruleStatusIds))) {
+                if (CollectionUtils.isNotEmpty(deploymentService.approveRule(store, ruleType, ruleRefIds, comment, ruleStatusIds))) {
                     status = PUBLISH_RULE;
 
                     //publish rule

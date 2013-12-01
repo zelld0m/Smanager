@@ -97,22 +97,22 @@ public class DeploymentService {
     }
 
     @RemoteMethod
-    public List<String> approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+    public List<String> approveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
         // TODO: add transaction dependency handshake
-        List<String> result = approveRule(ruleType, Arrays.asList(ruleRefIdList), comment);
-        daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, UtilityService.getStoreId(), UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+        List<String> result = approveRule(storeId, ruleType, Arrays.asList(ruleRefIdList), comment);
+        daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, storeId, UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 
         return result;
     }
 
-    private List<String> approveRule(String ruleType, List<String> ruleRefIdList, String comment) {
+    private List<String> approveRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
         List<String> result = new ArrayList<String>();
         try {
             List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
 
             try {
-                if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL,UtilityService.getStoreId(), "approvalNotification"))) {
+                if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL, storeId, "approvalNotification"))) {
                     List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                     mailService.sendNotification(RuleStatusEntity.APPROVED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
                 }
@@ -134,21 +134,21 @@ public class DeploymentService {
     }
 
     @RemoteMethod
-    public List<String> unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+    public List<String> unapproveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
         // TODO: add transaction dependency handshake
-        List<String> result = unapproveRule(ruleType, Arrays.asList(ruleRefIdList), comment);
-        daoService.addRuleStatusComment(RuleStatusEntity.REJECTED, UtilityService.getStoreId(), UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+        List<String> result = unapproveRule(storeId, ruleType, Arrays.asList(ruleRefIdList), comment);
+        daoService.addRuleStatusComment(RuleStatusEntity.REJECTED, storeId, UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
         return result;
     }
 
-    public List<String> unapproveRule(String ruleType, List<String> ruleRefIdList, String comment) {
+    public List<String> unapproveRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
         List<String> result = new ArrayList<String>();
         try {
             List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.REJECTED.toString());
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
 
             try {
-                if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(), "approvalNotification"))) {
+                if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL, storeId, "approvalNotification"))) {
                     List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                     mailService.sendNotification(RuleStatusEntity.REJECTED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
                 }
@@ -438,7 +438,7 @@ public class DeploymentService {
 
     @RemoteMethod
     // Used by Submit For Approval and Delete Rule
-    public RuleStatus processRuleStatus(String ruleType, String ruleRefId, String description, Boolean isDelete) {
+    public RuleStatus processRuleStatus(String storeId, String ruleType, String ruleRefId, String description, Boolean isDelete) {
         int result = -1;
         try {
             String username = UtilityService.getUsername();
@@ -447,7 +447,7 @@ public class DeploymentService {
             ruleStatus.setRuleRefId(ruleRefId);
             ruleStatus.setDescription(description);
             ruleStatus.setLastModifiedBy(username);
-            ruleStatus.setStoreId(UtilityService.getStoreId());
+            ruleStatus.setStoreId(storeId);
             result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
                     : daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
 

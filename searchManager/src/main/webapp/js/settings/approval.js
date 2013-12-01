@@ -102,7 +102,7 @@
 							var confirmMsg = "Continue approval of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
 							jConfirm(confirmMsg, "Confirm Approval", function(status){
 								if(status){
-									DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+									DeploymentServiceJS.approveRule(GLOBAL_storeId, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){
 											postMsg(data,true);	
 											getApprovalList();
@@ -126,7 +126,7 @@
 							var confirmMsg = "Continue reject of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
 							jConfirm(confirmMsg, "Confirm Reject", function(status){
 								if(status){
-									DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+									DeploymentServiceJS.unapproveRule(GLOBAL_storeId, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){
 											postMsg(data,false);	
 											getApprovalList();
@@ -159,7 +159,7 @@
 						case "approveBtn":
 							jConfirm("Continue approval for Did You Mean List?", "Confirm Approval", function(status){
 								if(status){
-									DeploymentServiceJS.approveRule(entityName, ["spell_rule"], comment, [ruleStatusId],{
+									DeploymentServiceJS.approveRule(GLOBAL_storeId, entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){
 											jAlert("Did You Mean List was successfully approved.", "Approval");
 											getApprovalList();
@@ -182,7 +182,7 @@
 
 							jConfirm("Continue reject for Did You Mean List?", "Confirm Reject", function(status){
 								if(status){
-									DeploymentServiceJS.unapproveRule(entityName, ["spell_rule"], comment, [ruleStatusId],{
+									DeploymentServiceJS.unapproveRule(GLOBAL_storeId, entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){
 											jAlert("Did You Mean List was successfully rejected.", "Approval");
 											getApprovalList();
@@ -438,7 +438,7 @@
 														
 														switch($(evt.currentTarget).attr("id")){
 														case "approveBtn": 
-															DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
+															DeploymentServiceJS.approveRule(GLOBAL_storeId, tabSelectedText, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
 																callback: function(data){
 																	postMsg(data,true);	
 																	getApprovalList();
@@ -453,7 +453,7 @@
 																jAlert("Deleted rules cannot be rejected!","Approval");
 																return;
 															}
-															DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
+															DeploymentServiceJS.unapproveRule(GLOBAL_storeId, tabSelectedText, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
 																callback: function(data){
 																	postMsg(data,false);	
 																	getApprovalList();

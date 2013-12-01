@@ -11,18 +11,18 @@ import org.directwebremoting.convert.EnumConverter;
 		converter=EnumConverter.class, 
 		type="enum")
 public enum RuleEntity {
-	ELEVATE(1, "Elevate"),
-	EXCLUDE(2, "Exclude"),
-	KEYWORD(3, "Keyword"),
-	STORE_KEYWORD(4, "Store Keyword"),
-	CAMPAIGN(5, "Campaign"),
-	BANNER(6, "Banner"),
-	QUERY_CLEANING(7, "Query Cleaning"),
-	RANKING_RULE(8, "Ranking Rule"),
-	RULE_STATUS(9, "Rule Status"),
-	DEMOTE(10, "Demote"),
-	FACET_SORT(11, "Facet Sort"),
-    SPELL(12, "Did You Mean");
+	ELEVATE(1, "Elevate", "elevate"),
+	EXCLUDE(2, "Exclude", "exclude"),
+	KEYWORD(3, "Keyword", "keyword"),
+	STORE_KEYWORD(4, "Store Keyword", "storeKeyword"),
+	CAMPAIGN(5, "Campaign", "campaign"),
+	BANNER(6, "Banner", "banner"),
+	QUERY_CLEANING(7, "Query Cleaning", "queryCleaning"),
+	RANKING_RULE(8, "Ranking Rule", "rankingRule"),
+	RULE_STATUS(9, "Rule Status", "ruleStatus"),
+	DEMOTE(10, "Demote", "demote"),
+	FACET_SORT(11, "Facet Sort", "facetSort"),
+    SPELL(12, "Did You Mean", "didYouMean");
 
 	private final int code;
 	private final List<String> values;
@@ -62,6 +62,10 @@ public enum RuleEntity {
 	        }
 	    }
 		return value;
+	}
+	
+	public String getNthValue(int valueIndex) {
+		return values.get(valueIndex);
 	}
 	
 	private static boolean containsIgnoreCase(String str, List<String> list){

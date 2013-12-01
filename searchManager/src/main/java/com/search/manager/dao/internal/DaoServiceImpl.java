@@ -94,6 +94,7 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
+import com.search.manager.service.DeploymentService;
 import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleTransferUtil;
@@ -157,6 +158,8 @@ public class DaoServiceImpl implements DaoService {
     private BannerVersionDAO bannerVersionDAO;
     @Autowired
     private RuleTransferService ruleTransferService;
+    @Autowired
+    private DeploymentService deploymentService;
     @Autowired
     private ConfigManager configManager;
     private DaoServiceImpl instance;
@@ -1665,8 +1668,11 @@ public class DaoServiceImpl implements DaoService {
         }
         
         for (String targetStore : UtilityService.getStoresToExport(store)) {
+        	exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
+        	
         	boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty(PropertyFileType.SETTINGS, targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
-            exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
+        	boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty(PropertyFileType.WORKFLOW, targetStore, "enable."+rule.getRuleEntity().getNthValue(1)));
+        	
             ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
                     targetStore, null, null, ruleEntity);
             exportRuleMap.setExportDateTime(exportDateTime);
@@ -1679,7 +1685,7 @@ public class DaoServiceImpl implements DaoService {
             if (!exported) {
                 logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
             } else {
-            	if(isAutoImport) {
+            	if(isAutoImport && isRuleEntityEnabled) {
             		importExportedRule(targetStore, configManager.getStoreName(targetStore), rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), exportRuleMap.getRuleIdTarget() != null ? exportRuleMap.getRuleIdTarget() : DAOUtils.generateUniqueId(), rule.getRuleName());
             	}
             }
@@ -1716,8 +1722,18 @@ public class DaoServiceImpl implements DaoService {
     	String[] importTypeList = {importType};
     	String[] importAsRefIdList = {importAsRefId};
     	String[] ruleNameList = {ruleName};
+    	String status = configManager.getProperty(PropertyFileType.WORKFLOW, storeId, "status."+ruleEntity.getNthValue(1));
+    	
     	try {
 			ruleTransferService.importRejectRules(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
+			deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, comment, false);
+			switch(RuleStatusEntity.get(status)) {
+				case APPROVED: deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, importAsRefIdList); break;
+				
+				case REJECTED: deploymentService.unapproveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, importAsRefIdList);
+				
+				default: 
+			}
 		} catch (PublishLockException e) {
 			e.printStackTrace();
 		}

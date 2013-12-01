@@ -144,7 +144,7 @@
 				click: function(e){
 					jConfirm(base.options.moduleName + " " + base.options.rule["ruleName"] + " will be locked for approval. Continue?", "Submit For Approval", function(result){
 						if(result){
-							DeploymentServiceJS.processRuleStatus(base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
+							DeploymentServiceJS.processRuleStatus(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
 								callback: function(ruleStatus){
 									base.options.afterSubmitForApprovalRequest(ruleStatus);
 								},
