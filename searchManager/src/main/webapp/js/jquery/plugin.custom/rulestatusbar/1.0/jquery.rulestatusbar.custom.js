@@ -216,8 +216,8 @@
 			enableSingleVersionDownload: false,
 			beforeSubmitForApprovalRequest: function(){}, 
 			afterSubmitForApprovalRequest: function(status){}, 
-			beforerulestatusbarRequest: function(){}, 
-			afterrulestatusbarRequest: function(status){},
+			beforeRuleStatusRequest: function(){}, 
+			afterRuleStatusRequest: function(status){},
 			preRestoreCallback: function(base){},
 			postRestoreCallback: function(base, rule){}
 	};
