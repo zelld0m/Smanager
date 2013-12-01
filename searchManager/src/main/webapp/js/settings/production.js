@@ -113,7 +113,7 @@
 							jConfirm(confirmMsg, "Confirm Publish", function(status){
 								if(status){
 									var exception = false;
-									DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+									DeploymentServiceJS.publishRule(GLOBAL_storeId, GLOBAL_storeName, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){	
 											$.each(data.list, function() {
 												this.rName = $("tr#ruleItem" + $.formatAsId(this.ruleId) + " > td#ruleRefId > p#ruleName").text();
@@ -149,7 +149,7 @@
 							jConfirm(confirmMsg, "Confirm Unpublish", function(status){
 								if(status){
 									var exception = false;
-									DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+									DeploymentServiceJS.unpublishRuleGLOBAL_storeId, GLOBAL_storeName, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){
 											$.each(data.list, function() {
 												this.rName = $("tr#ruleItem" + $.formatAsId(this.ruleId) + " > td#ruleRefId > p#ruleName").text();
@@ -195,7 +195,7 @@
 							jConfirm("Continue publishing of Did You Mean List?", "Confirm Publish", function(status){
 								if(status){
 									var exception = false;
-									DeploymentServiceJS.publishRule(entityName, ["spell_rule"], comment, [ruleStatusId],{
+									DeploymentServiceJS.publishRule(GLOBAL_storeId, GLOBAL_storeName, entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){	
 											jAlert("Did You Mean List was successfully published.", "Publish Rule");
 											getForProductionList("approved");	

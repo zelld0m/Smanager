@@ -132,31 +132,31 @@
             <properties>
                 <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
                 <property id="status.exclude" type="DropDown" required="true">
                     <label>Exclude</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.demote" type="DropDown" required="true">
                     <label>Demote</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.facetSort" type="DropDown" required="true">
                     <label>Facet Sort</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.queryCleaning" type="DropDown" required="true">
                     <label>Query Cleaning</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.didYouMean" type="DropDown" required="true">
                     <label>Did You Mean</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.banner" type="DropDown" required="true">
                     <label>Banner</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 			</properties>
         </module>
@@ -197,31 +197,31 @@
             <properties>
                 <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
                 <property id="status.exclude" type="DropDown" required="true">
                     <label>Exclude</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.demote" type="DropDown" required="true">
                     <label>Demote</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.facetSort" type="DropDown" required="true">
                     <label>Facet Sort</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.queryCleaning" type="DropDown" required="true">
                     <label>Query Cleaning</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.didYouMean" type="DropDown" required="true">
                     <label>Did You Mean</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.banner" type="DropDown" required="true">
                     <label>Banner</label>
-                    <defaultValue>Pending Approval</defaultValue>
+                    <defaultValue>For Review</defaultValue>
                 </property>
 			</properties>
         </module>

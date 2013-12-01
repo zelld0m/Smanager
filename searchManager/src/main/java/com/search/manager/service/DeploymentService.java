@@ -283,11 +283,9 @@ public class DeploymentService {
     }
 
     @RemoteMethod
-    public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
+    public RecordSet<DeploymentModel> publishRule(String storeId, String storeName, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
         boolean obtainedLock = false;
         String userName = UtilityService.getUsername();
-        String storeName = UtilityService.getStoreName();
-        String storeId = UtilityService.getStoreId();
         try {
             obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
             return publishRuleNoLock(storeId, ruleType, ruleRefIdList, comment, ruleStatusIdList);

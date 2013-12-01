@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.authentication.dao.internal.UserDetailsImpl;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
@@ -216,10 +217,10 @@ public class SecurityService {
     }
     
     @RemoteMethod
-    public RecordSet<RuleStatusEntity> getRuleEntityList() {
-        List<RuleStatusEntity> statusLIst = Arrays.asList(RuleStatusEntity.APPROVAL_STATUS);
+    public RecordSet<ImportType> getImportTypeList() {
+        List<ImportType> statusLIst = Arrays.asList(ImportType.PUBLISHER_LIST);
         
-        return new RecordSet<RuleStatusEntity>(statusLIst, statusLIst.size());
+        return new RecordSet<ImportType>(statusLIst, statusLIst.size());
     }
 
     @RemoteMethod

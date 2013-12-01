@@ -7,11 +7,8 @@ $(function() {
     var tabContentFieldTemplate = "<tr><td>#{label}&nbsp;</td><td>#{field}</td></tr>";
     var stringFieldTemplate = "<input type='text' class='w240' id='#{id}'/>";
     var booleanFieldTemplate = "<input id='#{id}' type='checkbox' class='firerift-style-checkbox on-off'/>";
-    var accountRoleFieldTemplate = "<select class=\"w240p mar0\" id=\"#{id}\" style=\"cursor:pointer\">" +
-            "<option value=\"\">All Roles</option></select>";
-    var ruleEntityTemplate = "<select class=\"w240p mar0\" id=\"#{id}\" style=\"cursor:pointer\">" +
-    		"</select>";
-    
+    var accountRoleFieldTemplate = "<select class=\"w240p mar0\" id=\"#{id}\" style=\"cursor:pointer\"></select>";
+        
     var dropDownListMap = new Object();
     var tabObjects = new Array();
     var storePropertiesFilesArray;
@@ -421,7 +418,7 @@ $(function() {
                                     }
                                 });
                                 
-                                SecurityServiceJS.getRuleEntityList({
+                                SecurityServiceJS.getImportTypeList({
                                     callback: function(data) {
                                         roleList = data;
                                         var list = data.list;

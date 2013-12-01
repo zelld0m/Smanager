@@ -1722,16 +1722,15 @@ public class DaoServiceImpl implements DaoService {
     	String[] importTypeList = {importType};
     	String[] importAsRefIdList = {importAsRefId};
     	String[] ruleNameList = {ruleName};
-    	String status = configManager.getProperty(PropertyFileType.WORKFLOW, storeId, "status."+ruleEntity.getNthValue(1));
+    	String importTypeSetting = configManager.getProperty(PropertyFileType.WORKFLOW, storeId, "status."+ruleEntity.getNthValue(1));
     	
     	try {
 			ruleTransferService.importRejectRules(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
-			deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, comment, false);
-			switch(RuleStatusEntity.get(status)) {
-				case APPROVED: deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, importAsRefIdList); break;
-				
-				case REJECTED: deploymentService.unapproveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, importAsRefIdList);
-				
+			switch(ImportType.getByDisplayText(importTypeSetting)) {
+				case FOR_APPROVAL: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false); break;
+				case AUTO_PUBLISH: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false);
+									deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, importAsRefIdList); 
+									deploymentService.publishRule(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importAsRefIdList); break;
 				default: 
 			}
 		} catch (PublishLockException e) {
