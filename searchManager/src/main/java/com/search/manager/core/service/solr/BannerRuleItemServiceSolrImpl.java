@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.core.dao.BannerRuleItemDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Filter.FilterOperator;
@@ -122,11 +123,13 @@ public class BannerRuleItemServiceSolrImpl implements BannerRuleItemService {
 	@Override
 	public BannerRuleItem searchById(String storeId, String id)
 			throws CoreServiceException {
-		Search search = new Search(BannerRuleItem.class);
-		search.addFilter(new Filter("store", storeId));
-		search.addFilter(new Filter("memberId", id));
+		BannerRule bannerRule = new BannerRule();
+		BannerRuleItem bannerRuleItem = new BannerRuleItem();
+		bannerRule.setStoreId(storeId);
+		bannerRuleItem.setRule(bannerRule);
+		bannerRuleItem.setMemberId(id);
 
-		SearchResult<BannerRuleItem> searchResult = search(search);
+		SearchResult<BannerRuleItem> searchResult = search(bannerRuleItem);
 
 		if (searchResult.getTotalCount() > 0) {
 			return searchResult.getResult().get(0);
