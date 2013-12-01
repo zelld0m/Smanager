@@ -393,22 +393,12 @@
 				self.selectedRuleItemPage = page;
 				self.preShowRuleContent();
 
-				$("#submitForApproval").rulestatus({
+				$("#submitForApproval").rulestatusbar({
 					moduleName: self.moduleName,
 					ruleType: "Exclude",
 					rule: self.selectedRule,
 					enableVersion: true,
 					authorizeRuleBackup: allowModify,
-					viewAuditCallback: function(target){
-						$(target).viewaudit({
-							getDataCallback: function(base, page){
-								CommentServiceJS.getComment(self.moduleName, self.selectedRule["ruleId"], page, 5, {
-									callback: function(data){}
-								});
-							}
-						});
-					},
-					
 					authorizeSubmitForApproval: allowModify,
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
