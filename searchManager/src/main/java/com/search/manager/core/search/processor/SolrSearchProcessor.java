@@ -327,8 +327,7 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements
 			return "\""
 					+ ((DateTime) value).withZone(DateTimeZone.UTC).toString(
 							"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + "\"";
-		}
-		if (value instanceof Collection) {
+		} else if (value instanceof Collection) {
 			StringBuilder sb = new StringBuilder();
 			boolean first = true;
 			for (Object o : (Collection) value) {
