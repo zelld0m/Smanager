@@ -145,7 +145,7 @@
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						jConfirm(confirmMsg, "Confirm Export", function(status){
 							if(status){
-								RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
+								RuleTransferServiceJS.exportRule(GLOBAL_storeId, self.entityName, self.getSelectedRefId(), comment, {
 									callback: function(data){
 										showActionResponseFromMap(data, "export", "Export",
 										"Unable to find published data for this rule. Please contact Search Manager Team.");

@@ -1645,7 +1645,7 @@ public class DaoServiceImpl implements DaoService {
         // TODO: change return type to Map
         boolean exported = false;
         boolean exportedOnce = false;
-                
+        
         AuditTrail auditTrail = new AuditTrail();
         auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
         auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
@@ -1718,19 +1718,23 @@ public class DaoServiceImpl implements DaoService {
     }
     
     private void importExportedRule(String storeId, String storeName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
+    	
+    	RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(storeId, ruleEntity.toString(), importRuleRefId);
     	String[] importRuleRefIdList = {importRuleRefId};
     	String[] importTypeList = {importType};
     	String[] importAsRefIdList = {importAsRefId};
     	String[] ruleNameList = {ruleName};
+    	String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
     	String importTypeSetting = configManager.getProperty(PropertyFileType.WORKFLOW, storeId, "status."+ruleEntity.getNthValue(1));
-    	
     	try {
 			ruleTransferService.importRejectRules(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
+			
 			switch(ImportType.getByDisplayText(importTypeSetting)) {
 				case FOR_APPROVAL: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false); break;
 				case AUTO_PUBLISH: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false);
-									deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, importAsRefIdList); 
-									deploymentService.publishRule(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importAsRefIdList); break;
+									deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
+									deploymentService.publishRule(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList); 
+									break;
 				default: 
 			}
 		} catch (PublishLockException e) {

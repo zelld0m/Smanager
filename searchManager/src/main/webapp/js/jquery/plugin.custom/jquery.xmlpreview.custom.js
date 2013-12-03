@@ -1211,7 +1211,7 @@
 									case "okBtn": 
 										switch(base.options.transferType.toLowerCase()){
 										case "export": 
-											RuleTransferServiceJS.exportRule(base.options.ruleType, $.makeArray(base.options.ruleId), comment, {
+											RuleTransferServiceJS.exportRule(GLOBAL_storeId, base.options.ruleType, $.makeArray(base.options.ruleId), comment, {
 												callback: function(data){									
 													base.api.hide();
 													showActionResponseFromMap(data, "export", base.options.transferType,

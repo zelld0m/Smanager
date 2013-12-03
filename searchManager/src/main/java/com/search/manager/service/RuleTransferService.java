@@ -149,7 +149,7 @@ public class RuleTransferService {
     }
 
     @RemoteMethod
-    public Map<String, List<String>> exportRule(String ruleType, String[] ruleRefIdList, String comment) {
+    public Map<String, List<String>> exportRule(String storeId, String ruleType, String[] ruleRefIdList, String comment) {
 
         HashMap<String, List<String>> resultMap = new HashMap<String, List<String>>();
         ArrayList<String> passedList = new ArrayList<String>();
@@ -159,7 +159,7 @@ public class RuleTransferService {
         resultMap.put("FAILED", failedList);
 
         if (ArrayUtils.isNotEmpty(ruleRefIdList)) {
-            String store = UtilityService.getStoreId();
+            String store = storeId;
             RuleEntity ruleEntity = RuleEntity.find(ruleType);
             for (String ruleId : ruleRefIdList) {
                 boolean success = false;
@@ -219,7 +219,6 @@ public class RuleTransferService {
             ImportType importType = ImportType.getByDisplayText(importTypeList[i]);
             String ruleName = ruleNameList[i];
             String importAsId = importAsRefIdList[i];
-
             // initialize to status to 0
             int status = CREATE_RULE_STATUS;
 
@@ -420,7 +419,7 @@ public class RuleTransferService {
             }
 
             if (ArrayUtils.isNotEmpty(rejectRuleRefIdList)) {
-                Map<String, Integer> statusMap = unimportRules(ruleType, rejectRuleRefIdList,
+                Map<String, Integer> statusMap = unimportRules(storeId, ruleType, rejectRuleRefIdList,
                         comment, rejectRuleNameList);
                 for (String key : statusMap.keySet()) {
                     status = statusMap.get(key);
@@ -510,9 +509,9 @@ public class RuleTransferService {
      *
      * @return list of rule name of successfully rejected rule
      */
-    private Map<String, Integer> unimportRules(String ruleType, String[] ruleRefIdList, String comment, String[] ruleNameList) {
+    private Map<String, Integer> unimportRules(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleNameList) {
         Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
-        String store = UtilityService.getStoreId();
+        String store = storeId;
         RuleEntity ruleEntity = RuleEntity.find(ruleType);
 
         for (int i = 0; i < ruleRefIdList.length; i++) {

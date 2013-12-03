@@ -322,7 +322,7 @@
 		};
 
 		base.getList = function(){
-			DeploymentServiceJS.getRuleStatus(base.options.moduleName, base.options.keyword, {
+			DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, base.options.moduleName, base.options.keyword, {
 				callback:function(ruleStatus){
 					base.ruleStatus = ruleStatus;
 					base.options.locked = base.options.locked || (base.ruleStatus!=null && $.inArray(base.ruleStatus["approvalStatus"],["PENDING","APPROVED"])>=0);

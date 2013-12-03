@@ -82,7 +82,8 @@ public class RuleVersionService {
     @RemoteMethod
     public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
         boolean success = false;
-        RuleXml rule = RuleVersionUtil.getRuleVersion(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, version);
+        String storeId = UtilityService.getStoreId();
+        RuleXml rule = RuleVersionUtil.getRuleVersion(storeId, RuleEntity.find(ruleType), ruleId, version);
         if (rule != null) {
             rule.setCreatedBy(UtilityService.getUsername());
             success = daoService.restoreRuleVersion(rule);
@@ -96,9 +97,9 @@ public class RuleVersionService {
                     break;
                 case RANKING_RULE:
                     // what is this for?
-                    RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
+                    RuleStatus ruleStatus = deploymentService.getRuleStatus(storeId, "Ranking Rule", ruleId);
                     if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
-                        deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
+                        deploymentService.processRuleStatus(UtilityService.getStoreId(), "Ranking Rule", ruleId, null, false);
                     }
                     break;
             }

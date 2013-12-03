@@ -827,7 +827,7 @@
                 itemRuleStatusCallback: function(ui, item) {
                     var base = this;
 
-                    DeploymentServiceJS.getRuleStatus(base.options.ruleType, item["rule"]["ruleId"], {
+                    DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, base.options.ruleType, item["rule"]["ruleId"], {
                         callback: function(data) {
                             ui.find('.itemStatus').text(getRuleNameSubTextStatus(data));
                             if (!data["locked"] && allowModify) {

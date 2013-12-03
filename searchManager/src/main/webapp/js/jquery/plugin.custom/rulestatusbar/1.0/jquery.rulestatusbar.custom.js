@@ -14,7 +14,7 @@
 
 		base.getRuleStatus = function(){
 
-			DeploymentServiceJS.getRuleStatus(base.options.moduleName, base.options.rule["ruleId"], {
+			DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], {
 				preHook: function(){
 					base.options.beforeRuleStatusRequest();
 				},

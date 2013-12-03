@@ -239,7 +239,7 @@
 
 		base.getRuleStatus = function(tr, item){
 			var $tr = tr;
-			DeploymentServiceJS.getRuleStatus(base.options.moduleName, item["ruleId"], {
+			DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, base.options.moduleName, item["ruleId"], {
 				callback:function(data){
 					$tr.find('.itemSubText').html(getRuleNameSubTextStatus(data));
 				}

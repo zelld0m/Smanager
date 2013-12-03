@@ -8,7 +8,7 @@
             }
         },
         getRuleStatus: function($li, rule) {
-            DeploymentServiceJS.getRuleStatus(rule["type"], rule["id"], {
+            DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, rule["type"], rule["id"], {
                 callback: function(data) {
                     if (!$.isEmptyObject(data)) {
                         $li.find('.ruleStatus > .status').text(getRuleNameSubTextStatus(data));

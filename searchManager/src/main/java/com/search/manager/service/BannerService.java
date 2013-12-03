@@ -212,7 +212,7 @@ public class BannerService extends RuleService {
             BannerRule rule = srRule.getData();
 
             if (rule != null) {
-                RuleStatus ruleStatus = deploymentService.getRuleStatus(
+                RuleStatus ruleStatus = deploymentService.getRuleStatus(storeId,
                         RuleEntity.getValue(getRuleEntity().getCode()),
                         rule.getRuleId());
 
