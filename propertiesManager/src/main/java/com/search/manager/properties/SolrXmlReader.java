@@ -47,9 +47,10 @@ public class SolrXmlReader {
         }
     }
 
-    private List<String> getStoreAttributes(String attrName, boolean hasXmlTag) {
+    @SuppressWarnings("unchecked")
+	private List<String> getStoreAttributes(String attrName, boolean hasXmlTag) {
         List<String> storeAttrib = new ArrayList<String>();
-        List<HierarchicalConfiguration> hcList = xmlConfig.configurationsAt("/store");
+		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt("/store");
         
         for (HierarchicalConfiguration hc : hcList) {
             String attrib = "@" + attrName;
