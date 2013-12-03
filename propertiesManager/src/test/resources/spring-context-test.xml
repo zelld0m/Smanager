@@ -13,14 +13,14 @@
 
     <!-- Scans within the base package of the application for @Components to 
     configure as beans, @Controller, @Service, @Configuration, etc. -->
-    <context:component-scan base-package="com.search.properties.manager" />
+    <context:component-scan base-package="com.search.manager.properties" />
     
-    <bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
-        <constructor-arg name="storePropertiesLocation" value="src/test/resources/home/solr/conf/store-properties.xml"/>
-        <constructor-arg name="storePropertiesSaveLocation" value="src/test/resources/home/solr/conf"/>
+    <bean id="propertiesManager" class="com.search.manager.properties.PropertiesManager">
+        <constructor-arg name="storePropertiesFile" value="src/test/resources/home/solr/conf/store-properties.xml"/>
+        <constructor-arg name="storePropertiesFolder" value="src/test/resources/home/solr/conf"/>
     </bean>
     
-    <bean id="solrXmlReader" class="com.search.properties.manager.SolrXmlReader">
-        <constructor-arg name="configPath" value="src/test/resources/home/solr/conf/solr.xml"/>
+    <bean id="solrXmlReader" class="com.search.manager.properties.SolrXmlReader">
+        <constructor-arg name="storeSolrPropertiesFile" value="src/test/resources/home/solr/conf/solr.xml"/>
     </bean>
 </beans>
