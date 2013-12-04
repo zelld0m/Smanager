@@ -80,7 +80,7 @@
     </bean>
   
     <bean id="solrXmlReader" class="com.search.manager.properties.SolrXmlReader">
-        <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
+        <constructor-arg name="storeSolrPropertiesFile" value="/home/solr/conf/solr.xml"/>
     </bean>
         
     <!--        <util:properties id="globalVarConfig" location="/home/solr/conf/globalvar.properties"/>
