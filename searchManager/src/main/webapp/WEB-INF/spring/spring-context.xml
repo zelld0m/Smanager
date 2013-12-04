@@ -16,8 +16,7 @@
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!-- Specify that messages.properties is loaded to load resource bundles. 
-    This means that we can apply overrides to binding messages which aren't very 
-    nice -->
+    This means that we can apply overrides to binding messages which aren't very nice -->
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource"
           scope="singleton">
@@ -40,14 +39,14 @@
         </property>
     </bean>
 
-	<bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
-        <constructor-arg name="storePropertiesLocation" value="/home/solr/conf/store-properties.xml"/>
-        <constructor-arg name="storePropertiesSaveLocation" value="/home/solr/conf"/>
+	<bean id="propertiesManager" class="com.search.manager.properties.PropertiesManager" init-method="saveStoreProperties">
+        <constructor-arg name="storePropertiesFile" value="/home/solr/conf/store.xml"/>
+        <constructor-arg name="storePropertiesFolder" value="/home/solr/conf"/>
     </bean>
 
     <bean id="configManager" class="com.search.ws.ConfigManager" factory-method="getInstance">
-        <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
-        <constructor-arg name="pm" ref="propertiesManager"/>
+ 		<constructor-arg name="storeXMLFile" value="/home/solr/conf/store.xml"/>
+ 		<constructor-arg name="solrXMLFile" value="/home/solr/conf/solr.xml"/>
     </bean>
     
     <!-- PropertiesUtils -->
@@ -63,7 +62,7 @@
     <!-- Initialize Utility Classes -->
     <bean class="com.search.manager.utility.UtilityInitializer" scope="singleton" lazy-init="false" init-method="initialize">
         <property name="globalVarFile"              value="/home/solr/conf/globalvar.properties" />
-        <property name="configFile"                 value="/home/solr/conf/solr.xml" />
+        <property name="storeSolrPropertiesFile"    value="/home/solr/conf/solr.xml" />
         <property name="enterpriseSearchConfigFile" value="/home/solr/conf/enterpriseSearch.xml" />
         <property name="relevancyConfigFile"        value="/home/solr/conf/relevancy.xml" />
         <property name="messagesConfigFile"         value="/home/solr/conf/messages.xml" />
@@ -79,9 +78,8 @@
             </list>
         </property>
     </bean>
-        
   
-    <bean id="solrXmlReader" class="com.search.properties.manager.SolrXmlReader">
+    <bean id="solrXmlReader" class="com.search.manager.properties.SolrXmlReader">
         <constructor-arg name="configPath" value="/home/solr/conf/solr.xml"/>
     </bean>
         

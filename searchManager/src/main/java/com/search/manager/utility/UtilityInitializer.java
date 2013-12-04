@@ -14,7 +14,7 @@ public class UtilityInitializer {
     private static final Logger logger = LoggerFactory.getLogger(UtilityInitializer.class);
 
     private String globalVarFile;
-    private String configFile;
+    private String storeSolrPropertiesFile;
     private String enterpriseSearchConfigFile;
     private String relevancyConfigFile;
     private String messagesConfigFile;
@@ -23,9 +23,9 @@ public class UtilityInitializer {
         this.globalVarFile = globalVarFile;
     }
 
-    public void setConfigFile(String configFile) {
-        this.configFile = configFile;
-    }
+    public void setStoreSolrPropertiesFile(String storeSolrPropertiesFile) {
+		this.storeSolrPropertiesFile = storeSolrPropertiesFile;
+	}
 
     public void setEnterpriseSearchConfigFile(String enterpriseSearchConfigFile) {
         this.enterpriseSearchConfigFile = enterpriseSearchConfigFile;
@@ -42,31 +42,31 @@ public class UtilityInitializer {
     public void initialize() {
         // properties util
         if (StringUtils.isNotBlank(globalVarFile)) {
-            logger.info("global var file: " + globalVarFile);
+            logger.info("global var file: {}", globalVarFile);
             PropertiesUtils.initPropertiesConfig(globalVarFile);
         }
 
         // server config
-        if (StringUtils.isNotBlank(configFile)) {
-            logger.info("config file: " + configFile);
-            ConfigManager.getInstance(configFile);
+        if (StringUtils.isNotBlank(storeSolrPropertiesFile)) {
+            logger.info("config file: {}", storeSolrPropertiesFile);
+            ConfigManager.getInstance(storeSolrPropertiesFile);
         }
 
         // enterprise search config
         if (StringUtils.isNotBlank(enterpriseSearchConfigFile)) {
-            logger.info("enterprise search config file: " + enterpriseSearchConfigFile);
+            logger.info("enterprise search config file: {}", enterpriseSearchConfigFile);
             EnterpriseSearchConfigManager.getInstance(enterpriseSearchConfigFile);
         }
 
         // relevancy config
         if (StringUtils.isNotBlank(relevancyConfigFile)) {
-            logger.info("relevancy config file: " + relevancyConfigFile);
+            logger.info("relevancy config file: {}", relevancyConfigFile);
             RelevancyConfig.getInstance(relevancyConfigFile);
         }
 
         // messages config
         if (StringUtils.isNotBlank(messagesConfigFile)) {
-            logger.info("messages config file: " + messagesConfigFile);
+            logger.info("messages config file: {}", messagesConfigFile);
             MessagesConfig.getInstance(messagesConfigFile);
         }
     }

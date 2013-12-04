@@ -13,6 +13,8 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,10 +40,6 @@ import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
-import com.search.ws.ConfigManager.PropertyFileType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Repository("spellRuleDAO")
 public class SpellRuleDAO {
@@ -231,7 +229,7 @@ public class SpellRuleDAO {
 
     public Integer getMaxSuggest(String store) {
         return Integer.parseInt(StringUtils.defaultIfBlank(
-                ConfigManager.getInstance().getProperty(PropertyFileType.SETTINGS, store, "maxSpellSuggestions"), "3"));
+                ConfigManager.getInstance().getProperty("spell", store, "maxSpellSuggestions"), "3"));
     }
 
     @Audit(entity = Entity.spell, operation = Operation.updateSetting)
@@ -284,8 +282,7 @@ public class SpellRuleDAO {
                     new DateTime(), "spell_rule", maxSuggest, Lists.transform(spellRules, SpellRule.transformer));
 
             RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
-            ConfigManager.getInstance().setPublishedStoreLinguisticSetting(store, "maxSpellSuggestions",
-                    String.valueOf(daoService.getMaxSuggest(store)));
+            ConfigManager.getInstance().setPublishedStoreLinguisticSetting(store, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(store)));
             return true;
         } catch (Exception e) {
             logger.error("Error in publishing spell rules.", e);

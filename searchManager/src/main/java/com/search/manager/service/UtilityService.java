@@ -44,7 +44,6 @@ import com.search.manager.schema.model.Schema;
 import com.search.manager.utility.PropertiesUtils;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
-import com.search.ws.ConfigManager.PropertyFileType;
 
 @Service(value = "utilityService")
 @RemoteProxy(
@@ -369,7 +368,7 @@ public class UtilityService {
     }
 
     public static String getStoreSetting(String property) {
-        return ConfigManager.getInstance().getProperty(PropertyFileType.SETTINGS, getStoreId(), property);
+        return ConfigManager.getInstance().getProperty("settings", getStoreId(), property);
     }
 
     public static boolean setStoreSetting(String property, String value) {
@@ -377,11 +376,11 @@ public class UtilityService {
     }
 
     public static String getStoreSetting(String storeId, String property) {
-        return ConfigManager.getInstance().getProperty(PropertyFileType.SETTINGS, storeId, property);
+        return ConfigManager.getInstance().getProperty("settings", storeId, property);
     }
 
     public static List<String> getStoreSettings(String storeId, String property) {
-        return ConfigManager.getInstance().getPropertyList(PropertyFileType.SETTINGS, storeId, property);
+        return ConfigManager.getInstance().getPropertyList("settings", storeId, property);
     }
 
     public static List<String> getStoresToExport(String storeId) {

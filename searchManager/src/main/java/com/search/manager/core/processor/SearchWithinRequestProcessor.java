@@ -30,12 +30,12 @@ import org.springframework.stereotype.Component;
 
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrResponseParser;
-import com.search.ws.ConfigManager.PropertyFileType;
 
 @Component
 public class SearchWithinRequestProcessor implements RequestProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(SearchWithinRequestProcessor.class);
 	private ConfigManager cm =  ConfigManager.getInstance();
+	private static final String PROPERTY_MODULE_NET = "searchWithin";
 	private RequestPropertyBean requestPropertyBean;
 	
 	private SearchWithinRequestProcessor(){
@@ -48,48 +48,48 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 	}
 
 	public List<String> getFields(){
-		return cm.getPropertyList(PropertyFileType.SEARCHWITHIN, requestPropertyBean.getStoreId(), "searchwithin.solrfieldlist");
+		return cm.getPropertyList(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "searchwithin.solrfieldlist");
 	}
 
 	public List<String> getSearchWithinType(){
-		return cm.getPropertyList(PropertyFileType.SEARCHWITHIN, requestPropertyBean.getStoreId(), "searchwithin.type");
+		return cm.getPropertyList(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "searchwithin.type");
 	}
 
 	public String getRequestParamName(){
-		return StringUtils.defaultIfBlank(cm.getProperty(PropertyFileType.SEARCHWITHIN, requestPropertyBean.getStoreId(), "searchwithin.paramname"),"searchWithin");
+		return StringUtils.defaultIfBlank(cm.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "searchwithin.paramname"),"searchWithin");
 	}
 
 	public String getKeywordOperator(String swType){
-		return StringUtils.defaultIfBlank(cm.getProperty(PropertyFileType.SEARCHWITHIN,requestPropertyBean.getStoreId(), String.format("searchwithin.%s.keywordOperator",swType)),"OR");
+		return StringUtils.defaultIfBlank(cm.getProperty(PROPERTY_MODULE_NET,requestPropertyBean.getStoreId(), String.format("searchwithin.%s.keywordOperator",swType)),"OR");
 	}
 
 	public String getSolrFieldOperator(String swType){
-		return StringUtils.defaultIfBlank(cm.getProperty(PropertyFileType.SEARCHWITHIN,requestPropertyBean.getStoreId(), String.format("searchwithin.%s.solrFieldOperator",swType)),"OR");
+		return StringUtils.defaultIfBlank(cm.getProperty(PROPERTY_MODULE_NET,requestPropertyBean.getStoreId(), String.format("searchwithin.%s.solrFieldOperator",swType)),"OR");
 	}
 
 	public String getPrefixOperator(String swType){
-		return cm.getProperty(PropertyFileType.SEARCHWITHIN, requestPropertyBean.getStoreId(), String.format("searchwithin.%s.prefixTypeOperator", swType));
+		return cm.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), String.format("searchwithin.%s.prefixTypeOperator", swType));
 	}
 
 	public boolean isQuoteKeyword(String swType){
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getProperty(PropertyFileType.SEARCHWITHIN, requestPropertyBean.getStoreId(), String.format("searchwithin.%s.quoteKeyword",swType)), "false"));
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), String.format("searchwithin.%s.quoteKeyword",swType)), "false"));
 	}
 
 	public boolean isSplit(String swType){
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getProperty(PropertyFileType.SEARCHWITHIN, requestPropertyBean.getStoreId(), String.format("searchwithin.%s.split",swType)), "false"));
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), String.format("searchwithin.%s.split",swType)), "false"));
 	}
 	
 	public String getSplitRegex(String swType){
-		return cm.getProperty(PropertyFileType.SEARCHWITHIN,requestPropertyBean.getStoreId(), String.format("searchwithin.%s.splitRegex", swType));
+		return cm.getProperty(PROPERTY_MODULE_NET,requestPropertyBean.getStoreId(), String.format("searchwithin.%s.splitRegex", swType));
 	}
 	
 	public int getMinLength(){
-		return Integer.parseInt(StringUtils.defaultIfBlank(cm.getProperty(PropertyFileType.SEARCHWITHIN,requestPropertyBean.getStoreId(), "searchwithin.minLength"),"2"));
+		return Integer.parseInt(StringUtils.defaultIfBlank(cm.getProperty(PROPERTY_MODULE_NET,requestPropertyBean.getStoreId(), "searchwithin.minLength"),"2"));
 	}
 	
 	@Override
 	public boolean isEnabled(){
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getProperty(PropertyFileType.SEARCHWITHIN,requestPropertyBean.getStoreId(), "searchwithin.enable"), "false"));
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(cm.getProperty(PROPERTY_MODULE_NET,requestPropertyBean.getStoreId(), "searchwithin.enable"), "false"));
 	}
 	
 	public List<String> getTokenizedKeyword(List<String> keywords, String allowedSwParam){

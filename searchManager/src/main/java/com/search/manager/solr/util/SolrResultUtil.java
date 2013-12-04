@@ -39,7 +39,6 @@ import com.search.manager.solr.model.RelevancyRuleSolr;
 import com.search.manager.solr.model.RuleSolrResult;
 import com.search.manager.solr.model.SpellRuleSolr;
 import com.search.ws.ConfigManager;
-import com.search.ws.ConfigManager.PropertyFileType;
 
 public class SolrResultUtil {
 
@@ -298,10 +297,10 @@ public class SolrResultUtil {
 		ConfigManager cm = ConfigManager.getInstance();
 
 		for (BannerRuleItemSolr bannerRuleItemSolr : bannerRuleItemsSolr) {
-			String autoPrefixProtocol = cm.getProperty(PropertyFileType.SETTINGS,
+			String autoPrefixProtocol = cm.getProperty("settings",
 					bannerRuleItemSolr.getStore(),
 					DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
-			String protocol = StringUtils.defaultIfBlank(cm.getProperty(PropertyFileType.SETTINGS,
+			String protocol = StringUtils.defaultIfBlank(cm.getProperty("settings",
 					bannerRuleItemSolr.getStore(),
 					DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL),
 					"http");
