@@ -30,7 +30,7 @@ public class ImportRuleTask extends ModelBean{
 	
 	private ImportType importType;
 	
-	private TaskExecutionResult result;
+	private TaskExecutionResult taskExecutionResult;
 	
 	public String getTaskId() {
 		return taskId;
@@ -102,5 +102,13 @@ public class ImportRuleTask extends ModelBean{
 	
 	public void setImportType(ImportType importType) {
 		this.importType = importType;
+	}
+
+	public TaskExecutionResult getTaskExecutionResult() {
+		return taskExecutionResult;
+	}
+
+	public void setTaskExecutionResult(TaskExecutionResult taskExecutionResult) {
+		this.taskExecutionResult = taskExecutionResult;
 	}
 }
