@@ -43,6 +43,7 @@ import com.search.manager.core.processor.SearchWithinRequestProcessor;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
+import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -469,13 +470,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	}
 
 	protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws DaoException {
+		List<BannerRuleItem> bannerRuleItems = null;
 		try {
-			return getDaoService(fromSearchGui).getActiveBannerRuleItems(store, keyword, currentDate);
+			bannerRuleItems = getDaoService(fromSearchGui).getActiveBannerRuleItems(store, keyword, currentDate);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
 				if (!configManager.isSolrImplOnly()) {
 					try {
-						return daoService.getActiveBannerRuleItems(store, keyword, currentDate);
+						bannerRuleItems = daoService.getActiveBannerRuleItems(store, keyword, currentDate);
 					} catch (DaoException e1) {
 						logger.error("Failed to get active bannerRuleItems {}", e1);
 						return null;
@@ -486,6 +488,20 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			}
 			throw e;
 		}
+		
+		String autoPrefixProtocol = configManager.getProperty("settings", store.getStoreId(),
+				DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
+		Boolean isAutoPrefixProtocol = BooleanUtils.toBoolean(StringUtils.defaultIfBlank(autoPrefixProtocol, "false"));
+		
+		if(bannerRuleItems != null) {
+			for(int i=0; i<bannerRuleItems.size(); i++) {		
+				String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings", store.getStoreId(),
+						DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http:");
+				bannerRuleItems.get(i).setLinkPath((isAutoPrefixProtocol ? protocol : "") + bannerRuleItems.get(i).getLinkPath());
+			}
+		}
+		
+		return bannerRuleItems;
 	}
 
 	protected abstract String getRequestPath(HttpServletRequest request);
