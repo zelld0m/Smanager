@@ -41,26 +41,25 @@
         <constructor-arg name="storePropertiesFile" value="/home/solr/conf/store.xml" />
         <constructor-arg name="storePropertiesFolder" value="/home/solr/conf" />
     </bean>
-
-    <bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
- 		<constructor-arg name="storeXMLFile" value="/home/solr/conf/store.xml" />
- 		<constructor-arg name="solrXMLFile" value="/home/solr/conf/solr.xml" />
-    </bean>
     
-    <!-- PropertiesUtils -->
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="staticMethod" value="com.search.manager.utility.PropertiesUtils.initPropertiesConfig"/>
+    <bean id="propertiesUtils" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="com.search.manager.utility.PropertiesUtils.initPropertiesConfig" />
         <property name="arguments">
             <list>
                 <value>/home/solr/conf/globalvar.properties</value>
             </list>
         </property>
     </bean>
+    
+    <bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
+ 		<constructor-arg name="storeXMLFile" value="/home/solr/conf/store.xml" />
+ 		<constructor-arg name="solrXMLFile" value="/home/solr/conf/solr.xml" />
+    </bean>
         
     <!-- Initialize Utility Classes -->
     <bean class="com.search.manager.utility.UtilityInitializer" scope="singleton" lazy-init="false" init-method="initialize">
-        <property name="globalVarFile" value="/home/solr/conf/globalvar.properties" />
-        <property name="storeSolrPropertiesFile" value="/home/solr/conf/solr.xml" />
+        <!-- property name="globalVarFile" value="/home/solr/conf/globalvar.properties" / -->
+        <!-- property name="storeSolrPropertiesFile" value="/home/solr/conf/solr.xml" / -->
         <property name="enterpriseSearchConfigFile" value="/home/solr/conf/enterpriseSearch.xml" />
         <property name="relevancyConfigFile" value="/home/solr/conf/relevancy.xml" />
         <property name="messagesConfigFile" value="/home/solr/conf/messages.xml" />
