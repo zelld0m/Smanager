@@ -39,6 +39,9 @@ public class RedirectRuleDAO {
     private static final Logger logger =
             LoggerFactory.getLogger(RedirectRuleDAO.class);
 
+    @Autowired
+	private JodaDateTimeUtil jodaDateTimeUtil;
+    
     // needed by spring AOP
     public RedirectRuleDAO() {
     }
@@ -107,8 +110,8 @@ public class RedirectRuleDAO {
                             rs.getString(DAOConstants.COLUMN_CONDITION),
                             rs.getString(DAOConstants.COLUMN_CREATED_BY),
                             rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-                            JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
-                            JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
+                            jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+                            jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
                             rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
                             rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
                             isIncludeKeyword,

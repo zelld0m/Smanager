@@ -49,10 +49,17 @@ public class SpellRuleDAO {
 
     @Autowired
     private DaoService daoService;
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
+    @Autowired
+    private ConfigManager configManager;
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private RuleXmlUtil ruleXmlUtil;
+    @Autowired
+	private JodaDateTimeUtil jodaDateTimeUtil;
+    
     @PostConstruct
     public void init() {
         getSpellRuleProcedure = new GetSpellRuleProcedure(jdbcTemplate);
@@ -132,8 +139,8 @@ public class SpellRuleDAO {
     @Audit(entity = Entity.spell, operation = Operation.add)
     public int addSpellRules(List<SpellRule> spellRules) throws DaoException {
         int count = 0;
-        String username = UtilityService.getUsername();
-        String store = UtilityService.getStoreId();
+        String username = utilityService.getUsername();
+        String store = utilityService.getStoreId();
 
         try {
             for (SpellRule rule : spellRules) {
@@ -167,7 +174,7 @@ public class SpellRuleDAO {
     @Audit(entity = Entity.spell, operation = Operation.update)
     public int updateSpellRules(List<SpellRule> spellRules, List<SpellRule> deleted) throws DaoException {
         int count = 0;
-        String username = UtilityService.getUsername();
+        String username = utilityService.getUsername();
 
         try {
             for (SpellRule rule : deleted) {
@@ -229,12 +236,12 @@ public class SpellRuleDAO {
 
     public Integer getMaxSuggest(String store) {
         return Integer.parseInt(StringUtils.defaultIfBlank(
-                ConfigManager.getInstance().getProperty("spell", store, "maxSpellSuggestions"), "3"));
+                configManager.getProperty("spell", store, "maxSpellSuggestions"), "3"));
     }
 
     @Audit(entity = Entity.spell, operation = Operation.updateSetting)
     public boolean setMaxSuggest(String store, Integer maxSuggest) {
-        return ConfigManager.getInstance().setStoreSetting(store, "maxSpellSuggestions", String.valueOf(maxSuggest));
+        return configManager.setStoreSetting(store, "maxSpellSuggestions", String.valueOf(maxSuggest));
     }
 
     @Transactional
@@ -278,11 +285,11 @@ public class SpellRuleDAO {
             List<SpellRule> spellRules = records.getList();
             int maxSuggest = getMaxSuggest(store);
 
-            SpellRules spellRulesXml = new SpellRules(store, 0, "Did You Mean", "", UtilityService.getUsername(),
+            SpellRules spellRulesXml = new SpellRules(store, 0, "Did You Mean", "", utilityService.getUsername(),
                     new DateTime(), "spell_rule", maxSuggest, Lists.transform(spellRules, SpellRule.transformer));
 
-            RuleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
-            ConfigManager.getInstance().setPublishedStoreLinguisticSetting(store, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(store)));
+            ruleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
+            configManager.setPublishedStoreLinguisticSetting(store, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(store)));
             return true;
         } catch (Exception e) {
             logger.error("Error in publishing spell rules.", e);
@@ -476,12 +483,12 @@ public class SpellRuleDAO {
         }
     }
 
-    private static final SpellRule transform(ResultSet rs) throws SQLException {
+    private final SpellRule transform(ResultSet rs) throws SQLException {
         SpellRule rule = new SpellRule(rs.getString(DAOConstants.COLUMN_RULE_ID),
                 rs.getString(DAOConstants.COLUMN_STORE_ID), rs.getString(DAOConstants.COLUMN_STATUS), null, null,
                 rs.getString(DAOConstants.COLUMN_CREATED_BY), rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-                JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
-                JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+                jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+                jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 
         rule.fromTabbedSearchTerms(rs.getString(DAOConstants.COLUMN_SEARCH_TERM));
         rule.fromTabbedSuggestions(rs.getString(DAOConstants.COLUMN_SUGGEST));

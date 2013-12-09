@@ -22,6 +22,9 @@ import com.search.manager.model.SearchCriteria;
 @Repository(value="commentDAO")
 public class CommentDAO {
 
+	@Autowired
+	private JodaDateTimeUtil jodaDateTimeUtil;
+	
 	// needed by spring AOP
 	public CommentDAO(){}
 	
@@ -61,7 +64,7 @@ public class CommentDAO {
 	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
-	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+	                		jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
 	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID)
 	                		);
 	        	}

@@ -30,6 +30,9 @@ import com.search.manager.model.constants.AuditTrailConstants.Operation;
 @Repository(value = "bannerDAO")
 public class BannerDAO {
 
+	@Autowired
+	private JodaDateTimeUtil jodaDateTimeUtil;
+	
 	public BannerDAO() {
 		// for AOP use
 	}
@@ -289,9 +292,9 @@ public class BannerDAO {
 									rule,
 									rs.getString(DAOConstants.COLUMN_MEMBER_ID),
 									rs.getInt(DAOConstants.COLUMN_PRIORITY),
-									JodaDateTimeUtil.toDateTime(rs
+									jodaDateTimeUtil.toDateTime(rs
 											.getTimestamp(DAOConstants.COLUMN_START_DATE)),
-									JodaDateTimeUtil.toDateTime(rs
+									jodaDateTimeUtil.toDateTime(rs
 											.getTimestamp(DAOConstants.COLUMN_END_DATE)),
 									rs.getString(DAOConstants.COLUMN_IMAGE_ALT),
 									rs.getString(DAOConstants.COLUMN_LINK_PATH),
@@ -304,11 +307,11 @@ public class BannerDAO {
 
 							ruleItem.setCreatedBy(rs
 									.getString(DAOConstants.COLUMN_CREATED_BY));
-							ruleItem.setCreatedDate(JodaDateTimeUtil.toDateTime(rs
+							ruleItem.setCreatedDate(jodaDateTimeUtil.toDateTime(rs
 									.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
 							ruleItem.setLastModifiedBy(rs
 									.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
-							ruleItem.setLastModifiedDate(JodaDateTimeUtil.toDateTime(rs
+							ruleItem.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
 									.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 
 							return ruleItem;
@@ -487,9 +490,9 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, ruleItem.getMemberId());
 			inputs.put(DAOConstants.PARAM_PRIORITY, ruleItem.getPriority());
 			inputs.put(DAOConstants.PARAM_START_DATE,
-					JodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
+					jodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE,
-					JodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
+					jodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath.getId());
 			inputs.put(DAOConstants.PARAM_IMAGE_ALT, ruleItem.getImageAlt());
 			inputs.put(DAOConstants.PARAM_LINK_PATH, ruleItem.getLinkPath());
@@ -522,9 +525,9 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, memberId);
 			inputs.put(DAOConstants.PARAM_PRIORITY, ruleItem.getPriority());
 			inputs.put(DAOConstants.PARAM_START_DATE,
-					JodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
+					jodaDateTimeUtil.toSqlDate(ruleItem.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE,
-					JodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
+					jodaDateTimeUtil.toSqlDate(ruleItem.getEndDate()));
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID,
 					imagePath != null ? imagePath.getId() : null);
 			inputs.put(DAOConstants.PARAM_IMAGE_ALT, ruleItem.getImageAlt());
@@ -578,9 +581,9 @@ public class BannerDAO {
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, model.getMemberId());
 			inputs.put(DAOConstants.PARAM_START_DATE,
-					JodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
+					jodaDateTimeUtil.toSqlDate(criteria.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE,
-					JodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
+					jodaDateTimeUtil.toSqlDate(criteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_DISABLED, BooleanUtils
 					.toIntegerObject(model.getDisabled(), 1, 0, null));
 			inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePath!=null? imagePath.getId() : null);
