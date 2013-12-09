@@ -31,7 +31,13 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	@Autowired
 	private DaoService daoService;
-
+	@Autowired
+	private RuleVersionUtil ruleVersionUtil;
+	@Autowired
+	private RuleXmlUtil ruleXmlUtil;
+	@Autowired
+	private UtilityService utilityService;
+	
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
@@ -47,7 +53,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	@Override
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
-		RuleVersionListXml<DBRuleVersion> ruleVersions = RuleVersionUtil.getRuleVersionList(store, entity, ruleId);
+		RuleVersionListXml<DBRuleVersion> ruleVersions = ruleVersionUtil.getRuleVersionList(store, entity, ruleId);
         if (ruleVersions != null) {
             try {
                 long nextVersion = ruleVersions.getNextVersion();
@@ -58,7 +64,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
                     version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
                     ruleVersions.getVersions().add(version);
 
-                    return RuleVersionUtil.addRuleVersion(store, RuleEntity.SPELL, ruleId, ruleVersions);
+                    return ruleVersionUtil.addRuleVersion(store, RuleEntity.SPELL, ruleId, ruleVersions);
                 }
             } catch (DaoException e) {
                 logger.error("Unable to create new version.", e);
@@ -70,7 +76,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	@Override
 	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
-		  RuleVersionListXml<DBRuleVersion> ruleVersions = RuleVersionUtil.getPublishedList(store, entity, ruleId);
+		  RuleVersionListXml<DBRuleVersion> ruleVersions = ruleVersionUtil.getPublishedList(store, entity, ruleId);
 
 	        if (ruleVersions != null) {
 	            try {
@@ -78,12 +84,12 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	                DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
 	                        ruleId, RuleEntity.SPELL);
-	                RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+	                RuleStatus ruleStatus = ruleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
 	                version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
 	                version.setRuleStatus(ruleStatus);
 	                ruleVersions.getVersions().add(version);
 
-	                return RuleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersions);
+	                return ruleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersions);
 	            } catch (DaoException e) {
 	                logger.error("Unable to create new published version.", e);
 	            }
@@ -94,7 +100,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
-		String username = UtilityService.getUsername();
+		String username = utilityService.getUsername();
 		DBRuleVersion version = (DBRuleVersion) xml;
 
 		try {
@@ -112,7 +118,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 	public boolean deleteRuleVersion(String store, String ruleId, String username, long version) {
 		try {
 			if (daoService.deleteSpellRuleVersion(store, (int) version)) {
-				RuleVersionListXml<DBRuleVersion> ruleVersions = RuleVersionUtil.getRuleVersionList(store, entity,
+				RuleVersionListXml<DBRuleVersion> ruleVersions = ruleVersionUtil.getRuleVersionList(store, entity,
 				        ruleId);
 
 				for (DBRuleVersion ruleVersion : ruleVersions.getVersions()) {
@@ -124,7 +130,7 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 					}
 				}
 
-				return RuleVersionUtil.saveRuleVersionList(store, entity, ruleId, ruleVersions,
+				return ruleVersionUtil.saveRuleVersionList(store, entity, ruleId, ruleVersions,
 				        RuleVersionUtil.BACKUP_PATH);
 			}
 		} catch (DaoException e) {
@@ -136,12 +142,12 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	@Override
 	public List<RuleXml> getPublishedRuleVersions(String store, String ruleId) {
-		return RuleVersionUtil.getPublishedList(store, entity, ruleId).getVersions();
+		return ruleVersionUtil.getPublishedList(store, entity, ruleId).getVersions();
 	}
 
 	@Override
 	public List<RuleXml> getRuleVersions(String store, String ruleId) {
-		return RuleVersionUtil.getRuleVersionList(store, entity, ruleId).getVersions();
+		return ruleVersionUtil.getRuleVersionList(store, entity, ruleId).getVersions();
 	}
 
 	@Override
