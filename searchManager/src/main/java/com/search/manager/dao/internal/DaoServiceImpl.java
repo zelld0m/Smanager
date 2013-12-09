@@ -147,7 +147,15 @@ public class DaoServiceImpl implements DaoService {
     private SpellRuleVersionDAO spellRuleVersionDAO;
     @Autowired
     private BannerVersionDAO bannerVersionDAO;
+    @Autowired
+    private SearchHelper searchHelper;
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private RuleTransferUtil ruleTransferUtil;
+    
     private DaoServiceImpl instance;
+    
     private static final Logger logger =
             LoggerFactory.getLogger(DaoServiceImpl.class);
 
@@ -264,7 +272,7 @@ public class DaoServiceImpl implements DaoService {
                 map.put(e.getEdp(), ep);
             }
         }
-        SearchHelper.getProducts(map, storeId, serverName, keyword);
+        searchHelper.getProducts(map, storeId, serverName, keyword);
         return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()), set.getTotalSize());
     }
 
@@ -296,7 +304,7 @@ public class DaoServiceImpl implements DaoService {
                 map.put(e.getEdp(), ep);
             }
         }
-        SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
+        searchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
         return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()), set.getTotalSize());
     }
 
@@ -325,7 +333,7 @@ public class DaoServiceImpl implements DaoService {
         } else {
             map.put(e.getEdp(), ep);
         }
-        SearchHelper.getProducts(map, storeId, serverName, keyword);
+        searchHelper.getProducts(map, storeId, serverName, keyword);
         return map.get(e.getEdp());
     }
 
@@ -356,7 +364,7 @@ public class DaoServiceImpl implements DaoService {
                 map.put(e.getEdp(), ep);
             }
         }
-        SearchHelper.getProducts(map, storeId, serverName, keyword);
+        searchHelper.getProducts(map, storeId, serverName, keyword);
         return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()), set.getTotalSize());
     }
 
@@ -386,7 +394,7 @@ public class DaoServiceImpl implements DaoService {
                 map.put(e.getEdp(), ep);
             }
         }
-        SearchHelper.getProducts(map, storeId, serverName, keyword);
+        searchHelper.getProducts(map, storeId, serverName, keyword);
         return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()), set.getTotalSize());
     }
 
@@ -417,7 +425,7 @@ public class DaoServiceImpl implements DaoService {
                 map.put(e.getEdp(), ep);
             }
         }
-        SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
+        searchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
         return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()), set.getTotalSize());
     }
 
@@ -445,7 +453,7 @@ public class DaoServiceImpl implements DaoService {
         } else {
             map.put(e.getEdp(), dp);
         }
-        SearchHelper.getProducts(map, storeId, serverName, keyword);
+        searchHelper.getProducts(map, storeId, serverName, keyword);
         return map.get(e.getEdp());
     }
 
@@ -475,7 +483,7 @@ public class DaoServiceImpl implements DaoService {
                 map.put(e.getEdp(), dp);
             }
         }
-        SearchHelper.getProducts(map, storeId, serverName, keyword);
+        searchHelper.getProducts(map, storeId, serverName, keyword);
         return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()), set.getTotalSize());
     }
 
@@ -505,7 +513,7 @@ public class DaoServiceImpl implements DaoService {
                 map.put(e.getEdp(), ep);
             }
         }
-        SearchHelper.getProducts(map, storeId, serverName, keyword);
+        searchHelper.getProducts(map, storeId, serverName, keyword);
         return new RecordSet<Product>(new ArrayList<Product>(map.values()), set.getTotalSize());
     }
 
@@ -535,13 +543,13 @@ public class DaoServiceImpl implements DaoService {
                 map.put(e.getEdp(), ep);
             }
         }
-        SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
+        searchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
         return new RecordSet<Product>(new ArrayList<Product>(map.values()), set.getTotalSize());
     }
 
     @Override
     public String getEdpByPartNumber(String serverName, String storeId, String keyword, String partNumber) {
-        return SearchHelper.getEdpByPartNumber(serverName, storeId, partNumber);
+        return searchHelper.getEdpByPartNumber(serverName, storeId, partNumber);
     }
 
     /* Keywords */
@@ -815,7 +823,7 @@ public class DaoServiceImpl implements DaoService {
         ep.setCreatedBy(e.getCreatedBy());
         ep.setStore(exclude.getStoreKeyword().getStoreId());
         map.put(e.getEdp(), ep);
-        SearchHelper.getProducts(map, storeId, serverName, keyword);
+        searchHelper.getProducts(map, storeId, serverName, keyword);
         return map.get(e.getEdp());
     }
 
@@ -1652,8 +1660,8 @@ public class DaoServiceImpl implements DaoService {
             logger.error("Failed to retrieve rule status for " + ruleEntity + " : " + ruleId, e);
         }
 
-        for (String targetStore : UtilityService.getStoresToExport(store)) {
-            exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
+        for (String targetStore : utilityService.getStoresToExport(store)) {
+            exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
             ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
                     targetStore, null, null, ruleEntity);
             exportRuleMap.setExportDateTime(exportDateTime);
