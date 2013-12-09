@@ -57,7 +57,11 @@ public class AuditInterceptor {
             LoggerFactory.getLogger(AuditInterceptor.class);
     @Autowired
     private AuditTrailDAO auditTrailDAO;
-
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
+    
     @Before(value = "com.search.manager.aop.SystemArchitecture.inServiceLayer()"
             + "&& target(bean) "
             + "&& @annotation(com.search.manager.aop.Audit)"
@@ -104,7 +108,7 @@ public class AuditInterceptor {
         auditTrail.setEntity(auditable.entity().toString());
         auditTrail.setOperation(auditable.operation().toString());
         auditTrail.setCreatedDate(new DateTime());
-        auditTrail.setUsername(UtilityService.getUsername());
+        auditTrail.setUsername(utilityService.getUsername());
 
         switch (auditable.entity()) {
             case banner:
@@ -242,7 +246,7 @@ public class AuditInterceptor {
 
             auditTrail.setDetails(String.format(message.toString(),
                     auditTrail.getReferenceId(),
-                    ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(),
+                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(),
                     e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(),
                     e.getCondition() != null ? e.getCondition().getReadableString() : ""));
         }
@@ -311,7 +315,7 @@ public class AuditInterceptor {
                 message.append(" Condition[%4$s]");
             }
             auditTrail.setDetails(String.format(message.toString(),
-                    auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+                    auditTrail.getReferenceId(), ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
         }
 
         logAuditTrail(auditTrail);
@@ -386,7 +390,7 @@ public class AuditInterceptor {
                 message.append(" Condition[%5$s]");
             }
             auditTrail.setDetails(String.format(message.toString(),
-                    auditTrail.getReferenceId(), ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+                    auditTrail.getReferenceId(), ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
         }
 
         logAuditTrail(auditTrail);
@@ -468,8 +472,8 @@ public class AuditInterceptor {
             }
 
             auditTrail.setDetails(String.format(message.toString(), ruleItem.getMemberId(), ruleItem.getPriority(),
-                    ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getStartDate(), JodaPatternType.DATE)),
-                    ObjectUtils.toString(JodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getEndDate(), JodaPatternType.DATE)),
+                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getStartDate(), JodaPatternType.DATE)),
+                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getEndDate(), JodaPatternType.DATE)),
                     ruleItem.getDisabled(),
                     ruleItem.getImagePath() != null ? ruleItem.getImagePath().getId() : "",
                     ruleItem.getImagePath() != null ? ruleItem.getImagePath().getPath() : "",
@@ -509,7 +513,7 @@ public class AuditInterceptor {
         List<SpellRule> updated = null;
         List<SpellRule> deleted = null;
         Integer maxSuggest = null;
-        String username = UtilityService.getUsername();
+        String username = utilityService.getUsername();
         StringBuilder message = new StringBuilder();
 
         switch (auditable.operation()) {
@@ -1019,7 +1023,8 @@ public class AuditInterceptor {
         logAuditTrail(auditTrail);
     }
 
-    private void logRuleStatus(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+    @SuppressWarnings("unused")
+	private void logRuleStatus(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
         RuleStatus ruleStatus = (RuleStatus) jp.getArgs()[0];
         auditTrail.setStoreId(ruleStatus.getStoreId());
         auditTrail.setReferenceId(ruleStatus.getRuleRefId());
