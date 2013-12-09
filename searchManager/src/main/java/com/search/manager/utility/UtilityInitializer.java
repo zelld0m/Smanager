@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.search.manager.schema.MessagesConfig;
 import com.search.manager.schema.RelevancyConfig;
-import com.search.ws.ConfigManager;
+//import com.search.ws.ConfigManager;
 import com.search.ws.EnterpriseSearchConfigManager;
 
 public class UtilityInitializer {
@@ -49,7 +49,7 @@ public class UtilityInitializer {
         // server config
         if (StringUtils.isNotBlank(storeSolrPropertiesFile)) {
             logger.info("config file: {}", storeSolrPropertiesFile);
-            ConfigManager.getInstance(storeSolrPropertiesFile);
+//            ConfigManager.getInstance(storeSolrPropertiesFile);
         }
 
         // enterprise search config
