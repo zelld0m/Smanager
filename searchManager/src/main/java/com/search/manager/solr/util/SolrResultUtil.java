@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeZone;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.MemberTypeEntity;
@@ -40,8 +42,12 @@ import com.search.manager.solr.model.RuleSolrResult;
 import com.search.manager.solr.model.SpellRuleSolr;
 import com.search.ws.ConfigManager;
 
+@Component
 public class SolrResultUtil {
 
+	@Autowired
+	private ConfigManager configManager;
+	
 	public static List<DemoteResult> toDemoteResult(
 			List<RuleSolrResult> ruleSolrResults) {
 		List<DemoteResult> demoteResults = new ArrayList<DemoteResult>();
@@ -291,16 +297,15 @@ public class SolrResultUtil {
 		return spellRules;
 	}
 
-	public static List<BannerRuleItem> toBannerRuleItem(
+	public List<BannerRuleItem> toBannerRuleItem(
 			List<BannerRuleItemSolr> bannerRuleItemsSolr) {
 		List<BannerRuleItem> bannerRuleItems = new ArrayList<BannerRuleItem>();
-		ConfigManager cm = ConfigManager.getInstance();
 
 		for (BannerRuleItemSolr bannerRuleItemSolr : bannerRuleItemsSolr) {
-			String autoPrefixProtocol = cm.getProperty("settings",
+			String autoPrefixProtocol = configManager.getProperty("settings",
 					bannerRuleItemSolr.getStore(),
 					DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
-			String protocol = StringUtils.defaultIfBlank(cm.getProperty("settings",
+			String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings",
 					bannerRuleItemSolr.getStore(),
 					DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL),
 					"http");
