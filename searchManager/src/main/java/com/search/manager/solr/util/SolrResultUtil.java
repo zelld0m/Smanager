@@ -5,13 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeZone;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleType;
@@ -40,13 +36,12 @@ import com.search.manager.solr.model.RedirectRuleSolr;
 import com.search.manager.solr.model.RelevancyRuleSolr;
 import com.search.manager.solr.model.RuleSolrResult;
 import com.search.manager.solr.model.SpellRuleSolr;
-import com.search.ws.ConfigManager;
 
 @Component
 public class SolrResultUtil {
 
-	@Autowired
-	private ConfigManager configManager;
+//	@Autowired
+//	private ConfigManager configManager;
 	
 	public static List<DemoteResult> toDemoteResult(
 			List<RuleSolrResult> ruleSolrResults) {
@@ -297,20 +292,20 @@ public class SolrResultUtil {
 		return spellRules;
 	}
 
-	public List<BannerRuleItem> toBannerRuleItem(
+	public static List<BannerRuleItem> toBannerRuleItem(
 			List<BannerRuleItemSolr> bannerRuleItemsSolr) {
 		List<BannerRuleItem> bannerRuleItems = new ArrayList<BannerRuleItem>();
 
 		for (BannerRuleItemSolr bannerRuleItemSolr : bannerRuleItemsSolr) {
-			String autoPrefixProtocol = configManager.getProperty("settings",
-					bannerRuleItemSolr.getStore(),
-					DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
-			String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings",
-					bannerRuleItemSolr.getStore(),
-					DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL),
-					"http");
-			Boolean isAutoPrefixProtocol = BooleanUtils.toBoolean(StringUtils
-					.defaultIfBlank(autoPrefixProtocol, "false"));
+//			String autoPrefixProtocol = configManager.getProperty("settings",
+//					bannerRuleItemSolr.getStore(),
+//					DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
+//			String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings",
+//					bannerRuleItemSolr.getStore(),
+//					DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL),
+//					"http");
+//			Boolean isAutoPrefixProtocol = BooleanUtils.toBoolean(StringUtils
+//					.defaultIfBlank(autoPrefixProtocol, "false"));
 
 			BannerRuleItem bannerRuleItem = new BannerRuleItem();
 			BannerRule bannerRule = new BannerRule();
@@ -328,8 +323,9 @@ public class SolrResultUtil {
 			bannerRuleItem.setEndDate(JodaDateTimeUtil.toDateTime(
 					bannerRuleItemSolr.getEndDate(), DateTimeZone.UTC));
 			bannerRuleItem.setImageAlt(bannerRuleItemSolr.getImageAlt());
-			bannerRuleItem.setLinkPath((isAutoPrefixProtocol ? protocol + ":"
-					: "") + bannerRuleItemSolr.getLinkPath());
+//			bannerRuleItem.setLinkPath((isAutoPrefixProtocol ? protocol + ":"
+//					: "") + bannerRuleItemSolr.getLinkPath());
+			bannerRuleItem.setLinkPath(bannerRuleItemSolr.getLinkPath());
 			bannerRuleItem.setOpenNewWindow(bannerRuleItemSolr
 					.isOpenNewWindow());
 			bannerRuleItem.setDescription(bannerRuleItemSolr.getDescription());
