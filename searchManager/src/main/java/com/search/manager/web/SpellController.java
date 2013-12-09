@@ -55,7 +55,11 @@ public class SpellController {
     private RuleTransferService ruleTransferService;
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String store) {
@@ -85,7 +89,7 @@ public class SpellController {
                 version.setStore(store);
                 version.getProps().put("maxSuggest", String.valueOf(maxSuggest));
 
-                SubReportHeader subReportHeader = RuleXmlReportUtil
+                SubReportHeader subReportHeader = ruleXmlReportUtil
                         .getVersionSubReportHeader(version, RuleEntity.SPELL);
                 subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(spellRules,
                         SpellReportBean.transformer)));
@@ -108,7 +112,7 @@ public class SpellController {
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
         ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
         @SuppressWarnings("unchecked")
-        RuleVersionListXml<DBRuleVersion> ruleVersions = RuleVersionUtil.getPublishedList(store, RuleEntity.SPELL,
+        RuleVersionListXml<DBRuleVersion> ruleVersions = ruleVersionUtil.getPublishedList(store, RuleEntity.SPELL,
                 "spell_rule");
 
         try {
@@ -118,7 +122,7 @@ public class SpellController {
                 List<SpellRule> spellRule = daoService.getSpellRuleVersion(store, 0);
 
                 if (latest != null && spellRule != null && spellRule.size() > 0) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(latest,
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(latest,
                             RuleEntity.SPELL);
                     subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(spellRule,
                             SpellReportBean.transformer)));
@@ -146,7 +150,7 @@ public class SpellController {
 
         try {
             if (xml != null) {
-                SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.SPELL);
+                SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.SPELL);
                 subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                         daoService.getSpellRuleVersion(xml.getStore(), 0), SpellReportBean.transformer)));
             }
@@ -176,7 +180,7 @@ public class SpellController {
                         DBRuleVersion version = (DBRuleVersion) xml;
                         List<SpellRule> spellRules = daoService.getSpellRuleVersion(store, (int) version.getVersion());
                         if (spellRules != null) {
-                            SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(version,
+                            SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(version,
                                     RuleEntity.SPELL);
                             subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(spellRules,
                                     SpellReportBean.transformer)));
@@ -211,7 +215,7 @@ public class SpellController {
                     DBRuleVersion version = (DBRuleVersion) xml;
 
                     if (version != null && xml.getVersion() == versionNo) {
-                        SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(version,
+                        SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(version,
                                 RuleEntity.SPELL);
                         subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                                 daoService.getSpellRuleVersion(store, (int) versionNo), SpellReportBean.transformer)));
