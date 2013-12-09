@@ -15,7 +15,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
@@ -36,9 +35,6 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 		BannerRuleItemDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(BannerRuleItemDaoSolrImpl.class);
-
-	@Autowired
-	private SolrResultUtil solrResultUtil;
 	
 	@Override
 	public List<BannerRuleItem> getBannerRuleItems(Store store)
@@ -62,7 +58,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					solrQuery);
 
 			if (queryResponse != null) {
-				bannerRuleItems = solrResultUtil.toBannerRuleItem(queryResponse
+				bannerRuleItems = SolrResultUtil.toBannerRuleItem(queryResponse
 						.getBeans(BannerRuleItemSolr.class));
 			}
 		} catch (Exception e) {
@@ -97,7 +93,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					solrQuery);
 
 			if (queryResponse != null) {
-				List<BannerRuleItem> bannerRuleItems = solrResultUtil
+				List<BannerRuleItem> bannerRuleItems = SolrResultUtil
 						.toBannerRuleItem(queryResponse
 								.getBeans(BannerRuleItemSolr.class));
 
@@ -135,7 +131,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					solrQuery);
 
 			if (queryResponse != null) {
-				List<BannerRuleItem> bannerRuleItems = solrResultUtil
+				List<BannerRuleItem> bannerRuleItems = SolrResultUtil
 						.toBannerRuleItem(queryResponse
 								.getBeans(BannerRuleItemSolr.class));
 
@@ -184,7 +180,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					solrQuery);
 
 			if (queryResponse != null) {
-				List<BannerRuleItem> bannerRuleItems = solrResultUtil
+				List<BannerRuleItem> bannerRuleItems = SolrResultUtil
 						.toBannerRuleItem(queryResponse
 								.getBeans(BannerRuleItemSolr.class));
 
@@ -221,7 +217,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 					solrQuery);
 
 			if (queryResponse != null) {
-				List<BannerRuleItem> bannerRuleItems = solrResultUtil
+				List<BannerRuleItem> bannerRuleItems = SolrResultUtil
 						.toBannerRuleItem(queryResponse
 								.getBeans(BannerRuleItemSolr.class));
 
