@@ -39,7 +39,8 @@ import com.search.ws.ConfigManager;
 @Service("workflowNotificationMailService")
 public class WorkflowNotificationMailService {
 
-	private static final Logger logger = LoggerFactory.getLogger(WorkflowNotificationMailService.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(WorkflowNotificationMailService.class);
 
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern PATTERN = Pattern.compile(EMAIL_PATTERN);
@@ -50,6 +51,10 @@ public class WorkflowNotificationMailService {
 	private SimpleMailMessage mailDetails;
 	@Autowired
 	private DaoService daoService;
+	@Autowired
+	private UtilityService utilityService;
+	@Autowired
+	private ConfigManager configManager;
 
 	public boolean sendNotification(RuleStatusEntity status, String ruleType,
 			String approvedBy, List<RuleStatus> ruleStatusList, String comment) {
@@ -64,10 +69,10 @@ public class WorkflowNotificationMailService {
 		Set<String> cc = new HashSet<String>();
 		Set<String> bcc = new HashSet<String>();
 
-		cc.addAll(ConfigManager.getInstance().getPropertyList("mail",
-				UtilityService.getStoreId(), "mail.workflow.cc"));
-		bcc.addAll(ConfigManager.getInstance().getPropertyList("mail",
-				UtilityService.getStoreId(), "mail.workflow.bcc"));
+		cc.addAll(configManager.getPropertyList("mail",
+				utilityService.getStoreId(), "mail.workflow.cc"));
+		bcc.addAll(configManager.getPropertyList("mail",
+				utilityService.getStoreId(), "mail.workflow.bcc"));
 
 		try {
 			User approvedByUser = daoService.getUser(approvedBy);
@@ -83,19 +88,19 @@ public class WorkflowNotificationMailService {
 
 		switch (status) {
 		case PENDING:
-			String pendingSubject = ConfigManager.getInstance()
-					.getProperty("mail", UtilityService.getStoreId(),
+			String pendingSubject = configManager
+					.getProperty("mail", utilityService.getStoreId(),
 							"mail.workflow.pendingSubject");
 			subject = (StringUtils.isNotBlank(pendingSubject)) ? pendingSubject
 					: "Search Manager: Rule Submitted For Approval";
 			templateLocation = "default-submitted-for-approval.vm";
-			cc.addAll(ConfigManager.getInstance().getPropertyList("mail",
-					UtilityService.getStoreId(), "mail.workflow.pendingCc"));
-			bcc.addAll(ConfigManager.getInstance().getPropertyList("mail",
-					UtilityService.getStoreId(), "mail.workflow.pendingBcc"));
+			cc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.pendingCc"));
+			bcc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.pendingBcc"));
 
 			try {
-				Map<String, User> recipients = getApprover(UtilityService
+				Map<String, User> recipients = getApprover(utilityService
 						.getStoreId());
 
 				if (recipients != null && recipients.size() > 0) {
@@ -123,54 +128,53 @@ public class WorkflowNotificationMailService {
 
 			break;
 		case APPROVED:
-			String approvedSubject = ConfigManager.getInstance()
-					.getProperty("mail", UtilityService.getStoreId(),
-							"mail.workflow.approvedSubject");
+			String approvedSubject = configManager.getProperty("mail",
+					utilityService.getStoreId(),
+					"mail.workflow.approvedSubject");
 			subject = (StringUtils.isNotBlank(approvedSubject)) ? approvedSubject
 					: "Search Manager: Approved Rule(s)";
 			templateLocation = "default-approval-approve.vm";
-			cc.addAll(ConfigManager.getInstance().getPropertyList("mail", 
-					UtilityService.getStoreId(), "mail.workflow.approvedCc"));
-			bcc.addAll(ConfigManager.getInstance().getPropertyList("mail", 
-					UtilityService.getStoreId(), "mail.workflow.approvedBcc"));
+			cc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.approvedCc"));
+			bcc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.approvedBcc"));
 			break;
 		case REJECTED:
-			String rejectedSubject = ConfigManager.getInstance()
-					.getProperty("mail", UtilityService.getStoreId(),
-							"mail.workflow.rejectedSubject");
+			String rejectedSubject = configManager.getProperty("mail",
+					utilityService.getStoreId(),
+					"mail.workflow.rejectedSubject");
 			subject = (StringUtils.isNotBlank(rejectedSubject)) ? rejectedSubject
 					: "Search Manager: Rejected Rule(s)";
 			templateLocation = "default-approval-reject.vm";
-			cc.addAll(ConfigManager.getInstance().getPropertyList("mail", 
-					UtilityService.getStoreId(), "mail.workflow.rejectedCc"));
-			bcc.addAll(ConfigManager.getInstance().getPropertyList("mail", 
-					UtilityService.getStoreId(), "mail.workflow.rejectedBcc"));
+			cc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.rejectedCc"));
+			bcc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.rejectedBcc"));
 			break;
 		case PUBLISHED:
-			String publishedSubject = ConfigManager.getInstance()
-					.getProperty("mail", UtilityService.getStoreId(),
-							"mail.workflow.publishedSubject");
+			String publishedSubject = configManager.getProperty("mail",
+					utilityService.getStoreId(),
+					"mail.workflow.publishedSubject");
 			subject = (StringUtils.isNotBlank(publishedSubject)) ? publishedSubject
 					: "Search Manager: Published Rule(s)";
 			templateLocation = "default-pushtoprod-publish.vm";
-			cc.addAll(ConfigManager.getInstance().getPropertyList("mail", 
-					UtilityService.getStoreId(), "mail.workflow.publishedCc"));
-			bcc.addAll(ConfigManager.getInstance().getPropertyList("mail", 
-					UtilityService.getStoreId(), "mail.workflow.publishedBcc"));
+			cc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.publishedCc"));
+			bcc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.publishedBcc"));
 			break;
 		case UNPUBLISHED:
-			String unpublishedSubject = ConfigManager.getInstance()
-					.getProperty("mail", UtilityService.getStoreId(),
-							"mail.workflow.unpublishedSubject");
+			String unpublishedSubject = configManager.getProperty("mail",
+					utilityService.getStoreId(),
+					"mail.workflow.unpublishedSubject");
 
 			subject = (StringUtils.isNotBlank(unpublishedSubject)) ? unpublishedSubject
 					: "Search Manager: Un-published Rule(s)";
 			templateLocation = "default-pushtoprod-unpublish.vm";
-			cc.addAll(ConfigManager.getInstance().getPropertyList("mail", 
-					UtilityService.getStoreId(), "mail.workflow.unpublishedCc"));
-			bcc.addAll(ConfigManager.getInstance()
-					.getPropertyList("mail", UtilityService.getStoreId(),
-							"mail.workflow.unpublishedBcc"));
+			cc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.unpublishedCc"));
+			bcc.addAll(configManager.getPropertyList("mail",
+					utilityService.getStoreId(), "mail.workflow.unpublishedBcc"));
 			break;
 		default:
 			return false;
@@ -189,22 +193,22 @@ public class WorkflowNotificationMailService {
 			messageDetails.setBcc(bcc.toArray(new String[bcc.size()]));
 		}
 
-		model.put("store", UtilityService.getStoreName());
+		model.put("store", utilityService.getStoreName());
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		model.put("ruleType", ruleEntity != null ? ruleEntity.getValues()
 				.get(0) : ruleType);
 
 		model.put("actionBy", StringUtils.trim(actionBy));
 
-		DateTimeZone defTZ = DateTimeZone.forID(ConfigManager.getInstance()
-				.getStoreParameter(UtilityService.getStoreId(),
+		DateTimeZone defTZ = DateTimeZone.forID(configManager
+				.getStoreParameter(utilityService.getStoreId(),
 						"default-timezone"));
 		DateTime inNewTZ = DateTime.now().withZone(defTZ);
 		String dateFormatted = "";
 
 		try {
-			String pattern = ConfigManager.getInstance().getStoreParameter(
-					UtilityService.getStoreId(), "datetime-format");
+			String pattern = configManager.getStoreParameter(
+					utilityService.getStoreId(), "datetime-format");
 			DateTimeFormatter formatter = DateTimeFormat.forPattern(pattern);
 			dateFormatted = formatter.print(inNewTZ);
 		} catch (Exception e) {
@@ -263,7 +267,9 @@ public class WorkflowNotificationMailService {
 						model);
 			}
 		} catch (DaoException e) {
-			logger.error("Error at WorkflowNotificationMailService.sendNotification()", e);
+			logger.error(
+					"Error at WorkflowNotificationMailService.sendNotification()",
+					e);
 			flag = false;
 		}
 
@@ -285,10 +291,10 @@ public class WorkflowNotificationMailService {
 
 		User userFilter = new User();
 		userFilter.setStoreId(storeId);
-		userFilter.setGroupId((StringUtils.isNotBlank(ConfigManager
-				.getInstance().getProperty("mail", UtilityService.getStoreId(),
-						"mail.workflow.approver.group"))) ? ConfigManager
-				.getInstance().getProperty("mail", UtilityService.getStoreId(),
+		userFilter.setGroupId((StringUtils.isNotBlank(configManager
+				.getProperty("mail", utilityService.getStoreId(),
+						"mail.workflow.approver.group"))) ? configManager
+				.getProperty("mail", utilityService.getStoreId(),
 						"mail.workflow.approver.group") : "APPROVER");
 		userFilter.setAccountNonExpired(true);
 		userFilter.setAccountNonLocked(true);
