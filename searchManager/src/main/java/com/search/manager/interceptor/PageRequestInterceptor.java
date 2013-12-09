@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.search.manager.authentication.dao.internal.UserDetailsImpl;
@@ -20,16 +21,20 @@ public class PageRequestInterceptor extends BaseInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(PageRequestInterceptor.class);
 
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private ConfigManager configManager;
+    
     @Override
     public boolean before(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.info(String.format("Prehandle request for %s", request.getRequestURL()));
-
-        ConfigManager cm = ConfigManager.getInstance();
+        
         UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        String storeId = UtilityService.getStoreId();
-        String systemTimeZoneId = cm.getSystemTimeZoneId();
-        String storeTimeZoneId = cm.getStoreParameter(storeId, "default-timezone");
+        String storeId = utilityService.getStoreId();
+        String systemTimeZoneId = configManager.getSystemTimeZoneId();
+        String storeTimeZoneId = configManager.getStoreParameter(storeId, "default-timezone");
         String userTimeZoneId = userDetailsImpl.getDateTimeZoneId();
 
         // Monitor and persist system timezone, update to user-defined/store-defined timezone
