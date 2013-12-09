@@ -25,13 +25,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTimeZone;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.properties.PropertiesManager;
+import com.search.manager.properties.exception.NotDirectoryException;
+import com.search.manager.properties.model.Module;
+import com.search.manager.properties.model.Store;
+import com.search.manager.properties.model.StoreProperties;
+import com.search.manager.properties.util.Stores;
 import com.search.manager.utility.PropertiesUtils;
-import com.search.properties.manager.PropertiesManager;
-import com.search.properties.manager.exception.NotDirectoryException;
-import com.search.properties.manager.model.Module;
-import com.search.properties.manager.model.Store;
-import com.search.properties.manager.model.StoreProperties;
-import com.search.properties.manager.util.Stores;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +120,7 @@ public class ConfigManager {
 				String moduleName = module.getName();
 				try {
 					String filePath = Stores.getFormattedSaveLocation(
-							propertiesManager.getStorePropertiesSaveLocation(), storeId,
+							propertiesManager.getStorePropertiesFolder(), storeId,
 							moduleName);
 
 					if (moduleName.equals("settings")) {
