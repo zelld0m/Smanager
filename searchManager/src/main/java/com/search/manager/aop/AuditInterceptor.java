@@ -246,7 +246,7 @@ public class AuditInterceptor {
 
             auditTrail.setDetails(String.format(message.toString(),
                     auditTrail.getReferenceId(),
-                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(),
+                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getStoreKeyword().getStoreId(), e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(),
                     e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(),
                     e.getCondition() != null ? e.getCondition().getReadableString() : ""));
         }
@@ -315,7 +315,7 @@ public class AuditInterceptor {
                 message.append(" Condition[%4$s]");
             }
             auditTrail.setDetails(String.format(message.toString(),
-                    auditTrail.getReferenceId(), ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+                    auditTrail.getReferenceId(), ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getStoreKeyword().getStoreId(), e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
         }
 
         logAuditTrail(auditTrail);
@@ -390,7 +390,7 @@ public class AuditInterceptor {
                 message.append(" Condition[%5$s]");
             }
             auditTrail.setDetails(String.format(message.toString(),
-                    auditTrail.getReferenceId(), ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+                    auditTrail.getReferenceId(), ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(e.getStoreKeyword().getStoreId(), e.getExpiryDate(), JodaPatternType.DATE)), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
         }
 
         logAuditTrail(auditTrail);
@@ -472,8 +472,8 @@ public class AuditInterceptor {
             }
 
             auditTrail.setDetails(String.format(message.toString(), ruleItem.getMemberId(), ruleItem.getPriority(),
-                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getStartDate(), JodaPatternType.DATE)),
-                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getEndDate(), JodaPatternType.DATE)),
+                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getRule().getStoreId(), ruleItem.getStartDate(), JodaPatternType.DATE)),
+                    ObjectUtils.toString(jodaDateTimeUtil.formatFromStorePatternWithZone(ruleItem.getRule().getStoreId(), ruleItem.getEndDate(), JodaPatternType.DATE)),
                     ruleItem.getDisabled(),
                     ruleItem.getImagePath() != null ? ruleItem.getImagePath().getId() : "",
                     ruleItem.getImagePath() != null ? ruleItem.getImagePath().getPath() : "",

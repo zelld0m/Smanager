@@ -259,10 +259,8 @@ public class BannerService extends RuleService {
 
         ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
         BannerRule rule = new BannerRule(storeId, ruleId, ruleName, null);
-        DateTime startDT = jodaDateTimeUtil.toDateTimeFromStorePattern(
-                startDate, JodaPatternType.DATE);
-        DateTime endDT = jodaDateTimeUtil.toDateTimeFromStorePattern(endDate,
-                JodaPatternType.DATE);
+        DateTime startDT = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE);
+        DateTime endDT = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate,JodaPatternType.DATE);
 
         ImagePath newImagePath = new ImagePath(storeId, imagePathId, imagePath,
                 imageSize, null, imageAlias);
@@ -458,10 +456,8 @@ public class BannerService extends RuleService {
             rule.setRuleId(ruleId);
             rule.setStoreId(storeId);
 
-            DateTime startDT = jodaDateTimeUtil.toDateTimeFromStorePattern(
-                    startDate, JodaPatternType.DATE);
-            DateTime endDT = jodaDateTimeUtil.toDateTimeFromStorePattern(
-                    endDate, JodaPatternType.DATE);
+            DateTime startDT = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE);
+            DateTime endDT = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE);
 
             BannerRuleItem ruleItem = new BannerRuleItem();
             ruleItem.setRule(rule);

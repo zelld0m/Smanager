@@ -191,18 +191,18 @@ public class AuditService {
 
     @RemoteMethod
     public RecordSet<AuditTrail> getAuditTrail(String userName, String operation, String entity, String keyword, String referenceId, String startDate, String endDate, int page, int itemsPerPage) {
-        String store = utilityService.getStoreId();
+        String storeId = utilityService.getStoreId();
         AuditTrail auditTrail = new AuditTrail();
         auditTrail.setUsername(StringUtils.isBlank(userName) ? null : userName);
         auditTrail.setOperation(StringUtils.isBlank(operation) ? null : operation);
         auditTrail.setEntity(StringUtils.isBlank(entity) ? null : entity);
-        auditTrail.setStoreId(store);
+        auditTrail.setStoreId(storeId);
         auditTrail.setKeyword(StringUtils.isBlank(keyword) ? null : keyword);
         auditTrail.setReferenceId(StringUtils.isBlank(referenceId) ? null : referenceId);
         RecordSet<AuditTrail> rSet = null;
 
-        DateTime startDt = !StringUtils.isBlank(startDate) ? jodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE) : null;
-        DateTime endDt = !StringUtils.isBlank(endDate) ? jodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE) : null;
+        DateTime startDt = !StringUtils.isBlank(startDate) ? jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE) : null;
+        DateTime endDt = !StringUtils.isBlank(endDate) ? jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE) : null;
 
         try {
             rSet = daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, startDt, endDt, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));

@@ -55,9 +55,10 @@ public class SecurityService {
     
     @RemoteMethod
     public RecordSet<User> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
+    	String storeId = utilityService.getStoreId();
         User user = new User();
         user.setGroupId(StringUtils.trimToNull(roleId));
-        user.setStoreId(utilityService.getStoreId());
+        user.setStoreId(storeId);
         user.setFullName(StringUtils.trimToNull(search));
 
         if (StringUtils.isNotEmpty(status)) {
@@ -68,7 +69,7 @@ public class SecurityService {
         }
 
         SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user, null, null, Integer.parseInt(page), 10);
-        searchCriteria.setEndDate(jodaDateTimeUtil.toDateTimeFromStorePattern(memberSince, JodaPatternType.DATE));
+        searchCriteria.setEndDate(jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, memberSince, JodaPatternType.DATE));
         RecordSet<User> users = getUsers(searchCriteria, MatchType.LIKE_NAME);
         for (User u : users.getList()) {
             // clear the password before returning
