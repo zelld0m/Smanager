@@ -57,7 +57,15 @@ public class RelevancyService extends RuleService {
             LoggerFactory.getLogger(RelevancyService.class);
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private SolrSchemaUtility solrSchemaUtility;
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
+    @Autowired
+    private SearchHelper searchHelper;
+    
     @Override
     public RuleEntity getRuleEntity() {
         return RuleEntity.RANKING_RULE;
@@ -67,7 +75,7 @@ public class RelevancyService extends RuleService {
     public Relevancy getRule(String ruleId) {
         try {
             Relevancy rule = new Relevancy(ruleId);
-            rule.setStore(new Store(UtilityService.getStoreId()));
+            rule.setStore(new Store(utilityService.getStoreId()));
             rule = daoService.getRelevancyDetails(rule);
             // TODO: probably create a new method. one for Approval page. Another for Simulator and Top Keywords
             List<RelevancyKeyword> relKWList = daoService.getRelevancyKeywords(rule).getList();
@@ -94,7 +102,7 @@ public class RelevancyService extends RuleService {
     @RemoteMethod
     public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
         Relevancy relevancy = new Relevancy();
-        relevancy.setStore(new Store(UtilityService.getStoreId()));
+        relevancy.setStore(new Store(utilityService.getStoreId()));
         relevancy.setRelevancyName(ruleName);
         SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, 0, 0);
         RecordSet<Relevancy> set = daoService.searchRelevancy(criteria, MatchType.MATCH_NAME);
@@ -116,15 +124,15 @@ public class RelevancyService extends RuleService {
             logger.info(String.format("%s %s %s", relevancyId, fieldName, fieldValue));
             Relevancy relevancy = new Relevancy();
             relevancy.setRelevancyId(relevancyId);
-            relevancy.setStore(new Store(UtilityService.getStoreId()));
-            relevancy.setLastModifiedBy(UtilityService.getUsername());
+            relevancy.setStore(new Store(utilityService.getStoreId()));
+            relevancy.setLastModifiedBy(utilityService.getUsername());
 
             RelevancyField relevancyField = new RelevancyField();
 
             //bq post-processing
             if (StringUtils.equalsIgnoreCase("bq", fieldName)) {
                 try {
-                    Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreId());
+                    Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
                     BoostQueryModel boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
                     fieldValue = boostQueryModel.toString();
                 } catch (SchemaException e) {
@@ -136,7 +144,7 @@ public class RelevancyService extends RuleService {
             //bf post-processing
             if (StringUtils.equalsIgnoreCase("bf", fieldName)) {
                 try {
-                    Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreId());
+                    Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
                     BoostFunctionModel.toModel(schema, fieldValue, true);
                 } catch (SchemaException e) {
                     logger.error("Failed during addOrUpdateRelevancyField()", e);
@@ -164,7 +172,7 @@ public class RelevancyService extends RuleService {
         try {
             logger.info(String.format("%s %d %d", name, page, itemsPerPage));
             Relevancy relevancy = new Relevancy();
-            relevancy.setStore(new Store(UtilityService.getStoreId()));
+            relevancy.setStore(new Store(utilityService.getStoreId()));
             relevancy.setRelevancyName(name);
             SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, page, itemsPerPage);
 
@@ -179,20 +187,20 @@ public class RelevancyService extends RuleService {
     public Relevancy cloneRule(String ruleId, String name, String startDate, String endDate, String description) throws Exception {
         String clonedId = StringUtils.EMPTY;
         Relevancy clonedRelevancy = null;
-        String userName = UtilityService.getUsername();
+        String userName = utilityService.getUsername();
         if (ruleId.equalsIgnoreCase("")) {
-            ruleId = UtilityService.getStoreId() + "_default";
+            ruleId = utilityService.getStoreId() + "_default";
         }
         try {
-            String storeId = UtilityService.getStoreId();
+            String storeId = utilityService.getStoreId();
             Relevancy relevancy = new Relevancy();
             relevancy.setStore(new Store(storeId));
             relevancy.setRelevancyName(name);
             relevancy.setDescription(description);
 //            relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
 //            relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
-            relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : JodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
-            relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
+            relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : jodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
+            relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : jodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
             relevancy.setCreatedBy(userName);
             clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
             Relevancy hostRelevancy = getRule(ruleId);
@@ -224,7 +232,7 @@ public class RelevancyService extends RuleService {
     public int updateRule(String id, String name, String description, String startDate, String endDate) {
         try {
             logger.info(String.format("%s %s %s %s %s", id, name, description, startDate, endDate));
-            String storeId = UtilityService.getStoreId();
+            String storeId = utilityService.getStoreId();
             Relevancy rule = new Relevancy();
             rule.setStore(new Store(storeId));
             rule.setRuleId(id);
@@ -232,9 +240,9 @@ public class RelevancyService extends RuleService {
             rule.setDescription(description);
 //            rule.setStartDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
 //            rule.setEndDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
-            rule.setStartDate(JodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
-            rule.setEndDate(JodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
-            rule.setLastModifiedBy(UtilityService.getUsername());
+            rule.setStartDate(jodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
+            rule.setEndDate(jodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
+            rule.setLastModifiedBy(utilityService.getUsername());
             return daoService.updateRelevancy(rule);
         } catch (DaoException e) {
             logger.error("Failed during addRelevancy()", e);
@@ -246,14 +254,14 @@ public class RelevancyService extends RuleService {
     public int deleteRule(String ruleId) {
         try {
             try {
-                daoService.createRuleVersion(UtilityService.getStoreId(), RuleEntity.RANKING_RULE, ruleId, UtilityService.getUsername(), "Deleted Rule", "Deleted Rule");
+                daoService.createRuleVersion(utilityService.getStoreId(), RuleEntity.RANKING_RULE, ruleId, utilityService.getUsername(), "Deleted Rule", "Deleted Rule");
             } catch (Exception e) {
                 logger.error("Error creating backup. " + e.getMessage());
             }
-            String username = UtilityService.getUsername();
+            String username = utilityService.getUsername();
             Relevancy rule = new Relevancy();
             rule.setRuleId(ruleId);
-            String storeName = UtilityService.getStoreId();
+            String storeName = utilityService.getStoreId();
             rule.setStore(new Store(storeName));
             rule.setLastModifiedBy(username);
             int status = daoService.deleteRelevancy(rule);
@@ -274,7 +282,7 @@ public class RelevancyService extends RuleService {
     @RemoteMethod
     public BoostQueryModel getValuesByString(String bq) {
         logger.info(String.format("%s", bq));
-        Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreId());
+        Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
         BoostQueryModel boostQueryModel = new BoostQueryModel();
 
         try {
@@ -290,10 +298,10 @@ public class RelevancyService extends RuleService {
     public RecordSet<String> getValuesByField(String keyword, int page, int itemsPerPage, String facetField, String[] excludeList) {
         logger.info(String.format("%s %d %d %s %s", keyword, page, itemsPerPage, facetField, Arrays.toString(excludeList)));
 
-        String server = UtilityService.getServerName();
-        String store = UtilityService.getStoreId();
+        String server = utilityService.getServerName();
+        String store = utilityService.getStoreId();
 
-        List<String> facetValues = SearchHelper.getFacetValues(server, store, facetField);
+        List<String> facetValues = searchHelper.getFacetValues(server, store, facetField);
 
         if (ArrayUtils.isNotEmpty(excludeList)) {
             facetValues.remove(" ");
@@ -334,7 +342,7 @@ public class RelevancyService extends RuleService {
             RelevancyKeyword rk = new RelevancyKeyword();
             Relevancy r = new Relevancy();
             r.setRelevancyId(ruleId);
-            r.setStore(new Store(UtilityService.getStoreId()));
+            r.setStore(new Store(utilityService.getStoreId()));
             rk.setRelevancy(r);
             rk.setKeyword(new Keyword(""));
             SearchCriteria<RelevancyKeyword> criteria = new SearchCriteria<RelevancyKeyword>(rk, null, null, 0, 0);
@@ -391,8 +399,8 @@ public class RelevancyService extends RuleService {
         int result = -1;
         try {
             Relevancy relevancy = new Relevancy(relevancyId);
-            relevancy.setStore(new Store(UtilityService.getStoreId()));
-            daoService.addKeyword(new StoreKeyword(UtilityService.getStoreId(), keywordId));
+            relevancy.setStore(new Store(utilityService.getStoreId()));
+            daoService.addKeyword(new StoreKeyword(utilityService.getStoreId(), keywordId));
             Keyword keyword = new Keyword(keywordId);
             return daoService.addRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
         } catch (DaoException e) {
@@ -406,7 +414,7 @@ public class RelevancyService extends RuleService {
         int result = -1;
         try {
             Relevancy relevancy = new Relevancy(relevancyId);
-            relevancy.setStore(new Store(UtilityService.getStoreId()));
+            relevancy.setStore(new Store(utilityService.getStoreId()));
             Keyword keyword = new Keyword(keywordId);
             return daoService.deleteRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
         } catch (DaoException e) {
@@ -433,7 +441,7 @@ public class RelevancyService extends RuleService {
         List<QueryField> qFieldList = new ArrayList<QueryField>();
         logger.info(String.format("%s", fieldValue));
         try {
-            Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreId());
+            Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
             QueryFieldsModel qFieldModel = QueryFieldsModel.toModel(schema, fieldValue, true);
             if (qFieldModel != null) {
                 qFieldList = qFieldModel.getQueryFields();
@@ -447,7 +455,7 @@ public class RelevancyService extends RuleService {
 
     @RemoteMethod
     public RecordSet<Field> getIndexedFields(int page, int itemsPerPage, String filter, String[] excludedFields) {
-        Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreId());
+        Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
 
         List<Field> excludeFieldList = new ArrayList<Field>();
 
@@ -469,7 +477,7 @@ public class RelevancyService extends RuleService {
     @RemoteMethod
     public int getTotalRuleUsedByKeyword(String keyword) {
         try {
-            StoreKeyword storeKeyword = new StoreKeyword(new Store(UtilityService.getStoreId()), new Keyword(keyword));
+            StoreKeyword storeKeyword = new StoreKeyword(new Store(utilityService.getStoreId()), new Keyword(keyword));
             return daoService.getRelevancyKeywordCount(storeKeyword);
         } catch (DaoException e) {
             e.printStackTrace();
@@ -481,7 +489,7 @@ public class RelevancyService extends RuleService {
     public RecordSet<RelevancyKeyword> getAllRuleUsedByKeyword(String keyword) {
         try {
             Relevancy relevancy = new Relevancy("", "");
-            relevancy.setStore(new Store(UtilityService.getStoreId()));
+            relevancy.setStore(new Store(utilityService.getStoreId()));
             return daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
                     new RelevancyKeyword(new Keyword(keyword), relevancy), null, null, 0, 0),
                     MatchType.LIKE_NAME, ExactMatch.MATCH);
@@ -495,7 +503,7 @@ public class RelevancyService extends RuleService {
     public int updateRulePriority(String ruleId, String keyword, int priority) {
         try {
             Relevancy relevancy = new Relevancy(ruleId);
-            relevancy.setStore(new Store(UtilityService.getStoreId()));
+            relevancy.setStore(new Store(utilityService.getStoreId()));
             RelevancyKeyword tmpRelKey = new RelevancyKeyword(new Keyword(keyword), relevancy);
             RelevancyKeyword rk = daoService.getRelevancyKeyword(tmpRelKey);
             rk.setRelevancy(relevancy);
@@ -512,7 +520,7 @@ public class RelevancyService extends RuleService {
         try {
             Relevancy rule = new Relevancy();
             rule.setRuleId(ruleId);
-            rule.setStore(new Store(UtilityService.getStoreId()));
+            rule.setStore(new Store(utilityService.getStoreId()));
             return daoService.getRelevancyKeywordCount(rule);
         } catch (DaoException e) {
             logger.error("Failed during getRedirectKeywordCount()", e);

@@ -39,10 +39,14 @@ public class AuditService {
             LoggerFactory.getLogger(AuditService.class);
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
+    
     public RecordSet<AuditTrail> getProductTrail(Entity entity, String keyword, String productId, int page, int itemsPerPage) {
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
 
             logger.info(String.format("%s %s %d %d", keyword, productId, page, itemsPerPage));
             AuditTrail auditTrail = new AuditTrail();
@@ -51,7 +55,7 @@ public class AuditService {
             auditTrail.setKeyword(keyword);
             auditTrail.setReferenceId(productId);
 
-            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             return null;
         }
@@ -59,14 +63,14 @@ public class AuditService {
 
     public RecordSet<AuditTrail> getActivityTrail(Entity entity, int page, int itemsPerPage) {
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
 
             logger.info(String.format("%d %d", page, itemsPerPage));
             AuditTrail auditTrail = new AuditTrail();
             auditTrail.setEntity(entity.toString());
             auditTrail.setStoreId(store);
 
-            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             return null;
         }
@@ -75,14 +79,14 @@ public class AuditService {
     @RemoteMethod
     public RecordSet<AuditTrail> getItemTrail(String productId, int page, int itemsPerPage) {
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
 
             logger.info(String.format("%s %d %d", productId, page, itemsPerPage));
             AuditTrail auditTrail = new AuditTrail();
             auditTrail.setStoreId(store);
             auditTrail.setReferenceId(productId);
 
-            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             return null;
         }
@@ -91,14 +95,14 @@ public class AuditService {
     @RemoteMethod
     public RecordSet<AuditTrail> getRedirectTrail(String ruleId, int page, int itemsPerPage) {
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
 
             logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
             AuditTrail auditTrail = new AuditTrail();
             auditTrail.setEntity(Entity.queryCleaning.toString());
             auditTrail.setReferenceId(ruleId);
             auditTrail.setStoreId(store);
-            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             return null;
         }
@@ -107,7 +111,7 @@ public class AuditService {
     @RemoteMethod
     public RecordSet<AuditTrail> getRelevancyTrail(String ruleId, int page, int itemsPerPage) {
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
 
             logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
             AuditTrail auditTrail = new AuditTrail();
@@ -115,7 +119,7 @@ public class AuditService {
             auditTrail.setReferenceId(ruleId);
             auditTrail.setStoreId(store);
 
-            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             return null;
         }
@@ -139,7 +143,7 @@ public class AuditService {
     @RemoteMethod
     public RecordSet<AuditTrail> getBannerItemTrail(String ruleId, String memberId, int page, int itemsPerPage) {
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
 
             logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
             AuditTrail auditTrail = new AuditTrail();
@@ -147,7 +151,7 @@ public class AuditService {
             auditTrail.setReferenceId(ruleId);
             auditTrail.setStoreId(store);
 
-            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             return null;
         }
@@ -156,7 +160,7 @@ public class AuditService {
     @RemoteMethod
     public RecordSet<AuditTrail> getFacetSortTrail(String ruleId, int page, int itemsPerPage) {
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
 
             logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
             AuditTrail auditTrail = new AuditTrail();
@@ -164,7 +168,7 @@ public class AuditService {
             auditTrail.setReferenceId(ruleId);
             auditTrail.setStoreId(store);
 
-            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+            return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             return null;
         }
@@ -187,7 +191,7 @@ public class AuditService {
 
     @RemoteMethod
     public RecordSet<AuditTrail> getAuditTrail(String userName, String operation, String entity, String keyword, String referenceId, String startDate, String endDate, int page, int itemsPerPage) {
-        String store = UtilityService.getStoreId();
+        String store = utilityService.getStoreId();
         AuditTrail auditTrail = new AuditTrail();
         auditTrail.setUsername(StringUtils.isBlank(userName) ? null : userName);
         auditTrail.setOperation(StringUtils.isBlank(operation) ? null : operation);
@@ -197,11 +201,11 @@ public class AuditService {
         auditTrail.setReferenceId(StringUtils.isBlank(referenceId) ? null : referenceId);
         RecordSet<AuditTrail> rSet = null;
 
-        DateTime startDt = !StringUtils.isBlank(startDate) ? JodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE) : null;
-        DateTime endDt = !StringUtils.isBlank(endDate) ? JodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE) : null;
+        DateTime startDt = !StringUtils.isBlank(startDate) ? jodaDateTimeUtil.toDateTimeFromStorePattern(startDate, JodaPatternType.DATE) : null;
+        DateTime endDt = !StringUtils.isBlank(endDate) ? jodaDateTimeUtil.toDateTimeFromStorePattern(endDate, JodaPatternType.DATE) : null;
 
         try {
-            rSet = daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, startDt, endDt, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
+            rSet = daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, startDt, endDt, page, itemsPerPage), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             logger.error("Error getting audit trail. " + e.getMessage());
         }
@@ -215,7 +219,7 @@ public class AuditService {
         switch (type) {
             case 1: {
                 User user = new User();
-                user.setStoreId(UtilityService.getStoreId());
+                user.setStoreId(utilityService.getStoreId());
                 SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user, null, null, 0, 0);
                 try {
                     RecordSet<User> record = daoService.getUsers(searchCriteria, MatchType.MATCH_ID);
@@ -294,7 +298,7 @@ public class AuditService {
                         }
                         break;
                     case security:
-                        if (UtilityService.hasPermission("CREATE_RULE")) {
+                        if (utilityService.hasPermission("CREATE_RULE")) {
                             for (Object opt : Arrays.asList(AuditTrailConstants.securityOperations)) {
                                 ddList.add(opt.toString());
                             }
@@ -305,7 +309,7 @@ public class AuditService {
             break;
             case 3: {
                 for (Object opt : Arrays.asList(AuditTrailConstants.ENTITY_LIST_ASC)) {
-                    if (opt.toString().equals(AuditTrailConstants.Entity.security) && UtilityService.hasPermission("CREATE_RULE") || !opt.toString().equals(AuditTrailConstants.Entity.security)) {
+                    if (opt.toString().equals(AuditTrailConstants.Entity.security) && utilityService.hasPermission("CREATE_RULE") || !opt.toString().equals(AuditTrailConstants.Entity.security)) {
                         ddList.add(opt.toString());
                     }
 
@@ -313,7 +317,7 @@ public class AuditService {
                 break;
             }
             case 4: {
-                ddList = daoService.getRefIDs(filter[0], filter[1], UtilityService.getStoreId());
+                ddList = daoService.getRefIDs(filter[0], filter[1], utilityService.getStoreId());
                 break;
             }
 
@@ -324,7 +328,7 @@ public class AuditService {
     @RemoteMethod
     public List<String> getDropdownValues(int type) {
         try {
-            return daoService.getDropdownValues(type, UtilityService.getStoreId(), UtilityService.hasPermission("CREATE_RULE"));
+            return daoService.getDropdownValues(type, utilityService.getStoreId(), utilityService.hasPermission("CREATE_RULE"));
         } catch (DaoException e) {
             logger.error("Error getting dropdown values" + e.getMessage());
         }

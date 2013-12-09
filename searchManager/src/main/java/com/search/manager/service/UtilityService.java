@@ -24,6 +24,7 @@ import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.search.manager.authentication.dao.internal.UserDetailsImpl;
-import com.search.manager.core.processor.RequestPropertyBean;
-import com.search.manager.core.processor.SearchWithinRequestProcessor;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
@@ -55,6 +54,12 @@ public class UtilityService {
 
     private static final Logger logger =
             LoggerFactory.getLogger(UtilityService.class);
+    
+    @Autowired
+    private ConfigManager configManager;
+    @Autowired
+    private SolrSchemaUtility solrSchemaUtility;
+    
     private final static Map<RuleEntity, AtomicReference<String>> lockService;
 
     static {
@@ -64,7 +69,7 @@ public class UtilityService {
         }
     }
 
-    public static boolean obtainPublishLock(RuleEntity ruleType, String username, String storeName) throws PublishLockException {
+    public boolean obtainPublishLock(RuleEntity ruleType, String username, String storeName) throws PublishLockException {
         if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(storeName)) {
             String lock = storeName + "^" + username;
             lock = lock.intern();
@@ -101,7 +106,7 @@ public class UtilityService {
         return "";
     }
 
-    public static boolean releasePublishLock(RuleEntity ruleType, String username, String storeName) {
+    public boolean releasePublishLock(RuleEntity ruleType, String username, String storeName) {
         if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(storeName)) {
             String lock = storeName + "^" + username;
             lock = lock.intern();
@@ -115,7 +120,7 @@ public class UtilityService {
     }
 
     @RemoteMethod
-    public static String getUsername() {
+    public String getUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal == null || !(principal instanceof UserDetailsImpl)) {
             return "";
@@ -124,14 +129,13 @@ public class UtilityService {
     }
 
     @RemoteMethod
-    public static String getServerName() {
+    public String getServerName() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         String serverName = (String) attr.getAttribute("serverName", RequestAttributes.SCOPE_SESSION);
         if (StringUtils.isEmpty(serverName)) {
             // get default server for store
-            ConfigManager cm = ConfigManager.getInstance();
-            if (cm != null) {
-                serverName = cm.getStoreParameter(getStoreId(), "server-url");
+            if (configManager != null) {
+                serverName = configManager.getStoreParameter(getStoreId(), "server-url");
             }
             attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
         }
@@ -139,62 +143,60 @@ public class UtilityService {
     }
 
     @RemoteMethod
-    public static void setServerName(String serverName) {
+    public void setServerName(String serverName) {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
     }
 
     @RemoteMethod
-    public static String getStoreId() {
-        ConfigManager cm = ConfigManager.getInstance();
+    public String getStoreId() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         String storeId = (String) attr.getAttribute("storeId", RequestAttributes.SCOPE_SESSION);
-        return cm.getStoreIdByAliases(storeId);
+        return configManager.getStoreIdByAliases(storeId);
     }
 
     @RemoteMethod
-    public static String getTimeZoneId() {
+    public String getTimeZoneId() {
         return DateTimeZone.getDefault().getID();
     }
 
     @RemoteMethod
-    public static String getStoreCore(String storeId) {
-        ConfigManager cm = ConfigManager.getInstance();
+    public String getStoreCore(String storeId) {
         if (StringUtils.isNotBlank(storeId)) {
-            return cm.getStoreParameter(storeId, "core");
+            return configManager.getStoreParameter(storeId, "core");
         }
 
-        return cm.getStoreParameter(getStoreId(), "core");
+        return configManager.getStoreParameter(getStoreId(), "core");
     }
 
     @RemoteMethod
-    public static String getStoreCore() {
+    public String getStoreCore() {
         return getStoreCore(getStoreId());
     }
 
     @RemoteMethod
-    public static String getStoreName() {
+    public String getStoreName() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         String storeName = (String) attr.getAttribute("storeName", RequestAttributes.SCOPE_SESSION);
         return storeName;
     }
 
     @RemoteMethod
-    public static void setStoreId(String storeId) {
+    public void setStoreId(String storeId) {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         attr.setAttribute("storeId", storeId, RequestAttributes.SCOPE_SESSION);
     }
 
     @RemoteMethod
-    public static void setStoreName(String storeName) {
+    public void setStoreName(String storeName) {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
     }
 
     @RemoteMethod
-    public static String getSolrConfig() {
+    public String getSolrConfig() {
         JSONObject json = new JSONObject();
-        String url = ConfigManager.getInstance().getServerParameter(getServerName(), "url");
+        String url = configManager.getServerParameter(getServerName(), "url");
         Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
         Matcher m = pattern.matcher(url);
         if (m.matches()) {
@@ -207,10 +209,10 @@ public class UtilityService {
 
     @SuppressWarnings("unchecked")
     @RemoteMethod
-    public static String getIndexedSchemaFields() {
+    public String getIndexedSchemaFields() {
         JSONObject json = new JSONObject();
 
-        Schema schema = SolrSchemaUtility.getDefaultSchema();
+        Schema schema = solrSchemaUtility.getDefaultSchema();
         if (schema != null) {
             ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
             json.put("indexedFields", (List<String>) attr.getAttribute("indexedFields", RequestAttributes.SCOPE_SESSION));
@@ -221,10 +223,8 @@ public class UtilityService {
     }
 
     @RemoteMethod
-    public static String getStoreParameters() {
-    	ConfigManager configManager = ConfigManager.getInstance();
+    public String getStoreParameters() {
         String storeId = getStoreId();
-        SearchWithinRequestProcessor processor = new SearchWithinRequestProcessor(new RequestPropertyBean(storeId));
         JSONObject json = new JSONObject();
         json.put("username", getUsername());
         json.put("solrSelectorParam", getSolrSelectorParam());
@@ -244,23 +244,23 @@ public class UtilityService {
 		json.put("storeRedirectSelfDomain", getStoreSelfDomains(storeId));
 		json.put("storeRedirectRelativePath", getStoreRelativePath(storeId));
         json.put("storeFacetTemplateType", getStoreFacetTemplateType(storeId));
-        json.put("searchWithinEnabled", processor.isEnabled());
-        json.put("searchWithinTypes", processor.getSearchWithinType());
-        json.put("searchWithinParamName", processor.getRequestParamName());
+        json.put("searchWithinEnabled", configManager.getProperty("searchWithin", storeId, "searchwithin.enable"));
+        json.put("searchWithinTypes", configManager.getProperty("searchWithin", storeId, "searchwithin.type"));
+        json.put("searchWithinParamName", configManager.getProperty("searchWithin", storeId, "searchwithin.paramname"));
 
         return json.toString();
     }
 
     @RemoteMethod
-    public static Map<String, String> getServerListForSelectedStore(boolean includeSelectedStore) {
-        Map<String, String> map = ConfigManager.getInstance().getServersByStoreId(getStoreId());
+    public Map<String, String> getServerListForSelectedStore(boolean includeSelectedStore) {
+        Map<String, String> map = configManager.getServersByStoreId(getStoreId());
         if (!includeSelectedStore) {
             map.remove(getServerName());
         }
         return map;
     }
 
-    public static boolean hasPermission(String permission) {
+    public boolean hasPermission(String permission) {
         boolean flag = false;
         for (GrantedAuthority auth : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
             if (permission.equals(auth.getAuthority())) {
@@ -271,12 +271,12 @@ public class UtilityService {
         return flag;
     }
 
-    public static String formatComment(String comment) {
+    public String formatComment(String comment) {
         if (StringUtils.isNotBlank(comment)) {
             StringBuilder commentBuilder = new StringBuilder();
             commentBuilder.append(new Date().getTime())
                     .append("|")
-                    .append(UtilityService.getUsername())
+                    .append(getUsername())
                     .append("|")
                     .append(comment.length())
                     .append("|")
@@ -287,7 +287,7 @@ public class UtilityService {
         return null;
     }
 
-    public static String getPasswordHash(String password) {
+    public String getPasswordHash(String password) {
         MessageDigest messageDigest = null;
         String hashedPass = null;
         try {
@@ -304,107 +304,98 @@ public class UtilityService {
     }
 
     @RemoteMethod
-    public static String getStoreFacetTemplate() {
-
-        ConfigManager cm = ConfigManager.getInstance();
+    public String getStoreFacetTemplate() {
         String storeFacetTemplate = StringUtils.EMPTY;
-        if (cm != null) {
-            storeFacetTemplate = cm.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+        if (configManager != null) {
+            storeFacetTemplate = configManager.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
         }
 
         return storeFacetTemplate;
     }
 
     @RemoteMethod
-    public static List<String> getStoreGroupMembership() {
+    public List<String> getStoreGroupMembership() {
         List<String> groupMembershipList = new ArrayList<String>();
-
-        ConfigManager cm = ConfigManager.getInstance();
-        if (cm != null) {
-            groupMembershipList = cm.getStoreParameterList(getStoreId(), "group-membership/group");
+        if (configManager != null) {
+            groupMembershipList = configManager.getStoreParameterList(getStoreId(), "group-membership/group");
         }
 
         return groupMembershipList;
     }
 
     @RemoteMethod
-    public static String getStoreFacetPrefix() {
-
-        ConfigManager cm = ConfigManager.getInstance();
+    public String getStoreFacetPrefix() {
         String storeFacetPrefix = StringUtils.EMPTY;
-        if (cm != null) {
-            storeFacetPrefix = cm.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
+        if (configManager != null) {
+            storeFacetPrefix = configManager.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
         }
 
         return storeFacetPrefix;
     }
 
     @RemoteMethod
-    public static String getStoreFacetTemplateName() {
-
-        ConfigManager cm = ConfigManager.getInstance();
+    public String getStoreFacetTemplateName() {
         String storeFacetTemplateName = StringUtils.EMPTY;
-        if (cm != null) {
-            storeFacetTemplateName = cm.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+        if (configManager != null) {
+            storeFacetTemplateName = configManager.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
         }
 
         return storeFacetTemplateName;
     }
 
     @RemoteMethod
-    public static String getStoreFacetName() {
-        ConfigManager cm = ConfigManager.getInstance();
+    public String getStoreFacetName() {
         String storeFacetTemplate = StringUtils.EMPTY;
-        if (cm != null) {
-            storeFacetTemplate = cm.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
+        if (configManager != null) {
+            storeFacetTemplate = configManager.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
         }
 
         return storeFacetTemplate;
     }
 
     @RemoteMethod
-    public static String getSolrSelectorParam() {
-        return ConfigManager.getInstance().getSolrSelectorParam();
+    public String getSolrSelectorParam() {
+        return configManager.getSolrSelectorParam();
     }
 
-    public static String getStoreSetting(String property) {
-        return ConfigManager.getInstance().getProperty("settings", getStoreId(), property);
+    public String getStoreSetting(String property) {
+        return configManager.getProperty("settings", getStoreId(), property);
     }
 
-    public static boolean setStoreSetting(String property, String value) {
-        return ConfigManager.getInstance().setStoreSetting(getStoreId(), property, value);
+    public boolean setStoreSetting(String property, String value) {
+        return configManager.setStoreSetting(getStoreId(), property, value);
     }
 
-    public static String getStoreSetting(String storeId, String property) {
-        return ConfigManager.getInstance().getProperty("settings", storeId, property);
+    public String getStoreSetting(String storeId, String property) {
+        return configManager.getProperty("settings", storeId, property);
     }
 
-    public static List<String> getStoreSettings(String storeId, String property) {
-        return ConfigManager.getInstance().getPropertyList("settings", storeId, property);
+    public List<String> getStoreSettings(String storeId, String property) {
+        return configManager.getPropertyList("settings", storeId, property);
     }
 
-    public static List<String> getStoresToExport(String storeId) {
-        return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_EXPORT_TARGET);
+    public List<String> getStoresToExport(String storeId) {
+        return getStoreSettings(storeId, DAOConstants.SETTINGS_EXPORT_TARGET);
     }
 
-    public static List<String> getStoreDomains(String storeId) {
-        return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_SITE_DOMAIN);
+    public List<String> getStoreDomains(String storeId) {
+        return getStoreSettings(storeId, DAOConstants.SETTINGS_SITE_DOMAIN);
     }
     
-    public static String getStoreDefaultBannerSize(String storeId) {
-        return StringUtils.defaultIfBlank(UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_DEFAULT_BANNER_SIZE), "728x90");
+    public String getStoreDefaultBannerSize(String storeId) {
+        return StringUtils.defaultIfBlank(getStoreSetting(storeId, DAOConstants.SETTINGS_DEFAULT_BANNER_SIZE), "728x90");
     }
 
-    public static List<String> getStoreAllowedBannerSizes(String storeId) {
-        List<String> allowedSizes = UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_ALLOWED_BANNER_SIZES);
+    public List<String> getStoreAllowedBannerSizes(String storeId) {
+        List<String> allowedSizes = getStoreSettings(storeId, DAOConstants.SETTINGS_ALLOWED_BANNER_SIZES);
         return allowedSizes != null && allowedSizes.size() > 0 ? allowedSizes : Arrays.asList("180x150", "728x90", "300x250", "160x600");
     }
 
-    public static String getStoreDefaultBannerLinkPathProtocol(String storeId) {
-        return StringUtils.defaultIfBlank(UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "728x90");
+    public String getStoreDefaultBannerLinkPathProtocol(String storeId) {
+        return StringUtils.defaultIfBlank(getStoreSetting(storeId, DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "728x90");
     }
      
-    public static void setFacetTemplateValues(RedirectRuleCondition condition) {
+    public void setFacetTemplateValues(RedirectRuleCondition condition) {
         if (condition != null) {
             condition.setFacetPrefix(getStoreFacetPrefix());
             condition.setFacetTemplate(getStoreFacetTemplate());
@@ -412,7 +403,7 @@ public class UtilityService {
         }
     }
 
-    public static void setFacetTemplateValues(List<? extends Product> list) {
+    public void setFacetTemplateValues(List<? extends Product> list) {
         if (CollectionUtils.isNotEmpty(list)) {
             String facetPrefix = getStoreFacetPrefix();
             String facetTemplate = getStoreFacetTemplate();
@@ -428,24 +419,24 @@ public class UtilityService {
         }
     }
 
-    public static String getStoreDateFormat() {
-        return ConfigManager.getInstance().getStoreParameter(getStoreId(), "date-format");
+    public String getStoreDateFormat() {
+        return configManager.getStoreParameter(getStoreId(), "date-format");
     }
 
-    public static String getStoreDateTimeFormat() {
-        return ConfigManager.getInstance().getStoreParameter(getStoreId(), "datetime-format");
+    public String getStoreDateTimeFormat() {
+        return configManager.getStoreParameter(getStoreId(), "datetime-format");
     }
     
-    public static List<String> getStoreSelfDomains(String storeId) {
-    	return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_SELF_DOMAIN);
+    public List<String> getStoreSelfDomains(String storeId) {
+    	return getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_SELF_DOMAIN);
     }
     
-    public static List<String> getStoreRelativePath(String storeId) {
-    	return UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_RELATIVE_PATH);
+    public List<String> getStoreRelativePath(String storeId) {
+    	return getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_RELATIVE_PATH);
     }
     
-    public static String getStoreFacetTemplateType(String storeId) {
-    	return UtilityService.getStoreSetting(storeId, DAOConstants.SETTINGS_FACET_TEMPLATE);
+    public String getStoreFacetTemplateType(String storeId) {
+    	return getStoreSetting(storeId, DAOConstants.SETTINGS_FACET_TEMPLATE);
     }
     
 }

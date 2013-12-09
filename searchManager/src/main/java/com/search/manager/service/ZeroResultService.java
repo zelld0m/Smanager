@@ -44,12 +44,14 @@ public class ZeroResultService {
     private static final Logger logger =
             LoggerFactory.getLogger(ZeroResultService.class);
     @Autowired
-    ReportNotificationMailService reportNotificationMailService;
-
+    private ReportNotificationMailService reportNotificationMailService;
+    @Autowired
+    private UtilityService utilityService;
+    
     @RemoteMethod
     public List<String> getFileList() {
         List<String> filenameList = new ArrayList<String>();
-        File dir = new File(PropertiesUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId());
+        File dir = new File(PropertiesUtils.getValue("zerorsdir") + File.separator + utilityService.getStoreId());
 
         File[] files = dir.listFiles();
 
@@ -78,7 +80,7 @@ public class ZeroResultService {
         BufferedReader reader = null;
         try {
             try {
-                String filePath = PropertiesUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId() + File.separator + filename;
+                String filePath = PropertiesUtils.getValue("zerorsdir") + File.separator + utilityService.getStoreId() + File.separator + filename;
 
                 if (filename.indexOf("-splunk") > 0) {
                     readCsvFile(filePath, list);
@@ -122,7 +124,7 @@ public class ZeroResultService {
     }
 
     private File getFile(String filename) {
-        return new File(PropertiesUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId() + File.separator + filename);
+        return new File(PropertiesUtils.getValue("zerorsdir") + File.separator + utilityService.getStoreId() + File.separator + filename);
     }
 
     @RemoteMethod

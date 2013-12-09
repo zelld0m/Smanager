@@ -35,17 +35,23 @@ public class RuleVersionService {
     private DaoService daoService;
     @Autowired
     private DeploymentService deploymentService;
-
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
+    @Autowired
+    private RuleXmlUtil ruleXmlUtil;
+    
     @RemoteMethod
     public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
-        return daoService.createRuleVersion(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), name, reason);
+        return daoService.createRuleVersion(utilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, utilityService.getUsername(), name, reason);
     }
 
     @RemoteMethod
     public boolean deleteRuleVersion(String ruleType, String ruleId, int version) {
         boolean success = false;
         try {
-            success = daoService.deleteRuleVersion(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
+            success = daoService.deleteRuleVersion(utilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, utilityService.getUsername(), version);
         } catch (Exception e) {
             logger.error("Failed during deleteRuleVersion()", e);
         }
@@ -61,7 +67,7 @@ public class RuleVersionService {
     public List<RuleXml> getRuleVersions(String ruleType, String ruleId) {
         List<RuleXml> versionList = null;
         try {
-            versionList = daoService.getRuleVersions(UtilityService.getStoreId(), ruleType, ruleId);
+            versionList = daoService.getRuleVersions(utilityService.getStoreId(), ruleType, ruleId);
         } catch (Exception e) {
             logger.error("Failed during getRuleVersions()", e);
         }
@@ -72,7 +78,7 @@ public class RuleVersionService {
     public int getRuleVersionsCount(String ruleType, String ruleId) {
         int count = 0;
         try {
-            count = daoService.getRuleVersionsCount(UtilityService.getStoreId(), ruleType, ruleId);
+            count = daoService.getRuleVersionsCount(utilityService.getStoreId(), ruleType, ruleId);
         } catch (Exception e) {
             logger.error("Failed during getRuleVersionsCount()", e);
         }
@@ -82,9 +88,9 @@ public class RuleVersionService {
     @RemoteMethod
     public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
         boolean success = false;
-        RuleXml rule = RuleVersionUtil.getRuleVersion(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, version);
+        RuleXml rule = ruleVersionUtil.getRuleVersion(utilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, version);
         if (rule != null) {
-            rule.setCreatedBy(UtilityService.getUsername());
+            rule.setCreatedBy(utilityService.getUsername());
             success = daoService.restoreRuleVersion(rule);
             switch (RuleEntity.find(ruleType)) {
                 case ELEVATE:
@@ -108,15 +114,15 @@ public class RuleVersionService {
 
     @RemoteMethod
     public RuleXml getCurrentRuleXml(String ruleType, String ruleId) {
-        String store = UtilityService.getStoreId();
-        RuleXml rXml = RuleXmlUtil.currentRuleToXml(store, ruleType, ruleId);
+        String store = utilityService.getStoreId();
+        RuleXml rXml = ruleXmlUtil.currentRuleToXml(store, ruleType, ruleId);
 
         if (rXml instanceof ElevateRuleXml) {
-            ((ElevateRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
+            ((ElevateRuleXml) rXml).setProducts(ruleXmlUtil.getProductDetails(rXml, store));
         } else if (rXml instanceof ExcludeRuleXml) {
-            ((ExcludeRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
+            ((ExcludeRuleXml) rXml).setProducts(ruleXmlUtil.getProductDetails(rXml, store));
         } else if (rXml instanceof DemoteRuleXml) {
-            ((DemoteRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
+            ((DemoteRuleXml) rXml).setProducts(ruleXmlUtil.getProductDetails(rXml, store));
         }
 
         return rXml;

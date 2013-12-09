@@ -40,14 +40,16 @@ public class SpellRuleService {
 
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+    private UtilityService utilityService;
+    
     @RemoteMethod
     public ServiceResponse<RecordSet<SpellRule>> getSpellRule(String ruleId, String searchTerm, String suggestion,
             String status, int pageNumber, int itemsPerPage) {
         ServiceResponse<RecordSet<SpellRule>> response = new ServiceResponse<RecordSet<SpellRule>>();
 
         try {
-            SpellRule rule = new SpellRule(ruleId, UtilityService.getStoreId());
+            SpellRule rule = new SpellRule(ruleId, utilityService.getStoreId());
 
             if (StringUtils.isNotEmpty(searchTerm))
                 rule.setSearchTerms(new String[] { searchTerm });
@@ -69,7 +71,7 @@ public class SpellRuleService {
 
     @RemoteMethod
     public ServiceResponse<Void> addSpellRuleBatch(SpellRule[] spellRules) {
-        String store = UtilityService.getStoreId();
+        String store = utilityService.getStoreId();
         ServiceResponse<Void> response = new ServiceResponse<Void>();
 
         try {
@@ -96,7 +98,7 @@ public class SpellRuleService {
 
     @RemoteMethod
     public ServiceResponse<Void> updateSpellRuleBatch(Integer maxSuggest, SpellRule[] spellRules, SpellRule[] deleted) {
-        String store = UtilityService.getStoreId();
+        String store = utilityService.getStoreId();
         ServiceResponse<Void> response = new ServiceResponse<Void>();
 
         try {
@@ -125,7 +127,7 @@ public class SpellRuleService {
     @RemoteMethod
     public ServiceResponse<Integer> getMaxSuggest() {
         ServiceResponse<Integer> response = new ServiceResponse<Integer>();
-        String store = UtilityService.getStoreId();
+        String store = utilityService.getStoreId();
 
         try {
             response.success(daoService.getMaxSuggest(store));
@@ -142,7 +144,7 @@ public class SpellRuleService {
         ServiceResponse<SpellRule> response = new ServiceResponse<SpellRule>();
 
         try {
-            SpellRule spellRule = daoService.getSpellRule(ruleId, UtilityService.getStoreId());
+            SpellRule spellRule = daoService.getSpellRule(ruleId, utilityService.getStoreId());
 
             if (spellRule != null) {
                 response.success(spellRule);
@@ -163,7 +165,7 @@ public class SpellRuleService {
         try {
             SpellRule rule = new SpellRule();
 
-            rule.setStoreId(UtilityService.getStoreId());
+            rule.setStoreId(utilityService.getStoreId());
             rule.setStatus(modifiedStatusList);
 
             Map<String, Object> data = new HashMap<String, Object>();
@@ -254,7 +256,7 @@ public class SpellRuleService {
         SpellRules rules = null;
 
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
             List<SpellRule> spellRule = daoService.getSpellRules(store, null);
             Integer maxSuggest = daoService.getMaxSuggest(store);
 

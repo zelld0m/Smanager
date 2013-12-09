@@ -32,12 +32,14 @@ public class StoreKeywordService {
             LoggerFactory.getLogger(StoreKeywordService.class);
     @Autowired
     private DaoService daoService;
+    @Autowired
+    private UtilityService utilityService;
 
     @RemoteMethod
     public RecordSet<StoreKeyword> getAllByKeyword(String keyword, int page, int itemsPerPage) throws Exception {
         try {
             logger.info(String.format("%d %d %s", page, itemsPerPage, keyword));
-            return daoService.getAllKeywordsMatching(UtilityService.getStoreId(), keyword, page, itemsPerPage);
+            return daoService.getAllKeywordsMatching(utilityService.getStoreId(), keyword, page, itemsPerPage);
         } catch (DaoException e) {
             logger.error("Failed during getAllByKeyword()", e);
             throw e;
@@ -75,7 +77,7 @@ public class StoreKeywordService {
     @RemoteMethod
     public RecordSet<StoreKeyword> getAll(int total) {
         try {
-            return daoService.getAllKeywords(UtilityService.getStoreId(), 1, total);
+            return daoService.getAllKeywords(utilityService.getStoreId(), 1, total);
         } catch (DaoException e) {
             logger.error("Failed during getStoreKeywords()", e);
         }
@@ -87,7 +89,7 @@ public class StoreKeywordService {
         Keyword newKeyword = null;
         try {
             logger.info(String.format("%s", keyword));
-            int result = daoService.addKeyword(new StoreKeyword(UtilityService.getStoreId(), keyword));
+            int result = daoService.addKeyword(new StoreKeyword(utilityService.getStoreId(), keyword));
             if (result == 1) {
                 newKeyword = new Keyword(keyword, keyword);
             }
@@ -101,7 +103,7 @@ public class StoreKeywordService {
     public Keyword getKeyword(String keyword) {
         StoreKeyword storeKeyword = null;
         try {
-            storeKeyword = daoService.getKeyword(UtilityService.getStoreId(), keyword);
+            storeKeyword = daoService.getKeyword(utilityService.getStoreId(), keyword);
         } catch (DaoException e) {
             logger.error("Failed during getKeyword()", e);
         }
