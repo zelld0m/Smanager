@@ -10,7 +10,7 @@
 
     <!-- Initialize Utility Classes -->
     <bean class="com.search.manager.utility.UtilityInitializer" scope="singleton" lazy-init="false" init-method="initialize">
-        <property name="globalVarFile"              value="/home/solr/bin/ws/config/globalvar.properties" />
-        <property name="configFile"                 value="${solr.configPath}" />
+        <property name="globalVarFile" value="/home/solr/bin/ws/config/globalvar.properties" />
+        <property name="storeSolrPropertiesFile" value="${solr.configPath}" />
     </bean>
 </beans>

@@ -100,7 +100,6 @@ import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
-import com.search.ws.ConfigManager.PropertyFileType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1670,8 +1669,8 @@ public class DaoServiceImpl implements DaoService {
         for (String targetStore : UtilityService.getStoresToExport(store)) {
         	exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
         	
-        	boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty(PropertyFileType.SETTINGS, targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
-        	boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty(PropertyFileType.WORKFLOW, targetStore, "enable."+rule.getRuleEntity().getNthValue(1)));
+        	boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty("settings", targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
+        	boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty("workflow", targetStore, "enable."+rule.getRuleEntity().getNthValue(1)));
         	
             ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
                     targetStore, null, null, ruleEntity);
@@ -1725,7 +1724,7 @@ public class DaoServiceImpl implements DaoService {
     	String[] importAsRefIdList = {importAsRefId};
     	String[] ruleNameList = {ruleName};
     	String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
-    	String importTypeSetting = configManager.getProperty(PropertyFileType.WORKFLOW, storeId, "status."+ruleEntity.getNthValue(1));
+    	String importTypeSetting = configManager.getProperty("workflow", storeId, "status."+ruleEntity.getNthValue(1));
     	try {
 			ruleTransferService.importRejectRules(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
 			

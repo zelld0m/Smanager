@@ -1,18 +1,17 @@
 package com.search.ws;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.http.message.BasicNameValuePair;
-import static org.junit.Assert.assertEquals;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.search.ws.ConfigManager.PropertyFileType;
 
 /**
  *
@@ -41,20 +40,18 @@ public class ConfigManagerTest {
 
     @Test
     public void testGetListMailProperty() {
-        assertEquals(Arrays.asList("true"), configManager.getPropertyList(PropertyFileType.MAIL,"pcmall",
+        assertEquals(Arrays.asList("true"), configManager.getPropertyList("mail","pcmall",
                 "pushToProdNotification"));
     }
 
     @Test
     public void testGetListSearchwithinProperty() {
-        assertEquals(Arrays.asList("true"), configManager.getPropertyList(PropertyFileType.SEARCHWITHIN,
-                "pcmall", "searchwithin.enable"));
+        assertEquals(Arrays.asList("true"), configManager.getPropertyList("searchWithin", "pcmall", "searchwithin.enable"));
     }
 
     @Test
     public void testGetMailProperty() {
-        assertEquals("true", configManager.getProperty(PropertyFileType.MAIL,"pcmall",
-                "approvalNotification"));
+        assertEquals("true", configManager.getProperty("mail","pcmall", "approvalNotification"));
     }
 
     @Test
@@ -74,7 +71,7 @@ public class ConfigManagerTest {
 //    }
     @Test
     public void testGetSearchWithinProperty() {
-        assertEquals("searchwithin", configManager.getProperty(PropertyFileType.SEARCHWITHIN,
+        assertEquals("searchwithin", configManager.getProperty("searchWithin",
                 "pcmall", "searchwithin.paramname"));
     }
 
@@ -131,8 +128,7 @@ public class ConfigManagerTest {
 
     @Test
     public void testGetStoreNames() {
-        assertEquals(Arrays.asList("PCM", "MacMall", "PCMall BD", "PCMG BD", "MacMall BD",
-                "eCOST"), configManager.getStoreNames());
+        assertEquals(Arrays.asList("PCM", "MacMall", "PCMall BD", "PCMG BD", "MacMall BD", "eCOST"), configManager.getStoreNames());
     }
 
     @Test
@@ -149,14 +145,13 @@ public class ConfigManagerTest {
     
     @Test
     public void testGetStoreSetting() {
-        assertEquals("pcm.com", configManager.getProperty(PropertyFileType.SETTINGS, "pcmall", "site_domain"));
-        assertEquals("true", configManager.getProperty(PropertyFileType.SETTINGS, "pcmall", "auto_export"));
+        assertEquals("pcm.com", configManager.getProperty("settings", "pcmall", "site_domain"));
+        assertEquals("true", configManager.getProperty("settings", "pcmall", "auto_export"));
     }
 
     @Test
     public void testGetStoreSettings() {
-        assertEquals(Arrays.asList("180x150", "728x90", "300x250", "728x150"),
-                configManager.getPropertyList(PropertyFileType.SETTINGS, "pcmall", "allowed_banner_sizes"));
+        assertEquals(Arrays.asList("180x150", "728x90", "300x250", "728x150"), configManager.getPropertyList("settings", "pcmall", "allowed_banner_sizes"));
     }
     
     @Test

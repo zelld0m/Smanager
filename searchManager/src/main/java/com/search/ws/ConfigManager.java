@@ -3,6 +3,7 @@ package com.search.ws;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -23,162 +24,83 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTimeZone;
-
-import com.search.manager.enums.RuleEntity;
-import com.search.manager.properties.PropertiesManager;
-import com.search.manager.properties.exception.NotDirectoryException;
-import com.search.manager.properties.model.Module;
-import com.search.manager.properties.model.Store;
-import com.search.manager.properties.model.StoreProperties;
-import com.search.manager.properties.util.Stores;
-import com.search.manager.utility.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.utility.PropertiesUtils;
 
 public class ConfigManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
-	private static PropertiesManager propertiesManager;
-	private XMLConfiguration xmlConfig;
-	private static ConfigManager instance;
-	//TODO: will eventually move out if settings is migrated to DB instead of file
-	private Map<String, PropertiesConfiguration> serverSettingsMap = new HashMap<String, PropertiesConfiguration>();
-	private Map<String, PropertiesConfiguration> linguisticSettingsMap = new HashMap<String, PropertiesConfiguration>();
-	private Map<String, PropertiesConfiguration> mailSettingsMap = new HashMap<String, PropertiesConfiguration>();
-	private Map<String, PropertiesConfiguration> searchWithinSettingsMap = new HashMap<String, PropertiesConfiguration>();
-	private Map<String, PropertiesConfiguration> facetSortSettingsMap = new HashMap<String, PropertiesConfiguration>();
-	private Map<String, PropertiesConfiguration> workflowSettingsMap = new HashMap<String, PropertiesConfiguration>();
+	private static ConfigManager instance = null;
+	private static XMLConfiguration solrXMLConfig;
+	private static XMLConfiguration storeXMLConfig;
+	private Map<String, PropertiesConfiguration> storeSettingsMap = new HashMap<String, PropertiesConfiguration>();
 
 	private ConfigManager() {
-		// do nothing...
+		// Exists only to defeat instantiation.
 	}
 
-	private ConfigManager(String configPath) {
-		try {
-			xmlConfig = new XMLConfiguration();
-			xmlConfig.setDelimiterParsingDisabled(true);
-			xmlConfig.setExpressionEngine(new XPathExpressionEngine());
-			xmlConfig.load(configPath);
-			xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-			logger.debug("Search Config Folder: " + xmlConfig.getFile().getAbsolutePath());
+	public synchronized static ConfigManager getInstance(String solrXMLFile, String storeXMLFile) {
+		if (instance == null) {
+			instance = new ConfigManager(solrXMLFile, storeXMLFile);
+		}
+		return instance;
+	}
+	
+	public synchronized static ConfigManager getInstance(String solrXMLFile) {
+		if (instance == null) {
+			instance = new ConfigManager(solrXMLFile);
+		}
+		return instance;
+	}
 
-			// create the store specific properties if not existing yet
-			propertiesManager.saveStoreProperties();
+	public List<String> getModuleNames() {
+		return Arrays.asList(storeXMLConfig.getStringArray("**/module/@name"));
+	}
 
-			// loads the store settings to their respective map
-			loadStoreSettingsToMapFromStoreProperties(propertiesManager.getStoreProperties());
+	private ConfigManager(String solrXMLFile, String storeXMLFile) {
+		solrXMLConfig = getXMLConfiguration(solrXMLFile);
+		storeXMLConfig = getXMLConfiguration(storeXMLFile);
+		initStoreSettingsMap();
 
-			// server settings
-			for (String storeId : getStoreIds()) {
-				// did you mean
-				String fileName = PropertiesUtils.getValue("publishedfilepath");
-				if (StringUtils.isNotBlank(fileName)) {
-					fileName += File.separator + storeId + File.separator
-							+ RuleEntity.getValue(RuleEntity.SPELL.getCode())
-							+ File.separator + "spell.properties";
-					File spellFile = new File(fileName);
-					if (!spellFile.exists()) {
-						spellFile.getParentFile().mkdirs();
-						try {
-							spellFile.createNewFile();
-						} catch (IOException e) {
-							logger.error("No spell file detected and unable to create "
-									+ "spell file", e);
-						}
+		// server settings
+		for (String storeId : getStoreIds()) {
+			// did you mean
+			String fileName = PropertiesUtils.getValue("publishedfilepath");
+			if (StringUtils.isNotBlank(fileName)) {
+				fileName += File.separator + storeId + File.separator
+						+ RuleEntity.getValue(RuleEntity.SPELL.getCode())
+						+ File.separator + "spell.properties";
+				File spellFile = new File(fileName);
+				if (!spellFile.exists()) {
+					spellFile.getParentFile().mkdirs();
+					try {
+						spellFile.createNewFile();
+					} catch (IOException e) {
+						logger.error("No spell file detected and unable to create "
+								+ "spell file", e);
 					}
-
-					PropertiesConfiguration propConfig = new PropertiesConfiguration(spellFile.getAbsolutePath());
-					propConfig.setAutoSave(true);
-					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-					linguisticSettingsMap.put(storeId, propConfig);
 				}
-			}
 
-			// initialize the timezone
-			initTimezone();
-
-		} catch (ConfigurationException ex) {
-			ex.printStackTrace(System.err);
-			logger.error(ex.getLocalizedMessage());
-		}
-	}
-
-	/**
-	 * loads the store settings to their respective map
-	 *
-	 * @param storeProperties the {@link StoreProperties} object
-	 */
-	private void loadStoreSettingsToMapFromStoreProperties(
-			StoreProperties storeProperties) {
-		List<Store> stores = storeProperties.getStores();
-
-		for (Store store : stores) {
-			String storeId = store.getId();
-			List<Module> modules = store.getModules();
-
-			for (Module module : modules) {
-				String moduleName = module.getName();
-				try {
-					String filePath = Stores.getFormattedSaveLocation(
-							propertiesManager.getStorePropertiesFolder(), storeId,
-							moduleName);
-
-					if (moduleName.equals("settings")) {
-						// load the store settings
-						loadStoreSettingsToMap("settings", serverSettingsMap, storeId,
-								filePath);
-					} else if (moduleName.equals("mail")) {
-						// load the mail settings
-						loadStoreSettingsToMap("mail", mailSettingsMap, storeId, filePath);
-					} else if (moduleName.equals("searchwithin")) {
-						// load the searchwithin settings
-						loadStoreSettingsToMap("searchwithin", searchWithinSettingsMap,
-								storeId, filePath);
-					} else if (moduleName.equals("facetsort")) {
-						// load the searchwithin settings
-						loadStoreSettingsToMap("facetsort", facetSortSettingsMap,
-								storeId, filePath);
-					} else if (moduleName.equals("workflow")) {
-						// load the workflow settings
-						loadStoreSettingsToMap("workflow", workflowSettingsMap,
-								storeId, filePath);
-					}	
-				} catch (NotDirectoryException e) {
-					logger.error(String.format("%s is not a valid directory",
-							e.getFile().getPath()), e);
-				}
+//				PropertiesConfiguration propConfig = new PropertiesConfiguration(spellFile.getAbsolutePath());
+//				propConfig.setAutoSave(true);
+//				propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+//				linguisticSettingsMap.put(storeId, propConfig);
 			}
 		}
+
+		// initialize the timezone
+		initTimezone();
+
 	}
 
-	/**
-	 * Helper method for loading store settings to a {@link Map}
-	 *
-	 * @param moduleName the module name (used for logging purposes only)
-	 * @param storeSettingsMap the {@link Map} to store the store settings
-	 * @param storeId the store id
-	 * @param filePath the file path of the store settings
-	 */
-	private void loadStoreSettingsToMap(String moduleName,
-			Map<String, PropertiesConfiguration> storeSettingsMap, String storeId,
-			String filePath) {
-		try {
-			PropertiesConfiguration propConfig = new PropertiesConfiguration(filePath);
-			propConfig.setAutoSave(true);
-			propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-			storeSettingsMap.put(storeId, propConfig);
-			logger.info(String.format("%s property file for %s: %s", moduleName, storeId,
-					propConfig.getFileName()));
-		} catch (ConfigurationException e) {
-			logger.error(String.format("Unable to load the store configuration for %s",
-					moduleName), e);
-		}
-	}
 
 	private void initTimezone() {
 
 		/* System timezone */
-		String systemTimeZoneId = xmlConfig.getString("/system-timezone", "America/Los_Angeles");
+		String systemTimeZoneId = solrXMLConfig.getString("/system-timezone", "America/Los_Angeles");
 
 		if (TimeZone.getDefault().getID().equalsIgnoreCase(systemTimeZoneId)) {
 			logger.info(String.format("-DTZ- System timezone is already set to %s", systemTimeZoneId));
@@ -209,23 +131,27 @@ public class ConfigManager {
 			}
 		}
 	}
-
-	public List<String> getStoreNames() {
-		return getStoreAttributes("name", false);
+	
+	public String getSystemTimeZoneId() {
+		return StringUtils.defaultIfBlank(getParameter("system-timezone"), "America/Los_Angeles");
 	}
-
+	
 	private List<String> getStoreIds() {
-		return getStoreAttributes("id", false);
+		return Arrays.asList(solrXMLConfig.getStringArray("/store/@id"));
 	}
-
+	
+	public List<String> getStoreNames() {
+		return Arrays.asList(solrXMLConfig.getStringArray("/store/@name"));
+	}
+	
 	public List<String> getCoreNames() {
 		return getStoreAttributes("core", true);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public List<String> getStoreAttributes(String attrName, boolean hasXmlTag) {
 		List<String> storeAttrib = new ArrayList<String>();
-		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/store"));
+		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) solrXMLConfig.configurationsAt(("/store"));
 		for (HierarchicalConfiguration hc : hcList) {
 			String attrib = "@" + attrName;
 			if (hasXmlTag) {
@@ -239,31 +165,53 @@ public class ConfigManager {
 		return storeAttrib;
 	}
 
-	public String getStoreName(String storeId) {
-		return (xmlConfig.getString("/store[@id='" + getStoreIdByAliases(storeId) + "']/@name"));
+
+	private void initStoreSettingsMap() {
+		for (String storeId : getStoreIds()) {
+			for (String moduleName: getModuleNames()) {
+				String filePath =String.format("%s/%s/%s", storeXMLConfig.getBasePath(), storeId, moduleName);
+				String mapKey = String.format("%s-%s", storeId, moduleName);
+				try {
+					PropertiesConfiguration propConfig = new PropertiesConfiguration(filePath);
+					propConfig.setAutoSave(true);
+					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+					storeSettingsMap.put(mapKey, propConfig);
+					logger.info(String.format("%s property file for %s: %s", moduleName, storeId, propConfig.getFileName()));
+				} catch (ConfigurationException e) {
+					logger.error(String.format("Unable to load the store configuration for %s", moduleName), e);
+				}
+			}
+		}
 	}
 
-	public String getStoreParameter(String storeId, String param) {
-		return (xmlConfig.getString("/store[@id='" + getStoreIdByAliases(storeId) + "']/" + param));
+	private ConfigManager(String solrXMLFile) {
+		this(solrXMLFile, null);
 	}
 
-	public String getSystemTimeZoneId() {
-		return StringUtils.defaultIfBlank(getParameter("system-timezone"), "America/Los_Angeles");
+	public static ConfigManager getInstance() {
+		return instance;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<String> getStoreParameterList(String storeId, String param) {
-		return (xmlConfig.getList("/store[@id='" + getStoreIdByAliases(storeId) + "']/" + param));
-	}
+	private XMLConfiguration getXMLConfiguration(String filePath) {
+		XMLConfiguration xmlConfiguration = new XMLConfiguration();
 
-	public String getServerParameter(String server, String param) {
-		return (xmlConfig.getString("/server[@name='" + server + "']/" + param));
+		try {
+			xmlConfiguration.setDelimiterParsingDisabled(true);
+			xmlConfiguration.setExpressionEngine(new XPathExpressionEngine());
+			xmlConfiguration.load(filePath);
+			xmlConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
+			logger.info("Loaded file path: {}", xmlConfiguration.getFile().getAbsolutePath());
+		} catch (ConfigurationException e) {
+			logger.error(e.getMessage());
+		}
+
+		return xmlConfiguration;
 	}
 
 	@SuppressWarnings("unchecked")
 	public String getStoreIdByAliases(String storeId) {
-		String sId = xmlConfig.getString("/store[@id='" + storeId + "']/@id");
-		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt("/store");
+		String sId = solrXMLConfig.getString(String.format("/store[@id='%s']/@id", storeId));
+		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) solrXMLConfig.configurationsAt("/store");
 
 		if (StringUtils.isBlank(sId) && CollectionUtils.isNotEmpty(hcList)) {
 			for (HierarchicalConfiguration hc : hcList) {
@@ -281,8 +229,8 @@ public class ConfigManager {
 	@SuppressWarnings("unchecked")
 	public List<NameValuePair> getDefaultSolrParameters(String storeId) {
 		List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
-		List<String> solrParamNames = (List<String>) xmlConfig.getList("/store[@id='" + storeId + "']/solr-param-name/param-name");
-		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/store[@id='" + storeId + "']/solr-param-value"));
+		List<String> solrParamNames = (List<String>) solrXMLConfig.getList(String.format("/store[@id='%s']/solr-param-name/param-name", storeId));
+		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) solrXMLConfig.configurationsAt(("/store[@id='" + storeId + "']/solr-param-value"));
 
 		for (HierarchicalConfiguration hc : hcList) {
 			String solrParamName = hc.getString("@name");
@@ -296,18 +244,48 @@ public class ConfigManager {
 		return nameValuePairList;
 	}
 
-	public boolean isSharedCore() {
-		return xmlConfig.getBoolean("/shared-core", false);
+	public String getPublishedDidYouMeanPath(String storeId) {
+		String fileName = PropertiesUtils.getValue("publishedfilepath");
+		if (StringUtils.isNotBlank(fileName)) {
+			fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.csv";
+		}
+		return StringUtils.trimToNull(fileName);
 	}
 
+
 	public String getSolrSelectorParam() {
-		return xmlConfig.getString("/solr-selector-param");
+		return solrXMLConfig.getString("/solr-selector-param");
+	}
+
+	public String getStoreParameter(String storeId, String param) {
+		return solrXMLConfig.getString(String.format("/store[@id='%s']/%s", getStoreIdByAliases(storeId), param));
+	}
+
+	public String getParameter(String... keys) {
+		StringBuilder str = new StringBuilder();
+		for (String key : keys) {
+			str.append("/").append(key);
+		}
+		return solrXMLConfig.getString(str.toString());
+	}
+
+	public String getServerParameter(String server, String param) {
+		return solrXMLConfig.getString(String.format("/server[@name='%s']/%s", server, param));
+	}
+
+	public String getStoreName(String storeId) {
+		return solrXMLConfig.getString(String.format("/store[@id='%s']/@name", getStoreIdByAliases(storeId)));
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> getStoreParameterList(String storeId, String param) {
+		return (List<String>) solrXMLConfig.getList(String.format("/store[@id='%s']/%s", getStoreIdByAliases(storeId), param));
 	}
 
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getServersByStoreId(String storeId) {
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt("/server");
+		List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) solrXMLConfig.configurationsAt("/server");
 		for (HierarchicalConfiguration hc : hcList) {
 			String[] store = StringUtils.split(hc.getString("store"), ",");
 			if (ArrayUtils.contains(store, getStoreIdByAliases(storeId))) {
@@ -329,71 +307,13 @@ public class ConfigManager {
 		}
 		return map;
 	}
-
-	public String getParameter(String... keys) {
-		StringBuilder str = new StringBuilder();
-		for (String key : keys) {
-			str.append("/").append(key);
-		}
-		return xmlConfig.getString(str.toString());
+	
+	public boolean isSharedCore() {
+		return solrXMLConfig.getBoolean("/shared-core", false);
 	}
 
-	public synchronized static ConfigManager getInstance(String configPath) {
-		if (instance == null) {
-			instance = new ConfigManager(configPath);
-		}
-		return instance;
-	}
-
-	public synchronized static ConfigManager getInstance(String configPath,
-			PropertiesManager pm) {
-		propertiesManager = pm;
-		return getInstance(configPath);
-	}
-
-	public void setInstance(String configPath) {
-		getInstance(configPath);
-	}
-
-	public static ConfigManager getInstance() {
-		return instance;
-	}
-
-	public boolean setStoreSetting(String storeId, String field, String value) {
-		PropertiesConfiguration config = serverSettingsMap.get(storeId);
-		if (config != null) {
-			synchronized (config) {
-				config.setProperty(field, value);
-				return StringUtils.equals(config.getString(field), value);
-			}
-		}
-		return false;
-	}
-
-	public boolean setPublishedStoreLinguisticSetting(String storeId, String field, String value) {
-		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
-		if (config != null) {
-			synchronized (config) {
-				config.setProperty(field, value);
-				return StringUtils.equals(config.getString(field), value);
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * For a property that has multiple values, getString() will return the first value of
-	 * the list
-	 *
-	 */
-	public String getPublishedStoreLinguisticSetting(String storeId, String field) {
-		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
-		if (config != null) {
-			synchronized (config) {
-				return config.getString(field);
-			}
-		}
-		return null;
+	public boolean isSolrImplOnly() {
+		return "1".equals(PropertiesUtils.getValue("solrImplOnly"));
 	}
 
 	public boolean isMemberOf(String groupName, String storeId) {
@@ -406,55 +326,23 @@ public class ConfigManager {
 		return false;
 	}
 
-	public String getPublishedDidYouMeanPath(String storeId) {
-		String fileName = PropertiesUtils.getValue("publishedfilepath");
-		if (StringUtils.isNotBlank(fileName)) {
-			fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.csv";
-		}
-		return StringUtils.trimToNull(fileName);
-	}
-
-	public boolean isSolrImplOnly() {
-		return "1".equals(PropertiesUtils.getValue("solrImplOnly"));
-	}
-
-	public enum PropertyFileType{
-		MAIL,
-		SETTINGS,
-		SEARCHWITHIN,
-		FACETSORT,
-		WORKFLOW
-	}
-
-	private PropertiesConfiguration getPropertiesConfiguration(PropertyFileType pft, String storeId){
-		PropertiesConfiguration config = null;
-
-		switch(pft){
-		case MAIL: config = mailSettingsMap.get(storeId); break;
-		case SETTINGS: config = serverSettingsMap.get(storeId); break;
-		case SEARCHWITHIN: config = searchWithinSettingsMap.get(storeId); break;
-		case FACETSORT: config = facetSortSettingsMap.get(storeId); break;
-		case WORKFLOW: config = workflowSettingsMap.get(storeId); break;
-		}
-		
-		return config;
-	}
-	
-	public String getProperty(PropertyFileType pft, String storeId, String field) {
-		PropertiesConfiguration config = getPropertiesConfiguration(pft, storeId);
+	public String getProperty(String moduleName, String storeId, String field) {
+		String mapKey = String.format("%s-%s", storeId, moduleName);
+		PropertiesConfiguration config = storeSettingsMap.get(mapKey);
 
 		if (config != null) {
 			synchronized (config) {
 				return StringUtils.trimToEmpty(config.getString(field));
 			}
 		}
-		
+
 		return StringUtils.EMPTY;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<String> getPropertyList(PropertyFileType pft, String storeId, String field) {
-		PropertiesConfiguration config = getPropertiesConfiguration(pft, storeId);
+	public List<String> getPropertyList(String moduleName, String storeId, String field) {
+		String mapKey = String.format("%s-%s", storeId, moduleName);
+		PropertiesConfiguration config = storeSettingsMap.get(mapKey);
 
 		if (config != null) {
 			synchronized (config) {
@@ -463,5 +351,43 @@ public class ConfigManager {
 		}
 
 		return new ArrayList<String>();
+	}
+
+
+	/**
+	 * For a property that has multiple values, getString() will return the first value of
+	 * the list
+	 *
+	 */
+	public String getPublishedStoreLinguisticSetting(String storeId, String field) {
+//		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
+//		if (config != null) {
+//			synchronized (config) {
+//				return config.getString(field);
+//			}
+//		}
+		return null;
+	}
+
+	public boolean setStoreSetting(String storeId, String field, String value) {
+		//		PropertiesConfiguration config = serverSettingsMap.get(storeId);
+		//		if (config != null) {
+		//			synchronized (config) {
+		//				config.setProperty(field, value);
+		//				return StringUtils.equals(config.getString(field), value);
+		//			}
+		//		}
+		return false;
+	}
+	
+	public boolean setPublishedStoreLinguisticSetting(String storeId, String field, String value) {
+//		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
+//		if (config != null) {
+//			synchronized (config) {
+//				config.setProperty(field, value);
+//				return StringUtils.equals(config.getString(field), value);
+//			}
+//		}
+		return false;
 	}
 }

@@ -18,6 +18,8 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,11 +40,8 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
-import com.search.ws.ConfigManager.PropertyFileType;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "deploymentService")
 @RemoteProxy(
@@ -116,7 +115,7 @@ public class DeploymentService {
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
 
             try {
-                if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL, storeId, "approvalNotification"))) {
+				if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getProperty("mail",UtilityService.getStoreId(), "approvalNotification"))) {
                     List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                     mailService.sendNotification(RuleStatusEntity.APPROVED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
                 }
@@ -152,7 +151,7 @@ public class DeploymentService {
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
 
             try {
-                if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL, storeId, "approvalNotification"))) {
+				if (result != null && result.size() > 0 && "1".equals(ConfigManager.getInstance().getProperty("mail", UtilityService.getStoreId(), "approvalNotification"))) {
                     List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                     mailService.sendNotification(RuleStatusEntity.REJECTED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
                 }
@@ -322,7 +321,7 @@ public class DeploymentService {
 
             if (ruleMap != null && ruleMap.size() > 0) {
                 try {
-                    if ("1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL,storeId, "pushToProdNotification"))) {
+					if ("1".equals(ConfigManager.getInstance().getProperty("mail",UtilityService.getStoreId(), "pushToProdNotification"))) {
                         List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                         mailService.sendNotification(RuleStatusEntity.PUBLISHED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
                     }
@@ -392,7 +391,7 @@ public class DeploymentService {
 
             if (ruleMap != null && ruleMap.size() > 0) {
                 try {
-                    if ("1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(), "pushToProdNotification"))) {
+                    if ("1".equals(ConfigManager.getInstance().getProperty("mail", UtilityService.getStoreId(), "pushToProdNotification"))) {
                         List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                         mailService.sendNotification(RuleStatusEntity.UNPUBLISHED, ruleType, UtilityService.getUsername(), ruleStatusInfoList, comment);
                     }
@@ -456,7 +455,7 @@ public class DeploymentService {
             if (result > 0) {
                 RuleStatus ruleStatusInfo = getRuleStatus(storeId, ruleType, ruleRefId);
                 try {
-                    if (!isDelete && "1".equals(ConfigManager.getInstance().getProperty(PropertyFileType.MAIL, UtilityService.getStoreId(), "pendingNotification"))) {
+                    if (!isDelete && "1".equals(ConfigManager.getInstance().getProperty("mail", UtilityService.getStoreId(), "pendingNotification"))) {
                         List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
                         ruleStatusInfoList.add(ruleStatusInfo);
                         mailService.sendNotification(RuleStatusEntity.PENDING, ruleType, UtilityService.getUsername(), ruleStatusInfoList, "");

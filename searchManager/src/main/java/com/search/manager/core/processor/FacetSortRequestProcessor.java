@@ -20,7 +20,6 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.ws.ConfigManager;
-import com.search.ws.ConfigManager.PropertyFileType;
 import com.search.ws.SearchException;
 import com.search.ws.SolrConstants;
 import com.search.ws.SolrResponseParser;
@@ -29,6 +28,7 @@ import com.search.ws.SolrResponseParser;
 public class FacetSortRequestProcessor implements RequestProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FacetSortRequestProcessor.class);
 	private ConfigManager configManager = ConfigManager.getInstance();
+	private static final String PROPERTY_MODULE_NET = "facetsort";
 	private RequestPropertyBean requestPropertyBean;
 
 	private FacetSortRequestProcessor(){
@@ -42,7 +42,7 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 	@Override
 	public boolean isEnabled() {
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getProperty(PropertyFileType.FACETSORT, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
+		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
 	}
 
 	private FacetSort getFacetSortRule(StoreKeyword storeKeyword) throws DaoException {
