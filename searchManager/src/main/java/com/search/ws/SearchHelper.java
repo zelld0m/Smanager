@@ -32,6 +32,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
@@ -39,10 +41,16 @@ import com.search.manager.model.SearchResult;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropertiesUtils;
 
+@Component
 public class SearchHelper {
 
 	private static final Logger logger = LoggerFactory.getLogger(SearchHelper.class);
 
+	@Autowired
+	private ConfigManager configManager;
+	@Autowired
+	private UtilityService utilityService;
+	
 	private static JSON parseJsonResponse(JsonSlurper slurper, HttpResponse response) {
 		BufferedReader reader = null;
 		InputStream in = null;
@@ -89,7 +97,7 @@ public class SearchHelper {
 		return false;
 	}
 
-	public static LinkedHashMap<String, Product> getProducts(List<? extends SearchResult> itemList, String store,
+	public LinkedHashMap<String, Product> getProducts(List<? extends SearchResult> itemList, String store,
 	        String ruleId) {
 		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
 
@@ -104,23 +112,23 @@ public class SearchHelper {
 		}
 
 		if (MapUtils.isNotEmpty(map)) {
-			SearchHelper.getProducts(map, store, UtilityService.getServerName(), ruleId);
+			getProducts(map, store, utilityService.getServerName(), ruleId);
 		}
 
 		return map;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static LinkedHashMap<String, Product> getProductsIgnoreKeyword(Map<String, ? extends Product> map,
+	public LinkedHashMap<String, Product> getProductsIgnoreKeyword(Map<String, ? extends Product> map,
 	        String store, String ruleId) {
 		if (MapUtils.isNotEmpty(map)) {
-			SearchHelper.getProductsIgnoreKeyword(map, store, UtilityService.getServerName(), ruleId);
+			getProductsIgnoreKeyword(map, store, utilityService.getServerName(), ruleId);
 		}
 
 		return (LinkedHashMap<String, Product>) map;
 	}
 
-	public static void getProducts(Map<String, ? extends Product> productList, String storeId, String server,
+	public void getProducts(Map<String, ? extends Product> productList, String storeId, String server,
 	        String keyword) {
 		HttpClient client = null;
 		HttpPost post = null;
@@ -129,7 +137,7 @@ public class SearchHelper {
 			if (productList == null || productList.isEmpty()) {
 				return;
 			}
-			ConfigManager configManager = ConfigManager.getInstance();
+//			ConfigManager configManager = ConfigManager.getInstance();
 
 			// build the query
 			String facetName = configManager.getStoreParameter(storeId, "facet-name");
@@ -255,7 +263,7 @@ public class SearchHelper {
 		}
 	}
 
-	public static void getProductsIgnoreKeyword(Map<String, ? extends Product> productList, String storeId,
+	public void getProductsIgnoreKeyword(Map<String, ? extends Product> productList, String storeId,
 	        String server, String keyword) {
 		HttpClient client = null;
 		HttpPost post = null;
@@ -264,7 +272,7 @@ public class SearchHelper {
 			if (productList == null || productList.isEmpty()) {
 				return;
 			}
-			ConfigManager configManager = ConfigManager.getInstance();
+//			ConfigManager configManager = ConfigManager.getInstance();
 
 			// build the query
 			String facetName = configManager.getStoreParameter(storeId, "facet-name");
@@ -390,24 +398,24 @@ public class SearchHelper {
 		}
 	}
 
-	public static List<String> getFacetValues(String server, String storeId, String field) {
+	public List<String> getFacetValues(String server, String storeId, String field) {
 		return getFacetValues(server, storeId, field, null);
 	}
 
-	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters) {
+	public List<String> getFacetValues(String server, String storeId, String field, List<String> filters) {
 		return getFacetValues(server, storeId, field, filters, true);
 	}
 
-	public static Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields) {
+	public Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields) {
 		return getFacetValues(server, storeId, fields, null);
 	}
 
-	public static Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields,
+	public Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields,
 	        List<String> filters) {
 		return getFacetValues(server, storeId, fields, filters, true);
 	}
 
-	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters,
+	public List<String> getFacetValues(String server, String storeId, String field, List<String> filters,
 	        boolean hasMincount) {
 		ArrayList<String> fields = new ArrayList<String>();
 		fields.add(field);
@@ -419,7 +427,7 @@ public class SearchHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields,
+	public Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields,
 	        List<String> filters, boolean hasMincount) {
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
 
@@ -432,7 +440,7 @@ public class SearchHelper {
 		HttpResponse solrResponse = null;
 
 		try {
-			ConfigManager configManager = ConfigManager.getInstance();
+//			ConfigManager configManager = ConfigManager.getInstance();
 
 			// build the query
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -551,7 +559,7 @@ public class SearchHelper {
 		return map;
 	}
 
-	public static String getEdpByPartNumber(String server, String storeId, String partNumber) {
+	public String getEdpByPartNumber(String server, String storeId, String partNumber) {
 		String edp = "";
 		HttpClient client = null;
 		HttpPost post = null;
@@ -560,7 +568,7 @@ public class SearchHelper {
 			return edp;
 		}
 		try {
-			ConfigManager configManager = ConfigManager.getInstance();
+//			ConfigManager configManager = ConfigManager.getInstance();
 
 			// build the query
 			String core = configManager.getStoreParameter(storeId, "core");
@@ -629,7 +637,7 @@ public class SearchHelper {
 		return edp;
 	}
 
-	public static boolean isForceAddCondition(String server, String storeId, String keyword, String fqCondition) {
+	public boolean isForceAddCondition(String server, String storeId, String keyword, String fqCondition) {
 		boolean forceAdd = false;
 		HttpClient client = null;
 		HttpPost post = null;
@@ -638,7 +646,7 @@ public class SearchHelper {
 		try {
 			// build the query
 
-			ConfigManager configManager = ConfigManager.getInstance();
+//			ConfigManager configManager = ConfigManager.getInstance();
 			String core = configManager.getStoreParameter(storeId, "core");
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core)
 			        .concat("select?").replace("http://", PropertiesUtils.getValue("browsejssolrurl"));
