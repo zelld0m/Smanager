@@ -35,17 +35,18 @@ public class ReportHeader {
 	private String fileName;
 	private Date date;
 	
-	private String replaceValues(String string) {
-		return StringUtils.replace(
-				StringUtils.replace(
-					StringUtils.replace(
-						string, "%%StoreName%%", UtilityService.getStoreName()),
-						"%%User%%", UtilityService.getUsername()),
-						"%%Date%%", DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), date));
-	}
+//	private String replaceValues(String string) {
+//		return StringUtils.replace(
+//				StringUtils.replace(
+//					StringUtils.replace(
+//						string, "%%StoreName%%", UtilityService.getStoreName()),
+//						"%%User%%", UtilityService.getUsername()),
+//						"%%Date%%", DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), date));
+//	}
 	
 	public String getReportName() {
-		return replaceValues(reportName);
+//		return replaceValues(reportName);
+		return reportName;
 	}
 	
 	public void setReportName(String reportName) {
@@ -53,7 +54,8 @@ public class ReportHeader {
 	}
 	
 	public String getSubReportName() {
-		return replaceValues(subReportName);
+//		return replaceValues(subReportName);
+		return reportName;
 	}
 	
 	public void setSubReportName(String subReportName) {

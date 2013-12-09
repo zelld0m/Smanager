@@ -47,7 +47,8 @@ public class SpellReportBean extends ReportBean<SpellRule> {
 
 	@ReportField(label = "Created Date", size = 20, sortOrder = 6)
 	public String getCreatedDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(model.getCreatedDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(model.getCreatedDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 
 	@ReportField(label = "Modified By", size = 20, sortOrder = 7)
@@ -57,6 +58,7 @@ public class SpellReportBean extends ReportBean<SpellRule> {
 
 	@ReportField(label = "Modified Date", size = 20, sortOrder = 8)
 	public String getModifiedDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(model.getLastModifiedDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(model.getLastModifiedDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 }
