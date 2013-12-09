@@ -15,13 +15,12 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-
-import com.search.manager.service.UtilityService;
-import com.search.ws.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.search.ws.ConfigManager;
 
 @Component
 public class JodaDateTimeUtil {
@@ -31,8 +30,8 @@ public class JodaDateTimeUtil {
 
     @Autowired
     private ConfigManager configManager;
-    @Autowired
-    private UtilityService utilityService;
+//    @Autowired
+//    private UtilityService utilityService;
     
     public static DateTimeZone getTimeZone() {
         return DateTimeZone.getDefault();
@@ -116,15 +115,15 @@ public class JodaDateTimeUtil {
         return toDateTime(storeId, null, dateTimeText, "datetime-format");
     }
 
-    public DateTime toDateTimeFromStorePattern(String dateTimeText, JodaPatternType patternType) {
-        String storeId = utilityService.getStoreId();
-        return toDateTimeFromStorePattern(storeId, dateTimeText, patternType);
-    }
+//    public DateTime toDateTimeFromStorePattern(String dateTimeText, JodaPatternType patternType) {
+//        String storeId = utilityService.getStoreId();
+//        return toDateTimeFromStorePattern(storeId, dateTimeText, patternType);
+//    }
 
-    public DateTime toDateTimeFromStorePattern(String dateTimeText) {
-        String storeId = utilityService.getStoreId();
-        return toDateTimeFromStorePattern(storeId, dateTimeText, JodaPatternType.DATE_TIME);
-    }
+//    public DateTime toDateTimeFromStorePattern(String dateTimeText) {
+//        String storeId = utilityService.getStoreId();
+//        return toDateTimeFromStorePattern(storeId, dateTimeText, JodaPatternType.DATE_TIME);
+//    }
 
     private String formatDateTime(String storeId, String pattern, DateTime dateTime, String xmlTag) {
     	
@@ -145,20 +144,24 @@ public class JodaDateTimeUtil {
         return StringUtils.isNotBlank(pattern) ? formatDateTime(null, pattern, dateTime, null) : "";
     }
 
-    public String formatFromStorePattern(DateTime dateTime, JodaPatternType patternType) {
-        String storeId = utilityService.getStoreId();
-        return StringUtils.isNotBlank(storeId) ? formatFromStorePattern(storeId, dateTime, patternType) : "";
-    }
+//    public String formatFromStorePattern(DateTime dateTime, JodaPatternType patternType) {
+//        String storeId = utilityService.getStoreId();
+//        return StringUtils.isNotBlank(storeId) ? formatFromStorePattern(storeId, dateTime, patternType) : "";
+//    }
 
     public String formatFromStorePattern(String storeId, DateTime dateTime, JodaPatternType patternType) {
         return formatDateTime(storeId, null, dateTime, JodaPatternType.DATE.equals(patternType) ? "date-format" : "datetime-format");
     }
 
-    public String formatFromStorePatternWithZone(DateTime dateTime, JodaPatternType patternType) {
-        String storeId = utilityService.getStoreId();
-        return StringUtils.isNotBlank(storeId) ? String.format("%s %s", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()) : "";
-    }
+//    public String formatFromStorePatternWithZone(DateTime dateTime, JodaPatternType patternType) {
+//        String storeId = utilityService.getStoreId();
+//        return StringUtils.isNotBlank(storeId) ? String.format("%s %s", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()) : "";
+//    }
 
+    public String formatFromStorePatternWithZone(String storeId, DateTime dateTime, JodaPatternType patternType) {
+    	return StringUtils.isNotBlank(storeId) ? String.format("%s %s", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()) : "";
+    }
+    
     public static String getRemainingDays(DateTime startDateTime, DateTime endDateTime) {
 
         if (startDateTime == null) {
