@@ -162,7 +162,8 @@ public class User extends ModelBean {
 	}
 	
 	public String getFormattedThruDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getThruDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getThruDate(), JodaPatternType.DATE);
+		return "";
 	}
 
 	public void setThruDate(DateTime thruDate) {
@@ -215,6 +216,7 @@ public class User extends ModelBean {
 	}
 
 	public String getFormattedLastAccessDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastAccessDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastAccessDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 }

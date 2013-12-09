@@ -228,10 +228,12 @@ public class Product extends ModelBean {
 	}
 	
 	public String getFormattedExpiryDateTime(){
-		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 	
 	public String getFormattedExpiryDate(){
-		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getExpiryDate(), JodaPatternType.DATE);
+		return "";
 	}
 }

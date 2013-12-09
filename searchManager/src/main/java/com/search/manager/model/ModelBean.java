@@ -63,18 +63,22 @@ public class ModelBean implements Serializable {
 	}
 
 	public String getFormattedCreatedDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 	
 	public String getFormattedLastModifiedDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 	
 	public String getFormattedCreatedDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
+		return "";
 	}
 	
 	public String getFormattedLastModifiedDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE);
+		return "";
 	}
 }

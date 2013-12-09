@@ -322,11 +322,13 @@ public class Relevancy extends ModelBean {
 	}
 
 	public String getFormattedStartDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
+		return "";
 	}
 
 	public String getFormattedEndDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE);
+		return "";
 	}
 	
 	/**
