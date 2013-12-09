@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -24,19 +26,22 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.model.User;
 import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ClusterAwareUsernamePasswordAuthentication
         extends UsernamePasswordAuthenticationFilter {
 
     private static final Logger logger =
             LoggerFactory.getLogger(ClusterAwareUsernamePasswordAuthentication.class);
+    
     @Autowired
     private ClusterAwareSessionRegistryImpl sessionRegistry;
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+    private ConfigManager configManager;
+    @Autowired
+    private UtilityService utilityService;
+    
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
             HttpServletResponse response, Authentication authResult)
@@ -46,15 +51,14 @@ public class ClusterAwareUsernamePasswordAuthentication
         String sessionId = SessionRegistryUtils.getSessionId(authResult);
 
         sessionRegistry.registerNewSession(sessionId, principal);
-
-        ConfigManager cm = ConfigManager.getInstance();
+        
         String storeId = ((UserDetailsImpl) authResult.getPrincipal()).getStoreId();
-        String storeName = cm.getStoreName(storeId);
-        String serverName = cm.getStoreParameter(storeId, "default-server");
+        String storeName = configManager.getStoreName(storeId);
+        String serverName = configManager.getStoreParameter(storeId, "default-server");
 
-        UtilityService.setStoreId(storeId);
-        UtilityService.setStoreName(storeName);
-        UtilityService.setServerName(serverName);
+        utilityService.setStoreId(storeId);
+        utilityService.setStoreName(storeName);
+        utilityService.setServerName(serverName);
 
         //Delete cookies
         response.addCookie(CookieUtils.expireNow("server.selection", request.getContextPath()));
