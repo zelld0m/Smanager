@@ -45,7 +45,9 @@ public class BannerController {
     private RuleVersionService ruleVersionService;
     @Autowired
     private DownloadService downloadService;
-
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String store) {
@@ -109,7 +111,7 @@ public class BannerController {
                 }
             }
 
-            subModels.add(new BannerReportModel(reportHeader, RuleXmlReportUtil.getVersionSubReportHeader(ruleXml,
+            subModels.add(new BannerReportModel(reportHeader, ruleXmlReportUtil.getVersionSubReportHeader(ruleXml,
                     RuleEntity.BANNER), reportBeans));
         }
 
