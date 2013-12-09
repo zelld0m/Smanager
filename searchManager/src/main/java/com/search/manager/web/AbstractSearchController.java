@@ -493,11 +493,11 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
 		Boolean isAutoPrefixProtocol = BooleanUtils.toBoolean(StringUtils.defaultIfBlank(autoPrefixProtocol, "false"));
 		
-		if(bannerRuleItems != null) {
-			for(int i=0; i<bannerRuleItems.size(); i++) {		
+		if(bannerRuleItems != null && isAutoPrefixProtocol) {
+			for(int i=0; i<bannerRuleItems.size(); i++) {
 				String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings", store.getStoreId(),
 						DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http:");
-				bannerRuleItems.get(i).setLinkPath((isAutoPrefixProtocol ? protocol : "") + bannerRuleItems.get(i).getLinkPath());
+				bannerRuleItems.get(i).setLinkPath(protocol + bannerRuleItems.get(i).getLinkPath());
 			}
 		}
 		
