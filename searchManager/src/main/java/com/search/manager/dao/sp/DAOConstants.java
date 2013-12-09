@@ -136,7 +136,11 @@ public class DAOConstants {
     public static final String SP_PUBLISH_SPELL_RULE = "usp_Publish_Spell_Rule";
     public static final String SP_RESTORE_SPELL_RULE_VERSION = "usp_Restore_Spell_Rule_Version";
     public static final String SP_GET_SPELL_RULE_VERSION = "usp_Get_Spell_Rule_Version";
-
+    // IMPORT RULE TASK
+    public static final String SP_ADD_IMPORT_RULE_TASK = "usp_Add_Import_Rule_Task";
+    public static final String SP_UPDATE_IMPORT_RULE_TASK= "usp_Update_Import_Rule_Task";
+    public static final String SP_GET_IMPORT_RULE_TASK = "usp_Get_Import_Rule_Task";
+    
     /* Stored Procedure Parameter Names */
     public static final String PARAM_STORE_ID = "store_id";
     public static final String PARAM_TIMEZONE_ID = "timezone_id";
