@@ -48,7 +48,9 @@ public class ElevateController {
     private DownloadService downloadService;
     @Autowired
     private RuleVersionService ruleVersionService;
-
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
@@ -152,8 +154,8 @@ public class ElevateController {
         if (rules != null) {
             for (RuleXml xml : rules) {
                 if (xml != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.ELEVATE);
-                    subModels.add(new ElevateReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.ELEVATE);
+                    subModels.add(new ElevateReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
                 }
             }
         }

@@ -53,7 +53,13 @@ public class FacetSortController {
     private DownloadService downloadService;
     @Autowired
     private RuleVersionService ruleVersionService;
-
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
@@ -142,7 +148,7 @@ public class FacetSortController {
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        RuleVersionListXml facetSortXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.FACET_SORT, ruleId);
+        RuleVersionListXml facetSortXml = ruleVersionUtil.getRuleVersionList(utilityService.getStoreId(), RuleEntity.FACET_SORT, ruleId);
         String subTitle = String.format("Facet Sort Rule [%s]", facetSortXml != null ? facetSortXml.getRuleName() : "");
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
@@ -155,8 +161,8 @@ public class FacetSortController {
             for (RuleXml rule : rules) {
                 FacetSortRuleXml xml = (FacetSortRuleXml) rule;
                 if (rule != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.FACET_SORT);
-                    subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getFacetSortReportBeanList(xml)));
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.FACET_SORT);
+                    subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getFacetSortReportBeanList(xml)));
                 }
             }
         }
