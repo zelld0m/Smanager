@@ -14,8 +14,9 @@ public enum TaskStatus {
 	QUEUED("Queued", "Queued"),
 	IN_PROCESS("In Process", "In Process"),
 	FAILED("Failed", "Failed"),
-	COMPLETED("Completed", "Completed");
-
+	COMPLETED("Completed", "Completed"),
+	CANCELED("Canceled", "Canceled");
+	
 	private final String name;
 	private final String displayText;
 	
