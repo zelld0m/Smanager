@@ -10,13 +10,20 @@
     <os family="unix" />
   </condition>
 
-  <target description="Deploy config files" name="config">
+  <target description="Deploy config files" name="config-dev">
     <mkdir dir="${conf.home}" />
     <copy todir="${conf.home}">
-      <fileset dir="${basedir}/config" />
+      <fileset dir="${basedir}/config/dev" />
     </copy>
   </target>
 
+  <target description="Deploy config files" name="config-stage">
+	<mkdir dir="${conf.home}" />
+	<copy todir="${conf.home}">
+		<fileset dir="${basedir}/config/stage" />
+	</copy>
+  </target>
+	
   <target if="isWindows" name="--set-win-props">
     <property name="conf.home" value="C:/home/solr/bin/ws/config" />
   </target>
@@ -31,4 +38,3 @@
 
   <target depends="--set-props" name="props" />
 </project>
-
