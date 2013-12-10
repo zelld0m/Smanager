@@ -42,6 +42,7 @@
   </target>
 
   <target depends="--set-win-props,--set-unix-props" name="--set-props">
+    <echo message="timezone: ${timezone}" />
     <echo message="conf.home: ${conf.home}" />
   </target>
 
