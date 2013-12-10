@@ -11,6 +11,13 @@ public class TaskExecutionResult {
 	
 	private DateTime taskEndDateTime;
 
+	public TaskExecutionResult(TaskStatus taskStatus, String taskErrorMessage, DateTime taskStartDateTime, DateTime taslEmdDateTime) {
+		this.taskStatus = taskStatus;
+		this.taskErrorMessage = taskErrorMessage;
+		this.taskStartDateTime = taskStartDateTime;
+		this.taskEndDateTime = taslEmdDateTime;
+	}
+	
 	public TaskStatus getTaskStatus() {
 		return taskStatus;
 	}

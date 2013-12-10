@@ -11,10 +11,10 @@ public class WorkflowConstants {
 	
 	public static final String COLUMN_TASK_ID = "TASK_ID";
 	public static final String COLUMN_RULE_TYPE_ID = "RULE_TYPE_ID";
-	public static final String COLUMN_SOURCE_STORE_ID = "SOURCE_STORE_ID";
+	public static final String COLUMN_SOURCE_RULE_STORE_ID = "SOURCE_RULE_STORE_ID";
 	public static final String COLUMN_SOURCE_RULE_ID = "SOURCE_RULE_ID";
 	public static final String COLUMN_SOURCE_RULE_NAME = "SOURCE_RULE_NAME";
-	public static final String COLUMN_TARGET_STORE_ID = "TARGET_STORE_ID";
+	public static final String COLUMN_TARGET_RULE_STORE_ID = "TARGET_RULE_STORE_ID";
 	public static final String COLUMN_TARGET_RULE_ID = "TARGET_RULE_ID";
 	public static final String COLUMN_TARGET_RULE_NAME = "TARGET_RULE_NAME";
 	public static final String COLUMN_IMPORT_TYPE = "IMPORT_TYPE";
@@ -28,4 +28,7 @@ public class WorkflowConstants {
 	public static final String COLUMN_LAST_UPDATED_BY = "LAST_UPDATED_BY";
 	public static final String COLUMN_LAST_UPDATED_STAMP = "LAST_UPDATED_STAMP";
 	public static final String COLUMN_LAST_UPDATED_TX_STAMP = "LAST_UPDATED_TX_STAMP";
+	
+	public static final String PARAM_START_ROW = "Start_Row";
+	public static final String PARAM_END_ROW = "End_Row";
 }

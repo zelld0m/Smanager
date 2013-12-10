@@ -32,6 +32,18 @@ public class ImportRuleTask extends ModelBean{
 	
 	private TaskExecutionResult taskExecutionResult;
 	
+	public ImportRuleTask(String taskId, RuleType ruleType, String sourceStoreId, String sourceRuleId, String sourceRuleName, String targetStoreId, String targetRuleId, String targetRuleName, ImportType importType, TaskExecutionResult taskExecutionResult) {
+		this.taskId = taskId;
+		this.ruleType = ruleType;
+		this.sourceStoreId = sourceStoreId;
+		this.sourceRuleId = sourceRuleId;
+		this.sourceRuleName = sourceRuleName;
+		this.targetStoreId = targetStoreId;
+		this.targetRuleId = targetRuleId;
+		this.targetRuleName = targetRuleName;
+		this.importType = importType;
+	}
+	
 	public String getTaskId() {
 		return taskId;
 	}
