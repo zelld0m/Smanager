@@ -88,7 +88,7 @@ public class RuleXmlUtil {
     private static final String PRERESTOREPATH = PropertiesUtils.getValue("pre-restorepath");
     
     @Autowired
-    private static DaoService daoService;
+    private DaoService daoService;
     @Autowired
 	private ConfigManager configManager;
     @Autowired
@@ -283,7 +283,7 @@ public class RuleXmlUtil {
         return productList;
     }
 
-    private static RuleXml xmlFileToRuleXml(String path) {
+    private RuleXml xmlFileToRuleXml(String path) {
         FileReader reader = null;
 
         try {
@@ -992,7 +992,7 @@ public class RuleXmlUtil {
         return restoreRule(xml, isVersion, true);
     }
 
-    public static boolean saveRuleXml(RuleXml xml, String location, long version) {
+    public boolean saveRuleXml(RuleXml xml, String location, long version) {
         FileWriter writer = null;
 
         try {
@@ -1018,7 +1018,7 @@ public class RuleXmlUtil {
         }
     }
 
-    public static RuleXml loadVersion(String file) {
+    public RuleXml loadVersion(String file) {
         return xmlFileToRuleXml(file);
     }
 
@@ -1109,14 +1109,6 @@ public class RuleXmlUtil {
                 return StringUtil.escapeKeyword(ruleId);
         }
         return ruleId;
-    }
-
-    public DaoService getDaoService() {
-        return daoService;
-    }
-
-    public void setDaoService(DaoService daoService) {
-        RuleXmlUtil.daoService = daoService;
     }
 
     public RuleStatus getRuleStatus(String ruleEntity, String store, String ruleId) {

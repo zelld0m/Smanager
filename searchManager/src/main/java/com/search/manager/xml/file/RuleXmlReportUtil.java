@@ -7,10 +7,11 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
@@ -55,8 +56,6 @@ import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class RuleXmlReportUtil {
@@ -65,28 +64,12 @@ public class RuleXmlReportUtil {
             LoggerFactory.getLogger(RuleXmlReportUtil.class);
     
     @Autowired
-    private static DaoService daoService;
-    @Autowired
     private UtilityService utilityService;
     @Autowired
     private JodaDateTimeUtil jodaDateTimeUtil;
-    
-    private static RuleXmlReportUtil instance = null;
 
     protected RuleXmlReportUtil() {
         //Exists only to defeat instantiation.
-    }
-
-    public static RuleXmlReportUtil getInstance() {
-        logger.info("RuleXmlReportUtil.getInstance()");
-        if (instance == null) {
-            synchronized (RuleXmlReportUtil.class) {
-                if (instance == null) {
-                    instance = new RuleXmlReportUtil();
-                }
-            }
-        }
-        return instance;
     }
 
     public SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity) {
@@ -99,7 +82,9 @@ public class RuleXmlReportUtil {
         subReportHeader.addRow("Notes: ", StringUtils.defaultIfBlank(xml.getNotes(), ""));
         subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? jodaDateTimeUtil.formatFromStorePattern(storeId, xml.getCreatedDate(), JodaPatternType.DATE_TIME) : "");
         subReportHeader.addRow("Created By: ", xml.getCreatedBy());
-
+        
+        logger.debug("Version Sub Report Header: " + subReportHeader);
+        
         switch (ruleEntity) {
             case SPELL:
                 // for spell rules, one sheet per version will be created,
@@ -308,12 +293,5 @@ public class RuleXmlReportUtil {
 
         return subReports;
     }
-
-    public DaoService getDaoService() {
-        return daoService;
-    }
-
-    public void setDaoService(DaoService daoService) {
-        RuleXmlReportUtil.daoService = daoService;
-    }
+    
 }
