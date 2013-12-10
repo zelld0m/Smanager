@@ -60,8 +60,6 @@ public class RelevancyService extends RuleService {
     @Autowired
     private UtilityService utilityService;
     @Autowired
-    private SolrSchemaUtility solrSchemaUtility;
-    @Autowired
     private JodaDateTimeUtil jodaDateTimeUtil;
     @Autowired
     private SearchHelper searchHelper;
@@ -132,7 +130,7 @@ public class RelevancyService extends RuleService {
             //bq post-processing
             if (StringUtils.equalsIgnoreCase("bq", fieldName)) {
                 try {
-                    Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
+                    Schema schema = SolrSchemaUtility.getSchema(utilityService.getSolrServerUrl(utilityService.getServerName()), utilityService.getStoreCore());
                     BoostQueryModel boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
                     fieldValue = boostQueryModel.toString();
                 } catch (SchemaException e) {
@@ -144,7 +142,7 @@ public class RelevancyService extends RuleService {
             //bf post-processing
             if (StringUtils.equalsIgnoreCase("bf", fieldName)) {
                 try {
-                    Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
+                	Schema schema = SolrSchemaUtility.getSchema(utilityService.getSolrServerUrl(utilityService.getServerName()), utilityService.getStoreCore());
                     BoostFunctionModel.toModel(schema, fieldValue, true);
                 } catch (SchemaException e) {
                     logger.error("Failed during addOrUpdateRelevancyField()", e);
@@ -282,7 +280,7 @@ public class RelevancyService extends RuleService {
     @RemoteMethod
     public BoostQueryModel getValuesByString(String bq) {
         logger.info(String.format("%s", bq));
-        Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
+        Schema schema = SolrSchemaUtility.getSchema(utilityService.getSolrServerUrl(utilityService.getServerName()), utilityService.getStoreCore());
         BoostQueryModel boostQueryModel = new BoostQueryModel();
 
         try {
@@ -441,7 +439,7 @@ public class RelevancyService extends RuleService {
         List<QueryField> qFieldList = new ArrayList<QueryField>();
         logger.info(String.format("%s", fieldValue));
         try {
-            Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
+        	Schema schema = SolrSchemaUtility.getSchema(utilityService.getSolrServerUrl(utilityService.getServerName()), utilityService.getStoreCore());
             QueryFieldsModel qFieldModel = QueryFieldsModel.toModel(schema, fieldValue, true);
             if (qFieldModel != null) {
                 qFieldList = qFieldModel.getQueryFields();
@@ -455,8 +453,8 @@ public class RelevancyService extends RuleService {
 
     @RemoteMethod
     public RecordSet<Field> getIndexedFields(int page, int itemsPerPage, String filter, String[] excludedFields) {
-        Schema schema = solrSchemaUtility.getSchema(utilityService.getServerName(), utilityService.getStoreId());
-
+        Schema schema = SolrSchemaUtility.getSchema(utilityService.getSolrServerUrl(utilityService.getServerName()), utilityService.getStoreCore());
+        
         List<Field> excludeFieldList = new ArrayList<Field>();
 
         for (String string : excludedFields) {
