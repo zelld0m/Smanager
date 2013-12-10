@@ -1,9 +1,10 @@
 <project basedir="." name="SearchGuiWS">
 
   <property environment="env" />
+  <property name="timezone" value="PST"/>
   
   <tstamp>
-	<format property="touch.time" pattern="yyyyMMdd HHmmss"/>
+	<format property="touch.time" pattern="yyyyMMdd HHmmss" timezone="${timezone}"/>
   </tstamp>
 	
   <condition property="isWindows">
@@ -15,7 +16,7 @@
   </condition>
 
   <target depends="--set-props" description="Archive config files" name="archive-old-config">
-  	<zip destfile="${conf.home}/WS${touch.time}.zip" basedir="${conf.home}" excludes="*.zip"/>
+  	<zip destfile="${conf.home}/WS ${timezone} ${touch.time}.zip" basedir="${conf.home}" excludes="*.zip"/>
   </target>
 	
   <target depends="archive-old-config" description="Deploy config files" name="config-dev">
