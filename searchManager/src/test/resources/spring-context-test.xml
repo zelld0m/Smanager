@@ -16,21 +16,21 @@
         </property>
     </bean>
     
-    <bean id="propertiesReader" class="com.search.properties.manager.PropertiesReader"/>
-    <bean id="propertiesManagerService" class="com.search.properties.manager.service.PropertiesManagerService"/>
-    <bean id="propertiesReaderService" class="com.search.properties.manager.service.PropertiesReaderService"/>
+    <bean id="propertiesReader" class="com.search.manager.properties.PropertiesReader"/>
+    <bean id="propertiesManagerService" class="com.search.manager.properties.service.PropertiesManagerService"/>
+    <bean id="propertiesReaderService" class="com.search.manager.properties.service.PropertiesReaderService"/>
     
-    <bean id="solrXmlReader" class="com.search.properties.manager.SolrXmlReader">
+    <bean id="solrXmlReader" class="com.search.manager.properties.SolrXmlReader">
         <constructor-arg name="storeSolrPropertiesFile" value="src/test/resources/home/solr/conf/solr.xml"/>
     </bean>
     
-    <bean id="propertiesManager" class="com.search.properties.manager.PropertiesManager">
+    <bean id="propertiesManager" class="com.search.manager.properties.PropertiesManager">
         <constructor-arg name="storePropertiesFile"  value="src/test/resources/home/solr/conf/store.xml"/>
         <constructor-arg name="storePropertiesFolder" value="src/test/resources/home/solr/conf"/>
     </bean>
     
-    <bean id="configManager" class="com.search.ws.ConfigManager" factory-method="getInstance">
-        <constructor-arg name="storeXMLFile" value="/home/solr/conf/store.xml"/>
- 		<constructor-arg name="solrXMLFile" value="/home/solr/conf/solr.xml"/>
+    <bean id="configManager" class="com.search.ws.ConfigManager">
+        <constructor-arg name="storeXMLFile" value="src/test/resources/home/solr/conf/store.xml"/>
+ 		<constructor-arg name="solrXMLFile" value="src/test/resources/home/solr/conf/solr.xml"/>
     </bean>
 </beans>
