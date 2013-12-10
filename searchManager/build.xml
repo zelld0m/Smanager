@@ -10,19 +10,34 @@
     <os family="unix" />
   </condition>
 
-  <target depends="--set-props" description="Deploy config files" name="dev-config">
+  <target depends="--set-props" description="Deploy Dev-GUI Config Files" name="config-dev-gui">
     <mkdir dir="${conf.home}" />
     <copy todir="${conf.home}">
-      <fileset dir="${basedir}/config/dev" />
+      <fileset dir="${basedir}/config/dev/gui" />
     </copy>
   </target>
   
-  <target depends="--set-props" description="Deploy config files" name="stage-config">
+  <target depends="--set-props" description="Deploy Stage-GUI Config Files" name="config-stage-gui">
     <mkdir dir="${conf.home}" />
     <copy todir="${conf.home}">
-      <fileset dir="${basedir}/config/stage" />
+      <fileset dir="${basedir}/config/stage/gui" />
     </copy>
   </target>
+  
+  <target depends="--set-props" description="Deploy Dev-WS Config Files" name="config-dev-ws">
+    <mkdir dir="${ws.conf.home}" />
+    <copy todir="${ws.conf.home}">
+      <fileset dir="${basedir}/config/dev/ws" />
+    </copy>
+  </target>
+  
+  <target depends="--set-props" description="Deploy Stage-WS Config Files" name="config-stage-ws">
+    <mkdir dir="${ws.conf.home}" />
+    <copy todir="${ws.conf.home}">
+      <fileset dir="${basedir}/config/stage/ws" />
+    </copy>
+  </target>
+  
 
   <target depends="--set-props" description="Deploy resources files" name="resources">
     <mkdir dir="${resc.home}" />
@@ -39,18 +54,21 @@
   </target>
 
   <target if="isWindows" name="--set-win-props">
+    <property name="ws.conf.home" value="C:/home/solr/conf" />
     <property name="conf.home" value="C:/home/solr/conf" />
     <property name="resc.home" value="C:/home/solr/resources" />
     <property name="util.home" value="C:/home/solr/utilities" />
   </target>
 
   <target if="isUnix" name="--set-unix-props">
+    <property name="ws.conf.home" value="/home/solr/conf" />
     <property name="conf.home" value="/home/solr/conf" />
     <property name="resc.home" value="/home/solr/resources" />
     <property name="util.home" value="/home/solr/utilities" />
   </target>
 
   <target depends="--set-win-props,--set-unix-props" name="--set-props">
+    <echo message="ws.conf.home: ${ws.conf.home}" />
     <echo message="conf.home: ${conf.home}" />
     <echo message="resc.home: ${resc.home}" />
     <echo message="util.home: ${util.home}" />
