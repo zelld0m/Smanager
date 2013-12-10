@@ -32,6 +32,7 @@ import com.search.manager.utility.PropertiesUtils;
 public class RuleTransferUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(RuleTransferUtil.class);
+    
     public static final Pattern PATTERN = Pattern.compile("__(.*).xml", Pattern.DOTALL);
     private static final String IMPORT_FILE_PATH = PropertiesUtils.getValue("importfilepath");
     
