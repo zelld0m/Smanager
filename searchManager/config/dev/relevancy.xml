@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Dev Config -->
 	<!--
 		TODO: consider putting this in another config file. So that in case of
 		config update, application won't have to reload this also

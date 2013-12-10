@@ -1,7 +1,12 @@
 <project basedir="." name="SearchGuiWS">
 
   <property environment="env" />
-
+  <property name="timezone" value="PST"/>
+  
+  <tstamp>
+	<format property="touch.time" pattern="yyyyMMdd HHmmss" timezone="${timezone}"/>
+  </tstamp>
+	
   <condition property="isWindows">
     <os family="windows" />
   </condition>
@@ -10,13 +15,24 @@
     <os family="unix" />
   </condition>
 
-  <target description="Deploy config files" name="config">
+  <target depends="--set-props" description="Archive config files" name="archive-old-config">
+  	<zip destfile="${conf.home}/WS ${timezone} ${touch.time}.zip" basedir="${conf.home}" excludes="*.zip"/>
+  </target>
+	
+  <target depends="archive-old-config" description="Deploy config files" name="config-dev">
     <mkdir dir="${conf.home}" />
-    <copy todir="${conf.home}">
-      <fileset dir="${basedir}/config" />
+    <copy todir="${conf.home}" overwrite="true" verbose="true" >
+      <fileset dir="${basedir}/config/dev"/>
     </copy>
   </target>
 
+  <target depends="archive-old-config" description="Deploy config files" name="config-stage">
+	<mkdir dir="${conf.home}" />
+	<copy todir="${conf.home}" overwrite="true" verbose="true" >
+		<fileset dir="${basedir}/config/stage" />
+	</copy>
+  </target>
+	
   <target if="isWindows" name="--set-win-props">
     <property name="conf.home" value="C:/home/solr/bin/ws/config" />
   </target>
@@ -26,9 +42,9 @@
   </target>
 
   <target depends="--set-win-props,--set-unix-props" name="--set-props">
+    <echo message="timezone: ${timezone}" />
     <echo message="conf.home: ${conf.home}" />
   </target>
 
   <target depends="--set-props" name="props" />
 </project>
-
