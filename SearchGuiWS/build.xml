@@ -1,7 +1,11 @@
 <project basedir="." name="SearchGuiWS">
 
   <property environment="env" />
-
+  
+  <tstamp>
+	<format property="touch.time" pattern="yyyyMMdd HHmmss"/>
+  </tstamp>
+	
   <condition property="isWindows">
     <os family="windows" />
   </condition>
@@ -10,16 +14,20 @@
     <os family="unix" />
   </condition>
 
-  <target description="Deploy config files" name="config-dev">
+  <target depends="--set-props" description="Archive config files" name="archive-old-config">
+  	<zip destfile="${conf.home}/WS${touch.time}.zip" basedir="${conf.home}" excludes="*.zip"/>
+  </target>
+	
+  <target depends="archive-old-config" description="Deploy config files" name="config-dev">
     <mkdir dir="${conf.home}" />
-    <copy todir="${conf.home}">
-      <fileset dir="${basedir}/config/dev" />
+    <copy todir="${conf.home}" overwrite="true" verbose="true" >
+      <fileset dir="${basedir}/config/dev"/>
     </copy>
   </target>
 
-  <target description="Deploy config files" name="config-stage">
+  <target depends="archive-old-config" description="Deploy config files" name="config-stage">
 	<mkdir dir="${conf.home}" />
-	<copy todir="${conf.home}">
+	<copy todir="${conf.home}" overwrite="true" verbose="true" >
 		<fileset dir="${basedir}/config/stage" />
 	</copy>
   </target>
