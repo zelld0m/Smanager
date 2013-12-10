@@ -47,9 +47,12 @@ public class FacetSortService extends RuleService {
 
     private static final Logger logger =
             LoggerFactory.getLogger(FacetSortService.class);
+    
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+    private UtilityService utilityService;
+    
     @Override
     public RuleEntity getRuleEntity() {
         return RuleEntity.FACET_SORT;
@@ -59,8 +62,8 @@ public class FacetSortService extends RuleService {
     public FacetSort addRule(String ruleName, String ruleType, String sortType) {
         int result = -1;
         String ruleId = "";
-        String store = UtilityService.getStoreId();
-        String username = UtilityService.getUsername();
+        String store = utilityService.getStoreId();
+        String username = utilityService.getUsername();
 
         try {
             FacetSort rule = new FacetSort(ruleName, ruleType, sortType, store);
@@ -113,8 +116,8 @@ public class FacetSortService extends RuleService {
         int result = -1;
 
         try {
-            String store = UtilityService.getStoreId();
-            String username = UtilityService.getUsername();
+            String store = utilityService.getStoreId();
+            String username = utilityService.getUsername();
             FacetSort rule = new FacetSort(ruleId, store);
             rule.setLastModifiedBy(username);
             result = daoService.deleteFacetSort(rule);
@@ -137,8 +140,8 @@ public class FacetSortService extends RuleService {
         int result = -1;
 
         try {
-            String store = UtilityService.getStoreId();
-            String username = UtilityService.getUsername();
+            String store = utilityService.getStoreId();
+            String username = utilityService.getUsername();
             FacetSort facetSort = new FacetSort(ruleId, name, "", sortType, store);
             facetSort.setLastModifiedBy(username);
             result = daoService.updateFacetSort(facetSort);
@@ -182,9 +185,9 @@ public class FacetSortService extends RuleService {
             List<FacetGroupItem> facetGroupItems = new ArrayList<FacetGroupItem>();
             for (int i = 0; i < ArrayUtils.getLength(arrFacetGroupItems); i++) {
                 FacetGroupItem facetGroupItem = new FacetGroupItem(facetGroup.getId(), "", arrFacetGroupItems[i], i + 1);
-                facetGroupItem.setCreatedBy(UtilityService.getUsername());
+                facetGroupItem.setCreatedBy(utilityService.getUsername());
                 facetGroupItem.setFacetGroupId(facetGroup.getId());
-                facetGroupItem.setStoreId(UtilityService.getStoreId());
+                facetGroupItem.setStoreId(utilityService.getStoreId());
                 facetGroupItem.setRuleId(ruleId);
                 facetGroupItem.setFacetGroup(facetGroup);
 
@@ -202,7 +205,7 @@ public class FacetSortService extends RuleService {
     public RecordSet<FacetSort> getAllRule(String name, int page, int itemsPerPage) {
         logger.info(String.format("%s %d %d", name, page, itemsPerPage));
         try {
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
             FacetSort facetSort = new FacetSort("", name, store);
             SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSort, page, itemsPerPage);
             return daoService.searchFacetSort(criteria, MatchType.LIKE_NAME);
@@ -223,20 +226,20 @@ public class FacetSortService extends RuleService {
 
     @RemoteMethod
     public FacetSort getRuleById(String ruleId) {
-        String store = UtilityService.getStoreId();
+        String store = utilityService.getStoreId();
         return getRule(new FacetSort(ruleId, store));
     }
 
     @RemoteMethod
     public FacetSort getRuleByNameAndType(String ruleName, String ruleType) {
-        String store = UtilityService.getStoreId();
+        String store = utilityService.getStoreId();
         return getRule(new FacetSort(ruleName, RuleType.get(ruleType), null, new Store(store)));
     }
 
     @RemoteMethod
     public FacetSort getRuleByName(String ruleName) {
         FacetSort facetSort = null;
-        StoreKeyword sk = new StoreKeyword(UtilityService.getStoreId(), ruleName);
+        StoreKeyword sk = new StoreKeyword(utilityService.getStoreId(), ruleName);
 
         try {
             if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {
@@ -280,7 +283,7 @@ public class FacetSortService extends RuleService {
         int result = -1;
 
         try {
-            String username = UtilityService.getUsername();
+            String username = utilityService.getUsername();
             FacetGroup facetGroup = new FacetGroup(ruleId, name, facetGroupType, sortType, sequence);
             facetGroup.setCreatedBy(username);
             return daoService.addFacetGroup(facetGroup);
@@ -332,7 +335,7 @@ public class FacetSortService extends RuleService {
     @RemoteMethod
     public int addSingleFacetGroupItem(String facetGroupId, String name, Integer sequence) {
         FacetGroupItem facetGroupItem = new FacetGroupItem(facetGroupId, "", name, sequence);
-        facetGroupItem.setCreatedBy(UtilityService.getUsername());
+        facetGroupItem.setCreatedBy(utilityService.getUsername());
         return addFacetGroupItem(facetGroupItem);
     }
 
@@ -341,7 +344,7 @@ public class FacetSortService extends RuleService {
         int result = -1;
 
         try {
-            String username = UtilityService.getUsername();
+            String username = utilityService.getUsername();
             FacetGroupItem facetGroupItem = new FacetGroupItem(memberId, name, sequence);
             facetGroupItem.setLastModifiedBy(username);
             return daoService.updateFacetGroupItem(facetGroupItem);
@@ -357,7 +360,7 @@ public class FacetSortService extends RuleService {
         int result = -1;
 
         try {
-            String username = UtilityService.getUsername();
+            String username = utilityService.getUsername();
             FacetGroupItem facetGroupItem = new FacetGroupItem(memberId);
             facetGroupItem.setLastModifiedBy(username);
             return daoService.deleteFacetGroupItem(facetGroupItem);
@@ -373,7 +376,7 @@ public class FacetSortService extends RuleService {
         int result = -1;
 
         try {
-            String username = UtilityService.getUsername();
+            String username = utilityService.getUsername();
             FacetGroup facetGroup = new FacetGroup(facetGroupId);
             facetGroup.setLastModifiedBy(username);
             return daoService.clearFacetGroupItem(facetGroup);

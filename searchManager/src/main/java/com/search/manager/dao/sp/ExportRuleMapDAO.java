@@ -24,6 +24,9 @@ import com.search.manager.model.SearchCriteria;
 
 @Repository(value="exportRuleMapDAO")
 public class ExportRuleMapDAO {
+	
+	@Autowired
+	private JodaDateTimeUtil jodaDateTimeUtil;
 
 	// needed by spring AOP
 	public ExportRuleMapDAO(){}
@@ -72,9 +75,9 @@ public class ExportRuleMapDAO {
 	                		rs.getString(DAOConstants.COLUMN_PROD_STORE_ID_TARGET), 
 	                		rs.getString(DAOConstants.COLUMN_RULE_ID_TARGET), 
 	                		rs.getString(DAOConstants.COLUMN_RULE_NAME_TARGET),
-	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_PUBLISHED_DATE)),
-	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPORT_DATE)),
-	                		JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_IMPORT_DATE)),
+	                		jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_PUBLISHED_DATE)),
+	                		jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_EXPORT_DATE)),
+	                		jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_IMPORT_DATE)),
 	                		BooleanUtils.toBooleanObject(rs.getString(DAOConstants.COLUMN_DELETED), "Y", "N", null), 
 	                		BooleanUtils.toBooleanObject(rs.getString(DAOConstants.COLUMN_REJECTED), "Y", "N", null), 
 	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID));
@@ -200,9 +203,9 @@ public class ExportRuleMapDAO {
 			inputs.put(DAOConstants.PARAM_PROD_STORE_ID_TARGET, exportRuleMap.getStoreIdTarget());
 			inputs.put(DAOConstants.PARAM_RULE_ID_TARGET, exportRuleMap.getRuleIdTarget());
 			inputs.put(DAOConstants.PARAM_RULE_NAME_TARGET, exportRuleMap.getRuleNameTarget());
-			inputs.put(DAOConstants.PARAM_PUBLISHED_DATE, JodaDateTimeUtil.toSqlDate(exportRuleMap.getPublishedDateTime()));
-			inputs.put(DAOConstants.PARAM_EXPORT_DATE, JodaDateTimeUtil.toSqlDate(exportRuleMap.getExportDateTime()));
-			inputs.put(DAOConstants.PARAM_IMPORT_DATE, JodaDateTimeUtil.toSqlDate(exportRuleMap.getImportDateTime()));
+			inputs.put(DAOConstants.PARAM_PUBLISHED_DATE, jodaDateTimeUtil.toSqlDate(exportRuleMap.getPublishedDateTime()));
+			inputs.put(DAOConstants.PARAM_EXPORT_DATE, jodaDateTimeUtil.toSqlDate(exportRuleMap.getExportDateTime()));
+			inputs.put(DAOConstants.PARAM_IMPORT_DATE, jodaDateTimeUtil.toSqlDate(exportRuleMap.getImportDateTime()));
 	        inputs.put(DAOConstants.PARAM_REJECTED, BooleanUtils.toString(exportRuleMap.getRejected(), "Y", "N", null));
 	        inputs.put(DAOConstants.PARAM_DELETED, BooleanUtils.toString(exportRuleMap.getDeleted(), "Y", "N", null));
 			result = DAOUtils.getUpdateCount(updateExportRuleMapStoredProcedure.execute(inputs));

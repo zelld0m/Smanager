@@ -24,6 +24,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -36,14 +38,13 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SolrXmlResponseParser extends SolrResponseParser {
 
 	// TODO: create a threadpool for this?
 	private static final Logger logger =
 			LoggerFactory.getLogger(SolrXmlResponseParser.class);
+	
 	// Belongs to initial Solr XML response which will be used to generate the HTTP Response
 	private Document mainDoc = null;
 	private Node resultNode = null;
@@ -56,7 +57,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	private List<Node> elevatedEntries = new ArrayList<Node>();
 	private Node spellcheckNode = null;
 	private List<Node> spellCheckParams = new ArrayList<Node>();
-
+	
 	private static Node locateElementNode(Node startingNode, String nodeName) throws SearchException {
 		return locateElementNode(startingNode, nodeName, null);
 	}
@@ -746,9 +747,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		if (facetSortRule == null || facetFieldsNode == null) {
 			return;
 		}
-
-		ConfigManager cm = ConfigManager.getInstance();
-
+		
 		for (String key : facetSortRule.getItems().keySet()) {
 
 			boolean isFacetTemplate = false;
@@ -757,8 +756,10 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				sortType = facetSortRule.getSortType();
 			}
 			List<String> elevatedValues = facetSortRule.getItems().get(key);
-			if (StringUtils.equals("Category", key) && cm.isMemberOf("PCM", facetSortRule.getStoreId())) {
-				key = ConfigManager.getInstance().getStoreParameter(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+//			if (StringUtils.equals("Category", key) && configManager.isMemberOf("PCM", facetSortRule.getStoreId())) {
+//			key = configManager.getStoreParameter(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+			if (StringUtils.equals("Category", key) && isCNETImplementation) {
+				key = facetTemplate;
 				isFacetTemplate = true;
 			}
 

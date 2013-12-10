@@ -26,41 +26,26 @@ import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.utility.PropertiesUtils;
 
+@Component
 public class ConfigManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
-	private static ConfigManager instance = null;
-	private static XMLConfiguration solrXMLConfig;
-	private static XMLConfiguration storeXMLConfig;
+	
+	private XMLConfiguration solrXMLConfig;
+	private XMLConfiguration storeXMLConfig;
 	private Map<String, PropertiesConfiguration> storeSettingsMap = new HashMap<String, PropertiesConfiguration>();
-
+	
+	@SuppressWarnings("unused")
 	private ConfigManager() {
 		// Exists only to defeat instantiation.
 	}
 
-	public synchronized static ConfigManager getInstance(String solrXMLFile, String storeXMLFile) {
-		if (instance == null) {
-			instance = new ConfigManager(solrXMLFile, storeXMLFile);
-		}
-		return instance;
-	}
-	
-	public synchronized static ConfigManager getInstance(String solrXMLFile) {
-		if (instance == null) {
-			instance = new ConfigManager(solrXMLFile);
-		}
-		return instance;
-	}
-
-	public List<String> getModuleNames() {
-		return Arrays.asList(storeXMLConfig.getStringArray("**/module/@name"));
-	}
-
-	private ConfigManager(String solrXMLFile, String storeXMLFile) {
+	public ConfigManager(String solrXMLFile, String storeXMLFile) {
 		solrXMLConfig = getXMLConfiguration(solrXMLFile);
 		storeXMLConfig = getXMLConfiguration(storeXMLFile);
 		initStoreSettingsMap();
@@ -96,7 +81,26 @@ public class ConfigManager {
 
 	}
 
-
+	private void initStoreSettingsMap() {
+		for (String storeId : getStoreIds()) {
+			for (String moduleName: getModuleNames()) {
+				String basePath = StringUtils.remove(storeXMLConfig.getBasePath(), storeXMLConfig.getFile().getName());
+				String module = String.format("%s.%s.properties", storeId, moduleName);
+				String filePath = String.format("%s%s/%s", basePath, storeId, module);
+				String mapKey = String.format("%s-%s", storeId, moduleName);
+				try {
+					PropertiesConfiguration propConfig = new PropertiesConfiguration(filePath);
+					propConfig.setAutoSave(true);
+					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+					storeSettingsMap.put(mapKey, propConfig);
+					logger.info(String.format("%s property file for %s: %s", moduleName, storeId, propConfig.getFileName()));
+				} catch (ConfigurationException e) {
+					logger.error(String.format("Unable to load the store configuration for %s", moduleName), e);
+				}
+			}
+		}
+	}
+	
 	private void initTimezone() {
 
 		/* System timezone */
@@ -132,6 +136,10 @@ public class ConfigManager {
 		}
 	}
 	
+	public List<String> getModuleNames() {
+		return Arrays.asList(storeXMLConfig.getStringArray("*/module/@name"));
+	}
+	
 	public String getSystemTimeZoneId() {
 		return StringUtils.defaultIfBlank(getParameter("system-timezone"), "America/Los_Angeles");
 	}
@@ -163,33 +171,6 @@ public class ConfigManager {
 			}
 		}
 		return storeAttrib;
-	}
-
-
-	private void initStoreSettingsMap() {
-		for (String storeId : getStoreIds()) {
-			for (String moduleName: getModuleNames()) {
-				String filePath =String.format("%s/%s/%s", storeXMLConfig.getBasePath(), storeId, moduleName);
-				String mapKey = String.format("%s-%s", storeId, moduleName);
-				try {
-					PropertiesConfiguration propConfig = new PropertiesConfiguration(filePath);
-					propConfig.setAutoSave(true);
-					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-					storeSettingsMap.put(mapKey, propConfig);
-					logger.info(String.format("%s property file for %s: %s", moduleName, storeId, propConfig.getFileName()));
-				} catch (ConfigurationException e) {
-					logger.error(String.format("Unable to load the store configuration for %s", moduleName), e);
-				}
-			}
-		}
-	}
-
-	private ConfigManager(String solrXMLFile) {
-		this(solrXMLFile, null);
-	}
-
-	public static ConfigManager getInstance() {
-		return instance;
 	}
 
 	private XMLConfiguration getXMLConfiguration(String filePath) {

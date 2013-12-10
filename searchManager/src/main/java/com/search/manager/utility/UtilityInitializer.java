@@ -6,26 +6,16 @@ import org.slf4j.LoggerFactory;
 
 import com.search.manager.schema.MessagesConfig;
 import com.search.manager.schema.RelevancyConfig;
-import com.search.ws.ConfigManager;
+//import com.search.ws.ConfigManager;
 import com.search.ws.EnterpriseSearchConfigManager;
 
 public class UtilityInitializer {
 
     private static final Logger logger = LoggerFactory.getLogger(UtilityInitializer.class);
-
-    private String globalVarFile;
-    private String storeSolrPropertiesFile;
+    
     private String enterpriseSearchConfigFile;
     private String relevancyConfigFile;
     private String messagesConfigFile;
-
-    public void setGlobalVarFile(String globalVarFile) {
-        this.globalVarFile = globalVarFile;
-    }
-
-    public void setStoreSolrPropertiesFile(String storeSolrPropertiesFile) {
-		this.storeSolrPropertiesFile = storeSolrPropertiesFile;
-	}
 
     public void setEnterpriseSearchConfigFile(String enterpriseSearchConfigFile) {
         this.enterpriseSearchConfigFile = enterpriseSearchConfigFile;
@@ -40,18 +30,6 @@ public class UtilityInitializer {
     }
 
     public void initialize() {
-        // properties util
-        if (StringUtils.isNotBlank(globalVarFile)) {
-            logger.info("global var file: {}", globalVarFile);
-            PropertiesUtils.initPropertiesConfig(globalVarFile);
-        }
-
-        // server config
-        if (StringUtils.isNotBlank(storeSolrPropertiesFile)) {
-            logger.info("config file: {}", storeSolrPropertiesFile);
-            ConfigManager.getInstance(storeSolrPropertiesFile);
-        }
-
         // enterprise search config
         if (StringUtils.isNotBlank(enterpriseSearchConfigFile)) {
             logger.info("enterprise search config file: {}", enterpriseSearchConfigFile);

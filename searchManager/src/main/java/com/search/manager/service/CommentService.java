@@ -35,7 +35,11 @@ public class CommentService {
             LoggerFactory.getLogger(CommentService.class);
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+    private DateAndTimeUtils dateAndTimeUtils;
+    @Autowired
+    private UtilityService utilityService;
+    
     public DaoService getDaoService() {
         return daoService;
     }
@@ -61,7 +65,7 @@ public class CommentService {
                     end = strComment.indexOf("|", start);
                     String date = strComment.substring(start, end);
                     if (StringUtils.isNotBlank(date)) {
-                        date = DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), new Date(Long.parseLong(date)));
+                        date = dateAndTimeUtils.formatDateTimeUsingConfig(utilityService.getStoreId(), new Date(Long.parseLong(date)));
                     }
                     comment.setDate(date);
                     // user
@@ -98,7 +102,7 @@ public class CommentService {
         int result = 0;
         try {
             for (String rsId : ruleId) {
-                Comment comment = new Comment(new Store(UtilityService.getStoreId()), rsId, RuleEntity.getId(ruleType), pComment, UtilityService.getUsername());
+                Comment comment = new Comment(new Store(utilityService.getStoreId()), rsId, RuleEntity.getId(ruleType), pComment, utilityService.getUsername());
                 result = daoService.addComment(comment);
             }
         } catch (DaoException e) {
@@ -111,7 +115,7 @@ public class CommentService {
     public int addRuleItemComment(String ruleType, String memberId, String pComment) {
         int result = 0;
         try {
-            Comment comment = new Comment(new Store(UtilityService.getStoreId()), memberId, RuleEntity.getId(ruleType), pComment, UtilityService.getUsername());
+            Comment comment = new Comment(new Store(utilityService.getStoreId()), memberId, RuleEntity.getId(ruleType), pComment, utilityService.getUsername());
             result = daoService.addComment(comment);
         } catch (DaoException e) {
             logger.error("Failed during addRuleItemComment()", e);

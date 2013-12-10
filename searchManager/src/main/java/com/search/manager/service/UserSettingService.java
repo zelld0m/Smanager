@@ -31,12 +31,14 @@ public class UserSettingService {
     private static final String RESPONSE_STATUS_FAILED = "0";
     @Autowired
     private DaoService daoService;
+    @Autowired
+    private UtilityService utilityService;
 
     @RemoteMethod
     public User getUser() {
         User user = null;
         try {
-            user = daoService.getUser(UtilityService.getUsername());
+            user = daoService.getUser(utilityService.getUsername());
             if (user != null) {
                 // don't return the password
                 user.setPassword(null);
@@ -62,8 +64,8 @@ public class UserSettingService {
                 user.setEmail(email);
 
                 if (StringUtils.isNotEmpty(oldpassword) || StringUtils.isNotEmpty(newpassword)) {
-                    if (UtilityService.getPasswordHash(oldpassword).equals(user.getPassword())) {
-                        user.setPassword(UtilityService.getPasswordHash(newpassword));
+                    if (utilityService.getPasswordHash(oldpassword).equals(user.getPassword())) {
+                        user.setPassword(utilityService.getPasswordHash(newpassword));
                     } else {
                         json.put("status", RESPONSE_STATUS_FAILED);
                         json.put("message", MessagesConfig.getInstance().getMessage("password.not.match", username));

@@ -47,7 +47,9 @@ public class ExcludeController {
     private DownloadService downloadService;
     @Autowired
     private RuleVersionService ruleVersionService;
-
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
@@ -148,8 +150,8 @@ public class ExcludeController {
         if (rules != null) {
             for (RuleXml xml : rules) {
                 if (xml != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.EXCLUDE);
-                    subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getExcludeProducts(xml)));
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.EXCLUDE);
+                    subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getExcludeProducts(xml)));
                 }
             }
         }

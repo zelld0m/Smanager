@@ -13,14 +13,20 @@ import org.apache.commons.lang.time.DateUtils;
 import com.search.ws.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * A utility class for Date and Time related functions.
  */
+@Component
 public final class DateAndTimeUtils {
 
     private static final Logger logger =
             LoggerFactory.getLogger(DateAndTimeUtils.class);
+    
+    @Autowired
+    private ConfigManager configManager;
     
     /**
      * The format for parsing dates without times.
@@ -166,12 +172,11 @@ public final class DateAndTimeUtils {
         return minutesWithLeadingZero;
     }
 
-    public static String formatDateUsingConfig(String store, Date date) {
+    public String formatDateUsingConfig(String store, Date date) {
         if (StringUtils.isBlank(store) || date == null) {
             return "";
         }
-
-        ConfigManager configManager = ConfigManager.getInstance();
+        
         String dateFormat = configManager.getStoreParameter(store, "dateformat");
 
         if (StringUtils.isBlank(dateFormat)) {
@@ -185,8 +190,7 @@ public final class DateAndTimeUtils {
         }
     }
 
-    public static String formatDateTimeUsingConfig(String store, Date date) {
-        ConfigManager configManager = ConfigManager.getInstance();
+    public String formatDateTimeUsingConfig(String store, Date date) {
         String dateFormat = configManager.getStoreParameter(store, "datetimeformat");
 
         if (date == null) {
@@ -204,10 +208,10 @@ public final class DateAndTimeUtils {
         }
     }
 
-    public static Date toSQLDate(String store, String str) {
+    public Date toSQLDate(String store, String str) {
         Date convertedDate = null;
         if (StringUtils.isNotBlank(str)) {
-            DateFormat formatter = new SimpleDateFormat(ConfigManager.getInstance().getStoreParameter(store, "dateformat"));
+            DateFormat formatter = new SimpleDateFormat(configManager.getStoreParameter(store, "dateformat"));
 
             try {
                 convertedDate = formatter.parse(str);
@@ -267,12 +271,12 @@ public final class DateAndTimeUtils {
         return null;
     }
 
-    public static Date getDate(String store, Date date) {
+    public Date getDate(String store, Date date) {
         if (StringUtils.isBlank(store) || date == null) {
             return null;
         }
 
-        DateFormat formatter = new SimpleDateFormat(ConfigManager.getInstance().getStoreParameter(store, "dateformat"));
+        DateFormat formatter = new SimpleDateFormat(configManager.getStoreParameter(store, "dateformat"));
 
         try {
             return formatter.parse(formatter.format(date));

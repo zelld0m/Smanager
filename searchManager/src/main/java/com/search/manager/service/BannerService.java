@@ -54,7 +54,11 @@ public class BannerService extends RuleService {
     private DaoService daoService;
     @Autowired
     private DeploymentService deploymentService;
-
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
+    
     @Override
     public RuleEntity getRuleEntity() {
         return RuleEntity.BANNER;
@@ -175,8 +179,8 @@ public class BannerService extends RuleService {
 
     @RemoteMethod
     public ServiceResponse<Void> addRule(String ruleName) {
-        String storeId = UtilityService.getStoreId();
-        String username = UtilityService.getUsername();
+        String storeId = utilityService.getStoreId();
+        String username = utilityService.getUsername();
         BannerRule rule = new BannerRule(storeId, ruleName, username);
         ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
@@ -235,7 +239,7 @@ public class BannerService extends RuleService {
     @RemoteMethod
     public ServiceResponse<Void> addRuleItem(String storeId,
             Map<String, String> params) {
-        String username = UtilityService.getUsername();
+        String username = utilityService.getUsername();
 
         String ruleId = params.get("ruleId");
         String ruleName = params.get("ruleName");
@@ -255,10 +259,8 @@ public class BannerService extends RuleService {
 
         ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
         BannerRule rule = new BannerRule(storeId, ruleId, ruleName, null);
-        DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(
-                startDate, JodaPatternType.DATE);
-        DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(endDate,
-                JodaPatternType.DATE);
+        DateTime startDT = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE);
+        DateTime endDT = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate,JodaPatternType.DATE);
 
         ImagePath newImagePath = new ImagePath(storeId, imagePathId, imagePath,
                 imageSize, null, imageAlias);
@@ -332,7 +334,7 @@ public class BannerService extends RuleService {
         } else if ("date".equalsIgnoreCase(filter)) {
             startDate = endDate = now;
             if (StringUtils.isNotBlank(dateFilter)) {
-            	startDate = JodaDateTimeUtil.toUserDateTimeZone(storeId, dateFilter).toDateMidnight().toDateTime();
+            	startDate = jodaDateTimeUtil.toUserDateTimeZone(storeId, dateFilter).toDateMidnight().toDateTime();
 				endDate = startDate;
             }
             disabled = false;
@@ -428,7 +430,7 @@ public class BannerService extends RuleService {
     @RemoteMethod
     public ServiceResponse<Void> updateRuleItem(String storeId,
             Map<String, String> params) {
-        String username = UtilityService.getUsername();
+        String username = utilityService.getUsername();
         ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
         String ruleId = params.get("ruleId");
@@ -454,10 +456,8 @@ public class BannerService extends RuleService {
             rule.setRuleId(ruleId);
             rule.setStoreId(storeId);
 
-            DateTime startDT = JodaDateTimeUtil.toDateTimeFromStorePattern(
-                    startDate, JodaPatternType.DATE);
-            DateTime endDT = JodaDateTimeUtil.toDateTimeFromStorePattern(
-                    endDate, JodaPatternType.DATE);
+            DateTime startDT = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE);
+            DateTime endDT = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE);
 
             BannerRuleItem ruleItem = new BannerRuleItem();
             ruleItem.setRule(rule);
@@ -521,8 +521,8 @@ public class BannerService extends RuleService {
 
     public ServiceResponse<Void> addImagePathLink(String imageUrl,
             String alias, String imageSize) {
-        String storeId = UtilityService.getStoreId();
-        String username = UtilityService.getUsername();
+        String storeId = utilityService.getStoreId();
+        String username = utilityService.getUsername();
         ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
         ImagePath imagePath = new ImagePath(storeId, null, imageUrl, imageSize,
@@ -571,8 +571,8 @@ public class BannerService extends RuleService {
     @RemoteMethod
     public ServiceResponse<Void> updateImagePathAlias(String imagePathId,
             String alias) {
-        String storeId = UtilityService.getStoreId();
-        String username = UtilityService.getUsername();
+        String storeId = utilityService.getStoreId();
+        String username = utilityService.getUsername();
         ServiceResponse<Void> serviceResponse = new ServiceResponse<Void>();
 
         ImagePath imagePath = new ImagePath(storeId, imagePathId, null, null,
@@ -651,9 +651,9 @@ public class BannerService extends RuleService {
             String startDateText, String endDateText, boolean aggregate) {
         ServiceResponse<RecordSet<BannerStatistics>> serviceResponse = new ServiceResponse<RecordSet<BannerStatistics>>();
 
-        DateTime startDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(
+        DateTime startDateTime = jodaDateTimeUtil.toDateTimeFromStorePattern(
                 storeId, startDateText, JodaPatternType.DATE);
-        DateTime endDateTime = JodaDateTimeUtil.toDateTimeFromStorePattern(
+        DateTime endDateTime = jodaDateTimeUtil.toDateTimeFromStorePattern(
                 storeId, endDateText, JodaPatternType.DATE);
 
         if (startDateTime == null && endDateTime == null) {

@@ -58,7 +58,13 @@ public class RelevancyController {
     private DownloadService downloadService;
     @Autowired
     private RuleVersionService ruleVersionService;
-
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
 
@@ -150,7 +156,7 @@ public class RelevancyController {
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        RuleVersionListXml listXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.RANKING_RULE, ruleId);
+        RuleVersionListXml listXml = ruleVersionUtil.getRuleVersionList(utilityService.getStoreId(), RuleEntity.RANKING_RULE, ruleId);
         String subTitle = String.format("Ranking Rule [%s]", listXml != null ? listXml.getRuleName() : "");
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
@@ -163,8 +169,8 @@ public class RelevancyController {
             for (RuleXml rule : rules) {
                 RankingRuleXml xml = (RankingRuleXml) rule;
                 if (xml != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.RANKING_RULE);
-                    subModels.addAll(RuleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.RANKING_RULE);
+                    subModels.addAll(ruleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
                 }
             }
         }

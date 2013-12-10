@@ -9,6 +9,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.http.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.SearchDaoService;
@@ -22,6 +23,9 @@ public class RequestProcessorUtil {
 
 	private static SearchDaoService daoService;
 	private static SearchDaoService solrService;
+	
+	@Autowired
+	private ConfigManager configManager;
 	
 	private static final String[] uniqueFields = {
 		SolrConstants.SOLR_PARAM_ROWS,
@@ -49,8 +53,7 @@ public class RequestProcessorUtil {
 		return added;
 	}
 	
-	public static Map<String, String> getFacetMap(String storeId) {
-		ConfigManager configManager = ConfigManager.getInstance();
+	public Map<String, String> getFacetMap(String storeId) {
 		Map<String, String> facetMap = new HashMap<String, String>();
 		facetMap.put(SolrConstants.SOLR_PARAM_FACET_NAME, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
 		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
@@ -58,7 +61,7 @@ public class RequestProcessorUtil {
 		return facetMap;
 	}
 
-	public static Map<String, String> generateActiveRule(String type, String id, String name, boolean active) {
+	public Map<String, String> generateActiveRule(String type, String id, String name, boolean active) {
 		Map<String, String> activeRule = new HashMap<String, String>();
 		activeRule.put(SolrConstants.TAG_RULE_TYPE, type);
 		activeRule.put(SolrConstants.TAG_RULE_ID, id);
@@ -67,15 +70,15 @@ public class RequestProcessorUtil {
 		return activeRule;
 	}
 	
-	public static SearchDaoService getDaoService(boolean isGuiRequest){
+	public SearchDaoService getDaoService(boolean isGuiRequest){
 		return isGuiRequest? daoService: solrService;
 	}
 
-	public static StoreKeyword getStoreKeywordOverride(String storeId, String keyword) {
+	public StoreKeyword getStoreKeywordOverride(String storeId, String keyword) {
 		return new StoreKeyword(storeId, keyword);
 	}
 
-	public static SearchDaoService getDaoService() {
+	public SearchDaoService getDaoService() {
 		return daoService;
 	}
 

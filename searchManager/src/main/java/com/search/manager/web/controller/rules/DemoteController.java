@@ -40,14 +40,18 @@ public class DemoteController {
 
     private static final Logger logger =
             LoggerFactory.getLogger(DemoteController.class);
+    
     private static final String RULE_TYPE = RuleEntity.DEMOTE.toString();
+    
     @Autowired
     private DemoteService demoteService;
     @Autowired
     private DownloadService downloadService;
     @Autowired
     private RuleVersionService ruleVersionService;
-
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
@@ -150,8 +154,8 @@ public class DemoteController {
         if (rules != null) {
             for (RuleXml xml : rules) {
                 if (xml != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.DEMOTE);
-                    subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts(xml)));
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.DEMOTE);
+                    subModels.add(new DemoteReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getDemoteProducts(xml)));
                 }
             }
         }

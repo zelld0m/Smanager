@@ -7,9 +7,11 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
@@ -54,44 +56,35 @@ import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Component
 public class RuleXmlReportUtil {
 
     private static final Logger logger =
             LoggerFactory.getLogger(RuleXmlReportUtil.class);
+    
     @Autowired
-    private static DaoService daoService;
-    private static RuleXmlReportUtil instance = null;
+    private UtilityService utilityService;
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
 
     protected RuleXmlReportUtil() {
         //Exists only to defeat instantiation.
     }
 
-    public static RuleXmlReportUtil getInstance() {
-        logger.info("RuleXmlReportUtil.getInstance()");
-        if (instance == null) {
-            synchronized (RuleXmlReportUtil.class) {
-                if (instance == null) {
-                    instance = new RuleXmlReportUtil();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public static SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity) {
+    public SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity) {
         SubReportHeader subReportHeader = new SubReportHeader();
 
-        String storeId = UtilityService.getStoreId();
+        String storeId = utilityService.getStoreId();
 
         subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
         subReportHeader.addRow("Name: ", StringUtils.defaultIfBlank(xml.getName(), ""));
         subReportHeader.addRow("Notes: ", StringUtils.defaultIfBlank(xml.getNotes(), ""));
-        subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId, xml.getCreatedDate(), JodaPatternType.DATE_TIME) : "");
+        subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? jodaDateTimeUtil.formatFromStorePattern(storeId, xml.getCreatedDate(), JodaPatternType.DATE_TIME) : "");
         subReportHeader.addRow("Created By: ", xml.getCreatedBy());
-
+        
+        logger.debug("Version Sub Report Header: " + subReportHeader);
+        
         switch (ruleEntity) {
             case SPELL:
                 // for spell rules, one sheet per version will be created,
@@ -106,7 +99,7 @@ public class RuleXmlReportUtil {
         return subReportHeader;
     }
 
-    public static List<ElevateReportBean> getElevateProducts(RuleXml ruleXml) {
+    public List<ElevateReportBean> getElevateProducts(RuleXml ruleXml) {
         if (ruleXml != null) {
             ElevateRuleXml xml = (ElevateRuleXml) ruleXml;
             List<ElevateProduct> products = xml.getProducts();
@@ -123,7 +116,7 @@ public class RuleXmlReportUtil {
         }
     }
 
-    public static List<DemoteReportBean> getDemoteProducts(RuleXml ruleXml) {
+    public List<DemoteReportBean> getDemoteProducts(RuleXml ruleXml) {
         if (ruleXml != null) {
             DemoteRuleXml dXml = (DemoteRuleXml) ruleXml;
             List<DemoteProduct> products = dXml.getProducts();
@@ -140,7 +133,7 @@ public class RuleXmlReportUtil {
         }
     }
 
-    public static List<ExcludeReportBean> getExcludeProducts(RuleXml ruleXml) {
+    public List<ExcludeReportBean> getExcludeProducts(RuleXml ruleXml) {
         if (ruleXml != null) {
             ExcludeRuleXml dXml = (ExcludeRuleXml) ruleXml;
             List<Product> products = dXml.getProducts();
@@ -157,7 +150,7 @@ public class RuleXmlReportUtil {
         }
     }
 
-    public static List<FacetSortReportBean> getFacetSortReportBeanList(FacetSortRuleXml xml) {
+    public List<FacetSortReportBean> getFacetSortReportBeanList(FacetSortRuleXml xml) {
         List<FacetSortReportBean> list = new ArrayList<FacetSortReportBean>();
         List<FacetSortGroupXml> groups = xml.getGroups();
         FacetSort fs = new FacetSort(xml);
@@ -215,7 +208,7 @@ public class RuleXmlReportUtil {
         return (redirectRule != null) ? new ReplaceKeywordReportBean(redirectRule) : null;
     }
 
-    public static List<ReportModel<? extends ReportBean<?>>> getRedirectSubReports(RedirectRuleXml xml, ReportHeader reportHeader, SubReportHeader subReportHeader) {
+    public List<ReportModel<? extends ReportBean<?>>> getRedirectSubReports(RedirectRuleXml xml, ReportHeader reportHeader, SubReportHeader subReportHeader) {
         List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 
         RedirectRuleReportBean redirectRule = getRedirectRuleReportBean(xml);
@@ -278,7 +271,7 @@ public class RuleXmlReportUtil {
         return relevancyFields;
     }
 
-    public static List<ReportModel<? extends ReportBean<?>>> getRelevancySubReports(RankingRuleXml xml, ReportHeader reportHeader, SubReportHeader subReportHeader) {
+    public List<ReportModel<? extends ReportBean<?>>> getRelevancySubReports(RankingRuleXml xml, ReportHeader reportHeader, SubReportHeader subReportHeader) {
         List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 
         RelevancyReportBean relevancy = getRelevancyReportBean(xml);
@@ -300,12 +293,5 @@ public class RuleXmlReportUtil {
 
         return subReports;
     }
-
-    public DaoService getDaoService() {
-        return daoService;
-    }
-
-    public void setDaoService(DaoService daoService) {
-        RuleXmlReportUtil.daoService = daoService;
-    }
+    
 }

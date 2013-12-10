@@ -422,119 +422,119 @@ public class BoostQueryModel implements VerifiableModel {
         return expression;
     }
 
-    @SuppressWarnings("unchecked")
-    public static void main(String[] args) {
-
-        Pattern p = Pattern.compile("(.*?) AND (.*?)");
-        Matcher m = p.matcher("A AND B");
-        if (m.matches()) {
-            for (int i = 0; i <= m.groupCount(); i++) {
-                logger.debug(m.group(i));
-            }
-        }
-
-//		if (Pattern.matches(".*[^\\\\] .*", "[FROM A TO B]")) {
-//			logger.debug("contains non-escaped space");
-//		}
-
-//		System.out.println("apple bee".replaceAll("\\ ", "\\\\ "));
-//		if (true) {
-//			return;
-//		}
-
-        ConfigManager.getInstance("/home/solr/conf/solr.xml");
-        RelevancyConfig conf = RelevancyConfig.getInstance("/home/solr/conf/relevancy.xml");
-
-        for (Operator e : conf.getAllLogicalOperators()) {
-            logger.debug(e.getName() + ": " + e.getText() + " : " + e.getRegExp());
-        }
-        for (Operator e : conf.getAllFilterOperators()) {
-            logger.debug(e.getName() + ": " + e.getText() + " : " + e.getRegExp());
-        }
-
-        Expression a = new Expression(conf.getLogicalOperator("or"), "hello", "world");
-        Expression b = new Expression(conf.getLogicalOperator("and"), "good morning", a);
-        Expression c = new Expression(conf.getFilterOperator("contains"), "hello test");
-
-        logger.debug("", a);
-        logger.debug("", b);
-        logger.debug("", c);
-
-        try {
-            a.validate();
-            b.validate();
-            c.validate();
-        } catch (Exception e) {
-            logger.error(e.toString(), e);
-        }
-
-
-        Schema schema = SolrSchemaUtility.getSchema("search", "pcmall");
-        String[] bqs = {
-            "Manufacturer:(\"2Point Communications\")^1 Manufacturer:(\"1 Step Technology\")^2",
-            //			"Manufacturer:Apple^10",
-            //			"(Manufacturer:Apple)^10",
-            //			"(Manufacturer:Apple Bee)^10 Manufacturer:Belkin Beer^20",
-            //			"(Manufacturer:Apple)^10 Manufacturer:Belkin^20",
-            "Manufacturer:(Apple Bee AND Lenovo)^10", //			"(Manufacturer:(Apple AND Lenovo))^10",
-        //			"Manufacturer:(*:* AND NOT Lenovo)^10",
-        //			"Manufacturer:(*Lenovo*)^10",
-        //			"Manufacturer:([* TO *])^10",
-        //			"Manufacturer:(*:* AND NOT [* TO *])^10",
-        //			"Manufacturer:([A TO B])^10",
-        //			"Manufacturer:({A TO B})^10",
-        //			"Manufacturer:(A~10)^10",
-        //			"Manufacturer:*A*^10",  // *A* treated as search term
-        //			"Manufacturer:A~10^10", // A~10 treated as search term
-        //			"Manufacturer:(*A*)^10",
-        //			"Manufacturer:(*A* AND B)^10",
-        //			"Manufacturer:(\"A B\"~10)^10",
-        //
-        //			//ok
-        //			"Manufacturer:IBM^10 Manufacturer:Apple^10",
-        //			"Manufacturer:Belkin^10 Manufacturer:(IBM AND Lenovo)^10 (Manufacturer:(Apple AND AppleCare))^10",
-        //			"(Manufacturer:(Apple AND AppleCare AND \"Belkin Systems\") AND Manufacturer:(IBM AND Lenovo) AND Manufacturer:HP)^10",
-        //			"*:* AND NOT (Category:Computers)^10",
-        //			"((Manufacturer:(Apple AND AppleCare) AND Manufacturer:Lenovo))^10 *:* AND NOT (Category:Computers)^10",
-        };
-
-        String[] errorbqs = { //				"Manufacturer:Apple AND Lenovo^10", // error: no grouping defined
-        //				"Manufacturer:Apple OR Lenovo^10", // error: no grouping defined
-        //				"Manufacturer:*:* AND NOT Lenovo^10", // error: no grouping defined
-        //				"Manufacturer:[* TO *]^10", // error: no grouping defined
-        //				"Manufacturer:[A TO B]^10", // error: no grouping defined
-        //				"Manufacturer:([FROM A TO B])^10", // error: value cannot be multiple words unless space is escaped by backslash
-        //				"Manufacturer:([A TO B B])^10", // error: value cannot be multiple words unless space is escaped by backslash
-        //				"Manufacturer:{A TO B}^10", // error: no grouping defined
-        //				"Manufacturer:\"A B\"~10^10", // error: no grouping defined
-        //
-        //				"(Manufacturer:Apple)", // error: no boost factor
-        //				"((Manufacturer:Apple)^10", // error: mismatched parentheses
-        //				"(Manufacturer:Apple)^10 (Manufacturer:Belkin))^20", // error: mismatched parentheses
-        //				"(Manufacturer:Apple)^10 AND Manufacturer:Belkin^20", // error: cannot have AND between boost queries
-        //				"Manufacturer:IBM Manufacturer:Apple^10", // error: no boost factor declared
-        //				"Manufacturer:IBM (Manufacturer:Apple)^10", // error: no boost factor declared
-        //				"Manufacturer:IBM (Manufacturer:Apple)^10 Manufacturer:Belkin^20", // error: no boost factor declared
-        //				"(Manufacturer:Apple Belkin)^10", // error: no field declared or value is not single
-        //				"((Manufacturer:(Apple AND AppleCare) AND Manufacturer:Lenovo))^10 AND *:* AND NOT (Category:Computers)^10" // TODO error: cannot have AND between boost queries
-        };
-
-        for (String bq : bqs) {
-            try {
-                BoostQueryModel model = BoostQueryModel.toModel(schema, bq, true);
-                logger.info(model.toString() + " is valid.");
-            } catch (Exception e) {
-                logger.error(bq + " is invalid: " + e.getMessage(), e);
-            }
-        }
-
-        for (String bq : errorbqs) {
-            try {
-                BoostQueryModel model = BoostQueryModel.toModel(schema, bq, true);
-                logger.error(model.toString() + " is valid.");
-            } catch (Exception e) {
-                logger.info(bq + " is invalid: " + e.getMessage());
-            }
-        }
-    }
+//    @SuppressWarnings("unchecked")
+//    public static void main(String[] args) {
+//
+//        Pattern p = Pattern.compile("(.*?) AND (.*?)");
+//        Matcher m = p.matcher("A AND B");
+//        if (m.matches()) {
+//            for (int i = 0; i <= m.groupCount(); i++) {
+//                logger.debug(m.group(i));
+//            }
+//        }
+//
+////		if (Pattern.matches(".*[^\\\\] .*", "[FROM A TO B]")) {
+////			logger.debug("contains non-escaped space");
+////		}
+//
+////		System.out.println("apple bee".replaceAll("\\ ", "\\\\ "));
+////		if (true) {
+////			return;
+////		}
+//
+//        ConfigManager.getInstance("/home/solr/conf/solr.xml");
+//        RelevancyConfig conf = RelevancyConfig.getInstance("/home/solr/conf/relevancy.xml");
+//
+//        for (Operator e : conf.getAllLogicalOperators()) {
+//            logger.debug(e.getName() + ": " + e.getText() + " : " + e.getRegExp());
+//        }
+//        for (Operator e : conf.getAllFilterOperators()) {
+//            logger.debug(e.getName() + ": " + e.getText() + " : " + e.getRegExp());
+//        }
+//
+//        Expression a = new Expression(conf.getLogicalOperator("or"), "hello", "world");
+//        Expression b = new Expression(conf.getLogicalOperator("and"), "good morning", a);
+//        Expression c = new Expression(conf.getFilterOperator("contains"), "hello test");
+//
+//        logger.debug("", a);
+//        logger.debug("", b);
+//        logger.debug("", c);
+//
+//        try {
+//            a.validate();
+//            b.validate();
+//            c.validate();
+//        } catch (Exception e) {
+//            logger.error(e.toString(), e);
+//        }
+//
+//
+//        Schema schema = SolrSchemaUtility.getSchema("search", "pcmall");
+//        String[] bqs = {
+//            "Manufacturer:(\"2Point Communications\")^1 Manufacturer:(\"1 Step Technology\")^2",
+//            //			"Manufacturer:Apple^10",
+//            //			"(Manufacturer:Apple)^10",
+//            //			"(Manufacturer:Apple Bee)^10 Manufacturer:Belkin Beer^20",
+//            //			"(Manufacturer:Apple)^10 Manufacturer:Belkin^20",
+//            "Manufacturer:(Apple Bee AND Lenovo)^10", //			"(Manufacturer:(Apple AND Lenovo))^10",
+//        //			"Manufacturer:(*:* AND NOT Lenovo)^10",
+//        //			"Manufacturer:(*Lenovo*)^10",
+//        //			"Manufacturer:([* TO *])^10",
+//        //			"Manufacturer:(*:* AND NOT [* TO *])^10",
+//        //			"Manufacturer:([A TO B])^10",
+//        //			"Manufacturer:({A TO B})^10",
+//        //			"Manufacturer:(A~10)^10",
+//        //			"Manufacturer:*A*^10",  // *A* treated as search term
+//        //			"Manufacturer:A~10^10", // A~10 treated as search term
+//        //			"Manufacturer:(*A*)^10",
+//        //			"Manufacturer:(*A* AND B)^10",
+//        //			"Manufacturer:(\"A B\"~10)^10",
+//        //
+//        //			//ok
+//        //			"Manufacturer:IBM^10 Manufacturer:Apple^10",
+//        //			"Manufacturer:Belkin^10 Manufacturer:(IBM AND Lenovo)^10 (Manufacturer:(Apple AND AppleCare))^10",
+//        //			"(Manufacturer:(Apple AND AppleCare AND \"Belkin Systems\") AND Manufacturer:(IBM AND Lenovo) AND Manufacturer:HP)^10",
+//        //			"*:* AND NOT (Category:Computers)^10",
+//        //			"((Manufacturer:(Apple AND AppleCare) AND Manufacturer:Lenovo))^10 *:* AND NOT (Category:Computers)^10",
+//        };
+//
+//        String[] errorbqs = { //				"Manufacturer:Apple AND Lenovo^10", // error: no grouping defined
+//        //				"Manufacturer:Apple OR Lenovo^10", // error: no grouping defined
+//        //				"Manufacturer:*:* AND NOT Lenovo^10", // error: no grouping defined
+//        //				"Manufacturer:[* TO *]^10", // error: no grouping defined
+//        //				"Manufacturer:[A TO B]^10", // error: no grouping defined
+//        //				"Manufacturer:([FROM A TO B])^10", // error: value cannot be multiple words unless space is escaped by backslash
+//        //				"Manufacturer:([A TO B B])^10", // error: value cannot be multiple words unless space is escaped by backslash
+//        //				"Manufacturer:{A TO B}^10", // error: no grouping defined
+//        //				"Manufacturer:\"A B\"~10^10", // error: no grouping defined
+//        //
+//        //				"(Manufacturer:Apple)", // error: no boost factor
+//        //				"((Manufacturer:Apple)^10", // error: mismatched parentheses
+//        //				"(Manufacturer:Apple)^10 (Manufacturer:Belkin))^20", // error: mismatched parentheses
+//        //				"(Manufacturer:Apple)^10 AND Manufacturer:Belkin^20", // error: cannot have AND between boost queries
+//        //				"Manufacturer:IBM Manufacturer:Apple^10", // error: no boost factor declared
+//        //				"Manufacturer:IBM (Manufacturer:Apple)^10", // error: no boost factor declared
+//        //				"Manufacturer:IBM (Manufacturer:Apple)^10 Manufacturer:Belkin^20", // error: no boost factor declared
+//        //				"(Manufacturer:Apple Belkin)^10", // error: no field declared or value is not single
+//        //				"((Manufacturer:(Apple AND AppleCare) AND Manufacturer:Lenovo))^10 AND *:* AND NOT (Category:Computers)^10" // TODO error: cannot have AND between boost queries
+//        };
+//
+//        for (String bq : bqs) {
+//            try {
+//                BoostQueryModel model = BoostQueryModel.toModel(schema, bq, true);
+//                logger.info(model.toString() + " is valid.");
+//            } catch (Exception e) {
+//                logger.error(bq + " is invalid: " + e.getMessage(), e);
+//            }
+//        }
+//
+//        for (String bq : errorbqs) {
+//            try {
+//                BoostQueryModel model = BoostQueryModel.toModel(schema, bq, true);
+//                logger.error(model.toString() + " is valid.");
+//            } catch (Exception e) {
+//                logger.info(bq + " is invalid: " + e.getMessage());
+//            }
+//        }
+//    }
 }

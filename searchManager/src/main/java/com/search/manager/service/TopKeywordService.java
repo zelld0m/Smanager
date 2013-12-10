@@ -33,11 +33,13 @@ public class TopKeywordService {
     ReportNotificationMailService reportNotificationMailService;
     @Autowired
     CommandExecutor commandExecutor;
-
+    @Autowired
+    private UtilityService utilityService;
+    
     @RemoteMethod
     public List<String> getFileList() {
         List<String> filenameList = new ArrayList<String>();
-        File dir = new File(PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId());
+        File dir = new File(PropertiesUtils.getValue("topkwdir") + File.separator + utilityService.getStoreId());
 
         File[] files = dir.listFiles();
 
@@ -66,7 +68,7 @@ public class TopKeywordService {
         BufferedReader reader = null;
         try {
             try {
-                String filePath = PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
+                String filePath = PropertiesUtils.getValue("topkwdir") + File.separator + utilityService.getStoreId()
                         + File.separator + filename;
 
                 if (filename.indexOf("-splunk") > 0) {
@@ -114,7 +116,7 @@ public class TopKeywordService {
     }
 
     private File getFile(String filename) {
-        return new File(PropertiesUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
+        return new File(PropertiesUtils.getValue("topkwdir") + File.separator + utilityService.getStoreId()
                 + File.separator + filename);
     }
 
@@ -131,7 +133,7 @@ public class TopKeywordService {
 
     @RemoteMethod
     public FileTransfer downloadCustomRangeAsCSV(Date from, Date to, String customFilename) {
-        List<TopKeyword> topKeywords = StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreId());
+        List<TopKeyword> topKeywords = StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), utilityService.getStoreId());
         return FileTransferUtils.downloadCsv(new CsvTransformer<TopKeyword>() {
             @Override
             public String[] toStringArray(TopKeyword t) {
@@ -149,7 +151,7 @@ public class TopKeywordService {
 
     @RemoteMethod
     public boolean sendCustomRangeAsEmail(Date from, Date to, String customFilename, String[] recipients) {
-        return commandExecutor.addCommand(new TopKeywordMailCommand(reportNotificationMailService, UtilityService
+        return commandExecutor.addCommand(new TopKeywordMailCommand(reportNotificationMailService, utilityService
                 .getStoreId(), asUTC(from), asUTC(to), recipients, StringUtils.isBlank(customFilename) ? "customRangeTopKeywords"
                 : customFilename + ".csv", new ByteArrayInputStream(getFileHeader("customRangeTopKeywords-splunk")
                 .getBytes()), "text/csv"));
@@ -157,6 +159,6 @@ public class TopKeywordService {
 
     @RemoteMethod
     public List<TopKeyword> getTopKeywords(Date from, Date to) {
-        return StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreId());
+        return StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), utilityService.getStoreId());
     }
 }

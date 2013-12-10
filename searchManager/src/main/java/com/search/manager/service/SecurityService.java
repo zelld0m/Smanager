@@ -51,12 +51,17 @@ public class SecurityService {
     private DaoService daoService;
     @Autowired
     private AccessNotificationMailService mailService;
-
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
+    
     @RemoteMethod
     public RecordSet<User> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
+    	String storeId = utilityService.getStoreId();
         User user = new User();
         user.setGroupId(StringUtils.trimToNull(roleId));
-        user.setStoreId(UtilityService.getStoreId());
+        user.setStoreId(storeId);
         user.setFullName(StringUtils.trimToNull(search));
 
         if (StringUtils.isNotEmpty(status)) {
@@ -67,7 +72,7 @@ public class SecurityService {
         }
 
         SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user, null, null, Integer.parseInt(page), 10);
-        searchCriteria.setEndDate(JodaDateTimeUtil.toDateTimeFromStorePattern(memberSince, JodaPatternType.DATE));
+        searchCriteria.setEndDate(jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, memberSince, JodaPatternType.DATE));
         RecordSet<User> users = getUsers(searchCriteria, MatchType.LIKE_NAME);
         for (User u : users.getList()) {
             // clear the password before returning
@@ -84,8 +89,8 @@ public class SecurityService {
         try {
             User user = new User();
             user.setUsername(username);
-            user.setLastModifiedBy(UtilityService.getUsername());
-            user.setStoreId(UtilityService.getStoreId());
+            user.setLastModifiedBy(utilityService.getUsername());
+            user.setStoreId(utilityService.getStoreId());
             result = daoService.removeUser(user);
             if (result > -1) {
                 json.put("status", RESPONSE_STATUS_OK);
@@ -119,10 +124,10 @@ public class SecurityService {
             if (record != null && record.getTotalSize() > 0) {
                 user.setEmail(record.getList().get(0).getEmail());
                 user.setFullName(record.getList().get(0).getFullName());
-                user.setLastModifiedBy(UtilityService.getUsername());
-                user.setStoreId(UtilityService.getStoreId());
+                user.setLastModifiedBy(utilityService.getUsername());
+                user.setStoreId(utilityService.getStoreId());
                 if (StringUtils.isNotBlank(password)) {
-                    user.setPassword(UtilityService.getPasswordHash(password));
+                    user.setPassword(utilityService.getPasswordHash(password));
                 }
                 result = daoService.resetPassword(user);
             }
@@ -146,7 +151,7 @@ public class SecurityService {
     @RemoteMethod
     public JSONObject addUser(String roleId, String rolename, String username, String fullname, String password, String expire, String locked, String email, String timezoneId) {
         JSONObject json = new JSONObject();
-        String storeId = UtilityService.getStoreId();
+        String storeId = utilityService.getStoreId();
 
         int result = -1;
         try {
@@ -172,9 +177,9 @@ public class SecurityService {
                 user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
             }
 
-            user.setThruDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expire, JodaPatternType.DATE));
-            user.setPassword(UtilityService.getPasswordHash(password));
-            user.setCreatedBy(UtilityService.getUsername());
+            user.setThruDate(jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expire, JodaPatternType.DATE));
+            user.setPassword(utilityService.getPasswordHash(password));
+            user.setCreatedBy(utilityService.getUsername());
             result = daoService.addUser(user);
 
             if (result > -1) {
@@ -262,31 +267,31 @@ public class SecurityService {
     public JSONObject updateUser(String roleId, String username, String expire, String locked, String email, String timezoneId) {
         JSONObject json = new JSONObject();
         username = StringUtils.trim(username);
-        String storeId = UtilityService.getStoreId();
+        String storeId = utilityService.getStoreId();
 
         int result = -1;
 
         try {
             User user = new User();
             user.setUsername(username);
-            user.setLastModifiedBy(UtilityService.getUsername());
+            user.setLastModifiedBy(utilityService.getUsername());
             SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user, null, null, null, 1);
             RecordSet<User> record = getUsers(searchCriteria, MatchType.MATCH_ID);
 
             if (record != null && record.getTotalSize() > 0) {
                 user.setGroupId(roleId);
                 if (StringUtils.isNotBlank(expire)) {
-                    DateTime newExpiryDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expire, JodaPatternType.DATE);
+                    DateTime newExpiryDate = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expire, JodaPatternType.DATE);
                     user.setThruDate(newExpiryDate);
                     user.setAccountNonExpired(newExpiryDate.isAfter(DateTime.now()));
                 }
-                user.setStoreId(UtilityService.getStoreId());
+                user.setStoreId(utilityService.getStoreId());
                 if (StringUtils.isNotEmpty(locked)) {
                     user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
                 }
                 user.setEmail(email);
                 user.setTimezoneId(timezoneId);
-                user.setLastModifiedBy(UtilityService.getUsername());
+                user.setLastModifiedBy(utilityService.getUsername());
                 result = daoService.updateUser(user);
             }
 

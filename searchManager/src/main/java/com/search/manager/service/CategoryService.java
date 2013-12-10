@@ -11,6 +11,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.exception.DataException;
@@ -33,6 +34,13 @@ public class CategoryService {
 	private static final Logger logger =
             LoggerFactory.getLogger(CategoryService.class);
 
+	@Autowired
+	private UtilityService utilityService;
+	@Autowired
+	private SearchHelper searchHelper;
+	@Autowired
+	private ConfigManager configManager;
+	
     @RemoteMethod
     public static List<String> getIMSCategories() throws DataException {
         return CatCodeUtil.getIMSCategoryNextLevel("", "", "");
@@ -54,7 +62,7 @@ public class CategoryService {
     }
 
     @RemoteMethod
-    public static List<String> getIMSManufacturers(String catcode, String category, String subcategory, String className, String subclass) {
+    public List<String> getIMSManufacturers(String catcode, String category, String subcategory, String className, String subclass) {
         List<String> filters = new ArrayList<String>();
         if (StringUtils.isNotBlank(catcode)) {
             filters.add(String.format("CatCode: %s", catcode));
@@ -71,7 +79,7 @@ public class CategoryService {
         if (StringUtils.isNotBlank(subclass)) {
             filters.add(String.format("SubClass: \"%s\"", subclass));
         }
-        return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(), "Manufacturer", filters);
+        return searchHelper.getFacetValues(utilityService.getServerName(), utilityService.getStoreId(), "Manufacturer", filters);
     }
 
     @RemoteMethod
@@ -90,7 +98,7 @@ public class CategoryService {
     }
 
     @RemoteMethod
-    public static List<String> getCNETManufacturers(String level1Category, String level2Category, String level3Category) {
+    public List<String> getCNETManufacturers(String level1Category, String level2Category, String level3Category) {
         Map<String, List<String>> filter = new HashMap<String, List<String>>();
         ArrayList<String> filters = null;
         if (StringUtils.isNotBlank(level1Category)) {
@@ -110,20 +118,20 @@ public class CategoryService {
         }
         filters = new ArrayList<String>();
         RedirectRuleCondition rr = new RedirectRuleCondition();
-        rr.setStoreId(UtilityService.getStoreId());
+        rr.setStoreId(utilityService.getStoreId());
         rr.setFilter(filter);
-        UtilityService.setFacetTemplateValues(rr);
+        utilityService.setFacetTemplateValues(rr);
         filters.add(rr.getConditionForSolr());
-        return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(), "Manufacturer", filters);
+        return searchHelper.getFacetValues(utilityService.getServerName(), utilityService.getStoreId(), "Manufacturer", filters);
     }
 
     @RemoteMethod
-    public static List<String> getTemplateNamesByStore(String storeId) throws DataException {
+    public List<String> getTemplateNamesByStore(String storeId) throws DataException {
     	
     	try {
-    		if(UtilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("IMS")) {
+    		if(utilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("IMS")) {
     			return getIMSTemplateNames();
-    		} else if(UtilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("CNET")) {
+    		} else if(utilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("CNET")) {
     			return getCNETTemplateNames();
     		}
     	} catch(Exception e) {
@@ -144,7 +152,7 @@ public class CategoryService {
     }
 
     @RemoteMethod
-    public static Map<String, Attribute> getIMSTemplateAttributes(String templateName) throws DataException {
+    public Map<String, Attribute> getIMSTemplateAttributes(String templateName) throws DataException {
         Map<String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
 
         ArrayList<String> filters = new ArrayList<String>();
@@ -156,7 +164,7 @@ public class CategoryService {
             fields.add(a.getAttributeName());
         }
 
-        Map<String, List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(),
+        Map<String, List<String>> map = searchHelper.getFacetValues(utilityService.getServerName(), utilityService.getStoreId(),
                 fields, filters, false);
 
         for (Attribute a : attrMap.values()) {
@@ -172,10 +180,10 @@ public class CategoryService {
     }
 
     @RemoteMethod
-    public static Map<String, Attribute> getCNETTemplateAttributes(String templateName) throws DataException {
+    public Map<String, Attribute> getCNETTemplateAttributes(String templateName) throws DataException {
         // TODO: merge with above method
         Map<String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
-        String storeId = UtilityService.getStoreId();
+        String storeId = utilityService.getStoreId();
 
         ArrayList<String> filters = new ArrayList<String>();
         ArrayList<String> fields = new ArrayList<String>();
@@ -185,11 +193,11 @@ public class CategoryService {
             fields.add(a.getAttributeName());
         }
 
-        String templateNameField = ConfigManager.getInstance().getStoreParameter(storeId, "facet-template");
+        String templateNameField = configManager.getStoreParameter(storeId, "facet-template");
         if (StringUtils.isNotEmpty(templateNameField)) {
             filters.add(templateNameField + "Name:\"" + templateName + "\"");
 
-            Map<String, List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(),
+            Map<String, List<String>> map = searchHelper.getFacetValues(utilityService.getServerName(), utilityService.getStoreId(),
                     fields, filters, false);
 
             for (Attribute a : attrMap.values()) {

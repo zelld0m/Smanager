@@ -35,7 +35,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 		BannerRuleItemDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(BannerRuleItemDaoSolrImpl.class);
-
+	
 	@Override
 	public List<BannerRuleItem> getBannerRuleItems(Store store)
 			throws DaoException {
@@ -86,7 +86,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			solrQuery.setSortField("priority", ORDER.asc);
+			solrQuery.setSort("priority", ORDER.asc);
 			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName()).query(
@@ -124,7 +124,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			solrQuery.setSortField("priority", ORDER.asc);
+			solrQuery.setSort("priority", ORDER.asc);
 			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName()).query(
@@ -173,7 +173,7 @@ public class BannerRuleItemDaoSolrImpl extends BaseDaoSolr implements
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			solrQuery.setSortField("priority", ORDER.asc);
+			solrQuery.setSort("priority", ORDER.asc);
 			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = solrServers.getCoreInstance(
 					Constants.Core.BANNER_RULE_CORE.getCoreName()).query(

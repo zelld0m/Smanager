@@ -614,63 +614,63 @@ public class RedirectRuleCondition extends ModelBean {
         return map;
     }
 
-    public static void main(String[] args) {
-        ConfigManager.getInstance("C:\\home\\solr\\conf\\solr.xml");
-
-        // initialize catcodeutil
-        boolean initCatCodeUtil = false;
-
-        if (initCatCodeUtil) {
-            try {
-                CatCodeUtil.init2();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-
-        // if Condition == "Refurbished" set Refurbished_Flag:1
-        //				== "Open Box"    set OpenBox_Flag:1
-        //              == "Clearance"   set Clearance_Flag:1
-        // if License == "License Products Only" set Licence_Flag:1
-        //		      == "Non-License Products Only", set Licence_Flag:0
-        //            else, set Licence_Flag:0
-        // if Availability == "In Stock" set InStock:1
-        //                 == "Call"     set InStock:0
-        // if ImageExists == "Products Without Image Only", set ImageExists:0
-        //                == "Products With Image Only", set ImageExists:2
-        String[] conditions = {
-            //				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
-            //				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",
-            //				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
-            //				"CatCode:31* AND Manufacturer:\"BlackBerry\"",
-            //				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\s"",
-            //				"Name:bag ivory AND Description:bag ivory",
-            //				"TemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5 OR a2|Core i7",
-            //				"PCMall_FacetTemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5",
-            //				"Clearance_Flag:1 AND Licence_Flag:0 AND ImageExists:1",
-            "Manufacturer:Apple AND PCMall_FacetTemplate:Data Storage | Network Attached Storage (NAS) AND Description:netbook", //				""
-        };
-
-        for (String condition : conditions) {
-            logger.info("***************");
-            
-            RedirectRuleCondition rr = new RedirectRuleCondition(condition);
-            rr.setStoreId("macmall");
-            
-            logger.info(String.format("text: %s", condition));
-            logger.info(String.format("condition: %s", rr.getCondition()));
-            logger.info(String.format("solr filter: %s", rr.getConditionForSolr()));
-            logger.info(String.format("readable string: %s", rr.getReadableString()));
-            logger.info(String.format("ims filter: %s", rr.getIMSFilters()));
-            logger.info(String.format("cnet filter: %s", rr.getCNetFilters()));
-            logger.info(String.format("facets: %s", rr.getFacets()));
-            logger.info(String.format("dynamic attributes: %s", rr.getDynamicAttributes()));
-            logger.info(String.format("IMS filter: %b", rr.isIMSFilter()));
-            logger.info(String.format("CNET filter: %b", rr.isCNetFilter()));
-        }
-    }
+//    public static void main(String[] args) {
+//        ConfigManager.getInstance("C:\\home\\solr\\conf\\solr.xml");
+//
+//        // initialize catcodeutil
+//        boolean initCatCodeUtil = false;
+//
+//        if (initCatCodeUtil) {
+//            try {
+//                CatCodeUtil.init2();
+//            } catch (Exception e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+//
+//
+//        // if Condition == "Refurbished" set Refurbished_Flag:1
+//        //				== "Open Box"    set OpenBox_Flag:1
+//        //              == "Clearance"   set Clearance_Flag:1
+//        // if License == "License Products Only" set Licence_Flag:1
+//        //		      == "Non-License Products Only", set Licence_Flag:0
+//        //            else, set Licence_Flag:0
+//        // if Availability == "In Stock" set InStock:1
+//        //                 == "Call"     set InStock:0
+//        // if ImageExists == "Products Without Image Only", set ImageExists:0
+//        //                == "Products With Image Only", set ImageExists:2
+//        String[] conditions = {
+//            //				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
+//            //				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",
+//            //				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
+//            //				"CatCode:31* AND Manufacturer:\"BlackBerry\"",
+//            //				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\s"",
+//            //				"Name:bag ivory AND Description:bag ivory",
+//            //				"TemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5 OR a2|Core i7",
+//            //				"PCMall_FacetTemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5",
+//            //				"Clearance_Flag:1 AND Licence_Flag:0 AND ImageExists:1",
+//            "Manufacturer:Apple AND PCMall_FacetTemplate:Data Storage | Network Attached Storage (NAS) AND Description:netbook", //				""
+//        };
+//
+//        for (String condition : conditions) {
+//            logger.info("***************");
+//            
+//            RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+//            rr.setStoreId("macmall");
+//            
+//            logger.info(String.format("text: %s", condition));
+//            logger.info(String.format("condition: %s", rr.getCondition()));
+//            logger.info(String.format("solr filter: %s", rr.getConditionForSolr()));
+//            logger.info(String.format("readable string: %s", rr.getReadableString()));
+//            logger.info(String.format("ims filter: %s", rr.getIMSFilters()));
+//            logger.info(String.format("cnet filter: %s", rr.getCNetFilters()));
+//            logger.info(String.format("facets: %s", rr.getFacets()));
+//            logger.info(String.format("dynamic attributes: %s", rr.getDynamicAttributes()));
+//            logger.info(String.format("IMS filter: %b", rr.isIMSFilter()));
+//            logger.info(String.format("CNET filter: %b", rr.isCNetFilter()));
+//        }
+//    }
 
     public void setRuleId(String ruleId) {
         this.ruleId = ruleId;

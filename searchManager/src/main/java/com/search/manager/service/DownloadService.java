@@ -19,6 +19,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.report.model.ReportBean;
@@ -35,6 +36,11 @@ import org.slf4j.LoggerFactory;
 @Service("downloadService")
 public class DownloadService {
 
+	@Autowired
+	private UtilityService utilityService;
+	@Autowired
+	private DateAndTimeUtils dateAndTimeUtils;
+	
 	// TODO: code cleanup: create one class that handles all excel related stuff
 	public enum downloadType {
 		EXCEL, PDF, CSV, XML
@@ -154,7 +160,7 @@ public class DownloadService {
 		return lines;
 	}
 
-	private static int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, Map<String, HSSFCellStyle> styleMap,
+	private int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, Map<String, HSSFCellStyle> styleMap,
 			int rowIndex, ReportModel<? extends ReportBean<?>> model, boolean mainModel, boolean writeSubHeader) {
 		// Set column widths
 		for (int i = 0; i < model.getColumnCount(); i++) {
@@ -179,7 +185,7 @@ public class DownloadService {
 		return rowIndex;
 	}
 
-	private static int writeHeader(HSSFWorkbook workbook, HSSFSheet worksheet, Map<String, HSSFCellStyle> styleMap,
+	private int writeHeader(HSSFWorkbook workbook, HSSFSheet worksheet, Map<String, HSSFCellStyle> styleMap,
 			int rowIndex, ReportModel<? extends ReportBean<?>> model) {
 
 		// Create cell style for the report title
@@ -220,11 +226,11 @@ public class DownloadService {
 				CellStyle.VERTICAL_CENTER, false);
 		HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
 		createCell(rowHeader, 0, cellStyleHeaderParam, "Requested by:");
-		createCell(rowHeader, 1, cellStyleHeaderValue, UtilityService.getUsername());
+		createCell(rowHeader, 1, cellStyleHeaderValue, utilityService.getUsername());
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, model.getColumnCount() - 1));
 		rowHeader = createRow(worksheet, ++rowIndex, 25f);
 		createCell(rowHeader, 0, cellStyleHeaderParam, "Generated on:");
-		createCell(rowHeader, 1, cellStyleHeaderValue, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), model.getReportHeader().getDate()));
+		createCell(rowHeader, 1, cellStyleHeaderValue, dateAndTimeUtils.formatDateTimeUsingConfig(utilityService.getStoreId(), model.getReportHeader().getDate()));
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, model.getColumnCount() - 1));
 		return rowIndex;
 	}

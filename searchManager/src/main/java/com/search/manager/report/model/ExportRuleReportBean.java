@@ -32,7 +32,8 @@ public class ExportRuleReportBean extends ReportBean<RuleStatus> {
 	@ReportField(label="Published Date", size=20, sortOrder=3)
 	public String getPublishedDate(){
 		if(model.getLastPublishedDate() != null){
-			return JodaDateTimeUtil.formatFromStorePattern(model.getLastPublishedDate(), JodaPatternType.DATE_TIME);
+//			return JodaDateTimeUtil.formatFromStorePattern(model.getLastPublishedDate(), JodaPatternType.DATE_TIME);
+			return "";
 		}
 		return "";
 	}

@@ -8,6 +8,7 @@ import java.util.*;
 import org.apache.commons.lang.time.DateUtils;
 import org.directwebremoting.annotations.*;
 import org.directwebremoting.spring.SpringCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.model.KeywordStats;
@@ -22,6 +23,9 @@ public class KeywordTrendsService {
 
     private static final Logger logger =
             LoggerFactory.getLogger(KeywordTrendsService.class);
+    
+    @Autowired
+    private UtilityService utilityService;
 
     @RemoteMethod
     public List<KeywordStats> getStats(List<String> keywords, Date fromDate, Date toDate, String collation) {
@@ -42,7 +46,7 @@ public class KeywordTrendsService {
     @RemoteMethod
     public List<String> getTopTenKeywords() {
         Date recent = getMostRecentStatsDate();
-        List<KeywordStats> list = StatisticsUtil.top(recent, 10, 0, 1, UtilityService.getStoreId());
+        List<KeywordStats> list = StatisticsUtil.top(recent, 10, 0, 1, utilityService.getStoreId());
         List<String> top = new ArrayList<String>();
 
         for (KeywordStats stats : list) {
@@ -54,7 +58,7 @@ public class KeywordTrendsService {
 
     @RemoteMethod
     public Date getMostRecentStatsDate() {
-        File dir = new File(PropertiesUtils.getValue("splunkdir") + File.separator + UtilityService.getStoreId());
+        File dir = new File(PropertiesUtils.getValue("splunkdir") + File.separator + utilityService.getStoreId());
         File[] files = dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -83,7 +87,7 @@ public class KeywordTrendsService {
 
             try {
                 String path = csvs[0].getCanonicalPath();
-                String dateStr = new MessageFormat(StatisticsUtil.getSplunkFilePattern(UtilityService.getStoreId())).parse(path)[1].toString();
+                String dateStr = new MessageFormat(StatisticsUtil.getSplunkFilePattern(utilityService.getStoreId())).parse(path)[1].toString();
 
                 return DateAndTimeUtils.parseDateYYYYMMDD(dateStr);
             } catch (IOException ex) {
@@ -108,7 +112,7 @@ public class KeywordTrendsService {
         Date limit = DateAndTimeUtils.asUTC(toDate);
 
         while (DateAndTimeUtils.compare(date, limit) <= 0) {
-            StatisticsUtil.retrieveStats(list, date, 0, 1, collation, UtilityService.getStoreId());
+            StatisticsUtil.retrieveStats(list, date, 0, 1, collation, utilityService.getStoreId());
             date = DateUtils.addDays(date, 1);
         }
     }

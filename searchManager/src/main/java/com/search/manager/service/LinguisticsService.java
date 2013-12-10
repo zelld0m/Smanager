@@ -24,6 +24,7 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.ws.ConfigManager;
@@ -40,15 +41,19 @@ public class LinguisticsService {
     private static final org.slf4j.Logger logger =
             LoggerFactory.getLogger(LinguisticsService.class);
 
+    @Autowired
+    private ConfigManager configManager;
+    @Autowired
+    private UtilityService utilityService;
+    
     public HttpResponse getDocument(String fileName) throws ParserConfigurationException {
 
         String url = "";
         HttpClient client = new DefaultHttpClient();
         HttpPost post = null;
         HttpResponse response = null;
-        ConfigManager cm = ConfigManager.getInstance();
-        String core = cm.getStoreParameter(UtilityService.getStoreId(), "core");
-        url = cm.getServerParameter(UtilityService.getServerName(), "url").replace("(core)", core) + "admin/file/?file=" + fileName;
+        String core = configManager.getStoreParameter(utilityService.getStoreId(), "core");
+        url = configManager.getServerParameter(utilityService.getServerName(), "url").replace("(core)", core) + "admin/file/?file=" + fileName;
         post = new HttpPost(url);
         try {
             response = client.execute(post);

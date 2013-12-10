@@ -14,12 +14,15 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -33,28 +36,30 @@ import com.search.manager.schema.model.Analyzer.Type;
 import com.search.manager.schema.model.Field;
 import com.search.manager.schema.model.FieldType;
 import com.search.manager.schema.model.Schema;
-import com.search.manager.schema.model.VerifiableModel;
 import com.search.manager.schema.model.bf.BoostFunctionModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryFieldsModel;
 import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Component
 public class SolrSchemaUtility {
 
     private static final Logger logger =
             LoggerFactory.getLogger(SolrSchemaUtility.class);
 
-    public static Schema getDefaultSchema() {
+    @Autowired
+	private ConfigManager configManager;
+    @Autowired
+    private UtilityService utilityService;
+    
+    public Schema getDefaultSchema() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         Schema schema = (Schema) attr.getAttribute("storeSchema", RequestAttributes.SCOPE_SESSION);
         if (schema == null) {
             // get default server for store
-            ConfigManager cm = ConfigManager.getInstance();
-            if (cm != null) {
-                schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreId());
+            if (configManager != null) {
+                schema = getSchema(utilityService.getServerName(), utilityService.getStoreId());
             }
             attr.setAttribute("storeSchema", schema, RequestAttributes.SCOPE_SESSION);
 
@@ -83,9 +88,9 @@ public class SolrSchemaUtility {
         return schema;
     }
 
-    public static Schema getSchema(String serverName, String storeId) {
-        String core = ConfigManager.getInstance().getStoreParameter(storeId, "core");
-        return getSchema(ConfigManager.getInstance().getServerParameter(serverName, "url").replace("(core)", core)
+    public Schema getSchema(String serverName, String storeId) {
+        String core = configManager.getStoreParameter(storeId, "core");
+        return getSchema(configManager.getServerParameter(serverName, "url").replace("(core)", core)
                 + "admin/file/?file=schema.xml");
     }
 
@@ -375,45 +380,45 @@ public class SolrSchemaUtility {
 
     public static void main(String[] args) {
 
-        ConfigManager.getInstance("/home/solr/conf/solr.xml");
-        RelevancyConfig.getInstance("/home/solr/conf/relevancy.xml");
+//        onfigManager("/home/solr/conf/solr.xml");
+//        RelevancyConfig.getInstance("/home/solr/conf/relevancy.xml");
 
 //		Schema schema = SolrSchemaUtility.getSchema("http://afs-pl-schpd01.afservice.org:8080/solr14/macmall/admin/file/?file=schema.xml");
 //		Schema schema = SolrSchemaUtility.getSchema("http://afs-pl-schmstr02.afservice.org:8080/solr4/macmall/admin/file/?file=schema.xml");
-        Schema schema = SolrSchemaUtility.getSchema("afs-pl-schpd02", "pcmall");
-
-        for (Field field : schema.getFields()) {
-            logger.info("Field name: " + field.getName());
-            logger.info("\tindexed: " + field.isIndexed());
-            logger.info("\tstored: " + field.isStored());
-            logger.info("\tmultiValued: " + field.isMultiValued());
-            if (field.isDynamic()) {
-                logger.info("\tdynamic: " + field.isDynamic());
-            }
-            for (NameValuePair attribute : field.getAttributes()) {
-                logger.info("\t\t\tAttribute " + attribute.getName() + ": " + attribute.getValue());
-            }
-            FieldType fieldType = field.getFieldType();
-            logger.info("\ttype: " + fieldType.getName());
-            for (Analyzer analyzer : fieldType.getAnalyzers()) {
-                logger.info("\t\t" + analyzer.getType());
-                if (analyzer.getTokenizer() != null) {
-                    logger.info("\t\t\ttokenizer: " + analyzer.getTokenizer().getClassName());
-                    for (NameValuePair attribute : analyzer.getTokenizer().getAttributes()) {
-                        logger.info("\t\t\t\tAttribute " + attribute.getName() + ": " + attribute.getValue());
-                    }
-                }
-                for (AnalyzerComponent filter : analyzer.getFilters()) {
-                    logger.info("\t\t\tFilter: " + filter.getClassName());
-                    for (NameValuePair attribute : filter.getAttributes()) {
-                        logger.info("\t\t\t\tAttribute " + attribute.getName() + ": " + attribute.getValue());
-                    }
-                }
-            }
-            for (Field copyField : field.getCopyFields()) {
-                logger.info("\tcopy field: " + copyField.getName());
-            }
-        }
+//        Schema schema = getSchema("afs-pl-schpd02", "pcmall");
+//
+//        for (Field field : schema.getFields()) {
+//            logger.info("Field name: " + field.getName());
+//            logger.info("\tindexed: " + field.isIndexed());
+//            logger.info("\tstored: " + field.isStored());
+//            logger.info("\tmultiValued: " + field.isMultiValued());
+//            if (field.isDynamic()) {
+//                logger.info("\tdynamic: " + field.isDynamic());
+//            }
+//            for (NameValuePair attribute : field.getAttributes()) {
+//                logger.info("\t\t\tAttribute " + attribute.getName() + ": " + attribute.getValue());
+//            }
+//            FieldType fieldType = field.getFieldType();
+//            logger.info("\ttype: " + fieldType.getName());
+//            for (Analyzer analyzer : fieldType.getAnalyzers()) {
+//                logger.info("\t\t" + analyzer.getType());
+//                if (analyzer.getTokenizer() != null) {
+//                    logger.info("\t\t\ttokenizer: " + analyzer.getTokenizer().getClassName());
+//                    for (NameValuePair attribute : analyzer.getTokenizer().getAttributes()) {
+//                        logger.info("\t\t\t\tAttribute " + attribute.getName() + ": " + attribute.getValue());
+//                    }
+//                }
+//                for (AnalyzerComponent filter : analyzer.getFilters()) {
+//                    logger.info("\t\t\tFilter: " + filter.getClassName());
+//                    for (NameValuePair attribute : filter.getAttributes()) {
+//                        logger.info("\t\t\t\tAttribute " + attribute.getName() + ": " + attribute.getValue());
+//                    }
+//                }
+//            }
+//            for (Field copyField : field.getCopyFields()) {
+//                logger.info("\tcopy field: " + copyField.getName());
+//            }
+//        }
 
 //		String[] mms = {
 //				"2",
@@ -455,8 +460,8 @@ public class SolrSchemaUtility {
 //
 //
 //
-        String[] qfs = {
-            "GenericUser_Keywords^2", //			"Manufacturer^10.0",
+//        String[] qfs = {
+//            "GenericUser_Keywords^2", //			"Manufacturer^10.0",
         //			"Manufacturer^10.",
         //			"Manufacturer^.0",
         //			"Manufacturer0",
@@ -465,29 +470,29 @@ public class SolrSchemaUtility {
         //			"Manufacturer^10.0 ManufacturerIndex^5.2 Manufacturer^1",
         //			"Manufacturer^10.0 ManufacturerIndex^-2 Manufacturer^1",
         //			"Manufacturer^10.0 ManufacturerIndex^2Manufacturer^1",
-        };
+//        };
 
-        for (String string : qfs) {
-            try {
-                VerifiableModel model = QueryFieldsModel.toModel(schema, string, false);
-                try {
-                    if (model.validate()) {
-                        logger.debug(model + " is valid");
-                    }
-                } catch (Exception e) {
-                    logger.debug(model + " is invalid: " + e.getMessage());
-                }
-            } catch (Exception e) {
-                logger.debug(string + " is invalid: " + e.getMessage());
-            }
-        }
-
-        logger.debug("***************************************************");
+//        for (String string : qfs) {
+//            try {
+//                VerifiableModel model = QueryFieldsModel.toModel(schema, string, false);
+//                try {
+//                    if (model.validate()) {
+//                        logger.debug(model + " is valid");
+//                    }
+//                } catch (Exception e) {
+//                    logger.debug(model + " is invalid: " + e.getMessage());
+//                }
+//            } catch (Exception e) {
+//                logger.debug(string + " is invalid: " + e.getMessage());
+//            }
+//        }
+//
+//        logger.debug("***************************************************");
 //
 //
 //
 //
-        String[] bfs = {
+//        String[] bfs = {
             /*"sum(linear(eCOST_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
              "sum(linear(PcMall_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
              "sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
@@ -497,22 +502,22 @@ public class SolrSchemaUtility {
              "ms(NOW,2000-01-01T00:00:00ABZZ)^2.0",
              "ms(NOW,2000-01-01T00:65:61Z)^2.0",
              //				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0)^10.0",*/
-            "sum(linear(PcMall_PopularityScale,1,0),0)^2", //				"ms(NOW/HOUR)^2.0",
+//            "sum(linear(PcMall_PopularityScale,1,0),0)^2", //				"ms(NOW/HOUR)^2.0",
         //				"ms(NOW/2HOURS)^2.0",
         //				"ms(NOW/DAY+6MONTHS-3DAYS)^2.0"
-        };
+//        };
 
-        for (String bf : bfs) {
-            try {
-                BoostFunctionModel model = BoostFunctionModel.toModel(schema, bf, false);
-                if (model.validate()) {
-                    logger.debug(model + " is valid.");
-
-                }
-            } catch (Exception e) {
-                logger.debug(bf + " is invalid: " + e.getMessage());
-            }
-        }
+//        for (String bf : bfs) {
+//            try {
+//                BoostFunctionModel model = BoostFunctionModel.toModel(schema, bf, false);
+//                if (model.validate()) {
+//                    logger.debug(model + " is valid.");
+//
+//                }
+//            } catch (Exception e) {
+//                logger.debug(bf + " is invalid: " + e.getMessage());
+//            }
+//        }
 
     }
 }

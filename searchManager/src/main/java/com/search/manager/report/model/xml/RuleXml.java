@@ -179,7 +179,8 @@ public class RuleXml extends BaseEntityXml{
 	public String getFormattedCreatedDateTime(){
 		DateTime createdDateTime = getCreatedDate();
 		if(createdDateTime!=null){
-			return JodaDateTimeUtil.formatFromStorePattern(getStore(), createdDateTime, JodaPatternType.DATE_TIME);
+//			return JodaDateTimeUtil.formatFromStorePattern(getStore(), createdDateTime, JodaPatternType.DATE_TIME);
+			return "";
 		}
 		
 		return "";

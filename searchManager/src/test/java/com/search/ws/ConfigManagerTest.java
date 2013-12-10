@@ -45,8 +45,8 @@ public class ConfigManagerTest {
     }
 
     @Test
-    public void testGetListSearchwithinProperty() {
-        assertEquals(Arrays.asList("true"), configManager.getPropertyList("searchWithin", "pcmall", "searchwithin.enable"));
+    public void testGetSearchWithinProperty() {
+        assertEquals("true", configManager.getProperty("searchwithin", "pcmall", "searchwithin.enable"));
     }
 
     @Test
@@ -69,11 +69,6 @@ public class ConfigManagerTest {
 //    public void testGetPublishedStoreLinguisticSetting() {
 //        // TODO add test here
 //    }
-    @Test
-    public void testGetSearchWithinProperty() {
-        assertEquals("searchwithin", configManager.getProperty("searchWithin",
-                "pcmall", "searchwithin.paramname"));
-    }
 
 //    @Test
 //    public void testGetServerParameterName() {

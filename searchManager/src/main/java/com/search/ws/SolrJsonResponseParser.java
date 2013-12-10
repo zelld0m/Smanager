@@ -28,6 +28,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.SortType;
@@ -39,11 +41,11 @@ import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
 import com.search.manager.utility.ParameterUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class SolrJsonResponseParser extends SolrResponseParser {
 
+	private static final Logger logger =
+         LoggerFactory.getLogger(SolrJsonResponseParser.class);
+	 
     private JSONObject initialJson = null;
     private JsonSlurper slurper = null;
     private JSONArray resultArray = null; // DOCS entry
@@ -57,9 +59,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
     private JSONObject spellcheckObject = null;
     private JSONObject spellcheckParams = null;
     private String wrf = "";
-    private static final Logger logger =
-            LoggerFactory.getLogger(SolrJsonResponseParser.class);
-
+    
     public SolrJsonResponseParser() {
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
@@ -557,10 +557,10 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 
         JSONObject facets = new JSONObject();
         if (root.getFacetCount() > 1) {
-            ConfigManager cm = ConfigManager.getInstance();
 
-            if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !cm.isMemberOf("PCM", facetSortRule.getStoreId())) {
-                for (String lvl1Key : root.getFacets()) {
+//            if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !configManager.isMemberOf("PCM", facetSortRule.getStoreId())) {
+        	if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !isCNETImplementation) {    
+        		for (String lvl1Key : root.getFacets()) {
                     CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
                     lvl1Map.put(lvl1Key, lvl1.getCount());
                 }
@@ -777,11 +777,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             return;
         }
 
-        ConfigManager cm = ConfigManager.getInstance();
-
         for (String key : facetSortRule.getItems().keySet()) {
-            if (!(StringUtils.equals("Category", key) && cm.isMemberOf("PCM", facetSortRule.getStoreId()))) {
-
+//            if (!(StringUtils.equals("Category", key) && configManager.isMemberOf("PCM", facetSortRule.getStoreId()))) {
+        	if (!(StringUtils.equals("Category", key) && isCNETImplementation)) {
                 // grab a copy of the fields
                 List<FacetEntry> entries = new ArrayList<FacetEntry>();
 

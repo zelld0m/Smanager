@@ -66,6 +66,9 @@ public class SolrServiceImpl implements SolrService {
     @Autowired
     @Qualifier("bannerRuleItemDaoSolr")
     private BannerRuleItemDao bannerRuleItemDao;
+    @Autowired
+    private ConfigManager configManager;
+    
     private static final Logger logger =
             LoggerFactory.getLogger(SolrServiceImpl.class);
 
@@ -568,8 +571,7 @@ public class SolrServiceImpl implements SolrService {
         // TODO: place in utility. check DaoCacheServiceImpl
         SpellRule spellRule = null;
         String os = System.getProperty("os.name");
-        String fileName = ConfigManager.getInstance()
-                .getPublishedDidYouMeanPath(storeId);
+        String fileName = configManager.getPublishedDidYouMeanPath(storeId);
         String rule = null;
         if (StringUtils.containsIgnoreCase(os, "window")) {
             // assume this is dev workstation
@@ -653,8 +655,7 @@ public class SolrServiceImpl implements SolrService {
     public Integer getMaxSuggest(String storeId) throws DaoException {
         Integer value = null;
         try {
-            String val = ConfigManager.getInstance()
-                    .getPublishedStoreLinguisticSetting(storeId,
+            String val = configManager.getPublishedStoreLinguisticSetting(storeId,
                     "maxSpellSuggestions");
             value = Integer.parseInt(val);
         } catch (Exception e) {

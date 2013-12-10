@@ -43,6 +43,7 @@ import com.search.manager.core.processor.SearchWithinRequestProcessor;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
+import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -76,13 +77,22 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	@Autowired
 	@Qualifier("daoService")
 	private SearchDaoService daoService;
-
 	@Autowired
 	@Qualifier("solrService")
 	private SearchDaoService solrService;
-
+	@Autowired
 	protected ConfigManager configManager;
-
+	@Autowired
+	private JodaDateTimeUtil jodaDateTimeUtil;
+	@Autowired
+	private UtilityService utilityService;
+	@Autowired
+	private RequestProcessorUtil requestProcessorUtil;
+	@Autowired
+	private SearchWithinRequestProcessor searchWithinRequestProcessor;
+	@Autowired
+	private FacetSortRequestProcessor facetSortRequestProcessor;
+	
 	protected final ExecutorService execService = Executors.newCachedThreadPool();
 
 	protected final static String[] uniqueFields = {
@@ -98,7 +108,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		configManager = ConfigManager.getInstance();
 		QueryValidator.init();
 	}
 
@@ -461,13 +470,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	}
 
 	protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws DaoException {
+		List<BannerRuleItem> bannerRuleItems = null;
 		try {
-			return getDaoService(fromSearchGui).getActiveBannerRuleItems(store, keyword, currentDate);
+			bannerRuleItems = getDaoService(fromSearchGui).getActiveBannerRuleItems(store, keyword, currentDate);
 		} catch (DaoException e) {
 			if (!fromSearchGui) {
 				if (!configManager.isSolrImplOnly()) {
 					try {
-						return daoService.getActiveBannerRuleItems(store, keyword, currentDate);
+						bannerRuleItems = daoService.getActiveBannerRuleItems(store, keyword, currentDate);
 					} catch (DaoException e1) {
 						logger.error("Failed to get active bannerRuleItems {}", e1);
 						return null;
@@ -478,6 +488,20 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			}
 			throw e;
 		}
+		
+		String autoPrefixProtocol = configManager.getProperty("settings", store.getStoreId(),
+				DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
+		Boolean isAutoPrefixProtocol = BooleanUtils.toBoolean(StringUtils.defaultIfBlank(autoPrefixProtocol, "false"));
+		
+		if(bannerRuleItems != null && isAutoPrefixProtocol) {
+			for(int i=0; i<bannerRuleItems.size(); i++) {
+				String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings", store.getStoreId(),
+						DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http:");
+				bannerRuleItems.get(i).setLinkPath(protocol + bannerRuleItems.get(i).getLinkPath());
+			}
+		}
+		
+		return bannerRuleItems;
 	}
 
 	protected abstract String getRequestPath(HttpServletRequest request);
@@ -578,7 +602,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
 	protected DateTime getOverrideCurrentDate(String storeId, String dateText) {
 		DateTime convertedCurrentDate = DateTime.now();
-		DateTime overrideCurrentDate = JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, dateText, JodaPatternType.DATE);
+		DateTime overrideCurrentDate = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, dateText, JodaPatternType.DATE);
 
 		logger.info("Current Date: {}", convertedCurrentDate.toString());
 		if (overrideCurrentDate != null) {
@@ -593,7 +617,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
 	protected boolean isSameDomain(String storeId, String url) {
 		// relative path
-		List<String> relativePath = UtilityService.getStoreRelativePath(storeId);
+		List<String> relativePath = utilityService.getStoreRelativePath(storeId);
 		for(String path : relativePath) {
 			if(url.startsWith(path)) {
 				return true;
@@ -601,7 +625,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		}
 		
 		// configured domain
-		List<String> domains = UtilityService.getStoreSelfDomains(storeId);
+		List<String> domains = utilityService.getStoreSelfDomains(storeId);
 		for(String domain: domains) {
 			if(url.contains(domain)) {
 				return true;
@@ -749,13 +773,13 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				}
 			}
 			
-			//Integrate search within request processor
-			new SearchWithinRequestProcessor(new RequestPropertyBean(storeId)).process(request, solrHelper, null, paramMap, nameValuePairs);
+			// Integrate search within request processor
+			searchWithinRequestProcessor.process(request, solrHelper, new RequestPropertyBean(storeId), null, paramMap, nameValuePairs);
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 			addDefaultParameters(storeId, nameValuePairs, paramMap);
 
-			Map<String, String> facetMap = RequestProcessorUtil.getFacetMap(storeId);
+			Map<String, String> facetMap = requestProcessorUtil.getFacetMap(storeId);
 			String facetTemplate = facetMap.get(SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 			
 			if (fromSearchGui) {
@@ -849,7 +873,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						}
 						
 						boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
-						activeRules.add(RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));
+						activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));
 
 						if (stop) {
 							redirect = null;
@@ -966,7 +990,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 							for (String condition : redirect.getConditions()) {
 								if (StringUtils.isNotEmpty(condition)) {
 									RedirectRuleCondition rr = new RedirectRuleCondition(condition);
-									setFacetTemplateValues(rr, RequestProcessorUtil.getFacetMap(sk.getStoreId()));
+									setFacetTemplateValues(rr, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 									String conditionForSolr = applyValueOverride(rr.getConditionForSolr(), request, RuleEntity.QUERY_CLEANING);
 									if (StringUtils.isNotBlank(conditionForSolr)) {
 										builder.append("(").append(conditionForSolr).append(") OR ");
@@ -1017,7 +1041,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					}
 	
 					if (relevancy != null) {
-						activeRules.add(RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_RELEVANCY, relevancy.getRelevancyId(), relevancy.getRelevancyName(), !disableRelevancy));
+						activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_RELEVANCY, relevancy.getRelevancyId(), relevancy.getRelevancyName(), !disableRelevancy));
 						if (!disableRelevancy) {
 							logger.debug("Applying relevancy {} with id: {}", relevancy.getRelevancyName(), relevancy.getRelevancyId());
 						} else {
@@ -1084,14 +1108,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					if (isActiveSearchRule(storeId, RuleEntity.EXCLUDE)) {
 						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, keyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 						}
 						if (!disableExclude) {
-							excludeList = getExcludeRules(sk, fromSearchGui, RequestProcessorUtil.getFacetMap(sk.getStoreId()));
+							excludeList = getExcludeRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 	
 							//TODO: refactor to method
 							if (fromSearchGui) {
-								List<ExcludeResult> expiredList = getExpiredExcludeRules(sk, fromSearchGui, RequestProcessorUtil.getFacetMap(sk.getStoreId()));
+								List<ExcludeResult> expiredList = getExpiredExcludeRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 								String excludeItem = "";
 								for (ExcludeResult expired : expiredList) {
 									switch(expired.getExcludeEntity()){
@@ -1111,12 +1135,12 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					if (isActiveSearchRule(storeId, RuleEntity.DEMOTE)) {
 						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, keyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
 						}
 						if (!disableDemote && bestMatchFlag) {
-							demoteList = getDemoteRules(sk, fromSearchGui, RequestProcessorUtil.getFacetMap(sk.getStoreId()));
+							demoteList = getDemoteRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 							if (fromSearchGui) {
-								List<DemoteResult> expiredList = getExpiredDemoteRules(sk, fromSearchGui, RequestProcessorUtil.getFacetMap(sk.getStoreId()));
+								List<DemoteResult> expiredList = getExpiredDemoteRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 								if (logger.isDebugEnabled()) {
 									logger.debug("Expired Demoted List: ");
 								}
@@ -1136,10 +1160,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					if (isActiveSearchRule(storeId, RuleEntity.ELEVATE)) {
 						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, keyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 						}
 						if (!disableElevate) {
-							elevatedList = getElevateRules(sk, fromSearchGui, RequestProcessorUtil.getFacetMap(sk.getStoreId()));
+							elevatedList = getElevateRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 							if (CollectionUtils.isNotEmpty(elevatedList)) {
 								// prepare force added list
 								for (ElevateResult elevateResult : elevatedList) {
@@ -1155,7 +1179,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 							if (!bestMatchFlag) {
 								elevatedList.clear();
 							} else if (fromSearchGui) { // && bestMatchFlag //TODO: 
-								List<ElevateResult> expiredList = getExpiredElevateRules(sk, fromSearchGui, RequestProcessorUtil.getFacetMap(sk.getStoreId()));
+								List<ElevateResult> expiredList = getExpiredElevateRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 								if (logger.isDebugEnabled()) {
 									logger.debug("Expired Elevated List: ");
 								}
@@ -1175,7 +1199,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					try {
 						bannerList = getActiveBannerRuleItems(new Store(storeId), keyword, fromSearchGui, currentDate);
 						if (bannerList != null && bannerList.size() > 0) {
-							activeRules.add((RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_BANNER, bannerList.get(0).getRule().getRuleId(), keyword, !disableBanner)));
+							activeRules.add((requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_BANNER, bannerList.get(0).getRule().getRuleId(), keyword, !disableBanner)));
 							if (!disableBanner) {
 								solrHelper.setBannerRuleItems(bannerList);
 								//TODO: also log expired and non-active banner
@@ -1200,6 +1224,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			solrHelper.setDemotedItems(demoteList);
 			solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
 			solrHelper.setFacetTemplate(facetTemplate);
+			solrHelper.setCNETImplementation(configManager.isMemberOf("PCM", storeId));
 			solrHelper.setOriginalKeyword(originalKeyword);
 			solrHelper.setIncludeEDP(includeEDP);
 			solrHelper.setIncludeFacetTemplateFacet(includeFacetTemplateFacet);
@@ -1264,7 +1289,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// FACETSORT
 			if (!isRedirectToPage) {
 				RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId, keyword, keywordPresent, fromSearchGui, disableFacetSort);
-				new FacetSortRequestProcessor(requestPropertyBean).process(request, solrHelper, activeRules, paramMap, nameValuePairs);
+				facetSortRequestProcessor.process(request, solrHelper, requestPropertyBean, activeRules, paramMap, nameValuePairs);
 			}
 
 			Future<Integer> getTemplateCount = null;
@@ -1289,7 +1314,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				StoreKeyword sk = getStoreKeywordOverride(RuleEntity.SPELL, storeId, originalKeyword);
 				SpellRule spellRule = getSpellRule(sk, fromSearchGui);
 				if (spellRule != null) {
-					activeRules.add((RequestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DID_YOU_MEAN, spellRule.getRuleId(), originalKeyword, !disableDidYouMean)));
+					activeRules.add((requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DID_YOU_MEAN, spellRule.getRuleId(), originalKeyword, !disableDidYouMean)));
 					if (!disableDidYouMean) {
 						solrHelper.setSpellRule(spellRule);
 					}

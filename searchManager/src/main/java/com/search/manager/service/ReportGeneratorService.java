@@ -18,6 +18,8 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +29,8 @@ import utilities.ZeroResults;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.search.manager.mail.ReportNotificationMailService;
 import com.search.manager.utility.PropertiesUtils;
 import com.search.ws.ConfigManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "reportGeneratorService")
 @RemoteProxy(
@@ -45,16 +44,20 @@ public class ReportGeneratorService {
             LoggerFactory.getLogger(ReportGeneratorService.class);
     private final String[] topKeywordHeader = {"Search Terms", "First SKU", "Number of Search Results", "Searches"};
     private final String[] zeroResultsHeader = {"Search Terms", "Searches"};
+    
+//    @Autowired
+//    private ReportNotificationMailService reportNotificationMailService;
     @Autowired
-    ReportNotificationMailService reportNotificationMailService;
-
+    private UtilityService utilityService;
+    @Autowired
+    private ConfigManager configManager;
+    
     @RemoteMethod
     public Object generateZeroResults(String content, String format) throws IOException {
-        ConfigManager cm = ConfigManager.getInstance();
-        String core = cm.getStoreParameter(UtilityService.getStoreId(), "core");
+        String core = configManager.getStoreParameter(utilityService.getStoreId(), "core");
 
-        String solrParams = "select?rows=1&" + ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreId()) + "e&wt=xml";
-        String url = cm.getServerParameter(UtilityService.getServerName(), "url")
+        String solrParams = "select?rows=1&" + configManager.getDefaultSolrParameters(utilityService.getStoreId()) + "e&wt=xml";
+        String url = configManager.getServerParameter(utilityService.getServerName(), "url")
                 .replace("(core)", core).replace("http://", PropertiesUtils.getValue("browsejssolrurl")) + solrParams;
         HashMap<String, KeyValuePair> map = processFile(content, format);
 
@@ -96,11 +99,10 @@ public class ReportGeneratorService {
 
     @RemoteMethod
     public Object generateTopKeywords(String content, String format) throws IOException {
-        ConfigManager cm = ConfigManager.getInstance();
-        String core = cm.getStoreParameter(UtilityService.getStoreId(), "core");
+        String core = configManager.getStoreParameter(utilityService.getStoreId(), "core");
 
-        String solrParams = "select?rows=1&" + ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreId()) + "e&wt=xml";
-        String url = cm.getServerParameter(UtilityService.getServerName(), "url")
+        String solrParams = "select?rows=1&" + configManager.getDefaultSolrParameters(utilityService.getStoreId()) + "e&wt=xml";
+        String url = configManager.getServerParameter(utilityService.getServerName(), "url")
                 .replace("(core)", core).replace("http://", PropertiesUtils.getValue("browsejssolrurl")) + solrParams;
 
         TopKeywords top = new TopKeywords(url);

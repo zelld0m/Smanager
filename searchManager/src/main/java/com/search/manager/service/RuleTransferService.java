@@ -54,14 +54,22 @@ import org.slf4j.LoggerFactory;
         @Param(name = "beanName", value = "ruleTransferService"))
 public class RuleTransferService {
 
+	private static final Logger logger =
+        LoggerFactory.getLogger(RuleTransferService.class);
+	
     @Autowired
     private DeploymentService deploymentService;
     @Autowired
     private DaoService daoService;
     @Autowired
     private FacetSortService facetSortService;
-    private static final Logger logger =
-            LoggerFactory.getLogger(RuleTransferService.class);
+    @Autowired
+    private RuleTransferUtil ruleTransferUtil;
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private RuleXmlUtil ruleXmlUtil;
+    
     private static final int CREATE_RULE_STATUS = 0;
     private static final int SUBMIT_FOR_APPROVAL = 1;
     private static final int APPROVE_RULE = 2;
@@ -76,7 +84,7 @@ public class RuleTransferService {
 
     @RemoteMethod
     public List<RuleXml> getAllRulesToImport(String ruleType) {
-        return RuleTransferUtil.getAllExportedRules(UtilityService.getStoreId(), ruleType);
+        return ruleTransferUtil.getAllExportedRules(utilityService.getStoreId(), ruleType);
     }
 
     /*
@@ -89,7 +97,7 @@ public class RuleTransferService {
      * */
     @RemoteMethod
     public RecordSet<RuleXml> getRulesToImport(String ruleType, String keywordFilter, int page, int itemsPerPage, String ruleFilter, String orderBy) {
-        String store = UtilityService.getStoreId();
+        String store = utilityService.getStoreId();
         RuleEntity ruleEntity = RuleEntity.find(ruleType);
         List<RuleXml> list = new ArrayList<RuleXml>();
         RecordSet<ExportRuleMap> exportList = null;
@@ -111,7 +119,7 @@ public class RuleTransferService {
                     for (ExportRuleMap ruleMap : exportList.getList()) {
                         String ruleId = ruleMap.getRuleIdOrigin();
                         boolean isRejected = BooleanUtils.isTrue(ruleMap.getRejected());
-                        RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, StringUtil.escapeKeyword(ruleId));
+                        RuleXml ruleXml = ruleTransferUtil.getRuleToImport(store, ruleEntity, StringUtil.escapeKeyword(ruleId));
                         if (ruleXml != null) {
                             ruleXml.setRejected(isRejected);
                             list.add(ruleXml);
@@ -139,13 +147,13 @@ public class RuleTransferService {
 
     @RemoteMethod
     public RuleXml getRuleToExport(String ruleType, String ruleId) {
-        List<RuleXml> ruleVersions = daoService.getPublishedRuleVersions(UtilityService.getStoreId(), ruleType, ruleId);
-        return RuleXmlUtil.getLatestVersion(ruleVersions);
+        List<RuleXml> ruleVersions = daoService.getPublishedRuleVersions(utilityService.getStoreId(), ruleType, ruleId);
+        return ruleXmlUtil.getLatestVersion(ruleVersions);
     }
 
     @RemoteMethod
     public RuleXml getRuleToImport(String ruleType, String ruleId) {
-        return RuleTransferUtil.getRuleToImport(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId);
+        return ruleTransferUtil.getRuleToImport(utilityService.getStoreId(), RuleEntity.find(ruleType), ruleId);
     }
 
     @RemoteMethod
@@ -167,7 +175,7 @@ public class RuleTransferService {
 
                 if (ruleXml != null && StringUtils.isNotBlank(ruleXml.getRuleId())) {
                     try {
-                        if (daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.MANUAL, UtilityService.getUsername(), comment)) {
+                        if (daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.MANUAL, utilityService.getUsername(), comment)) {
                             success = true;
                         }
                     } catch (DaoException e) {
@@ -389,7 +397,7 @@ public class RuleTransferService {
 
         try {
             if (autoPublish) {
-                obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
+                obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
             }
             if (ArrayUtils.isNotEmpty(importRuleRefIdList)) {
                 Map<String, Integer> statusMap = importRules(storeId, ruleType, importRuleRefIdList, comment,
@@ -438,7 +446,7 @@ public class RuleTransferService {
 
         } finally {
             if (obtainedLock) {
-                UtilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
+                utilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
             }
         }
         return successList;
@@ -461,8 +469,8 @@ public class RuleTransferService {
 
     private boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName) {
         boolean success = false;
-        String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
-        RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, id);
+        String id = ruleXmlUtil.getRuleId(ruleEntity, ruleId);
+        RuleXml ruleXml = ruleTransferUtil.getRuleToImport(store, ruleEntity, id);
 
         String storeIdOrigin = ruleXml.getStore();
         String ruleIdOrigin = ruleXml.getRuleId();
@@ -471,7 +479,7 @@ public class RuleTransferService {
         switch (ruleEntity) {
             case SPELL:
                 try {
-                    success = daoService.importSpellRule(store, storeIdOrigin, UtilityService.getUsername(),
+                    success = daoService.importSpellRule(store, storeIdOrigin, utilityService.getUsername(),
                             Integer.valueOf(((DBRuleVersion) ruleXml).getProps().get("maxSuggest")));
                 } catch (DaoException e) {
                     logger.error("Error importing Did You Mean rules.", e);
@@ -481,8 +489,8 @@ public class RuleTransferService {
                 ruleXml.setStore(store);
                 ruleXml.setRuleId(importAsRefId);
                 ruleXml.setRuleName(ruleName);
-                ruleXml.setCreatedBy(UtilityService.getUsername());
-                success = RuleTransferUtil.importRule(store, importAsRefId, ruleXml);
+                ruleXml.setCreatedBy(utilityService.getUsername());
+                success = ruleTransferUtil.importRule(store, importAsRefId, ruleXml);
         }
 
         if (success) {
@@ -490,7 +498,7 @@ public class RuleTransferService {
                     store, ruleEntity.name(), ruleId));
             ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store,
                     importAsRefId, ruleName, ruleEntity);
-            exportRuleMap.setDeleted(RuleTransferUtil.deleteRuleFile(ruleEntity, store, ruleId, comment));
+            exportRuleMap.setDeleted(ruleTransferUtil.deleteRuleFile(ruleEntity, store, ruleId, comment));
             exportRuleMap.setRejected(false);
             exportRuleMap.setImportDateTime(DateTime.now());
 
@@ -535,7 +543,7 @@ public class RuleTransferService {
                     break;
             }
 
-            RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, RuleXmlUtil.getRuleId(ruleEntity, refId));
+            RuleXml ruleXml = ruleTransferUtil.getRuleToImport(store, ruleEntity, ruleXmlUtil.getRuleId(ruleEntity, refId));
             if (ruleXml != null) {
                 ExportRuleMap exportRuleMap = new ExportRuleMap(ruleXml.getStore(), refId, null, store, null, null, ruleEntity);
                 exportRuleMap.setDeleted(false);
@@ -556,17 +564,17 @@ public class RuleTransferService {
 
     @RemoteMethod
     public boolean getAutoExport() {
-        return BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
+        return BooleanUtils.toBoolean(utilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
     }
 
     @RemoteMethod
     public boolean setAutoExport(boolean autoexport) {
-        return UtilityService.setStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
+        return utilityService.setStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
     }
 
     @RemoteMethod
     public ExportRuleMap getRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleEntity) {
-        String storeIdTarget = UtilityService.getStoreId();
+        String storeIdTarget = utilityService.getStoreId();
         ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 
         try {
@@ -586,7 +594,7 @@ public class RuleTransferService {
 
     @RemoteMethod
     public List<ExportRuleMap> getExportMapList(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
-        String storeIdTarget = UtilityService.getStoreId();
+        String storeIdTarget = utilityService.getStoreId();
         ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 
         try {
@@ -604,7 +612,7 @@ public class RuleTransferService {
 
     @RemoteMethod
     public Map<String, ExportRuleMap> getMapRuleTransferMap(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
-        String storeIdTarget = UtilityService.getStoreId();
+        String storeIdTarget = utilityService.getStoreId();
         ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
         Map<String, ExportRuleMap> map = new HashMap<String, ExportRuleMap>();
         boolean returnAllIdsOrigin = ArrayUtils.isEmpty(ruleIdsOrigin);

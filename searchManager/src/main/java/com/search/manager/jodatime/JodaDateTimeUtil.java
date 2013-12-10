@@ -15,17 +15,24 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-
-import com.search.manager.service.UtilityService;
-import com.search.ws.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.search.ws.ConfigManager;
+
+@Component
 public class JodaDateTimeUtil {
 
     private static final Logger logger =
             LoggerFactory.getLogger(JodaDateTimeUtil.class);
 
+    @Autowired
+    private ConfigManager configManager;
+//    @Autowired
+//    private UtilityService utilityService;
+    
     public static DateTimeZone getTimeZone() {
         return DateTimeZone.getDefault();
     }
@@ -34,7 +41,7 @@ public class JodaDateTimeUtil {
         return getTimeZone().getID();
     }
 
-    public static Timestamp toSqlDate(DateTime dateTime) {
+    public Timestamp toSqlDate(DateTime dateTime) {
         if (dateTime == null) {
             return null;
         }
@@ -42,8 +49,7 @@ public class JodaDateTimeUtil {
         /*	For logging display, making sure that zone is set to defined system timezone
          * 	specified in solr.xml and jvm arguments
          */
-        ConfigManager cm = ConfigManager.getInstance();
-        DateTimeZone systemDateTimeZone = DateTimeZone.forID(cm.getSystemTimeZoneId());
+        DateTimeZone systemDateTimeZone = DateTimeZone.forID(configManager.getSystemTimeZoneId());
         DateTime dTime = dateTime.withZone(systemDateTimeZone);
 
         logger.info(String.format("-DTZ- Joda timezone to SQL timezone: %s(%s) -> %s(%s)", dateTime.toString(), dateTime.getZone().getID(), dTime.toString(), dTime.getZone().getID()));
@@ -74,9 +80,8 @@ public class JodaDateTimeUtil {
         return jodaTimeZone;
     }
 
-    public static DateTime toDateTime(Timestamp timestamp) {
-        ConfigManager cm = ConfigManager.getInstance();
-        DateTimeZone systemDateTimeZone = DateTimeZone.forID(cm.getSystemTimeZoneId());
+    public DateTime toDateTime(Timestamp timestamp) {
+        DateTimeZone systemDateTimeZone = DateTimeZone.forID(configManager.getSystemTimeZoneId());
         return (timestamp == null ? null : new DateTime(timestamp, systemDateTimeZone).withZone(DateTimeZone.getDefault()));
     }
 
@@ -84,9 +89,7 @@ public class JodaDateTimeUtil {
         return (date == null ? null : new DateTime(date, tz).withZone(DateTimeZone.getDefault()));
     }
 
-    private static DateTime toDateTime(String storeId, String pattern, String dateTimeText, String xmlTag) {
-        ConfigManager configManager = ConfigManager.getInstance();
-
+    private DateTime toDateTime(String storeId, String pattern, String dateTimeText, String xmlTag) {
         if (StringUtils.isNotBlank(storeId)) {
             pattern = configManager.getStoreParameter(storeId, xmlTag);
         }
@@ -100,31 +103,30 @@ public class JodaDateTimeUtil {
         return formatter.withZone(DateTimeZone.getDefault()).parseDateTime(dateTimeText);
     }
 
-    public static DateTime toDateTimeFromPattern(String pattern, String dateTimeText) {
+    public DateTime toDateTimeFromPattern(String pattern, String dateTimeText) {
         return toDateTime(null, pattern, dateTimeText, null);
     }
 
-    public static DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText, JodaPatternType patternType) {
+    public DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText, JodaPatternType patternType) {
         return toDateTime(storeId, null, dateTimeText, patternType.equals(JodaPatternType.DATE) ? "date-format" : "datetime-format");
     }
 
-    public static DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText) {
+    public DateTime toDateTimeFromStorePattern(String storeId, String dateTimeText) {
         return toDateTime(storeId, null, dateTimeText, "datetime-format");
     }
 
-    public static DateTime toDateTimeFromStorePattern(String dateTimeText, JodaPatternType patternType) {
-        String storeId = UtilityService.getStoreId();
-        return toDateTimeFromStorePattern(storeId, dateTimeText, patternType);
-    }
+//    public DateTime toDateTimeFromStorePattern(String dateTimeText, JodaPatternType patternType) {
+//        String storeId = utilityService.getStoreId();
+//        return toDateTimeFromStorePattern(storeId, dateTimeText, patternType);
+//    }
 
-    public static DateTime toDateTimeFromStorePattern(String dateTimeText) {
-        String storeId = UtilityService.getStoreId();
-        return toDateTimeFromStorePattern(storeId, dateTimeText, JodaPatternType.DATE_TIME);
-    }
+//    public DateTime toDateTimeFromStorePattern(String dateTimeText) {
+//        String storeId = utilityService.getStoreId();
+//        return toDateTimeFromStorePattern(storeId, dateTimeText, JodaPatternType.DATE_TIME);
+//    }
 
-    private static String formatDateTime(String storeId, String pattern, DateTime dateTime, String xmlTag) {
-        ConfigManager configManager = ConfigManager.getInstance();
-
+    private String formatDateTime(String storeId, String pattern, DateTime dateTime, String xmlTag) {
+    	
         if (StringUtils.isNotBlank(storeId)) {
             pattern = configManager.getStoreParameter(storeId, xmlTag);
         }
@@ -138,24 +140,28 @@ public class JodaDateTimeUtil {
         return formatter.withZone(DateTimeZone.getDefault()).print(dateTime);
     }
 
-    public static String formatDateTimeFromPattern(String pattern, DateTime dateTime) {
+    public String formatDateTimeFromPattern(String pattern, DateTime dateTime) {
         return StringUtils.isNotBlank(pattern) ? formatDateTime(null, pattern, dateTime, null) : "";
     }
 
-    public static String formatFromStorePattern(DateTime dateTime, JodaPatternType patternType) {
-        String storeId = UtilityService.getStoreId();
-        return StringUtils.isNotBlank(storeId) ? formatFromStorePattern(storeId, dateTime, patternType) : "";
-    }
+//    public String formatFromStorePattern(DateTime dateTime, JodaPatternType patternType) {
+//        String storeId = utilityService.getStoreId();
+//        return StringUtils.isNotBlank(storeId) ? formatFromStorePattern(storeId, dateTime, patternType) : "";
+//    }
 
-    public static String formatFromStorePattern(String storeId, DateTime dateTime, JodaPatternType patternType) {
+    public String formatFromStorePattern(String storeId, DateTime dateTime, JodaPatternType patternType) {
         return formatDateTime(storeId, null, dateTime, JodaPatternType.DATE.equals(patternType) ? "date-format" : "datetime-format");
     }
 
-    public static String formatFromStorePatternWithZone(DateTime dateTime, JodaPatternType patternType) {
-        String storeId = UtilityService.getStoreId();
-        return StringUtils.isNotBlank(storeId) ? String.format("%s %s", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()) : "";
-    }
+//    public String formatFromStorePatternWithZone(DateTime dateTime, JodaPatternType patternType) {
+//        String storeId = utilityService.getStoreId();
+//        return StringUtils.isNotBlank(storeId) ? String.format("%s %s", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()) : "";
+//    }
 
+    public String formatFromStorePatternWithZone(String storeId, DateTime dateTime, JodaPatternType patternType) {
+    	return StringUtils.isNotBlank(storeId) ? String.format("%s %s", formatFromStorePattern(storeId, dateTime, patternType), getTimeZoneID()) : "";
+    }
+    
     public static String getRemainingDays(DateTime startDateTime, DateTime endDateTime) {
 
         if (startDateTime == null) {
@@ -188,10 +194,9 @@ public class JodaDateTimeUtil {
 	 *  Convert string to user-defined timezone if set, otherwise store-defined timezone will be applied
 	 *  
 	 */
-	public static DateTime toUserDateTimeZone(String storeId, String dateTimeText){
-		ConfigManager cm = ConfigManager.getInstance();
-		String dateFormat = cm.getStoreParameter(storeId, "date-format");
-		String dateTimeFormat = cm.getStoreParameter(storeId, "datetime-format");
+	public DateTime toUserDateTimeZone(String storeId, String dateTimeText){
+		String dateFormat = configManager.getStoreParameter(storeId, "date-format");
+		String dateTimeFormat = configManager.getStoreParameter(storeId, "datetime-format");
 		
 		DateTimeParser[] parsers = { 
 		        DateTimeFormat.forPattern(dateFormat).getParser(),

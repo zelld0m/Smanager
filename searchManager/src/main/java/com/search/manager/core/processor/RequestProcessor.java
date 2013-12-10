@@ -10,6 +10,14 @@ import org.apache.http.NameValuePair;
 import com.search.ws.SolrResponseParser;
 
 public interface RequestProcessor {
-	public boolean isEnabled();
-	public void process(HttpServletRequest request, SolrResponseParser solrHelper, List<Map<String, String>> activeRules, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs);
+	
+	boolean isEnabled(RequestPropertyBean requestPropertyBean);
+
+	void process(HttpServletRequest request,
+			SolrResponseParser solrHelper,
+			RequestPropertyBean requestPropertyBean,
+			List<Map<String, String>> activeRules,
+			Map<String, List<NameValuePair>> paramMap,
+			List<NameValuePair> nameValuePairs);
+
 }

@@ -54,7 +54,15 @@ public class ElevateService extends RuleService {
             LoggerFactory.getLogger(ElevateService.class);
     @Autowired
     private DaoService daoService;
-
+    @Autowired
+	private UtilityService utilityService;
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
+    @Autowired
+    private DateAndTimeUtils dateAndTimeUtils;
+    @Autowired
+    private SearchHelper searchHelper;
+    
     @Override
     public RuleEntity getRuleEntity() {
         return RuleEntity.ELEVATE;
@@ -63,7 +71,7 @@ public class ElevateService extends RuleService {
     @RemoteMethod
     public int updateElevateItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition) {
         int changes = 0;
-        String storeId = UtilityService.getStoreId();
+        String storeId = utilityService.getStoreId();
         ElevateResult elevate = new ElevateResult();
         elevate.setStoreKeyword(new StoreKeyword(storeId, keyword));
         elevate.setMemberId(memberId);
@@ -92,7 +100,7 @@ public class ElevateService extends RuleService {
             changes += ((updateElevate(keyword, memberId, position, condition) > 0) ? 1 : 0);
         }
 
-        if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaDateTimeUtil.formatFromStorePattern(storeId, elevateProduct.getExpiryDate(), JodaPatternType.DATE)))) {
+        if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(jodaDateTimeUtil.formatFromStorePattern(storeId, elevateProduct.getExpiryDate(), JodaPatternType.DATE)))) {
             changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0) ? 1 : 0);
         }
 
@@ -103,7 +111,7 @@ public class ElevateService extends RuleService {
     public int updateElevateFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter) {
         int changes = 0;
 
-        String storeId = UtilityService.getStoreId();
+        String storeId = utilityService.getStoreId();
         ElevateResult elevate = new ElevateResult();
         elevate.setStoreKeyword(new StoreKeyword(storeId, keyword));
         elevate.setMemberId(memberId);
@@ -111,7 +119,7 @@ public class ElevateService extends RuleService {
         RedirectRuleCondition rrCondition = new RedirectRuleCondition();
         rrCondition.setStoreId(storeId);
         rrCondition.setFilter(filter);
-        UtilityService.setFacetTemplateValues(rrCondition);
+        utilityService.setFacetTemplateValues(rrCondition);
 
         try {
             elevate = daoService.getElevateItem(elevate);
@@ -142,7 +150,7 @@ public class ElevateService extends RuleService {
             changes += ((updateElevate(keyword, memberId, position, rrCondition.getCondition()) > 0) ? 1 : 0);
         }
 
-        if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(JodaDateTimeUtil.formatFromStorePattern(storeId, elevateProduct.getExpiryDate(), JodaPatternType.DATE)))) {
+        if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(jodaDateTimeUtil.formatFromStorePattern(storeId, elevateProduct.getExpiryDate(), JodaPatternType.DATE)))) {
             changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0) ? 1 : 0);
         }
 
@@ -153,15 +161,15 @@ public class ElevateService extends RuleService {
         int result = -1;
         try {
             logger.info(String.format("%s %s %s %d %s %s", keyword, edp, condition != null ? condition.getCondition() : "", sequence, expiryDate, comment));
-            String storeId = UtilityService.getStoreId();
-            String userName = UtilityService.getUsername();
+            String storeId = utilityService.getStoreId();
+            String userName = utilityService.getUsername();
             daoService.addKeyword(new StoreKeyword(storeId, keyword)); // TODO: What if keyword is not added?
 
             ElevateResult e = new ElevateResult(new StoreKeyword(storeId, keyword));
             e.setLocation(sequence);
-            e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
+            e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
             e.setCreatedBy(userName);
-            e.setComment(UtilityService.formatComment(comment));
+            e.setComment(utilityService.formatComment(comment));
             e.setElevateEntity(entity);
             e.setForceAdd(forceAdd);
             switch (entity) {
@@ -217,12 +225,12 @@ public class ElevateService extends RuleService {
         resultMap.put("PASSED", passedList);
         resultMap.put("FAILED", failedList);
 
-        String server = UtilityService.getServerName();
-        String store = UtilityService.getStoreId();
+        String server = utilityService.getServerName();
+        String store = utilityService.getStoreId();
 
         int count = 0;
-        comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-        comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+        comment = comment.replaceAll("%%timestamp%%", dateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+        comment = comment.replaceAll("%%commentor%%", utilityService.getUsername());
 
         sequence = (sequence == 0) ? 1 : sequence;
         for (String partNumber : partNumbers) {
@@ -248,8 +256,8 @@ public class ElevateService extends RuleService {
     @RemoteMethod
     public int addFacetRule(String keyword, int sequence, String expiryDate, String comment, Map<String, List<String>> filter) {
         RedirectRuleCondition rrCondition = new RedirectRuleCondition(filter);
-        rrCondition.setStoreId(UtilityService.getStoreId());
-        UtilityService.setFacetTemplateValues(rrCondition);
+        rrCondition.setStoreId(utilityService.getStoreId());
+        utilityService.setFacetTemplateValues(rrCondition);
         return addItem(keyword, null, rrCondition, sequence, expiryDate, comment, MemberTypeEntity.FACET, false);
     }
 
@@ -258,12 +266,12 @@ public class ElevateService extends RuleService {
         int result = -1;
         try {
             logger.info(String.format("%s %s %s", keyword, memberId, expiryDate));
-            String storeId = UtilityService.getStoreId();
+            String storeId = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(storeId, keyword), memberId);
             e = daoService.getElevateItem(e);
             if (e != null) {
-                e.setExpiryDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
-                e.setLastModifiedBy(UtilityService.getUsername());
+                e.setExpiryDate(jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
+                e.setLastModifiedBy(utilityService.getUsername());
                 result = daoService.updateElevateResultExpiryDate(e);
             }
         } catch (DaoException e) {
@@ -280,16 +288,16 @@ public class ElevateService extends RuleService {
     public int addComment(String keyword, String memberId, String comment) {
         try {
             logger.info(String.format("%s %s %s", keyword, memberId, comment));
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
 
             if (StringUtils.isNotBlank(comment)) {
-                comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-                comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+                comment = comment.replaceAll("%%timestamp%%", dateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+                comment = comment.replaceAll("%%commentor%%", utilityService.getUsername());
             }
 
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword), memberId);
-            e.setLastModifiedBy(UtilityService.getUsername());
-            e.setComment(UtilityService.formatComment(comment));
+            e.setLastModifiedBy(utilityService.getUsername());
+            e.setComment(utilityService.formatComment(comment));
             daoService.appendElevateResultComment(e);
             return addComment(comment, e);
         } catch (DaoException e) {
@@ -302,9 +310,9 @@ public class ElevateService extends RuleService {
     public int deleteItemInRule(String keyword, String memberId) {
         try {
             logger.info(String.format("%s %s", keyword, memberId));
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword), memberId);
-            e.setLastModifiedBy(UtilityService.getUsername());
+            e.setLastModifiedBy(utilityService.getUsername());
             e = daoService.getElevateItem(e);
             return daoService.deleteElevateResult(e);
         } catch (DaoException e) {
@@ -317,7 +325,7 @@ public class ElevateService extends RuleService {
     public int updateElevate(String keyword, String memberId, int sequence, String condition) {
         try {
             logger.info(String.format("%s %s %d", keyword, memberId, sequence));
-            ElevateResult elevate = new ElevateResult(new StoreKeyword(UtilityService.getStoreId(), keyword), memberId);
+            ElevateResult elevate = new ElevateResult(new StoreKeyword(utilityService.getStoreId(), keyword), memberId);
 
             try {
                 elevate = daoService.getElevateItem(elevate);
@@ -329,7 +337,7 @@ public class ElevateService extends RuleService {
                     elevate.setCondition(new RedirectRuleCondition(condition));
                 }
                 elevate.setLocation(sequence);
-                elevate.setLastModifiedBy(UtilityService.getUsername());
+                elevate.setLastModifiedBy(utilityService.getUsername());
                 return daoService.updateElevateResult(elevate);
             }
         } catch (DaoException e) {
@@ -342,7 +350,7 @@ public class ElevateService extends RuleService {
     public int updateElevateForceAdd(String keyword, String memberId, boolean forceAddFlag) {
         try {
             logger.info(String.format("%s %s %b", keyword, memberId, forceAddFlag));
-            ElevateResult elevate = new ElevateResult(new StoreKeyword(UtilityService.getStoreId(), keyword), memberId);
+            ElevateResult elevate = new ElevateResult(new StoreKeyword(utilityService.getStoreId(), keyword), memberId);
 
             try {
                 elevate = daoService.getElevateItem(elevate);
@@ -351,7 +359,7 @@ public class ElevateService extends RuleService {
             }
             if (elevate != null) {
                 elevate.setForceAdd(forceAddFlag);
-                elevate.setLastModifiedBy(UtilityService.getUsername());
+                elevate.setLastModifiedBy(utilityService.getUsername());
                 return daoService.updateElevateResult(elevate);
             }
         } catch (DaoException e) {
@@ -373,7 +381,7 @@ public class ElevateService extends RuleService {
         }
 
         if (rs != null && CollectionUtils.isNotEmpty(rs.getList())) {
-            UtilityService.setFacetTemplateValues(rs.getList());
+            utilityService.setFacetTemplateValues(rs.getList());
         }
 
         return rs;
@@ -398,8 +406,8 @@ public class ElevateService extends RuleService {
         RecordSet<ElevateProduct> result = null;
         try {
             logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
-            String server = UtilityService.getServerName();
-            String store = UtilityService.getStoreId();
+            String server = utilityService.getServerName();
+            String store = utilityService.getStoreId();
 
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null, page, itemsPerPage);
@@ -414,8 +422,8 @@ public class ElevateService extends RuleService {
     public RecordSet<ElevateProduct> getAllElevatedProductsIgnoreKeyword(String keyword, int page, int itemsPerPage) {
         try {
             logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
-            String server = UtilityService.getServerName();
-            String store = UtilityService.getStoreId();
+            String server = utilityService.getServerName();
+            String store = utilityService.getStoreId();
 
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null, page, itemsPerPage);
@@ -430,8 +438,8 @@ public class ElevateService extends RuleService {
     public RecordSet<ElevateProduct> getActiveElevatedProducts(String keyword, int page, int itemsPerPage) {
         try {
             logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
-            String server = UtilityService.getServerName();
-            String store = UtilityService.getStoreId();
+            String server = utilityService.getServerName();
+            String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, DateTime.now(), null, page, itemsPerPage);
             return daoService.getElevatedProducts(server, criteria);
@@ -445,8 +453,8 @@ public class ElevateService extends RuleService {
     public RecordSet<ElevateProduct> getActiveElevatedProductsIgnoreKeyword(String keyword, int page, int itemsPerPage) {
         try {
             logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
-            String server = UtilityService.getServerName();
-            String store = UtilityService.getStoreId();
+            String server = utilityService.getServerName();
+            String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, DateTime.now(), null, page, itemsPerPage);
             return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
@@ -460,8 +468,8 @@ public class ElevateService extends RuleService {
     public RecordSet<ElevateProduct> getExpiredElevatedProducts(String keyword, int page, int itemsPerPage) {
         try {
             logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
-            String server = UtilityService.getServerName();
-            String store = UtilityService.getStoreId();
+            String server = utilityService.getServerName();
+            String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateTime.now().minusDays(1), page, itemsPerPage);
             return daoService.getElevatedProducts(server, criteria);
@@ -475,8 +483,8 @@ public class ElevateService extends RuleService {
     public RecordSet<ElevateProduct> getExpiredElevatedProductsIgnoreKeyword(String keyword, int page, int itemsPerPage) {
         try {
             logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
-            String server = UtilityService.getServerName();
-            String store = UtilityService.getStoreId();
+            String server = utilityService.getServerName();
+            String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateTime.now().minusDays(1), page, itemsPerPage);
             return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
@@ -490,8 +498,8 @@ public class ElevateService extends RuleService {
     public RecordSet<ElevateProduct> getNoExpiryElevatedProducts(String keyword, int page, int itemsPerPage) {
         try {
             logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
-            String server = UtilityService.getServerName();
-            String store = UtilityService.getStoreId();
+            String server = utilityService.getServerName();
+            String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null, page, itemsPerPage);
             return daoService.getNoExpiryElevatedProducts(server, criteria);
@@ -505,7 +513,7 @@ public class ElevateService extends RuleService {
     public Integer getTotalProductInRule(String keyword) {
         try {
             logger.info(String.format("%s", keyword));
-            String store = UtilityService.getStoreId();
+            String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null, null, null);
             return daoService.getElevateResultCount(criteria);
@@ -519,8 +527,8 @@ public class ElevateService extends RuleService {
     public ElevateProduct getElevatedProduct(String keyword, String memberId) {
         try {
             logger.info(String.format("%s %s", keyword, memberId));
-            String server = UtilityService.getServerName();
-            String store = UtilityService.getStoreId();
+            String server = utilityService.getServerName();
+            String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
             e.setMemberId(memberId);
             return daoService.getElevatedProduct(server, e);
@@ -544,7 +552,7 @@ public class ElevateService extends RuleService {
     public int clearRule(String keyword) {
         try {
             logger.info(String.format("%s", keyword));
-            return daoService.clearElevateResult(new StoreKeyword(UtilityService.getStoreId(), keyword));
+            return daoService.clearElevateResult(new StoreKeyword(utilityService.getStoreId(), keyword));
         } catch (DaoException e) {
             logger.error("Failed during clearRule()", e);
         }
@@ -554,17 +562,17 @@ public class ElevateService extends RuleService {
     private int addComment(String comment, ElevateResult e) throws DaoException {
         Comment com = new Comment();
         com.setComment(comment);
-        com.setUsername(UtilityService.getUsername());
+        com.setUsername(utilityService.getUsername());
         com.setReferenceId(e.getMemberId());
         com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
-        com.setStore(new Store(UtilityService.getStoreId()));
+        com.setStore(new Store(utilityService.getStoreId()));
         return daoService.addComment(com);
     }
 
     @RemoteMethod
     public int addRuleComment(String keyword, String memberId, String pComment) {
         int result = -1;
-        String store = UtilityService.getStoreId();
+        String store = utilityService.getStoreId();
 
         try {
             ElevateResult elevate = new ElevateResult();
@@ -573,7 +581,7 @@ public class ElevateService extends RuleService {
             elevate = daoService.getElevateItem(elevate);
             if (elevate != null) {
                 elevate.setComment(pComment);
-                elevate.setLastModifiedBy(UtilityService.getUsername());
+                elevate.setLastModifiedBy(utilityService.getUsername());
                 daoService.updateElevateResultComment(elevate);
                 result = addComment(pComment, elevate);
             }
@@ -586,8 +594,8 @@ public class ElevateService extends RuleService {
     @RemoteMethod
     public Map<String, Boolean> isRequireForceAdd(final String keyword, String[] memberIds) {
         ExecutorService execService = Executors.newFixedThreadPool(10);
-        final String storeName = UtilityService.getStoreId();
-        final String serverName = UtilityService.getServerName();
+        final String storeName = utilityService.getStoreId();
+        final String serverName = utilityService.getServerName();
         final Map<String, Boolean> map = new HashMap<String, Boolean>();
         int tasks = 0;
 
@@ -601,7 +609,7 @@ public class ElevateService extends RuleService {
                     String condition = "";
                     if (MemberTypeEntity.FACET.equals(elevate.getEntity())) {
                         RedirectRuleCondition rr = elevate.getCondition();
-                        UtilityService.setFacetTemplateValues(rr);
+                        utilityService.setFacetTemplateValues(rr);
                         condition = rr.getConditionForSolr();
                     } else {
                         condition = String.format("EDP:%s", elevate.getEdp());
@@ -612,7 +620,7 @@ public class ElevateService extends RuleService {
                         public Boolean call() {
                             boolean forceAdd = false;
                             try {
-                                forceAdd = SearchHelper.isForceAddCondition(serverName, storeName, keyword, filter);
+                                forceAdd = searchHelper.isForceAddCondition(serverName, storeName, keyword, filter);
                             } catch (Exception e) {
                                 logger.error("Failed to get force add status for condition: " + filter, e);
                             }
@@ -646,8 +654,8 @@ public class ElevateService extends RuleService {
     public Map<String, Boolean> isItemInNaturalResult(final String keyword, String[] memberIds, String[] conditions) {
 
         ExecutorService execService = Executors.newFixedThreadPool(10);
-        final String storeName = UtilityService.getStoreId();
-        final String serverName = UtilityService.getServerName();
+        final String storeName = utilityService.getStoreId();
+        final String serverName = utilityService.getServerName();
         final Map<String, Boolean> map = new HashMap<String, Boolean>();
         int tasks = 0;
 
@@ -662,7 +670,7 @@ public class ElevateService extends RuleService {
                         public Boolean call() {
                             boolean forceAdd = false;
                             try {
-                                forceAdd = SearchHelper.isForceAddCondition(serverName, storeName, keyword, condition);
+                                forceAdd = searchHelper.isForceAddCondition(serverName, storeName, keyword, condition);
                             } catch (Exception e) {
                                 logger.error("Failed to get force add status for condition: " + condition, e);
                             }

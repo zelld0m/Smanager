@@ -52,14 +52,22 @@ public class RedirectController {
 
     private static final Logger logger =
             LoggerFactory.getLogger(RedirectController.class);
+    
     private static final String RULE_TYPE = RuleEntity.QUERY_CLEANING.toString();
+    
     @Autowired
     private RedirectService redirectService;
     @Autowired
     private DownloadService downloadService;
     @Autowired
     private RuleVersionService ruleVersionService;
-
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private RuleVersionUtil ruleVersionUtil;
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
@@ -137,7 +145,7 @@ public class RedirectController {
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        RuleVersionListXml listXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.QUERY_CLEANING, ruleId);
+        RuleVersionListXml listXml = ruleVersionUtil.getRuleVersionList(utilityService.getStoreId(), RuleEntity.QUERY_CLEANING, ruleId);
         String subTitle = String.format("Query Cleaning Rule [%s]", listXml != null ? listXml.getRuleName() : "");
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
@@ -150,8 +158,8 @@ public class RedirectController {
             for (RuleXml rule : rules) {
                 RedirectRuleXml xml = (RedirectRuleXml) rule;
                 if (xml != null) {
-                    SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.QUERY_CLEANING);
-                    subModels.addAll(RuleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.QUERY_CLEANING);
+                    subModels.addAll(ruleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
                 }
             }
         }

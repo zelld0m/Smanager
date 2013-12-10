@@ -59,13 +59,21 @@ public class RuleTransferController {
 
     private static final Logger logger =
             LoggerFactory.getLogger(RuleTransferController.class);
+    
     private static final String IMPORT = "import";
     private static final String EXPORT = "export";
+    
     @Autowired
     private RuleTransferService ruleTransferService;
     @Autowired
     private DownloadService downloadService;
-
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private RuleXmlReportUtil ruleXmlReportUtil;
+    
     /**
      * Downloads the report as an Excel format.
      * <p>
@@ -186,11 +194,11 @@ public class RuleTransferController {
         }
 
         if (xml.getRuleStatus() != null) {
-            String storeId = UtilityService.getStoreId();
-            subReportHeader.addRow("Published Date: ", xml.getRuleStatus().getLastPublishedDate() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId, xml.getRuleStatus().getLastPublishedDate(), JodaPatternType.DATE_TIME) : "");
+            String storeId = utilityService.getStoreId();
+            subReportHeader.addRow("Published Date: ", xml.getRuleStatus().getLastPublishedDate() != null ? jodaDateTimeUtil.formatFromStorePattern(storeId, xml.getRuleStatus().getLastPublishedDate(), JodaPatternType.DATE_TIME) : "");
             if (EXPORT.equalsIgnoreCase(transferType)) {
                 subReportHeader.addRow("Export Type: ", xml.getRuleStatus().getExportType() != null ? xml.getRuleStatus().getExportType().getDisplayText() : "");
-                subReportHeader.addRow("Export Date: ", xml.getRuleStatus().getLastExportDate() != null ? JodaDateTimeUtil.formatFromStorePattern(storeId, xml.getRuleStatus().getLastExportDate(), JodaPatternType.DATE_TIME) : "");
+                subReportHeader.addRow("Export Date: ", xml.getRuleStatus().getLastExportDate() != null ? jodaDateTimeUtil.formatFromStorePattern(storeId, xml.getRuleStatus().getLastExportDate(), JodaPatternType.DATE_TIME) : "");
             }
         }
 
@@ -210,7 +218,7 @@ public class RuleTransferController {
                         RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
                         if (xml != null) {
                             SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                            subModels.add(new ElevateReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
+                            subModels.add(new ElevateReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
                         }
                     }
                 }
@@ -221,7 +229,7 @@ public class RuleTransferController {
                 for (RuleXml xml : rules) {
                     if (xml != null) {
                         SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                        subModels.add(new ElevateReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
+                        subModels.add(new ElevateReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
                     }
                 }
             }
@@ -242,7 +250,7 @@ public class RuleTransferController {
                         RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
                         if (xml != null) {
                             SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                            subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts((DemoteRuleXml) xml)));
+                            subModels.add(new DemoteReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getDemoteProducts((DemoteRuleXml) xml)));
                         }
                     }
                 }
@@ -253,7 +261,7 @@ public class RuleTransferController {
                 for (RuleXml xml : rules) {
                     if (xml != null) {
                         SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                        subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts((DemoteRuleXml) xml)));
+                        subModels.add(new DemoteReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getDemoteProducts((DemoteRuleXml) xml)));
                     }
                 }
             }
@@ -274,7 +282,7 @@ public class RuleTransferController {
                         RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
                         if (xml != null) {
                             SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                            subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getExcludeProducts((ExcludeRuleXml) xml)));
+                            subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getExcludeProducts((ExcludeRuleXml) xml)));
                         }
                     }
                 }
@@ -285,7 +293,7 @@ public class RuleTransferController {
                 for (RuleXml xml : rules) {
                     if (xml != null) {
                         SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                        subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getExcludeProducts((ExcludeRuleXml) xml)));
+                        subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getExcludeProducts((ExcludeRuleXml) xml)));
                     }
                 }
             }
@@ -307,7 +315,7 @@ public class RuleTransferController {
                         FacetSortRuleXml xml = (FacetSortRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
                         if (xml != null) {
                             SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                            subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getFacetSortReportBeanList(xml)));
+                            subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getFacetSortReportBeanList(xml)));
                         }
                     }
                 }
@@ -319,7 +327,7 @@ public class RuleTransferController {
                     FacetSortRuleXml xml = (FacetSortRuleXml) rule;
                     if (rule != null) {
                         SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                        subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getFacetSortReportBeanList(xml)));
+                        subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getFacetSortReportBeanList(xml)));
                     }
                 }
             }
@@ -341,7 +349,7 @@ public class RuleTransferController {
                         RedirectRuleXml xml = (RedirectRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
                         if (xml != null) {
                             SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                            subModels.addAll(RuleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
+                            subModels.addAll(ruleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
                         }
                     }
                 }
@@ -353,7 +361,7 @@ public class RuleTransferController {
                     RedirectRuleXml xml = (RedirectRuleXml) rule;
                     if (xml != null) {
                         SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                        subModels.addAll(RuleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
+                        subModels.addAll(ruleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
                     }
                 }
             }
@@ -375,7 +383,7 @@ public class RuleTransferController {
                         RankingRuleXml xml = (RankingRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
                         if (xml != null) {
                             SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                            subModels.addAll(RuleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
+                            subModels.addAll(ruleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
                         }
                     }
                 }
@@ -387,7 +395,7 @@ public class RuleTransferController {
                     RankingRuleXml xml = (RankingRuleXml) rule;
                     if (xml != null) {
                         SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-                        subModels.addAll(RuleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
+                        subModels.addAll(ruleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
                     }
                 }
             }

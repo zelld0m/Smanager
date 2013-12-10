@@ -7,10 +7,25 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
-
-    <!-- Initialize Utility Classes -->
-    <bean class="com.search.manager.utility.UtilityInitializer" scope="singleton" lazy-init="false" init-method="initialize">
-        <property name="globalVarFile" value="/home/solr/bin/ws/config/globalvar.properties" />
-        <property name="storeSolrPropertiesFile" value="${solr.configPath}" />
+    
+    <bean id="propertiesUtils" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="com.search.manager.utility.PropertiesUtils.initPropertiesConfig" />
+        <property name="arguments">
+            <list>
+                <value>/home/solr/bin/ws/config/globalvar.properties</value>
+            </list>
+        </property>
     </bean>
+    
+    <bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
+ 		<constructor-arg name="storeXMLFile" value="/home/solr/conf/store.xml" />
+ 		<constructor-arg name="solrXMLFile" value="/home/solr/conf/solr.xml" />
+    </bean>
+    
+    <bean id="jodaDateTimeUtil" class="com.search.manager.jodatime.JodaDateTimeUtil" />
+    <bean id="utilityService" class="com.search.manager.service.UtilityService" />
+	<bean id="RuleTransferUtil" class="com.search.manager.xml.file.RuleTransferUtil" />
+	<bean id="solrSchemaUtility" class="com.search.manager.schema.SolrSchemaUtility" />
+	<bean id="ruleVersionUtil" class="com.search.manager.dao.file.RuleVersionUtil" />
+	
 </beans>

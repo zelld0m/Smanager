@@ -30,10 +30,10 @@
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/timezone-js/0.4.4/date.js" />" ></script>
 
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreParameters()" var="storeParameters" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getIndexedSchemaFields()" var="schemaFields" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getTimeZoneId()" var="timeZoneId" />
+  <spring:eval expression="@utilityService.getSolrConfig()" var="solrConfig" />
+  <spring:eval expression="@utilityService.getStoreParameters()" var="storeParameters" />
+  <spring:eval expression="@utilityService.getIndexedSchemaFields()" var="schemaFields" />
+  <spring:eval expression="@utilityService.getTimeZoneId()" var="timeZoneId" />
   
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;

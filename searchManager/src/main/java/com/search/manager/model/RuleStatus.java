@@ -292,34 +292,42 @@ public class RuleStatus extends ModelBean {
 	}
 
 	public String getFormattedLastRequestDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 	
 	public String getFormattedLastApprovalDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 	
 	public String getFormattedLastPublishedDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 	
 	public String getFormattedLastExportDateTime() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 
 	public String getFormattedLastRequestDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDate(), JodaPatternType.DATE);
+		return "";
 	}
 	
 	public String getFormattedLastApprovalDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDate(), JodaPatternType.DATE);
+		return "";
 	}
 	
 	public String getFormattedLastPublishedDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDate(), JodaPatternType.DATE);
+		return "";
 	}
 	
 	public String getFormattedLastExportDate() {
-		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDate(), JodaPatternType.DATE);
+		return "";
 	}
 }

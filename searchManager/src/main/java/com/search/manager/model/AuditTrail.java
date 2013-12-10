@@ -111,10 +111,12 @@ public class AuditTrail extends ModelBean implements Serializable {
 	}
 	
 	public String getFormattedCreatedDateTime(){
-		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
+//		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
+		return "";
 	}
 	
 	public String getFormattedCreatedDate(){
-		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
+//		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
+		return "";
 	}
 }
