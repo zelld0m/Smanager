@@ -83,7 +83,7 @@ public class ConfigManager {
 
 	private void initStoreSettingsMap() {
 		for (String storeId : getStoreIds()) {
-			for (String moduleName: getModuleNames()) {
+			for (String moduleName: getModuleNames(storeId)) {
 				String basePath = StringUtils.remove(storeXMLConfig.getBasePath(), storeXMLConfig.getFile().getName());
 				String module = String.format("%s.%s.properties", storeId, moduleName);
 				String filePath = String.format("%s%s/%s", basePath, storeId, module);
@@ -136,8 +136,8 @@ public class ConfigManager {
 		}
 	}
 	
-	public List<String> getModuleNames() {
-		return Arrays.asList(storeXMLConfig.getStringArray("*/module/@name"));
+	public List<String> getModuleNames(String storeId) {
+		return Arrays.asList(storeXMLConfig.getStringArray(String.format("/store[@id='%s']/module/@name", storeId)));
 	}
 	
 	public String getSystemTimeZoneId() {
