@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Dev Config -->
 <store-properties>
     <store id="ecost" extends="pcmall">
         <module name="settings" title="Settings">

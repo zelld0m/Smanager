@@ -1,7 +1,6 @@
 package com.search.manager.web.controller.rules;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -41,8 +43,6 @@ import com.search.manager.service.RelevancyService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/relevancy")
@@ -102,10 +102,10 @@ public class RelevancyController {
         String relevancyId = request.getParameter("id");
         String filename = request.getParameter("filename");
         String type = request.getParameter("type");
-        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
-
-        Date headerDate = new Date(clientTimezone);
-
+//        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
+        
         logger.debug(String.format("Received request to download report as an XLS: %s %s", relevancyId, filename));
 
         if (StringUtils.isBlank(filename)) {
@@ -151,8 +151,9 @@ public class RelevancyController {
         String ruleId = request.getParameter("id");
         String type = request.getParameter("type");
         String filename = request.getParameter("filename");
-        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
-        Date headerDate = new Date(clientTimezone);
+//        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
 
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 

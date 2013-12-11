@@ -1,12 +1,14 @@
 package com.search.manager.web;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -23,8 +25,6 @@ import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.service.AuditService;
 import com.search.manager.service.DownloadService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/audit")
@@ -58,10 +58,10 @@ public class AuditController {
         String endDate = request.getParameter("endDate");
         String totalSize = request.getParameter("totalSize");
         String filename = request.getParameter("filename");
-        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
-
-        Date headerDate = new Date(clientTimezone);
-
+//        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
+        
         logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s %s %s %s", userName, operation, entity, keyword, referenceId, startDate, endDate, totalSize, filename));
 
         int nTotalSize = 0;

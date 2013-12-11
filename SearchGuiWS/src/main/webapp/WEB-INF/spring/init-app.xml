@@ -22,10 +22,9 @@
  		<constructor-arg name="solrXMLFile" value="/home/solr/conf/solr.xml" />
     </bean>
     
-    <bean id="jodaDateTimeUtil" class="com.search.manager.jodatime.JodaDateTimeUtil" />
-    <bean id="utilityService" class="com.search.manager.service.UtilityService" />
-	<bean id="RuleTransferUtil" class="com.search.manager.xml.file.RuleTransferUtil" />
-	<bean id="solrSchemaUtility" class="com.search.manager.schema.SolrSchemaUtility" />
-	<bean id="ruleVersionUtil" class="com.search.manager.dao.file.RuleVersionUtil" />
+    <bean id="jodaDateTimeUtil" class="com.search.manager.jodatime.JodaDateTimeUtil" scope="singleton" />
+    <bean id="utilityService" class="com.search.manager.service.UtilityService" scope="singleton" />
+	<bean id="ruleTransferUtil" class="com.search.manager.xml.file.RuleTransferUtil" scope="singleton" />
+	<bean id="ruleVersionUtil" class="com.search.manager.dao.file.RuleVersionUtil" scope="singleton" />
 	
 </beans>

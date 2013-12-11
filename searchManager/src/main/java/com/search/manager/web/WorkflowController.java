@@ -1,7 +1,6 @@
 package com.search.manager.web;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,8 +27,6 @@ import com.search.manager.report.model.PublishRuleStatusReportModel;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.service.DeploymentService;
 import com.search.manager.service.DownloadService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 public class WorkflowController {
@@ -95,7 +95,7 @@ public class WorkflowController {
         }
 
         String subTitle = "Approval List [" + ruleType + "]";
-        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, new Date());
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, new DateTime());
         ApprovalRuleStatusReportModel reportModel = new ApprovalRuleStatusReportModel(reportHeader, list);
 
         // Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
@@ -133,7 +133,7 @@ public class WorkflowController {
         }
 
         String subTitle = "Publish List [" + ruleType + "]";
-        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, new Date());
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, new DateTime());
         PublishRuleStatusReportModel reportModel = new PublishRuleStatusReportModel(reportHeader, list);
 
         // Delegate to downloadService. Make sure to pass an instance of HttpServletResponse

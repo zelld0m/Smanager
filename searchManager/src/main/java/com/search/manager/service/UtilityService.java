@@ -57,8 +57,6 @@ public class UtilityService {
     
     @Autowired
     private ConfigManager configManager;
-    @Autowired
-    private SolrSchemaUtility solrSchemaUtility;
     
     private final static Map<RuleEntity, AtomicReference<String>> lockService;
 
@@ -211,8 +209,8 @@ public class UtilityService {
     @RemoteMethod
     public String getIndexedSchemaFields() {
         JSONObject json = new JSONObject();
-
-        Schema schema = solrSchemaUtility.getDefaultSchema();
+        
+        Schema schema = SolrSchemaUtility.getDefaultSchema(getSolrServerUrl(getServerName()), getStoreCore());
         if (schema != null) {
             ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
             json.put("indexedFields", (List<String>) attr.getAttribute("indexedFields", RequestAttributes.SCOPE_SESSION));
@@ -374,6 +372,10 @@ public class UtilityService {
         return configManager.getPropertyList("settings", storeId, property);
     }
 
+    public String getSolrServerUrl(String serverName) {
+    	return configManager.getServerParameter(serverName, "url");
+    }
+    
     public List<String> getStoresToExport(String storeId) {
         return getStoreSettings(storeId, DAOConstants.SETTINGS_EXPORT_TARGET);
     }
