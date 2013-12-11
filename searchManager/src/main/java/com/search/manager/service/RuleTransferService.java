@@ -210,7 +210,7 @@ public class RuleTransferService {
     private Map<String, Integer> importRules(String store, String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList) {
         Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
        RuleEntity ruleEntity = RuleEntity.find(ruleType);
-        String userName = UtilityService.getUsername();
+        String userName = utilityService.getUsername();
 
         AuditTrail auditTrail = new AuditTrail();
         auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.importRule));
@@ -384,7 +384,7 @@ public class RuleTransferService {
         Integer status = null;
         boolean autoPublish = false;
         boolean obtainedLock = false;
-        String userName = UtilityService.getUsername();
+        String userName = utilityService.getUsername();
 
         if (ArrayUtils.isNotEmpty(importTypeList)) {
             for (String importType : importTypeList) {

@@ -4,6 +4,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.ImportType;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.model.ModelBean;
 
@@ -14,7 +15,7 @@ public class ImportRuleTask extends ModelBean{
 
 	private String taskId;
 	
-	private RuleType ruleType;
+	private RuleEntity ruleEntity;
 	
 	private String sourceStoreId;
 	
@@ -32,9 +33,9 @@ public class ImportRuleTask extends ModelBean{
 	
 	private TaskExecutionResult taskExecutionResult;
 	
-	public ImportRuleTask(String taskId, RuleType ruleType, String sourceStoreId, String sourceRuleId, String sourceRuleName, String targetStoreId, String targetRuleId, String targetRuleName, ImportType importType, TaskExecutionResult taskExecutionResult) {
+	public ImportRuleTask(String taskId, RuleEntity ruleEntity, String sourceStoreId, String sourceRuleId, String sourceRuleName, String targetStoreId, String targetRuleId, String targetRuleName, ImportType importType, TaskExecutionResult taskExecutionResult) {
 		this.taskId = taskId;
-		this.ruleType = ruleType;
+		this.ruleEntity = ruleEntity;
 		this.sourceStoreId = sourceStoreId;
 		this.sourceRuleId = sourceRuleId;
 		this.sourceRuleName = sourceRuleName;
@@ -52,12 +53,12 @@ public class ImportRuleTask extends ModelBean{
 		this.taskId = taskId;
 	}
 	
-	public RuleType getRuleType() {
-		return ruleType;
+	public RuleEntity getRuleEntity() {
+		return ruleEntity;
 	}
 	
-	public void setRuleType(RuleType ruleType) {
-		this.ruleType = ruleType;
+	public void setRuleEntity(RuleEntity ruleEntity) {
+		this.ruleEntity = ruleEntity;
 	}
 	
 	public String getSourceStoreId() {

@@ -97,6 +97,8 @@ import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.DeploymentService;
 import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.UtilityService;
+import com.search.manager.workflow.dao.ImportRuleTaskDAO;
+import com.search.manager.workflow.model.ImportRuleTask;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
@@ -161,6 +163,14 @@ public class DaoServiceImpl implements DaoService {
     private UtilityService utilityService;
     @Autowired
     private RuleTransferUtil ruleTransferUtil;
+    @Autowired
+    private ConfigManager configManager;
+    @Autowired
+    private RuleTransferService ruleTransferService;
+    @Autowired
+    private DeploymentService deploymentService;
+    @Autowired
+    private ImportRuleTaskDAO importRuleTaskDAO;
     
     private DaoServiceImpl instance;
     
@@ -1667,19 +1677,13 @@ public class DaoServiceImpl implements DaoService {
         } catch (DaoException e) {
             logger.error("Failed to retrieve rule status for " + ruleEntity + " : " + ruleId, e);
         }
-<<<<<<< HEAD
         
-        for (String targetStore : UtilityService.getStoresToExport(store)) {
-        	exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
+        for (String targetStore : utilityService.getStoresToExport(store)) {
+        	exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
         	
         	boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty("settings", targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
         	boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty("workflow", targetStore, "enable."+rule.getRuleEntity().getNthValue(1)));
-        	
-=======
 
-        for (String targetStore : utilityService.getStoresToExport(store)) {
-            exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
->>>>>>> refs/remotes/origin/facet-rule-expand
             ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
                     targetStore, null, null, ruleEntity);
             exportRuleMap.setExportDateTime(exportDateTime);
@@ -1733,20 +1737,29 @@ public class DaoServiceImpl implements DaoService {
     	String[] ruleNameList = {ruleName};
     	String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
     	String importTypeSetting = configManager.getProperty("workflow", storeId, "status."+ruleEntity.getNthValue(1));
+    	
+    	ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, utilityService.getStoreId(), importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
+    	
     	try {
-			ruleTransferService.importRejectRules(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
-			
-			switch(ImportType.getByDisplayText(importTypeSetting)) {
-				case FOR_APPROVAL: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false); break;
-				case AUTO_PUBLISH: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false);
-									deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
-									deploymentService.publishRule(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList); 
-									break;
-				default: 
-			}
-		} catch (PublishLockException e) {
+			importRuleTaskDAO.addImportRuleTask(importRuleTask);
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+//    	try {
+//			ruleTransferService.importRejectRules(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
+//			
+//			switch(ImportType.getByDisplayText(importTypeSetting)) {
+//				case FOR_APPROVAL: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false); break;
+//				case AUTO_PUBLISH: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false);
+//									deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
+//									deploymentService.publishRule(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList); 
+//									break;
+//				default: 
+//			}
+//		} catch (PublishLockException e) {
+//			e.printStackTrace();
+//		}
     }
 
     /* Used by SearchServlet */

@@ -88,8 +88,8 @@ public class RuleVersionService {
     @RemoteMethod
     public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
         boolean success = false;
-        String storeId = UtilityService.getStoreId();
-        RuleXml rule = RuleVersionUtil.getRuleVersion(storeId, RuleEntity.find(ruleType), ruleId, version);
+        String storeId = utilityService.getStoreId();
+        RuleXml rule = ruleVersionUtil.getRuleVersion(storeId, RuleEntity.find(ruleType), ruleId, version);
 
         if (rule != null) {
             rule.setCreatedBy(utilityService.getUsername());
@@ -106,7 +106,7 @@ public class RuleVersionService {
                     // what is this for?
                     RuleStatus ruleStatus = deploymentService.getRuleStatus(storeId, "Ranking Rule", ruleId);
                     if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
-                        deploymentService.processRuleStatus(UtilityService.getStoreId(), "Ranking Rule", ruleId, null, false);
+                        deploymentService.processRuleStatus(utilityService.getStoreId(), "Ranking Rule", ruleId, null, false);
                     }
                     break;
             }

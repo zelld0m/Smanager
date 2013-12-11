@@ -58,19 +58,12 @@ public class DeploymentService {
     @Autowired
     private WorkflowNotificationMailService mailService;
     @Autowired
-<<<<<<< HEAD
-    private RuleTransferService ruleTransferService;
-    @Autowired
-    private ConfigManager configManager;
-
-=======
     private UtilityService utilityService;
     @Autowired
     private ConfigManager configManager;
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
-    
->>>>>>> refs/remotes/origin/facet-rule-expand
+
     @RemoteMethod
     public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {
         RecordSet<RuleStatus> rSet = null;
@@ -107,7 +100,7 @@ public class DeploymentService {
     @RemoteMethod
     public List<String> approveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
         // TODO: add transaction dependency handshake
-        List<String> result = approveRule(ruleType, Arrays.asList(ruleRefIdList), comment);
+        List<String> result = approveRule(storeId, ruleType, Arrays.asList(ruleRefIdList), comment);
         daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, utilityService.getStoreId(), utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 
 
@@ -117,7 +110,7 @@ public class DeploymentService {
     private List<String> approveRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
         List<String> result = new ArrayList<String>();
         try {
-			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
+			List<RuleStatus> ruleStatusList = generateApprovalList(storeId, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
 
             try {
@@ -146,7 +139,7 @@ public class DeploymentService {
     public List<String> unapproveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
         // TODO: add transaction dependency handshake
         List<String> result = unapproveRule(storeId, ruleType, Arrays.asList(ruleRefIdList), comment);
-        daoService.addRuleStatusComment(RuleStatusEntity.REJECTED, storeId, UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+        daoService.addRuleStatusComment(RuleStatusEntity.REJECTED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 		return result;
     }
 
@@ -154,7 +147,7 @@ public class DeploymentService {
         List<String> result = new ArrayList<String>();
         try {
             List<RuleStatus> ruleStatusList = generateApprovalList(storeId, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.REJECTED.toString());
-            getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, UtilityService.getUsername(), DateTime.now()));
+            getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
 
             try {
                 if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "approvalNotification"))) {
@@ -214,8 +207,8 @@ public class DeploymentService {
 
 
     public RecordSet<DeploymentModel> publishRuleNoLock(String store, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
-        String username = UtilityService.getUsername();
-        boolean isAutoExport = BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
+        String username = utilityService.getUsername();
+        boolean isAutoExport = BooleanUtils.toBoolean(utilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
 		List<String> approvedRuleList = null;
         List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
 
@@ -295,10 +288,10 @@ public class DeploymentService {
     @RemoteMethod
     public RecordSet<DeploymentModel> publishRule(String storeId, String storeName, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
         boolean obtainedLock = false;
-        String userName = UtilityService.getUsername();
+        String userName = utilityService.getUsername();
 
         try {
-            obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
+            obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
             return publishRuleNoLock(storeId, ruleType, ruleRefIdList, comment, ruleStatusIdList);
 
         } finally {
@@ -324,7 +317,7 @@ public class DeploymentService {
             }
             
             List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, publishWSMap(storeId, ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
-            Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), DateTime.now());
+            Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
 
             List<String> result = new ArrayList<String>();
             getSuccessList(result, ruleMap);
@@ -394,7 +387,7 @@ public class DeploymentService {
     private Map<String, Boolean> unpublishRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
         try {
             List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
-            Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, UtilityService.getUsername(), DateTime.now());
+            Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
 
             List<String> result = new ArrayList<String>();
             getSuccessList(result, ruleMap);
@@ -453,13 +446,8 @@ public class DeploymentService {
     public RuleStatus processRuleStatus(String storeId, String ruleType, String ruleRefId, String description, Boolean isDelete) {
         int result = -1;
         try {
-<<<<<<< HEAD
-            String username = UtilityService.getUsername();
-            RuleStatus ruleStatus = createRuleStatus(storeId);
-=======
             String username = utilityService.getUsername();
-            RuleStatus ruleStatus = createRuleStatus();
->>>>>>> refs/remotes/origin/facet-rule-expand
+            RuleStatus ruleStatus = createRuleStatus(storeId);
             ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
             ruleStatus.setRuleRefId(ruleRefId);
             ruleStatus.setDescription(description);
@@ -548,7 +536,7 @@ public class DeploymentService {
     }
 
     private RuleStatus createRuleStatus(String storeId) {
-        String userName = UtilityService.getUsername();
+        String userName = utilityService.getUsername();
         RuleStatus ruleStatus = new RuleStatus();
         ruleStatus.setCreatedBy(userName);
         ruleStatus.setLastModifiedBy(userName);
