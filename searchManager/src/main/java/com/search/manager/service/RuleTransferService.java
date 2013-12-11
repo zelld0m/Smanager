@@ -488,7 +488,7 @@ public class RuleTransferService {
         switch (ruleEntity) {
             case SPELL:
                 try {
-                    success = daoService.importSpellRule(store, storeIdOrigin, utilityService.getUsername(),
+                    success = daoService.importSpellRule(store, storeIdOrigin, userName,
                             Integer.valueOf(((DBRuleVersion) ruleXml).getProps().get("maxSuggest")));
                 } catch (DaoException e) {
                     logger.error("Error importing Did You Mean rules.", e);
