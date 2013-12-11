@@ -1,13 +1,15 @@
 package com.search.manager.web.controller.rules;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -30,8 +32,6 @@ import com.search.manager.service.DownloadService;
 import com.search.manager.service.ExcludeService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/exclude")
@@ -74,9 +74,10 @@ public class ExcludeController {
         String page = request.getParameter("page");
         String filename = request.getParameter("filename");
         String itemsPerPage = request.getParameter("itemperpage");
-        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
-
-        Date headerDate = new Date(clientTimezone);
+//        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
+        
         logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
 
         if (StringUtils.isBlank(filename)) {
@@ -127,9 +128,10 @@ public class ExcludeController {
         String type = request.getParameter("type");
         String filter = request.getParameter("filter");
         String filename = request.getParameter("filename");
-        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
-        Date headerDate = new Date(clientTimezone);
-
+//        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
+        
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
         String subTitle = "List of %%Filter%%Excluded Items for [" + keyword + "]";

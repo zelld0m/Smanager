@@ -1,7 +1,6 @@
 package com.search.manager.web;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -49,8 +51,6 @@ import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/")
@@ -86,9 +86,10 @@ public class RuleTransferController {
     public void getExportXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
         String filename = StringUtils.isNotBlank(request.getParameter("filename")) ? request.getParameter("filename") : "export rule";
         String fileType = request.getParameter("type");
-        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
         String ruleType = request.getParameter("ruleType");
-        Date headerDate = new Date(clientTimezone);
+//        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         RuleEntity ruleEntity = RuleEntity.find(ruleType);
 
         logger.debug(String.format("Received request to download report as an XLS: %s", filename));
@@ -125,9 +126,10 @@ public class RuleTransferController {
     public void getImportXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
         String filename = StringUtils.isNotBlank(request.getParameter("filename")) ? request.getParameter("filename") : "export rule";
         String fileType = request.getParameter("type");
-        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
         String ruleType = request.getParameter("ruleType");
-        Date headerDate = new Date(clientTimezone);
+//        long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         RuleEntity ruleEntity = RuleEntity.find(ruleType);
 
         logger.debug(String.format("Received request to download report as an XLS: %s", filename));

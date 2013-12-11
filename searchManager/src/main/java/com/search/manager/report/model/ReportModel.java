@@ -4,17 +4,16 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.report.annotation.ReportField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ReportModel represents the records in the report being generated. Only content should
@@ -141,7 +140,7 @@ public class ReportModel<T extends ReportBean<?>> {
         list.add(bean);
 
 //		ReportModel<ElevateReportBean> model = new ReportModel<ElevateReportBean>(ElevateReportBean.class, list);
-        ReportHeader reportHeader = new ReportHeader("Search GUI (%%STORE%%)", "List of Elevated Items", "elevate", new Date());
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%STORE%%)", "List of Elevated Items", "elevate", new DateTime());
         ElevateReportModel model = new ElevateReportModel(reportHeader, list);
 
         for (int i = 0; i < model.getColumnCount(); i++) {

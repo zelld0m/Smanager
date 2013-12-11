@@ -1,12 +1,14 @@
 package com.search.manager.web;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -35,8 +37,6 @@ import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.service.SpellRuleService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/spell")
@@ -49,7 +49,8 @@ public class SpellController {
     private RuleVersionService ruleVersionService;
     @Autowired
     private DownloadService downloadService;
-    @Autowired
+    @SuppressWarnings("unused")
+	@Autowired
     private SpellRuleService spellRuleService;
     @Autowired
     private RuleTransferService ruleTransferService;
@@ -73,7 +74,8 @@ public class SpellController {
             @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
         logger.debug(String.format("Received request to download current rule as an XLS: %s", filename));
 
-        Date headerDate = new Date(clientTimezone);
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         String subTitle = "Did You Mean Rules";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
@@ -106,7 +108,8 @@ public class SpellController {
             @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
         logger.debug(String.format("Received request to download current rule as an XLS: %s", filename));
 
-        Date headerDate = new Date(clientTimezone);
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         String subTitle = "Did You Mean Rules";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
@@ -140,7 +143,8 @@ public class SpellController {
             @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
         logger.debug(String.format("Received request to download current rule as an XLS: %s", filename));
 
-        Date headerDate = new Date(clientTimezone);
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         String subTitle = "Did You Mean Rules for Import";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
@@ -166,7 +170,8 @@ public class SpellController {
             @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        Date headerDate = new Date(clientTimezone);
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         String subTitle = "Did You Mean Rules";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());
@@ -202,7 +207,8 @@ public class SpellController {
             @RequestParam("clientTimezone") Long clientTimezone, @RequestParam("type") String type) {
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        Date headerDate = new Date(clientTimezone);
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         String subTitle = "Did You Mean Rules";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<SpellReportBean> reportModel = new SpellReportModel(reportHeader, new ArrayList<SpellReportBean>());

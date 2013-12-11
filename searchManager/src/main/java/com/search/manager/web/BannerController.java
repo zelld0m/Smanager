@@ -1,12 +1,14 @@
 package com.search.manager.web;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -29,8 +31,6 @@ import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.utility.Transformers;
 import com.search.manager.xml.file.RuleXmlReportUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/banner")
@@ -39,7 +39,8 @@ public class BannerController {
 
     private static final Logger logger =
             LoggerFactory.getLogger(BannerController.class);
-    @Autowired
+    @SuppressWarnings("unused")
+	@Autowired
     private BannerService bannerService;
     @Autowired
     private RuleVersionService ruleVersionService;
@@ -63,7 +64,8 @@ public class BannerController {
             @RequestParam("type") String type) {
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        Date headerDate = new Date(clientTimezone);
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         String subTitle = "Banners for keyword [" + keyword + "]";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         BannerRuleXml xml = (BannerRuleXml) ruleVersionService.getCurrentRuleXml("Banner", ruleId);
@@ -92,7 +94,8 @@ public class BannerController {
             @RequestParam("type") String type) {
         logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 
-        Date headerDate = new Date(clientTimezone);
+//        Date headerDate = new Date(clientTimezone);
+        DateTime headerDate = new DateTime();
         String subTitle = "Banners for keyword [" + keyword + "]";
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<BannerReportBean> reportModel = new BannerReportModel(reportHeader,
