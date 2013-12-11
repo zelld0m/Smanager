@@ -19,15 +19,17 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.report.model.SubReportHeader;
-import com.search.manager.utility.DateAndTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service for processing Apache POI-based reports
@@ -39,7 +41,7 @@ public class DownloadService {
 	@Autowired
 	private UtilityService utilityService;
 	@Autowired
-	private DateAndTimeUtils dateAndTimeUtils;
+	private JodaDateTimeUtil jodaDateTimeUtil;
 	
 	// TODO: code cleanup: create one class that handles all excel related stuff
 	public enum downloadType {
@@ -193,7 +195,7 @@ public class DownloadService {
 				CellStyle.VERTICAL_CENTER, true);
 		// Create report title
 		HSSFRow rowTitle = createRow(worksheet, rowIndex, 25f);
-		createCell(rowTitle, 0, cellStyleTitle, model.getReportHeader().getReportName());
+		createCell(rowTitle, 0, cellStyleTitle, replaceValues(model.getReportHeader().getReportName(), model.getReportHeader().getDate()));
 		// Create merged region for the report title
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, model.getColumnCount() - 1));
 
@@ -202,7 +204,7 @@ public class DownloadService {
 		HSSFCellStyle cellStyleSubTitle = getCellStyle(workbook, styleMap, "SUBTITLE", rowSubTitleFont, CellStyle.ALIGN_CENTER,
 				CellStyle.VERTICAL_CENTER, true);
 		HSSFRow rowSubTitle = createRow(worksheet, ++rowIndex, 25f);
-		String subReportName = model.getReportHeader().getSubReportName();
+		String subReportName = replaceValues(model.getReportHeader().getSubReportName(), model.getReportHeader().getDate());
 		createCell(rowSubTitle, 0, cellStyleSubTitle, subReportName);
 		// Create merged region for the report subtitle
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, model.getColumnCount() - 1));
@@ -230,7 +232,8 @@ public class DownloadService {
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, model.getColumnCount() - 1));
 		rowHeader = createRow(worksheet, ++rowIndex, 25f);
 		createCell(rowHeader, 0, cellStyleHeaderParam, "Generated on:");
-		createCell(rowHeader, 1, cellStyleHeaderValue, dateAndTimeUtils.formatDateTimeUsingConfig(utilityService.getStoreId(), model.getReportHeader().getDate()));
+//		createCell(rowHeader, 1, cellStyleHeaderValue, dateAndTimeUtils.formatDateTimeUsingConfig(utilityService.getStoreId(), model.getReportHeader().getDate()));
+		createCell(rowHeader, 1, cellStyleHeaderValue, jodaDateTimeUtil.formatFromStorePattern(utilityService.getStoreId(), model.getReportHeader().getDate(), JodaPatternType.DATE));
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, model.getColumnCount() - 1));
 		return rowIndex;
 	}
@@ -384,4 +387,14 @@ public class DownloadService {
 			try { if (outputStream != null) outputStream.close(); } catch (IOException e) { } 
 		}
 	}
+	
+	private String replaceValues(String string, DateTime dateTime) {
+		return StringUtils.replace(StringUtils.replace(
+				StringUtils.replace(string, "%%StoreName%%",
+						utilityService.getStoreName()), "%%User%%",
+				utilityService.getUsername()), "%%Date%%",
+				jodaDateTimeUtil.formatFromStorePattern(utilityService.getStoreId(), dateTime,
+						JodaPatternType.DATE));
+	}
+	
 }
