@@ -1697,7 +1697,7 @@ public class DaoServiceImpl implements DaoService {
                 logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
             } else {
             	if(isAutoImport && isRuleEntityEnabled) {
-            		importExportedRule(targetStore, configManager.getStoreName(targetStore), rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), exportRuleMap.getRuleIdTarget() != null ? exportRuleMap.getRuleIdTarget() : DAOUtils.generateUniqueId(), rule.getRuleName());
+            		importExportedRule(targetStore, username, configManager.getStoreName(targetStore), rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), exportRuleMap.getRuleIdTarget() != null ? exportRuleMap.getRuleIdTarget() : DAOUtils.generateUniqueId(), rule.getRuleName());
             	}
             }
         }
@@ -1728,9 +1728,10 @@ public class DaoServiceImpl implements DaoService {
         return exported;
     }
     
-    private void importExportedRule(String storeId, String storeName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
+    private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
     	ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, utilityService.getStoreId(), importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
-    	
+    	importRuleTask.setCreatedBy(userName);
+    	importRuleTask.setCreatedDate(new DateTime());
     	try {
 			importRuleTaskDAO.addImportRuleTask(importRuleTask);
 		} catch (DaoException e) {
