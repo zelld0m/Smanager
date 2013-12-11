@@ -207,10 +207,9 @@ public class RuleTransferService {
         return resultMap;
     }
 
-    private Map<String, Integer> importRules(String store, String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList) {
+    private Map<String, Integer> importRules(String store, String userName, String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList) {
         Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
        RuleEntity ruleEntity = RuleEntity.find(ruleType);
-        String userName = utilityService.getUsername();
 
         AuditTrail auditTrail = new AuditTrail();
         auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.importRule));
@@ -256,7 +255,7 @@ public class RuleTransferService {
                     break;
             }
 
-            if (importRule(ruleEntity, store, ruleId, comment, importType, importAsId, ruleName)) {
+            if (importRule(ruleEntity, store, userName, ruleId, comment, importType, importAsId, ruleName)) {
                 try {
                     daoService.addRuleStatus(new RuleStatus(ruleEntity, store, importAsId, ruleName, userName, userName,
                             RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
@@ -373,83 +372,93 @@ public class RuleTransferService {
         return statusMap;
     }
 
+    public Map<String, String> importRejectRules(String storeId, String storeName, String userName, String ruleType,
+            String[] importRuleRefIdList, String comment,
+            String[] importTypeList, String[] importAsRefIdList,
+            String[] ruleNameList, String[] rejectRuleRefIdList,
+            String[] rejectRuleNameList) throws PublishLockException {
+    	
+    	 Map<String, String> successList = new HashMap<String, String>();
+    	 Integer status = null;
+    	 boolean autoPublish = false;
+         boolean obtainedLock = false;
+    	
+    	 if (ArrayUtils.isNotEmpty(importTypeList)) {
+             for (String importType : importTypeList) {
+                 if (ImportType.AUTO_PUBLISH.equals(ImportType.getByDisplayText(importType))) {
+                     autoPublish = true;
+                     break;
+                 }
+             }
+         }
+
+         try {
+             if (autoPublish) {
+                 obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
+             }
+             if (ArrayUtils.isNotEmpty(importRuleRefIdList)) {
+                 Map<String, Integer> statusMap = importRules(storeId, userName, ruleType, importRuleRefIdList, comment,
+                         importTypeList, importAsRefIdList, ruleNameList);
+
+                 for (String key : statusMap.keySet()) {
+                     status = statusMap.get(key);
+                     if (status != null) {
+                         switch (status) {
+                             case 0:
+                                 successList.put(key, "import_fail");
+                                 break;
+                             case 1:
+                             case 2:
+                                 successList.put(key, "import_success_submit_for_approval_fail");
+                                 break;
+                             case 3:
+                             case 4:
+                                 successList.put(key, "import_success_publish_fail");
+                                 break;
+                             case 5:
+                                 successList.put(key, "import_success");
+                                 break;
+                         }
+                     }
+                 }
+             }
+
+             if (ArrayUtils.isNotEmpty(rejectRuleRefIdList)) {
+                 Map<String, Integer> statusMap = unimportRules(storeId, ruleType, rejectRuleRefIdList,
+                         comment, rejectRuleNameList);
+                 for (String key : statusMap.keySet()) {
+                     status = statusMap.get(key);
+                     if (status != null) {
+                         switch (status) {
+                             case 0:
+                                 successList.put(key, "reject_fail");
+                                 break;
+                             case 1:
+                                 successList.put(key, "reject_success");
+                                 break;
+                         }
+                     }
+                 }
+             }
+
+         } finally {
+             if (obtainedLock) {
+                 utilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
+             }
+         }
+         return successList;
+    }
+    
     @RemoteMethod
     public Map<String, String> importRejectRules(String storeId, String storeName, String ruleType,
             String[] importRuleRefIdList, String comment,
             String[] importTypeList, String[] importAsRefIdList,
             String[] ruleNameList, String[] rejectRuleRefIdList,
             String[] rejectRuleNameList) throws PublishLockException {
-        Map<String, String> successList = new HashMap<String, String>();
-
-        Integer status = null;
-        boolean autoPublish = false;
-        boolean obtainedLock = false;
-        String userName = utilityService.getUsername();
-
-        if (ArrayUtils.isNotEmpty(importTypeList)) {
-            for (String importType : importTypeList) {
-                if (ImportType.AUTO_PUBLISH.equals(ImportType.getByDisplayText(importType))) {
-                    autoPublish = true;
-                    break;
-                }
-            }
-        }
-
-        try {
-            if (autoPublish) {
-                obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
-            }
-            if (ArrayUtils.isNotEmpty(importRuleRefIdList)) {
-                Map<String, Integer> statusMap = importRules(storeId, ruleType, importRuleRefIdList, comment,
-                        importTypeList, importAsRefIdList, ruleNameList);
-
-                for (String key : statusMap.keySet()) {
-                    status = statusMap.get(key);
-                    if (status != null) {
-                        switch (status) {
-                            case 0:
-                                successList.put(key, "import_fail");
-                                break;
-                            case 1:
-                            case 2:
-                                successList.put(key, "import_success_submit_for_approval_fail");
-                                break;
-                            case 3:
-                            case 4:
-                                successList.put(key, "import_success_publish_fail");
-                                break;
-                            case 5:
-                                successList.put(key, "import_success");
-                                break;
-                        }
-                    }
-                }
-            }
-
-            if (ArrayUtils.isNotEmpty(rejectRuleRefIdList)) {
-                Map<String, Integer> statusMap = unimportRules(storeId, ruleType, rejectRuleRefIdList,
-                        comment, rejectRuleNameList);
-                for (String key : statusMap.keySet()) {
-                    status = statusMap.get(key);
-                    if (status != null) {
-                        switch (status) {
-                            case 0:
-                                successList.put(key, "reject_fail");
-                                break;
-                            case 1:
-                                successList.put(key, "reject_success");
-                                break;
-                        }
-                    }
-                }
-            }
-
-        } finally {
-            if (obtainedLock) {
-                utilityService.releasePublishLock(RuleEntity.find(ruleType), userName, storeName);
-            }
-        }
-        return successList;
+        
+    	String userName = utilityService.getUsername();
+    	return importRejectRules(storeId, storeName, userName, ruleType, importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, rejectRuleRefIdList, rejectRuleNameList);
+        
     }
 
     private String getRuleName(RuleEntity ruleEntity, String ruleId, String ruleName) {
@@ -467,7 +476,7 @@ public class RuleTransferService {
         }
     }
 
-    private boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName) {
+    private boolean importRule(RuleEntity ruleEntity, String store, String userName, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName) {
         boolean success = false;
         String id = ruleXmlUtil.getRuleId(ruleEntity, ruleId);
         RuleXml ruleXml = ruleTransferUtil.getRuleToImport(store, ruleEntity, id);
@@ -489,7 +498,7 @@ public class RuleTransferService {
                 ruleXml.setStore(store);
                 ruleXml.setRuleId(importAsRefId);
                 ruleXml.setRuleName(ruleName);
-                ruleXml.setCreatedBy(utilityService.getUsername());
+                ruleXml.setCreatedBy(userName);
                 success = ruleTransferUtil.importRule(store, importAsRefId, ruleXml);
         }
 

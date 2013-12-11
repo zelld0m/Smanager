@@ -67,17 +67,18 @@ public class ImportRuleTaskDAOImpl
 		
 		try{
 			ImportRuleTask importRuleTask = searchCriteria.getModel();
+			TaskExecutionResult taskExecutionResult = importRuleTask.getTaskExecutionResult();
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			
-			inputs.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, importRuleTask.getRuleEntity().ordinal());
+			inputs.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, importRuleTask.getRuleEntity() != null ? importRuleTask.getRuleEntity().getCode() : null);
 			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, importRuleTask.getSourceStoreId());
 			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, importRuleTask.getSourceRuleName());
 			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, importRuleTask.getTargetStoreId());
 			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, importRuleTask.getTargetRuleName());
-			inputs.put(WorkflowConstants.COLUMN_IMPORT_TYPE, importRuleTask.getImportType());
-			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, importRuleTask.getTaskExecutionResult().getTaskStatus());
-			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, jodaDateTimeUtil.toSqlDate(importRuleTask.getTaskExecutionResult().getTaskStartDateTime()));
-			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, jodaDateTimeUtil.toSqlDate(importRuleTask.getTaskExecutionResult().getTaskEndDateTime()));
+			inputs.put(WorkflowConstants.COLUMN_IMPORT_TYPE, importRuleTask.getImportType() != null ? importRuleTask.getImportType().ordinal() + 1 : null);
+			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult != null ? taskExecutionResult.getTaskStatus().ordinal() + 1 : null);
+			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, taskExecutionResult != null ? jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()) : null);
+			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, taskExecutionResult != null ? jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()) : null);
 			inputs.put(WorkflowConstants.COLUMN_CREATED_STAMP, jodaDateTimeUtil.toSqlDate(importRuleTask.getCreatedDate()));
 			inputs.put(WorkflowConstants.PARAM_START_ROW, searchCriteria.getStartRow());
 			inputs.put(WorkflowConstants.PARAM_END_ROW, searchCriteria.getEndRow());
@@ -167,7 +168,7 @@ public class ImportRuleTaskDAOImpl
 
 		@Override
 		protected void declareSqlReturnResultSetParameters() {
-			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<ImportRuleTask>() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ImportRuleTask>() {
 				public ImportRuleTask mapRow(ResultSet rs, int rowNum) throws SQLException {
 					return buildModel(rs, rowNum);
 				}
@@ -198,7 +199,7 @@ public class ImportRuleTaskDAOImpl
 
 		@Override
 		protected void declareSqlReturnResultSetParameters() {
-			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<ImportRuleTask>() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ImportRuleTask>() {
 				public ImportRuleTask mapRow(ResultSet rs, int rowNum) throws SQLException {
 					return buildModel(rs, rowNum);
 				}
@@ -229,12 +230,12 @@ public class ImportRuleTaskDAOImpl
 			}
 			if (StringUtils.isNumeric(ruleTypeVal)) {
 				try {
-					ruleEntity = RuleEntity.find(ruleTypeVal);
+					ruleEntity = RuleEntity.get(Integer.valueOf(ruleTypeVal));
 				} catch (Exception e) {
 				}
 			}
 			
-			return new ImportRuleTask(rs.getString(WorkflowConstants.COLUMN_TASK_ID), 
+			ImportRuleTask result =  new ImportRuleTask(rs.getString(WorkflowConstants.COLUMN_TASK_ID), 
 					ruleEntity, 
 					rs.getString(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID), 
 					rs.getString(WorkflowConstants.COLUMN_SOURCE_RULE_ID), 
@@ -247,6 +248,10 @@ public class ImportRuleTaskDAOImpl
 							rs.getString(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE), 
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_START_STAMP)), 
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_END_STAMP))));
+			
+			result.setCreatedBy(rs.getString(WorkflowConstants.COLUMN_CREATED_BY));
+			
+			return result;
 		
 	}
 	
@@ -270,8 +275,11 @@ public class ImportRuleTaskDAOImpl
 
 		@Override
 		protected void declareSqlReturnResultSetParameters() {
-			// TODO Auto-generated method stub
-			
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ImportRuleTask>() {
+				public ImportRuleTask mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return buildModel(rs, rowNum);
+				}
+			}));
 		}
 	}
 }

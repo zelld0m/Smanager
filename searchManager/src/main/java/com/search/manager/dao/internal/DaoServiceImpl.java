@@ -1729,15 +1729,6 @@ public class DaoServiceImpl implements DaoService {
     }
     
     private void importExportedRule(String storeId, String storeName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
-    	
-    	RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(storeId, ruleEntity.toString(), importRuleRefId);
-    	String[] importRuleRefIdList = {importRuleRefId};
-    	String[] importTypeList = {importType};
-    	String[] importAsRefIdList = {importAsRefId};
-    	String[] ruleNameList = {ruleName};
-    	String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
-    	String importTypeSetting = configManager.getProperty("workflow", storeId, "status."+ruleEntity.getNthValue(1));
-    	
     	ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, utilityService.getStoreId(), importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
     	
     	try {
@@ -1746,20 +1737,6 @@ public class DaoServiceImpl implements DaoService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//    	try {
-//			ruleTransferService.importRejectRules(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
-//			
-//			switch(ImportType.getByDisplayText(importTypeSetting)) {
-//				case FOR_APPROVAL: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false); break;
-//				case AUTO_PUBLISH: deploymentService.processRuleStatus(storeId, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false);
-//									deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
-//									deploymentService.publishRule(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList); 
-//									break;
-//				default: 
-//			}
-//		} catch (PublishLockException e) {
-//			e.printStackTrace();
-//		}
     }
 
     /* Used by SearchServlet */

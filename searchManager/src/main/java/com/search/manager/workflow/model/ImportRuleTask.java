@@ -43,6 +43,7 @@ public class ImportRuleTask extends ModelBean{
 		this.targetRuleId = targetRuleId;
 		this.targetRuleName = targetRuleName;
 		this.importType = importType;
+		this.taskExecutionResult = taskExecutionResult;
 	}
 	
 	public String getTaskId() {

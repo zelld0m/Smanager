@@ -39,6 +39,10 @@ public enum RuleEntity {
 	public List<String> getValues() {
 		return values;
 	}
+	
+	public static RuleEntity get(Integer intValue) { 
+        return RuleEntity.values()[intValue-1];
+    }
 
 	public static RuleEntity find(String name) {
 	    for (RuleEntity entity : RuleEntity.values()) {
