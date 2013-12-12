@@ -27,7 +27,6 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.ExportType;
-import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.exception.PublishLockException;
@@ -116,7 +115,7 @@ public class DeploymentService {
             try {
                 if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail",utilityService.getStoreId(), "approvalNotification"))) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-                    mailService.sendNotification(RuleStatusEntity.APPROVED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
+                    mailService.sendNotification(storeId, RuleStatusEntity.APPROVED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                 }
             } catch (Exception e) {
                 logger.error("Failed during sending approval notification. approveRule()", e);
@@ -152,7 +151,7 @@ public class DeploymentService {
             try {
                 if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "approvalNotification"))) {
                     List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-                    mailService.sendNotification(RuleStatusEntity.REJECTED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
+                    mailService.sendNotification(storeId, RuleStatusEntity.REJECTED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                 }
             } catch (Exception e) {
                 logger.error("Failed during sending approval notification. unapproveRule()", e);
@@ -326,7 +325,7 @@ public class DeploymentService {
                 try {
                     if ("1".equals(configManager.getProperty("mail", storeId, "pushToProdNotification"))) {
                         List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-                        mailService.sendNotification(RuleStatusEntity.PUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
+                        mailService.sendNotification(storeId, RuleStatusEntity.PUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                     }
                 } catch (Exception e) {
                     logger.error("Failed during sending pushToProd notification. publishRule()", e);
@@ -396,7 +395,7 @@ public class DeploymentService {
                 try {
                     if ("1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "pushToProdNotification"))) {
                         List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-                        mailService.sendNotification(RuleStatusEntity.UNPUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
+                        mailService.sendNotification(storeId, RuleStatusEntity.UNPUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                     }
                 } catch (Exception e) {
                     logger.error("Failed during sending pushToProd notification. unpublishRule()", e);
@@ -462,7 +461,7 @@ public class DeploymentService {
                     if (!isDelete && "1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "pendingNotification"))) {
                         List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
                         ruleStatusInfoList.add(ruleStatusInfo);
-                        mailService.sendNotification(RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
+                        mailService.sendNotification(storeId, RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
                     }
                 } catch (Exception e) {
                     logger.error("Failed during sending 'Submitted For Approval' notification. processRuleStatus()", e);
