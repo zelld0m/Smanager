@@ -25,8 +25,8 @@ import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropertiesUtils;
+import com.search.ws.ConfigManager;
 
 @Component
 public class RuleTransferUtil {
@@ -39,7 +39,7 @@ public class RuleTransferUtil {
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
     @Autowired
-    private UtilityService utilityService;
+    private ConfigManager configManager;
     
     public List<RuleXml> getAllExportedRules(String storeId, String ruleType) {
         return (ArrayList<RuleXml>) getRules(storeId, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
@@ -62,7 +62,7 @@ public class RuleTransferUtil {
 			if(ruleItemXmlList!=null){
 				for(RuleItemXml ruleItemXml: ruleItemXmlList){
 					RedirectRuleCondition rrc = ruleItemXml.getRuleCondition();
-					if(rrc!=null) rrc.setFacetValues(utilityService.getStoreFacetPrefix(storeId), utilityService.getStoreFacetTemplate(storeId), utilityService.getStoreFacetTemplateName(storeId));
+					if(rrc!=null) rrc.setFacetValues(configManager.getStoreFacetPrefix(storeId), configManager.getStoreFacetTemplate(storeId), configManager.getStoreFacetTemplateName(storeId));
 				}
 			} 
         }

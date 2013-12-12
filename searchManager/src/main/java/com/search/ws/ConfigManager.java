@@ -35,11 +35,11 @@ import com.search.manager.utility.PropertiesUtils;
 public class ConfigManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
-	
+
 	private XMLConfiguration solrXMLConfig;
 	private XMLConfiguration storeXMLConfig;
 	private Map<String, PropertiesConfiguration> storeSettingsMap = new HashMap<String, PropertiesConfiguration>();
-	
+
 	@SuppressWarnings("unused")
 	private ConfigManager() {
 		// Exists only to defeat instantiation.
@@ -69,10 +69,10 @@ public class ConfigManager {
 					}
 				}
 
-//				PropertiesConfiguration propConfig = new PropertiesConfiguration(spellFile.getAbsolutePath());
-//				propConfig.setAutoSave(true);
-//				propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-//				linguisticSettingsMap.put(storeId, propConfig);
+				//				PropertiesConfiguration propConfig = new PropertiesConfiguration(spellFile.getAbsolutePath());
+				//				propConfig.setAutoSave(true);
+				//				propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+				//				linguisticSettingsMap.put(storeId, propConfig);
 			}
 		}
 
@@ -100,7 +100,7 @@ public class ConfigManager {
 			}
 		}
 	}
-	
+
 	private void initTimezone() {
 
 		/* System timezone */
@@ -135,27 +135,27 @@ public class ConfigManager {
 			}
 		}
 	}
-	
+
 	public List<String> getModuleNames(String storeId) {
 		return Arrays.asList(storeXMLConfig.getStringArray(String.format("/store[@id='%s']/module/@name", storeId)));
 	}
-	
+
 	public String getSystemTimeZoneId() {
 		return StringUtils.defaultIfBlank(getParameter("system-timezone"), "America/Los_Angeles");
 	}
-	
+
 	private List<String> getStoreIds() {
 		return Arrays.asList(solrXMLConfig.getStringArray("/store/@id"));
 	}
-	
+
 	public List<String> getStoreNames() {
 		return Arrays.asList(solrXMLConfig.getStringArray("/store/@name"));
 	}
-	
+
 	public List<String> getCoreNames() {
 		return getStoreAttributes("core", true);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<String> getStoreAttributes(String attrName, boolean hasXmlTag) {
 		List<String> storeAttrib = new ArrayList<String>();
@@ -288,7 +288,7 @@ public class ConfigManager {
 		}
 		return map;
 	}
-	
+
 	public boolean isSharedCore() {
 		return solrXMLConfig.getBoolean("/shared-core", false);
 	}
@@ -341,12 +341,12 @@ public class ConfigManager {
 	 *
 	 */
 	public String getPublishedStoreLinguisticSetting(String storeId, String field) {
-//		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
-//		if (config != null) {
-//			synchronized (config) {
-//				return config.getString(field);
-//			}
-//		}
+		//		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
+		//		if (config != null) {
+		//			synchronized (config) {
+		//				return config.getString(field);
+		//			}
+		//		}
 		return null;
 	}
 
@@ -360,15 +360,36 @@ public class ConfigManager {
 		//		}
 		return false;
 	}
-	
+
 	public boolean setPublishedStoreLinguisticSetting(String storeId, String field, String value) {
-//		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
-//		if (config != null) {
-//			synchronized (config) {
-//				config.setProperty(field, value);
-//				return StringUtils.equals(config.getString(field), value);
-//			}
-//		}
+		//		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
+		//		if (config != null) {
+		//			synchronized (config) {
+		//				config.setProperty(field, value);
+		//				return StringUtils.equals(config.getString(field), value);
+		//			}
+		//		}
 		return false;
+	}
+
+	public List<String> getStoreGroupMembership(String storeId) {
+		return getStoreParameterList(storeId, "group-membership/group");
+	}
+
+	/* Facet-related */
+	public String getStoreFacetTemplate(String storeId) {
+		return StringUtils.defaultIfBlank(getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE), StringUtils.EMPTY);
+	}
+
+	public String getStoreFacetPrefix(String storeId) {
+		return StringUtils.defaultIfBlank(getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME), StringUtils.EMPTY);
+	}
+
+	public String getStoreFacetName(String storeId) {
+		return StringUtils.defaultIfBlank(getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME), StringUtils.EMPTY);
+	}
+	
+	public String getStoreFacetTemplateName(String storeId) {
+		return StringUtils.defaultIfBlank(getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME), StringUtils.EMPTY);
 	}
 }
