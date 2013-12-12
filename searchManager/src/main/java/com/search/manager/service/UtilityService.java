@@ -128,15 +128,19 @@ public class UtilityService {
 
     @RemoteMethod
     public String getServerName() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        String serverName = (String) attr.getAttribute("serverName", RequestAttributes.SCOPE_SESSION);
-        if (StringUtils.isEmpty(serverName)) {
-            // get default server for store
-            if (configManager != null) {
-                serverName = configManager.getStoreParameter(getStoreId(), "server-url");
-            }
-            attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
-        }
+        return getServerName(getStoreId());
+    }
+    
+    public String getServerName(String storeId) {
+//    	ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+//        String serverName = attr != null ? (String) attr.getAttribute("serverName", RequestAttributes.SCOPE_SESSION) : null;
+//        if (StringUtils.isEmpty(serverName)) {
+//            // get default server for store
+//            if (configManager != null) {
+                String serverName = configManager.getStoreParameter(storeId, "server-url");
+//            }
+//            attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
+//        }
         return serverName;
     }
 
@@ -303,7 +307,7 @@ public class UtilityService {
 
     @RemoteMethod
     public String getStoreFacetTemplate() {
-      return getStoreFacetTemplate();
+      return getStoreFacetTemplate(getStoreId());
     }
     
     public String getStoreFacetTemplate(String storeId) {

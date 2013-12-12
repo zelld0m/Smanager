@@ -193,7 +193,7 @@ public class ImportRuleTaskDAOImpl
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_IMPORT_TYPE, Types.INTEGER));
-			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_CREATED_BY, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_CREATED_STAMP, Types.TIMESTAMP));
 		}
 
