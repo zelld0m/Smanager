@@ -384,6 +384,7 @@
                 </group>
                 <group>
                     <member property-id="auto_export"/>
+                    <member property-id="auto_import"/>
                 </group>
                 <group name="Export Feature">
                     <member property-id="export_target"/>
@@ -424,6 +425,10 @@
                 <property id="auto_export" type="Boolean">
                     <label>Auto Export</label>
                     <defaultValue>true</defaultValue>
+                </property>
+                <property id="auto_import" type="Boolean">
+                    <label>Auto Import</label>
+                    <defaultValue>false</defaultValue>
                 </property>
                 <property id="export_target" type="String" multiValued="true">
                     <label>Export Target</label>
