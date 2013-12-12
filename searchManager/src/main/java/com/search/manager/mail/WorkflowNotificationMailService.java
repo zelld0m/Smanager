@@ -43,6 +43,7 @@ public class WorkflowNotificationMailService {
 
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern PATTERN = Pattern.compile(EMAIL_PATTERN);
+	private static final String MODULE_NAME = "mail";
 
 	@Autowired
 	private EmailSender emailSender;
@@ -67,9 +68,9 @@ public class WorkflowNotificationMailService {
 		Set<String> cc = new HashSet<String>();
 		Set<String> bcc = new HashSet<String>();
 
-		cc.addAll(configManager.getPropertyList("mail", storeId,
+		cc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 				"mail.workflow.cc"));
-		bcc.addAll(configManager.getPropertyList("mail", storeId,
+		bcc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 				"mail.workflow.bcc"));
 
 		try {
@@ -86,14 +87,14 @@ public class WorkflowNotificationMailService {
 
 		switch (status) {
 		case PENDING:
-			String pendingSubject = configManager.getProperty("mail", storeId,
-					"mail.workflow.pendingSubject");
+			String pendingSubject = configManager.getProperty(MODULE_NAME,
+					storeId, "mail.workflow.pendingSubject");
 			subject = (StringUtils.isNotBlank(pendingSubject)) ? pendingSubject
 					: "Search Manager: Rule Submitted For Approval";
 			templateLocation = "default-submitted-for-approval.vm";
-			cc.addAll(configManager.getPropertyList("mail", storeId,
+			cc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.pendingCc"));
-			bcc.addAll(configManager.getPropertyList("mail", storeId,
+			bcc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.pendingBcc"));
 
 			try {
@@ -124,48 +125,48 @@ public class WorkflowNotificationMailService {
 
 			break;
 		case APPROVED:
-			String approvedSubject = configManager.getProperty("mail", storeId,
-					"mail.workflow.approvedSubject");
+			String approvedSubject = configManager.getProperty(MODULE_NAME,
+					storeId, "mail.workflow.approvedSubject");
 			subject = (StringUtils.isNotBlank(approvedSubject)) ? approvedSubject
 					: "Search Manager: Approved Rule(s)";
 			templateLocation = "default-approval-approve.vm";
-			cc.addAll(configManager.getPropertyList("mail", storeId,
+			cc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.approvedCc"));
-			bcc.addAll(configManager.getPropertyList("mail", storeId,
+			bcc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.approvedBcc"));
 			break;
 		case REJECTED:
-			String rejectedSubject = configManager.getProperty("mail", storeId,
-					"mail.workflow.rejectedSubject");
+			String rejectedSubject = configManager.getProperty(MODULE_NAME,
+					storeId, "mail.workflow.rejectedSubject");
 			subject = (StringUtils.isNotBlank(rejectedSubject)) ? rejectedSubject
 					: "Search Manager: Rejected Rule(s)";
 			templateLocation = "default-approval-reject.vm";
-			cc.addAll(configManager.getPropertyList("mail", storeId,
+			cc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.rejectedCc"));
-			bcc.addAll(configManager.getPropertyList("mail", storeId,
+			bcc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.rejectedBcc"));
 			break;
 		case PUBLISHED:
-			String publishedSubject = configManager.getProperty("mail",
+			String publishedSubject = configManager.getProperty(MODULE_NAME,
 					storeId, "mail.workflow.publishedSubject");
 			subject = (StringUtils.isNotBlank(publishedSubject)) ? publishedSubject
 					: "Search Manager: Published Rule(s)";
 			templateLocation = "default-pushtoprod-publish.vm";
-			cc.addAll(configManager.getPropertyList("mail", storeId,
+			cc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.publishedCc"));
-			bcc.addAll(configManager.getPropertyList("mail", storeId,
+			bcc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.publishedBcc"));
 			break;
 		case UNPUBLISHED:
-			String unpublishedSubject = configManager.getProperty("mail",
+			String unpublishedSubject = configManager.getProperty(MODULE_NAME,
 					storeId, "mail.workflow.unpublishedSubject");
 
 			subject = (StringUtils.isNotBlank(unpublishedSubject)) ? unpublishedSubject
 					: "Search Manager: Un-published Rule(s)";
 			templateLocation = "default-pushtoprod-unpublish.vm";
-			cc.addAll(configManager.getPropertyList("mail", storeId,
+			cc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.unpublishedCc"));
-			bcc.addAll(configManager.getPropertyList("mail", storeId,
+			bcc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 					"mail.workflow.unpublishedBcc"));
 			break;
 		default:
@@ -282,11 +283,11 @@ public class WorkflowNotificationMailService {
 
 		User userFilter = new User();
 		userFilter.setStoreId(storeId);
-		userFilter
-				.setGroupId((StringUtils.isNotBlank(configManager.getProperty(
-						"mail", storeId, "mail.workflow.approver.group"))) ? configManager
-						.getProperty("mail", storeId,
-								"mail.workflow.approver.group") : "APPROVER");
+		userFilter.setGroupId((StringUtils.isNotBlank(configManager
+				.getProperty(MODULE_NAME, storeId,
+						"mail.workflow.approver.group"))) ? configManager
+				.getProperty(MODULE_NAME, storeId,
+						"mail.workflow.approver.group") : "APPROVER");
 		userFilter.setAccountNonExpired(true);
 		userFilter.setAccountNonLocked(true);
 		userFilter.setCredentialsNonExpired(true);
@@ -305,5 +306,20 @@ public class WorkflowNotificationMailService {
 		}
 
 		return null;
+	}
+
+	public boolean isApprovalNotificationEnable(String storeId) {
+		return configManager.getProperty(MODULE_NAME, storeId,
+				"approvalNotification").equals("1");
+	}
+
+	public boolean isPushToProdNotificationEnable(String storeId) {
+		return configManager.getProperty(MODULE_NAME, storeId,
+				"pushToProdNotification").equals("1");
+	}
+
+	public boolean isPendingNotificationEnable(String storeId) {
+		return configManager.getProperty(MODULE_NAME, storeId,
+				"pendingNotification").equals("1");
 	}
 }

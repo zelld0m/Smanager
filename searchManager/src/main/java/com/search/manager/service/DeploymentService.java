@@ -38,7 +38,6 @@ import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.xml.file.RuleXmlUtil;
-import com.search.ws.ConfigManager;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -58,8 +57,6 @@ public class DeploymentService {
     private WorkflowNotificationMailService mailService;
     @Autowired
     private UtilityService utilityService;
-    @Autowired
-    private ConfigManager configManager;
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
 
@@ -113,7 +110,7 @@ public class DeploymentService {
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
 
             try {
-                if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail",utilityService.getStoreId(), "approvalNotification"))) {
+                if (result != null && result.size() > 0 && mailService.isApprovalNotificationEnable(storeId)) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                     mailService.sendNotification(storeId, RuleStatusEntity.APPROVED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                 }
@@ -149,7 +146,7 @@ public class DeploymentService {
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
 
             try {
-                if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "approvalNotification"))) {
+                if (result != null && result.size() > 0 && mailService.isApprovalNotificationEnable(storeId)) {
                     List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                     mailService.sendNotification(storeId, RuleStatusEntity.REJECTED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                 }
@@ -323,7 +320,7 @@ public class DeploymentService {
 
             if (ruleMap != null && ruleMap.size() > 0) {
                 try {
-                    if ("1".equals(configManager.getProperty("mail", storeId, "pushToProdNotification"))) {
+                    if (mailService.isPushToProdNotificationEnable(storeId)) {
                         List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                         mailService.sendNotification(storeId, RuleStatusEntity.PUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                     }
@@ -393,7 +390,7 @@ public class DeploymentService {
 
             if (ruleMap != null && ruleMap.size() > 0) {
                 try {
-                    if ("1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "pushToProdNotification"))) {
+                    if (mailService.isPushToProdNotificationEnable(storeId)) {
                         List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                         mailService.sendNotification(storeId, RuleStatusEntity.UNPUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                     }
@@ -458,7 +455,7 @@ public class DeploymentService {
             if (result > 0) {
                 RuleStatus ruleStatusInfo = getRuleStatus(storeId, ruleType, ruleRefId);
                 try {
-                    if (!isDelete && "1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "pendingNotification"))) {
+                    if (!isDelete && mailService.isPendingNotificationEnable(storeId)) {
                         List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
                         ruleStatusInfoList.add(ruleStatusInfo);
                         mailService.sendNotification(storeId, RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
