@@ -136,5 +136,8 @@
         <module name="searchwithin" title="Search Within">
             
         </module>
+        <module name="facetsort" title="Facet Sort">
+            
+        </module>
     </store>
 </store-properties>
