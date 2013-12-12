@@ -36,6 +36,7 @@ import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.service.SpellRuleService;
+import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller
@@ -60,6 +61,8 @@ public class SpellController {
     private RuleXmlReportUtil ruleXmlReportUtil;
     @Autowired
     private RuleVersionUtil ruleVersionUtil;
+    @Autowired
+    private UtilityService utilityService;
     
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -92,7 +95,7 @@ public class SpellController {
                 version.getProps().put("maxSuggest", String.valueOf(maxSuggest));
 
                 SubReportHeader subReportHeader = ruleXmlReportUtil
-                        .getVersionSubReportHeader(version, RuleEntity.SPELL);
+                        .getVersionSubReportHeader(utilityService.getStoreId(), version, RuleEntity.SPELL);
                 subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(spellRules,
                         SpellReportBean.transformer)));
             }
@@ -125,7 +128,7 @@ public class SpellController {
                 List<SpellRule> spellRule = daoService.getSpellRuleVersion(store, 0);
 
                 if (latest != null && spellRule != null && spellRule.size() > 0) {
-                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(latest,
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), latest,
                             RuleEntity.SPELL);
                     subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(spellRule,
                             SpellReportBean.transformer)));
@@ -154,7 +157,7 @@ public class SpellController {
 
         try {
             if (xml != null) {
-                SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.SPELL);
+                SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), xml, RuleEntity.SPELL);
                 subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                         daoService.getSpellRuleVersion(xml.getStore(), 0), SpellReportBean.transformer)));
             }
@@ -185,7 +188,7 @@ public class SpellController {
                         DBRuleVersion version = (DBRuleVersion) xml;
                         List<SpellRule> spellRules = daoService.getSpellRuleVersion(store, (int) version.getVersion());
                         if (spellRules != null) {
-                            SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(version,
+                            SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), version,
                                     RuleEntity.SPELL);
                             subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(spellRules,
                                     SpellReportBean.transformer)));
@@ -221,7 +224,7 @@ public class SpellController {
                     DBRuleVersion version = (DBRuleVersion) xml;
 
                     if (version != null && xml.getVersion() == versionNo) {
-                        SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(version,
+                        SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), version,
                                 RuleEntity.SPELL);
                         subModels.add(new SpellReportModel(reportHeader, subReportHeader, Lists.transform(
                                 daoService.getSpellRuleVersion(store, (int) versionNo), SpellReportBean.transformer)));

@@ -29,6 +29,7 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.BannerService;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.Transformers;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
@@ -48,6 +49,8 @@ public class BannerController {
     private DownloadService downloadService;
     @Autowired
     private RuleXmlReportUtil ruleXmlReportUtil;
+    @Autowired
+    private UtilityService utilityService;
     
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -114,7 +117,7 @@ public class BannerController {
                 }
             }
 
-            subModels.add(new BannerReportModel(reportHeader, ruleXmlReportUtil.getVersionSubReportHeader(ruleXml,
+            subModels.add(new BannerReportModel(reportHeader, ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), ruleXml,
                     RuleEntity.BANNER), reportBeans));
         }
 
