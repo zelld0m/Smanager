@@ -1697,7 +1697,7 @@ public class DaoServiceImpl implements DaoService {
                 logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
             } else {
             	if(isAutoImport && isRuleEntityEnabled) {
-            		importExportedRule(targetStore, username, configManager.getStoreName(targetStore), rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), exportRuleMap.getRuleIdTarget() != null ? exportRuleMap.getRuleIdTarget() : DAOUtils.generateUniqueId(), rule.getRuleName());
+            		importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), exportRuleMap.getRuleIdTarget() != null ? exportRuleMap.getRuleIdTarget() : DAOUtils.generateUniqueId(), rule.getRuleName());
             	}
             }
         }

@@ -122,7 +122,7 @@ public class SearchHelper {
 	public LinkedHashMap<String, Product> getProductsIgnoreKeyword(Map<String, ? extends Product> map,
 	        String store, String ruleId) {
 		if (MapUtils.isNotEmpty(map)) {
-			getProductsIgnoreKeyword(map, store, utilityService.getServerName(store), ruleId);
+			getProductsIgnoreKeyword(map, store, configManager.getServerName(store), ruleId);
 		}
 
 		return (LinkedHashMap<String, Product>) map;

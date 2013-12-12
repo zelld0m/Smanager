@@ -411,7 +411,7 @@ public class DeploymentService {
         return Collections.EMPTY_MAP;
     }
 
-    @RemoteMethod
+    @RemoteMethod //TODO: move to RuleStatusServiceImpl
     public RuleStatus getRuleStatus(String storeId, String ruleType, String ruleRefId) {
         RuleStatus result = null;
 
@@ -534,7 +534,7 @@ public class DeploymentService {
         }
         return rsList;
     }
-
+    //TODO: transfer to RuleStatusServiceImpl
     private RuleStatus createRuleStatus(String storeId) {
         String userName = utilityService.getUsername();
         RuleStatus ruleStatus = new RuleStatus();

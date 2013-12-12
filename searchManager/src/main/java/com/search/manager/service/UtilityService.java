@@ -114,13 +114,20 @@ public class UtilityService {
 		return false;
 	}
 
+	//TODO: Think of a better implementation
 	@RemoteMethod
 	public String getUsername() {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (principal == null || !(principal instanceof UserDetailsImpl)) {
-			return "";
+		try {
+			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if (principal == null || !(principal instanceof UserDetailsImpl)) {
+				return "";
+			}
+			return ((UserDetailsImpl) principal).getUsername();
+		} catch(Exception e) {
+			logger.error("failed in UtilityService.getUsername(), using 'System' instead.", e);
 		}
-		return ((UserDetailsImpl) principal).getUsername();
+		
+		return "System";
 	}
 
 	@RemoteMethod
@@ -130,7 +137,7 @@ public class UtilityService {
 		if (StringUtils.isEmpty(serverName)) {
 			// get default server for store
 			if (configManager != null) {
-				serverName = configManager.getStoreParameter(getStoreId(), "server-url");
+				serverName = configManager.getServerName(getStoreId());
 			}
 			attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
 		}

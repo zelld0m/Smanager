@@ -27,6 +27,9 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.utility.PropertiesUtils;
@@ -231,6 +234,10 @@ public class ConfigManager {
 			fileName += File.separator + storeId + File.separator + RuleEntity.getValue(RuleEntity.SPELL.getCode()) + File.separator + "spell.csv";
 		}
 		return StringUtils.trimToNull(fileName);
+	}
+	
+	public String getServerName(String storeId) {
+		return getStoreParameter(storeId, "default-server");
 	}
 
 
