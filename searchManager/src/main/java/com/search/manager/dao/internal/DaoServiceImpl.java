@@ -1730,8 +1730,8 @@ public class DaoServiceImpl implements DaoService {
     
     private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
     	ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, utilityService.getStoreId(), importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
-    	importRuleTask.setCreatedBy(userName);
-    	importRuleTask.setCreatedDate(new DateTime());
+//    	importRuleTask.setCreatedBy(userName);
+//    	importRuleTask.setCreatedDate(new DateTime());
     	try {
 			importRuleTaskDAO.addImportRuleTask(importRuleTask);
 		} catch (DaoException e) {
