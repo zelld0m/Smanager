@@ -1,7 +1,6 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +8,8 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,6 @@ import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
-import com.search.manager.utility.DateAndTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "commentService")
 @RemoteProxy(
@@ -36,13 +34,7 @@ public class CommentService {
     @Autowired
     private DaoService daoService;
     @Autowired
-    private DateAndTimeUtils dateAndTimeUtils;
-    @Autowired
     private UtilityService utilityService;
-    
-    public DaoService getDaoService() {
-        return daoService;
-    }
 
     public void setDaoService(DaoService daoService) {
         this.daoService = daoService;
@@ -63,11 +55,11 @@ public class CommentService {
                     Comment comment = new Comment();
                     // date
                     end = strComment.indexOf("|", start);
-                    String date = strComment.substring(start, end);
-                    if (StringUtils.isNotBlank(date)) {
-                        date = dateAndTimeUtils.formatDateTimeUsingConfig(utilityService.getStoreId(), new Date(Long.parseLong(date)));
-                    }
-                    comment.setDate(date);
+//                    String date = strComment.substring(start, end);
+//                    if (StringUtils.isNotBlank(date)) {
+//                        date = dateAndTimeUtils.formatDateTimeUsingConfig(utilityService.getStoreId(), new Date(Long.parseLong(date)));
+//                    }
+//                    comment.setDate(date);
                     // user
                     start = end + 1;
                     end = strComment.indexOf("|", start);
