@@ -99,6 +99,89 @@
     </store>
     
     <store id="pcmallcap" extends="pcmall">
+    	<module name="workflow" title="Workflow Settings">
+            <groups>
+				<group name="Auto Import Rules">
+                    <member property-id="enable.elevate"/>
+					<member property-id="enable.exclude"/>
+					<member property-id="enable.demote"/>
+					<member property-id="enable.facetSort"/>
+					<member property-id="enable.queryCleaning"/>
+					<member property-id="enable.didYouMean"/>
+					<member property-id="enable.banner"/>
+                </group>
+                <group name="Default Import Status">
+                    <member property-id="status.elevate"/>
+					<member property-id="status.exclude"/>
+					<member property-id="status.demote"/>
+					<member property-id="status.facetSort"/>
+					<member property-id="status.queryCleaning"/>
+					<member property-id="status.didYouMean"/>
+					<member property-id="status.banner"/>
+                </group>
+            </groups>
+            
+            <properties>
+			
+				<property id="enable.elevate" type="Boolean" required="true">
+                    <label>Elevate</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="enable.exclude" type="Boolean" required="true">
+                    <label>Exclude</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.demote" type="Boolean" required="true">
+                    <label>Demote</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.facetSort" type="Boolean" required="true">
+                    <label>Facet Sort</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.queryCleaning" type="Boolean" required="true">
+                    <label>Query Cleaning</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.didYouMean" type="Boolean" required="true">
+                    <label>Did You Mean</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.banner" type="Boolean" required="true">
+                    <label>Banner</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+			
+                <property id="status.elevate" type="DropDown" required="true">
+                    <label>Elevate</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+                <property id="status.exclude" type="DropDown" required="true">
+                    <label>Exclude</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.demote" type="DropDown" required="true">
+                    <label>Demote</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.facetSort" type="DropDown" required="true">
+                    <label>Facet Sort</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.queryCleaning" type="DropDown" required="true">
+                    <label>Query Cleaning</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.didYouMean" type="DropDown" required="true">
+                    <label>Did You Mean</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.banner" type="DropDown" required="true">
+                    <label>Banner</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+			</properties>
+        </module>
         <module name="settings" title="Settings">
             <groups>
                 <group name="New Banner Ads Feature">
@@ -218,7 +301,7 @@
                     <defaultValue></defaultValue>
                 </property>
                 
-                <property id="mail.workflow.approver.group" type="AccountRole">
+                <property id="mail.workflow.approver.group" type="DropDown">
                     <label>Approver Group</label>
                     <defaultValue>APPROVER</defaultValue>
                 </property>
@@ -301,6 +384,7 @@
                 </group>
                 <group>
                     <member property-id="auto_export"/>
+                    <member property-id="auto_import"/>
                 </group>
                 <group name="Export Feature">
                     <member property-id="export_target"/>
@@ -341,6 +425,10 @@
                 <property id="auto_export" type="Boolean">
                     <label>Auto Export</label>
                     <defaultValue>true</defaultValue>
+                </property>
+                <property id="auto_import" type="Boolean">
+                    <label>Auto Import</label>
+                    <defaultValue>false</defaultValue>
                 </property>
                 <property id="export_target" type="String" multiValued="true">
                     <label>Export Target</label>
