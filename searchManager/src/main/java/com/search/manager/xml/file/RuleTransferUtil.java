@@ -41,28 +41,28 @@ public class RuleTransferUtil {
     @Autowired
     private UtilityService utilityService;
     
-    public List<RuleXml> getAllExportedRules(String store, String ruleType) {
-        return (ArrayList<RuleXml>) getRules(store, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
+    public List<RuleXml> getAllExportedRules(String storeId, String ruleType) {
+        return (ArrayList<RuleXml>) getRules(storeId, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
     }
 
-    public RuleXml getRuleToImport(String store, RuleEntity ruleEntity, String ruleId) {
-        return getRule(store, ruleEntity, ruleId, IMPORT_FILE_PATH);
+    public RuleXml getRuleToImport(String storeId, RuleEntity ruleEntity, String ruleId) {
+        return getRule(storeId, ruleEntity, ruleId, IMPORT_FILE_PATH);
     }
 
     @SuppressWarnings("unchecked")
-    public RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId, String path) {
-        RuleXml ruleXml = getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), path);
+    public RuleXml getRule(String storeId, RuleEntity ruleEntity, String ruleId, String path) {
+        RuleXml ruleXml = getRule(storeId, ruleEntity, new File(getFilename(storeId, ruleEntity, ruleId)), path);
 
         if (ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml) {
             ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
-            productDetailsAware.setProducts(ruleXmlUtil.getProductDetails(ruleXml, store));
+            productDetailsAware.setProducts(ruleXmlUtil.getProductDetails(ruleXml, storeId));
         
             List<RuleItemXml> ruleItemXmlList = (List<RuleItemXml>) productDetailsAware.getItem();
 
 			if(ruleItemXmlList!=null){
 				for(RuleItemXml ruleItemXml: ruleItemXmlList){
 					RedirectRuleCondition rrc = ruleItemXml.getRuleCondition();
-					if(rrc!=null) rrc.setFacetValues(utilityService.getStoreFacetPrefix(), utilityService.getStoreFacetTemplate(), utilityService.getStoreFacetTemplateName());
+					if(rrc!=null) rrc.setFacetValues(utilityService.getStoreFacetPrefix(storeId), utilityService.getStoreFacetTemplate(storeId), utilityService.getStoreFacetTemplateName(storeId));
 				}
 			} 
         }
@@ -70,7 +70,7 @@ public class RuleTransferUtil {
         return ruleXml;
     }
 
-    public RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path) {
+    public RuleXml getRule(String storeId, RuleEntity ruleEntity, File file, String path) {
         try {
             if (file != null && file.exists()) {
                 JAXBContext context = JAXBContext.newInstance(RuleXml.class);
@@ -85,9 +85,9 @@ public class RuleTransferUtil {
         return null;
     }
 
-    public List<RuleXml> getRules(String store, RuleEntity ruleEntity, String path) {
+    public List<RuleXml> getRules(String storeId, RuleEntity ruleEntity, String path) {
         List<RuleXml> ruleXmls = new ArrayList<RuleXml>();
-        String dir = ruleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
+        String dir = ruleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, storeId, ruleEntity);
 
         File dirFile = new File(dir);
 
@@ -105,12 +105,12 @@ public class RuleTransferUtil {
         File[] listOfFiles = dirFile.listFiles();
 
         for (File file : listOfFiles) {
-            RuleXml ruleXml = getRule(store, ruleEntity, file, path);
+            RuleXml ruleXml = getRule(storeId, ruleEntity, file, path);
 
             if (ruleXml != null) {
                 if (ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml) {
                     ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
-                    productDetailsAware.setProducts(ruleXmlUtil.getProductDetails(ruleXml, store));
+                    productDetailsAware.setProducts(ruleXmlUtil.getProductDetails(ruleXml, storeId));
                     ruleXmls.add((RuleXml) productDetailsAware);
                 } else {
                     ruleXmls.add(ruleXml);
@@ -126,20 +126,20 @@ public class RuleTransferUtil {
         return ruleXmlUtil.ruleXmlToFile(targetStore, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
     }
 
-    public boolean importRule(String store, String ruleId, RuleXml ruleXml) {
-        logger.info(String.format("Importing rule xml... [store = %s, ruleId = %s]", store, ruleId));
+    public boolean importRule(String storeId, String ruleId, RuleXml ruleXml) {
+        logger.info(String.format("Importing rule xml... [store = %s, ruleId = %s]", storeId, ruleId));
         return ruleXmlUtil.importRule(ruleXml);
     }
 
-    public String getFilename(String store, RuleEntity ruleEntity, String ruleId) {
-        return ruleXmlUtil.getFilename(IMPORT_FILE_PATH, store, ruleEntity, ruleId);
+    public String getFilename(String storeId, RuleEntity ruleEntity, String ruleId) {
+        return ruleXmlUtil.getFilename(IMPORT_FILE_PATH, storeId, ruleEntity, ruleId);
     }
 
-    public boolean deleteRuleFile(RuleEntity ruleEntity, String store, String ruleId, String comment) {
+    public boolean deleteRuleFile(RuleEntity ruleEntity, String storeId, String ruleId, String comment) {
         boolean success = false;
         String id = ruleXmlUtil.getRuleId(ruleEntity, ruleId);
         try {
-            String filepath = getFilename(store, ruleEntity, id);
+            String filepath = getFilename(storeId, ruleEntity, id);
             File file = new File(filepath);
 
             logger.info(String.format("Trying to delete file [%s]", filepath));

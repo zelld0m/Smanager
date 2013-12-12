@@ -303,9 +303,13 @@ public class UtilityService {
 
     @RemoteMethod
     public String getStoreFacetTemplate() {
+      return getStoreFacetTemplate();
+    }
+    
+    public String getStoreFacetTemplate(String storeId) {
         String storeFacetTemplate = StringUtils.EMPTY;
         if (configManager != null) {
-            storeFacetTemplate = configManager.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+            storeFacetTemplate = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
         }
 
         return storeFacetTemplate;
@@ -323,19 +327,27 @@ public class UtilityService {
 
     @RemoteMethod
     public String getStoreFacetPrefix() {
-        String storeFacetPrefix = StringUtils.EMPTY;
-        if (configManager != null) {
-            storeFacetPrefix = configManager.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
-        }
+      return getStoreFacetPrefix(getStoreId());
+    }
+    
+    public String getStoreFacetPrefix(String storeId) {
+    	 String storeFacetPrefix = StringUtils.EMPTY;
+         if (configManager != null) {
+             storeFacetPrefix = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME);
+         }
 
-        return storeFacetPrefix;
+         return storeFacetPrefix;
     }
 
     @RemoteMethod
     public String getStoreFacetTemplateName() {
+       return getStoreFacetTemplateName(getStoreId());
+    }
+    
+    public String getStoreFacetTemplateName(String storeId) {
         String storeFacetTemplateName = StringUtils.EMPTY;
         if (configManager != null) {
-            storeFacetTemplateName = configManager.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+            storeFacetTemplateName = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
         }
 
         return storeFacetTemplateName;
