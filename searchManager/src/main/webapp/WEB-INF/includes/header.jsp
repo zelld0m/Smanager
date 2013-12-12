@@ -15,7 +15,7 @@
 <title>Search Manager</title>
 
   <!-- jQuery dependencies -->
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script> 
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-ui-1.8.16.custom.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.core.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.autocomplete.min.js" />" ></script>
@@ -119,6 +119,8 @@
   <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>
   <script type="text/javascript" src="<spring:url value="/js/init-validate.js" />" ></script>
   
+  <script type="text/javascript" src="<spring:url value="/js/util/StringBuilder.js"/>"></script>
+  
   <!-- DWR dependencies -->
   <script type="text/javascript" src="<spring:url value="/dwr/util.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/engine.js"/>"></script>
@@ -134,7 +136,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/RelevancyServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/DeploymentServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/CategoryServiceJS.js"/>"></script>
-  <script type="text/javascript" src="<spring:url value="/dwr/interface/RedirectServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/RedirectServiceJS.js"/>"></script> 
   <!--<script type="text/javascript" src="<spring:url value="/dwr/interface/DAOCacheServiceJS.js"/>"></script>-->
   <script type="text/javascript" src="<spring:url value="/dwr/interface/SecurityServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/UserSettingServiceJS.js"/>"></script>
@@ -148,6 +150,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/BannerServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/SpellRuleServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/ExcelFileUploadedServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
   

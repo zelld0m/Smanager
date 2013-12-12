@@ -20,7 +20,9 @@ public class AuditTrailConstants {
 		ruleStatus,
 		security,
 		facetSort,
-		spell
+		spell,
+		excelFileUploaded,
+		excelFileReport
 	}
 	
 	public enum Operation {
