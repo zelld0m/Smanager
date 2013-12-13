@@ -117,17 +117,16 @@ public class UtilityService {
 	//TODO: Think of a better implementation
 	@RemoteMethod
 	public String getUsername() {
-		try {
+		if(SecurityContextHolder.getContext().getAuthentication() != null) {
 			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			if (principal == null || !(principal instanceof UserDetailsImpl)) {
 				return "";
 			}
 			return ((UserDetailsImpl) principal).getUsername();
-		} catch(Exception e) {
-			logger.error("failed in UtilityService.getUsername(), using 'System' instead.", e);
+		} else {
+			logger.error("failed in UtilityService.getUsername(), using 'System' instead.");
+			return "System";
 		}
-		
-		return "System";
 	}
 
 	@RemoteMethod

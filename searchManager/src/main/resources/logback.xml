@@ -114,7 +114,7 @@
       ============================================================
     -->
     
-    <logger name="com.search" additivity="false" target="TRACE">
+    <logger name="com.search" additivity="false" level="TRACE">
         <appender-ref ref="console"/>
     </logger>
 

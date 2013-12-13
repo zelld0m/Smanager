@@ -99,6 +99,7 @@ import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.workflow.dao.ImportRuleTaskDAO;
 import com.search.manager.workflow.model.ImportRuleTask;
+import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
@@ -171,6 +172,8 @@ public class DaoServiceImpl implements DaoService {
     private DeploymentService deploymentService;
     @Autowired
     private ImportRuleTaskDAO importRuleTaskDAO;
+    @Autowired
+    private WorkflowService workflowService;
     
     private DaoServiceImpl instance;
     
@@ -1697,7 +1700,7 @@ public class DaoServiceImpl implements DaoService {
                 logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
             } else {
             	if(isAutoImport && isRuleEntityEnabled) {
-            		importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), exportRuleMap.getRuleIdTarget() != null ? exportRuleMap.getRuleIdTarget() : DAOUtils.generateUniqueId(), rule.getRuleName());
+            		importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), workflowService.generateImportAsId(ruleEntity, rule.getRuleName()), rule.getRuleName());
             	}
             }
         }

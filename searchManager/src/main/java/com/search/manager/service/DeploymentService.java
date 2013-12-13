@@ -101,7 +101,7 @@ public class DeploymentService {
     public List<String> approveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
         // TODO: add transaction dependency handshake
         List<String> result = approveRule(storeId, ruleType, Arrays.asList(ruleRefIdList), comment);
-        daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, utilityService.getStoreId(), utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+        daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 
 
         return result;
@@ -114,7 +114,7 @@ public class DeploymentService {
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
 
             try {
-                if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail",utilityService.getStoreId(), "approvalNotification"))) {
+                if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail",storeId, "approvalNotification"))) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                     mailService.sendNotification(RuleStatusEntity.APPROVED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                 }
@@ -208,7 +208,7 @@ public class DeploymentService {
 
     public RecordSet<DeploymentModel> publishRuleNoLock(String store, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
         String username = utilityService.getUsername();
-        boolean isAutoExport = BooleanUtils.toBoolean(utilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
+        boolean isAutoExport = BooleanUtils.toBoolean(utilityService.getStoreSetting(store, DAOConstants.SETTINGS_AUTO_EXPORT));
 		List<String> approvedRuleList = null;
         List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
 
@@ -459,7 +459,7 @@ public class DeploymentService {
             if (result > 0) {
                 RuleStatus ruleStatusInfo = getRuleStatus(storeId, ruleType, ruleRefId);
                 try {
-                    if (!isDelete && "1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "pendingNotification"))) {
+                    if (!isDelete && "1".equals(configManager.getProperty("mail", storeId, "pendingNotification"))) {
                         List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
                         ruleStatusInfoList.add(ruleStatusInfo);
                         mailService.sendNotification(RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
