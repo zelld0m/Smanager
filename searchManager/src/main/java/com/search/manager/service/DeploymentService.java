@@ -101,7 +101,7 @@ public class DeploymentService {
     public List<String> approveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
         // TODO: add transaction dependency handshake
         List<String> result = approveRule(storeId, ruleType, Arrays.asList(ruleRefIdList), comment);
-        daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, utilityService.getStoreId(), utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+        daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 
 
         return result;
@@ -114,7 +114,7 @@ public class DeploymentService {
             getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
 
             try {
-                if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail",utilityService.getStoreId(), "approvalNotification"))) {
+                if (result != null && result.size() > 0 && "1".equals(configManager.getProperty("mail",storeId, "approvalNotification"))) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
                     mailService.sendNotification(RuleStatusEntity.APPROVED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
                 }
@@ -205,10 +205,10 @@ public class DeploymentService {
         return new RecordSet<RuleStatus>(list, approvedRset.getTotalSize() + publishedRset.getTotalSize());
     }
 
-
+    //TODO: Transfer to WorkflowServiceImpl
     public RecordSet<DeploymentModel> publishRuleNoLock(String store, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
         String username = utilityService.getUsername();
-        boolean isAutoExport = BooleanUtils.toBoolean(utilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
+        boolean isAutoExport = BooleanUtils.toBoolean(utilityService.getStoreSetting(store, DAOConstants.SETTINGS_AUTO_EXPORT));
 		List<String> approvedRuleList = null;
         List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
 
@@ -284,7 +284,7 @@ public class DeploymentService {
                 
         return new RecordSet<DeploymentModel>(publishingResultList, publishingResultList.size());
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     @RemoteMethod
     public RecordSet<DeploymentModel> publishRule(String storeId, String storeName, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
         boolean obtainedLock = false;
@@ -300,7 +300,7 @@ public class DeploymentService {
             }
         }
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     @SuppressWarnings("unchecked")
     private Map<String, Boolean> publishRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
         try {
@@ -411,7 +411,7 @@ public class DeploymentService {
         return Collections.EMPTY_MAP;
     }
 
-    @RemoteMethod
+    @RemoteMethod //TODO: move to RuleStatusServiceImpl
     public RuleStatus getRuleStatus(String storeId, String ruleType, String ruleRefId) {
         RuleStatus result = null;
 
@@ -459,7 +459,7 @@ public class DeploymentService {
             if (result > 0) {
                 RuleStatus ruleStatusInfo = getRuleStatus(storeId, ruleType, ruleRefId);
                 try {
-                    if (!isDelete && "1".equals(configManager.getProperty("mail", utilityService.getStoreId(), "pendingNotification"))) {
+                    if (!isDelete && "1".equals(configManager.getProperty("mail", storeId, "pendingNotification"))) {
                         List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
                         ruleStatusInfoList.add(ruleStatusInfo);
                         mailService.sendNotification(RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
@@ -520,7 +520,7 @@ public class DeploymentService {
         }
         return ruleStatusList;
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     private List<RuleStatus> getPublishingListFromMap(String storeId, Map<String, Boolean> ruleRefIdMap, Integer ruleTypeId, String status) {
         List<RuleStatus> rsList = new ArrayList<RuleStatus>();
         for (Map.Entry<String, Boolean> e : ruleRefIdMap.entrySet()) {
@@ -534,7 +534,7 @@ public class DeploymentService {
         }
         return rsList;
     }
-
+    //TODO: transfer to RuleStatusServiceImpl
     private RuleStatus createRuleStatus(String storeId) {
         String userName = utilityService.getUsername();
         RuleStatus ruleStatus = new RuleStatus();
@@ -543,7 +543,7 @@ public class DeploymentService {
         ruleStatus.setStoreId(storeId);
         return ruleStatus;
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     private Map<String, Boolean> publishWSMap(String storeId, List<String> ruleList, RuleEntity ruleType) {
         SearchGuiClientService service = new SearchGuiClientServiceImpl();
         return service.deployRulesMap(storeId, ruleList, ruleType);
@@ -553,7 +553,7 @@ public class DeploymentService {
         SearchGuiClientService service = new SearchGuiClientServiceImpl();
         return service.unDeployRulesMap(utilityService.getStoreId(), ruleList, ruleType);
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     private List<RuleStatus> getRuleStatusInfo(List<String> results, List<RuleStatus> ruleStatusList) {
         List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
         for (RuleStatus ruleStatus : ruleStatusList) {
