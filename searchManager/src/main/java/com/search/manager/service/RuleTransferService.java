@@ -41,6 +41,7 @@ import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.rules.FacetSortService;
 import com.search.manager.utility.StringUtil;
+import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 import org.slf4j.Logger;
@@ -69,6 +70,8 @@ public class RuleTransferService {
     private UtilityService utilityService;
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
+    @Autowired
+    private WorkflowService workflowService; 
     
     private static final int CREATE_RULE_STATUS = 0;
     private static final int SUBMIT_FOR_APPROVAL = 1;
@@ -301,7 +304,7 @@ public class RuleTransferService {
 
                     if (ImportType.FOR_APPROVAL == importType || ImportType.AUTO_PUBLISH == importType) {
                         //submit rule for approval
-                        ruleStatus = deploymentService.processRuleStatus(store, ruleType, importAsId, ruleName, false);
+                        ruleStatus = workflowService.processRuleStatus(store, userName, ruleType, importAsId, ruleName, false);
                         status++;
 
                         if (ruleStatus != null && ImportType.AUTO_PUBLISH == importType) {

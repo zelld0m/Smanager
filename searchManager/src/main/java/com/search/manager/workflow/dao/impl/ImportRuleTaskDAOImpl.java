@@ -103,7 +103,7 @@ public class ImportRuleTaskDAOImpl
 			
 			TaskExecutionResult taskExecutionResult = importRuleTask.getTaskExecutionResult();
 			
-			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult.getTaskStatus());
+			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult.getTaskStatus().ordinal() + 1);
 			inputs.put(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE, taskExecutionResult.getTaskErrorMessage());
 			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()));
 			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()));
@@ -193,7 +193,7 @@ public class ImportRuleTaskDAOImpl
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_IMPORT_TYPE, Types.INTEGER));
-			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_CREATED_BY, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_CREATED_STAMP, Types.TIMESTAMP));
 		}
 
