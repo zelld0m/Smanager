@@ -205,7 +205,7 @@ public class DeploymentService {
         return new RecordSet<RuleStatus>(list, approvedRset.getTotalSize() + publishedRset.getTotalSize());
     }
 
-
+    //TODO: Transfer to WorkflowServiceImpl
     public RecordSet<DeploymentModel> publishRuleNoLock(String store, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
         String username = utilityService.getUsername();
         boolean isAutoExport = BooleanUtils.toBoolean(utilityService.getStoreSetting(store, DAOConstants.SETTINGS_AUTO_EXPORT));
@@ -284,7 +284,7 @@ public class DeploymentService {
                 
         return new RecordSet<DeploymentModel>(publishingResultList, publishingResultList.size());
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     @RemoteMethod
     public RecordSet<DeploymentModel> publishRule(String storeId, String storeName, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
         boolean obtainedLock = false;
@@ -300,7 +300,7 @@ public class DeploymentService {
             }
         }
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     @SuppressWarnings("unchecked")
     private Map<String, Boolean> publishRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
         try {
@@ -520,7 +520,7 @@ public class DeploymentService {
         }
         return ruleStatusList;
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     private List<RuleStatus> getPublishingListFromMap(String storeId, Map<String, Boolean> ruleRefIdMap, Integer ruleTypeId, String status) {
         List<RuleStatus> rsList = new ArrayList<RuleStatus>();
         for (Map.Entry<String, Boolean> e : ruleRefIdMap.entrySet()) {
@@ -543,7 +543,7 @@ public class DeploymentService {
         ruleStatus.setStoreId(storeId);
         return ruleStatus;
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     private Map<String, Boolean> publishWSMap(String storeId, List<String> ruleList, RuleEntity ruleType) {
         SearchGuiClientService service = new SearchGuiClientServiceImpl();
         return service.deployRulesMap(storeId, ruleList, ruleType);
@@ -553,7 +553,7 @@ public class DeploymentService {
         SearchGuiClientService service = new SearchGuiClientServiceImpl();
         return service.unDeployRulesMap(utilityService.getStoreId(), ruleList, ruleType);
     }
-
+    //TODO: Transfer to WorkflowServiceImpl
     private List<RuleStatus> getRuleStatusInfo(List<String> results, List<RuleStatus> ruleStatusList) {
         List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
         for (RuleStatus ruleStatus : ruleStatusList) {

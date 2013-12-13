@@ -81,8 +81,8 @@ public class ImportTaskManager {
 			switch(ImportType.getByDisplayText(importTypeSetting)) {
 				case FOR_APPROVAL: workflowService.processRuleStatus(storeId, userName, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false); break;
 				case AUTO_PUBLISH: workflowService.processRuleStatus(storeId, userName, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false);
-									deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
-									deploymentService.publishRule(storeId, storeName, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList); 
+								   deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
+								   workflowService.publishRule(storeId, storeName, userName, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList); 
 									break;
 				default: 
 			}
