@@ -91,8 +91,7 @@ public class ImportRuleTaskDAOImpl
 		
 	}
 	
-	public int updateImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
-		int result = -1;
+	public ImportRuleTask updateImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
 		
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -109,13 +108,16 @@ public class ImportRuleTaskDAOImpl
 			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()));
 			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_BY, importRuleTask.getLastModifiedBy());
 			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_STAMP, jodaDateTimeUtil.toSqlDate(importRuleTask.getLastModifiedDate()));
+						
+			RecordSet<ImportRuleTask> rSet = DAOUtils.getRecordSet(updateImportRuleTaskStoredProcedure.execute(inputs));
 			
-			result = DAOUtils.getUpdateCount(updateImportRuleTaskStoredProcedure.execute(inputs));
+			ImportRuleTask result = rSet.getList().size() > 0 ? rSet.getList().get(0) : null;
+			
+			return result;
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateImportRuleTask()", e);
 		}
 		
-		return result;
 	}
 	
 	public ImportRuleTask addImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
