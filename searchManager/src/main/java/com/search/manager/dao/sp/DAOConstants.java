@@ -136,6 +136,12 @@ public class DAOConstants {
     public static final String SP_PUBLISH_SPELL_RULE = "usp_Publish_Spell_Rule";
     public static final String SP_RESTORE_SPELL_RULE_VERSION = "usp_Restore_Spell_Rule_Version";
     public static final String SP_GET_SPELL_RULE_VERSION = "usp_Get_Spell_Rule_Version";
+    public static final String SP_GET_EXCEL_FILE_UPLOADED = "usp_Get_Excel_File_Uploaded";
+    public static final String SP_GET_EXCEL_FILE_REPORT = "usp_Get_Excel_File_Report";
+    public static final String SP_ADD_EXCEL_FILE_UPLOADED = "usp_Add_Excel_File_Uploaded";
+    public static final String SP_ADD_EXCEL_FILE_REPORT = "usp_Add_Excel_File_Report";
+    public static final String SP_DELETE_EXCEL_FILE_UPLOADED = "usp_Delete_Excel_File_Uploaded";
+    public static final String SP_UPDATE_EXCEL_FILE_UPLOADED = "usp_Update_Excel_File_Uploaded";
 
     /* Stored Procedure Parameter Names */
     public static final String PARAM_STORE_ID = "store_id";
@@ -286,6 +292,16 @@ public class DAOConstants {
     public static final String PARAM_PUBLISHED_DATE = "published_date";
     public static final String PARAM_EXPORT_DATE = "export_date";
     public static final String PARAM_IMPORT_DATE = "import_date";
+    // export_rule_map_parameters
+    public static final String PARAM_EXCEL_FILE_UPLOADED_ID = "excel_file_uploaded_id";
+    public static final String PARAM_FILE_NAME = "file_name";
+    public static final String PARAM_EXCEL_FILE_REPORT_ID = "excel_file_report_id";
+    public static final String PARAM_RANK = "rank";
+    public static final String PARAM_SKU = "sku";
+    public static final String PARAM_EXPIRATION = "expiration";
+    public static final String PARAM_ADDED_ON_RULE_DATE = "Added_on_Rule_Date";
+    public static final String PARAM_ADDED_ON_RULE_BY = "Added_on_Rule_By";
+    public static final String PARAM_CREATED_STAMP = "Created_Stamp";
     // DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
     public static final String COLUMN_KEYWORD = "keyword";
     public static final String COLUMN_PROD_KEYWORD_ID = "prod_keyword_id";
@@ -337,7 +353,7 @@ public class DAOConstants {
     public static final String COLUMN_REDIRECT_URL = "redirect_url";
     public static final String COLUMN_INCLUDE_KEYWORD = "include_keyword";
     public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE = "replace_keyword_message_type";
-    public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT = "replace_keyword_message_custom_text";
+    public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT = "replace_keyword_message_custom_text";    
     public static final int REPLACE_KEYWORD_NO_ADDITIONAL_TEXT = 1;
     public static final int REPLACE_KEYWORD_STANDARD_TEXT = 2;
     public static final int REPLACE_KEYWORD_CUSTOM_TEXT = 3;
@@ -350,7 +366,9 @@ public class DAOConstants {
     public static final String COLUMN_EVENT_STATUS = "event_status";
     public static final String COLUMN_LAST_PUBLISHED_DATE = "last_published_date";
     public static final String COLUMN_CREATED_STAMP = "created_stamp";
+    public static final String COLUMN_CREATED_TX_STAMP = "created_tx_stamp";
     public static final String COLUMN_LAST_UPDATED_STAMP = "last_updated_stamp";
+    public static final String COLUMN_LAST_UPDATED_TX_STAMP = "last_updated_tx_stamp";
     public static final String COLUMN_LAST_UPDATED_BY = "last_updated_by";
     public static final String COLUMN_GROUP_ID = "group_id";
     public static final String COLUMN_PERMISSION_ID = "permission_id";
@@ -415,6 +433,14 @@ public class DAOConstants {
     public static final String COLUMN_TOTAL_NUMBER = "total_number";
     // ADD/UPDATE/DELETE* SPs total size
     public static final String COLUMN_RESULT = "RESULT";
+    public static final String COLUMN_EXCEL_FILE_UPLOADED_ID = "excel_file_uploaded_id";
+    public static final String COLUMN_FILE_NAME = "file_name";
+    public static final String COLUMN_EXCEL_FILE_REPORT_ID = "excel_file_report_id";
+    public static final String COLUMN_RANK = "rank";
+    public static final String COLUMN_SKU = "sku";
+    public static final String COLUMN_ADDED_ON_RULE_STAMP = "added_on_rule_stamp";
+    public static final String COLUMN_EXPIRATION = "expiration";
+    public static final String COLUMN_ADDED_ON_RULE_BY = "added_on_rule_by";
     // will be used in elevate/exclude/etc. once feature for adding by brand/facet is added. Important: existing SP must be changed
     public static final String MEMBER_TYPE_PART = "PART_NUMBER";
     // used by settings

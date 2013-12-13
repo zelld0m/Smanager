@@ -7,10 +7,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Store;
@@ -94,7 +98,12 @@ public class DAOUtils {
                 .append(StringUtils.leftPad(encodeString(random.nextInt(MAX_RANDOM_INT)), 3, "0")); // random int
         return builder.toString();
     }
-
+    public static String generateUniqueId64Char() {
+   	 EthernetAddress nic = EthernetAddress.fromInterface();
+   	 TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(nic);
+   	 UUID uuid = uuidGenerator.generate();
+   	 return uuid.toString();
+   }
     @SuppressWarnings("unchecked")
     public static int getUpdateCount(Map<String, Object> result) {
         int i = -1;
