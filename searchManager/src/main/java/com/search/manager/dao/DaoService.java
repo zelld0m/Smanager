@@ -266,9 +266,6 @@ public interface DaoService extends SearchDaoService {
 	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
 	public List<RuleXml> getPublishedRuleVersions(String store, String ruleType, String ruleId);
 	
-	/* Export */
-	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment) throws DaoException;
-	
 	/* Export Rule Map */
 	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
