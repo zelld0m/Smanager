@@ -8,8 +8,6 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
-import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -117,15 +115,5 @@ private static final long serialVersionUID = 1L;
 
 	public void setStore(Store store) {
 		this.store = store;
-	}
-
-	public String getFormattedCreatedDateTime(){
-//		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
-		return "";
-	}
-	
-	public String getFormattedCreatedDate(){
-//		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
-		return "";
 	}
 }

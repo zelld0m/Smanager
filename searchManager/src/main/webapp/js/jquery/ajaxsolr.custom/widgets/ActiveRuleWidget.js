@@ -13,7 +13,7 @@
                     if (!$.isEmptyObject(data)) {
                         $li.find('.ruleStatus > .status').text(getRuleNameSubTextStatus(data));
                         $li.find('.ruleStatus > .statusMode').text($.isNotBlank(data["locked"]) && data["locked"] ? " [ Read-Only ]" : "");
-                        $li.find('.lastPublished').text($.isNotBlank(data["formattedLastPublishedDateTime"]) ? 'Published on ' + data["formattedLastPublishedDateTime"] : '');
+                        $li.find('.lastPublished').text($.isNotBlank($.toStoreFormat(data["lastPublishedDate"])) ? 'Published on ' + $.toStoreFormat(data["lastPublishedDate"]) : '');
                     }
                 }
             });

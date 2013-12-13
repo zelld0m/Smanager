@@ -7,7 +7,6 @@ import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
 import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -155,26 +154,6 @@ public class BannerRuleItem extends ModelBean{
 
 	public void setDisabled(Boolean disabled) {
 		this.disabled = disabled;
-	}
-	
-	public String getFormattedStartDate(){
-//		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
-		return "";
-	}
-	
-	public String getFormattedStartDateTime(){
-//		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE_TIME);
-		return "";
-	}
-	
-	public String getFormattedEndDate(){
-//		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE);
-		return "";
-	}
-	
-	public String getFormattedEndDateTime(){
-//		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE_TIME);
-		return "";
 	}
 	
 	public String getDaysLeft(){

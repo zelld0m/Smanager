@@ -412,8 +412,8 @@
             ui
                     .find("#imageTitle").text(item["imagePath"]["alias"]).end()
                     .find("#priority").val(item["priority"]).end()
-                    .find("#startDate").val(item["formattedStartDate"]).end()
-                    .find("#endDate").val(item["formattedEndDate"]).end()
+                    .find("#startDate").val($.toStoreFormat(item["startDate"],GLOBAL_storeDateFormat)).end()
+                    .find("#endDate").val($.toStoreFormat(item["endDate"],GLOBAL_storeDateFormat)).end()
 
                     .find("#imagePath").val(item["imagePath"]["path"]).prop({
                 readonly: true,
@@ -503,7 +503,7 @@
                         callback: function(sr) {
                             var rItem = sr["data"];
                             if (rItem) {
-                                u.find(".itemSchedule").text(rItem["formattedStartDate"] + '-' + rItem["formattedEndDate"]);
+                                u.find(".itemSchedule").text($.toStoreFormat(rItem["startDate"],GLOBAL_storeDateFormat) + '-' + $.toStoreFormat(rItem["endDate"],GLOBAL_storeDateFormat));
                             }
                         }
                     });
@@ -562,7 +562,10 @@
             }, {locked: self.selectedRuleStatus["locked"] || !allowModify});
         },
         addLastUpdateHandler: function(ui, item) {
-            var lastModifiedDate = $.isBlank(item["formattedLastModifiedDateTime"]) ? item["formattedCreatedDateTime"] : item["formattedLastModifiedDateTime"];
+            var lastModifiedDate = $.isBlank(
+            		$.toStoreFormat(item["lastModifiedDate"])) ? 
+            				$.toStoreFormat(item["createdDate"]) : 
+            					$.toStoreFormat(item["lastModifiedDate"]);
             var lastModifiedBy = $.isBlank(item["lastModifiedBy"]) ? item["createdBy"] : item["lastModifiedBy"];
 
             ui.find('#lastModifiedIcon').off().on({
@@ -980,8 +983,10 @@
                 "imagePath": imagePath,
                 "imageAlias": imageAlias,
                 "priority": !$.iequals(priority, $.trim(item["priority"])) ? priority : null,
-                "startDate": !$.iequals(startDate, item["formattedStartDate"]) ? startDate : null,
-                "endDate": !$.iequals(endDate, item["formattedEndDate"]) ? endDate : null,
+                "startDate": !$.iequals(startDate, 
+                		$.toStoreFormat(item["startDate"],GLOBAL_storeDateFormat)) ? startDate : null,
+                "endDate": !$.iequals(endDate, 
+                		$.toStoreFormat(item["endDate"],GLOBAL_storeDateFormat)) ? endDate : null,
                 "imageAlt": !$.iequals(imageAlt, item["imageAlt"]) ? imageAlt : null,
                 "linkPath": !$.iequals(linkPath, item["linkPath"]) ? linkPath : null,
                 "description": !$.iequals(description, item["description"]) ? description : null,

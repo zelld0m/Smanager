@@ -153,12 +153,12 @@
 					$li.find("#restoreLink").show();
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
-					$li.find("#verDate").text($.isNotBlank(item["formattedCreatedDateTime"]) ? item["formattedCreatedDateTime"] : "");
+					$li.find("#verDate").text($.toStoreFormat(item["createdDate"]));
 				}
 				else {
 					$li.find("#verName").text("Not Available");
 					$li.find("#verNote").text("Not Available");
-					if(item["formattedLastModifiedDateTime"]) $li.find("#verDate").text(item["formattedLastModifiedDateTime"]);
+					if(item["lastModifiedDateTime"]) $li.find("#verDate").text($.toStoreFormat(item["lastModifiedDateTime"]));
 				}
 				$li.find("#ruleId").text(item["ruleId"]);
 				$li.find("#ruleName").text(item["ruleName"]);
