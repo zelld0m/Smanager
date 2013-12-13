@@ -1,7 +1,5 @@
 package com.search.manager.dao.internal;
 
-import com.search.manager.dao.DaoException;
-import com.search.manager.dao.DaoService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,12 +8,15 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.dao.DaoException;
+import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.BannerVersionDAO;
 import com.search.manager.dao.file.DemoteVersionDAO;
 import com.search.manager.dao.file.ElevateVersionDAO;
@@ -28,7 +29,6 @@ import com.search.manager.dao.file.SpellRuleVersionDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CommentDAO;
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.DemoteDAO;
 import com.search.manager.dao.sp.ElevateDAO;
@@ -46,12 +46,10 @@ import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
 import com.search.manager.enums.ExportRuleMapSortType;
 import com.search.manager.enums.ExportType;
-import com.search.manager.enums.ImportType;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.enums.RuleType;
-import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.BannerRule;
 import com.search.manager.model.BannerRuleItem;
@@ -83,29 +81,22 @@ import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
-import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.BannerRuleXml;
+import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
-import com.search.manager.report.model.xml.DBRuleVersion;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.DeploymentService;
 import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.UtilityService;
-import com.search.manager.workflow.dao.ImportRuleTaskDAO;
-import com.search.manager.workflow.model.ImportRuleTask;
-import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service("daoService")
 public class DaoServiceImpl implements DaoService {
@@ -170,10 +161,6 @@ public class DaoServiceImpl implements DaoService {
     private RuleTransferService ruleTransferService;
     @Autowired
     private DeploymentService deploymentService;
-    @Autowired
-    private ImportRuleTaskDAO importRuleTaskDAO;
-    @Autowired
-    private WorkflowService workflowService;
     
     private DaoServiceImpl instance;
     
@@ -1653,94 +1640,6 @@ public class DaoServiceImpl implements DaoService {
             resultMap.put(rsId, result);
         }
         return resultMap;
-    }
-
-    public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment) throws DaoException {
-        // TODO: change return type to Map
-        boolean exported = false;
-        boolean exportedOnce = false;
-        
-        AuditTrail auditTrail = new AuditTrail();
-        auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
-        auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
-        auditTrail.setUsername(username);
-        auditTrail.setStoreId(store);
-        DateTime exportDateTime = DateTime.now();
-
-        RuleStatus ruleStatus = null;
-        try {
-            SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(
-                    new RuleStatus(ruleEntity.getCode(), store, ruleId), null, null, null, null);
-            RecordSet<RuleStatus> approvedRset = getRuleStatus(searchCriteria);
-            if (approvedRset != null && CollectionUtils.isNotEmpty(approvedRset.getList())) {
-                ruleStatus = approvedRset.getList().get(0);
-            } else {
-                logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
-            }
-        } catch (DaoException e) {
-            logger.error("Failed to retrieve rule status for " + ruleEntity + " : " + ruleId, e);
-        }
-        
-        for (String targetStore : utilityService.getStoresToExport(store)) {
-        	exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
-        	
-        	boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty("settings", targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
-        	boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty("workflow", targetStore, "enable."+rule.getRuleEntity().getNthValue(1)));
-
-            ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
-                    targetStore, null, null, ruleEntity);
-            exportRuleMap.setExportDateTime(exportDateTime);
-            exportRuleMap.setDeleted(false);
-            if (ruleStatus != null) {
-                exportRuleMap.setPublishedDateTime(ruleStatus.getLastPublishedDate());
-            }
-            saveExportRuleMap(exportRuleMap);
-            exportedOnce |= exported;
-            if (!exported) {
-                logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
-            } else {
-            	if(isAutoImport && isRuleEntityEnabled) {
-            		importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), workflowService.generateImportAsId(ruleEntity, rule.getRuleName()), rule.getRuleName());
-            	}
-            }
-        }
-
-        if (exportedOnce) {
-            try {
-                if (ruleStatus != null) {
-                    // RULE STATUS
-                    updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDateTime);
-                    // AUDIT TRAIL
-                    auditTrail.setCreatedDate(exportDateTime);
-                    auditTrail.setReferenceId(ruleStatus.getRuleRefId());
-                    if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
-                        auditTrail.setKeyword(ruleStatus.getRuleRefId());
-                    }
-                    auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].",
-                            auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.AUTOMATIC));
-                    addAuditTrail(auditTrail);
-                    // COMMENT
-                    addRuleStatusComment(RuleStatusEntity.EXPORTED, store, username, comment, ruleStatus.getRuleStatusId());
-                } else {
-                    logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
-                }
-            } catch (DaoException e) {
-                logger.error("Failed to update rule status for " + ruleEntity + " : " + ruleId, e);
-            }
-        }
-        return exported;
-    }
-    
-    private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
-    	ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, utilityService.getStoreId(), importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
-    	importRuleTask.setCreatedBy(userName);
-    	importRuleTask.setCreatedDate(new DateTime());
-    	try {
-			importRuleTaskDAO.addImportRuleTask(importRuleTask);
-		} catch (DaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     }
 
     /* Used by SearchServlet */

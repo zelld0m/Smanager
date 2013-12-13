@@ -7,8 +7,6 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
-import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -213,10 +211,5 @@ public class User extends ModelBean {
 
 	public void setLastAccessDate(DateTime lastAccessDate) {
 		this.lastAccessDate = lastAccessDate;
-	}
-
-	public String getFormattedLastAccessDateTime() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastAccessDate(), JodaPatternType.DATE_TIME);
-		return "";
 	}
 }

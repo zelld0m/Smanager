@@ -96,10 +96,15 @@ public class RuleXmlUtil {
     @Autowired
     private UtilityService utilityService;
     
-    protected RuleXmlUtil() {
-        //Exists only to defeat instantiation.
+    private RuleXmlUtil() {
+        // Exists only to defeat instantiation.
     }
 
+    // a setter method so that the Spring container can 'inject'
+    public void setDaoService(DaoService daoService) {
+        this.daoService = daoService;
+    }
+    
     protected void setFacetTemplateValues(String storeId, RedirectRuleCondition condition) {
         if (configManager != null && condition != null) {
             condition.setFacetPrefix(configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));

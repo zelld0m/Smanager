@@ -16,8 +16,6 @@ import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 import org.joda.time.DateTime;
 
-import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 import com.search.manager.report.model.xml.RankingRuleXml;
 

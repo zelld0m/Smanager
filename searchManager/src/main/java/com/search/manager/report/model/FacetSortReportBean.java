@@ -1,5 +1,7 @@
 package com.search.manager.report.model;
 
+import org.joda.time.DateTime;
+
 import com.search.manager.model.FacetGroup;
 import com.search.manager.report.annotation.ReportField;
 
@@ -40,8 +42,8 @@ public class FacetSortReportBean extends ReportBean<FacetGroup> {
 	}
 
 	@ReportField(label="Created Date", size=20, sortOrder=5)
-	public String getCreatedDate(){
-		return model.getFormattedCreatedDate();
+	public DateTime getCreatedDate(){
+		return model.getCreatedDate();
 	}
 
 	/*@ReportField(label="Modified By", size=20, sortOrder=6)

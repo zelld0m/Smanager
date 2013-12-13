@@ -204,7 +204,7 @@
 					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
 
-					var formattedExpiryDate = $.isNotBlank(list[i]["formattedExpiryDate"])? list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]: "";
+					var formattedExpiryDate = $.isNotBlank(list[i]["expiryDate"])? $.toStoreFormat(list[i]["expiryDate"],GLOBAL_storeDateFormat) + "<br/>" +  list[i]["validityText"]: "";
 					
 					if(FACET){
 						memberConditions.push(list[i].condition["conditionForSolr"]);
@@ -471,8 +471,8 @@
 						}
 						else{
 							$content.find("#ruleInfo").html(data["ruleName"]);
-							$content.find("#startDate").html(data["formattedStartDate"]);
-							$content.find("#endDate").html(data["formattedEndDate"]);
+							$content.find("#startDate").html($.toStoreFormat(data["startDate"], GLOBAL_storeDateFormat));
+							$content.find("#endDate").html($.toStoreFormat(data["endDate"], GLOBAL_storeDateFormat));
 							$content.find("#description").html(data["description"]);
 
 							relKeyword = base.toStringArray(data["relKeyword"]);
@@ -659,8 +659,8 @@
 				var xml = base.options.ruleXml;
 
 				$content.find("#ruleInfo").html(xml["ruleName"]);
-				$content.find("#startDate").html(xml["formattedStartDate"]);
-				$content.find("#endDate").html(xml["formattedEndDate"]);
+				$content.find("#startDate").html($.toStoreFormat(xml["startDate"]));
+				$content.find("#endDate").html($.toStoreFormat(xml["endDate"]));
 				$content.find("#description").html(xml["description"]);
 
 				var $table = $content.find("div.ruleField table#item");

@@ -31,6 +31,7 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.ExcludeService;
 import com.search.manager.service.RuleVersionService;
+import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller
@@ -49,6 +50,8 @@ public class ExcludeController {
     private RuleVersionService ruleVersionService;
     @Autowired
     private RuleXmlReportUtil ruleXmlReportUtil;
+    @Autowired
+    private UtilityService utilityService;
     
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
@@ -152,7 +155,7 @@ public class ExcludeController {
         if (rules != null) {
             for (RuleXml xml : rules) {
                 if (xml != null) {
-                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.EXCLUDE);
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), xml, RuleEntity.EXCLUDE);
                     subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getExcludeProducts(xml)));
                 }
             }

@@ -1,6 +1,7 @@
 package com.search.manager.report.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.DemoteProduct;
@@ -49,8 +50,8 @@ public class DemoteReportBean extends ReportBean<DemoteProduct> {
 	}
 	
 	@ReportField(label="Valid Until", size=20, sortOrder=5)
-	public String getValidity(){
-		return model.getFormattedExpiryDate();
+	public DateTime getValidity(){
+		return model.getExpiryDate();
 	}
 
 	@ReportField(label="Created By", size=20, sortOrder=6)
@@ -59,8 +60,8 @@ public class DemoteReportBean extends ReportBean<DemoteProduct> {
 	}
 
 	@ReportField(label="Created Date", size=20, sortOrder=7)
-	public String getCreatedDate(){
-		return model.getFormattedCreatedDate();
+	public DateTime getCreatedDate(){
+		return model.getCreatedDate();
 	}
 
 	@ReportField(label="Modified By", size=20, sortOrder=8)
@@ -69,8 +70,8 @@ public class DemoteReportBean extends ReportBean<DemoteProduct> {
 	}
 	
 	@ReportField(label="Modified Date", size=20, sortOrder=9)
-	public String getModifiedDate(){
-		return model.getFormattedLastModifiedDate();
+	public DateTime getModifiedDate(){
+		return model.getLastModifiedDate();
 	}
 
 	private boolean isFacet() {

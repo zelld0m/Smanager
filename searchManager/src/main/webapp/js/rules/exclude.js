@@ -198,7 +198,8 @@
 					$li.find(".validityDays").html($item["validityText"]);
 				} 
 
-				var formattedExpiryDate = $item["formattedExpiryDate"];
+				var formattedExpiryDate = $.toStoreFormat($item["expiryDate"], GLOBAL_dateFormat);
+				
 				if($.isBlank(formattedExpiryDate)){
 					$li.find(".clearDate").hide();
 				}else{
@@ -217,7 +218,7 @@
 					buttonImageOnly: true,
 					disabled: self.selectedRuleStatus["locked"] || !allowModify,
 					onSelect: function(dateText, inst) {	
-						if ($item["formattedExpiryDate"] !== dateText){
+						if ($.toStoreFormat($item["expiryDate"], GLOBAL_dateFormat) !== dateText){
 							self.updateValidityDate($item, "update", dateText);
 						}
 					}
@@ -289,7 +290,7 @@
 				
 				$li.find('.lastModifiedIcon').off().on({
 					mouseenter: showLastModified 
-				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDateTime"]});
+				},{user: $item["lastModifiedBy"], date:$.toStoreFormat($item["lastModifiedDateTime"])});
 
 				$li.find('.deleteRuleItemIcon').off().on({
 					click: function(e){

@@ -55,7 +55,6 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.service.UtilityService;
 
 @Component
 public class RuleXmlReportUtil {
@@ -64,19 +63,14 @@ public class RuleXmlReportUtil {
             LoggerFactory.getLogger(RuleXmlReportUtil.class);
     
     @Autowired
-    private UtilityService utilityService;
-    @Autowired
     private JodaDateTimeUtil jodaDateTimeUtil;
 
     protected RuleXmlReportUtil() {
         //Exists only to defeat instantiation.
     }
 
-    public SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity) {
+    public SubReportHeader getVersionSubReportHeader(String storeId, RuleXml xml, RuleEntity ruleEntity) {
         SubReportHeader subReportHeader = new SubReportHeader();
-
-        String storeId = utilityService.getStoreId();
-
         subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
         subReportHeader.addRow("Name: ", StringUtils.defaultIfBlank(xml.getName(), ""));
         subReportHeader.addRow("Notes: ", StringUtils.defaultIfBlank(xml.getNotes(), ""));
