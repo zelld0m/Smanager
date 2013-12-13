@@ -239,6 +239,7 @@ public class UtilityService {
 		json.put("storeFacetTemplateName", getStoreFacetTemplateName());
 		json.put("storeGroupMembership", getStoreGroupMembership());
 		json.put("storeDateFormat", getStoreDateFormat());
+		json.put("storeDateTimeFormat", getStoreDateTimeFormat());
 		json.put("storeDefaultBannerSize", getStoreDefaultBannerSize(storeId));
 		json.put("storeAllowedBannerSizes", getStoreAllowedBannerSizes(storeId));
 		json.put("storeDefaultBannerLinkPathProtocol", getStoreDefaultBannerLinkPathProtocol(storeId));

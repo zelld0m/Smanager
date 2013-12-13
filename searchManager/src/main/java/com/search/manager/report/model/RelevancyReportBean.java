@@ -1,5 +1,7 @@
 package com.search.manager.report.model;
 
+import org.joda.time.DateTime;
+
 import com.search.manager.model.Relevancy;
 import com.search.manager.report.annotation.ReportField;
 
@@ -42,8 +44,8 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 	}
 
 	@ReportField(label="Created Date", size=20, sortOrder=6)
-	public String getCreatedDate(){
-		return model.getFormattedCreatedDate();
+	public DateTime getCreatedDate(){
+		return model.getCreatedDate();
 	}
 
 	@ReportField(label="Modified By", size=20, sortOrder=7)
@@ -52,7 +54,7 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 	}
 	
 	@ReportField(label="Modified Date", size=20, sortOrder=8)
-	public String getModifiedDate(){
-		return model.getFormattedLastModifiedDate();
+	public DateTime getModifiedDate(){
+		return model.getLastModifiedDate();
 	}	
 }

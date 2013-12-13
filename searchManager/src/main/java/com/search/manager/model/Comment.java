@@ -110,16 +110,4 @@ public class Comment implements Serializable {
 	public void setStore(Store store) {
 		this.store = store;
 	}
-
-	public String getFormattedCreatedDateTime() {
-		// return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(),
-		// JodaPatternType.DATE_TIME);
-		return "";
-	}
-
-	public String getFormattedCreatedDate() {
-		// return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(),
-		// JodaPatternType.DATE);
-		return "";
-	}
 }

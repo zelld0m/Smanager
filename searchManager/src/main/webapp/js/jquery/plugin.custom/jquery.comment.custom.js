@@ -82,7 +82,7 @@
 			for (var i = 0; i < data.list.length; i++) {
 				var $item = data.list[i];
 				var auditEntryHTML = base.contentHolder.find('div#commentEntryTemplate').html();
-				auditEntryHTML = auditEntryHTML.replace("%%timestamp%%", $.defaultIfBlank($item["formattedCreatedDateTime"],"Date Not Available"));
+				auditEntryHTML = auditEntryHTML.replace("%%timestamp%%", $.defaultIfBlank($.toStoreFormat($item["createdDate"]),"Date Not Available"));
 				auditEntryHTML = auditEntryHTML.replace("%%commentor%%", $.defaultIfBlank($item.username,"User not available"));
 				auditEntryHTML = auditEntryHTML.replace("%%comment%%", $.defaultIfBlank($item.comment, "").replace(new RegExp("&",'g'),"&amp;"));
 				auditItems += auditEntryHTML;

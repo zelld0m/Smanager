@@ -6,8 +6,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.joda.time.DateTime;
 
-import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 public class ModelBean implements Serializable {
@@ -60,25 +58,5 @@ public class ModelBean implements Serializable {
 
 	public void setLastModifiedDate(DateTime lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	public String getFormattedCreatedDateTime() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE_TIME);
-		return "";
-	}
-	
-	public String getFormattedLastModifiedDateTime() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE_TIME);
-		return "";
-	}
-	
-	public String getFormattedCreatedDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getCreatedDate(), JodaPatternType.DATE);
-		return "";
-	}
-	
-	public String getFormattedLastModifiedDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastModifiedDate(), JodaPatternType.DATE);
-		return "";
 	}
 }
