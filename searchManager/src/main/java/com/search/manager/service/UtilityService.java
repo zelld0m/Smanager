@@ -236,8 +236,8 @@ public class UtilityService {
 		json.put("storeDefaultBannerSize", getStoreDefaultBannerSize(storeId));
 		json.put("storeAllowedBannerSizes", getStoreAllowedBannerSizes(storeId));
 		json.put("storeDefaultBannerLinkPathProtocol", getStoreDefaultBannerLinkPathProtocol(storeId));
-		json.put("storeRedirectSelfDomain", getStoreSelfDomains(storeId));
-		json.put("storeRedirectRelativePath", getStoreRelativePath(storeId));
+		json.put("storeRedirectSelfDomain", configManager.getPropertyList("settings", storeId, "redirect_self_domain"));
+		json.put("storeRedirectRelativePath", configManager.getPropertyList("settings", storeId, "redirect_relative_path"));
 		json.put("storeFacetTemplateType", getStoreFacetTemplateType(storeId));
 		json.put("searchWithinEnabled", configManager.getProperty("searchWithin", storeId, "searchwithin.enable"));
 		json.put("searchWithinTypes", configManager.getProperty("searchWithin", storeId, "searchwithin.type"));
@@ -399,14 +399,6 @@ public class UtilityService {
 
 	public String getStoreDateTimeFormat() {
 		return configManager.getStoreParameter(getStoreId(), "datetime-format");
-	}
-
-	public List<String> getStoreSelfDomains(String storeId) {
-		return getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_SELF_DOMAIN);
-	}
-
-	public List<String> getStoreRelativePath(String storeId) {
-		return getStoreSettings(storeId, DAOConstants.SETTINGS_REDIRECT_RELATIVE_PATH);
 	}
 
 	public String getStoreFacetTemplateType(String storeId) {
