@@ -105,7 +105,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 					exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
 
 					boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty("settings", targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
-					boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty("workflow", targetStore, "enable."+rule.getRuleEntity().getNthValue(1)));
+					boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty("workflow", targetStore, "enable."+rule.getRuleEntity().getXmlName()));
 
 					ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
 							targetStore, null, null, ruleEntity);
