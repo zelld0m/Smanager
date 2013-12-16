@@ -159,7 +159,7 @@ public class RedirectController {
             for (RuleXml rule : rules) {
                 RedirectRuleXml xml = (RedirectRuleXml) rule;
                 if (xml != null) {
-                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.QUERY_CLEANING);
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), xml, RuleEntity.QUERY_CLEANING);
                     subModels.addAll(ruleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
                 }
             }

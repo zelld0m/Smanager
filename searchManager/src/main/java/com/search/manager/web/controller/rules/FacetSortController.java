@@ -162,7 +162,7 @@ public class FacetSortController {
             for (RuleXml rule : rules) {
                 FacetSortRuleXml xml = (FacetSortRuleXml) rule;
                 if (rule != null) {
-                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.FACET_SORT);
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), xml, RuleEntity.FACET_SORT);
                     subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getFacetSortReportBeanList(xml)));
                 }
             }

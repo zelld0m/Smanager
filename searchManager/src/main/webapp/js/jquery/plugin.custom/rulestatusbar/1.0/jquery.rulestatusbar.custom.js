@@ -27,10 +27,8 @@
 						if($.isNotBlank(ruleStatus["approvalStatus"])){
 							base.$el.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
 						}
-
-						if($.isNotBlank(ruleStatus["formattedLastPublishedDateTime"])){
-							base.$el.find("#publishedDate").text(ruleStatus["formattedLastPublishedDateTime"]);
-						}
+						
+						base.$el.find("#publishedDate").text($.toStoreFormat(ruleStatus["lastPublishedDate"]));
 
 						if(ruleStatus["locked"]){
 							base.$el.find("#statusMode").text("[ Read-Only ]");

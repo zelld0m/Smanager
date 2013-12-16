@@ -13,8 +13,6 @@ import org.springframework.util.StringUtils;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
-import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -289,45 +287,5 @@ public class RuleStatus extends ModelBean {
 
 	public void setLastExportDate(DateTime lastExportDate) {
 		this.lastExportDate = lastExportDate;
-	}
-
-	public String getFormattedLastRequestDateTime() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDate(), JodaPatternType.DATE_TIME);
-		return "";
-	}
-	
-	public String getFormattedLastApprovalDateTime() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDate(), JodaPatternType.DATE_TIME);
-		return "";
-	}
-	
-	public String getFormattedLastPublishedDateTime() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDate(), JodaPatternType.DATE_TIME);
-		return "";
-	}
-	
-	public String getFormattedLastExportDateTime() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDate(), JodaPatternType.DATE_TIME);
-		return "";
-	}
-
-	public String getFormattedLastRequestDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastRequestDate(), JodaPatternType.DATE);
-		return "";
-	}
-	
-	public String getFormattedLastApprovalDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastApprovalDate(), JodaPatternType.DATE);
-		return "";
-	}
-	
-	public String getFormattedLastPublishedDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastPublishedDate(), JodaPatternType.DATE);
-		return "";
-	}
-	
-	public String getFormattedLastExportDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getLastExportDate(), JodaPatternType.DATE);
-		return "";
 	}
 }

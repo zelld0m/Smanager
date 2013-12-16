@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.util.IdGenerator;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
@@ -91,8 +92,7 @@ public class ImportRuleTaskDAOImpl
 		
 	}
 	
-	public int updateImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
-		int result = -1;
+	public ImportRuleTask updateImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
 		
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -105,24 +105,29 @@ public class ImportRuleTaskDAOImpl
 			
 			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult.getTaskStatus().ordinal() + 1);
 			inputs.put(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE, taskExecutionResult.getTaskErrorMessage());
+			inputs.put(WorkflowConstants.COLUMN_RUN_ATTEMPT, taskExecutionResult.getRunAttempt());
+			inputs.put(WorkflowConstants.COLUMN_STATE_COMPLETED, taskExecutionResult.getStateCompleted() != null ? taskExecutionResult.getStateCompleted().ordinal() + 1 : 0);
 			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()));
 			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()));
 			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_BY, importRuleTask.getLastModifiedBy());
 			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_STAMP, jodaDateTimeUtil.toSqlDate(importRuleTask.getLastModifiedDate()));
+						
+			RecordSet<ImportRuleTask> rSet = DAOUtils.getRecordSet(updateImportRuleTaskStoredProcedure.execute(inputs));
 			
-			result = DAOUtils.getUpdateCount(updateImportRuleTaskStoredProcedure.execute(inputs));
+			ImportRuleTask result = rSet.getList().size() > 0 ? rSet.getList().get(0) : null;
+			
+			return result;
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateImportRuleTask()", e);
 		}
 		
-		return result;
 	}
 	
 	public ImportRuleTask addImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			
-			inputs.put(WorkflowConstants.COLUMN_TASK_ID, DAOUtils.generateUniqueId());
+			inputs.put(WorkflowConstants.COLUMN_TASK_ID, IdGenerator.generateUniqueId());
 			inputs.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, importRuleTask.getRuleEntity().getCode());
 			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, importRuleTask.getSourceStoreId());
 			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_ID, importRuleTask.getSourceRuleId());
@@ -245,7 +250,9 @@ public class ImportRuleTaskDAOImpl
 					rs.getString(WorkflowConstants.COLUMN_TARGET_RULE_NAME), 
 					importType, 
 					new TaskExecutionResult(taskStatus, 
-							rs.getString(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE), 
+							rs.getString(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE),
+							rs.getInt(WorkflowConstants.COLUMN_RUN_ATTEMPT),
+							rs.getInt(WorkflowConstants.COLUMN_STATE_COMPLETED) != 0 ? ImportType.get(rs.getInt(WorkflowConstants.COLUMN_STATE_COMPLETED)) : null,
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_START_STAMP)), 
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_END_STAMP))));
 			
@@ -267,6 +274,8 @@ public class ImportRuleTaskDAOImpl
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_STATUS, Types.INTEGER));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE, Types.VARCHAR));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_RUN_ATTEMPT, Types.INTEGER));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_STATE_COMPLETED, Types.INTEGER));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_START_STAMP, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_END_STAMP, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_LAST_UPDATED_BY, Types.VARCHAR));

@@ -42,7 +42,8 @@
 						audit = audits[i];
 						referenceId = audit.referenceId !=null? audit.referenceId : "";
 						
-						$('#resultsBody').append('<tr><td class=\"txtAC\">' + audit["formattedCreatedDateTime"] + '</td><td class=\"txtAC\"><p class="breakWord w100">' + referenceId + '</p></td><td class=\"txtAC\">' + audit.username + '</td>' +
+						$('#resultsBody').append('<tr><td class=\"txtAC\">' + 
+								$.toStoreFormat(audit["createdDate"]) + '</td><td class=\"txtAC\"><p class="breakWord w100">' + referenceId + '</p></td><td class=\"txtAC\">' + audit.username + '</td>' +
 								'<td class=\"txtAC\"><p class="breakWord w80">' + audit.entity + '</p></td><td class=\"txtAC\"><p class="breakWord w90">' + audit.operation + '</p></td><td class=\"txtAC\"><p class="breakWord w100">' + $.trimToEmpty(audit.keyword) + '</p></td><td><p class="breakWord w135">' + audit.details + '</p></td></tr>');
 					}
 					

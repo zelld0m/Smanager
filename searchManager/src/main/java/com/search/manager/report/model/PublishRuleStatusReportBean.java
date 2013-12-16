@@ -1,5 +1,7 @@
 package com.search.manager.report.model;
 
+import org.joda.time.DateTime;
+
 import com.search.manager.model.Comment;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.annotation.ReportField;
@@ -31,8 +33,8 @@ public class PublishRuleStatusReportBean extends ReportBean<RuleStatus> {
 	}
 	
 	@ReportField(label="Last Published Date", size=20, sortOrder=5)
-	public String getLastPublishedDate() {
-		return model.getFormattedLastPublishedDateTime();
+	public DateTime getLastPublishedDate() {
+		return model.getLastPublishedDate();
 	}
 	
 	@ReportField(label="Comment", size=20, sortOrder=6)

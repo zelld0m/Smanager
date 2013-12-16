@@ -134,7 +134,7 @@
 			}).show();
 			
 			$tr.find(".itemName").text(rule["ruleName"]);
-			$tr.find(".itemCreatedDate").text(rule["formattedCreatedDateTime"]);
+			$tr.find(".itemCreatedDate").text($.toStoreFormat(rule["createdDate"]));
 			$tr.find(".itemRemove").off().on({
 				click: function(e){
 					var $tr = $(e.currentTarget).parents("tr#" + e.data.rule["ruleId"]);

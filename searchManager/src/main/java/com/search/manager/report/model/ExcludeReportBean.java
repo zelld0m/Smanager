@@ -1,6 +1,7 @@
 package com.search.manager.report.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
@@ -44,8 +45,8 @@ public class ExcludeReportBean extends ReportBean<Product> {
 	}
 	
 	@ReportField(label="Valid Until", size=20, sortOrder=4)
-	public String getValidity(){
-		return model.getFormattedExpiryDateTime(); 
+	public DateTime getValidity(){
+		return model.getExpiryDate(); 
 	}
 
 	@ReportField(label="Created By", size=20, sortOrder=5)
@@ -54,8 +55,8 @@ public class ExcludeReportBean extends ReportBean<Product> {
 	}
 
 	@ReportField(label="Created Date", size=20, sortOrder=6)
-	public String getCreatedDate(){
-		return model.getFormattedCreatedDate();
+	public DateTime getCreatedDate(){
+		return model.getCreatedDate();
 	}
 
 	@ReportField(label="Modified By", size=20, sortOrder=7)
@@ -64,8 +65,8 @@ public class ExcludeReportBean extends ReportBean<Product> {
 	}
 	
 	@ReportField(label="Modified Date", size=20, sortOrder=12)
-	public String getModifiedDate(){
-		return model.getFormattedLastModifiedDate();
+	public DateTime getModifiedDate(){
+		return model.getLastModifiedDate();
 	}
 
 	private boolean isFacet() {

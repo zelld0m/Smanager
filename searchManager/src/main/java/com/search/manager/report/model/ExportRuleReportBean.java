@@ -2,8 +2,8 @@ package com.search.manager.report.model;
 
 import java.util.List;
 
-import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
+import org.joda.time.DateTime;
+
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.annotation.ReportField;
 
@@ -30,12 +30,8 @@ public class ExportRuleReportBean extends ReportBean<RuleStatus> {
 	}
 	
 	@ReportField(label="Published Date", size=20, sortOrder=3)
-	public String getPublishedDate(){
-		if(model.getLastPublishedDate() != null){
-//			return JodaDateTimeUtil.formatFromStorePattern(model.getLastPublishedDate(), JodaPatternType.DATE_TIME);
-			return "";
-		}
-		return "";
+	public DateTime getPublishedDate(){
+		return model.getLastPublishedDate();
 	}
 	
 	@ReportField(label="Export Type", size=20, sortOrder=4)
@@ -47,11 +43,8 @@ public class ExportRuleReportBean extends ReportBean<RuleStatus> {
 	}
 	
 	@ReportField(label="Export Date", size=20, sortOrder=5)
-	public String getCreatedBy(){
-		if(model.getLastExportDate() != null){
-			return model.getFormattedLastExportDateTime();
-		}
-		return "";
+	public DateTime getCreatedBy(){
+		return model.getLastExportDate();
 	}
 
 	public List<? extends ReportBean<?>> getSubReports() {
@@ -61,6 +54,4 @@ public class ExportRuleReportBean extends ReportBean<RuleStatus> {
 	public void setSubReports(List<? extends ReportBean<?>> subReports) {
 		this.subReports = subReports;
 	}
-	
-	
 }

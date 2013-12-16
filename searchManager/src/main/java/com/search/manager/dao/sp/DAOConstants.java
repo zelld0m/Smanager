@@ -430,7 +430,5 @@ public class DAOConstants {
     public static final String SETTINGS_ALLOWED_BANNER_SIZES = "allowed_banner_sizes";
     public static final String SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL = "default_banner_linkpath_protocol";
     public static final String SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL = "autoprefix_banner_linkpath_protocol";
-    public static final String SETTINGS_REDIRECT_SELF_DOMAIN = "redirect_self_domain";
-    public static final String SETTINGS_REDIRECT_RELATIVE_PATH = "redirect_relative_path";
     public static final String SETTINGS_FACET_TEMPLATE = "facet_template";
 }

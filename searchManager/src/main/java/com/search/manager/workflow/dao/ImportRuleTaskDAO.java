@@ -10,6 +10,6 @@ public interface ImportRuleTaskDAO {
 
 	public ImportRuleTask getImportRuleTask(ImportRuleTask importRuleTask) throws DaoException;
 	public RecordSet<ImportRuleTask> getImportRuleTask(SearchCriteria<ImportRuleTask> searchCriteria, SortOrder sortOrder) throws DaoException;
-	public int updateImportRuleTask(ImportRuleTask importRuleTask) throws DaoException;
+	public ImportRuleTask updateImportRuleTask(ImportRuleTask importRuleTask) throws DaoException;
 	public ImportRuleTask addImportRuleTask(ImportRuleTask importRuleTask) throws DaoException;
 }

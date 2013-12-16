@@ -59,15 +59,10 @@
 		};
 
 		base.populateContent = function(){
-			
 			base.$el.find("#content").find("#ruleId").text(base.options.rule["ruleId"]);
 			base.$el.find("#content").find("#ruleName").val(base.options.rule["ruleName"]);
 			base.$el.find("#content").find("#ruleDescription").val(base.options.rule["ruleDescription"]);
-			
-			if($.isNotBlank(base.options.ruleStatus["formattedLastPublishedDateTime"])){
-				base.$el.find("#header").find("span#ruleLastPublishedDate").empty().append(ruleStatus["formattedLastPublishedDateTime"]);
-			}
-			
+			base.$el.find("#header").find("span#ruleLastPublishedDate").empty().append($.toStoreFormat(ruleStatus["lastPublishedDate"]));
 			base.registerListener();
 		};
 		

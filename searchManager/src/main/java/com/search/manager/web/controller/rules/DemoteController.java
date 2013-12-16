@@ -31,6 +31,7 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.DemoteService;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleVersionService;
+import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller
@@ -51,6 +52,8 @@ public class DemoteController {
     private RuleVersionService ruleVersionService;
     @Autowired
     private RuleXmlReportUtil ruleXmlReportUtil;
+    @Autowired
+    private UtilityService utilityService;
     
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
@@ -155,7 +158,7 @@ public class DemoteController {
         if (rules != null) {
             for (RuleXml xml : rules) {
                 if (xml != null) {
-                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.DEMOTE);
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), xml, RuleEntity.DEMOTE);
                     subModels.add(new DemoteReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getDemoteProducts(xml)));
                 }
             }

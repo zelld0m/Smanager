@@ -1,11 +1,10 @@
 package com.search.manager.report.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.search.manager.model.SpellRule;
-import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.report.annotation.ReportField;
 
 public class SpellReportBean extends ReportBean<SpellRule> {
@@ -46,9 +45,8 @@ public class SpellReportBean extends ReportBean<SpellRule> {
 	}
 
 	@ReportField(label = "Created Date", size = 20, sortOrder = 6)
-	public String getCreatedDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(model.getCreatedDate(), JodaPatternType.DATE_TIME);
-		return "";
+	public DateTime getCreatedDate() {
+		return model.getCreatedDate();
 	}
 
 	@ReportField(label = "Modified By", size = 20, sortOrder = 7)
@@ -57,8 +55,7 @@ public class SpellReportBean extends ReportBean<SpellRule> {
 	}
 
 	@ReportField(label = "Modified Date", size = 20, sortOrder = 8)
-	public String getModifiedDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(model.getLastModifiedDate(), JodaPatternType.DATE_TIME);
-		return "";
+	public DateTime getModifiedDate() {
+		return model.getLastModifiedDate();
 	}
 }

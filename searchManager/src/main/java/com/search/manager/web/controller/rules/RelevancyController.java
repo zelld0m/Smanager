@@ -170,7 +170,7 @@ public class RelevancyController {
             for (RuleXml rule : rules) {
                 RankingRuleXml xml = (RankingRuleXml) rule;
                 if (xml != null) {
-                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.RANKING_RULE);
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), xml, RuleEntity.RANKING_RULE);
                     subModels.addAll(ruleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
                 }
             }

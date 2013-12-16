@@ -23,7 +23,7 @@ $(function() {
     dropDownListMap['mail.workflow.approver.group'] = accountRoleArray;
     
     dropDownListMap['status.elevate'] = dropDownListMap['status.exclude'] = dropDownListMap['status.demote'] = dropDownListMap['status.facetSort'] 
-    = dropDownListMap['status.queryCleaning'] = dropDownListMap['status.didYouMean'] = dropDownListMap['status.banner'] = ruleEntityArray;
+    = dropDownListMap['status.queryCleaning'] = dropDownListMap['status.didYouMean'] = dropDownListMap['status.banner'] = dropDownListMap['status.rankingRule'] = ruleEntityArray;
     
     var Field = function(id, propertyId, type) {
         this.id = id;

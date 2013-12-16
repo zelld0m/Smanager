@@ -13,22 +13,19 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.search.manager.exception.DataException;
 import com.search.manager.service.CategoryService;
-import com.search.manager.utility.CatCodeUtil;
 import com.search.manager.utility.CatCodeUtil.Attribute;
-import com.search.ws.ConfigManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class RedirectRuleCondition extends ModelBean {
 
     // increment after every change in model
     private static final long serialVersionUID = -6248904441308276236L;
-    private static final Logger logger =
-            LoggerFactory.getLogger(RedirectRuleCondition.class);
+    private static final Logger logger = LoggerFactory.getLogger(RedirectRuleCondition.class);
     private String ruleId;
     private Integer sequenceNumber;
     private String storeId;

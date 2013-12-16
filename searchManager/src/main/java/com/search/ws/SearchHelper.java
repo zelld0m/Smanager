@@ -38,7 +38,6 @@ import org.springframework.stereotype.Component;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
 import com.search.manager.model.SearchResult;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropertiesUtils;
 
 @Component
@@ -48,8 +47,6 @@ public class SearchHelper {
 
 	@Autowired
 	private ConfigManager configManager;
-	@Autowired
-	private UtilityService utilityService;
 	
 	private static JSON parseJsonResponse(JsonSlurper slurper, HttpResponse response) {
 		BufferedReader reader = null;
@@ -97,13 +94,13 @@ public class SearchHelper {
 		return false;
 	}
 
-	public LinkedHashMap<String, Product> getProducts(List<? extends SearchResult> itemList, String store,
+	public LinkedHashMap<String, Product> getProducts(List<? extends SearchResult> itemList, String storeId,
 	        String ruleId) {
 		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
 
 		for (SearchResult e : itemList) {
 			Product ep = new Product(e);
-			ep.setStore(store);
+			ep.setStore(storeId);
 			if (e.getMemberType() == MemberTypeEntity.PART_NUMBER) {
 				map.put(e.getEdp(), ep);
 			} else {
@@ -112,7 +109,7 @@ public class SearchHelper {
 		}
 
 		if (MapUtils.isNotEmpty(map)) {
-			getProducts(map, store, utilityService.getServerName(), ruleId);
+			getProducts(map, storeId, configManager.getServerName(storeId), ruleId);
 		}
 
 		return map;
@@ -137,8 +134,7 @@ public class SearchHelper {
 			if (productList == null || productList.isEmpty()) {
 				return;
 			}
-//			ConfigManager configManager = ConfigManager.getInstance();
-
+			
 			// build the query
 			String facetName = configManager.getStoreParameter(storeId, "facet-name");
 			// TODO: replace qt with relevancy
@@ -272,8 +268,7 @@ public class SearchHelper {
 			if (productList == null || productList.isEmpty()) {
 				return;
 			}
-//			ConfigManager configManager = ConfigManager.getInstance();
-
+			
 			// build the query
 			String facetName = configManager.getStoreParameter(storeId, "facet-name");
 			// TODO: replace qt with relevancy
@@ -440,8 +435,6 @@ public class SearchHelper {
 		HttpResponse solrResponse = null;
 
 		try {
-//			ConfigManager configManager = ConfigManager.getInstance();
-
 			// build the query
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			for (String field : fields) {
@@ -568,8 +561,6 @@ public class SearchHelper {
 			return edp;
 		}
 		try {
-//			ConfigManager configManager = ConfigManager.getInstance();
-
 			// build the query
 			String core = configManager.getStoreParameter(storeId, "core");
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core)
@@ -645,8 +636,6 @@ public class SearchHelper {
 
 		try {
 			// build the query
-
-//			ConfigManager configManager = ConfigManager.getInstance();
 			String core = configManager.getStoreParameter(storeId, "core");
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core)
 			        .concat("select?").replace("http://", PropertiesUtils.getValue("browsejssolrurl"));

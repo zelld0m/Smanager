@@ -78,9 +78,10 @@
 
 			if(base.selectedItem!=null){
 				if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").val(base.selectedItem["location"]);
-				base.contentHolder.find("#selItemValidityDate").val(base.selectedItem["formattedExpiryDate"]);
+				base.contentHolder.find("#selItemValidityDate").val(
+						$.toStoreFormat(base.selectedItem["expiryDate"],GLOBAL_storeDateFormat));
 
-				if($.isNotBlank(base.selectedItem["formattedExpiryDate"]) && !base.options.locked){
+				if($.isNotBlank($.toStoreFormat(base.selectedItem["expiryDate"],GLOBAL_storeDateFormat)) && !base.options.locked){
 					base.contentHolder.find("#deleteCalendarIcon").show();
 				}
 			}else{
@@ -223,7 +224,7 @@
 				$li.find("#conditionText").text(conditionText);
 			}
 
-			var validityDate = item["formattedExpiryDate"];
+			var validityDate = $.toStoreFormat(item["expiryDate"],GLOBAL_storeDateFormat);
 
 			if (!item["isExpired"]) $li.find("#validityText").html("Validity: ");
 			$li.find("#validityDate").text($.isBlank(validityDate)? "Indefinite" : validityDate);

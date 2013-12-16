@@ -45,10 +45,11 @@
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
 	var GLOBAL_requestURL = "<%=request.getRequestURL()%>";	
 	var GLOBAL_requestURI = "<%=request.getRequestURI()%>";	
+	var GLOBAL_timeZoneId = '${timeZoneId}';	
 	
 	timezoneJS.timezone.zoneFileBasePath = GLOBAL_contextPath + '/tz';
 	timezoneJS.timezone.init();
-	var GLOBAL_currentDate = new timezoneJS.Date('${year}', '${month-1}', '${day}', '${hour}', '${min}', '${timeZoneId}');
+	var GLOBAL_currentDate = new timezoneJS.Date('${year}', '${month-1}', '${day}', '${hour}', '${min}', GLOBAL_timeZoneId);
 	
 	//store schema indexed fields
 	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
@@ -70,6 +71,8 @@
 	var GLOBAL_storeName = GLOBAL_storeParameters["storeName"];
 	var GLOBAL_storeDomains = $.makeArray(GLOBAL_storeParameters["storeDomains"]);
 	var GLOBAL_storeSort = GLOBAL_storeParameters["storeSort"];
+	var GLOBAL_dateFormat = GLOBAL_storeParameters["storeDateFormat"];	
+	var GLOBAL_dateTimeFormat = GLOBAL_storeParameters["storeDateTimeFormat"];		
 	var GLOBAL_storeFacetName = GLOBAL_storeParameters["storeFacetName"];
 	var GLOBAL_storeFacetTemplate = GLOBAL_storeParameters["storeFacetTemplate"];
 	var GLOBAL_storeFacetTemplateName = GLOBAL_storeParameters["storeFacetTemplateName"];
@@ -151,11 +154,10 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/SpellRuleServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
-  
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-array-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-date-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-string-functions.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-store-functions.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-store-functions.js" />" ></script>  
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.pagination.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.viewaudit.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.comment.custom.js" />" ></script>

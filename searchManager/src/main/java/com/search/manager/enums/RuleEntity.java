@@ -68,6 +68,14 @@ public enum RuleEntity {
 		return value;
 	}
 	
+	public String getName() {
+		return getNthValue(0);
+	}
+	
+	public String getXmlName() {
+		return getNthValue(1);
+	}
+	
 	public String getNthValue(int valueIndex) {
 		return values.get(valueIndex);
 	}

@@ -36,10 +36,9 @@
 							base.$el.find("span#status").empty().append(getRuleNameSubTextStatus(ruleStatus));
 						}
 
-						if($.isNotBlank(ruleStatus["formattedLastPublishedDateTime"])){
-
+						if($.isNotBlank($.toStoreFormat(ruleStatus["lastPublishedDate"]))){
 							base.$el.find("div#publishHolder").show();
-							base.$el.find("span#statusDate").empty().append(ruleStatus["formattedLastPublishedDateTime"]);
+							base.$el.find("span#statusDate").empty().append($.toStoreFormat(ruleStatus["lastPublishedDate"]));
 						}
 
 						base.$el.find("a#submitForApprovalBtn").show();

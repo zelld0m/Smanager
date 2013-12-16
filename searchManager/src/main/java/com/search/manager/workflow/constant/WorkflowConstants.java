@@ -20,6 +20,8 @@ public class WorkflowConstants {
 	public static final String COLUMN_IMPORT_TYPE = "IMPORT_TYPE";
 	public static final String COLUMN_TASK_STATUS = "TASK_STATUS";
 	public static final String COLUMN_TASK_ERROR_MESSAGE = "TASK_ERROR_MESSAGE";
+	public static final String COLUMN_RUN_ATTEMPT = "RUN_ATTEMPT";
+	public static final String COLUMN_STATE_COMPLETED = "STATE_COMPLETED";
 	public static final String COLUMN_TASK_START_STAMP = "TASK_START_STAMP";
 	public static final String COLUMN_TASK_END_STAMP = "TASK_END_STAMP";
 	public static final String COLUMN_CREATED_BY = "CREATED_BY";

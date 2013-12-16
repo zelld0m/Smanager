@@ -156,7 +156,7 @@
 		var base = this;
 		
 		ui.find(".itemName").text(item["rule"]["ruleName"]);
-		ui.find(".itemSchedule").text(item["formattedStartDate"] + ' - ' + item["formattedEndDate"]);
+		ui.find(".itemSchedule").text($.toStoreFormat(item["startDate"],GLOBAL_storeDateFormat) + ' - ' + $.toStoreFormat(item["endDate"],GLOBAL_storeDateFormat));
 		base.options.itemRuleStatusCallback.call(base, ui, item);
 	};
 

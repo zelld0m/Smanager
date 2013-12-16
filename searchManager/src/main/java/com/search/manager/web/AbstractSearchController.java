@@ -60,7 +60,6 @@ import com.search.manager.model.SearchResult;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.ParameterUtils;
 import com.search.manager.utility.QueryValidator;
 import com.search.manager.utility.SearchLogger;
@@ -84,8 +83,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	protected ConfigManager configManager;
 	@Autowired
 	private JodaDateTimeUtil jodaDateTimeUtil;
-	@Autowired
-	private UtilityService utilityService;
 	@Autowired
 	private RequestProcessorUtil requestProcessorUtil;
 	@Autowired
@@ -617,7 +614,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
 	protected boolean isSameDomain(String storeId, String url) {
 		// relative path
-		List<String> relativePath = utilityService.getStoreRelativePath(storeId);
+		List<String> relativePath = configManager.getPropertyList("settings", storeId, "redirect_relative_path");
 		for(String path : relativePath) {
 			if(url.startsWith(path)) {
 				return true;
@@ -625,7 +622,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		}
 		
 		// configured domain
-		List<String> domains = utilityService.getStoreSelfDomains(storeId);
+		List<String> domains = configManager.getPropertyList("settings", storeId, "redirect_self_domain");
 		for(String domain: domains) {
 			if(url.contains(domain)) {
 				return true;

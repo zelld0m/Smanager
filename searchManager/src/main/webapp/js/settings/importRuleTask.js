@@ -2,7 +2,7 @@ var rowPerPage=10;
 var moduleName="Auto Import";
 function changePage(pageNumber){
 	$("#mainContainer").empty().append("Loading....");	
-	$("#mainContainer").load("/searchManager/importRuleTask/paging/"+pageNumber,function(){showPaging();});	
+	$("#mainContainer").load("/searchManager/autoimport/" + GLOBAL_storeId + "/page/" + pageNumber,function(){showPaging();});	
 }
 function showPaging(){
 	var currentPage = $('#currentPageNumber').val();
@@ -23,20 +23,19 @@ function showPaging(){
 			var pageNumber=parseInt(e.data.page);
 			changePage(pageNumber);
 		},
-	nextLinkCallback: function(e){ 
-		var pageNumber=parseInt(e.data.page) + 1;
-		changePage(pageNumber);			
+		nextLinkCallback: function(e){ 
+			var pageNumber=parseInt(e.data.page) + 1;
+			changePage(pageNumber);			
 		},
-	prevLinkCallback: function(e){
-		var pageNumber=parseInt(e.data.page) - 1;
-		changePage(pageNumber);
-	}
+		prevLinkCallback: function(e){
+			var pageNumber=parseInt(e.data.page) - 1;
+			changePage(pageNumber);
+		}
 	});
 }
 function loadPaging() {
 	var currentPage = $('#currentPageNumber').val();
 	changePage(currentPage);
-	
 }
 (function($){
 

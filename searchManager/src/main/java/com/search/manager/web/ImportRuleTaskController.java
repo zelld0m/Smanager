@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.service.UtilityService;
 import com.search.manager.workflow.model.ImportRuleTask;
-import com.search.manager.workflow.service.impl.ImportRuleTaskService;
+import com.search.manager.workflow.service.ImportRuleTaskService;
 
 /**
  * 
@@ -25,34 +26,42 @@ import com.search.manager.workflow.service.impl.ImportRuleTaskService;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/importRuleTask")
+@RequestMapping("/autoimport")
 public class ImportRuleTaskController {
 
-	@Autowired
-	private ImportRuleTaskService importRuleTaskService;
-	@Autowired
-	private UtilityService utilityService;
+	@Autowired private ImportRuleTaskService importRuleTaskService;
+	@Autowired private UtilityService utilityService;
 
-
-	@RequestMapping(value = "/", method = { RequestMethod.GET,
-			RequestMethod.POST })
-	public String execute(HttpServletRequest request,
-			HttpServletResponse response, Model model) throws IOException, DaoException {
-		RecordSet<ImportRuleTask> recordSet = importRuleTaskService
-				.getImportRuleTasks(1);
+	@RequestMapping(value = "/{store}", 
+	                method = { RequestMethod.GET, RequestMethod.POST })
+	public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws IOException, DaoException {
+	    
+	    String storeId = utilityService.getStoreId();
+	    
+	    ImportRuleTask importRuleTask = new ImportRuleTask();
+	    importRuleTask.setSourceStoreId(storeId);
+	    
+	    SearchCriteria<ImportRuleTask> searchCriteria = new SearchCriteria<ImportRuleTask>(importRuleTask, 1, 10);
+		RecordSet<ImportRuleTask> recordSet = importRuleTaskService.getImportRuleTasks(searchCriteria);
 		model.addAttribute("importRuleTasks", recordSet.getList());
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", 1);
-		model.addAttribute("dateFomat", utilityService.getStoreDateFormat());
+		model.addAttribute("dateFomat", utilityService.getStoreDateTimeFormat());
 		return "importRuleTask/importRuleTask";
 	}
 	
-	@RequestMapping(value = "/paging/{pageNumber}", method = { RequestMethod.GET,
-			RequestMethod.POST })
+	@RequestMapping(value = "/{store}/page/{pageNumber}", 
+	                method = { RequestMethod.GET, RequestMethod.POST })
 	public String paging(HttpServletRequest request,
-			HttpServletResponse response, Model model,@PathVariable int pageNumber) throws IOException, DaoException {
-		RecordSet<ImportRuleTask> recordSet = importRuleTaskService
-				.getImportRuleTasks(pageNumber);
+			HttpServletResponse response, Model model, @PathVariable String store, @PathVariable int pageNumber) throws IOException, DaoException {
+	    
+	    String storeId = utilityService.getStoreId();
+	    
+	    ImportRuleTask importRuleTask = new ImportRuleTask();
+        importRuleTask.setSourceStoreId(storeId);
+        
+        SearchCriteria<ImportRuleTask> searchCriteria = new SearchCriteria<ImportRuleTask>(importRuleTask, pageNumber, 10);
+		RecordSet<ImportRuleTask> recordSet = importRuleTaskService.getImportRuleTasks(searchCriteria);
 		model.addAttribute("importRuleTasks", recordSet.getList());
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", pageNumber);

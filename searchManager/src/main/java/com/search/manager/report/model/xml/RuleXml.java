@@ -6,11 +6,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
-import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.Product;
 import com.search.manager.model.RuleStatus;
 
@@ -174,15 +171,4 @@ public class RuleXml extends BaseEntityXml{
 	public void setFileExists(boolean fileExists) {
 		this.fileExists = fileExists;
 	}	
-	
-	@XmlTransient
-	public String getFormattedCreatedDateTime(){
-		DateTime createdDateTime = getCreatedDate();
-		if(createdDateTime!=null){
-//			return JodaDateTimeUtil.formatFromStorePattern(getStore(), createdDateTime, JodaPatternType.DATE_TIME);
-			return "";
-		}
-		
-		return "";
-	}
 }

@@ -32,6 +32,7 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.ElevateService;
 import com.search.manager.service.RuleVersionService;
+import com.search.manager.service.UtilityService;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller
@@ -50,6 +51,8 @@ public class ElevateController {
     private RuleVersionService ruleVersionService;
     @Autowired
     private RuleXmlReportUtil ruleXmlReportUtil;
+    @Autowired
+    private UtilityService utilityService;
     
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
@@ -155,7 +158,7 @@ public class ElevateController {
         if (rules != null) {
             for (RuleXml xml : rules) {
                 if (xml != null) {
-                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.ELEVATE);
+                    SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), xml, RuleEntity.ELEVATE);
                     subModels.add(new ElevateReportModel(reportHeader, subReportHeader, ruleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
                 }
             }
