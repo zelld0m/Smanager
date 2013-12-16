@@ -109,6 +109,7 @@
 					<member property-id="enable.queryCleaning"/>
 					<member property-id="enable.didYouMean"/>
 					<member property-id="enable.banner"/>
+					<member property-id="enable.rankingRule"/>
                 </group>
                 <group name="Default Import Status">
                     <member property-id="status.elevate"/>
@@ -118,6 +119,7 @@
 					<member property-id="status.queryCleaning"/>
 					<member property-id="status.didYouMean"/>
 					<member property-id="status.banner"/>
+					<member property-id="status.rankingRule"/>
                 </group>
             </groups>
             
@@ -151,6 +153,10 @@
                     <label>Banner</label>
                     <defaultValue>true</defaultValue>
                 </property>
+				<property id="enable.rankingRule" type="Boolean" required="true">
+                    <label>Ranking Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
 			
                 <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
@@ -178,6 +184,10 @@
                 </property>
 				<property id="status.banner" type="DropDown" required="true">
                     <label>Banner</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.rankingRule" type="DropDown" required="true">
+                    <label>Ranking Rule</label>
                     <defaultValue>For Review</defaultValue>
                 </property>
 			</properties>
