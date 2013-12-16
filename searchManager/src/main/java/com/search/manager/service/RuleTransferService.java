@@ -19,6 +19,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -205,7 +206,7 @@ public class RuleTransferService {
         return resultMap;
     }
 
-    private Map<String, Integer> importRules(String store, String userName, String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList) {
+    private Map<String, Integer> importRules(String store, String userName, RuleSource ruleSource, String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList) {
         Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
         RuleEntity ruleEntity = RuleEntity.find(ruleType);
 
@@ -299,7 +300,7 @@ public class RuleTransferService {
 
                     if (ImportType.FOR_APPROVAL == importType || ImportType.AUTO_PUBLISH == importType) {
                         //submit rule for approval
-                        ruleStatus = workflowService.processRuleStatus(store, userName, ruleType, importAsId, ruleName, false);
+                        ruleStatus = workflowService.processRuleStatus(store, userName, ruleSource, ruleType, importAsId, ruleName, false);
                         status++;
 
                         if (ruleStatus != null && ImportType.AUTO_PUBLISH == importType) {
@@ -370,7 +371,7 @@ public class RuleTransferService {
         return statusMap;
     }
 
-    public Map<String, String> importRejectRules(String storeId, String storeName, String userName, String ruleType,
+    public Map<String, String> processImportRejectRules(String storeId, String storeName, String userName, RuleSource ruleSource, String ruleType,
             String[] importRuleRefIdList, String comment,
             String[] importTypeList, String[] importAsRefIdList,
             String[] ruleNameList, String[] rejectRuleRefIdList,
@@ -395,7 +396,7 @@ public class RuleTransferService {
                 obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
             }
             if (ArrayUtils.isNotEmpty(importRuleRefIdList)) {
-                Map<String, Integer> statusMap = importRules(storeId, userName, ruleType, importRuleRefIdList, comment,
+                Map<String, Integer> statusMap = importRules(storeId, userName, ruleSource, ruleType, importRuleRefIdList, comment,
                         importTypeList, importAsRefIdList, ruleNameList);
 
                 for (String key : statusMap.keySet()) {
@@ -455,7 +456,7 @@ public class RuleTransferService {
             String[] rejectRuleNameList) throws PublishLockException {
 
         String userName = utilityService.getUsername();
-        return importRejectRules(storeId, storeName, userName, ruleType, importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, rejectRuleRefIdList, rejectRuleNameList);
+        return processImportRejectRules(storeId, storeName, userName, RuleSource.USER, ruleType, importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, rejectRuleRefIdList, rejectRuleNameList);
 
     }
 

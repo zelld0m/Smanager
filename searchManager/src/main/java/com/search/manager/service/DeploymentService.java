@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -99,14 +100,14 @@ public class DeploymentService {
 	@RemoteMethod
 	public List<String> approveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
-		List<String> result = approveRule(storeId, ruleType, Arrays.asList(ruleRefIdList), comment);
+		List<String> result = approveRule(storeId, RuleSource.USER, ruleType, Arrays.asList(ruleRefIdList), comment);
 		daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 
 
 		return result;
 	}
 
-	private List<String> approveRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
+	private List<String> approveRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(storeId, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
@@ -115,7 +116,7 @@ public class DeploymentService {
 			try {
 				if (result != null && result.size() > 0 && mailService.isApprovalNotificationEnable(storeId)) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-					mailService.sendNotification(storeId, RuleStatusEntity.APPROVED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
+					mailService.sendNotification(storeId, ruleSource, RuleStatusEntity.APPROVED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
 				}
 			} catch (Exception e) {
 				logger.error("Failed during sending approval notification. approveRule()", e);
@@ -151,7 +152,7 @@ public class DeploymentService {
 			try {
 				if (result != null && result.size() > 0 && mailService.isApprovalNotificationEnable(storeId)) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-					mailService.sendNotification(storeId, RuleStatusEntity.REJECTED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
+					mailService.sendNotification(storeId, RuleSource.USER, RuleStatusEntity.REJECTED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
 				}
 			} catch (Exception e) {
 				logger.error("Failed during sending approval notification. unapproveRule()", e);
@@ -230,7 +231,7 @@ public class DeploymentService {
 			logger.error("No approved rules retrieved for publishing");
 		} else {
 			// Actual publishing of rules to production
-			ruleMap = publishRule(store, ruleType, approvedRuleList, comment);
+			ruleMap = publishRule(store, RuleSource.USER, ruleType, approvedRuleList, comment);
 		}
 
 		if (MapUtils.isEmpty(ruleMap)) {
@@ -296,7 +297,7 @@ public class DeploymentService {
 	}
 	//TODO: Transfer to WorkflowServiceImpl
 	@SuppressWarnings("unchecked")
-	private Map<String, Boolean> publishRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
+	private Map<String, Boolean> publishRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
 		try {
 
 			// insert custom handling for linguistics rules here
@@ -320,7 +321,7 @@ public class DeploymentService {
 				try {
 					if (mailService.isPushToProdNotificationEnable(storeId)) {
 						List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-						mailService.sendNotification(storeId, RuleStatusEntity.PUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
+						mailService.sendNotification(storeId, ruleSource, RuleStatusEntity.PUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
 					}
 				} catch (Exception e) {
 					logger.error("Failed during sending pushToProd notification. publishRule()", e);
@@ -351,7 +352,7 @@ public class DeploymentService {
 			} catch (DaoException e) {
 				logger.error("Failed during getCleanList()", e);
 			}
-			Map<String, Boolean> ruleMap = unpublishRule(storeId, ruleType, cleanList, comment);
+			Map<String, Boolean> ruleMap = unpublishRule(storeId, RuleSource.USER, ruleType, cleanList, comment);
 
 			for (String ruleId : ruleRefIdList) {
 				DeploymentModel deploy = new DeploymentModel();
@@ -378,7 +379,7 @@ public class DeploymentService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Boolean> unpublishRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
+	private Map<String, Boolean> unpublishRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
 			Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
@@ -390,7 +391,7 @@ public class DeploymentService {
 				try {
 					if (mailService.isPushToProdNotificationEnable(storeId)) {
 						List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-						mailService.sendNotification(storeId, RuleStatusEntity.UNPUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
+						mailService.sendNotification(storeId, ruleSource, RuleStatusEntity.UNPUBLISHED, ruleType, utilityService.getUsername(), ruleStatusInfoList, comment);
 					}
 				} catch (Exception e) {
 					logger.error("Failed during sending pushToProd notification. unpublishRule()", e);
@@ -456,7 +457,7 @@ public class DeploymentService {
 					if (!isDelete && mailService.isPendingNotificationEnable(storeId)) {
 						List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
 						ruleStatusInfoList.add(ruleStatusInfo);
-						mailService.sendNotification(storeId, RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
+						mailService.sendNotification(storeId, RuleSource.USER, RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
 					}
 				} catch (Exception e) {
 					logger.error("Failed during sending 'Submitted For Approval' notification. processRuleStatus()", e);

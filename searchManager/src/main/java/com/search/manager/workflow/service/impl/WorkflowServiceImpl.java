@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -162,7 +163,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 		importRuleTaskService.addImportRuleTask(importRuleTask);
 	}
 
-	public RuleStatus processRuleStatus(String storeId, String username, String ruleType, String ruleRefId, String description, Boolean isDelete) {
+	public RuleStatus processRuleStatus(String storeId, String username, RuleSource ruleSource, String ruleType, String ruleRefId, String description, Boolean isDelete) {
 		int result = -1;
 		try {
 			RuleStatus ruleStatus = ruleStatusService.createRuleStatus(storeId, username);
@@ -180,7 +181,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 					if (!isDelete && "1".equals(configManager.getProperty("mail", storeId, "pendingNotification"))) {
 						List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
 						ruleStatusInfoList.add(ruleStatusInfo);
-						mailService.sendNotification(storeId, RuleStatusEntity.PENDING, ruleType, username, ruleStatusInfoList, "");
+						mailService.sendNotification(storeId, ruleSource, RuleStatusEntity.PENDING, ruleType, username, ruleStatusInfoList, "");
 					}
 				} catch (Exception e) {
 					logger.error("Failed during sending 'Submitted For Approval' notification. processRuleStatus()", e);
@@ -196,12 +197,12 @@ public class WorkflowServiceImpl implements WorkflowService{
 		return null;
 	}
 
-	public RecordSet<DeploymentModel> publishRule(String storeId, String storeName, String userName, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
+	public RecordSet<DeploymentModel> publishRule(String storeId, String storeName, String userName, RuleSource ruleSource, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
 
 		try {
 			obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
-			return publishRuleNoLock(storeId, userName, ruleType, ruleRefIdList, comment, ruleStatusIdList);
+			return publishRuleNoLock(storeId, userName, ruleSource, ruleType, ruleRefIdList, comment, ruleStatusIdList);
 
 		} finally {
 			if (obtainedLock) {
@@ -210,7 +211,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 		}
 	}
 
-	public RecordSet<DeploymentModel> publishRuleNoLock(String store, String username, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
+	public RecordSet<DeploymentModel> publishRuleNoLock(String store, String username, RuleSource ruleSource, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean isAutoExport = BooleanUtils.toBoolean(utilityService.getStoreSetting(store, DAOConstants.SETTINGS_AUTO_EXPORT));
 		List<String> approvedRuleList = null;
 		List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
@@ -234,7 +235,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 			logger.error("No approved rules retrieved for publishing");
 		} else {
 			// Actual publishing of rules to production
-			ruleMap = publishRule(store, username, ruleType, approvedRuleList, comment);
+			ruleMap = publishRule(store, username, ruleSource, ruleType, approvedRuleList, comment);
 		}
 
 		if (MapUtils.isEmpty(ruleMap)) {
@@ -284,7 +285,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Boolean> publishRule(String storeId, String userName, String ruleType, List<String> ruleRefIdList, String comment) {
+	private Map<String, Boolean> publishRule(String storeId, String userName, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
 		try {
 
 			// insert custom handling for linguistics rules here
@@ -305,7 +306,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 				try {
 					if ("1".equals(configManager.getProperty("mail", storeId, "pushToProdNotification"))) {
 						List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
-						mailService.sendNotification(storeId, RuleStatusEntity.PUBLISHED, ruleType, userName, ruleStatusInfoList, comment);
+						mailService.sendNotification(storeId, ruleSource, RuleStatusEntity.PUBLISHED, ruleType, userName, ruleStatusInfoList, comment);
 					}
 				} catch (Exception e) {
 					logger.error("Failed during sending pushToProd notification. publishRule()", e);

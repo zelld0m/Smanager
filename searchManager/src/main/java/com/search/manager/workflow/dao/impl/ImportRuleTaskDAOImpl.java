@@ -105,6 +105,8 @@ public class ImportRuleTaskDAOImpl
 			
 			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult.getTaskStatus().ordinal() + 1);
 			inputs.put(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE, taskExecutionResult.getTaskErrorMessage());
+			inputs.put(WorkflowConstants.COLUMN_RUN_ATTEMPT, taskExecutionResult.getRunAttempt());
+			inputs.put(WorkflowConstants.COLUMN_STATE_COMPLETED, taskExecutionResult.getStateCompleted() != null ? taskExecutionResult.getStateCompleted().ordinal() + 1 : 0);
 			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()));
 			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()));
 			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_BY, importRuleTask.getLastModifiedBy());
@@ -248,7 +250,9 @@ public class ImportRuleTaskDAOImpl
 					rs.getString(WorkflowConstants.COLUMN_TARGET_RULE_NAME), 
 					importType, 
 					new TaskExecutionResult(taskStatus, 
-							rs.getString(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE), 
+							rs.getString(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE),
+							rs.getInt(WorkflowConstants.COLUMN_RUN_ATTEMPT),
+							rs.getInt(WorkflowConstants.COLUMN_STATE_COMPLETED) != 0 ? ImportType.get(rs.getInt(WorkflowConstants.COLUMN_STATE_COMPLETED)) : null,
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_START_STAMP)), 
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_END_STAMP))));
 			
@@ -270,6 +274,8 @@ public class ImportRuleTaskDAOImpl
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_STATUS, Types.INTEGER));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE, Types.VARCHAR));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_RUN_ATTEMPT, Types.INTEGER));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_STATE_COMPLETED, Types.INTEGER));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_START_STAMP, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_END_STAMP, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_LAST_UPDATED_BY, Types.VARCHAR));

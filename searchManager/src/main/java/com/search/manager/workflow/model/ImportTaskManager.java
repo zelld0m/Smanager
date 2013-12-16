@@ -1,11 +1,13 @@
 package com.search.manager.workflow.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.enums.RuleEntity;
@@ -43,7 +45,7 @@ public class ImportTaskManager {
 
 	public void importRules() throws DaoException {
 
-		TaskExecutionResult taskExecutionResult = new TaskExecutionResult(TaskStatus.QUEUED, null, null, null);
+		TaskExecutionResult taskExecutionResult = new TaskExecutionResult(TaskStatus.QUEUED, null, 0, null, null, null);
 		ImportRuleTask importRuleTask = new ImportRuleTask(null, null, null, null, null, null, null, null, null, taskExecutionResult);
 		RecordSet<ImportRuleTask> importRecords = importRuleTaskDAO.getImportRuleTask(new SearchCriteria<ImportRuleTask>(importRuleTask, null, null, 0, 0), SortOrder.DESCRIPTION_ASCENDING);
 
@@ -66,42 +68,75 @@ public class ImportTaskManager {
 
 	private void importQueueItems(ImportRuleTask importRuleQueueItem, String userName) throws DaoException {
 		try {
-			RuleEntity ruleEntity = importRuleQueueItem.getRuleEntity();
-			String ruleName = importRuleQueueItem.getTargetRuleName();
-			String comment = importRuleQueueItem.getComment();
-			String importRuleRefId = importRuleQueueItem.getSourceRuleId();
-			String storeId = importRuleQueueItem.getTargetStoreId();
-			String storeName = configManager.getStoreName(importRuleQueueItem.getTargetStoreId());
-			String importTypeSetting = configManager.getProperty("workflow", storeId, "status."+ruleEntity.getXmlName());
-						
-			String[] importRuleRefIdList = {importRuleRefId};
-			String[] importTypeList = {importRuleQueueItem.getImportType().getDisplayText()};
-			String[] importAsRefIdList = {importRuleQueueItem.getTargetRuleId()};
-			String[] ruleNameList = {ruleName};
-			
-			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
 
-			if(!ruleStatus.isLocked()) {
-				updateTaskExecution(importRuleQueueItem, TaskStatus.IN_PROCESS, new DateTime(), null, "");
-				
-				ruleTransferService.importRejectRules(storeId, storeName, importRuleQueueItem.getCreatedBy(), ruleEntity.getName(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
-				
-				switch(ImportType.getByDisplayText(importTypeSetting)) {
-				case FOR_APPROVAL: 
-					workflowService.processRuleStatus(storeId, userName, ruleEntity.getName(), importRuleRefId, ruleName, false); break;
-				case AUTO_PUBLISH: 
-					workflowService.processRuleStatus(storeId, userName, ruleEntity.getName(), importRuleRefId, ruleName, false);
-					RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(storeId, ruleEntity.toString(), importRuleRefId);
-					String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
-					deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
-					workflowService.publishRule(storeId, storeName, userName, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList); 
-					break;
-				default: 
+			String storeId = importRuleQueueItem.getTargetStoreId();
+			int maxAttempts = Integer.parseInt(StringUtils.defaultIfBlank(configManager.getProperty("workflow", storeId, "maxRunAttempts"), "5"));
+
+			if(importRuleQueueItem.getTaskExecutionResult().getRunAttempt() < maxAttempts) {
+
+				RuleEntity ruleEntity = importRuleQueueItem.getRuleEntity();
+				String ruleName = importRuleQueueItem.getTargetRuleName();
+				String comment = importRuleQueueItem.getComment();
+				String importRuleRefId = importRuleQueueItem.getSourceRuleId();
+				String storeName = configManager.getStoreName(importRuleQueueItem.getTargetStoreId());
+				String importTypeSetting = configManager.getProperty("workflow", storeId, "status."+ruleEntity.getXmlName());
+
+				String[] importRuleRefIdList = {importRuleRefId};
+				String[] importTypeList = {importRuleQueueItem.getImportType().getDisplayText()};
+				String[] importAsRefIdList = {importRuleQueueItem.getTargetRuleId()};
+				String[] ruleNameList = {ruleName};
+
+				RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
+
+				TaskExecutionResult taskExecutionResult = importRuleQueueItem.getTaskExecutionResult();
+
+				taskExecutionResult.setRunAttempt(taskExecutionResult.getRunAttempt() + 1);
+
+				if(!ruleStatus.isLocked()) {
+
+					updateTaskExecution(importRuleQueueItem, TaskStatus.IN_PROCESS, new DateTime(), null, "");
+
+					if(taskExecutionResult.getStateCompleted() == null)
+						ruleTransferService.processImportRejectRules(storeId, storeName, importRuleQueueItem.getCreatedBy(), RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
+
+					taskExecutionResult.setStateCompleted(ImportType.FOR_REVIEW);
+
+					switch(ImportType.getByDisplayText(importTypeSetting)) {
+					case FOR_APPROVAL: 
+						if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
+							workflowService.processRuleStatus(storeId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefId, ruleName, false); 
+							taskExecutionResult.setStateCompleted(ImportType.FOR_APPROVAL);
+						}
+						break;
+					case AUTO_PUBLISH: 
+
+						RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(storeId, ruleEntity.toString(), importRuleRefId);
+						String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
+
+						if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
+							workflowService.processRuleStatus(storeId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefId, ruleName, false);
+							taskExecutionResult.setStateCompleted(ImportType.FOR_APPROVAL);
+						}
+
+						if(ImportType.FOR_APPROVAL.equals(taskExecutionResult.getStateCompleted())) {
+							deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
+							workflowService.publishRule(storeId, storeName, userName, RuleSource.AUTO_IMPORT, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList);
+							taskExecutionResult.setStateCompleted(ImportType.AUTO_PUBLISH);
+						}
+						break;
+
+					default: 
+					}
+
+					updateTaskExecution(importRuleQueueItem, TaskStatus.COMPLETED, null, new DateTime(), "");
+				} else {
+					//TODO: update import task to completed and set error message as rule is locked.
+					updateTaskExecution(importRuleQueueItem, TaskStatus.FAILED, null, new DateTime(), "The rule is locked.");
 				}
 			} else {
-				//TODO: update import task to completed and set error message as rule is locked.
+				logger.info("Max run attempts has been reached, ignoring rule {}", importRuleQueueItem.getTargetRuleName());
 			}
-			updateTaskExecution(importRuleQueueItem, TaskStatus.COMPLETED, null, new DateTime(), "");
+
 		} catch (Exception e) {
 			logger.error("failed executing ImportTaskManager.importQueueItems.", e);
 			updateTaskExecution(importRuleQueueItem, TaskStatus.FAILED, null, new DateTime(), e.getMessage());
