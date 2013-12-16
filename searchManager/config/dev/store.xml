@@ -101,6 +101,9 @@
     <store id="pcmallcap" extends="pcmall">
     	<module name="workflow" title="Workflow Settings">
             <groups>
+            	<group name="General">
+            		<member property-id="maxRunAttempts"/>
+            	</group>
 				<group name="Auto Import Rules">
                     <member property-id="enable.elevate"/>
 					<member property-id="enable.exclude"/>
@@ -124,7 +127,10 @@
             </groups>
             
             <properties>
-			
+				<property id="maxRunAttempts" type="String" required="true">
+                    <label>Max Run Attempts</label>
+                    <defaultValue>5</defaultValue>
+                </property>
 				<property id="enable.elevate" type="Boolean" required="true">
                     <label>Elevate</label>
                     <defaultValue>true</defaultValue>
