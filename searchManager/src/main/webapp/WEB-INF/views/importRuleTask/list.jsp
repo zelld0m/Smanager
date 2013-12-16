@@ -2,6 +2,7 @@
     	<input id="totalItem" type="hidden" value="${totalCount}"/>
     	<input id="currentPageNumber" type="hidden" value="${currentPage}"/>
 		<div id="sortablePagingTop" class="floatL txtAL w100p"></div>
+		<div class="clearB"></div>	
 		<div style="width:730px;height:350px;overflow:auto;">
 		<table class="tblItems w100p marT5">
 		<thead>
@@ -48,6 +49,7 @@
 		</tbody>
     	</table> 
     	</div>
+    	<div class="clearB"></div>	
     	<div id="sortablePagingBottom" class="floatL txtAL w100p"></div>
     	<div id="dialog-modal">
     		
