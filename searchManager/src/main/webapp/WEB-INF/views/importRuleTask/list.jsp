@@ -2,7 +2,7 @@
     	<input id="totalItem" type="hidden" value="${totalCount}"/>
     	<input id="currentPageNumber" type="hidden" value="${currentPage}"/>
 		<div id="sortablePagingTop" class="floatL txtAL w100p"></div>
-		<div style="width:730px;height:350px;overflow:scroll;">
+		<div style="width:730px;height:350px;overflow:auto;">
 		<table class="tblItems w100p marT5">
 		<thead>
             <tr class="alt">
