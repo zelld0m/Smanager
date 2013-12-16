@@ -49,7 +49,7 @@ public class ImportTaskManager {
 		logger.info("queued records: {}", importRecords.getTotalSize());
 		
 		for(ImportRuleTask importRuleQueueItem : importRecords.getList()) {
-			importQueueItems(importRuleQueueItem, importRuleQueueItem.getTargetStoreId(), configManager.getStoreName(importRuleQueueItem.getTargetStoreId()), importRuleQueueItem.getCreatedBy(), importRuleQueueItem.getRuleEntity(), importRuleQueueItem.getTargetRuleId(), "Auto Import", importRuleQueueItem.getImportType(), importRuleQueueItem.getTargetRuleId(), importRuleQueueItem.getTargetRuleName());
+			importQueueItems(importRuleQueueItem, importRuleQueueItem.getTargetStoreId(), configManager.getStoreName(importRuleQueueItem.getTargetStoreId()), importRuleQueueItem.getCreatedBy(), importRuleQueueItem.getRuleEntity(), importRuleQueueItem.getSourceRuleId(), "Auto Import", importRuleQueueItem.getImportType(), importRuleQueueItem.getTargetRuleId(), importRuleQueueItem.getTargetRuleName());
 		}
 		
 		importRuleTask.getTaskExecutionResult().setTaskStatus(TaskStatus.FAILED);
@@ -58,7 +58,7 @@ public class ImportTaskManager {
 		logger.info("failed records: {}", importRecords.getTotalSize());
 		
 		for(ImportRuleTask failedImportRuleQueueItem : importRecords.getList()) {
-			importQueueItems(failedImportRuleQueueItem, failedImportRuleQueueItem.getTargetStoreId(), configManager.getStoreName(failedImportRuleQueueItem.getTargetStoreId()), failedImportRuleQueueItem.getCreatedBy(), failedImportRuleQueueItem.getRuleEntity(), failedImportRuleQueueItem.getTargetRuleId(), "Auto Import", failedImportRuleQueueItem.getImportType(), failedImportRuleQueueItem.getTargetRuleId(), failedImportRuleQueueItem.getTargetRuleName());
+			importQueueItems(failedImportRuleQueueItem, failedImportRuleQueueItem.getTargetStoreId(), configManager.getStoreName(failedImportRuleQueueItem.getTargetStoreId()), failedImportRuleQueueItem.getCreatedBy(), failedImportRuleQueueItem.getRuleEntity(), failedImportRuleQueueItem.getSourceRuleId(), "Auto Import", failedImportRuleQueueItem.getImportType(), failedImportRuleQueueItem.getTargetRuleId(), failedImportRuleQueueItem.getTargetRuleName());
 		}
 		
 	}
