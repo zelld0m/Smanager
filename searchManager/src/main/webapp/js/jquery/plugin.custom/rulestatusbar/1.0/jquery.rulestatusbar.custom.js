@@ -27,7 +27,7 @@
 						if($.isNotBlank(ruleStatus["approvalStatus"])){
 							base.$el.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
 						}
-						console.log("TZ is " + GLOBAL_timeZoneId);
+						
 						base.$el.find("#publishedDate").text($.toStoreFormat(ruleStatus["lastPublishedDate"]));
 
 						if(ruleStatus["locked"]){
