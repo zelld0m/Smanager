@@ -17,24 +17,23 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @version 1.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(DAOUtils2.class)
+@PrepareForTest(IdGenerator.class)
 @PowerMockIgnore("javax.management.*")
-public class DAOUtils2Test {
+public class IdGeneratorTest {
 
     private final String expectedUniqueID = "819369d0-18f6-11e3-95bf-002655429c36";
 
     @Before
     public void setup() {
-        PowerMock.mockStatic(DAOUtils2.class);
-
-        EasyMock.expect(DAOUtils2.generateUniqueId()).andReturn(expectedUniqueID);
+        PowerMock.mockStatic(IdGenerator.class);
+        EasyMock.expect(IdGenerator.generateUniqueId()).andReturn(expectedUniqueID);
     }
 
     @Test
     public void testGenerateUniqueId() {
-        PowerMock.replay(DAOUtils2.class);
-        String generateUniqueId = DAOUtils2.generateUniqueId();
-        PowerMock.verify(DAOUtils2.class);
+        PowerMock.replay(IdGenerator.class);
+        String generateUniqueId = IdGenerator.generateUniqueId();
+        PowerMock.verify(IdGenerator.class);
         assertEquals(expectedUniqueID, generateUniqueId);
     }
 }
