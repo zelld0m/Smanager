@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
@@ -54,7 +55,7 @@ public class WorkflowNotificationMailService {
 	@Autowired
 	private ConfigManager configManager;
 
-	public boolean sendNotification(String storeId, RuleStatusEntity status,
+	public boolean sendNotification(String storeId, RuleSource ruleSource, RuleStatusEntity status, 
 			String ruleType, String approvedBy,
 			List<RuleStatus> ruleStatusList, String comment) {
 
