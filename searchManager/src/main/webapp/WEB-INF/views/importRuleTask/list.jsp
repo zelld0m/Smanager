@@ -3,7 +3,6 @@
     	<input id="currentPageNumber" type="hidden" value="${currentPage}"/>
 		<div id="sortablePagingTop" class="floatL txtAL w100p"></div>
 		<div class="clearB"></div>	
-		<div style="width:730px;height:350px;overflow:auto;">
 		<table class="tblItems w100p marT5">
 		<thead>
             <tr class="alt">
@@ -25,7 +24,7 @@
         </c:if>
 		    <tr class="conTableItem ${alt}">
 		   		<td align="center">
-					${importRuleTask.ruleEntity}
+					${importRuleTask.ruleEntity.name}
 		        </td>
 		        <td align="center">
 					${importRuleTask.sourceRuleName}
@@ -52,7 +51,6 @@
 		</c:forEach>			    
 		</tbody>
     	</table> 
-    	</div>
     	<div class="clearB"></div>	
     	<div id="sortablePagingBottom" class="floatL txtAL w100p"></div>
     	<div id="dialog-modal">
