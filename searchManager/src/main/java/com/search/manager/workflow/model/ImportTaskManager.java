@@ -49,8 +49,7 @@ public class ImportTaskManager {
 		logger.info("queued records: {}", importRecords.getTotalSize());
 		
 		for(ImportRuleTask importRuleQueueItem : importRecords.getList()) {
-			
-			importQueueItems(importRuleQueueItem, importRuleQueueItem.getTargetStoreId(), configManager.getStoreName(importRuleQueueItem.getTargetStoreId()), importRuleQueueItem.getCreatedBy(), importRuleQueueItem.getRuleEntity(), importRuleQueueItem.getSourceRuleId(), "Auto Import", importRuleQueueItem.getImportType(), importRuleQueueItem.getTargetRuleId(), importRuleQueueItem.getTargetRuleName());
+			importQueueItems(importRuleQueueItem, importRuleQueueItem.getTargetStoreId(), configManager.getStoreName(importRuleQueueItem.getTargetStoreId()), importRuleQueueItem.getCreatedBy(), importRuleQueueItem.getRuleEntity(), importRuleQueueItem.getTargetRuleId(), "Auto Import", importRuleQueueItem.getImportType(), importRuleQueueItem.getTargetRuleId(), importRuleQueueItem.getTargetRuleName());
 		}
 		
 		importRuleTask.getTaskExecutionResult().setTaskStatus(TaskStatus.FAILED);
@@ -59,21 +58,20 @@ public class ImportTaskManager {
 		logger.info("failed records: {}", importRecords.getTotalSize());
 		
 		for(ImportRuleTask failedImportRuleQueueItem : importRecords.getList()) {
-			
-			importQueueItems(failedImportRuleQueueItem, failedImportRuleQueueItem.getTargetStoreId(), configManager.getStoreName(failedImportRuleQueueItem.getTargetStoreId()), failedImportRuleQueueItem.getCreatedBy(), failedImportRuleQueueItem.getRuleEntity(), failedImportRuleQueueItem.getSourceRuleId(), "Auto Import", failedImportRuleQueueItem.getImportType(), failedImportRuleQueueItem.getTargetRuleId(), failedImportRuleQueueItem.getTargetRuleName());
+			importQueueItems(failedImportRuleQueueItem, failedImportRuleQueueItem.getTargetStoreId(), configManager.getStoreName(failedImportRuleQueueItem.getTargetStoreId()), failedImportRuleQueueItem.getCreatedBy(), failedImportRuleQueueItem.getRuleEntity(), failedImportRuleQueueItem.getTargetRuleId(), "Auto Import", failedImportRuleQueueItem.getImportType(), failedImportRuleQueueItem.getTargetRuleId(), failedImportRuleQueueItem.getTargetRuleName());
 		}
 		
 	}
 	
 	private void importQueueItems(ImportRuleTask importRuleQueueItem, String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, ImportType importType, String importAsRefId, String ruleName) throws DaoException {
     	try {
+    		updateTaskExecution(importRuleQueueItem, TaskStatus.IN_PROCESS, new DateTime(), null, "");
     		
-    		RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(storeId, ruleEntity.toString(), importRuleRefId);
+    		
         	String[] importRuleRefIdList = {importRuleRefId};
         	String[] importTypeList = {importType.getDisplayText()};
         	String[] importAsRefIdList = {importAsRefId};
         	String[] ruleNameList = {ruleName};
-        	String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
         	String importTypeSetting = configManager.getProperty("workflow", storeId, "status."+ruleEntity.getNthValue(1));
     		
 			ruleTransferService.importRejectRules(storeId, storeName, importRuleQueueItem.getCreatedBy(), ruleEntity.name(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
@@ -81,21 +79,35 @@ public class ImportTaskManager {
 			switch(ImportType.getByDisplayText(importTypeSetting)) {
 				case FOR_APPROVAL: workflowService.processRuleStatus(storeId, userName, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false); break;
 				case AUTO_PUBLISH: workflowService.processRuleStatus(storeId, userName, ruleEntity.getNthValue(0), importRuleRefId, ruleName, false);
+								   RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(storeId, ruleEntity.toString(), importRuleRefId);
+								   String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
 								   deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
 								   workflowService.publishRule(storeId, storeName, userName, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList); 
 									break;
 				default: 
 			}
-			importRuleQueueItem.setLastModifiedDate(new DateTime());
-			importRuleQueueItem.getTaskExecutionResult().setTaskStatus(TaskStatus.COMPLETED);
-			importRuleTaskDAO.updateImportRuleTask(importRuleQueueItem);
+			
+			updateTaskExecution(importRuleQueueItem, TaskStatus.COMPLETED, null, new DateTime(), "");
 		} catch (Exception e) {
 			logger.error("failed executing ImportTaskManager.importQueueItems.", e);
-			importRuleQueueItem.getTaskExecutionResult().setTaskStatus(TaskStatus.FAILED);
-			importRuleQueueItem.getTaskExecutionResult().setTaskErrorMessage(e.getMessage());
-			importRuleQueueItem.setLastModifiedDate(new DateTime());
-			importRuleTaskDAO.updateImportRuleTask(importRuleQueueItem);
-			e.printStackTrace();
+			updateTaskExecution(importRuleQueueItem, TaskStatus.FAILED, null, new DateTime(), e.getMessage());
 		} 
+	}
+	
+	private void updateTaskExecution(ImportRuleTask importRuleTask, TaskStatus taskStatus, DateTime startDate, DateTime endDate, String errorMessage) throws DaoException {
+		
+		importRuleTask.getTaskExecutionResult().setTaskErrorMessage(errorMessage);
+		importRuleTask.getTaskExecutionResult().setTaskStatus(taskStatus);
+		
+		if(startDate != null) {
+			importRuleTask.setLastModifiedDate(startDate);
+			importRuleTask.getTaskExecutionResult().setTaskStartDateTime(startDate);
+			
+		} else if(endDate != null) {
+			importRuleTask.setLastModifiedDate(endDate);
+			importRuleTask.getTaskExecutionResult().setTaskEndDateTime(endDate);
+		}
+		
+		importRuleTaskDAO.updateImportRuleTask(importRuleTask);
 	}
 }
