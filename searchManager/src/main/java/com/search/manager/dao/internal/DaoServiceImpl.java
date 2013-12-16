@@ -91,11 +91,6 @@ import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
-import com.search.manager.service.DeploymentService;
-import com.search.manager.service.RuleTransferService;
-import com.search.manager.service.UtilityService;
-import com.search.manager.xml.file.RuleTransferUtil;
-import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -151,16 +146,6 @@ public class DaoServiceImpl implements DaoService {
     private BannerVersionDAO bannerVersionDAO;
     @Autowired
  	private SearchHelper searchHelper;
-    @Autowired
-    private UtilityService utilityService;
-    @Autowired
-    private RuleTransferUtil ruleTransferUtil;
-    @Autowired
-    private ConfigManager configManager;
-    @Autowired
-    private RuleTransferService ruleTransferService;
-    @Autowired
-    private DeploymentService deploymentService;
     
     private DaoServiceImpl instance;
     
