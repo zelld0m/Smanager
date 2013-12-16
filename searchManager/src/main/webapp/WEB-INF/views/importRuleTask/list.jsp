@@ -7,7 +7,6 @@
 		<thead>
             <tr class="alt">
                 <th>Rule</th>
-                <th>Source Store</th>
                 <th>Source Rule</th>
                 <th>Target Store</th>
                 <th>Target Rule</th>
@@ -23,9 +22,6 @@
 		   		<td align="center">
 					${importRuleTask.ruleEntity}
 		        </td>
-		    	<td>
-		    		${importRuleTask.sourceStoreId}			    				    		
-		    	</td>
 		        <td align="center">
 					${importRuleTask.sourceRuleName}
 		        </td>

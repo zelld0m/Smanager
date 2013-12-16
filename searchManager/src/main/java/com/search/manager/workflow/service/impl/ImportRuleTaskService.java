@@ -24,7 +24,8 @@ public class ImportRuleTaskService {
 	private static final int ROW_PER_PAGE=10;
 
 	public RecordSet<ImportRuleTask> getImportRuleTasks(int pageNumber) throws DaoException {
-		SearchCriteria<ImportRuleTask> criteria = new SearchCriteria<ImportRuleTask>(new ImportRuleTask(),pageNumber,ROW_PER_PAGE);		
+		ImportRuleTask importRuleTask = new ImportRuleTask(null, null, null, null, null, null, null, null, null, null);
+		SearchCriteria<ImportRuleTask> criteria = new SearchCriteria<ImportRuleTask>(importRuleTask,pageNumber,ROW_PER_PAGE);		
 		RecordSet<ImportRuleTask> recordSet = dao.getImportRuleTask(criteria,null);
 		return recordSet;
 	}
