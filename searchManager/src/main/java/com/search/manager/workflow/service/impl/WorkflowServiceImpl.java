@@ -364,6 +364,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 		}
 	}
 
+	//TODO: retireve ExportRuleMap for QUERY_CLEANING and RANKING_RULE
 	public String generateImportAsId(RuleEntity ruleEntity, String ruleName) {
 		String importAsId = null;
 

@@ -69,8 +69,8 @@ public class ImportTaskManager {
 	private void importQueueItems(ImportRuleTask importRuleQueueItem, String userName) throws DaoException {
 		try {
 
-			String storeId = importRuleQueueItem.getTargetStoreId();
-			int maxAttempts = Integer.parseInt(StringUtils.defaultIfBlank(configManager.getProperty("workflow", storeId, "maxRunAttempts"), "5"));
+			String targetStoreId = importRuleQueueItem.getTargetStoreId();
+			int maxAttempts = Integer.parseInt(StringUtils.defaultIfBlank(configManager.getProperty("workflow", targetStoreId, "maxRunAttempts"), "5"));
 
 			if(importRuleQueueItem.getTaskExecutionResult().getRunAttempt() < maxAttempts) {
 
@@ -79,14 +79,14 @@ public class ImportTaskManager {
 				String comment = importRuleQueueItem.getComment();
 				String importRuleRefId = importRuleQueueItem.getSourceRuleId();
 				String storeName = configManager.getStoreName(importRuleQueueItem.getTargetStoreId());
-				String importTypeSetting = configManager.getProperty("workflow", storeId, "status."+ruleEntity.getXmlName());
+				String importTypeSetting = configManager.getProperty("workflow", targetStoreId, "status."+ruleEntity.getXmlName());
 
 				String[] importRuleRefIdList = {importRuleRefId};
 				String[] importTypeList = {importRuleQueueItem.getImportType().getDisplayText()};
 				String[] importAsRefIdList = {importRuleQueueItem.getTargetRuleId()};
 				String[] ruleNameList = {ruleName};
 
-				RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
+				RuleStatus ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
 
 				TaskExecutionResult taskExecutionResult = importRuleQueueItem.getTaskExecutionResult();
 
@@ -94,33 +94,32 @@ public class ImportTaskManager {
 
 				if(!ruleStatus.isLocked()) {
 
-					updateTaskExecution(importRuleQueueItem, TaskStatus.IN_PROCESS, new DateTime(), null, "");
-
+					
 					if(taskExecutionResult.getStateCompleted() == null)
-						ruleTransferService.processImportRejectRules(storeId, storeName, importRuleQueueItem.getCreatedBy(), RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
+						ruleTransferService.processImportRejectRules(targetStoreId, storeName, importRuleQueueItem.getCreatedBy(), RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
 
 					taskExecutionResult.setStateCompleted(ImportType.FOR_REVIEW);
 
 					switch(ImportType.getByDisplayText(importTypeSetting)) {
 					case FOR_APPROVAL: 
 						if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
-							workflowService.processRuleStatus(storeId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefId, ruleName, false); 
+							workflowService.processRuleStatus(targetStoreId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefId, ruleName, false); 
 							taskExecutionResult.setStateCompleted(ImportType.FOR_APPROVAL);
 						}
 						break;
 					case AUTO_PUBLISH: 
 
-						RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(storeId, ruleEntity.toString(), importRuleRefId);
+						RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(targetStoreId, ruleEntity.toString(), importRuleQueueItem.getTargetRuleId());
 						String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
 
 						if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
-							workflowService.processRuleStatus(storeId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefId, ruleName, false);
+							workflowService.processRuleStatus(targetStoreId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefId, ruleName, false);
 							taskExecutionResult.setStateCompleted(ImportType.FOR_APPROVAL);
 						}
 
 						if(ImportType.FOR_APPROVAL.equals(taskExecutionResult.getStateCompleted())) {
-							deploymentService.approveRule(storeId, ruleEntity.getNthValue(0), importRuleRefIdList, comment, ruleStatusIdList); 
-							workflowService.publishRule(storeId, storeName, userName, RuleSource.AUTO_IMPORT, ruleEntity.name(), importRuleRefIdList, comment, ruleStatusIdList);
+							deploymentService.approveRule(targetStoreId, ruleEntity.getNthValue(0), importAsRefIdList, comment, ruleStatusIdList); 
+							workflowService.publishRule(targetStoreId, storeName, userName, RuleSource.AUTO_IMPORT, ruleEntity.name(), importAsRefIdList, comment, ruleStatusIdList);
 							taskExecutionResult.setStateCompleted(ImportType.AUTO_PUBLISH);
 						}
 						break;
