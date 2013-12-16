@@ -17,8 +17,12 @@
             </tr>
         </thead>
 		<tbody>
-        <c:forEach items="${importRuleTasks}" var="importRuleTask">
-		    <tr>
+        <c:forEach items="${importRuleTasks}" var="importRuleTask" varStatus="status">
+        <c:set var="alt" value=""/>
+        <c:if test="${status.count %2 == 0}">
+        	<c:set var="alt" value="alt"/>
+        </c:if>
+		    <tr class="conTableItem ${alt}">
 		   		<td align="center">
 					${importRuleTask.ruleEntity}
 		        </td>
