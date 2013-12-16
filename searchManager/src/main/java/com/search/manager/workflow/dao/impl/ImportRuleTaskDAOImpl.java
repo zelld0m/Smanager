@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.util.IdGenerator;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
@@ -124,7 +125,7 @@ public class ImportRuleTaskDAOImpl
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			
-			inputs.put(WorkflowConstants.COLUMN_TASK_ID, DAOUtils.generateUniqueId());
+			inputs.put(WorkflowConstants.COLUMN_TASK_ID, IdGenerator.generateUniqueId());
 			inputs.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, importRuleTask.getRuleEntity().getCode());
 			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, importRuleTask.getSourceStoreId());
 			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_ID, importRuleTask.getSourceRuleId());
