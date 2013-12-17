@@ -6,7 +6,9 @@
 
 <!-- Page specific file dependencies --> 
 <link type="text/css" href="<spring:url value="/css/bigbets/bigbets.css" />" rel="stylesheet"> 
+<script type="text/javascript" src="<spring:url value="/js/util/moment-with-langs.min.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/rules/elevate.js" />"></script>   
+<script type="text/javascript" src="<spring:url value="/js/excelFileUploaded/excelFileUploadedPlugin.js" />"></script>
 
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
@@ -38,7 +40,13 @@
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
-	  
+		<ul class="fsize12 padT10 padR10 floatR" style="list-style-type: none;">
+	    	<li>
+	        	<a href="javascript:void(0);" 
+	                 style="color: #333; font-weight: bold;"
+	                id="uploadFromExcel">Upload from Excel Files</a>
+	        </li>
+	     </ul>	  
 	</div>
 	<div class="clearB"></div>	 
 	
