@@ -46,7 +46,7 @@
 					return;
 				}
 
-				$("#submitForApproval").rulestatus({
+				$("#submitForApproval").rulestatusbar({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
 					ruleType: "Facet Sort",

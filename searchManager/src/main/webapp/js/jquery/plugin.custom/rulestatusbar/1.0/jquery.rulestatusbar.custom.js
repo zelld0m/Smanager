@@ -28,8 +28,11 @@
 							base.$el.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
 						}
 						
-						base.$el.find("#publishedDate").text($.toStoreFormat(ruleStatus["lastPublishedDate"]));
-
+						var fomattedPublishedDate = $.toStoreFormat(ruleStatus["lastPublishedDate"]);
+						if($.isNotBlank(fomattedPublishedDate)){
+							base.$el.find("#publishedDate").text(fomattedPublishedDate);
+						}
+						
 						if(ruleStatus["locked"]){
 							base.$el.find("#statusMode").text("[ Read-Only ]");
 							base.$el.find("#submitForApprovalBtn").parent().remove();
