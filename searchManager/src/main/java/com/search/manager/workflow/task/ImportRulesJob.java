@@ -5,22 +5,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoException;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.manager.workflow.model.ImportTaskManager;
 
 public class ImportRulesJob {
 
 	private static final Logger logger =
-            LoggerFactory.getLogger(ImportRulesJob.class);
+			LoggerFactory.getLogger(ImportRulesJob.class);
 
 	@Autowired
 	private ImportTaskManager importTaskManager;
-	
+
 	public void importRules() {
-		logger.info("Running ImportRules job...");
-		try {
-			importTaskManager.importRules();
-		} catch (DaoException e) {
-			logger.error("error in ImportRulesJob.importRules(", e);
+
+		if("true".equals(PropertiesUtils.getValue("enableAutoImportJob"))) {
+			logger.info("Running ImportRules job...");
+			try {
+				importTaskManager.importRules();
+			} catch (DaoException e) {
+				logger.error("error in ImportRulesJob.importRules(", e);
+			}
+		} else {
+			logger.info("ImportRulesJob not enabled....");
 		}
 	}
 
