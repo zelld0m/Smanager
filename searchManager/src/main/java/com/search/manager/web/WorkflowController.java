@@ -41,28 +41,28 @@ public class WorkflowController {
     @RequestMapping(value = "/approval/{store}")
     public String pendingApproval(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
-        return "setting/approval";
+        return "workflow/approval";
     }
 
     @RequestMapping(value = "/production/{store}")
     public String pushToProd(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
 
-        return "setting/production";
+        return "workflow/production";
     }
 
     @RequestMapping(value = "/import/{store}")
     public String importRule(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
 
-        return "setting/import";
+        return "workflow/import";
     }
 
     @RequestMapping(value = "/export/{store}")
     public String exportRule(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
 
-        return "setting/export";
+        return "workflow/export";
     }
 
     /**

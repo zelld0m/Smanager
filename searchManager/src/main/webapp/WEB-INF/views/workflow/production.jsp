@@ -1,13 +1,13 @@
 <%@ include file="/WEB-INF/includes/includes.jsp"%>
 <%@ include file="/WEB-INF/includes/header.jsp"%>
-<c:set var="topmenu" value="setting" />
+<c:set var="topmenu" value="workflow" />
 <c:set var="submenu" value="production" />
 <%@ include file="/WEB-INF/includes/menu.jsp"%>
 
 <script type="text/javascript"
-	src="<spring:url value="/js/settings/production.js" />"></script>
+	src="<spring:url value="/js/workflow/production.js" />"></script>
 	
-<link type="text/css" rel="stylesheet" href="<spring:url value="/css/settings/settings.css" />">
+<link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 	
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
@@ -31,7 +31,7 @@
 			<div id="autoExportStatus" class="info notification border fsize14 marB20" style="display:none">
 			Auto-export setting is currently set to <span id="autoExportValue" class="fbold"></span>
 			<br/>
-			<span class="fsize12 fitalic">To modify this setting, go to <label class="fbold">Settings &gt; Export Rule</label></span>
+			<span class="fsize12 fitalic">To modify this setting, go to <label class="fbold">Workflow &gt; Export Rule</label></span>
 			</div> 
 		</c:if>
 		<!-- tabs -->

@@ -1,12 +1,12 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="setting"/>
+<c:set var="topmenu" value="workflow"/>
 <c:set var="submenu" value="approval"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-<script type="text/javascript" src="<spring:url value="/js/settings/approval.js" />"></script> 
+<script type="text/javascript" src="<spring:url value="/js/workflow/approval.js" />"></script> 
 
-<link type="text/css" rel="stylesheet" href="<spring:url value="/css/settings/settings.css" />">
+<link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
