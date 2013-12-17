@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -25,6 +26,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.enums.RuleSource;
+import com.search.manager.core.util.ServerUtil;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
@@ -39,8 +41,7 @@ import com.search.ws.ConfigManager;
 @Service("workflowNotificationMailService")
 public class WorkflowNotificationMailService {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(WorkflowNotificationMailService.class);
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowNotificationMailService.class);
 
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern PATTERN = Pattern.compile(EMAIL_PATTERN);
@@ -68,6 +69,8 @@ public class WorkflowNotificationMailService {
 
 		Set<String> cc = new HashSet<String>();
 		Set<String> bcc = new HashSet<String>();
+		
+		model.put("serverName", ServerUtil.getHostName());
 
 		cc.addAll(configManager.getPropertyList(MODULE_NAME, storeId,
 				"mail.workflow.cc"));
@@ -310,17 +313,14 @@ public class WorkflowNotificationMailService {
 	}
 
 	public boolean isApprovalNotificationEnable(String storeId) {
-		return configManager.getProperty(MODULE_NAME, storeId,
-				"approvalNotification").equals("1");
+	    return BooleanUtils.toBoolean(configManager.getProperty(MODULE_NAME, storeId, "approvalNotification"));
 	}
 
 	public boolean isPushToProdNotificationEnable(String storeId) {
-		return configManager.getProperty(MODULE_NAME, storeId,
-				"pushToProdNotification").equals("1");
+	    return BooleanUtils.toBoolean(configManager.getProperty(MODULE_NAME, storeId, "pushToProdNotification"));
 	}
 
 	public boolean isPendingNotificationEnable(String storeId) {
-		return configManager.getProperty(MODULE_NAME, storeId,
-				"pendingNotification").equals("1");
+	    return BooleanUtils.toBoolean(configManager.getProperty(MODULE_NAME, storeId, "pendingNotification"));
 	}
 }
