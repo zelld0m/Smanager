@@ -40,6 +40,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleXmlUtil;
+import com.search.ws.ConfigManager;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -53,6 +54,8 @@ public class DeploymentService {
 
 	private static final Logger logger =
 			LoggerFactory.getLogger(DeploymentService.class);
+	@Autowired
+	private ConfigManager configManager;
 	@Autowired
 	private DaoService daoService;
 	@Autowired
@@ -340,7 +343,7 @@ public class DeploymentService {
 	public RecordSet<DeploymentModel> unpublishRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
 		String userName = utilityService.getUsername();
-		String storeName = utilityService.getStoreName();
+		String storeName = configManager.getStoreName(storeId);
 		try {
 			obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
 			//clean list, only approved rules should be published

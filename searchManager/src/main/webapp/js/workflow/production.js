@@ -149,7 +149,7 @@
 							jConfirm(confirmMsg, "Confirm Unpublish", function(status){
 								if(status){
 									var exception = false;
-									DeploymentServiceJS.unpublishRule(GLOBAL_storeId, GLOBAL_storeName, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+									DeploymentServiceJS.unpublishRule(GLOBAL_storeId, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){
 											$.each(data.list, function() {
 												this.rName = $("tr#ruleItem" + $.formatAsId(this.ruleId) + " > td#ruleRefId > p#ruleName").text();
