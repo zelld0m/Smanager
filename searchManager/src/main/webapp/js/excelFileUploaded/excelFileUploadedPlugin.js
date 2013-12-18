@@ -1,13 +1,15 @@
-function showMainPage() {
-	var ruleType = $("#titleText").text().toLowerCase();
-	$("#ruleItemContainer").empty().append("Loading....");
-	$("#ruleItemContainer").load("/searchManager/excelFileUploaded/" + ruleType);
-}
+
 (function($){
 	$(document).ready(function(){
-		excelFileUploadedPlugin = {		
+		excelFileUploadedPlugin = {
+				showMainPage:function() {
+					var ruleType = $("#titleText").text().toLowerCase();
+					var storeId = GLOBAL_storeId;
+					$("#ruleItemContainer").empty().append("Loading....");
+					$("#ruleItemContainer").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType);
+				},
 				viewMain : function(){
-					showMainPage();
+					excelFileUploadedPlugin.showMainPage();
 				},
 				init : function(){
 					$("#uploadFromExcel").on({

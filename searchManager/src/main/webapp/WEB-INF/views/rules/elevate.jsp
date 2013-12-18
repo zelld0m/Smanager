@@ -6,7 +6,6 @@
 
 <!-- Page specific file dependencies --> 
 <link type="text/css" href="<spring:url value="/css/bigbets/bigbets.css" />" rel="stylesheet"> 
-<script type="text/javascript" src="<spring:url value="/js/util/moment-with-langs.min.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/rules/elevate.js" />"></script>   
 <script type="text/javascript" src="<spring:url value="/js/excelFileUploaded/excelFileUploadedPlugin.js" />"></script>
 

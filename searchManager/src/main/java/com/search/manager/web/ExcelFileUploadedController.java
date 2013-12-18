@@ -25,8 +25,8 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.reports.FileUploadForm;
-import com.search.manager.service.ExcelFileUploadedService;
 import com.search.manager.service.UtilityService;
+import com.search.manager.workflow.service.ExcelFileUploadedService;
 import com.search.reports.implementations.DefaultExcelParser;
 import com.search.reports.manager.model.ExcelFileReport;
 import com.search.reports.manager.model.ExcelFileUploaded;
@@ -46,13 +46,15 @@ public class ExcelFileUploadedController {
 	private ExcelFileUploadedService excelFileUploadedService;
 	@Autowired
 	private ExcelFileManagerService excelFileManagerService;
+	
+	@Autowired
+	private UtilityService utilityService;
 
-	@RequestMapping(value = "/{ruleType}", method = { RequestMethod.GET,
+	@RequestMapping(value = "/{storeId}/{ruleType}", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String execute(HttpServletRequest request,
 			HttpServletResponse response, Model model,
-			@PathVariable String ruleType) throws IOException, DaoException {
-		String storeId = UtilityService.getStoreId();
+			@PathVariable String ruleType,@PathVariable String storeId) throws IOException, DaoException {
 		int ruleTypeId = RuleEntity.getId(ruleType);
 		RecordSet<ExcelFileUploaded> recordSet = excelFileUploadedService
 				.getExcelFileUploadeds(storeId, ruleTypeId,1);
@@ -60,15 +62,15 @@ public class ExcelFileUploadedController {
 		model.addAttribute("ruleType", ruleType);
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", 1);
+		model.addAttribute("storeId",storeId);
 		return "excelFileUploaded/excelFileUploaded";
 	}
 	
-	@RequestMapping(value = "/paging/{ruleType}/{pageNumber}", method = { RequestMethod.GET,
+	@RequestMapping(value = "/paging/{storeId}/{ruleType}/{pageNumber}", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String paging(HttpServletRequest request,
 			HttpServletResponse response, Model model,
-			@PathVariable String ruleType,@PathVariable int pageNumber) throws IOException, DaoException {
-		String storeId = UtilityService.getStoreId();
+			@PathVariable String ruleType,@PathVariable int pageNumber,@PathVariable String storeId) throws IOException, DaoException {
 		int ruleTypeId = RuleEntity.getId(ruleType);
 		RecordSet<ExcelFileUploaded> recordSet = excelFileUploadedService
 				.getExcelFileUploadeds(storeId, ruleTypeId,pageNumber);
@@ -76,6 +78,7 @@ public class ExcelFileUploadedController {
 		model.addAttribute("ruleType", ruleType);
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", pageNumber);
+		model.addAttribute("storeId",storeId);
 		return "excelFileUploaded/excelFileUploaded";
 	}	
 	@RequestMapping(value = "/details/{ruleType}/{excelFileUploadedId}", method = { RequestMethod.GET,
@@ -83,7 +86,7 @@ public class ExcelFileUploadedController {
 	public String details(HttpServletRequest request,
 			HttpServletResponse response, Model model,
 			@PathVariable String ruleType,@PathVariable String excelFileUploadedId) throws IOException, DaoException {
-		String storeId = UtilityService.getStoreId();
+		String storeId = utilityService.getStoreId();
 		int ruleTypeId = RuleEntity.getId(ruleType);
 		ExcelFileUploaded excelFileUploaded = excelFileUploadedService.getExcelFileUploaded(excelFileUploadedId,storeId, ruleTypeId);
 		Map<String,List<ExcelFileReport>> mpKeyword = new HashMap<String,List<ExcelFileReport>>();
@@ -101,10 +104,10 @@ public class ExcelFileUploadedController {
 		return "excelFileUploaded/excelFileReport";
 	}	
 
-	@RequestMapping(value = "/upload/{ruleType}/", method = RequestMethod.POST)
+	@RequestMapping(value = "/upload/{storeId}/{ruleType}/", method = RequestMethod.POST)
 	public ModelAndView upload(
 			@ModelAttribute("uploadForm") FileUploadForm uploadForm,
-			Model model, @PathVariable String ruleType) {
+			Model model, @PathVariable String ruleType,@PathVariable String storeId) {
 		Map<String, FileInputStream> mp = new HashMap<String, FileInputStream>();
 		List<MultipartFile> files = uploadForm.getFiles();
 		try {
@@ -125,7 +128,7 @@ public class ExcelFileUploadedController {
 		}
 		List<ExcelFileUploaded> excelFileUploadeds = excelFileManagerService
 				.uploadExcelFile(mp);
-		String userName = UtilityService.getUsername();
+		String userName = utilityService.getUsername();
 		Map<String,List<ExcelFileUploaded>> parsedData=new HashMap<String,List<ExcelFileUploaded>>();
 		parsedData.put(userName, excelFileUploadeds);
 		excelFileUploadedService.setMapExcelFileUploadeds(parsedData);

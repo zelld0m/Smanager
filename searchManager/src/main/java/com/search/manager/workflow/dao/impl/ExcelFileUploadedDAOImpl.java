@@ -1,4 +1,4 @@
-package com.search.manager.dao.sp;
+package com.search.manager.workflow.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,23 +15,30 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.dao.sp.CUDStoredProcedure;
+import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.dao.sp.GetStoredProcedure;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.manager.workflow.dao.ExcelFileUploadedDAO;
 import com.search.reports.manager.model.ExcelFileReport;
 import com.search.reports.manager.model.ExcelFileUploaded;
 
 @Repository(value = "excelFileUploadedDAO")
-public class ExcelFileUploadedDAO {
+public class ExcelFileUploadedDAOImpl implements ExcelFileUploadedDAO{
 
 	// needed by spring AOP
-	public ExcelFileUploadedDAO() {
+	public ExcelFileUploadedDAOImpl() {
 	}
-
 	@Autowired
-	public ExcelFileUploadedDAO(JdbcTemplate jdbcTemplate) {
+	JodaDateTimeUtil jodaDateTimeUtil;
+	
+	@Autowired
+	public ExcelFileUploadedDAOImpl(JdbcTemplate jdbcTemplate) {
 		getExcelFileUploadedSP = new GetExcelFileUploadedSP(jdbcTemplate);
 		getExcelFileReportSP = new GetExcelFileReportSP(jdbcTemplate);
 		addExcelFileUploadedSP = new AddExcelFileUploadedSP(jdbcTemplate);
@@ -47,7 +54,53 @@ public class ExcelFileUploadedDAO {
 	private DeleteExcelFileUploadedSP deleteExcelFileUploadedSP;
 	private UpdateExcelFileUploadedSP updateExcelFileUploadedSP;
 
-	private class AddExcelFileUploadedSP extends CUDStoredProcedure {
+	static class CommonExcelFileUploaded{
+		public static ExcelFileUploaded getExcelFileUploaded(ResultSet rs,JodaDateTimeUtil jodaDateTimeUtil) throws SQLException{
+			return new ExcelFileUploaded(
+					rs.getString(DAOConstants.COLUMN_EXCEL_FILE_UPLOADED_ID),
+					rs.getString(DAOConstants.COLUMN_STORE_ID),		
+					rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID),
+					rs.getString(DAOConstants.COLUMN_FILE_NAME),
+					jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_ADDED_ON_RULE_STAMP)),
+					rs.getString(DAOConstants.COLUMN_ADDED_ON_RULE_BY),
+					rs.getString(DAOConstants.COLUMN_CREATED_BY),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_CREATED_TX_STAMP)),
+					rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_TX_STAMP)));
+		}
+	}
+	static class CommonExcelFileReport{
+		public static ExcelFileReport getExcelFileReport(ResultSet rs,JodaDateTimeUtil jodaDateTimeUtil) throws SQLException{
+			return new ExcelFileReport(
+					rs.getString(DAOConstants.COLUMN_EXCEL_FILE_UPLOADED_ID),
+					rs.getString(DAOConstants.COLUMN_STORE_ID),
+					rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID),
+					rs.getString(DAOConstants.COLUMN_KEYWORD),
+					rs.getString(DAOConstants.COLUMN_RANK),
+					rs.getString(DAOConstants.COLUMN_SKU),
+					rs.getString(DAOConstants.COLUMN_NAME),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_EXPIRATION)),
+					rs.getString(DAOConstants.COLUMN_CREATED_BY),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_CREATED_TX_STAMP)),
+					rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)),
+					jodaDateTimeUtil.toDateTime(rs
+							.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_TX_STAMP)));
+		}
+	}
+	
+	private class AddExcelFileUploadedSP extends GetStoredProcedure {
 		public AddExcelFileUploadedSP(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, DAOConstants.SP_ADD_EXCEL_FILE_UPLOADED);
 		}
@@ -67,9 +120,19 @@ public class ExcelFileUploadedDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP,
 					Types.DATE));			
 		}
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1,
+					new RowMapper<ExcelFileUploaded>() {
+						public ExcelFileUploaded mapRow(ResultSet rs, int rowNum)
+								throws SQLException {
+								return CommonExcelFileUploaded.getExcelFileUploaded(rs,jodaDateTimeUtil);
+						}
+					}));
+		}		
 	}
 
-	private class AddExcelFileReportSP extends CUDStoredProcedure {
+	private class AddExcelFileReportSP extends GetStoredProcedure {
 		public AddExcelFileReportSP(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, DAOConstants.SP_ADD_EXCEL_FILE_REPORT);
 		}
@@ -95,6 +158,16 @@ public class ExcelFileUploadedDAO {
 			declareParameter(new SqlParameter(
 					DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));			
 		}
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1,
+					new RowMapper<ExcelFileReport>() {
+						public ExcelFileReport mapRow(ResultSet rs, int rowNum)
+								throws SQLException {
+							return CommonExcelFileReport.getExcelFileReport(rs,jodaDateTimeUtil);
+						}
+					}));
+		}		
 	}
 
 	private class DeleteExcelFileUploadedSP extends CUDStoredProcedure {
@@ -113,7 +186,7 @@ public class ExcelFileUploadedDAO {
 		}
 	}
 	
-	private class UpdateExcelFileUploadedSP extends CUDStoredProcedure {
+	private class UpdateExcelFileUploadedSP extends GetStoredProcedure {
 		public UpdateExcelFileUploadedSP(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, DAOConstants.SP_UPDATE_EXCEL_FILE_UPLOADED);
 		}
@@ -127,8 +200,18 @@ public class ExcelFileUploadedDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ADDED_ON_RULE_DATE,
 					Types.DATE));			
 		}
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1,
+					new RowMapper<ExcelFileUploaded>() {
+						public ExcelFileUploaded mapRow(ResultSet rs, int rowNum)
+								throws SQLException {
+							return CommonExcelFileUploaded.getExcelFileUploaded(rs,jodaDateTimeUtil);
+						}
+					}));
+		}		
 	}	
-	
+		
 	private class GetExcelFileUploadedSP extends GetStoredProcedure {
 		public GetExcelFileUploadedSP(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, DAOConstants.SP_GET_EXCEL_FILE_UPLOADED);
@@ -156,23 +239,7 @@ public class ExcelFileUploadedDAO {
 					new RowMapper<ExcelFileUploaded>() {
 						public ExcelFileUploaded mapRow(ResultSet rs, int rowNum)
 								throws SQLException {
-							return new ExcelFileUploaded(
-									rs.getString(DAOConstants.COLUMN_EXCEL_FILE_UPLOADED_ID),
-									rs.getString(DAOConstants.COLUMN_STORE_ID),		
-									rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID),
-									rs.getString(DAOConstants.COLUMN_FILE_NAME),
-									JodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_ADDED_ON_RULE_STAMP)),
-									rs.getString(DAOConstants.COLUMN_ADDED_ON_RULE_BY),
-									rs.getString(DAOConstants.COLUMN_CREATED_BY),
-									JodaDateTimeUtil.toDateTime(rs
-											.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
-									JodaDateTimeUtil.toDateTime(rs
-											.getTimestamp(DAOConstants.COLUMN_CREATED_TX_STAMP)),
-									rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY),
-									JodaDateTimeUtil.toDateTime(rs
-											.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)),
-									JodaDateTimeUtil.toDateTime(rs
-											.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_TX_STAMP)));
+							return CommonExcelFileUploaded.getExcelFileUploaded(rs,jodaDateTimeUtil);
 						}
 					}));
 		}
@@ -221,17 +288,17 @@ public class ExcelFileUploadedDAO {
 									rs.getString(DAOConstants.COLUMN_RANK),
 									rs.getString(DAOConstants.COLUMN_SKU),
 									rs.getString(DAOConstants.COLUMN_NAME),
-									JodaDateTimeUtil.toDateTime(rs
+									jodaDateTimeUtil.toDateTime(rs
 											.getTimestamp(DAOConstants.COLUMN_EXPIRATION)),
 									rs.getString(DAOConstants.COLUMN_CREATED_BY),
-									JodaDateTimeUtil.toDateTime(rs
+									jodaDateTimeUtil.toDateTime(rs
 											.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
-									JodaDateTimeUtil.toDateTime(rs
+									jodaDateTimeUtil.toDateTime(rs
 											.getTimestamp(DAOConstants.COLUMN_CREATED_TX_STAMP)),
 									rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY),
-									JodaDateTimeUtil.toDateTime(rs
+									jodaDateTimeUtil.toDateTime(rs
 											.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)),
-									JodaDateTimeUtil.toDateTime(rs
+									jodaDateTimeUtil.toDateTime(rs
 											.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_TX_STAMP)));
 						}
 					}));
@@ -254,8 +321,7 @@ public class ExcelFileUploadedDAO {
 					excelFileUploaded.getRuleTypeId());			
 			inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
-			return DAOUtils.getRecordSet(getExcelFileUploadedSP
-					.execute(inputs));
+			return DAOUtils.getRecordSet(getExcelFileUploadedSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getExcelFileUploadeds()",
 					e);
@@ -337,10 +403,9 @@ public class ExcelFileUploadedDAO {
 	}
 
 	@Audit(entity = Entity.excelFileUploaded, operation = Operation.add)
-	public int addExcelFileUploaded(ExcelFileUploaded excelFileUploaded)
+	public ExcelFileUploaded addExcelFileUploaded(ExcelFileUploaded excelFileUploaded)
 			throws DaoException {
-		try {
-			int count = -1;			
+		try {	
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_EXCEL_FILE_UPLOADED_ID,
 					excelFileUploaded.getExcelFileUploadedId());
@@ -353,9 +418,8 @@ public class ExcelFileUploadedDAO {
 					excelFileUploaded.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_STAMP,
 					excelFileUploaded.getCreatedStamp());			
-			count = DAOUtils.getUpdateCount(addExcelFileUploadedSP
+			return DAOUtils.getItem(addExcelFileUploadedSP
 					.execute(inputs));
-			return count;
 		} catch (Exception e) {
 			throw new DaoException("Failed during addExcelFileUploadedSP()",
 					e);
@@ -363,10 +427,9 @@ public class ExcelFileUploadedDAO {
 	}
 
 	@Audit(entity = Entity.excelFileReport, operation = Operation.add)
-	public int addExcelFileReport(ExcelFileReport excelFileReport)
+	public ExcelFileReport addExcelFileReport(ExcelFileReport excelFileReport)
 			throws DaoException {
 		try {
-			int count = -1;
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_EXCEL_FILE_UPLOADED_ID,
 					excelFileReport.getExcelFileUploadedId());
@@ -381,12 +444,11 @@ public class ExcelFileUploadedDAO {
 			inputs.put(DAOConstants.PARAM_NAME,
 					excelFileReport.getName());				
 			inputs.put(DAOConstants.PARAM_EXPIRATION,
-					JodaDateTimeUtil.toSqlDate(excelFileReport.getExpiration()));		
+					jodaDateTimeUtil.toSqlDate(excelFileReport.getExpiration()));		
 			inputs.put(DAOConstants.PARAM_CREATED_BY,
 					excelFileReport.getCreatedBy());	
-			count = DAOUtils.getUpdateCount(addExcelFileReportSP
+			return DAOUtils.getItem(addExcelFileReportSP
 					.execute(inputs));
-			return count;
 		} catch (Exception e) {
 			throw new DaoException("Failed during addExcelFileReportSP()",
 					e);
@@ -413,20 +475,18 @@ public class ExcelFileUploadedDAO {
 		}
 	}
 	@Audit(entity = Entity.excelFileReport, operation = Operation.update)
-	public int updateExcelFileUploaded(ExcelFileUploaded excelFileUploaded)
+	public ExcelFileUploaded updateExcelFileUploaded(ExcelFileUploaded excelFileUploaded)
 			throws DaoException {
 		try {
-			int count = -1;			
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_EXCEL_FILE_UPLOADED_ID,
 					excelFileUploaded.getExcelFileUploadedId());
 			inputs.put(DAOConstants.PARAM_ADDED_ON_RULE_BY,
 					excelFileUploaded.getAddedOnRuleBy());
 			inputs.put(DAOConstants.PARAM_ADDED_ON_RULE_DATE,
-					JodaDateTimeUtil.toSqlDate(excelFileUploaded.getAddedOnRuleDate()));			
-			count = DAOUtils.getUpdateCount(updateExcelFileUploadedSP
+					jodaDateTimeUtil.toSqlDate(excelFileUploaded.getAddedOnRuleDate()));			
+			return DAOUtils.getItem(updateExcelFileUploadedSP
 					.execute(inputs));
-			return count;
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateExcelFileUploaded()",
 					e);

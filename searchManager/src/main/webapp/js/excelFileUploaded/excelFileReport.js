@@ -12,7 +12,7 @@
 								var excelFileUploadedId=$("#excelFileUploadedId").val();
 								ExcelFileUploadedServiceJS.updateExcelFileUploaded(excelFileUploadedId,{
 									callback: function(count){
-										loadPaging();									
+										excelFileUploaded.loadPaging();									
 									},
 									preHook: function(){ 
 									},

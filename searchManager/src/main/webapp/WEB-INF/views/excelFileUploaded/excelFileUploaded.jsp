@@ -10,7 +10,7 @@
     	<input id="totalItem" type="hidden" value="${totalCount}"/>
     	<input id="currentPageNumber" type="hidden" value="${currentPage}"/>
         <form:form id="excelFileUpload" method="POST"
-                   action="/searchManager/excelFileUploaded/upload/${ruleType}/"
+                   action="/searchManager/excelFileUploaded/upload/${storeId}/${ruleType}/"
                    commandName="uploadForm"
                    enctype="multipart/form-data">
            <table class="tblItems marT5">
@@ -52,8 +52,8 @@
 		   			<c:choose>
 		   				<c:when test="${excelFileUploaded.addedOnRuleBy == null}">
 					   		<a href="javascript:void(0);" 
-					   		onclick="setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
-					   		class="delete"">
+					   		onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
+					   		class="delete">
 					   			<img src="../images/icon_del.png">
 					   		</a>
 			   			</c:when>
@@ -63,7 +63,7 @@
 			   		</c:choose>        	
 		        </td>
 		    	<td>
-		    		<a href="javacript:void(0);" onclick="setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');" class="viewDetails" >${excelFileUploaded.fileName}</a> 			    				    		
+		    		<a href="javacript:void(0);" onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');" class="viewDetails" >${excelFileUploaded.fileName}</a> 			    				    		
 		    	</td>
 		        <td align="center">
 		        	${excelFileUploaded.createdBy}

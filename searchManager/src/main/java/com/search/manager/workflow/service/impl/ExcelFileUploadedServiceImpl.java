@@ -1,4 +1,4 @@
-package com.search.manager.service;
+package com.search.manager.workflow.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,31 +16,31 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOUtils;
-import com.search.manager.dao.sp.ExcelFileUploadedDAO;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.service.UtilityService;
+import com.search.manager.workflow.dao.ExcelFileUploadedDAO;
+import com.search.manager.workflow.service.ExcelFileUploadedService;
 import com.search.reports.manager.model.ExcelFileReport;
 import com.search.reports.manager.model.ExcelFileUploaded;
 
 @Service(value = "excelFileUploadedService")
 @RemoteProxy(name = "ExcelFileUploadedServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "excelFileUploadedService"))
-public class ExcelFileUploadedService extends RuleService {
+public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 	private static final int ROW_PER_PAGE = 10; 
 	private static Map<String,List<ExcelFileUploaded> > mapExcelFileUploadeds = new HashMap<String,List<ExcelFileUploaded>>();  
 	private static final Logger logger = LoggerFactory
-			.getLogger(ExcelFileUploadedService.class);
+			.getLogger(ExcelFileUploadedServiceImpl.class);
 	@Autowired
 	private ExcelFileUploadedDAO dao;
+	@Autowired
+	private UtilityService utilityService;	
 
-	@Override
-	public RuleEntity getRuleEntity() {
-		return RuleEntity.ELEVATE;
-	}
 	@RemoteMethod
 	public Integer addExcelFileUploadeds(String ruleType) throws DaoException {
-		String createdBy = UtilityService.getUsername();
-		String storeId = UtilityService.getStoreId();
+		String createdBy = utilityService.getUsername();
+		String storeId = utilityService.getStoreId();
 		int ruleTypeId = RuleEntity.getId(ruleType);
 		List<ExcelFileUploaded> excelFileUploadeds = getMapexcelfileuploadeds().get(createdBy);
 		for (ExcelFileUploaded excelFileUploaded : excelFileUploadeds) {
@@ -48,17 +48,17 @@ public class ExcelFileUploadedService extends RuleService {
 			excelFileUploaded.setRuleTypeId(ruleTypeId);
 			excelFileUploaded.setExcelFileUploadedId(DAOUtils
 					.generateUniqueId64Char());
-			excelFileUploaded.setCreatedBy(createdBy);				
-			dao.addExcelFileUploaded(excelFileUploaded);						
+			excelFileUploaded.setCreatedBy(createdBy);	
 			List<ExcelFileReport> excelFileReports = excelFileUploaded
 					.getExcelFileReports();
+			excelFileUploaded = dao.addExcelFileUploaded(excelFileUploaded);
 			for (ExcelFileReport excelFileReport : excelFileReports) {
 				excelFileReport.setExcelFileUploadedId(excelFileUploaded
 						.getExcelFileUploadedId());
 				excelFileReport.setCreatedBy(createdBy);
 				excelFileReport.setRuleTypeId(ruleTypeId);
 				excelFileReport.setStoreId(storeId);
-				dao.addExcelFileReport(excelFileReport);
+				excelFileReport = dao.addExcelFileReport(excelFileReport);
 			}
 		}
 		logger.info("addExcelFileUploadeds successfully done.");
@@ -106,17 +106,18 @@ public class ExcelFileUploadedService extends RuleService {
 			throws DaoException {
 			ExcelFileUploaded excelFileUploaded= new ExcelFileUploaded();
 			excelFileUploaded.setExcelFileUploadedId(excelFileUploadedId);
-			excelFileUploaded.setAddedOnRuleBy(UtilityService.getUsername());
+			excelFileUploaded.setAddedOnRuleBy(utilityService.getUsername());
 			excelFileUploaded.setAddedOnRuleDate(new DateTime());
-		return dao.updateExcelFileUploaded(excelFileUploaded);
+		 dao.updateExcelFileUploaded(excelFileUploaded);
+		 return 0;
 	}
 
-	public static Map<String,List<ExcelFileUploaded>> getMapexcelfileuploadeds() {
+	public Map<String,List<ExcelFileUploaded>> getMapexcelfileuploadeds() {
 		return mapExcelFileUploadeds;
 	}
 
-	public static void setMapExcelFileUploadeds(
+	public void setMapExcelFileUploadeds(
 			Map<String, List<ExcelFileUploaded>> mapExcelFileUploadeds) {
-		ExcelFileUploadedService.mapExcelFileUploadeds = mapExcelFileUploadeds;
+		ExcelFileUploadedServiceImpl.mapExcelFileUploadeds = mapExcelFileUploadeds;
 	}
 }
