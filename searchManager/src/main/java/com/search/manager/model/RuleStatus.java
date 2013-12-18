@@ -10,6 +10,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
@@ -26,6 +27,8 @@ public class RuleStatus extends ModelBean {
 	private String 		storeId;
 	private String 		description;
 
+	private RuleSource ruleSource;
+	
 	/* Rule Submission / Approval Request */
 	private DateTime 	lastRequestDate;
 	private String 		requestBy;
@@ -59,11 +62,12 @@ public class RuleStatus extends ModelBean {
 		this.storeId = storeId;
 	}
 
-	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String storeId, String description, String approvalStatus, String updateStatus,
+	public RuleStatus(String ruleStatusId, Integer ruleTypeId, RuleSource ruleSource, String ruleRefId, String storeId, String description, String approvalStatus, String updateStatus,
 			String publishedStatus, DateTime lastPublishedDateTime, String createdBy, String modifiedBy, DateTime createdDateTime, DateTime modifiedDateTime) {
 		super();
 		this.ruleStatusId = ruleStatusId;
 		this.ruleTypeId = ruleTypeId;
+		this.ruleSource = ruleSource;
 		this.ruleRefId = ruleRefId;
 		this.storeId = storeId;
 		this.description = description;
@@ -95,14 +99,14 @@ public class RuleStatus extends ModelBean {
 		}
 	}
 
-	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String storeId, String description,
+	public RuleStatus(String ruleStatusId, Integer ruleTypeId, RuleSource ruleSource, String ruleRefId, String storeId, String description,
 			String updateStatus, String requestBy, DateTime lastRequestDateTime,
 			String approvalStatus, String approvalBy, DateTime lastApprovalDateTime,
 			String publishedStatus, String publishedBy, DateTime lastPublishedDateTime,
 			ExportType exportType, String exportBy, DateTime lastExportDateTime,
 			String createdBy, String modifiedBy, DateTime dateCreated, DateTime dateModified) {
 		
-		this(ruleStatusId, ruleTypeId, ruleRefId, storeId, description, approvalStatus, updateStatus,
+		this(ruleStatusId, ruleTypeId, ruleSource, ruleRefId, storeId, description, approvalStatus, updateStatus,
 				publishedStatus, lastPublishedDateTime, createdBy, modifiedBy, dateCreated, dateModified);
 		this.requestBy = requestBy;
 		this.lastRequestDate= lastRequestDateTime;
@@ -121,8 +125,16 @@ public class RuleStatus extends ModelBean {
 	public void setRuleStatusId(String ruleStatusId) {
 		this.ruleStatusId = ruleStatusId;
 	}
+	
+	public RuleSource getRuleSource() {
+        return ruleSource;
+    }
 
-	public String getRuleRefId() {
+    public void setRuleSource(RuleSource ruleSource) {
+        this.ruleSource = ruleSource;
+    }
+
+    public String getRuleRefId() {
 		return ruleRefId;
 	}
 

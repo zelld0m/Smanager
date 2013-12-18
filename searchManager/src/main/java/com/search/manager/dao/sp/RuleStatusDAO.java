@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.ExportType;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -112,6 +113,7 @@ public class RuleStatusDAO {
 					return new RuleStatus(
 							rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID), 
 							rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID), 
+							RuleSource.values()[rs.getInt(DAOConstants.COLUMN_RULE_SOURCE)], 
 							rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
 							rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID), 
 							rs.getString(DAOConstants.COLUMN_DESCRIPTION),
@@ -212,6 +214,7 @@ public class RuleStatusDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, ruleStatus.getRuleTypeId());
 			inputs.put(DAOConstants.PARAM_REFERENCE_ID, ruleStatus.getRuleRefId());
+			inputs.put(DAOConstants.PARAM_RULE_SOURCE, ruleStatus.getRuleSource()!=null? ruleStatus.getRuleSource().ordinal() : null);
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, StringUtils.isNotBlank(ruleStatus.getApprovalStatus())?ruleStatus.getApprovalStatus():null);
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, StringUtils.isNotBlank(ruleStatus.getPublishedStatus())?ruleStatus.getPublishedStatus():null);
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, StringUtils.isNotBlank(ruleStatus.getUpdateStatus())?ruleStatus.getUpdateStatus():null);
@@ -234,6 +237,7 @@ public class RuleStatusDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, ruleStatus.getRuleTypeId());
+			inputs.put(DAOConstants.PARAM_RULE_SOURCE, ruleStatus.getRuleSource()!=null? ruleStatus.getRuleSource().ordinal() : RuleSource.USER);
 			inputs.put(DAOConstants.PARAM_REFERENCE_ID, ruleStatus.getRuleRefId());
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleStatus.getDescription());
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, ruleStatus.getPublishedStatus());
@@ -261,6 +265,7 @@ public class RuleStatusDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, ruleStatus.getRuleTypeId());
+			inputs.put(DAOConstants.PARAM_RULE_SOURCE, ruleStatus.getRuleSource()!=null? ruleStatus.getRuleSource().ordinal() : null);
 			inputs.put(DAOConstants.PARAM_REFERENCE_ID, ruleStatus.getRuleRefId());
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, StringUtils.isNotBlank(ruleStatus.getDescription())?ruleStatus.getDescription():null);
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, ruleStatus.getPublishedStatus());

@@ -267,6 +267,7 @@ public class DAOConstants {
     public static final String PARAM_SEARCH_TEXT = "search_text";
     public static final String PARAM_LAST_UPDATED_BY = "last_updated_by";
     // additional rule status parameters
+    public static final String PARAM_RULE_SOURCE = "rule_source";
     public static final String PARAM_REQUEST_BY = "request_by";
     public static final String PARAM_REQUESTED_BY = "requested_by";
     public static final String PARAM_LAST_REQUEST_DATE = "last_request_date";
@@ -347,6 +348,7 @@ public class DAOConstants {
     public static final int REPLACE_KEYWORD_CUSTOM_TEXT = 3;
     public static final String COLUMN_RULE_STATUS_ID = "rule_status_id";
     public static final String COLUMN_RULE_TYPE_ID = "rule_type_id";
+    public static final String COLUMN_RULE_SOURCE = "rule_source";
     public static final String COLUMN_REFERENCE_ID = "reference_id";
     public static final String COLUMN_COMMENT_ID = "comment_id";
     public static final String COLUMN_PUBLISHED_STATUS = "published_status";

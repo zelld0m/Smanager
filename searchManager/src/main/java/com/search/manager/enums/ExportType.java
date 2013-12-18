@@ -57,5 +57,4 @@ public enum ExportType {
 	public String toString() {
 		return String.valueOf(ordinal()+1);
 	}
-	
 }
