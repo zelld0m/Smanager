@@ -239,7 +239,7 @@ public class RuleStatusDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, ruleStatus.getRuleTypeId());
-			inputs.put(DAOConstants.PARAM_RULE_SOURCE, ruleStatus.getRuleSource()!=null? ruleStatus.getRuleSource().ordinal() : RuleSource.USER);
+			inputs.put(DAOConstants.PARAM_RULE_SOURCE, ruleStatus.getRuleSource()!=null? ruleStatus.getRuleSource().ordinal() : RuleSource.USER.ordinal());
 			inputs.put(DAOConstants.PARAM_REFERENCE_ID, ruleStatus.getRuleRefId());
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleStatus.getDescription());
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, ruleStatus.getPublishedStatus());

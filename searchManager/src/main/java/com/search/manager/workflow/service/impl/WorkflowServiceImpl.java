@@ -24,7 +24,6 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
-import com.search.manager.dao.sp.ExportRuleMapDAO;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
@@ -43,6 +42,7 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.service.rules.FacetSortService;
 import com.search.manager.workflow.model.ImportRuleTask;
+import com.search.manager.workflow.service.ExportRuleMapService;
 import com.search.manager.workflow.service.ImportRuleTaskService;
 import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
@@ -63,7 +63,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	@Autowired
 	private DaoService daoService;
 	@Autowired
-	private ExportRuleMapDAO exportRuleMapDAO;
+	private ExportRuleMapService exportRuleMapService;
 	@Autowired
 	private FacetSortService facetSortService;
 	@Autowired
@@ -81,82 +81,82 @@ public class WorkflowServiceImpl implements WorkflowService{
 
 	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment){
 		// TODO: change return type to Map
-				boolean exported = false;
-				boolean exportedOnce = false;
+		boolean exported = false;
+		boolean exportedOnce = false;
 
-				AuditTrail auditTrail = new AuditTrail();
-				auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
-				auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
-				auditTrail.setUsername(username);
-				auditTrail.setStoreId(store);
-				DateTime exportDateTime = DateTime.now();
+		AuditTrail auditTrail = new AuditTrail();
+		auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
+		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
+		auditTrail.setUsername(username);
+		auditTrail.setStoreId(store);
+		DateTime exportDateTime = DateTime.now();
 
-				RuleStatus ruleStatus = null;
-				try {
-					SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(
-							new RuleStatus(ruleEntity.getCode(), store, ruleId), null, null, null, null);
-					RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
-					if (approvedRset != null && CollectionUtils.isNotEmpty(approvedRset.getList())) {
-						ruleStatus = approvedRset.getList().get(0);
-					} else {
-						logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
-					}
-				} catch (DaoException e) {
-					logger.error("Failed to retrieve rule status for " + ruleEntity + " : " + ruleId, e);
+		RuleStatus ruleStatus = null;
+		try {
+			SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(
+					new RuleStatus(ruleEntity.getCode(), store, ruleId), null, null, null, null);
+			RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
+			if (approvedRset != null && CollectionUtils.isNotEmpty(approvedRset.getList())) {
+				ruleStatus = approvedRset.getList().get(0);
+			} else {
+				logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed to retrieve rule status for " + ruleEntity + " : " + ruleId, e);
+		}
+
+		for (String targetStore : utilityService.getStoresToExport(store)) {
+			exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
+
+			boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty("settings", targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
+			boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty("workflow", targetStore, "enable."+rule.getRuleEntity().getXmlName()));
+
+			ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
+					targetStore, null, null, ruleEntity);
+			exportRuleMap.setExportDateTime(exportDateTime);
+			exportRuleMap.setDeleted(false);
+			if (ruleStatus != null) {
+				exportRuleMap.setPublishedDateTime(ruleStatus.getLastPublishedDate());
+			}
+			try { //TODO:
+				daoService.saveExportRuleMap(exportRuleMap);
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+			exportedOnce |= exported;
+			if (!exported) {
+				logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
+			} else {
+				if(isAutoImport && isRuleEntityEnabled) {
+					importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), generateImportAsId(store, ruleId, rule.getRuleName(), targetStore, rule.getRuleName(), rule.getRuleEntity()), rule.getRuleName());
 				}
+			}
+		}
 
-				for (String targetStore : utilityService.getStoresToExport(store)) {
-					exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
-
-					boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty("settings", targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
-					boolean isRuleEntityEnabled = BooleanUtils.toBoolean(configManager.getProperty("workflow", targetStore, "enable."+rule.getRuleEntity().getXmlName()));
-
-					ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),
-							targetStore, null, null, ruleEntity);
-					exportRuleMap.setExportDateTime(exportDateTime);
-					exportRuleMap.setDeleted(false);
-					if (ruleStatus != null) {
-						exportRuleMap.setPublishedDateTime(ruleStatus.getLastPublishedDate());
+		if (exportedOnce) {
+			try {
+				if (ruleStatus != null) {
+					// RULE STATUS
+					daoService.updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDateTime);
+					// AUDIT TRAIL
+					auditTrail.setCreatedDate(exportDateTime);
+					auditTrail.setReferenceId(ruleStatus.getRuleRefId());
+					if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
+						auditTrail.setKeyword(ruleStatus.getRuleRefId());
 					}
-					try { //TODO:
-						daoService.saveExportRuleMap(exportRuleMap);
-					} catch (DaoException e) {
-						e.printStackTrace();
-					}
-					exportedOnce |= exported;
-					if (!exported) {
-						logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
-					} else {
-						if(isAutoImport && isRuleEntityEnabled) {
-							importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), generateImportAsId(ruleEntity, rule.getRuleName()), rule.getRuleName());
-						}
-					}
+					auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].",
+							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.AUTOMATIC));
+					daoService.addAuditTrail(auditTrail);
+					// COMMENT
+					daoService.addRuleStatusComment(RuleStatusEntity.EXPORTED, store, username, comment, ruleStatus.getRuleStatusId());
+				} else {
+					logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
 				}
-
-				if (exportedOnce) {
-					try {
-						if (ruleStatus != null) {
-							// RULE STATUS
-							daoService.updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDateTime);
-							// AUDIT TRAIL
-							auditTrail.setCreatedDate(exportDateTime);
-							auditTrail.setReferenceId(ruleStatus.getRuleRefId());
-							if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
-								auditTrail.setKeyword(ruleStatus.getRuleRefId());
-							}
-							auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].",
-									auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.AUTOMATIC));
-							daoService.addAuditTrail(auditTrail);
-							// COMMENT
-							daoService.addRuleStatusComment(RuleStatusEntity.EXPORTED, store, username, comment, ruleStatus.getRuleStatusId());
-						} else {
-							logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
-						}
-					} catch (DaoException e) {
-						logger.error("Failed to update rule status for " + ruleEntity + " : " + ruleId, e);
-					}
-				}
-				return exported;
+			} catch (DaoException e) {
+				logger.error("Failed to update rule status for " + ruleEntity + " : " + ruleId, e);
+			}
+		}
+		return exported;
 	}
 
 	private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
@@ -368,27 +368,36 @@ public class WorkflowServiceImpl implements WorkflowService{
 	}
 
 	//TODO: retireve ExportRuleMap for QUERY_CLEANING and RANKING_RULE
-	public String generateImportAsId(RuleEntity ruleEntity, String ruleName) {
+	public String generateImportAsId(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleNameTarget, RuleEntity ruleType) {
 		String importAsId = null;
 
-		switch (ruleEntity) {
+		switch (ruleType) {
 		case ELEVATE:
 		case EXCLUDE:
 		case DEMOTE:
-			importAsId = ruleName;
+			importAsId = ruleNameTarget;
 			break;
 		case FACET_SORT:
-			FacetSort facetSort = facetSortService.getRuleByName(ruleName);
+			FacetSort facetSort = facetSortService.getRuleByName(ruleNameTarget);
 			if (facetSort != null) {
 				importAsId = facetSort.getRuleId();
-				ruleName = facetSort.getRuleName();
 			} else {
 				importAsId = DAOUtils.generateUniqueId();
 			}
 			break;
 		case QUERY_CLEANING:
 		case RANKING_RULE:
-			
+			ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, null, ruleNameTarget, ruleType);
+			try {
+				exportRuleMap = exportRuleMapService.getExportRuleMap(exportRuleMap);
+			} catch (DaoException e) {
+				logger.error("Error executing WorkflowService.getImportAsId ", e);
+			}
+
+			if(exportRuleMap != null) {
+				importAsId = exportRuleMap.getRuleIdTarget();
+			}
+
 			if (StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)) {
 				importAsId = DAOUtils.generateUniqueId();
 			}
