@@ -83,7 +83,8 @@ public class WorkflowServiceImpl implements WorkflowService{
 		// TODO: change return type to Map
 		boolean exported = false;
 		boolean exportedOnce = false;
-
+		boolean isSourceAutoImport = BooleanUtils.toBoolean(configManager.getProperty("workflow", store, DAOConstants.SETTINGS_AUTO_IMPORT));
+		
 		AuditTrail auditTrail = new AuditTrail();
 		auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
 		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
@@ -127,7 +128,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 			if (!exported) {
 				logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
 			} else {
-				if(isAutoImport && isRuleEntityEnabled) {
+				if(isAutoImport && isRuleEntityEnabled && isSourceAutoImport) {
 					importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), generateImportAsId(store, ruleId, rule.getRuleName(), targetStore, rule.getRuleName(), rule.getRuleEntity()), rule.getRuleName());
 				}
 			}

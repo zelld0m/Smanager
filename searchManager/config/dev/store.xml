@@ -2,7 +2,7 @@
 <!-- Dev Config -->
 <store-properties>
     <store id="ecost" extends="pcmall">
-        <module name="settings" title="Settings">
+    	<module name="settings" title="Settings">
             <properties>
                 <property id="site_domain" type="String">
                     <label>New Site Domain</label>
@@ -240,7 +240,7 @@
     </store>
     
     <store id="pcmall">
-        <module name="mail" title="Mail">
+    	<module name="mail" title="Mail">
             <groups>
                 <group>
                     <member property-id="pendingNotification"/>
@@ -400,7 +400,6 @@
                 </group>
                 <group>
                     <member property-id="auto_export"/>
-                    <member property-id="auto_import"/>
                 </group>
                 <group name="Export Feature">
                     <member property-id="export_target"/>
@@ -441,10 +440,6 @@
                 <property id="auto_export" type="Boolean">
                     <label>Auto Export</label>
                     <defaultValue>true</defaultValue>
-                </property>
-                <property id="auto_import" type="Boolean">
-                    <label>Auto Import</label>
-                    <defaultValue>false</defaultValue>
                 </property>
                 <property id="export_target" type="String" multiValued="true">
                     <label>Export Target</label>
@@ -607,5 +602,18 @@
                 </property>
             </properties>
         </module>
+        <module name="workflow" title="Workflow">
+    		<groups>
+    			<group>
+    				 <member property-id="auto_import"/>
+    			</group>
+    		</groups>
+    		<properties>
+    			<property id="auto_import" type="Boolean">
+                    <label>Auto Import</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+    		</properties>
+    	</module>
     </store>
 </store-properties>
