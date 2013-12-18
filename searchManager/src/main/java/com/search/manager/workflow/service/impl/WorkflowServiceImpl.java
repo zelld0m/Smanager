@@ -24,6 +24,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.dao.sp.ExportRuleMapDAO;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
@@ -61,6 +62,8 @@ public class WorkflowServiceImpl implements WorkflowService{
 	private ConfigManager configManager;
 	@Autowired
 	private DaoService daoService;
+	@Autowired
+	private ExportRuleMapDAO exportRuleMapDAO;
 	@Autowired
 	private FacetSortService facetSortService;
 	@Autowired
@@ -385,6 +388,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 			break;
 		case QUERY_CLEANING:
 		case RANKING_RULE:
+			
 			if (StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)) {
 				importAsId = DAOUtils.generateUniqueId();
 			}
