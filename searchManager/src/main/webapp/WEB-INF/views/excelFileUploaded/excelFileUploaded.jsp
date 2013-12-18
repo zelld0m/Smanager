@@ -46,8 +46,12 @@
             </tr>
         </thead>
 		<tbody>
-        <c:forEach items="${excelFileUploadeds}" var="excelFileUploaded">
-		    <tr>
+        <c:forEach items="${excelFileUploadeds}" var="excelFileUploaded" varStatus="status">
+        <c:set var="alt" value=""/>
+        <c:if test="${status.count %2 == 0}">
+        	<c:set var="alt" value="alt"/>
+        </c:if>        
+		    <tr class="conTableItem ${alt}">
 		   		<td align="center">
 		   			<c:choose>
 		   				<c:when test="${excelFileUploaded.addedOnRuleBy == null}">
