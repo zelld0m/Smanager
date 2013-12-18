@@ -1,5 +1,9 @@
 package com.search.manager.core.enums;
 
+import java.util.EnumSet;
+
+import com.search.manager.workflow.model.TaskStatus;
+
 public enum RuleSource {
 
 	USER("User"),

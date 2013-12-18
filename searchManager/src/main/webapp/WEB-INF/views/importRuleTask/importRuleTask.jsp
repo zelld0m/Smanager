@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="setting"/>
+<c:set var="topmenu" value="workflow"/>
 <c:set var="submenu" value="importRuleTask"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 

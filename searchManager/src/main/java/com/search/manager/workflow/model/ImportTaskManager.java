@@ -93,7 +93,7 @@ public class ImportTaskManager {
 				taskExecutionResult.setRunAttempt(taskExecutionResult.getRunAttempt() + 1);
 
 				if(!ruleStatus.isLocked()) {
-
+				    DateTime startDate = new DateTime();
 					
 					if(taskExecutionResult.getStateCompleted() == null)
 						ruleTransferService.processImportRejectRules(targetStoreId, storeName, importRuleQueueItem.getCreatedBy(), RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
@@ -127,7 +127,7 @@ public class ImportTaskManager {
 					default: 
 					}
 
-					updateTaskExecution(importRuleQueueItem, TaskStatus.COMPLETED, null, new DateTime(), "");
+					updateTaskExecution(importRuleQueueItem, TaskStatus.COMPLETED, startDate, new DateTime(), "");
 				} else {
 					//TODO: update import task to completed and set error message as rule is locked.
 					updateTaskExecution(importRuleQueueItem, TaskStatus.FAILED, null, new DateTime(), "The rule is locked.");

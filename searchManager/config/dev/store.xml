@@ -99,7 +99,7 @@
     </store>
     
     <store id="pcmallcap" extends="pcmall">
-    	<module name="workflow" title="Workflow Settings">
+    	<module name="workflow" title="Workflow">
             <groups>
             	<group name="General">
             		<member property-id="maxRunAttempts"/>
@@ -132,23 +132,23 @@
                     <defaultValue>5</defaultValue>
                 </property>
 				<property id="enable.elevate" type="Boolean" required="true">
-                    <label>Elevate</label>
+                    <label>Elevate Rule</label>
                     <defaultValue>true</defaultValue>
                 </property>
                 <property id="enable.exclude" type="Boolean" required="true">
-                    <label>Exclude</label>
+                    <label>Exclude Rule</label>
                     <defaultValue>true</defaultValue>
                 </property>
 				<property id="enable.demote" type="Boolean" required="true">
-                    <label>Demote</label>
+                    <label>Demote Rule</label>
                     <defaultValue>true</defaultValue>
                 </property>
 				<property id="enable.facetSort" type="Boolean" required="true">
-                    <label>Facet Sort</label>
+                    <label>Facet Sort Rule</label>
                     <defaultValue>true</defaultValue>
                 </property>
 				<property id="enable.queryCleaning" type="Boolean" required="true">
-                    <label>Query Cleaning</label>
+                    <label>Redirect Rule</label>
                     <defaultValue>true</defaultValue>
                 </property>
 				<property id="enable.didYouMean" type="Boolean" required="true">
@@ -160,7 +160,7 @@
                     <defaultValue>true</defaultValue>
                 </property>
 				<property id="enable.rankingRule" type="Boolean" required="true">
-                    <label>Ranking Rule</label>
+                    <label>Relevancy Rule</label>
                     <defaultValue>true</defaultValue>
                 </property>
 			
@@ -181,7 +181,7 @@
                     <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.queryCleaning" type="DropDown" required="true">
-                    <label>Query Cleaning</label>
+                    <label>Redirect Rule</label>
                     <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.didYouMean" type="DropDown" required="true">
@@ -189,11 +189,11 @@
                     <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.banner" type="DropDown" required="true">
-                    <label>Banner</label>
+                    <label>Banner Rule</label>
                     <defaultValue>For Review</defaultValue>
                 </property>
 				<property id="status.rankingRule" type="DropDown" required="true">
-                    <label>Ranking Rule</label>
+                    <label>Relevancy Rule</label>
                     <defaultValue>For Review</defaultValue>
                 </property>
 			</properties>
@@ -368,23 +368,23 @@
                 </property>
                 
                 <property id="mail.workflow.pendingSubject" type="String">
-                    <label>Unpublished CC</label>
+                    <label>Pending Rule Subject</label>
                     <defaultValue>Search Manager: Rules Submitted For Approval</defaultValue>
                 </property>
                 <property id="mail.workflow.approvedSubject" type="String">
-                    <label>Unpublished BCC</label>
+                    <label>Approved Rule Subject</label>
                     <defaultValue>Search Manager: Approved Rules</defaultValue>
                 </property>
                 <property id="mail.workflow.rejectedSubject" type="String">
-                    <label>Unpublished CC</label>
+                    <label>Rejected Rule Subject</label>
                     <defaultValue>Search Manager: Rejected Rules</defaultValue>
                 </property>
                 <property id="mail.workflow.publishedSubject" type="String">
-                    <label>Unpublished BCC</label>
+                    <label>Published Rule Subject</label>
                     <defaultValue>Search Manager: Published Rules</defaultValue>
                 </property>
                 <property id="mail.workflow.unpublishedSubject" type="String">
-                    <label>Unpublished BCC</label>
+                    <label>UnPublished Rule Subject</label>
                     <defaultValue>Search Manager: Un-published Rules</defaultValue>
                 </property>
             </properties>
@@ -506,11 +506,11 @@
             <properties>
                 <property id="searchwithin.enable" type="Boolean">
                     <label>Enabled</label>
-                    <defaultValue>true</defaultValue>
+                    <defaultValue>false</defaultValue>
                 </property>
                 <property id="searchwithin.paramname" type="String">
                     <label>Param Name</label>
-                    <defaultValue>searchwithin</defaultValue>
+                    <defaultValue>searchWithin</defaultValue>
                 </property>
                 <property id="searchwithin.type" type="String" multiValued="true">
                     <label>Type</label>
@@ -602,7 +602,7 @@
             </groups>
             <properties>
                 <property id="facetsort.enabled" type="Boolean">
-                    <label>Facet Sort Enabled</label>
+                    <label>Enabled</label>
                     <defaultValue>false</defaultValue>
                 </property>
             </properties>

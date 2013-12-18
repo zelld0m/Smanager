@@ -41,7 +41,7 @@ import com.search.manager.xml.file.RuleXmlReportUtil;
 
 
 @Controller
-@RequestMapping("/facetsort")
+@RequestMapping("/facet")
 public class FacetSortController {
 
     private static final Logger logger = LoggerFactory.getLogger(FacetSortController.class);
@@ -63,7 +63,7 @@ public class FacetSortController {
     @RequestMapping(value = "/{store}")
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) {
         model.addAttribute("store", store);
-        return "rules/facetsort";
+        return "rules/facet";
     }
 
     /**

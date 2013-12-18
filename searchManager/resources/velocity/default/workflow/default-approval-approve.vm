@@ -10,6 +10,6 @@
 			<i>Comment:</i>
 			<p>${comment}</p>
 		</div>
-		<p>This email is an automated notification, which is unable to receive replies. We're happy to help you with any questions or concerns you may have. Please contact us via SearchManagerDevTeam@pcmall.com</p>
+		<p>This email is an automated notification from <a href="${serverName}:8080/searchManager">${serverName}</a>, which is unable to receive replies. We're happy to help you with any questions or concerns you may have. Please contact us via SearchManagerDevTeam@pcmall.com</p>
 	</body>
 </html>
