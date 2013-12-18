@@ -352,7 +352,7 @@ public class DeploymentService {
 			} catch (DaoException e) {
 				logger.error("Failed during getCleanList()", e);
 			}
-			Map<String, Boolean> ruleMap = unpublishRule(storeId, RuleSource.USER, ruleType, cleanList, comment);
+			Map<String, Boolean> ruleMap = processUnpublishRule(storeId, RuleSource.USER, ruleType, cleanList, comment);
 
 			for (String ruleId : ruleRefIdList) {
 				DeploymentModel deploy = new DeploymentModel();
@@ -379,7 +379,7 @@ public class DeploymentService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Boolean> unpublishRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
+	private Map<String, Boolean> processUnpublishRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
 			Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
