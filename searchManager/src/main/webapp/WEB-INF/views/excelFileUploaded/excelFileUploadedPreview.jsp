@@ -33,7 +33,7 @@
 			        	${excelFileReport.name}
 			        </td>
 			        <td align="center">
-			        	 <joda:format  value="${excelFileReport.expiration}"/> 
+			        	 <joda:format pattern="${dateFormat}"  value="${excelFileReport.expiration}"/> 
 			        </td>			        			        			        			        			        
 			    </tr>        
 			</c:forEach>			    

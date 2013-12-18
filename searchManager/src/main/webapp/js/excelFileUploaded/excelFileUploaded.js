@@ -12,8 +12,8 @@
 				changePage : function (pageNumber){
 					var ruleType = $("#titleText").text().toLowerCase();
 					var storeId = GLOBAL_storeId;
-					$("#ruleItemContainer").empty().append("Loading....");	
-					$("#ruleItemContainer").load("/searchManager/excelFileUploaded/paging/" + storeId + "/" + ruleType + "/" + pageNumber);	
+					$("#noSelected").empty().append("Loading....");	
+					$("#noSelected").load("/searchManager/excelFileUploaded/paging/" + storeId + "/" + ruleType + "/" + pageNumber);	
 				},
 				showPaging : function (){
 					var currentPage = $('#currentPageNumber').val();
@@ -131,14 +131,14 @@
 				        	    modal: true,
 				        	    buttons: {
 				        	        "Proceed": function() {
-				        	        	$("#ruleItemContainer").empty().append("Please wait while process in progress.");
+				        	        	$("#noSelected").empty().append("Please wait while process in progress.");
 				        	        	var ruleType = $("#titleText").text().toLowerCase();
 				        	        	ExcelFileUploadedServiceJS.addExcelFileUploadeds(ruleType,{
 											callback: function(count){ 
 												var ruleType = $("#titleText").text().toLowerCase();
 												var storeId = GLOBAL_storeId;
-												$("#ruleItemContainer").empty().append("Loading....");	
-												$("#ruleItemContainer").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType);
+												$("#noSelected").empty().append("Loading....");	
+												$("#noSelected").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType);
 											},
 											preHook: function(){ 
 											},

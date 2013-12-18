@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.service.UtilityService;
 import com.search.manager.workflow.model.ImportRuleTask;
 import com.search.manager.workflow.service.ImportRuleTaskService;
+import com.search.ws.ConfigManager;
 
 /**
  * 
@@ -29,43 +31,53 @@ import com.search.manager.workflow.service.ImportRuleTaskService;
 @RequestMapping("/autoimport")
 public class ImportRuleTaskController {
 
-	@Autowired private ImportRuleTaskService importRuleTaskService;
+	@Autowired private ConfigManager configManager;
+	@Autowired private ImportRuleTaskService importRuleTaskService;	
 	@Autowired private UtilityService utilityService;
-
+	
+	private static final String PROPERTY_MODULE_NAME = "workflow";
+	private static final String PROPERTY_NAME = "target";
 	@RequestMapping(value = "/{store}", 
 	                method = { RequestMethod.GET, RequestMethod.POST })
-	public String execute(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws IOException, DaoException {
-	    
-	    String storeId = utilityService.getStoreId();
-	    
+	public String execute(HttpServletRequest request, HttpServletResponse response, Model model
+		, @PathVariable String store) throws IOException, DaoException {
+		String storeId = utilityService.getStoreId();
 	    ImportRuleTask importRuleTask = new ImportRuleTask();
-	    importRuleTask.setSourceStoreId(storeId);
-	    
+	    importRuleTask = getStore(importRuleTask,storeId);    
 	    SearchCriteria<ImportRuleTask> searchCriteria = new SearchCriteria<ImportRuleTask>(importRuleTask, 1, 10);
 		RecordSet<ImportRuleTask> recordSet = importRuleTaskService.getImportRuleTasks(searchCriteria);
 		model.addAttribute("importRuleTasks", recordSet.getList());
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", 1);
-		model.addAttribute("dateFomat", utilityService.getStoreDateTimeFormat());
+		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		return "importRuleTask/importRuleTask";
 	}
 	
 	@RequestMapping(value = "/{store}/page/{pageNumber}", 
 	                method = { RequestMethod.GET, RequestMethod.POST })
 	public String paging(HttpServletRequest request,
-			HttpServletResponse response, Model model, @PathVariable String store, @PathVariable int pageNumber) throws IOException, DaoException {
-	    
-	    String storeId = utilityService.getStoreId();
-	    
+			HttpServletResponse response, Model model, @PathVariable String store
+			, @PathVariable int pageNumber) throws IOException, DaoException {
+		String storeId = utilityService.getStoreId();
 	    ImportRuleTask importRuleTask = new ImportRuleTask();
-        importRuleTask.setSourceStoreId(storeId);
-        
+	    importRuleTask = getStore(importRuleTask,storeId);
         SearchCriteria<ImportRuleTask> searchCriteria = new SearchCriteria<ImportRuleTask>(importRuleTask, pageNumber, 10);
 		RecordSet<ImportRuleTask> recordSet = importRuleTaskService.getImportRuleTasks(searchCriteria);
 		model.addAttribute("importRuleTasks", recordSet.getList());
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", pageNumber);
-		model.addAttribute("dateFomat", utilityService.getStoreDateFormat());
+		model.addAttribute("dateFormat", utilityService.getStoreDateFormat());
 		return "importRuleTask/list";
 	}	
+	private ImportRuleTask getStore(ImportRuleTask importRuleTask,String storeId){
+		if (StringUtils.equalsIgnoreCase(
+				StringUtils.defaultIfBlank(
+						configManager.getProperty(PROPERTY_MODULE_NAME,utilityService.getStoreId()
+								, PROPERTY_NAME), "false"),"true")){
+			importRuleTask.setTargetStoreId(storeId);			
+		}else{
+			importRuleTask.setSourceStoreId(storeId);
+		}
+		return importRuleTask;
+	}
 }
