@@ -30,7 +30,7 @@
 						},
 						nextLinkCallback: function(e){ 
 							var pageNumber=parseInt(e.data.page) + 1;
-							changePage(pageNumber);			
+							importRuleTask.changePage(pageNumber);			
 						},
 						prevLinkCallback: function(e){
 							var pageNumber=parseInt(e.data.page) - 1;
