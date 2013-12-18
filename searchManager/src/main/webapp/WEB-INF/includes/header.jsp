@@ -155,6 +155,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/BannerServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/SpellRuleServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ExcelFileUploadedServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/ImportRuleTaskService.js"/>"></script>
   
   <!-- jQuery custom plugin -->
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-array-functions.js" />" ></script>
