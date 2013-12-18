@@ -9,11 +9,13 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
-	
-	<!-- Registering this class makes Spring look for beans that have the name attribute set to the URL path -->
-	<bean id="beanNameUrlHandlerMapping" name="beanNameUrlHandlerMapping"
-		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"
-		scope="singleton" />
+	<bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+    
+    <!-- Registering this class makes Spring look for beans that have the name attribute set to the URL path -->
+    <bean id="beanNameUrlHandlerMapping" name="beanNameUrlHandlerMapping"
+              class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"
+              scope="singleton" />
 
 	<!-- Resolve logical view names to .jsp resources in the /WEB-INF/views directory.
 		 Note that this is the last view resolver because it will attempt to match
