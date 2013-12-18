@@ -63,6 +63,7 @@ public class ExcelFileUploadedController {
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", 1);
 		model.addAttribute("storeId",storeId);
+		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		return "excelFileUploaded/excelFileUploaded";
 	}
 	
@@ -79,6 +80,7 @@ public class ExcelFileUploadedController {
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", pageNumber);
 		model.addAttribute("storeId",storeId);
+		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		return "excelFileUploaded/excelFileUploaded";
 	}	
 	@RequestMapping(value = "/details/{ruleType}/{excelFileUploadedId}", method = { RequestMethod.GET,
@@ -101,6 +103,7 @@ public class ExcelFileUploadedController {
 		model.addAttribute("excelFileUploaded", excelFileUploaded);
 		model.addAttribute("keywords", mpKeyword);
 		model.addAttribute("ruleType", ruleType);
+		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		return "excelFileUploaded/excelFileReport";
 	}	
 
@@ -133,6 +136,7 @@ public class ExcelFileUploadedController {
 		parsedData.put(userName, excelFileUploadeds);
 		excelFileUploadedService.setMapExcelFileUploadeds(parsedData);
 		model.addAttribute("excelFileUploadeds", excelFileUploadeds);
+		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		return new ModelAndView("excelFileUploaded/excelFileUploadedPreview");
 	}
 

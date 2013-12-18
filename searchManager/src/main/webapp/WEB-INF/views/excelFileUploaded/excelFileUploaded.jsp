@@ -46,43 +46,54 @@
             </tr>
         </thead>
 		<tbody>
-        <c:forEach items="${excelFileUploadeds}" var="excelFileUploaded" varStatus="status">
-        <c:set var="alt" value=""/>
-        <c:if test="${status.count %2 == 0}">
-        	<c:set var="alt" value="alt"/>
-        </c:if>        
-		    <tr class="conTableItem ${alt}">
-		   		<td align="center">
-		   			<c:choose>
-		   				<c:when test="${excelFileUploaded.addedOnRuleBy == null}">
-					   		<a href="javascript:void(0);" 
-					   		onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
-					   		class="delete">
-					   			<img src="../images/icon_del.png">
-					   		</a>
-			   			</c:when>
-			   			<c:otherwise>
-			   				added
-			   			</c:otherwise>
-			   		</c:choose>        	
-		        </td>
-		    	<td>
-		    		<a href="javacript:void(0);" onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');" class="viewDetails" >${excelFileUploaded.fileName}</a> 			    				    		
-		    	</td>
-		        <td align="center">
-		        	${excelFileUploaded.createdBy}
-		        </td>
-		        <td align="center">
-		        	<joda:format  pattern="MMM dd, yyyy HH:mm:ss" value="${excelFileUploaded.createdStamp}"/>
-		        </td>
-		        <td align="center">
-		        	${excelFileUploaded.addedOnRuleBy}
-		        </td>
-		        <td align="center">
-		        	<joda:format pattern="MMM dd, yyyy HH:mm:ss" value="${excelFileUploaded.addedOnRuleDate}"/>
-		        </td>			        			        			        			        			        
-		    </tr>        
-		</c:forEach>			    
+		<c:choose>
+			<c:when test="${fn:length(excelFileUploadeds) > 0}">
+		        <c:forEach items="${excelFileUploadeds}" var="excelFileUploaded" varStatus="status">
+		        <c:set var="alt" value=""/>
+		        <c:if test="${status.count %2 == 0}">
+		        	<c:set var="alt" value="alt"/>
+		        </c:if>        
+				    <tr class="conTableItem ${alt}">
+				   		<td align="center">
+				   			<c:choose>
+				   				<c:when test="${excelFileUploaded.addedOnRuleBy == null}">
+							   		<a href="javascript:void(0);" 
+							   		onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
+							   		class="delete">
+							   			<img src="../images/icon_del.png">
+							   		</a>
+					   			</c:when>
+					   			<c:otherwise>
+					   				added
+					   			</c:otherwise>
+					   		</c:choose>        	
+				        </td>
+				    	<td>
+				    		<a href="javacript:void(0);" onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');" class="viewDetails" >${excelFileUploaded.fileName}</a> 			    				    		
+				    	</td>
+				        <td align="center">
+				        	${excelFileUploaded.createdBy}
+				        </td>
+				        <td align="center">
+				        	<joda:format  pattern="${dateFormat}" value="${excelFileUploaded.createdStamp}"/>
+				        </td>
+				        <td align="center">
+				        	${excelFileUploaded.addedOnRuleBy}
+				        </td>
+				        <td align="center">
+				        	<joda:format pattern="${dateFormat}" value="${excelFileUploaded.addedOnRuleDate}"/>
+				        </td>			        			        			        			        			        
+				    </tr>        
+				</c:forEach>	
+			</c:when>
+			<c:otherwise>
+				<tr>
+					<td colspan="6" align="center">
+						No record found.
+					</td>
+				</tr>
+			</c:otherwise>
+		</c:choose>    
 		</tbody>
     	</table> 
     	<div id="sortablePagingBottom" class="floatL txtAL w100p"><div class="txtDisplay floatL farial fsize11 fDblue padT10">Displaying 1 to 10 of 54 Users</div><div class="floatR farial fsize11 fgray txtAR padT10">	<div class="txtAR">		<ul class="pagination"><li><span class="pager-current"><a href="javascript:void(0);">1</a></span></li><li><span class=""><a href="javascript:void(0);">2</a></span></li><li><span class=""><a href="javascript:void(0);">3</a></span></li><li><span class=""><a href="javascript:void(0);">4</a></span></li><li><span class=""><a href="javascript:void(0);">5</a></span></li><li><span class=""><a href="javascript:void(0);">6</a></span></li><li><a href="javascript:void(0);">Next</a></li></ul>	</div></div></div>

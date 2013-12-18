@@ -17,38 +17,49 @@
             </tr>
         </thead>
 		<tbody>
-        <c:forEach items="${importRuleTasks}" var="importRuleTask" varStatus="status">
-        <c:set var="alt" value=""/>
-        <c:if test="${status.count %2 == 0}">
-        	<c:set var="alt" value="alt"/>
-        </c:if>
-		    <tr class="conTableItem ${alt}">
-		   		<td align="center">
-					${importRuleTask.ruleEntity.name}
-		        </td>
-		        <td align="center">
-					${importRuleTask.sourceRuleName}
-		        </td>
-		        <td align="center">
-		        	${importRuleTask.targetStoreId}
-		        </td>
-		        <td align="center">
-		        	${importRuleTask.targetRuleName}
-		        </td>
-		        <td align="center">
-		        	${importRuleTask.importType.displayText}
-		        </td>	
-		        <td align="center">
-		        	${importRuleTask.taskExecutionResult.taskStatus.displayText}
-		        </td>
-		        <td align="center">
-		        	<joda:format pattern="${dateFomat}" value="${importRuleTask.taskExecutionResult.taskStartDateTime}"/>
-		        </td>
-		        <td align="center">
-		        	<joda:format pattern="${dateFomat}" value="${importRuleTask.taskExecutionResult.taskEndDateTime}"/>
-		        </td>		        		        		        		        		        		        		        		        			        			        			        			        
-		    </tr>        
-		</c:forEach>			    
+		<c:choose>
+			<c:when test="${fn:length(importRuleTasks) > 0}">		
+		        <c:forEach items="${importRuleTasks}" var="importRuleTask" varStatus="status">
+		        <c:set var="alt" value=""/>
+		        <c:if test="${status.count %2 == 0}">
+		        	<c:set var="alt" value="alt"/>
+		        </c:if>
+				    <tr class="conTableItem ${alt}">
+				   		<td align="center">
+							${importRuleTask.ruleEntity.name}
+				        </td>
+				        <td align="center">
+							${importRuleTask.sourceRuleName}
+				        </td>
+				        <td align="center">
+				        	${importRuleTask.targetStoreId}
+				        </td>
+				        <td align="center">
+				        	${importRuleTask.targetRuleName}
+				        </td>
+				        <td align="center">
+				        	${importRuleTask.importType.displayText}
+				        </td>	
+				        <td align="center">
+				        	${importRuleTask.taskExecutionResult.taskStatus.displayText}
+				        </td>
+				        <td align="center">
+				        	<joda:format pattern="${dateFormat}" value="${importRuleTask.taskExecutionResult.taskStartDateTime}"/>
+				        </td>
+				        <td align="center">
+				        	<joda:format pattern="${dateFormat}" value="${importRuleTask.taskExecutionResult.taskEndDateTime}"/>
+				        </td>		        		        		        		        		        		        		        		        			        			        			        			        
+				    </tr>        
+				</c:forEach>			    
+			</c:when>
+			<c:otherwise>
+				<tr>
+					<td colspan="9" align="center">
+						No record found.
+					</td>
+				</tr>
+			</c:otherwise>
+		</c:choose>
 		</tbody>
     	</table> 
     	<div class="clearB"></div>	
