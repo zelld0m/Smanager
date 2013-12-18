@@ -40,6 +40,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleXmlUtil;
+import com.search.ws.ConfigManager;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -53,6 +54,8 @@ public class DeploymentService {
 
 	private static final Logger logger =
 			LoggerFactory.getLogger(DeploymentService.class);
+	@Autowired
+	private ConfigManager configManager;
 	@Autowired
 	private DaoService daoService;
 	@Autowired
@@ -340,7 +343,7 @@ public class DeploymentService {
 	public RecordSet<DeploymentModel> unpublishRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
 		boolean obtainedLock = false;
 		String userName = utilityService.getUsername();
-		String storeName = utilityService.getStoreName();
+		String storeName = configManager.getStoreName(storeId);
 		try {
 			obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
 			//clean list, only approved rules should be published
@@ -352,7 +355,7 @@ public class DeploymentService {
 			} catch (DaoException e) {
 				logger.error("Failed during getCleanList()", e);
 			}
-			Map<String, Boolean> ruleMap = unpublishRule(storeId, RuleSource.USER, ruleType, cleanList, comment);
+			Map<String, Boolean> ruleMap = processUnpublishRule(storeId, RuleSource.USER, ruleType, cleanList, comment);
 
 			for (String ruleId : ruleRefIdList) {
 				DeploymentModel deploy = new DeploymentModel();
@@ -379,7 +382,7 @@ public class DeploymentService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Boolean> unpublishRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
+	private Map<String, Boolean> processUnpublishRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
 			Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
