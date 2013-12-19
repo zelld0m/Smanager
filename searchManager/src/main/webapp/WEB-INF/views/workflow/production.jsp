@@ -4,8 +4,7 @@
 <c:set var="submenu" value="production" />
 <%@ include file="/WEB-INF/includes/menu.jsp"%>
 
-<script type="text/javascript"
-	src="<spring:url value="/js/workflow/production.js" />"></script>
+<script type="text/javascript" src="<spring:url value="/js/workflow/production.js" />"></script>
 	
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 	
@@ -23,9 +22,15 @@
 	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">Push to Production</h1>
 	</div>
-
+	<div class="floatL w730 titlePlacer breakWord">
+		<div class="floatR padT7">
+	  	<div class="floatL fbold fsize14 marT4 marR5"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-import: </div>
+	  	<div class="floatR marT4 marR5"><a class="infoIcon" href="javascript:void(0);" title="What's this?"><img src="/searchManager/images/icon_info.png"></a></div>
+	  	<div class="floatR marR5"><input id="autoimport" type="checkbox" class="firerift-style-checkbox on-off"/></div>
+	  	<div class="clearB"></div>
+      </div>
+	</div>
 	<div class="clearB"></div>
-
 	<div style="width: 95%" class="dashboard marT20 mar0">
 		<c:if test="${storeId eq 'pcmall' or storeId eq 'macmall'}">
 			<div id="autoExportStatus" class="info notification border fsize14 marB20" style="display:none">
