@@ -18,7 +18,7 @@ public interface ExcelFileUploadedService {
 	public int deleteExcelFileUploaded(String excelFileUploadedId,
 			String storeId, String fileName) throws DaoException;
 
-	public int updateExcelFileUploaded(String excelFileUploadedId)
+	public int updateExcelFileUploaded(String excelFileUploadedId,String storeId,String ruleType,boolean cleanFirst)
 			throws DaoException;
 	public Map<String,List<ExcelFileUploaded>> getMapexcelfileuploadeds();
 	public void setMapExcelFileUploadeds(

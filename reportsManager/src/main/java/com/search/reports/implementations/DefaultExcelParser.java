@@ -1,5 +1,6 @@
 package com.search.reports.implementations;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,10 +44,10 @@ public class DefaultExcelParser implements ExcelParser {
                     			excelFileReport.setKeyword(cell.getStringCellValue());
                     			 break;
                     	case 1:
-                    			excelFileReport.setRank(String.valueOf(cell.getNumericCellValue()));
+                    			excelFileReport.setRank(getEitherNumericOrStringValueAsString(cell));
                     			 break;
                     	case 2:		
-                    			excelFileReport.setSku(String.valueOf(cell.getNumericCellValue()));
+                    			excelFileReport.setSku(getEitherNumericOrStringValueAsString(cell));
                     			 break;
                     	case 3:            
                     			excelFileReport.setName(cell.getStringCellValue());
@@ -75,6 +76,16 @@ public class DefaultExcelParser implements ExcelParser {
 	public void setSheetName(String sheetName) {
 		this.sheetName = sheetName;
 	}
-
+	private String getEitherNumericOrStringValueAsString(Cell cell){
+		String result="";
+        int cellType = cell.getCellType();
+        if (cellType == Cell.CELL_TYPE_NUMERIC) {
+        	DecimalFormat df = new DecimalFormat("#");
+        	result = df.format(cell.getNumericCellValue()) + "";
+        } else if (cellType == Cell.CELL_TYPE_STRING) {
+        	result =  cell.getStringCellValue();
+        }
+        return result;
+    }
 
 }

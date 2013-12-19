@@ -19,6 +19,9 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.service.DemoteService;
+import com.search.manager.service.ElevateService;
+import com.search.manager.service.ExcludeService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.workflow.dao.ExcelFileUploadedDAO;
 import com.search.manager.workflow.service.ExcelFileUploadedService;
@@ -36,7 +39,13 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 	private ExcelFileUploadedDAO dao;
 	@Autowired
 	private UtilityService utilityService;	
-
+	@Autowired
+    private ElevateService elevateService;	
+	@Autowired
+    private DemoteService demoteService;
+	@Autowired
+    private ExcludeService excludeService;	
+	
 	@RemoteMethod
 	public Integer addExcelFileUploadeds(String ruleType) throws DaoException {
 		String createdBy = utilityService.getUsername();
@@ -48,11 +57,10 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 			excelFileUploaded.setRuleTypeId(ruleTypeId);
 			excelFileUploaded.setExcelFileUploadedId(DAOUtils
 					.generateUniqueId64Char());
-			excelFileUploaded.setCreatedBy(createdBy);	
-			List<ExcelFileReport> excelFileReports = excelFileUploaded
-					.getExcelFileReports();
-			excelFileUploaded = dao.addExcelFileUploaded(excelFileUploaded);
-			for (ExcelFileReport excelFileReport : excelFileReports) {
+			excelFileUploaded.setCreatedBy(createdBy);
+			dao.addExcelFileUploaded(excelFileUploaded);
+			for (ExcelFileReport excelFileReport : excelFileUploaded
+					.getExcelFileReports()) {
 				excelFileReport.setExcelFileUploadedId(excelFileUploaded
 						.getExcelFileUploadedId());
 				excelFileReport.setCreatedBy(createdBy);
@@ -102,10 +110,52 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 	}
 
 	@RemoteMethod
-	public int updateExcelFileUploaded(String excelFileUploadedId)
+	public int updateExcelFileUploaded(String excelFileUploadedId,String storeId,String ruleType,boolean cleanFirst)
 			throws DaoException {
-			ExcelFileUploaded excelFileUploaded= new ExcelFileUploaded();
-			excelFileUploaded.setExcelFileUploadedId(excelFileUploadedId);
+			int ruleTypeId= RuleEntity.getId(ruleType);
+			String currentKeyword = "";
+			ExcelFileUploaded excelFileUploaded= getExcelFileUploaded(excelFileUploadedId,storeId,ruleTypeId);
+			boolean isFirstKeyword = true;
+			for (ExcelFileReport excelFileReport : excelFileUploaded
+					.getExcelFileReports()) {				
+				if (!currentKeyword.equalsIgnoreCase(excelFileReport.getKeyword())){
+					currentKeyword=excelFileReport.getKeyword();
+					isFirstKeyword=true;
+				}  
+				if (RuleEntity.get(ruleTypeId) == RuleEntity.ELEVATE){
+					if (isFirstKeyword){						
+						if (cleanFirst){
+							elevateService.clearRule(excelFileReport.getKeyword());
+						}
+						isFirstKeyword = false;
+					}
+					int sequence =(int) Float.parseFloat(excelFileReport.getRank());
+					String expireDate = excelFileReport.getExpiration().toString(utilityService.getStoreDateFormat());
+					elevateService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), sequence, expireDate, excelFileReport.getName(), excelFileReport.getSku().split(","));
+				}
+				if (RuleEntity.get(ruleTypeId) == RuleEntity.DEMOTE){
+					if (isFirstKeyword){						
+						if (cleanFirst){
+							demoteService.clearRule(excelFileReport.getKeyword());
+						}
+						isFirstKeyword = false;
+					}
+					int sequence =(int) Float.parseFloat(excelFileReport.getRank());
+					String expireDate = excelFileReport.getExpiration().toString(utilityService.getStoreDateFormat());
+					demoteService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), sequence, expireDate, excelFileReport.getName(), excelFileReport.getSku().split(","));
+				}
+				if (RuleEntity.get(ruleTypeId) == RuleEntity.EXCLUDE){
+					if (isFirstKeyword){						
+						if (cleanFirst){
+							excludeService.clearRule(excelFileReport.getKeyword());
+						}
+						isFirstKeyword = false;
+					}
+					String expireDate = excelFileReport.getExpiration().toString(utilityService.getStoreDateFormat());
+					excludeService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), expireDate, excelFileReport.getName(), new String[]{excelFileReport.getSku()});
+				}				
+				
+			}
 			excelFileUploaded.setAddedOnRuleBy(utilityService.getUsername());
 			excelFileUploaded.setAddedOnRuleDate(new DateTime());
 		 dao.updateExcelFileUploaded(excelFileUploaded);
