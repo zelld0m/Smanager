@@ -438,42 +438,44 @@ public class DeploymentService {
 		}
 		return null;
 	}
-
+	
+	
 	@RemoteMethod
 	// Used by Submit For Approval and Delete Rule
-	public RuleStatus processRuleStatus(String storeId, String ruleType, String ruleRefId, String description, Boolean isDelete) {
-		int result = -1;
-		try {
-			String username = utilityService.getUsername();
-			RuleStatus ruleStatus = createRuleStatus(storeId);
-			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
-			ruleStatus.setRuleRefId(ruleRefId);
-			ruleStatus.setDescription(description);
-			ruleStatus.setLastModifiedBy(username);
-			ruleStatus.setStoreId(storeId);
-			result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
-					: daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
+	public RuleStatus submitRuleForApproval(String storeId, String ruleType, String ruleRefId, String description, Boolean isDelete) {
+	    int result = -1;
+        try {
+            String username = utilityService.getUsername();
+            RuleStatus ruleStatus = createRuleStatus(storeId);
+            ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+            ruleStatus.setRuleRefId(ruleRefId);
+            ruleStatus.setDescription(description);
+            ruleStatus.setLastModifiedBy(username);
+            ruleStatus.setRuleSource(RuleSource.USER);
+            ruleStatus.setStoreId(storeId);
+            result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
+                    : daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
 
-			if (result > 0) {
-				RuleStatus ruleStatusInfo = getRuleStatus(storeId, ruleType, ruleRefId);
-				try {
-					if (!isDelete && mailService.isPendingNotificationEnable(storeId)) {
-						List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
-						ruleStatusInfoList.add(ruleStatusInfo);
-						mailService.sendNotification(storeId, RuleSource.USER, RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
-					}
-				} catch (Exception e) {
-					logger.error("Failed during sending 'Submitted For Approval' notification. processRuleStatus()", e);
-				}
+            if (result > 0) {
+                RuleStatus ruleStatusInfo = getRuleStatus(storeId, ruleType, ruleRefId);
+                try {
+                    if (!isDelete && mailService.isPendingNotificationEnable(storeId)) {
+                        List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
+                        ruleStatusInfoList.add(ruleStatusInfo);
+                        mailService.sendNotification(storeId, RuleSource.USER, RuleStatusEntity.PENDING, ruleType, utilityService.getUsername(), ruleStatusInfoList, "");
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed during sending 'Submitted For Approval' notification. processRuleStatus()", e);
+                }
 
-				return ruleStatusInfo;
-			}
-		} catch (DaoException e) {
-			logger.error("Failed during processRuleStatus()", e);
-		} catch (Exception e) {
-			logger.error("Failed during processRuleStatus()", e);
-		}
-		return null;
+                return ruleStatusInfo;
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during processRuleStatus()", e);
+        } catch (Exception e) {
+            logger.error("Failed during processRuleStatus()", e);
+        }
+        return null;
 	}
 
 	@RemoteMethod

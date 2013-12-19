@@ -106,7 +106,7 @@ public class RuleVersionService {
                     // what is this for?
                     RuleStatus ruleStatus = deploymentService.getRuleStatus(storeId, "Ranking Rule", ruleId);
                     if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
-                        deploymentService.processRuleStatus(utilityService.getStoreId(), "Ranking Rule", ruleId, null, false);
+                        deploymentService.submitRuleForApproval(utilityService.getStoreId(), "Ranking Rule", ruleId, null, false);
                     }
                     break;
             }

@@ -55,6 +55,10 @@
 	$.rulestatusbar.prototype.getRuleStatus = function(){
 		var base = this;
 		DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], {
+			postHook: function(){
+				base.$el.find("#ruleStatusContainer").show();
+			},
+			
 			preHook: function(){
 				base.options.beforeRuleStatusRequest();
 			},
@@ -62,12 +66,16 @@
 			callback:function(ruleStatus){
 				base.options.ruleStatus = ruleStatus;
 			
-				if(ruleStatus!=null){
+				if(ruleStatus){
 					if($.isNotBlank(ruleStatus["approvalStatus"])){
 						base.$el.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
 					}
 					
 					var fomattedPublishedDate = $.toStoreFormat(ruleStatus["lastPublishedDate"]);
+					
+					if (ruleStatus["ruleSource"]==="AUTO_IMPORT")
+						base.$el.find("#autoImport").show();
+						
 					if($.isNotBlank(fomattedPublishedDate)){
 						base.$el.find("#publishedDate").text(fomattedPublishedDate);
 					}
@@ -186,7 +194,7 @@
 			click: function(e){
 				jConfirm(base.options.moduleName + " " + base.options.rule["ruleName"] + " will be locked for approval. Continue?", "Submit For Approval", function(result){
 					if(result){
-						DeploymentServiceJS.processRuleStatus(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
+						DeploymentServiceJS.submitRuleForApproval(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
 							callback: function(ruleStatus){
 								base.options.afterSubmitForApprovalRequest(ruleStatus);
 							},
@@ -203,14 +211,15 @@
 	$.rulestatusbar.prototype.getTemplate = function(){
 		var base = this;
 		var template = "";
-		template += '<div id="autoImportWarningContainer">';
-		template += '	<div id="autoImportWarningPattern" class="autoImportWarning warning border fsize14 marT5" style="display:none">';
-		template += '		<span class="autoImportWarningText"></span>';
-		template += '	</div>'; 
-		template += '</div>'; 
-		
 		template += '<div class="plugin-rulestatusbar">';
-		template += '	<ul class="page_info clearfix">';
+
+		template += '	<div id="autoImportWarningContainer">';
+		template += '		<div id="autoImportWarningPattern" class="autoImportWarning warning border fsize12 marT5" style="display:none">';
+		template += '			<span class="autoImportWarningText"></span>';
+		template += '		</div>'; 
+		template += '	</div>'; 
+		
+		template += '	<ul id="ruleStatusContainer" class="page_info clearfix" style="display:none">';
 		template += '		<li class="fLeft fBold">';
 		template += '			<span>Status:</span>';
 		template += '			<span id="status" class="cRed">Setup a Rule</span>';
@@ -239,7 +248,8 @@
 		template += '		</li>';	
 		template += '		<li class="fRight">';
 		template += '			<span class="fbold">Last Published</span>:';
-		template += '			<span id="publishedDate">No Published Date Yet</span>';
+		template += '			<span id="publishedDate">' + base.options.noPublishedDateText + '</span>';
+		template += '			<span id="autoImport" style="display:none"> | Auto-Import</span>';
 		template += '		</li>';		
 		template += '	</ul>';
 		template += '</div>';
@@ -264,6 +274,7 @@
 			afterRuleStatusRequest: function(status){},
 			preRestoreCallback: function(base){},
 			postRestoreCallback: function(base, rule){},
+			noPublishedDateText: "No data available",
 			autoImportWarningText: "Auto-import task from storeId created on createdDate will update this rule",
 	};
 
