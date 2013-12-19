@@ -251,6 +251,7 @@ public class UtilityService {
 		json.put("searchWithinParamName", configManager.getProperty("searchWithin", storeId, "searchwithin.paramname"));
 		json.put("isTargetStore", configManager.getProperty("workflow", storeId, "targetStore"));
 
+
 		return json.toString();
 	}
 

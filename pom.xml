@@ -141,6 +141,7 @@
     </build>
 
     <modules>
+	<module>reportsManager</module>
         <module>propertiesManager</module>
         <module>searchManager</module>
         <module>SearchGuiWS</module>

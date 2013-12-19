@@ -127,9 +127,17 @@
             </groups>
             
             <properties>
+            	<property id="auto_import" type="Boolean">
+                    <label>Authorize Auto Import</label>
+                    <defaultValue>false</defaultValue>
+                </property>
 				<property id="maxRunAttempts" type="String" required="true">
                     <label>Max Run Attempts</label>
                     <defaultValue>5</defaultValue>
+                </property>
+                <property id="targetStore" type="Boolean" required="true">
+                    <label>Target Store</label>
+                    <defaultValue>true</defaultValue>
                 </property>
 				<property id="enable.elevate" type="Boolean" required="true">
                     <label>Elevate Rule</label>
@@ -219,6 +227,113 @@
     </store>
     
     <store id="pcmallgov" extends="pcmall">
+        <module name="workflow" title="Workflow">
+            <groups>
+            	<group name="General">
+            		<member property-id="maxRunAttempts"/>
+            	</group>
+				<group name="Auto Import Rules">
+                    <member property-id="enable.elevate"/>
+					<member property-id="enable.exclude"/>
+					<member property-id="enable.demote"/>
+					<member property-id="enable.facetSort"/>
+					<member property-id="enable.queryCleaning"/>
+					<member property-id="enable.didYouMean"/>
+					<member property-id="enable.banner"/>
+					<member property-id="enable.rankingRule"/>
+                </group>
+                <group name="Default Import Status">
+                    <member property-id="status.elevate"/>
+					<member property-id="status.exclude"/>
+					<member property-id="status.demote"/>
+					<member property-id="status.facetSort"/>
+					<member property-id="status.queryCleaning"/>
+					<member property-id="status.didYouMean"/>
+					<member property-id="status.banner"/>
+					<member property-id="status.rankingRule"/>
+                </group>
+            </groups>
+            
+            <properties>
+            	<property id="auto_import" type="Boolean">
+                    <label>Authorized Auto Import</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="maxRunAttempts" type="String" required="true">
+                    <label>Max Run Attempts</label>
+                    <defaultValue>5</defaultValue>
+                </property>
+                <property id="targetStore" type="Boolean" required="true">
+                    <label>Target Store</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.elevate" type="Boolean" required="true">
+                    <label>Elevate Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="enable.exclude" type="Boolean" required="true">
+                    <label>Exclude Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.demote" type="Boolean" required="true">
+                    <label>Demote Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.facetSort" type="Boolean" required="true">
+                    <label>Facet Sort Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.queryCleaning" type="Boolean" required="true">
+                    <label>Redirect Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.didYouMean" type="Boolean" required="true">
+                    <label>Did You Mean</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.banner" type="Boolean" required="true">
+                    <label>Banner</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+				<property id="enable.rankingRule" type="Boolean" required="true">
+                    <label>Relevancy Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+			
+                <property id="status.elevate" type="DropDown" required="true">
+                    <label>Elevate</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+                <property id="status.exclude" type="DropDown" required="true">
+                    <label>Exclude</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.demote" type="DropDown" required="true">
+                    <label>Demote</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.facetSort" type="DropDown" required="true">
+                    <label>Facet Sort</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.queryCleaning" type="DropDown" required="true">
+                    <label>Redirect Rule</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.didYouMean" type="DropDown" required="true">
+                    <label>Did You Mean</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.banner" type="DropDown" required="true">
+                    <label>Banner Rule</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+				<property id="status.rankingRule" type="DropDown" required="true">
+                    <label>Relevancy Rule</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+			</properties>
+        </module>
         <module name="settings" title="Settings">
             <properties>
                 <property id="site_domain" type="String" required="true">
@@ -240,6 +355,168 @@
     </store>
     
     <store id="pcmall">
+    	<module name="searchwithin" title="Search Within">
+            <groups>
+                <group name="Search Within">
+                    <member property-id="searchwithin.enable"/>
+                    <member property-id="searchwithin.paramname"/>
+                    <member property-id="searchwithin.type"/>
+                    <member property-id="searchwithin.solrfieldlist"/>
+                    <member property-id="searchwithin.typeOperator"/>
+                </group>
+                
+                <group name="Include All">
+                    <member property-id="searchwithin.includeAll.solrFieldOperator"/>
+                    <member property-id="searchwithin.includeAll.keywordOperator"/>
+                    <member property-id="searchwithin.includeAll.quoteKeyword"/>
+                    <member property-id="searchwithin.includeAll.prefixTypeOperator"/>
+                </group>
+                
+                <group name="Include Some">
+                    <member property-id="searchwithin.includeSome.solrFieldOperator"/>
+                    <member property-id="searchwithin.includeSome.keywordOperator"/>
+                    <member property-id="searchwithin.includeSome.quoteKeyword"/>
+                    <member property-id="searchwithin.includeSome.prefixTypeOperator"/>
+                </group>
+                
+                <group name="Include Exact">
+                    <member property-id="searchwithin.includeExact.solrFieldOperator"/>
+                    <member property-id="searchwithin.includeExact.keywordOperator"/>
+                    <member property-id="searchwithin.includeExact.quoteKeyword"/>
+                    <member property-id="searchwithin.includeExact.prefixTypeOperator"/>
+                </group>
+                
+                <group name="Exclude All">
+                    <member property-id="searchwithin.excludeAll.solrFieldOperator"/>
+                    <member property-id="searchwithin.excludeAll.keywordOperator"/>
+                    <member property-id="searchwithin.excludeAll.quoteKeyword"/>
+                    <member property-id="searchwithin.excludeAll.prefixTypeOperator"/>
+                </group>
+            </groups>
+            <properties>
+                <property id="searchwithin.enable" type="Boolean">
+                    <label>Enabled</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+                <property id="searchwithin.paramname" type="String">
+                    <label>Param Name</label>
+                    <defaultValue>searchWithin</defaultValue>
+                </property>
+                <property id="searchwithin.type" type="String" multiValued="true">
+                    <label>Type</label>
+                    <defaultValue>includeAll,includeSome,includeExact,excludeAll</defaultValue>
+                </property>
+                <property id="searchwithin.solrfieldlist" type="String" multiValued="true">
+                    <label>Solr Field List</label>
+                    <defaultValue>PcMall_Name,Description</defaultValue>
+                </property>
+                <property id="searchwithin.typeOperator" type="String">
+                    <label>Type Operator</label>
+                    <defaultValue>AND</defaultValue>
+                </property>
+                
+                <property id="searchwithin.includeAll.solrFieldOperator" type="String">
+                    <label>Solr Field Operator</label>
+                    <defaultValue>OR</defaultValue>
+                </property>
+                <property id="searchwithin.includeAll.keywordOperator" type="String">
+                    <label>Keyword Operator</label>
+                    <defaultValue>AND</defaultValue>
+                </property>
+                <property id="searchwithin.includeAll.quoteKeyword" type="Boolean">
+                    <label>Quote Keyword</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+                <property id="searchwithin.includeAll.prefixTypeOperator" type="String">
+                    <label>Prefix Type Operator</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="searchwithin.includeSome.solrFieldOperator" type="String">
+                    <label>Solr Field Operator</label>
+                    <defaultValue>OR</defaultValue>
+                </property>
+                <property id="searchwithin.includeSome.keywordOperator" type="String">
+                    <label>Keyword Operator</label>
+                    <defaultValue>OR</defaultValue>
+                </property>
+                <property id="searchwithin.includeSome.quoteKeyword" type="Boolean">
+                    <label>Quote Keyword</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+                <property id="searchwithin.includeSome.prefixTypeOperator" type="String">
+                    <label>Prefix Type Operator</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="searchwithin.includeExact.solrFieldOperator" type="String">
+                    <label>Solr Field Operator</label>
+                    <defaultValue>OR</defaultValue>
+                </property>
+                <property id="searchwithin.includeExact.keywordOperator" type="String">
+                    <label>Keyword Operator</label>
+                    <defaultValue>OR</defaultValue>
+                </property>
+                <property id="searchwithin.includeExact.quoteKeyword" type="Boolean">
+                    <label>Quote Keyword</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+                <property id="searchwithin.includeExact.prefixTypeOperator" type="String">
+                    <label>Prefix Type Operator</label>
+                    <defaultValue></defaultValue>
+                </property>
+                
+                <property id="searchwithin.excludeAll.solrFieldOperator" type="String">
+                    <label>Solr Field Operator</label>
+                    <defaultValue>OR</defaultValue>
+                </property>
+                <property id="searchwithin.excludeAll.keywordOperator" type="String">
+                    <label>Keyword Operator</label>
+                    <defaultValue>OR</defaultValue>
+                </property>
+                <property id="searchwithin.excludeAll.quoteKeyword" type="Boolean">
+                    <label>Quote Keyword</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="searchwithin.excludeAll.prefixTypeOperator" type="String">
+                    <label>Prefix Type Operator</label>
+                    <defaultValue>-</defaultValue>
+                </property>
+            </properties>
+        </module>
+        <module name="facetsort" title="Facet Sort">
+            <groups>
+                <group>
+                    <member property-id="facetsort.enabled"/>
+                </group>
+            </groups>
+            <properties>
+                <property id="facetsort.enabled" type="Boolean">
+                    <label>Enabled</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+            </properties>
+        </module>
+        <module name="workflow" title="Workflow">
+    		<groups>
+    			<group>
+    				 <member property-id="auto_import"/>
+    			</group>
+    			 <group>
+                    <member property-id="targetStore"/>
+                </group>
+    		</groups>
+    		<properties>
+    			<property id="auto_import" type="Boolean">
+                    <label>Auto Import to Target</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+                <property id="targetStore" type="Boolean" required="true">
+                    <label>Target Store</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+    		</properties>
+    	</module>
     	<module name="mail" title="Mail">
             <groups>
                 <group>
@@ -398,10 +675,8 @@
                     <member property-id="default_banner_size"/>
                     <member property-id="allowed_banner_sizes"/>
                 </group>
-                <group>
-                    <member property-id="auto_export"/>
-                </group>
                 <group name="Export Feature">
+                    <member property-id="auto_export"/>
                     <member property-id="export_target"/>
                 </group>
                 <group name="Redirect URL">
@@ -460,160 +735,5 @@
                 </property>
             </properties>
         </module>
-        <module name="searchwithin" title="Search Within">
-            <groups>
-                <group name="Search Within">
-                    <member property-id="searchwithin.enable"/>
-                    <member property-id="searchwithin.paramname"/>
-                    <member property-id="searchwithin.type"/>
-                    <member property-id="searchwithin.solrfieldlist"/>
-                    <member property-id="searchwithin.typeOperator"/>
-                </group>
-                
-                <group name="Include All">
-                    <member property-id="searchwithin.includeAll.solrFieldOperator"/>
-                    <member property-id="searchwithin.includeAll.keywordOperator"/>
-                    <member property-id="searchwithin.includeAll.quoteKeyword"/>
-                    <member property-id="searchwithin.includeAll.prefixTypeOperator"/>
-                </group>
-                
-                <group name="Include Some">
-                    <member property-id="searchwithin.includeSome.solrFieldOperator"/>
-                    <member property-id="searchwithin.includeSome.keywordOperator"/>
-                    <member property-id="searchwithin.includeSome.quoteKeyword"/>
-                    <member property-id="searchwithin.includeSome.prefixTypeOperator"/>
-                </group>
-                
-                <group name="Include Exact">
-                    <member property-id="searchwithin.includeExact.solrFieldOperator"/>
-                    <member property-id="searchwithin.includeExact.keywordOperator"/>
-                    <member property-id="searchwithin.includeExact.quoteKeyword"/>
-                    <member property-id="searchwithin.includeExact.prefixTypeOperator"/>
-                </group>
-                
-                <group name="Exclude All">
-                    <member property-id="searchwithin.excludeAll.solrFieldOperator"/>
-                    <member property-id="searchwithin.excludeAll.keywordOperator"/>
-                    <member property-id="searchwithin.excludeAll.quoteKeyword"/>
-                    <member property-id="searchwithin.excludeAll.prefixTypeOperator"/>
-                </group>
-            </groups>
-            <properties>
-                <property id="searchwithin.enable" type="Boolean">
-                    <label>Enabled</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="searchwithin.paramname" type="String">
-                    <label>Param Name</label>
-                    <defaultValue>searchWithin</defaultValue>
-                </property>
-                <property id="searchwithin.type" type="String" multiValued="true">
-                    <label>Type</label>
-                    <defaultValue>includeAll,includeSome,includeExact,excludeAll</defaultValue>
-                </property>
-                <property id="searchwithin.solrfieldlist" type="String" multiValued="true">
-                    <label>Solr Field List</label>
-                    <defaultValue>PcMall_Name,Description</defaultValue>
-                </property>
-                <property id="searchwithin.typeOperator" type="String">
-                    <label>Type Operator</label>
-                    <defaultValue>AND</defaultValue>
-                </property>
-                
-                <property id="searchwithin.includeAll.solrFieldOperator" type="String">
-                    <label>Solr Field Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeAll.keywordOperator" type="String">
-                    <label>Keyword Operator</label>
-                    <defaultValue>AND</defaultValue>
-                </property>
-                <property id="searchwithin.includeAll.quoteKeyword" type="Boolean">
-                    <label>Quote Keyword</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="searchwithin.includeAll.prefixTypeOperator" type="String">
-                    <label>Prefix Type Operator</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="searchwithin.includeSome.solrFieldOperator" type="String">
-                    <label>Solr Field Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeSome.keywordOperator" type="String">
-                    <label>Keyword Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeSome.quoteKeyword" type="Boolean">
-                    <label>Quote Keyword</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="searchwithin.includeSome.prefixTypeOperator" type="String">
-                    <label>Prefix Type Operator</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="searchwithin.includeExact.solrFieldOperator" type="String">
-                    <label>Solr Field Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeExact.keywordOperator" type="String">
-                    <label>Keyword Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeExact.quoteKeyword" type="Boolean">
-                    <label>Quote Keyword</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="searchwithin.includeExact.prefixTypeOperator" type="String">
-                    <label>Prefix Type Operator</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="searchwithin.excludeAll.solrFieldOperator" type="String">
-                    <label>Solr Field Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.excludeAll.keywordOperator" type="String">
-                    <label>Keyword Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.excludeAll.quoteKeyword" type="Boolean">
-                    <label>Quote Keyword</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="searchwithin.excludeAll.prefixTypeOperator" type="String">
-                    <label>Prefix Type Operator</label>
-                    <defaultValue>-</defaultValue>
-                </property>
-            </properties>
-        </module>
-        <module name="facetsort" title="Facet Sort">
-            <groups>
-                <group>
-                    <member property-id="facetsort.enabled"/>
-                </group>
-            </groups>
-            <properties>
-                <property id="facetsort.enabled" type="Boolean">
-                    <label>Enabled</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-            </properties>
-        </module>
-        <module name="workflow" title="Workflow">
-    		<groups>
-    			<group>
-    				 <member property-id="auto_import"/>
-    			</group>
-    		</groups>
-    		<properties>
-    			<property id="auto_import" type="Boolean">
-                    <label>Auto Import</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-    		</properties>
-    	</module>
     </store>
 </store-properties>
