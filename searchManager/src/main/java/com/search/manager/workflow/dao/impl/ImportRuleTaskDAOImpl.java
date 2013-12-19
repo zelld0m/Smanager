@@ -74,8 +74,10 @@ public class ImportRuleTaskDAOImpl
 			inputs.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, importRuleTask.getRuleEntity() != null ? importRuleTask.getRuleEntity().getCode() : null);
 			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, importRuleTask.getSourceStoreId());
 			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, importRuleTask.getSourceRuleName());
+			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_ID, importRuleTask.getSourceRuleId());
 			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, importRuleTask.getTargetStoreId());
 			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, importRuleTask.getTargetRuleName());
+			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_ID, importRuleTask.getTargetRuleId());
 			inputs.put(WorkflowConstants.COLUMN_IMPORT_TYPE, importRuleTask.getImportType() != null ? importRuleTask.getImportType().ordinal() + 1 : null);
 			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult != null ? taskExecutionResult.getTaskStatus().ordinal() + 1 : null);
 			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, taskExecutionResult != null ? jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()) : null);
@@ -160,8 +162,10 @@ public class ImportRuleTaskDAOImpl
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_RULE_TYPE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_SOURCE_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_IMPORT_TYPE, Types.INTEGER));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_STATUS, Types.INTEGER));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_START_STAMP, Types.TIMESTAMP));

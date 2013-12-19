@@ -36,7 +36,8 @@ public class ImportRuleTaskController {
 	@Autowired private UtilityService utilityService;
 	
 	private static final String PROPERTY_MODULE_NAME = "workflow";
-	private static final String PROPERTY_NAME = "target";
+	private static final String PROPERTY_NAME = "targetStore";
+	
 	@RequestMapping(value = "/{store}", 
 	                method = { RequestMethod.GET, RequestMethod.POST })
 	public String execute(HttpServletRequest request, HttpServletResponse response, Model model
@@ -69,6 +70,7 @@ public class ImportRuleTaskController {
 		model.addAttribute("dateFormat", utilityService.getStoreDateFormat());
 		return "importRuleTask/list";
 	}	
+	
 	private ImportRuleTask getStore(ImportRuleTask importRuleTask,String storeId){
 		if (StringUtils.equalsIgnoreCase(
 				StringUtils.defaultIfBlank(
