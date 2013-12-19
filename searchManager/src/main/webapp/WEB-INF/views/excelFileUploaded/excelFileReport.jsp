@@ -42,10 +42,10 @@
 		        	<c:forEach items="${keyword.value}" var="excelFileReport">
 				    <tr>
 				        <td align="center">
-				        	<fmt:formatNumber value="${excelFileReport.rank}"/>
+				        	${excelFileReport.rank}
 				        </td>
 						<td align="center">
-				        	<fmt:formatNumber pattern="#####" value="${excelFileReport.sku}" />
+				        	${excelFileReport.sku}
 				        </td>		        
 				        <td align="center">
 				        	${excelFileReport.name}
@@ -64,15 +64,18 @@
 </div> 	  	
 <table class="tblItems w100p marT5">
 	<tr>
-    	<td align="right">
+    	<td align="right" valign="top">
   		<c:choose>
   			<c:when test="${excelFileUploaded.addedOnRuleBy == null}">
 				<a id="delete" href="javascript:void(0)" class="buttons btnGray clearfix">
 					<div class="buttons fontBold">Delete</div>
-				</a> 
+				</a>
+				<div class="btnGray clearfix">
+					<input type="checkbox" id="clearRuleFirst"/>Clear Rule First
+				</div>					 				
 				<a id="addToRule" href="javascript:void(0)" class="buttons btnGray clearfix">
 					<div class="buttons fontBold">Add to Rules</div>
-				</a> 
+				</a>
    			</c:when>
    			<c:otherwise>
 				File already been added to the rule. 

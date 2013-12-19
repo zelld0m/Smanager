@@ -60,8 +60,15 @@
 							   		<a href="javascript:void(0);" 
 							   		onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
 							   		class="delete">
-							   			<img src="../images/icon_del.png">
+							   			<img src="../images/icon_del.png" alt="Delete uploaded File">
 							   		</a>
+							   		&nbsp;
+							   		&nbsp;				   				
+							   		<a href="javascript:void(0);" 
+							   		onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
+							   		class="addToRule">
+							   			<img src="../images/icon_move.png" alt="Add to Rules">
+							   		</a>							   		
 					   			</c:when>
 					   			<c:otherwise>
 					   				added

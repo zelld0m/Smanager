@@ -3,14 +3,17 @@
 	$(document).ready(
 			
 		function(){
-		excelFileReport = {			
+		excelFileReport = {	
 				addToRule : function(e){
 					var fileName=$("#fileName").val();
 					var msg = "Are you sure you want to add to rule all entry in [" + fileName + "] excel file Upload?";
 					jConfirm(msg, "Confirm", function(status){					
 						if(status){					
 								var excelFileUploadedId=$("#excelFileUploadedId").val();
-								ExcelFileUploadedServiceJS.updateExcelFileUploaded(excelFileUploadedId,{
+								var isClear = $('#clearRuleFirst').is(":checked");
+								var ruleType = $("#titleText").text().toLowerCase();
+								var storeId = GLOBAL_storeId;
+								ExcelFileUploadedServiceJS.updateExcelFileUploaded(excelFileUploadedId,storeId,ruleType,isClear,{
 									callback: function(count){
 										excelFileUploaded.loadPaging();									
 									},
@@ -21,7 +24,7 @@
 								});						
 							}
 					});
-				},
+				},				
 				showHide : function(){
 					var keyword=$("#keyword").val();
 					
@@ -43,7 +46,7 @@
 					});	
 					$(".showHide").on({
 						click: excelFileReport.showHide
-					});						
+					});					
 				}				
 		};
 		excelFileReport.init();		

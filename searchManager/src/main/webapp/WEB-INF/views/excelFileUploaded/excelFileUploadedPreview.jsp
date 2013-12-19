@@ -24,10 +24,10 @@
 			    		${excelFileReport.keyword} 			    				    		
 			    	</td>
 			        <td align="center">
-			        	<fmt:formatNumber value="${excelFileReport.rank}"/>
+			        	${excelFileReport.rank}
 			        </td>
 					<td align="center">
-			        	<fmt:formatNumber pattern="#####" value="${excelFileReport.sku}" />
+			        	${excelFileReport.sku}
 			        </td>		        
 			        <td align="center">
 			        	${excelFileReport.name}

@@ -95,8 +95,9 @@
 								var excelFileUploadedId=$("#excelFileUploadedId").val();
 								var ruleType = $("#titleText").text().toLowerCase();
 								contentHolder.empty().load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId,function() {
-					        	    $( "#tabs" ).tabs().scrollabletab();
-					        	 });								
+					        	    $( "#tabs" ).tabs().scrollabletab();														        	    
+					        	 });
+
 							},
 							hide:function(evt, api){
 								api.destroy();
@@ -104,14 +105,36 @@
 						}
 					});
 				},
+				addToRule : function(e){
+					var fileName=$("#fileName").val();
+					var msg = "Are you sure you want to add to rule all entry in [" + fileName + "] excel file Upload?";
+					jConfirm(msg, "Confirm", function(status){					
+						if(status){					
+								var excelFileUploadedId=$("#excelFileUploadedId").val();								
+								var ruleType = $("#titleText").text().toLowerCase();
+								var storeId = GLOBAL_storeId;
+								ExcelFileUploadedServiceJS.updateExcelFileUploaded(excelFileUploadedId,storeId,ruleType,false,{
+									callback: function(count){
+										excelFileUploaded.loadPaging();									
+									},
+									preHook: function(){ 
+									},
+									postHook: function(){ 	
+									}
+								});						
+							}
+					});
+				},				
 				init : function(){
 					$(".viewDetails").on({
 						click: excelFileUploaded.viewDetails
 					});
 					$(".delete").on({
-						click:	excelFileUploaded.deleteExcelFileUploaded				
-						
-					});		
+						click:	excelFileUploaded.deleteExcelFileUploaded
+					});	
+					$(".addToRule").on({
+						click:	excelFileUploaded.addToRule
+					});						
 					$("#uploadButtonContainer").hide();
 					$('input[type=file]').change(function(e){
 						$("#uploadButtonContainer").show();
