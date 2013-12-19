@@ -1333,6 +1333,32 @@
             self.populateTabContent();
         }
     };
+    
+    RuleTransferServiceJS.getAutoExport({
+		callback: function(isAutoExport){
+			if(GLOBAL_isTargetStore == 'true') {
+				$('.autoImportDiv').show();
+			} else {
+				$('.autoImportDiv').hide();
+			}
+		}
+	});
+	
+	RuleTransferServiceJS.getAutoImport({
+		callback: function(isAutoImport){
+			$('.autoImport').slidecheckbox({
+				initOn: isAutoImport,
+				locked: false, //TODO:
+				changeStatusCallback: function(base, dt){
+					RuleTransferServiceJS.setAutoImport(dt.status, {
+						callback: function(set){
+							
+						}
+					});
+				}
+			});
+		}
+	});
 
     $(document).ready(function() {
         Import.init();

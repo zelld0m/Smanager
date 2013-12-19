@@ -445,7 +445,7 @@
 				callback:function(isAutoExport){
 					$('#autoExportValue').text(isAutoExport? 'ON':'OFF').parent('#autoExportStatus').show();
 					
-					if(isAutoExport && !GLOBAL_isTargetStore) {
+					if(isAutoExport && GLOBAL_isTargetStore != 'true') {
 						$('.autoImportDiv').show();
 					} else {
 						$('.autoImportDiv').hide();
