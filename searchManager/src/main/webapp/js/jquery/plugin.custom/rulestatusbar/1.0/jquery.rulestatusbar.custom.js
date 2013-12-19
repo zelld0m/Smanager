@@ -12,23 +12,48 @@
 		// Add a reverse reference to the DOM object
 		base.$el.data("rulestatusbar", base);
 
+		base.options = $.extend({},$.rulestatusbar.defaultOptions, options);
+		
 		// Run initializer
 		base.init();
 	};
 	
-	base.getImportTask = function(){
-		ImportRuleTaskService.getTasks(storeId, ruleEntityType, ruleId, {
-			callback:function(data){
-			
+	$.rulestatusbar.prototype.getImportTask = function(){
+		var base = this;
+		var autoImportWarnContainer = base.$el.find("#autoImportWarningContainer");
+		autoImportWarnContainer.find(".autoImportWarning:not(#autoImportWarningPattern)").remove();
+
+		ImportRuleTaskService.getTasks(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], {
+			callback:function(serviceResponse){
+				var list = serviceResponse["data"];
+
+				if(list){
+					for(var i=0; i< list.length; i++){
+						var task = list[i];
+						var autoImportWarnItem = autoImportWarnContainer.find("#autoImportWarningPattern").clone();
+						var storeId = task["sourceStoreId"];
+						var createdDate = $.toStoreFormat(task["createdDate"]);
+						var warningText = base.options.autoImportWarningText.replace(/storeId/g,storeId).replace(/createdDate/g,createdDate);
+						autoImportWarnItem.prop({id: task["taskId"]});
+						autoImportWarnItem.find(".autoImportWarningText").text(warningText);
+						autoImportWarnItem.show();
+						autoImportWarnContainer.append(autoImportWarnItem);
+					}
+					autoImportWarnContainer.show();
+				}
+			},
+			preHook:function(){
+				autoImportWarnContainer.hide();
 			},
 			postHook:function(){
 				base.getRuleStatus();
-			}
+			},
+			
 		});
 	};
 	
-	base.getRuleStatus = function(){
-
+	$.rulestatusbar.prototype.getRuleStatus = function(){
+		var base = this;
 		DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], {
 			preHook: function(){
 				base.options.beforeRuleStatusRequest();
@@ -36,8 +61,7 @@
 
 			callback:function(ruleStatus){
 				base.options.ruleStatus = ruleStatus;
-				base.$el.html(base.getTemplate());
-
+			
 				if(ruleStatus!=null){
 					if($.isNotBlank(ruleStatus["approvalStatus"])){
 						base.$el.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
@@ -149,13 +173,15 @@
 		});	
 	};
 
-	base.init = function(){
-		base.options = $.extend({},$.rulestatusbar.defaultOptions, options);
+	$.rulestatusbar.prototype.init = function(){
+		var base = this;
 		base.$el.empty();
+		base.$el.html(base.getTemplate());
 		base.getImportTask();
 	};
 
-	base.addSubmitForApprovalListener = function(){
+	$.rulestatusbar.prototype.addSubmitForApprovalListener = function(){
+		var base = this;
 		base.$el.find("#submitForApprovalBtn").off().on({
 			click: function(e){
 				jConfirm(base.options.moduleName + " " + base.options.rule["ruleName"] + " will be locked for approval. Continue?", "Submit For Approval", function(result){
@@ -174,10 +200,13 @@
 		});
 	};
 
-	base.getTemplate = function(){
+	$.rulestatusbar.prototype.getTemplate = function(){
+		var base = this;
 		var template = "";
-		template += '<div class="alert notification border fsize14 marT5">';
-		template += 'There is a pending import rule from';
+		template += '<div id="autoImportWarningContainer">';
+		template += '	<div id="autoImportWarningPattern" class="autoImportWarning warning border fsize14 marT5" style="display:none">';
+		template += '		<span class="autoImportWarningText"></span>';
+		template += '	</div>'; 
 		template += '</div>'; 
 		
 		template += '<div class="plugin-rulestatusbar">';
@@ -234,7 +263,8 @@
 			beforeRuleStatusRequest: function(){}, 
 			afterRuleStatusRequest: function(status){},
 			preRestoreCallback: function(base){},
-			postRestoreCallback: function(base, rule){}
+			postRestoreCallback: function(base, rule){},
+			autoImportWarningText: "Auto-import task from storeId created on createdDate will update this rule",
 	};
 
 	$.fn.rulestatusbar = function(options){

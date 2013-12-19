@@ -261,7 +261,9 @@ public class ImportRuleTaskDAOImpl
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_END_STAMP))));
 			
 			result.setCreatedBy(rs.getString(WorkflowConstants.COLUMN_CREATED_BY));
-			
+			result.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_CREATED_STAMP)));
+			result.setLastModifiedBy(rs.getString(WorkflowConstants.COLUMN_LAST_UPDATED_BY));
+			result.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_LAST_UPDATED_STAMP)));
 			return result;
 		
 	}

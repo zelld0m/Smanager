@@ -1,9 +1,12 @@
 package com.search.manager.workflow.model;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
 import com.search.manager.enums.ImportType;
 
+@DataTransferObject(converter = BeanConverter.class)
 public class TaskExecutionResult {
 	private TaskStatus taskStatus;
 	
