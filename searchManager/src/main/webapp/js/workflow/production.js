@@ -447,6 +447,22 @@
 				}
 			});
 			
+			RuleTransferServiceJS.getAutoImport({
+				callback: function(isAutoImport){
+					$('.autoImport').slidecheckbox({
+						initOn: isAutoImport,
+						locked: false, //TODO:
+						changeStatusCallback: function(base, dt){
+							RuleTransferServiceJS.setAutoImport(dt.status, {
+								callback: function(set){
+									
+								}
+							});
+						}
+					});
+				}
+			});
+			
 		};
 		
 		init();

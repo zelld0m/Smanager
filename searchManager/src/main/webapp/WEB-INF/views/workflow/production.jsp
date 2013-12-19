@@ -21,13 +21,10 @@
 
 	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">Push to Production</h1>
-	</div>
-	<div class="floatL w730 titlePlacer breakWord">
 		<div class="floatR padT7">
 	  	<div class="floatL fbold fsize14 marT4 marR5"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-import: </div>
 	  	<div class="floatR marT4 marR5"><a class="infoIcon" href="javascript:void(0);" title="What's this?"><img src="/searchManager/images/icon_info.png"></a></div>
-	  	<div class="floatR marR5"><input id="autoimport" type="checkbox" class="firerift-style-checkbox on-off"/></div>
-	  	<div class="clearB"></div>
+	  	<div class="floatR marR5"><input id="autoimport" type="checkbox" class="firerift-style-checkbox on-off autoImport"/></div>
       </div>
 	</div>
 	<div class="clearB"></div>

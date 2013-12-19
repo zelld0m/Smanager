@@ -401,11 +401,27 @@
 
 			RuleTransferServiceJS.getAutoExport({
 				callback: function(isAutoExport){
-					$('.firerift-style-checkbox').slidecheckbox({
+					$('.autoExport').slidecheckbox({
 						initOn: isAutoExport,
 						locked: false, //TODO:
 						changeStatusCallback: function(base, dt){
 							RuleTransferServiceJS.setAutoExport(dt.status, {
+								callback: function(set){
+									
+								}
+							});
+						}
+					});
+				}
+			});
+			
+			RuleTransferServiceJS.getAutoImport({
+				callback: function(isAutoImport){
+					$('.autoImport').slidecheckbox({
+						initOn: isAutoImport,
+						locked: false, //TODO:
+						changeStatusCallback: function(base, dt){
+							RuleTransferServiceJS.setAutoImport(dt.status, {
 								callback: function(set){
 									
 								}
