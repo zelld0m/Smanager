@@ -361,10 +361,6 @@ public class UtilityService {
 		return configManager.getServerParameter(serverName, "url");
 	}
 
-	public List<String> getStoresToExport(String storeId) {
-		return getStoreSettings(storeId, "workflow", DAOConstants.SETTINGS_EXPORT_TARGET);
-	}
-
 	public List<String> getStoreDomains(String storeId) {
 		return getStoreSettings(storeId, DAOConstants.SETTINGS_SITE_DOMAIN);
 	}
