@@ -106,7 +106,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 			logger.error("Failed to retrieve rule status for " + ruleEntity + " : " + ruleId, e);
 		}
 
-		for (String targetStore : utilityService.getStoresToExport(store)) {
+		for (String targetStore : configManager.getPropertyList("workflow", store, DAOConstants.SETTINGS_EXPORT_TARGET)) {
 			exported = ruleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
 
 			boolean isAutoImport = BooleanUtils.toBoolean(configManager.getProperty("workflow", targetStore, DAOConstants.SETTINGS_AUTO_IMPORT));
