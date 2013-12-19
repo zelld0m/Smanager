@@ -38,7 +38,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 	
 	@Autowired
 	private ConfigManager configManager;
-	private static final String PROPERTY_MODULE_NAME = "searchWithin";
+	private static final String PROPERTY_MODULE_NAME = "searchwithin";
 	
 	@Override
 	public boolean isEnabled(RequestPropertyBean requestPropertyBean){
