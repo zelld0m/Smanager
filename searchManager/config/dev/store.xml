@@ -499,6 +499,10 @@
         </module>
         <module name="workflow" title="Workflow">
     		<groups>
+    			<group name="Export Feature">
+                    <member property-id="auto_export"/>
+                    <member property-id="export_target"/>
+                </group>
     			<group>
     				 <member property-id="auto_import"/>
     			</group>
@@ -507,6 +511,15 @@
                 </group>
     		</groups>
     		<properties>
+    			<property id="auto_export" type="Boolean">
+                    <label>Auto Export</label>
+                    <defaultValue>true</defaultValue>
+                </property>
+                <property id="export_target" type="String" multiValued="true">
+                    <label>Export Target</label>
+                    <validator>STORE</validator>
+                    <defaultValue>pcmallcap,pcmgbd</defaultValue>
+                </property>
     			<property id="auto_import" type="Boolean">
                     <label>Auto Import to Target</label>
                     <defaultValue>false</defaultValue>
@@ -675,10 +688,6 @@
                     <member property-id="default_banner_size"/>
                     <member property-id="allowed_banner_sizes"/>
                 </group>
-                <group name="Export Feature">
-                    <member property-id="auto_export"/>
-                    <member property-id="export_target"/>
-                </group>
                 <group name="Redirect URL">
                     <member property-id="redirect_self_domain"/>
                     <member property-id="redirect_relative_path"/>
@@ -711,15 +720,6 @@
                     <label>Allowed Banner Sizes</label>
                     <validator>WxH</validator>
                     <defaultValue>180x150,728x90,300x250,728x150</defaultValue>
-                </property>
-                <property id="auto_export" type="Boolean">
-                    <label>Auto Export</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="export_target" type="String" multiValued="true">
-                    <label>Export Target</label>
-                    <validator>STORE</validator>
-                    <defaultValue>pcmallcap,pcmgbd</defaultValue>
                 </property>
                 <property id="redirect_self_domain" type="String">
                     <label>Redirect Self Domain</label>

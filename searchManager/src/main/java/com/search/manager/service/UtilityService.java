@@ -352,13 +352,17 @@ public class UtilityService {
 	public List<String> getStoreSettings(String storeId, String property) {
 		return configManager.getPropertyList("settings", storeId, property);
 	}
+	
+	public List<String> getStoreSettings(String storeId, String tab, String property) {
+		return configManager.getPropertyList(tab, storeId, property);
+	}
 
 	public String getSolrServerUrl(String serverName) {
 		return configManager.getServerParameter(serverName, "url");
 	}
 
 	public List<String> getStoresToExport(String storeId) {
-		return getStoreSettings(storeId, DAOConstants.SETTINGS_EXPORT_TARGET);
+		return getStoreSettings(storeId, "workflow", DAOConstants.SETTINGS_EXPORT_TARGET);
 	}
 
 	public List<String> getStoreDomains(String storeId) {

@@ -21,7 +21,7 @@
 
 	<div class="floatL w730 titlePlacer breakWord">
 		<div class="floatR padT7">
-	  	<div class="floatL fbold fsize14 marT4 marR5 autoImportDiv"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-import: </div>
+	  	<div class="floatL fbold fsize14 marT4 marR5 autoImportDiv"><label class="floatL wAuto marRL5 fLgray2">|</label>Target Auto-import: </div>
 	  	<div class="floatR marT4 marR5 autoImportDiv"><a class="infoIcon autoImportIcon" href="javascript:void(0);" title="What's this?"><img src="/searchManager/images/icon_info.png"></a></div>
 	  	<div class="floatR marR5 autoImportDiv"><input id="autoimport" type="checkbox" class="firerift-style-checkbox on-off autoImport"/></div>
       </div>
