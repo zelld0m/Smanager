@@ -85,6 +85,7 @@
 	var GLOBAL_searchWithinEnabled = GLOBAL_storeParameters["searchWithinEnabled"];
 	var GLOBAL_searchWithinTypes = GLOBAL_storeParameters["searchWithinTypes"];
 	var GLOBAL_searchWithinParamName = GLOBAL_storeParameters["searchWithinParamName"];
+	var GLOBAL_isTargetStore = GLOBAL_storeParameters["isTargetStore"];
 	
         // FOR REDIRECT PAGE
         var GLOBAL_storeRedirectSelfDomain = GLOBAL_storeParameters["storeRedirectSelfDomain"];

@@ -440,6 +440,12 @@
 							});
 						}
 					});
+					
+					if(isAutoExport && !GLOBAL_isTargetStore) {
+						$('.autoImportDiv').show();
+					} else {
+						$('.autoImportDiv').hide();
+					}
 				}
 			});
 			
