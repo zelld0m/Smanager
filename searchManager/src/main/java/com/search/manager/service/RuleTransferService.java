@@ -45,6 +45,8 @@ import com.search.manager.utility.StringUtil;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
+import com.search.ws.ConfigManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +61,8 @@ public class RuleTransferService {
     private static final Logger logger =
             LoggerFactory.getLogger(RuleTransferService.class);
 
+    @Autowired
+    private ConfigManager configManager;
     @Autowired
     private DeploymentService deploymentService;
     @Autowired
@@ -572,7 +576,7 @@ public class RuleTransferService {
 
     @RemoteMethod
     public boolean getAutoExport() {
-        return BooleanUtils.toBoolean(utilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
+    	return BooleanUtils.toBoolean(configManager.getProperty("workflow", utilityService.getStoreId(), DAOConstants.SETTINGS_AUTO_EXPORT));
     }
 
     @RemoteMethod
@@ -582,7 +586,7 @@ public class RuleTransferService {
     
     @RemoteMethod
     public boolean getAutoImport() {
-        return BooleanUtils.toBoolean(utilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_IMPORT));
+        return BooleanUtils.toBoolean(configManager.getProperty("workflow", utilityService.getStoreId(), DAOConstants.SETTINGS_AUTO_IMPORT));
     }
     
     @RemoteMethod

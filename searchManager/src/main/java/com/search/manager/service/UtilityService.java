@@ -246,9 +246,11 @@ public class UtilityService {
 		json.put("storeRedirectSelfDomain", configManager.getPropertyList("settings", storeId, "redirect_self_domain"));
 		json.put("storeRedirectRelativePath", configManager.getPropertyList("settings", storeId, "redirect_relative_path"));
 		json.put("storeFacetTemplateType", getStoreFacetTemplateType(storeId));
-		json.put("searchWithinEnabled", configManager.getProperty("searchwithin", storeId, "searchwithin.enable"));
-		json.put("searchWithinTypes", configManager.getProperty("searchwithin", storeId, "searchwithin.type"));
-		json.put("searchWithinParamName", configManager.getProperty("searchwithin", storeId, "searchwithin.paramname"));
+		json.put("searchWithinEnabled", configManager.getProperty("searchWithin", storeId, "searchwithin.enable"));
+		json.put("searchWithinTypes", configManager.getProperty("searchWithin", storeId, "searchwithin.type"));
+		json.put("searchWithinParamName", configManager.getProperty("searchWithin", storeId, "searchwithin.paramname"));
+		json.put("isTargetStore", configManager.getProperty("workflow", storeId, "targetStore"));
+
 
 		return json.toString();
 	}
@@ -350,13 +352,17 @@ public class UtilityService {
 	public List<String> getStoreSettings(String storeId, String property) {
 		return configManager.getPropertyList("settings", storeId, property);
 	}
+	
+	public List<String> getStoreSettings(String storeId, String tab, String property) {
+		return configManager.getPropertyList(tab, storeId, property);
+	}
 
 	public String getSolrServerUrl(String serverName) {
 		return configManager.getServerParameter(serverName, "url");
 	}
 
 	public List<String> getStoresToExport(String storeId) {
-		return getStoreSettings(storeId, DAOConstants.SETTINGS_EXPORT_TARGET);
+		return getStoreSettings(storeId, "workflow", DAOConstants.SETTINGS_EXPORT_TARGET);
 	}
 
 	public List<String> getStoreDomains(String storeId) {
