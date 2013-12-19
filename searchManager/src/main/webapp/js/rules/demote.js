@@ -708,6 +708,7 @@
 			setRule: function(rule){
 				var self = this;
 				self.selectedRule = rule;
+				$("#uploadFromExcel").remove();
 				self.showRuleContent();
 			},
 
