@@ -1,9 +1,11 @@
 package com.search.manager.core.enums;
 
-import java.util.EnumSet;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.EnumConverter;
 
-import com.search.manager.workflow.model.TaskStatus;
-
+@DataTransferObject(
+        converter=EnumConverter.class, 
+        type="enum")
 public enum RuleSource {
 
 	USER("User"),

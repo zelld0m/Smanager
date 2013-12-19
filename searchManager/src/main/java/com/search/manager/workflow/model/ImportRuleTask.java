@@ -5,7 +5,6 @@ import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.enums.RuleType;
 import com.search.manager.model.ModelBean;
 
 @DataTransferObject(converter = BeanConverter.class)
