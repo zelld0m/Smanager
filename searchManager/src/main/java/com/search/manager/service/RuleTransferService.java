@@ -579,6 +579,16 @@ public class RuleTransferService {
     public boolean setAutoExport(boolean autoexport) {
         return utilityService.setStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
     }
+    
+    @RemoteMethod
+    public boolean getAutoImport() {
+        return BooleanUtils.toBoolean(utilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_IMPORT));
+    }
+    
+    @RemoteMethod
+    public boolean setAutoImport(boolean autoexport) {
+        return utilityService.setStoreSetting(DAOConstants.SETTINGS_AUTO_IMPORT, BooleanUtils.toStringTrueFalse(autoexport));
+    }
 
     @RemoteMethod
     public ExportRuleMap getRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleEntity) {

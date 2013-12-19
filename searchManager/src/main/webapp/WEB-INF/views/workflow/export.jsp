@@ -23,7 +23,7 @@
 	  <div class="floatR padT7">
 	  	<div class="floatL fbold fsize14 marT4 marR5"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-export: </div>
 	  	<div class="floatR marT4 marR5"><a class="infoIcon" href="javascript:void(0);" title="What's this?"><img src="/searchManager/images/icon_info.png"></a></div>
-	  	<div class="floatR marR5"><input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off"/></div>
+	  	<div class="floatR marR5"><input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off autoExport"/></div>
 	  	<div class="clearB"></div>
       </div>
 	  <div class="floatR padT7">
@@ -36,7 +36,15 @@
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
 	</div>
-	
+		<div class="clearB"></div>
+	<div class="floatL w730 titlePlacer breakWord">
+		<div class="floatR padT7">
+	  	<div class="floatL fbold fsize14 marT4 marR5"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-import: </div>
+	  	<div class="floatR marT4 marR5"><a class="infoIcon autoImportIcon" href="javascript:void(0);" title="What's this?"><img src="/searchManager/images/icon_info.png"></a></div>
+	  	<div class="floatR marR5"><input id="autoimport" type="checkbox" class="firerift-style-checkbox on-off autoImport"/></div>
+	  	<div class="clearB"></div>
+      </div>
+	</div>
 	<div class="clearB"></div>
 	
 	<div style="width:95%" class="dashboard marT20 mar0 fsize12">

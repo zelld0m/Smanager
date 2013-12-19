@@ -447,6 +447,50 @@
 				}
 			});
 			
+			RuleTransferServiceJS.getAutoImport({
+				callback: function(isAutoImport){
+					$('.autoImport').slidecheckbox({
+						initOn: isAutoImport,
+						locked: false, //TODO:
+						changeStatusCallback: function(base, dt){
+							RuleTransferServiceJS.setAutoImport(dt.status, {
+								callback: function(set){
+									
+								}
+							});
+						}
+					});
+				}
+			});
+			
+			$('a.autoImportIcon').qtip({
+				content: { 
+					text: $('<div>')
+				},
+				show:{ modal:true },
+				style:{
+					width:'150px'
+				},
+				events: {
+					render:function(rEvt, api){
+						var $content = $("div", api.elements.content);
+						$content.html("");
+					},
+
+					show:function(rEvt, api){
+						var $content = $("div", api.elements.content);	
+
+						var text = "ON: all rules that you publish will be automatically imported to the target store(s). <br/> OFF: all rules that you publish needs to be manually imported in the target stores";
+
+						if(!$content.get(0))						
+							$content = api.elements.content;
+
+						$content.html(text);
+
+					}
+				}
+			});
+			
 		};
 		
 		init();
