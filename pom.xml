@@ -141,9 +141,9 @@
     </build>
 
     <modules>
+        <module>propertiesManager</module>
         <module>searchManager</module>
         <module>SearchGuiWS</module>
-        <module>propertiesManager</module>
     </modules>
     
     <dependencies>
