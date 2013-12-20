@@ -113,9 +113,13 @@
 								var excelFileUploadedId=$("#excelFileUploadedId").val();								
 								var ruleType = $("#titleText").text().toLowerCase();
 								var storeId = GLOBAL_storeId;
+								$("#noSelected").empty().append("Please wait while process in progress.");
 								ExcelFileUploadedServiceJS.updateExcelFileUploaded(excelFileUploadedId,storeId,ruleType,false,{
-									callback: function(count){
-										excelFileUploaded.loadPaging();									
+									callback: function(message){
+										jAlert(message, "Add to Rules Result", function(){
+											$("#noSelected").empty().append("Loading....");	
+											$("#noSelected").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType);
+										});									
 									},
 									preHook: function(){ 
 									},
