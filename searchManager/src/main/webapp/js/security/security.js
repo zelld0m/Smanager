@@ -412,8 +412,7 @@
 											$tr.find("td#validity > span").text(list[i].thruDate!=null? 
 													$.toStoreFormat(list[i]["thruDate"],GLOBAL_storeDateFormat): "");
 
-											$tr.find("td#lastAccess > span#dateAccess").text(list[i]["lastAccessDate"]==null? "" : 
-												$.toStoreFormat(list[i]["lastAccessDate"],GLOBAL_storeDateFormat));
+											$tr.find("td#lastAccess > span#dateAccess").text(list[i]["lastAccessDate"]? $.toStoreFormat(list[i]["lastAccessDate"]): "");
 											$tr.find("td#lastAccess > span#ipAccess").text(list[i].ip);
 											if (i%2!=0) $tr.addClass("alt"); 
 											$table.append($tr);

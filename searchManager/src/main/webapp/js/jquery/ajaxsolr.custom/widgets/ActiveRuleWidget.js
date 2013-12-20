@@ -13,7 +13,11 @@
                     if (!$.isEmptyObject(data)) {
                         $li.find('.ruleStatus > .status').text(getRuleNameSubTextStatus(data));
                         $li.find('.ruleStatus > .statusMode').text($.isNotBlank(data["locked"]) && data["locked"] ? " [ Read-Only ]" : "");
-                        $li.find('.lastPublished').text($.isNotBlank($.toStoreFormat(data["lastPublishedDate"])) ? 'Published on ' + $.toStoreFormat(data["lastPublishedDate"]) : '');
+                        $li.find('.lastPublished').text($.isNotBlank($.toStoreFormat(data["lastPublishedDate"])) ? 'Last Published: ' + $.toStoreFormat(data["lastPublishedDate"]) : '');
+                        if(data["ruleSource"]==="AUTO_IMPORT"){
+                        	$li.find('.lastPublished').append(" | Auto-Import");
+                        }
+                    
                     }
                 }
             });
