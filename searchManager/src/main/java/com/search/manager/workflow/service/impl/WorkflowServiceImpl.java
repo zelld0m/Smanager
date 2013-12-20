@@ -176,6 +176,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 			ruleStatus.setDescription(description);
 			ruleStatus.setLastModifiedBy(username);
 			ruleStatus.setStoreId(storeId);
+			ruleStatus.setRuleSource(ruleSource);
 			result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
 					: daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
 
