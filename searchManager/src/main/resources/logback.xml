@@ -115,7 +115,7 @@
     -->
     
     <logger name="com.search" additivity="false" level="TRACE">
-        <appender-ref ref="console"/>
+        <appender-ref ref="searchManager-file"/>
     </logger>
 
     <logger name="com.search.manager.authentication.session" additivity="false">
