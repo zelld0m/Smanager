@@ -110,15 +110,28 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 	}
 
 	@RemoteMethod
-	public int updateExcelFileUploaded(String excelFileUploadedId,String storeId,String ruleType,boolean cleanFirst)
+	public String updateExcelFileUploaded(String excelFileUploadedId,String storeId,String ruleType,boolean cleanFirst)
 			throws DaoException {
+			boolean success = false;
+			StringBuffer message = new StringBuffer(); 
+			StringBuffer passedSKU = new StringBuffer();
+			StringBuffer failedSKU = new StringBuffer();
 			int ruleTypeId= RuleEntity.getId(ruleType);
 			String currentKeyword = "";
 			ExcelFileUploaded excelFileUploaded= getExcelFileUploaded(excelFileUploadedId,storeId,ruleTypeId);
+			message.append("Filename:");
+			message.append(excelFileUploaded.getFileName());
 			boolean isFirstKeyword = true;
+			int ctr=0;
 			for (ExcelFileReport excelFileReport : excelFileUploaded
-					.getExcelFileReports()) {				
+					.getExcelFileReports()) {					
 				if (!currentKeyword.equalsIgnoreCase(excelFileReport.getKeyword())){
+					if (ctr>0){
+						printBottom(message,passedSKU,failedSKU);
+					}
+					message.append("<ul><li>Keyword:");
+					message.append(excelFileReport.getKeyword());
+					message.append("</li><ul>");
 					currentKeyword=excelFileReport.getKeyword();
 					isFirstKeyword=true;
 				}  
@@ -131,7 +144,16 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 					}
 					int sequence =(int) Float.parseFloat(excelFileReport.getRank());
 					String expireDate = excelFileReport.getExpiration().toString(utilityService.getStoreDateFormat());
-					elevateService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), sequence, expireDate, excelFileReport.getName(), excelFileReport.getSku().split(","));
+					Map<String, List<String>> mp = elevateService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), sequence, expireDate, excelFileReport.getName(), excelFileReport.getSku().split(","));
+					success = mp.get("PASSED").size()>0;
+					if (passedSKU.length()>0){
+						passedSKU.append(",");
+					}
+					passedSKU.append(listToString(mp.get("PASSED")));
+					if (failedSKU.length()>0){
+						failedSKU.append(",");
+					}
+					failedSKU.append(listToString(mp.get("FAILED")));			
 				}
 				if (RuleEntity.get(ruleTypeId) == RuleEntity.DEMOTE){
 					if (isFirstKeyword){						
@@ -142,7 +164,16 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 					}
 					int sequence =(int) Float.parseFloat(excelFileReport.getRank());
 					String expireDate = excelFileReport.getExpiration().toString(utilityService.getStoreDateFormat());
-					demoteService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), sequence, expireDate, excelFileReport.getName(), excelFileReport.getSku().split(","));
+					Map<String, List<String>> mp = demoteService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), sequence, expireDate, excelFileReport.getName(), excelFileReport.getSku().split(","));
+					success = mp.get("PASSED").size()>0;
+					if (passedSKU.length()>0){
+						passedSKU.append(",");
+					}
+					passedSKU.append(listToString(mp.get("PASSED")));
+					if (failedSKU.length()>0){
+						failedSKU.append(",");
+					}
+					failedSKU.append(listToString(mp.get("FAILED")));
 				}
 				if (RuleEntity.get(ruleTypeId) == RuleEntity.EXCLUDE){
 					if (isFirstKeyword){						
@@ -152,14 +183,27 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 						isFirstKeyword = false;
 					}
 					String expireDate = excelFileReport.getExpiration().toString(utilityService.getStoreDateFormat());
-					excludeService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), expireDate, excelFileReport.getName(), new String[]{excelFileReport.getSku()});
+					Map<String, List<String>> mp = excludeService.addItemToRuleUsingPartNumber(excelFileReport.getKeyword(), expireDate, excelFileReport.getName(), new String[]{excelFileReport.getSku()});
+					success = mp.get("PASSED").size()>0;
+					if (passedSKU.length()>0){
+						passedSKU.append(",");
+					}
+					passedSKU.append(listToString(mp.get("PASSED")));
+					if (failedSKU.length()>0){
+						failedSKU.append(",");
+					}
+					failedSKU.append(listToString(mp.get("FAILED")));			
 				}				
-				
+				ctr++;
 			}
+			printBottom(message,passedSKU,failedSKU);	
+		if (success){
 			excelFileUploaded.setAddedOnRuleBy(utilityService.getUsername());
 			excelFileUploaded.setAddedOnRuleDate(new DateTime());
-		 dao.updateExcelFileUploaded(excelFileUploaded);
-		 return 0;
+			dao.updateExcelFileUploaded(excelFileUploaded);				
+		}
+		
+		return message.toString();
 	}
 
 	public Map<String,List<ExcelFileUploaded>> getMapexcelfileuploadeds() {
@@ -169,5 +213,26 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 	public void setMapExcelFileUploadeds(
 			Map<String, List<ExcelFileUploaded>> mapExcelFileUploadeds) {
 		ExcelFileUploadedServiceImpl.mapExcelFileUploadeds = mapExcelFileUploadeds;
+	}
+	private String listToString(List<String> list){
+		StringBuffer s = new StringBuffer();
+		for(String value:list){
+			if (s.length() > 0){
+				s.append(",");
+			}
+			s.append(value);
+		}
+		return s.toString();
+	}
+	private void printBottom(StringBuffer message,StringBuffer passedSKU,StringBuffer failedSKU){
+		message.append("<li>Passed SKU/s:[");
+		message.append(passedSKU.toString());
+		message.append("]</li>");
+		message.append("<li>Failed SKU/s:[");
+		message.append(failedSKU.toString());
+		message.append("]</li>");						
+		message.append("</ul></ul>");
+		passedSKU.setLength(0);
+		failedSKU.setLength(0);
 	}
 }
