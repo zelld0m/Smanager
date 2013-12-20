@@ -344,7 +344,7 @@ public class RuleTransferService {
                     status = PUBLISH_RULE;
 
                     //publish rule
-                    RecordSet<DeploymentModel> deploymentRS = deploymentService.publishRuleNoLock(store, ruleType,
+                    RecordSet<DeploymentModel> deploymentRS = workflowService.publishRuleNoLock(store, userName, ruleSource, ruleType,
                             ruleRefIds, comment, ruleStatusIds);
                     if (deploymentRS == null || CollectionUtils.isEmpty(deploymentRS.getList())
                             || deploymentRS.getList().get(0).getPublished() != 1) {
