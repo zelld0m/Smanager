@@ -290,7 +290,7 @@ public class DeploymentService {
 
 		try {
 			obtainedLock = utilityService.obtainPublishLock(RuleEntity.find(ruleType), userName, storeName);
-			return publishRuleNoLock(storeId, ruleType, ruleRefIdList, comment, ruleStatusIdList);
+			return workflowService.publishRuleNoLock(storeId, userName, RuleSource.USER, ruleType, ruleRefIdList, comment, ruleStatusIdList);
 
 		} finally {
 			if (obtainedLock) {

@@ -111,6 +111,10 @@ public class ImportTaskManager {
 
 			taskExecutionResult.setStateCompleted(ImportType.FOR_REVIEW);
 
+			if(StringUtils.isEmpty(importTypeSetting)) {
+				importTypeSetting = "For Approval";
+			}
+			
 			switch(ImportType.getByDisplayText(importTypeSetting)) {
 			case FOR_APPROVAL: 
 				if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {

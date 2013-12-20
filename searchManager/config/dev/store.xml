@@ -174,35 +174,35 @@
 			
                 <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
                 <property id="status.exclude" type="DropDown" required="true">
                     <label>Exclude</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.demote" type="DropDown" required="true">
                     <label>Demote</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.facetSort" type="DropDown" required="true">
                     <label>Facet Sort</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.queryCleaning" type="DropDown" required="true">
                     <label>Redirect Rule</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.didYouMean" type="DropDown" required="true">
                     <label>Did You Mean</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.banner" type="DropDown" required="true">
                     <label>Banner Rule</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.rankingRule" type="DropDown" required="true">
                     <label>Relevancy Rule</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 			</properties>
         </module>
@@ -302,35 +302,35 @@
 			
                 <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
                 <property id="status.exclude" type="DropDown" required="true">
                     <label>Exclude</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.demote" type="DropDown" required="true">
                     <label>Demote</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.facetSort" type="DropDown" required="true">
                     <label>Facet Sort</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.queryCleaning" type="DropDown" required="true">
                     <label>Redirect Rule</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.didYouMean" type="DropDown" required="true">
                     <label>Did You Mean</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.banner" type="DropDown" required="true">
                     <label>Banner Rule</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 				<property id="status.rankingRule" type="DropDown" required="true">
                     <label>Relevancy Rule</label>
-                    <defaultValue>For Review</defaultValue>
+                    <defaultValue>For Approval</defaultValue>
                 </property>
 			</properties>
         </module>

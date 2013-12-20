@@ -217,7 +217,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	}
 
 	public RecordSet<DeploymentModel> publishRuleNoLock(String store, String username, RuleSource ruleSource, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
-		boolean isAutoExport = BooleanUtils.toBoolean(utilityService.getStoreSetting(store, DAOConstants.SETTINGS_AUTO_EXPORT));
+		boolean isAutoExport = BooleanUtils.toBoolean(configManager.getProperty("workflow", store, DAOConstants.SETTINGS_AUTO_EXPORT));
 		List<String> approvedRuleList = null;
 		List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
 
