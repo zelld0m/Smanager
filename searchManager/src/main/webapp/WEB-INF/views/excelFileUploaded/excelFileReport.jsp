@@ -64,23 +64,19 @@
 </div> 	  	
 <table class="tblItems w100p marT5">
 	<tr>
-    	<td align="right" valign="top">
-  		<c:choose>
-  			<c:when test="${excelFileUploaded.addedOnRuleBy == null}">
+    	<td align="right" valign="top">  	
+  			<c:if test="${excelFileUploaded.addedOnRuleBy == null}">
 				<a id="delete" href="javascript:void(0)" class="buttons btnGray clearfix">
 					<div class="buttons fontBold">Delete</div>
 				</a>
-				<div class="btnGray clearfix">
-					<input type="checkbox" id="clearRuleFirst"/>Clear Rule First
-				</div>					 				
-				<a id="addToRule" href="javascript:void(0)" class="buttons btnGray clearfix">
-					<div class="buttons fontBold">Add to Rules</div>
-				</a>
-   			</c:when>
-   			<c:otherwise>
-				File already been added to the rule. 
-   			</c:otherwise>
-   		</c:choose>	
+
+   			</c:if>
+			<div class="btnGray clearfix">
+				<input type="checkbox" id="clearRuleFirst"/>Clear Rule First
+			</div>					 				
+			<a id="addToRule" href="javascript:void(0)" class="buttons btnGray clearfix">
+				<div class="buttons fontBold">Add to Rules</div>
+			</a>   			
     	</td>           	  
 	</tr>
 </table> 

@@ -12,8 +12,12 @@
 				changePage : function (pageNumber){
 					var ruleType = $("#titleText").text().toLowerCase();
 					var storeId = GLOBAL_storeId;
-					$("#noSelected").empty().append("Loading....");	
-					$("#noSelected").load("/searchManager/excelFileUploaded/paging/" + storeId + "/" + ruleType + "/" + pageNumber);	
+					$("#noSelected").hide();
+					$("#preloader").show();
+					$("#noSelected").load("/searchManager/excelFileUploaded/paging/" + storeId + "/" + ruleType + "/" + pageNumber,function(){
+						$("#preloader").hide();
+						$("#noSelected").show();
+					});	
 				},
 				showPaging : function (){
 					var currentPage = $('#currentPageNumber').val();
@@ -34,13 +38,13 @@
 							var pageNumber=parseInt(e.data.page);
 							excelFileUploaded.changePage(pageNumber);
 						},
-					nextLinkCallback: function(e){ 
-						var pageNumber=parseInt(e.data.page) + 1;
-						excelFileUploaded.changePage(pageNumber);			
+						nextLinkCallback: function(e){ 
+							var pageNumber=parseInt(e.data.page) + 1;
+							excelFileUploaded.changePage(pageNumber);			
 						},
-					prevLinkCallback: function(e){
-						var pageNumber=parseInt(e.data.page) - 1;
-						excelFileUploaded.changePage(pageNumber);
+						prevLinkCallback: function(e){
+							var pageNumber=parseInt(e.data.page) - 1;
+							excelFileUploaded.changePage(pageNumber);
 					}
 					});
 				},
@@ -72,7 +76,7 @@
 				
 				viewDetails : function(el, options){
 					$(this).qtip({
-						id: "plugin-uploadimage-qtip",
+						id: "excelFileReportPage",
 						content: {
 							text: $('<div/>'),
 							title: { text: 'Excel File Reports', button: true
@@ -94,7 +98,8 @@
 								var contentHolder = $("div", api.elements.content);
 								var excelFileUploadedId=$("#excelFileUploadedId").val();
 								var ruleType = $("#titleText").text().toLowerCase();
-								contentHolder.empty().load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId,function() {
+								contentHolder.empty().append("<img src='/searchManager/images/ajax-loader-rect.gif'/>");
+								contentHolder.load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId,function() {
 					        	    $( "#tabs" ).tabs().scrollabletab();														        	    
 					        	 });
 
@@ -113,12 +118,17 @@
 								var excelFileUploadedId=$("#excelFileUploadedId").val();								
 								var ruleType = $("#titleText").text().toLowerCase();
 								var storeId = GLOBAL_storeId;
-								$("#noSelected").empty().append("Please wait while process in progress.");
-								ExcelFileUploadedServiceJS.updateExcelFileUploaded(excelFileUploadedId,storeId,ruleType,false,{
+								var isClear = false;
+								$("#ui-tooltip-excelFileReportPage").hide();
+								if ($("#clearRuleFirst").length > 0){
+									isClear = $("#clearRuleFirst").is(":checked");
+								}								
+								$("#noSelected").hide();
+								$("#preloader").show();
+								ExcelFileUploadedServiceJS.updateExcelFileUploaded(excelFileUploadedId,storeId,ruleType,isClear,{
 									callback: function(message){
 										jAlert(message, "Add to Rules Result", function(){
-											$("#noSelected").empty().append("Loading....");	
-											$("#noSelected").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType);
+											excelFileUploaded.loadPaging();
 										});									
 									},
 									preHook: function(){ 
@@ -158,14 +168,12 @@
 				        	    modal: true,
 				        	    buttons: {
 				        	        "Proceed": function() {
-				        	        	$("#noSelected").empty().append("Please wait while process in progress.");
+				    					$("#preloader").show();
+				    					$("#noSelected").hide();
 				        	        	var ruleType = $("#titleText").text().toLowerCase();
 				        	        	ExcelFileUploadedServiceJS.addExcelFileUploadeds(ruleType,{
 											callback: function(count){ 
-												var ruleType = $("#titleText").text().toLowerCase();
-												var storeId = GLOBAL_storeId;
-												$("#noSelected").empty().append("Loading....");	
-												$("#noSelected").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType);
+												excelFileUploaded.loadPaging();
 											},
 											preHook: function(){ 
 											},
