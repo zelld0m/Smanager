@@ -5,8 +5,17 @@
 				rowPerPage:10,
 				moduleName:"Auto Import",
 				changePage: function(pageNumber){
+					var filter = encodeURI($("#filter").val());
 					$("#mainContainer").empty().append("Loading....");	
-					$("#mainContainer").load("/searchManager/autoimport/" + GLOBAL_storeId + "/page/" + pageNumber,function(){importRuleTask.showPaging();});	
+					$("#mainContainer").load("/searchManager/autoimport/" + GLOBAL_storeId + "/page/" + pageNumber + "/" + filter,function(){importRuleTask.showPaging();});	
+				},
+				filterPage : function(){
+					var filter = $("#statusFilter").val() + ",";
+					filter = filter + $("#typeFilter").val() + ",";
+					filter = filter + $("#targetFilter").val();
+					$("#filter").val(filter);
+					var currentPage = $('#currentPageNumber').val();
+					importRuleTask.changePage(currentPage);
 				},
 				showPaging : function showPaging(){
 					var self = this;

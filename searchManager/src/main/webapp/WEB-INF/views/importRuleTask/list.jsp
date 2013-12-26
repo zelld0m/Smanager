@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
     	<input id="totalItem" type="hidden" value="${totalCount}"/>
     	<input id="currentPageNumber" type="hidden" value="${currentPage}"/>
+    	<input id="filter" type="hidden" value="${filter}"/>
 		<div id="sortablePagingTop" class="floatL txtAL w100p"></div>
 		<div class="clearB"></div>	
 		<table class="tblItems w100p marT5">
