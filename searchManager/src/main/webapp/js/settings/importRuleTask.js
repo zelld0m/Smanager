@@ -6,7 +6,7 @@
 				moduleName:"Auto Import",
 				changePage: function(pageNumber){
 					var filter = encodeURI($("#filter").val());
-					$("#mainContainer").empty().append("Loading....");	
+					$("#mainContainer").empty().append("<img src='/searchManager/images/ajax-loader-circ.gif'>");	
 					$("#mainContainer").load("/searchManager/autoimport/" + GLOBAL_storeId + "/page/" + pageNumber + "/" + filter,function(){importRuleTask.showPaging();});	
 				},
 				filterPage : function(){
@@ -21,7 +21,7 @@
 					var self = this;
 					var currentPage = $('#currentPageNumber').val();
 					var totalItem = $('#totalItem').val();	
-					if (parseInt(currentPage)-1 >= parseInt(totalItem)/self.rowPerPage){
+					if (parseInt(totalItem)>0 && parseInt(currentPage)-1 >= parseInt(totalItem)/self.rowPerPage){
 						currentPage=parseInt(currentPage)-1;
 						importRuleTask.changePage(currentPage);
 					}

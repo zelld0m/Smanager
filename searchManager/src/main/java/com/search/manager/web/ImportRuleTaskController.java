@@ -58,7 +58,7 @@ public class ImportRuleTaskController {
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		model.addAttribute("types", ImportType.values());
 		model.addAttribute("statuses", TaskStatus.values());
-		model.addAttribute("filter", "");
+		model.addAttribute("filter", ",,");
 		model.addAttribute("isTargetStore",isTargetStore());
 		if (!isTargetStore()){
 			model.addAttribute("targetStores",configManager.getPropertyList("workflow", store, DAOConstants.SETTINGS_EXPORT_TARGET));
@@ -73,6 +73,7 @@ public class ImportRuleTaskController {
 			HttpServletResponse response, Model model, @PathVariable String store
 			, @PathVariable int pageNumber,@PathVariable String filter) throws IOException, DaoException {
 		String storeId = utilityService.getStoreId();
+		pageNumber=pageNumber<=0?1:pageNumber;
 	    ImportRuleTask importRuleTask = new ImportRuleTask();
 	    importRuleTask = getStore(importRuleTask,storeId);
         SearchCriteria<ImportRuleTask> searchCriteria = new SearchCriteria<ImportRuleTask>(importRuleTask, pageNumber, 10);
