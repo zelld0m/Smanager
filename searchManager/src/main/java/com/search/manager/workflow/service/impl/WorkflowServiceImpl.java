@@ -129,7 +129,10 @@ public class WorkflowServiceImpl implements WorkflowService{
 				logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
 			} else {
 				if(isAutoImport && isRuleEntityEnabled && isSourceAutoImport) {
-					importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, ImportType.AUTO_IMPORT.getDisplayText(), generateImportAsId(store, ruleId, rule.getRuleName(), targetStore, rule.getRuleName(), rule.getRuleEntity()), rule.getRuleName());
+					
+					String importTypeSetting = configManager.getProperty("workflow", targetStore, "status."+ruleEntity.getXmlName());
+					
+					importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, importTypeSetting != null ? importTypeSetting : ImportType.FOR_APPROVAL.getDisplayText(), generateImportAsId(store, ruleId, rule.getRuleName(), targetStore, rule.getRuleName(), rule.getRuleEntity()), rule.getRuleName());
 				}
 			}
 		}

@@ -10,19 +10,10 @@
 
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
-	<div class="clearB floatL w240">
-		<div id="rulePanel"></div>
-	    <div class="clearB"></div>
-	</div>
-</div>
-<!--Left Menu-->
-<div class="clearB floatL minW240 sideMenuArea">
-    <div class="clearB floatL w240">
-		<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>
-    </div>
+	<jsp:include page="sideMenu.jsp"/>
 </div>
 <!--Main Menu-->
-<div class="floatL w730 marL10 marT27 facetPage">
+<div class="floatL w730 marL10 marT27">
 	
 	<div class="floatL w730 titlePlacer">
 	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
