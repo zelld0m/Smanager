@@ -246,9 +246,9 @@ public class UtilityService {
 		json.put("storeRedirectSelfDomain", configManager.getPropertyList("settings", storeId, "redirect_self_domain"));
 		json.put("storeRedirectRelativePath", configManager.getPropertyList("settings", storeId, "redirect_relative_path"));
 		json.put("storeFacetTemplateType", getStoreFacetTemplateType(storeId));
-		json.put("searchWithinEnabled", configManager.getProperty("searchWithin", storeId, "searchwithin.enable"));
-		json.put("searchWithinTypes", configManager.getProperty("searchWithin", storeId, "searchwithin.type"));
-		json.put("searchWithinParamName", configManager.getProperty("searchWithin", storeId, "searchwithin.paramname"));
+		json.put("searchWithinEnabled", configManager.getProperty("searchwithin", storeId, "searchwithin.enable"));
+		json.put("searchWithinTypes", configManager.getPropertyList("searchwithin", storeId, "searchwithin.type"));
+		json.put("searchWithinParamName", configManager.getProperty("searchwithin", storeId, "searchwithin.paramname"));
 		json.put("isTargetStore", configManager.getProperty("workflow", storeId, "targetStore"));
 
 
