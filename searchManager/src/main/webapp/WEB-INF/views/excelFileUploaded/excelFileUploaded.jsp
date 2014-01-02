@@ -26,9 +26,7 @@
            	 </tr>
            	<tr id="uploadButtonContainer">
            	  <td align="right">
-					<a href="javascript:$('#excelFileUpload').submit();" class="buttons btnGray clearfix">
-						<div class="buttons fontBold">Upload</div>
-					</a>       	  	
+					<input type="submit" value="Upload"/>    	  	
            	  </td>
            	 </tr>	
            	</table>           	 		
