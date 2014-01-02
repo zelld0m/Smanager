@@ -55,8 +55,7 @@
 		        </c:if>        
 				    <tr class="conTableItem ${alt}">
 				   		<td align="center">
-				   			<c:choose>
-				   				<c:when test="${excelFileUploaded.addedOnRuleBy == null}">
+				   				<c:if test="${excelFileUploaded.addedOnRuleBy == null}">
 							   		<a href="javascript:void(0);" 
 							   		onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
 							   		class="delete">
@@ -64,19 +63,15 @@
 							   		</a>
 							   		&nbsp;
 							   		&nbsp;				   				
-							   		<a href="javascript:void(0);" 
-							   		onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
-							   		class="addToRule">
-							   			<img src="../images/icon_move.png" alt="Add to Rules">
-							   		</a>							   		
-					   			</c:when>
-					   			<c:otherwise>
-					   				added
-					   			</c:otherwise>
-					   		</c:choose>        	
+					   			</c:if>        	
+								<a href="javascript:void(0);" 
+								onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');"
+								class="addToRule">
+									<img src="../images/ico-doc-plus.jpg" alt="Add to Rules">
+								</a>
 				        </td>
 				    	<td>
-				    		<a href="javacript:void(0);" onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');" class="viewDetails" >${excelFileUploaded.fileName}</a> 			    				    		
+				    		<a href="javascript:void(0);" onclick="excelFileUploaded.setValue('${excelFileUploaded.excelFileUploadedId}','${excelFileUploaded.storeId}','${excelFileUploaded.fileName}');" class="viewDetails" >${excelFileUploaded.fileName}</a> 			    				    		
 				    	</td>
 				        <td align="center">
 				        	${excelFileUploaded.createdBy}

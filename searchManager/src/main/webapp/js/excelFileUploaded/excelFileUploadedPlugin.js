@@ -4,10 +4,13 @@
 		excelFileUploadedPlugin = {
 				showMainPage:function() {
 					var ruleType = $("#titleText").text().toLowerCase().replace(" for","").trim();
-					var storeId = GLOBAL_storeId;
-					$("#noSelected").show();
-					$("#noSelected").empty().append("Loading....");
-					$("#noSelected").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType);
+					var storeId = GLOBAL_storeId;					
+					$("#preloader").show();
+					$("#noSelected").hide();
+					$("#noSelected").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType,function(){
+						$("#preloader").hide();
+						$("#noSelected").show();
+					});
 					$(".plugin-rulestatusbar").hide();
 					$("#ruleSelected").hide();
 					$("#ruleItemPagingTop").hide();
