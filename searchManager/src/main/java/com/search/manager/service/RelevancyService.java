@@ -21,6 +21,7 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -78,6 +79,8 @@ public class RelevancyService extends RuleService {
             // TODO: probably create a new method. one for Approval page. Another for Simulator and Top Keywords
             List<RelevancyKeyword> relKWList = daoService.getRelevancyKeywords(rule).getList();
             rule.setRelKeyword(relKWList);
+            rule.setFormattedStartDate(jodaDateTimeUtil.formatFromStorePattern(utilityService.getStoreId(),rule.getStartDate(), JodaPatternType.DATE));
+            rule.setFormattedEndDate(jodaDateTimeUtil.formatFromStorePattern(utilityService.getStoreId(),rule.getEndDate(), JodaPatternType.DATE));
             return rule;
         } catch (DaoException e) {
             logger.error("Failed during getRule()", e);
@@ -195,10 +198,10 @@ public class RelevancyService extends RuleService {
             relevancy.setStore(new Store(storeId));
             relevancy.setRelevancyName(name);
             relevancy.setDescription(description);
-//            relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
-//            relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
             relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : jodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
             relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : jodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
+            relevancy.setFormattedStartDate(jodaDateTimeUtil.formatFromStorePattern(utilityService.getStoreId(),relevancy.getStartDate(), JodaPatternType.DATE));
+            relevancy.setFormattedEndDate(jodaDateTimeUtil.formatFromStorePattern(utilityService.getStoreId(),relevancy.getEndDate(), JodaPatternType.DATE));            
             relevancy.setCreatedBy(userName);
             clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
             Relevancy hostRelevancy = getRule(ruleId);

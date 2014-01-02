@@ -15,7 +15,9 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 import com.search.manager.report.model.xml.RankingRuleXml;
 
@@ -31,6 +33,8 @@ public class Relevancy extends ModelBean {
 	private String description;
 	private Store store;
 	private DateTime startDate;
+	private String formattedStartDate;
+	private String formattedEndDate;
 	private DateTime endDate;
 	private Map<String, String> fields = new HashMap<String, String>();
 	private List<RelevancyKeyword> relKeyword;
@@ -319,15 +323,6 @@ public class Relevancy extends ModelBean {
 		return null;
 	}
 
-	public String getFormattedStartDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getStartDate(), JodaPatternType.DATE);
-		return "";
-	}
-
-	public String getFormattedEndDate() {
-//		return JodaDateTimeUtil.formatFromStorePattern(getEndDate(), JodaPatternType.DATE);
-		return "";
-	}
 	
 	/**
 	 * Used for GUI, return all parameters. Unassigned parameters will map to an empty string.
@@ -352,5 +347,21 @@ public class Relevancy extends ModelBean {
 
 	public void setFields(Map<String, String> fields) {
 		this.fields = fields;
+	}
+
+	public String getFormattedStartDate() {
+		return formattedStartDate;
+	}
+
+	public void setFormattedStartDate(String formattedStartDate) {
+		this.formattedStartDate = formattedStartDate;
+	}
+
+	public String getFormattedEndDate() {
+		return formattedEndDate;
+	}
+
+	public void setFormattedEndDate(String formattedEndDate) {
+		this.formattedEndDate = formattedEndDate;
 	}
 }
