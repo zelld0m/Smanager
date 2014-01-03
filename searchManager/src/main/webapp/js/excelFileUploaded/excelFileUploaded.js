@@ -58,6 +58,7 @@
 					var msg = "Are you sure delete Excel file Upload [" + fileName + "] ?";
 					jConfirm(msg, "Confirm", function(status){					
 						if(status){
+							$("#dialog-modal").dialog("close");
 							var excelFileUploadedId=$("#excelFileUploadedId").val();
 							var storeId=$("#storeId").val();							
 							ExcelFileUploadedServiceJS.deleteExcelFileUploaded(excelFileUploadedId,storeId,fileName,{
@@ -74,47 +75,29 @@
 
 				},
 				
-				viewDetails : function(el, options){
-					$(this).qtip({
-						id: "excelFileReportPage",
-						content: {
-							text: $('<div/>'),
-							title: { text: 'Excel File Reports', button: true
-							}
-						},
-						position:{
-							at: 'right top',
-							my: 'middle left'
-						},
-						show:{
-							solo: true,
-							ready: true
-						},
-						style: {
-							width: 'auto'
-						},
-						events: { 
-							show: function(event, api){
-								var contentHolder = $("div", api.elements.content);
-								var excelFileUploadedId=$("#excelFileUploadedId").val();
-								var ruleType = $("#titleText").text().toLowerCase();
-								contentHolder.empty().append("<img src='/searchManager/images/ajax-loader-rect.gif'/>");
-								contentHolder.load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId,function() {
-					        	    $( "#tabs" ).tabs().scrollabletab();														        	    
-					        	 });
-
-							},
-							hide:function(evt, api){
-								api.destroy();
-							}
-						}
-					});
+				viewDetails : function(){
+								$( "#dialog-modal" ).dialog({
+							    autoOpen: false,
+							    position: 'center' ,
+							    title: 'Details',	        		
+								height: 500,
+								width: 430,
+							    modal: true
+							    });								
+							var excelFileUploadedId=$("#excelFileUploadedId").val();
+							var ruleType = $("#titleText").text().toLowerCase(); 							
+							$("#dialog-modal").load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId,function() {
+				        	    $( "#tabs" ).tabs().scrollabletab();
+				        	    $("#dialog-modal").dialog("open");
+				        	 });							
+							
 				},
 				addToRule : function(e){
 					var fileName=$("#fileName").val();
 					var msg = "Are you sure you want to add to rule all entry in [" + fileName + "] excel file Upload?";
 					jConfirm(msg, "Confirm", function(status){					
-						if(status){					
+						if(status){				
+							  	$("#dialog-modal").dialog("close");
 								var excelFileUploadedId=$("#excelFileUploadedId").val();								
 								var ruleType = $("#titleText").text().toLowerCase();
 								var storeId = GLOBAL_storeId;
