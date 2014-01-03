@@ -13,8 +13,7 @@ import org.directwebremoting.convert.EnumConverter;
 public enum ImportType {
 	FOR_REVIEW("For Review", "For Review"),
 	FOR_APPROVAL("For Approval", "For Approval"),
-	AUTO_PUBLISH("Auto-Publish", "Auto-Publish"),
-	AUTO_IMPORT("Auto-Import", "Auto-Import");
+	AUTO_PUBLISH("Auto-Publish", "Auto-Publish");
 
 	private final String displayText;
 	private final String description;
