@@ -618,7 +618,7 @@
 
 			self.$maxSuggest = $("#max-suggest");
 
-			$("#ruleStatus").rulestatus({
+			$("#ruleStatus").rulestatusbar({
 				moduleName: self.RULE_TYPE,
 				ruleType: self.RULE_TYPE,
 				rule: self.rule,
