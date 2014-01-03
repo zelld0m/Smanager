@@ -580,8 +580,8 @@ public class RuleTransferService {
     }
 
     @RemoteMethod
-    public boolean setAutoExport(boolean autoexport) {
-        return utilityService.setStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
+    public void setAutoExport(Boolean autoexport) {
+    	configManager.setProperty("workflow", utilityService.getStoreId(), DAOConstants.SETTINGS_AUTO_EXPORT, autoexport.toString());
     }
     
     @RemoteMethod
@@ -590,8 +590,8 @@ public class RuleTransferService {
     }
     
     @RemoteMethod
-    public boolean setAutoImport(boolean autoexport) {
-        return utilityService.setStoreSetting(DAOConstants.SETTINGS_AUTO_IMPORT, BooleanUtils.toStringTrueFalse(autoexport));
+    public void setAutoImport(Boolean autoexport) {
+    	configManager.setProperty("workflow", utilityService.getStoreId(), DAOConstants.SETTINGS_AUTO_IMPORT, autoexport.toString());
     }
 
     @RemoteMethod
