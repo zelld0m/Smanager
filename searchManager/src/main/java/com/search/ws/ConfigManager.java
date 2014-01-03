@@ -321,6 +321,19 @@ public class ConfigManager {
 
 		return StringUtils.EMPTY;
 	}
+	
+	public void setProperty(String moduleName, String storeId, String field, String value) {
+		String mapKey = String.format("%s-%s", storeId, moduleName);
+		PropertiesConfiguration config = storeSettingsMap.get(mapKey);
+
+		if (config != null) {
+			synchronized (config) {
+				config.setProperty(field, value);
+			}
+		}
+
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<String> getPropertyList(String moduleName, String storeId, String field) {
