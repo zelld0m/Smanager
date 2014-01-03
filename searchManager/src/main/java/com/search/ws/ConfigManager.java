@@ -322,17 +322,18 @@ public class ConfigManager {
 		return StringUtils.EMPTY;
 	}
 	
-	public void setProperty(String moduleName, String storeId, String field, String value) {
+	public boolean setProperty(String moduleName, String storeId, String field, String value) {
 		String mapKey = String.format("%s-%s", storeId, moduleName);
 		PropertiesConfiguration config = storeSettingsMap.get(mapKey);
 
 		if (config != null) {
 			synchronized (config) {
 				config.setProperty(field, value);
+				return StringUtils.equals(config.getString(field), value);
 			}
 		}
-
 		
+		return false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -347,44 +348,6 @@ public class ConfigManager {
 		}
 
 		return new ArrayList<String>();
-	}
-
-
-	/**
-	 * For a property that has multiple values, getString() will return the first value of
-	 * the list
-	 *
-	 */
-	public String getPublishedStoreLinguisticSetting(String storeId, String field) {
-		//		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
-		//		if (config != null) {
-		//			synchronized (config) {
-		//				return config.getString(field);
-		//			}
-		//		}
-		return null;
-	}
-
-	public boolean setStoreSetting(String storeId, String field, String value) {
-		//		PropertiesConfiguration config = serverSettingsMap.get(storeId);
-		//		if (config != null) {
-		//			synchronized (config) {
-		//				config.setProperty(field, value);
-		//				return StringUtils.equals(config.getString(field), value);
-		//			}
-		//		}
-		return false;
-	}
-
-	public boolean setPublishedStoreLinguisticSetting(String storeId, String field, String value) {
-		//		PropertiesConfiguration config = linguisticSettingsMap.get(storeId);
-		//		if (config != null) {
-		//			synchronized (config) {
-		//				config.setProperty(field, value);
-		//				return StringUtils.equals(config.getString(field), value);
-		//			}
-		//		}
-		return false;
 	}
 
 	public List<String> getStoreGroupMembership(String storeId) {

@@ -342,7 +342,7 @@ public class UtilityService {
 	}
 
 	public boolean setStoreSetting(String property, String value) {
-		return configManager.setStoreSetting(getStoreId(), property, value);
+		return configManager.setProperty("spell", getStoreId(), property, value);
 	}
 
 	public String getStoreSetting(String storeId, String property) {
