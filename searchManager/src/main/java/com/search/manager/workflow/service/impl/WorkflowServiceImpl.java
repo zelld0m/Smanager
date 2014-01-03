@@ -310,9 +310,10 @@ public class WorkflowServiceImpl implements WorkflowService{
 			Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, userName, DateTime.now());
 			List<String> result = new ArrayList<String>();
 			getSuccessList(result, ruleMap);
+			
 			if (ruleMap != null && ruleMap.size() > 0) {
 				try {
-					if ("1".equals(configManager.getProperty("mail", storeId, "pushToProdNotification"))) {
+					if (mailService.isPushToProdNotificationEnable(storeId)) {
 						List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
 						mailService.sendNotification(storeId, ruleSource, RuleStatusEntity.PUBLISHED, ruleType, userName, ruleStatusInfoList, comment);
 					}
