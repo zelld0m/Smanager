@@ -7,7 +7,7 @@
 					var storeId = GLOBAL_storeId;					
 					$("#preloader").show();
 					$("#noSelected").hide();
-					$("#noSelected").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType,function(){
+					$("#noSelected").load("/searchManager/excelFileUploaded/" + storeId + "/" + ruleType + "/" + (Math.random()*99999),function(){
 						$("#preloader").hide();
 						$("#noSelected").show();
 					});

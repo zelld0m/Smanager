@@ -3,6 +3,7 @@ package com.search.reports.manager.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +35,8 @@ public class ExcelFileManagerServiceTest {
     @Test
     public void testExcelFileManager() throws IOException {
     	excelFileManagerService = new ExcelFileManagerService(new DefaultExcelParser("elevate"));
-    	File excelFile = FileUtils.getFile("src/test/resources/report1.xlsx");
-    	Map<String, FileInputStream> mp = new HashMap<String, FileInputStream>();
+    	File excelFile = FileUtils.getFile("src/test/resources/SKUs_SM.xlsx");
+    	Map<String, InputStream> mp = new HashMap<String, InputStream>();
     	mp.put(excelFile.getName(), new FileInputStream(excelFile));
     	List<ExcelFileUploaded> excelFileUploadeds=  excelFileManagerService.uploadExcelFile(mp);
     	ExcelFileUploaded excelFileUploaded=excelFileUploadeds.get(0);

@@ -50,7 +50,7 @@ public class ExcelFileUploadedController {
 	@Autowired
 	private UtilityService utilityService;
 
-	@RequestMapping(value = "/{storeId}/{ruleType}", method = { RequestMethod.GET,
+	@RequestMapping(value = "/{storeId}/{ruleType}/*", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String execute(HttpServletRequest request,
 			HttpServletResponse response, Model model,
@@ -67,7 +67,7 @@ public class ExcelFileUploadedController {
 		return "excelFileUploaded/excelFileUploaded";
 	}
 	
-	@RequestMapping(value = "/paging/{storeId}/{ruleType}/{pageNumber}", method = { RequestMethod.GET,
+	@RequestMapping(value = "/paging/{storeId}/{ruleType}/{pageNumber}/*", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String paging(HttpServletRequest request,
 			HttpServletResponse response, Model model,
@@ -83,7 +83,7 @@ public class ExcelFileUploadedController {
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		return "excelFileUploaded/excelFileUploaded";
 	}	
-	@RequestMapping(value = "/details/{ruleType}/{excelFileUploadedId}", method = { RequestMethod.GET,
+	@RequestMapping(value = "/details/{ruleType}/{excelFileUploadedId}/*", method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public String details(HttpServletRequest request,
 			HttpServletResponse response, Model model,
@@ -107,21 +107,19 @@ public class ExcelFileUploadedController {
 		return "excelFileUploaded/excelFileReport";
 	}	
 
-	@RequestMapping(value = "/upload/{storeId}/{ruleType}/", method = RequestMethod.POST)
+	@RequestMapping(value = "/upload/{storeId}/{ruleType}", method = RequestMethod.POST)
 	public ModelAndView upload(
 			@ModelAttribute("uploadForm") FileUploadForm uploadForm,
 			Model model, @PathVariable String ruleType,@PathVariable String storeId) {
-		Map<String, FileInputStream> mp = new HashMap<String, FileInputStream>();
+		Map<String, InputStream> mp = new HashMap<String, InputStream>();
 		List<MultipartFile> files = uploadForm.getFiles();
 		try {
 			if (files != null && files.size() > 0) {
 				for (MultipartFile multipartFile : files) {
 					String fileName = multipartFile.getOriginalFilename();
 					InputStream input;
-					input = multipartFile.getInputStream();
-					if (input instanceof FileInputStream) {
-						mp.put(fileName, (FileInputStream) input);
-					}
+					input = multipartFile.getInputStream();					
+					mp.put(fileName,input);
 				}
 			}
 			excelFileManagerService = new ExcelFileManagerService(
@@ -139,5 +137,6 @@ public class ExcelFileUploadedController {
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		return new ModelAndView("excelFileUploaded/excelFileUploadedPreview");
 	}
+
 
 }

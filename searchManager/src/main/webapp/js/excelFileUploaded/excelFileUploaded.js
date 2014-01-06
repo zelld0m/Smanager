@@ -14,7 +14,7 @@
 					var storeId = GLOBAL_storeId;
 					$("#noSelected").hide();
 					$("#preloader").show();
-					$("#noSelected").load("/searchManager/excelFileUploaded/paging/" + storeId + "/" + ruleType + "/" + pageNumber,function(){
+					$("#noSelected").empty().load("/searchManager/excelFileUploaded/paging/" + storeId + "/" + ruleType + "/" + pageNumber + "/" + (Math.random()*99999),function(){
 						$("#preloader").hide();
 						$("#noSelected").show();
 					});	
@@ -76,7 +76,7 @@
 				},
 				
 				viewDetails : function(){
-								$( "#dialog-modal" ).dialog({
+								$( "#dialog-modal-details" ).dialog({
 							    autoOpen: false,
 							    position: 'center' ,
 							    title: 'Details',	        		
@@ -85,9 +85,8 @@
 							    modal: true});								
 							var excelFileUploadedId=$("#excelFileUploadedId").val();
 							var ruleType = $("#titleText").text().toLowerCase(); 							
-							$("#dialog-modal").load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId,function() {
-				        	    $( "#tabs" ).tabs().scrollabletab();				        	    
-				        	    $("#dialog-modal").dialog("open");				        	    
+							$("#dialog-modal-details").empty().load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId + "/" + (Math.random()*99999),function() {			        	    
+				        	    $("#dialog-modal-details").dialog("open");				        	    
 				        	 });							
 							
 				},
