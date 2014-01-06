@@ -61,16 +61,17 @@
 	  	</c:forEach>
 	  	</tbody>
 	</table>
-</div> 	  	
-<table class="tblItems w100p marT5">
-	<tr>
-    	<td align="right" valign="top">  	
-  			<c:if test="${excelFileUploaded.addedOnRuleBy == null}">
-				<a id="delete" href="javascript:void(0);"><img src="../images/icon_del.png" alt="Delete uploaded File"></a>
-   			</c:if>
-			<input type="checkbox" id="clearRuleFirst"/>Clear Rule First
-			<a id="addToRule" href="javascript:void(0);"><img src="../images/ico-doc-plus.jpg" alt="Add to Rules"></a>
-    	</td>           	  
-	</tr>
-</table> 
+</div> 	  
+<input type="checkbox" id="clearRuleFirst"/>Clear keyword/s on Add to Rule
+<div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+	<div class="ui-dialog-buttonset">
+		<button id="addToRule" type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover" role="button" aria-disabled="false">
+			<span class="ui-button-text">Add to Rule</span>
+		</button>	
+		<c:if test="${excelFileUploaded.addedOnRuleBy == null}">
+			<button id="delete" type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+				<span class="ui-button-text">Delete</span>
+			</button>
+		</c:if>		
+</div></div>
 	 

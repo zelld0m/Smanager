@@ -82,13 +82,12 @@
 							    title: 'Details',	        		
 								height: 500,
 								width: 430,
-							    modal: true
-							    });								
+							    modal: true});								
 							var excelFileUploadedId=$("#excelFileUploadedId").val();
 							var ruleType = $("#titleText").text().toLowerCase(); 							
 							$("#dialog-modal").load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId,function() {
-				        	    $( "#tabs" ).tabs().scrollabletab();
-				        	    $("#dialog-modal").dialog("open");
+				        	    $( "#tabs" ).tabs().scrollabletab();				        	    
+				        	    $("#dialog-modal").dialog("open");				        	    
 				        	 });							
 							
 				},
