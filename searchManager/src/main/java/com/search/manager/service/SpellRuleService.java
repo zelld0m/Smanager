@@ -97,12 +97,11 @@ public class SpellRuleService {
     }
 
     @RemoteMethod
-    public ServiceResponse<Void> updateSpellRuleBatch(Integer maxSuggest, SpellRule[] spellRules, SpellRule[] deleted) {
-        String store = utilityService.getStoreId();
+    public ServiceResponse<Void> updateSpellRuleBatch(String storeId, Integer maxSuggest, SpellRule[] spellRules, SpellRule[] deleted) {
         ServiceResponse<Void> response = new ServiceResponse<Void>();
 
         try {
-            List<String> duplicates = checkDuplicatedSearchTerms(store, spellRules, deleted, true);
+            List<String> duplicates = checkDuplicatedSearchTerms(storeId, spellRules, deleted, true);
 
             if (duplicates.size() > 0) {
                 response.error("Duplicate search terms exist.", duplicates);
@@ -113,7 +112,7 @@ public class SpellRuleService {
                     }
                 }
                 daoService.updateSpellRules(Arrays.asList(spellRules), Arrays.asList(deleted));
-                daoService.setMaxSuggest(store, maxSuggest);
+                daoService.setMaxSuggest(storeId, maxSuggest);
                 response.success(null);
             }
         } catch (DaoException e) {

@@ -476,7 +476,7 @@
 
 							if (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0) {
 								if (validateInteger("Maximum suggestions", self.$maxSuggest.val(), 1, 10) && self.validate(entities)) {
-									SpellRuleServiceJS.updateSpellRuleBatch(parseInt(self.$maxSuggest.val()), entities, deleted,
+									SpellRuleServiceJS.updateSpellRuleBatch(GLOBAL_storeId, parseInt(self.$maxSuggest.val()), entities, deleted,
 										function(response) {
 											self.busy = false;
 											// success
@@ -618,7 +618,7 @@
 
 			self.$maxSuggest = $("#max-suggest");
 
-			$("#ruleStatus").rulestatus({
+			$("#ruleStatus").rulestatusbar({
 				moduleName: self.RULE_TYPE,
 				ruleType: self.RULE_TYPE,
 				rule: self.rule,

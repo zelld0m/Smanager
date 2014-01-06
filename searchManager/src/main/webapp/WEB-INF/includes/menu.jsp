@@ -115,7 +115,9 @@
                       <sec:authorize access="hasRole('MANAGE_USER')">
                           <li ${submenu eq 'security'? 'class="active"': ''}><a href="<spring:url value="/security/"/>${storeId}">Security</a></li>
                       </sec:authorize>
-                      <li ${submenu eq 'store_settings'? 'class="active"': ''}><a href="<spring:url value="/store_settings/" />${storeId}">Store Settings</a></li>
+                      <sec:authorize access="hasRole('ADMINISTER_SITE')">
+                      	<li ${submenu eq 'store_settings'? 'class="active"': ''}><a href="<spring:url value="/store_settings/" />${storeId}">Store Settings</a></li>
+                      </sec:authorize>
                </ul>
           </c:if>
           </div>

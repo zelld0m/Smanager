@@ -655,8 +655,7 @@ public class SolrServiceImpl implements SolrService {
     public Integer getMaxSuggest(String storeId) throws DaoException {
         Integer value = null;
         try {
-            String val = configManager.getPublishedStoreLinguisticSetting(storeId,
-                    "maxSpellSuggestions");
+            String val = configManager.getProperty("linguistic", storeId, "maxSpellSuggestions");
             value = Integer.parseInt(val);
         } catch (Exception e) {
         }

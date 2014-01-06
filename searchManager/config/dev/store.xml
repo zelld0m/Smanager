@@ -497,6 +497,19 @@
                 </property>
             </properties>
         </module>
+        <module name="spell" title="Did You Mean">
+            <groups>
+                <group>
+                    <member property-id="maxSpellSuggestions"/>
+                </group>
+            </groups>
+            <properties>
+                <property id="maxSpellSuggestions" type="String">
+                    <label>Max Spell Suggestions</label>
+                    <defaultValue>3</defaultValue>
+                </property>
+            </properties>
+        </module>
         <module name="workflow" title="Workflow">
     		<groups>
     			<group name="Export Feature">

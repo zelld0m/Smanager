@@ -240,8 +240,8 @@ public class SpellRuleDAO {
     }
 
     @Audit(entity = Entity.spell, operation = Operation.updateSetting)
-    public boolean setMaxSuggest(String store, Integer maxSuggest) {
-        return configManager.setStoreSetting(store, "maxSpellSuggestions", String.valueOf(maxSuggest));
+    public boolean setMaxSuggest(String storeId, Integer maxSuggest) {
+        return configManager.setProperty("spell", storeId, "maxSpellSuggestions", String.valueOf(maxSuggest));
     }
 
     @Transactional
@@ -289,7 +289,7 @@ public class SpellRuleDAO {
                     new DateTime(), "spell_rule", maxSuggest, Lists.transform(spellRules, SpellRule.transformer));
 
             ruleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
-            configManager.setPublishedStoreLinguisticSetting(store, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(store)));
+            configManager.setProperty("spell", store, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(store)));
             return true;
         } catch (Exception e) {
             logger.error("Error in publishing spell rules.", e);
