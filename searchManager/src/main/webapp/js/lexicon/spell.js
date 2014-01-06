@@ -646,6 +646,7 @@
 					base.api.elements.tooltip.unblock({onUnblock: function() {
 						jAlert("Did you mean rules restored.", "Version Restored");
 					}});
+					base.api.destroy();
 				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
 					self.selectedRuleStatus = ruleStatus;
