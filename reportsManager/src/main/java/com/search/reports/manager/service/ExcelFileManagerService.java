@@ -1,6 +1,7 @@
 package com.search.reports.manager.service;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -31,11 +32,11 @@ public class ExcelFileManagerService {
     
 
 
-    public List<ExcelFileUploaded> uploadExcelFile(Map<String,FileInputStream> mp) {
+    public List<ExcelFileUploaded> uploadExcelFile(Map<String,InputStream> mp) {
         return excelFileManager.uploadExportFile(mp);
     }
     
-    public List<ExcelFileUploaded> uploadExcelFile(FileInputStream input, String fileName) {
+    public List<ExcelFileUploaded> uploadExcelFile(InputStream input, String fileName) {
         return excelFileManager.uploadExportFile(input, fileName);
     }    
 
