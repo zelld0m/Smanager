@@ -66,17 +66,10 @@
 	<tr>
     	<td align="right" valign="top">  	
   			<c:if test="${excelFileUploaded.addedOnRuleBy == null}">
-				<a id="delete" href="javascript:void(0)" class="buttons btnGray clearfix">
-					<div class="buttons fontBold">Delete</div>
-				</a>
-
+				<a id="delete" href="javascript:void(0);"><img src="../images/icon_del.png" alt="Delete uploaded File"></a>
    			</c:if>
-			<div class="btnGray clearfix">
-				<input type="checkbox" id="clearRuleFirst"/>Clear Rule First
-			</div>					 				
-			<a id="addToRule" href="javascript:void(0)" class="buttons btnGray clearfix">
-				<div class="buttons fontBold">Add to Rules</div>
-			</a>   			
+			<input type="checkbox" id="clearRuleFirst"/>Clear Rule First
+			<a id="addToRule" href="javascript:void(0);"><img src="../images/ico-doc-plus.jpg" alt="Add to Rules"></a>
     	</td>           	  
 	</tr>
 </table> 

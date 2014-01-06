@@ -6,7 +6,7 @@
 				moduleName:"Auto Import",
 				changePage: function(pageNumber){
 					var filter = encodeURI($("#filter").val());
-					$("#mainContainer").empty().append("<img src='/searchManager/images/ajax-loader-circ.gif'>");	
+					$("#mainContainer").empty().append("<br/><br/><center><img src='/searchManager/images/ajax-loader-circ.gif'></center>");	
 					$("#mainContainer").load("/searchManager/autoimport/" + GLOBAL_storeId + "/page/" + pageNumber + "/" + filter,function(){importRuleTask.showPaging();});	
 				},
 				filterPage : function(){
