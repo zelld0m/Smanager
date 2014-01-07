@@ -601,8 +601,10 @@
             RedirectServiceJS.updateRedirectUrl(self.selectedRule["ruleId"], inputVal, {
                 callback: function(data) {
                     if (data > 0) {
+                    	 jAlert("Redirect URL successfully saved.", self.moduleName);
                         self.selectedRule["redirectUrl"] = inputVal;
                     } else {
+                    	jAlert("Redirect URL save unsuccessful.", self.moduleName);
                         $input.val(self.selectedRule["redirectUrl"]);
                     }
                 },
