@@ -58,7 +58,7 @@
 					var msg = "Are you sure delete Excel file Upload [" + fileName + "] ?";
 					jConfirm(msg, "Confirm", function(status){					
 						if(status){
-							$("#dialog-modal").dialog("close");
+							$("#dialog-modal-details").dialog("close");
 							var excelFileUploadedId=$("#excelFileUploadedId").val();
 							var storeId=$("#storeId").val();							
 							ExcelFileUploadedServiceJS.deleteExcelFileUploaded(excelFileUploadedId,storeId,fileName,{
@@ -95,7 +95,7 @@
 					var msg = "Are you sure you want to add to rule all entry in [" + fileName + "] excel file Upload?";
 					jConfirm(msg, "Confirm", function(status){					
 						if(status){				
-							  	$("#dialog-modal").dialog("close");
+							  	$("#dialog-modal-details").dialog("close");
 								var excelFileUploadedId=$("#excelFileUploadedId").val();								
 								var ruleType = $("#titleText").text().toLowerCase();
 								var storeId = GLOBAL_storeId;
