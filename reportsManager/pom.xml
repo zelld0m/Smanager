@@ -10,7 +10,6 @@
     
     <groupId>com.search</groupId>
     <artifactId>reportsManager</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <name>reportsManager</name>
     
     <url>http://maven.apache.org</url>

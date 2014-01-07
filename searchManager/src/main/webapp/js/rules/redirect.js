@@ -19,7 +19,7 @@
         addDownloadListener: function() {
             var self = this;
             $("a#downloadIcon").download({
-                headerText: "Download Query Cleaning",
+                headerText: "Download Redirect Rule",
                 requestCallback: function(e) {
                     var params = new Array();
                     var url = document.location.pathname + "/xls";
@@ -79,22 +79,22 @@
 
                         if (self.checkIfUpdateAllowed()) {
                             if ($.isBlank(ruleName)) {
-                                jAlert("Rule name is required.", "Query Cleaning");
+                                jAlert("Rule name is required.", "Redirect Rule");
                             }
                             else if (!isAllowedName(ruleName)) {
-                                jAlert("Rule name contains invalid value.", "Query Cleaning");
+                                jAlert("Rule name contains invalid value.", "Redirect Rule");
                             }
                             else if (!isAscii(description)) {
-                                jAlert("Description contains non-ASCII characters.", "Query Cleaning");
+                                jAlert("Description contains non-ASCII characters.", "Redirect Rule");
                             }
                             else if (!isXSSSafe(description)) {
-                                jAlert("Description contains XSS.", "Query Cleaning");
+                                jAlert("Description contains XSS.", "Redirect Rule");
                             }
                             else {
                                 RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
                                     callback: function(data) {
                                         if (data == true) {
-                                            jAlert("Another query cleaning rule is already using the name provided.", "Query Cleaning");
+                                            jAlert("Another redirect rule is already using the name provided.", "Redirect Rule");
                                         } else {
                                             var response = 0;
                                             RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
@@ -312,7 +312,7 @@
                 fieldName: "keyword",
                 page: self.ruleKeywordPage,
                 pageSize: self.ruleKeywordPageSize,
-                headerText: "Query Cleaning Keyword",
+                headerText: "Redirect Rule Keyword",
                 showAddButton: false,
                 showStatus: false,
                 filterText: self.ruleKeywordFilterText,
@@ -340,7 +340,7 @@
                                     $(e.currentTarget).qtip({
                                         content: {
                                             text: $('<div/>'),
-                                            title: {text: 'Query Cleaning for ' + item.name, button: true}
+                                            title: {text: 'Redirect Rule for ' + item.name, button: true}
                                         },
                                         show: {
                                             ready: true,
@@ -401,7 +401,7 @@
                 fieldName: "ruleName",
                 page: self.rulePage,
                 pageSize: self.rulePageSize,
-                headerText: "Query Cleaning Rule",
+                headerText: "Redirect Rule",
                 searchText: "Enter Name",
                 showAddButton: allowModify,
                 filterText: self.ruleFilterText,
@@ -422,7 +422,7 @@
                     RedirectServiceJS.checkForRuleNameDuplicate("", name, {
                         callback: function(data) {
                             if (data == true) {
-                                jAlert("Another query cleaning rule is already using the name provided.", "Query Cleaning");
+                                jAlert("Another redirect rule is already using the name provided.", "Redirect Rule");
                             } else {
                                 RedirectServiceJS.addRuleAndGetModel(name, {
                                     callback: function(data) {
@@ -567,7 +567,7 @@
                         
             if ($.isNotBlank(redirectUrlVal)) {
                 if (!$.startsWith(redirectUrlVal, "//") && !$.startsWith(redirectUrlVal, "/")) {
-                    jAlert("Link path value must either start with // or /", "Query Cleaning");
+                    jAlert("Link path value must either start with // or /", "Redirect Rule");
                     return false;
                 }
                 
@@ -578,16 +578,16 @@
                 if (isRelativePath) {                    
                     if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + "://" 
                             + GLOBAL_storeParameters.storeDomains[0] + redirectUrlVal)) {
-                        jAlert("Please specify a valid relative path redirect url", "Query Cleaning");
+                        jAlert("Please specify a valid relative path redirect url", "Redirect Rule");
                         return false;
                     }
                 } else if (!$.isValidURL(GLOBAL_storeDefaultBannerLinkPathProtocol + ":" + redirectUrlVal)) {
-                    jAlert("Please specify a valid redirect url", "Query Cleaning");
+                    jAlert("Please specify a valid redirect url", "Redirect Rule");
                     return false;
                 }
 
             } else {
-                jAlert("Please specify a redirect url", "Query Cleaning");
+                jAlert("Please specify a redirect url", "Redirect Rule");
                 return false;
             }
 
@@ -1679,7 +1679,7 @@
 
                         if ($.isNotBlank(inDynamicAttribute)) {
                             if ($divItemList.find("div#" + $.formatAsId(attrName)).length > 0) {
-                                jAlert("Attribute already added. Please select a different attribute name.", "Query Cleaning");
+                                jAlert("Attribute already added. Please select a different attribute name.", "Redirect Rule");
                             }
                             else {
                                 $ulAttributeValues.prop({id: $.formatAsId(attrName), title: attrName});
@@ -1718,7 +1718,7 @@
                             }
                         }
                         else {
-                            jAlert("Please select a dynamic attribute.", "Query Cleaning");
+                            jAlert("Please select a dynamic attribute.", "Redirect Rule");
                         }
                     }
                 },
@@ -1747,7 +1747,7 @@
                     }
 
                     if ($.isEmptyObject(condMap)) {
-                        jAlert('Please specify at least one filter condition', "Query Cleaning");
+                        jAlert('Please specify at least one filter condition', "Redirect Rule");
                         return;
                     } else {
                         var inputFields = ["CatCode", "Name", "Description"];
@@ -1856,7 +1856,7 @@
                         var $divItemList = $("div#conditionList");
 
                         if ($.isBlank(e.data.condition) || $divItemList.find("div.tempConditionItem").length > 0) {
-                            jAlert("You have an unsaved filter group", "Query Cleaning");
+                            jAlert("You have an unsaved filter group", "Redirect Rule");
                             return;
                         }
 
@@ -1896,7 +1896,7 @@
                         var $divItemList = $("div#conditionList");
 
                         if ($divItemList.find("div.tempConditionItem").length > 0) {
-                            jAlert("You have an unsaved filter group", "Query Cleaning");
+                            jAlert("You have an unsaved filter group", "Redirect Rule");
                             return;
                         }
 
