@@ -134,7 +134,7 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 					try {
 						return requestProcessorUtil.getDaoService().getFacetSortRule(storeKeyword);
 					} catch (DaoException e1) {
-						logger.error("Failed to get defaultRelevancyRule {}", e1);
+						logger.error("Failed to get facetSortRule using keyword {}", e1);
 						return null;
 					}
 				} else {
@@ -147,14 +147,14 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 	protected FacetSort getFacetSortRule(RequestPropertyBean requestPropertyBean, Store store, String templateName) throws DaoException {
 		try {
-			return requestProcessorUtil.getDaoService().getFacetSortRule(store, templateName);
+			return requestProcessorUtil.getDaoService(requestPropertyBean.isGuiRequest()).getFacetSortRule(store, templateName);
 		} catch (DaoException e) {
 			if (!requestPropertyBean.isGuiRequest()) {
 				if (!configManager.isSolrImplOnly()) {
 					try {
 						return requestProcessorUtil.getDaoService().getFacetSortRule(store, templateName);
 					} catch (DaoException e1) {
-						logger.error("Failed to get facetSortRule {}", e1);
+						logger.error("Failed to get facetSortRule using template{}", e1);
 						return null;
 					}
 				} else {
@@ -164,5 +164,4 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 			throw e;
 		}
 	}
-	
 }
