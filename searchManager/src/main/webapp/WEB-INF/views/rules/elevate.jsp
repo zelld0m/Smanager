@@ -39,13 +39,15 @@
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
-		<ul class="fsize12 padT10 padR10 floatR" style="list-style-type: none;">
+	  <sec:authorize access="hasRole('CREATE_RULE')">
+		 <ul class="fsize12 padT10 padR10 floatR" style="list-style-type: none;">
 	    	<li>
 	        	<a href="javascript:void(0);" 
 	                 style="color: #333; font-weight: bold;"
 	                id="uploadFromExcel">Upload SKUs from Excel Files</a>
 	        </li>
-	     </ul>	  
+	     </ul>
+	  </sec:authorize>	  
 	</div>
 	<div class="clearB"></div>	 
 	
