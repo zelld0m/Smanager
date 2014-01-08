@@ -58,12 +58,11 @@ public class ImportRuleTaskController {
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		model.addAttribute("types", ImportType.values());
 		model.addAttribute("statuses", TaskStatus.values());
-		model.addAttribute("filter", ",,");
+		model.addAttribute("filter", ",,,");
 		model.addAttribute("isTargetStore",isTargetStore());
 		if (!isTargetStore()){
 			model.addAttribute("targetStores",configManager.getPropertyList("workflow", store, DAOConstants.SETTINGS_EXPORT_TARGET));
-		}
-		model.addAttribute("dateFormat", utilityService.getStoreDateFormat());
+		}	
 		return "importRuleTask/importRuleTask";
 	}
 	
@@ -83,7 +82,7 @@ public class ImportRuleTaskController {
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", pageNumber);
 		model.addAttribute("filter", filter);
-		model.addAttribute("dateFormat", utilityService.getStoreDateFormat());
+		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		
 		return "importRuleTask/list";
 	}	
@@ -122,8 +121,11 @@ public class ImportRuleTaskController {
 						}
 						break;
 					case 2:						
+						searchCriteria.getModel().setTargetRuleName(arrFilter[ctr]);
+						break;		
+					case 3:						
 						searchCriteria.getModel().setTargetStoreId(arrFilter[ctr]);
-						break;						
+						break;							
 				}
 			}
 		}

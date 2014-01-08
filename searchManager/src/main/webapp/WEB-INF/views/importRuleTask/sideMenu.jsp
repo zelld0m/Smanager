@@ -19,7 +19,7 @@
 	    		</c:forEach>
 	    	</select>
     	</label> 
-    	<label class="txtLabel">Type:&nbsp;&nbsp;</label>
+    	<label class="txtLabel">Type:<br/></label>
     	<label class="details marR15">
 	    	<select class="w205" id="typeFilter">
 	    		<option value="">-- Select Type --</option>
@@ -28,6 +28,10 @@
 	    		</c:forEach>	    		
 	    	</select>
     	</label>    
+    	<label class="txtLabel">Rule Name:<br/></label>
+    	<label class="details marR15">
+	    	<input type="text" class="w200" id="targetRuleName" maxlength="200">
+    	</label>     	
     	<c:if test="${!isTargetStore}">    	
 	    	<label class="txtLabel">Target:</label>
 	    	<label class="details marR15">
