@@ -43,7 +43,7 @@
 	    	<li>
 	        	<a href="javascript:void(0);" 
 	                 style="color: #333; font-weight: bold;"
-	                id="uploadFromExcel">Upload from Excel Files</a>
+	                id="uploadFromExcel">Upload SKUs from Excel Files</a>
 	        </li>
 	     </ul>	    
 	</div>
