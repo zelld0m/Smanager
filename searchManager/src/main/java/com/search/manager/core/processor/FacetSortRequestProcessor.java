@@ -39,12 +39,18 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 	@Override
 	public boolean isEnabled(RequestPropertyBean requestPropertyBean) {
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
+		return (!requestPropertyBean.isDisableRule()) && BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
 	}
 
 	@Override
 	public void process(HttpServletRequest request, SolrResponseParser solrHelper, RequestPropertyBean requestPropertyBean, List<Map<String, String>> activeRules, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
-		boolean applyRule = false;
+		
+	    if(!isEnabled(requestPropertyBean)){
+            logger.info("Enabled? {}", BooleanUtils.toStringYesNo(isEnabled(requestPropertyBean)));
+            return;
+        }
+	    
+	    boolean applyRule = false;
 		final String storeId = requestPropertyBean.getStoreId();
 		final String keyword = requestPropertyBean.getKeyword();
 		final Map<String, String> facetMap = requestProcessorUtil.getFacetMap(storeId);
@@ -134,7 +140,7 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 					try {
 						return requestProcessorUtil.getDaoService().getFacetSortRule(storeKeyword);
 					} catch (DaoException e1) {
-						logger.error("Failed to get defaultRelevancyRule {}", e1);
+						logger.error("Failed to get facetSortRule using keyword {}", e1);
 						return null;
 					}
 				} else {
@@ -147,14 +153,14 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 	protected FacetSort getFacetSortRule(RequestPropertyBean requestPropertyBean, Store store, String templateName) throws DaoException {
 		try {
-			return requestProcessorUtil.getDaoService().getFacetSortRule(store, templateName);
+			return requestProcessorUtil.getDaoService(requestPropertyBean.isGuiRequest()).getFacetSortRule(store, templateName);
 		} catch (DaoException e) {
 			if (!requestPropertyBean.isGuiRequest()) {
 				if (!configManager.isSolrImplOnly()) {
 					try {
 						return requestProcessorUtil.getDaoService().getFacetSortRule(store, templateName);
 					} catch (DaoException e1) {
-						logger.error("Failed to get facetSortRule {}", e1);
+						logger.error("Failed to get facetSortRule using template{}", e1);
 						return null;
 					}
 				} else {
@@ -164,5 +170,4 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 			throw e;
 		}
 	}
-	
 }
