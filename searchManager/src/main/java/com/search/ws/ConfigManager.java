@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -134,8 +135,20 @@ public class ConfigManager {
 		}
 	}
 
-	public List<String> getModuleNames(String storeId) {
-		return Arrays.asList(storeXMLConfig.getStringArray(String.format("/store[@id='%s']/module/@name", storeId)));
+	@SuppressWarnings("unchecked")
+    public List<String> getModuleNames(String storeId) {
+	    //TODO: Improvement of PropertyManager verify extends feature
+	    List<String> modules = Arrays.asList(storeXMLConfig.getStringArray(String.format("/store[@id='%s']/module/@name", storeId)));
+	    List<String> inheritedModules = new ArrayList<String>();
+	    
+	    String parentStoreId = storeXMLConfig.getString(String.format("/store[@id='%s']/@extends", storeId));
+	    
+	    if(StringUtils.isNotBlank(parentStoreId)){
+	        inheritedModules = Arrays.asList(storeXMLConfig.getStringArray(String.format("/store[@id='%s']/module/@name", parentStoreId)));
+	        modules = (List<String>) CollectionUtils.union(modules, inheritedModules);
+	    }
+	    
+		return modules;
 	}
 
 	public String getSystemTimeZoneId() {
