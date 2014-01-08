@@ -39,12 +39,18 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 	@Override
 	public boolean isEnabled(RequestPropertyBean requestPropertyBean) {
-		return BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
+		return (!requestPropertyBean.isDisableRule()) && BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getProperty(PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
 	}
 
 	@Override
 	public void process(HttpServletRequest request, SolrResponseParser solrHelper, RequestPropertyBean requestPropertyBean, List<Map<String, String>> activeRules, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
-		boolean applyRule = false;
+		
+	    if(!isEnabled(requestPropertyBean)){
+            logger.info("Enabled? {}", BooleanUtils.toStringYesNo(isEnabled(requestPropertyBean)));
+            return;
+        }
+	    
+	    boolean applyRule = false;
 		final String storeId = requestPropertyBean.getStoreId();
 		final String keyword = requestPropertyBean.getKeyword();
 		final Map<String, String> facetMap = requestProcessorUtil.getFacetMap(storeId);
