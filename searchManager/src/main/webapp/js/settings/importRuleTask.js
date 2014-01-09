@@ -11,13 +11,12 @@
 						importRuleTask.init();
 						});				
 				},
-				viewDetails : function(el, options){
+				viewFailedReason : function(el, options){
 					$(this).qtip({
 						id: "excelFileReportPage",
 						content: {
 							text: $('<div/>'),
-							title: { text: 'Failed reason', button: true
-							}
+							title: { text: 'Reason'}
 						},
 						position:{
 							at: 'right top',
@@ -30,26 +29,37 @@
 						style: {
 							width: 300
 						},
+			            hide: 'mouseout',
+			            onHide: function(){
+			                $(this).qtip('destroy');
+			            },
 						events: { 
 							show: function(event, api){
 								var contentHolder = $("div", api.elements.content);
 								contentHolder.empty().append( $('#reason').val());
 							},
-							hide:function(evt, api){
-								api.destroy();
-							}
 						}
 					});
 				},				
 				filterPage : function(){
 					var filter = $("#statusFilter").val() + ",";
 					filter = filter + $("#typeFilter").val()  + ",";
-					filter = filter + $("#targetRuleName").val() + ",";
-					filter = filter + $("#targetFilter").val();
+					filter = filter + encodeURIComponent($("#targetRuleName").val()) + ",";
+					alert($("#targetFilter").length);
+					if ($("#targetFilter").length > 0){
+						filter = filter + $("#targetFilter").val();
+					}
 					$("#filter").val(filter);
-					var currentPage = $('#currentPageNumber').val();
+					alert(filter);
+					var currentPage = $('#currentPageNumber').val();					
 					importRuleTask.changePage(currentPage);
 				},
+				escapeHtml: function(string){
+					return String(string).replace(/[&<>"'\/]/g, function (s) {
+					      return entityMap[s];
+					    });					
+				}
+				,
 				showPaging : function showPaging(){
 					var self = this;
 					var currentPage = $('#currentPageNumber').val();
@@ -86,7 +96,7 @@
 				},				
 				init : function(){		
 					$(".failedReason").on({
-						mouseover: importRuleTask.viewDetails
+						mouseover: importRuleTask.viewFailedReason
 					});
 					importRuleTask.showPaging();
 					$("#titleText").html(this.moduleName);
