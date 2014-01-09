@@ -71,7 +71,7 @@
 		function checkIfDeleted() {
 			var refIds = getSelectedRefId();
 			for(var i=0; i<refIds.length; i++){	
-				status = $("tr#ruleItem" + $.formatAsId(refIds[i]) + " > td#type").html();
+				var status = $("tr#ruleItem" + $.formatAsId(refIds[i]) + " > td#type").html();
 				if ('DELETE' == status) {
 					return true;
 				}
