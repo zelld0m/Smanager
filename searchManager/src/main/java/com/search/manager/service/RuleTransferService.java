@@ -240,7 +240,7 @@ public class RuleTransferService {
                     ruleId = importAsId = ruleName;
                     break;
                 case FACET_SORT:
-                    FacetSort facetSort = facetSortService.getRuleByName(ruleName);
+                    FacetSort facetSort = facetSortService.getRuleByName(store, ruleName);
                     if (facetSort != null) {
                         importAsId = facetSort.getRuleId();
                         ruleName = facetSort.getRuleName();
