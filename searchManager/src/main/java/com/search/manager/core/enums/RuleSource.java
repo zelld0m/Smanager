@@ -21,4 +21,12 @@ public enum RuleSource {
 	public String getName() {
 		return name;
 	}
+	
+	public static RuleSource find(int ordinal) {
+		for(int i = 0; i < values().length; i++) {
+			if(i == ordinal)
+				return values()[i];
+		}
+		return null;
+	}
 }

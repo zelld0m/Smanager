@@ -1483,6 +1483,7 @@ public class DaoServiceImpl implements DaoService {
             updateRuleStatus.setRuleRefId(ruleStatus.getRuleRefId());
             updateRuleStatus.setRuleStatusId(ruleStatus.getRuleStatusId());
             updateRuleStatus.setDescription(ruleStatus.getDescription());
+            updateRuleStatus.setRuleSource(ruleStatus.getRuleSource());
         }
         return updateRuleStatus;
     }
