@@ -44,8 +44,7 @@
 				filterPage : function(){
 					var filter = $("#statusFilter").val() + ",";
 					filter = filter + $("#typeFilter").val()  + ",";
-					filter = filter + encodeURIComponent($("#targetRuleName").val()) + ",";
-					alert($("#targetFilter").length);
+					filter = filter + encodeURIComponent($("#targetRuleName").val()) + ",";					
 					if ($("#targetFilter").length > 0){
 						filter = filter + $("#targetFilter").val();
 					}
