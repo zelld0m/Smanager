@@ -1,6 +1,8 @@
 package com.search.manager.web;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,7 +123,11 @@ public class ImportRuleTaskController {
 						}
 						break;
 					case 2:						
-						searchCriteria.getModel().setTargetRuleName(arrFilter[ctr]);
+					try {
+						searchCriteria.getModel().setTargetRuleName(URLDecoder.decode( arrFilter[ctr], "UTF-8" ));
+					} catch (UnsupportedEncodingException e) {						
+						e.printStackTrace();
+					}
 						break;		
 					case 3:						
 						searchCriteria.getModel().setTargetStoreId(arrFilter[ctr]);

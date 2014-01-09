@@ -85,7 +85,9 @@
 							    modal: true});								
 							var excelFileUploadedId=$("#excelFileUploadedId").val();
 							var ruleType = $("#titleText").text().toLowerCase(); 							
-							$("#dialog-modal-details").empty().load("/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId + "/" + (Math.random()*99999),function() {			        	    
+							$("#dialog-modal-details").empty().load(
+									"/searchManager/excelFileUploaded/details/"+ ruleType + "/" + excelFileUploadedId + "/" + (Math.random()*99999)
+									,function() {			        	    
 				        	    $("#dialog-modal-details").dialog("open");				        	    
 				        	 });							
 							
@@ -139,41 +141,46 @@
 				        beforeSubmit: function() {
 				        	$("#uploadButtonContainer").hide();	        	
 				        },
-				        success: function(data) {	        	
-				        	$( "#dialog-modal" ).dialog({
-				        	    autoOpen: false,
-				        	    position: 'center' ,
-				        	    title: 'Preview',	        		
-				        		height: 550,
-				        		width: 850,
-				        	    modal: true,
-				        	    buttons: {
-				        	        "Proceed": function() {
-				    					$("#preloader").show();
-				    					$("#noSelected").hide();
-				        	        	var ruleType = $("#titleText").text().toLowerCase();
-				        	        	ExcelFileUploadedServiceJS.addExcelFileUploadeds(ruleType,{
-											callback: function(count){ 
-												excelFileUploaded.loadPaging();
-											},
-											preHook: function(){ 
-											},
-											postHook: function(){ 	
-											}
-										});	
-				        	        	$(this).dialog( "close" );
-				        	        },
-				        	        Cancel: function() {
-				        	          $( this ).dialog( "close" );
-				        	        }
-				        	      }
-				        	 });
-				        	$("#dialog-modal").empty().append(data);
-				        	$("#dialog-modal").dialog("open");
-				        	$(function() {
-				        	    $( "#tabs" ).tabs().scrollabletab();
-				        	 });	     
-				        	excelFileUploaded.loadPaging();
+				        success: function(data) {
+				        	if(data.toLowerCase().indexOf("error") >= 0){
+				        		jAlert(data, "Error on excelfile upload.", function(){
+									excelFileUploaded.loadPaging();});
+				        	}else{
+					        	$( "#dialog-modal" ).dialog({
+					        	    autoOpen: false,
+					        	    position: 'center' ,
+					        	    title: 'Preview',	        		
+					        		height: 550,
+					        		width: 850,
+					        	    modal: true,
+					        	    buttons: {
+					        	        "Proceed": function() {
+					    					$("#preloader").show();
+					    					$("#noSelected").hide();
+					        	        	var ruleType = $("#titleText").text().toLowerCase();
+					        	        	ExcelFileUploadedServiceJS.addExcelFileUploadeds(ruleType,{
+												callback: function(count){ 
+													excelFileUploaded.loadPaging();
+												},
+												preHook: function(){ 
+												},
+												postHook: function(){ 	
+												}
+											});	
+					        	        	$(this).dialog( "close" );
+					        	        },
+					        	        Cancel: function() {
+					        	          $( this ).dialog( "close" );
+					        	        }
+					        	      }
+					        	 });
+					        	$("#dialog-modal").empty().append(data);
+					        	$("#dialog-modal").dialog("open");
+					        	$(function() {
+					        	    $( "#tabs" ).tabs().scrollabletab();
+					        	 });	     
+					        	excelFileUploaded.loadPaging();
+				        	}
 				        }
 							        
 				    });					
