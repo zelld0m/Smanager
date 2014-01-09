@@ -237,9 +237,9 @@ public class FacetSortService extends RuleService {
     }
 
     @RemoteMethod
-    public FacetSort getRuleByName(String ruleName) {
+    public FacetSort getRuleByName(String storeId, String ruleName) {
         FacetSort facetSort = null;
-        StoreKeyword sk = new StoreKeyword(utilityService.getStoreId(), ruleName);
+        StoreKeyword sk = new StoreKeyword(storeId, ruleName);
 
         try {
             if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {

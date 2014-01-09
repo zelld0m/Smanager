@@ -384,7 +384,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 			importAsId = ruleNameTarget;
 			break;
 		case FACET_SORT:
-			FacetSort facetSort = facetSortService.getRuleByName(ruleNameTarget);
+			FacetSort facetSort = facetSortService.getRuleByName(storeIdTarget, ruleNameTarget);
 			if (facetSort != null) {
 				importAsId = facetSort.getRuleId();
 			} else {
