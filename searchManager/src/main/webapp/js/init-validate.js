@@ -52,7 +52,7 @@ validateEmail = function(fieldName, fieldValue, length) {
 	if (!$.isBlank(fieldValue)) {
 		var pattern = /^[\w\\+\\-]+([\.-]?[\w\\+\\-]+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 		if (!pattern.test(fieldValue)) {
-			jAlert(fieldName+" is an invalid email.");
+			jAlert(fieldName+" is invalid.","Validate Email");
 			return false;
 		};
 	}

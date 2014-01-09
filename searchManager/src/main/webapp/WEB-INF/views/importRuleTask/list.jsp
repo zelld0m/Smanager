@@ -45,7 +45,7 @@
 				        <td align="center">
 				        	${importRuleTask.taskExecutionResult.taskStatus.displayText}
 				        	<c:if test="${importRuleTask.taskExecutionResult.taskStatus.displayText == 'Failed'}">
-				        		<a href="javascript:void(0);" onmousemove="$('#reason').val('${importRuleTask.taskExecutionResult.taskErrorMessage} <br/><br/>runAttempt:${importRuleTask.taskExecutionResult.runAttempt}')" class="failedReason" reason = "xx"><img src="/searchManager/images/icon_alert.png"/></a>
+				        		<a href="javascript:void(0);" onmousemove="$('#reason').val('${importRuleTask.taskExecutionResult.taskErrorMessage} <br/><br/>Run attempt/s:${importRuleTask.taskExecutionResult.runAttempt}')" class="failedReason" reason = "xx"><img src="/searchManager/images/icon_alert.png"/></a>
 				        	</c:if>
 				        </td>
 				        <td align="center">
