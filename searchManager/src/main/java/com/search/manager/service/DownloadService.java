@@ -364,6 +364,25 @@ public class DownloadService {
 		download(response, workbook, fileName);
 	}
 
+    public void downloadMultiSheets(HttpServletResponse response, ReportModel<? extends ReportBean<?>> mainModel,
+            List<ReportModel<? extends ReportBean<?>>> subModels) throws ClassNotFoundException {
+        logger.debug("Downloading Excel report");
+        // 1. Create new workbook
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        String fileName = mainModel.getReportHeader().getFileName() + ".xls";
+        Map<String, HSSFCellStyle> styleMap = new HashMap<String, HSSFCellStyle>();
+
+        if (subModels != null) {
+            for (ReportModel<? extends ReportBean<?>> model : subModels) {
+                // 2. Create new worksheet
+                HSSFSheet worksheet = workbook.createSheet("" + model.getSubReportHeader().getFileName());
+                prepareXls(workbook, worksheet, styleMap, 0, model, true, true);
+            }
+        }
+
+        download(response, workbook, fileName);
+    }
+	
 	public void download(HttpServletResponse response, HSSFWorkbook workbook, String fileName) throws ClassNotFoundException {
 		logger.debug("Downloading Excel report");
 		// Make sure to set the correct content type

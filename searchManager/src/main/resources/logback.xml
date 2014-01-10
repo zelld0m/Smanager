@@ -107,6 +107,21 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
         </encoder>
     </appender>
+    
+    <appender name="importTask-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/tomcat/logs/importTask.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${user.home}/tomcat/logs/importTask.log.%i.gz</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>50MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+        </encoder>
+    </appender>
 
     <!--
       ============================================================
@@ -152,6 +167,10 @@
 
     <logger name="com.search.manager.utility.QueryValidator" level="WARN" additivity="false">
         <appender-ref ref="query-validator" />
+    </logger>
+
+	<logger name="com.search.manager.workflow.model.ImportTaskManager" additivity="false">
+        <appender-ref ref="importTask-file" />
     </logger>
 
     <root level="INFO">
