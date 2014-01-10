@@ -110,7 +110,7 @@ public class RuleStatusDAO {
 						} catch (Exception e) {
 						}
 					}
-					return new RuleStatus(
+					RuleStatus result = new RuleStatus(
 							rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID), 
 							rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID), 
 							RuleSource.values()[rs.getInt(DAOConstants.COLUMN_RULE_SOURCE)], 
@@ -139,6 +139,10 @@ public class RuleStatusDAO {
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
 							jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP))	                		
 					);
+					
+					result.setRuleSource(RuleSource.find(rs.getInt(DAOConstants.COLUMN_RULE_SOURCE)));
+					
+					return result;
 				}
 
 			}));

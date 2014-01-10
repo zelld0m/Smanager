@@ -124,10 +124,16 @@ public class ExcelFileUploadedController {
 			excelFileManagerService = new ExcelFileManagerService(
 					new DefaultExcelParser(ruleType));
 		} catch (IOException e) {			
-			e.printStackTrace();
+			model.addAttribute("errorMessage", "Error uploading file/s. Please check if the excel file is correct");
 		}
-		List<ExcelFileUploaded> excelFileUploadeds = excelFileManagerService
-				.uploadExcelFile(mp);
+		List<ExcelFileUploaded> excelFileUploadeds = new ArrayList<ExcelFileUploaded>();
+		try{
+			excelFileUploadeds = excelFileManagerService
+					.uploadExcelFile(mp);
+		}catch(Exception e){
+			model.addAttribute("errorMessage", "Error uploading file/s. Please check if the excel file is correct or format of the columns is valid.");
+		}
+
 		String userName = utilityService.getUsername();
 		Map<String,List<ExcelFileUploaded>> parsedData=new HashMap<String,List<ExcelFileUploaded>>();
 		parsedData.put(userName, excelFileUploadeds);

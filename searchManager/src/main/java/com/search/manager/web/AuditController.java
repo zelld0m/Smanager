@@ -21,8 +21,10 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.RecordSet;
 import com.search.manager.report.model.AuditTrailReportBean;
 import com.search.manager.report.model.AuditTrailReportModel;
+import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
+import com.search.manager.report.model.SubReportHeader;
 import com.search.manager.service.AuditService;
 import com.search.manager.service.DownloadService;
 
@@ -70,21 +72,47 @@ public class AuditController {
         } catch (Exception e) {
             nTotalSize = 1000;
         }
-        RecordSet<AuditTrail> AuditTrails = auditService.getAuditTrail(userName, operation, entity, keyword, referenceId, startDate, endDate, 1, nTotalSize);
-
+        
+//      RecordSet<AuditTrail> auditTrails = auditService.getAuditTrail(userName, operation, entity, keyword, referenceId, startDate, endDate, 1, nTotalSize);
+        /*
         List<AuditTrailReportBean> list = new ArrayList<AuditTrailReportBean>();
-        for (AuditTrail p : AuditTrails.getList()) {
-            list.add(new AuditTrailReportBean(p));
+        for (AuditTrail auditTrail : auditTrails.getList()) {
+            list.add(new AuditTrailReportBean(auditTrail));
         }
 
         String subTitle = "Audit Trail";
 
         ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
         ReportModel<AuditTrailReportBean> reportModel = new AuditTrailReportModel(reportHeader, list);
-
+        */
+        
+        String subTitle = "Audit Trail";
+        ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+        RecordSet<AuditTrail> auditTrails = auditService.getAuditTrail(userName, operation, entity, keyword, referenceId, startDate, endDate, 1, nTotalSize);
+        ReportModel<AuditTrailReportBean> reportModel = new AuditTrailReportModel(reportHeader, new ArrayList<AuditTrailReportBean>());
+        ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
+        List<AuditTrailReportBean> records = new ArrayList<AuditTrailReportBean>();
+        int maxRow = 65500;
+        int rowCount = 0;
+        int page = 1;
+        
+        for (int i=0; i < auditTrails.getList().size(); i++) {
+            records.add(new AuditTrailReportBean(auditTrails.getList().get(i)));
+            rowCount++;
+            if (rowCount > maxRow || i == auditTrails.getList().size() - 1) {
+                SubReportHeader subReportHeader = new SubReportHeader();
+                subReportHeader.setFileName("Page " + page);
+                subModels.add(new AuditTrailReportModel(reportHeader, subReportHeader, records));
+                records = new ArrayList<AuditTrailReportBean>();
+                rowCount = 0;
+                page++;
+            }
+        }
+        
         // Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
         if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
-            downloadService.downloadXLS(response, reportModel, null);
+            // downloadService.downloadXLS(response, reportModel, null);
+            downloadService.downloadMultiSheets(response, reportModel, subModels);
         }
     }
 }

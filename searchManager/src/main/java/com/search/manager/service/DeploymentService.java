@@ -113,7 +113,7 @@ public class DeploymentService {
 	private List<String> approveRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
 		List<String> result = new ArrayList<String>();
 		try {
-			List<RuleStatus> ruleStatusList = generateApprovalList(storeId, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
+			List<RuleStatus> ruleStatusList = generateApprovalList(storeId, ruleSource, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
 			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
 
 			try {
@@ -149,7 +149,7 @@ public class DeploymentService {
 	public List<String> unapproveRule(String storeId, String ruleType, List<String> ruleRefIdList, String comment) {
 		List<String> result = new ArrayList<String>();
 		try {
-			List<RuleStatus> ruleStatusList = generateApprovalList(storeId, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.REJECTED.toString());
+			List<RuleStatus> ruleStatusList = generateApprovalList(storeId, RuleSource.USER, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.REJECTED.toString());
 			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
 
 			try {
@@ -509,13 +509,14 @@ public class DeploymentService {
 		return result;
 	}
 
-	private List<RuleStatus> generateApprovalList(String storeId, List<String> ruleRefIdList, Integer ruleTypeId, String status) {
+	private List<RuleStatus> generateApprovalList(String storeId, RuleSource ruleSource, List<String> ruleRefIdList, Integer ruleTypeId, String status) {
 		List<RuleStatus> ruleStatusList = new ArrayList<RuleStatus>();
 		for (String ruleRefId : ruleRefIdList) {
 			RuleStatus ruleStatus = createRuleStatus(storeId);
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setApprovalStatus(status);
+			ruleStatus.setRuleSource(ruleSource);
 			ruleStatusList.add(ruleStatus);
 		}
 		return ruleStatusList;
