@@ -8,19 +8,29 @@
 <title>Search Manager</title>
 
 <link href="<spring:url value="/css/login.css" htmlEscape="true" />" rel="stylesheet" type="text/css">
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-ui-1.8.16.custom.min.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.core.min.js" />" ></script>
-<!-- jQuery alert  -->
-<script type="text/javascript" src="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.js" />" ></script>
-<link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.css" />" />
+<script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script>
+<script type="text/javascript" src="<spring:url value="/js/jquery/jquery-ui-1.8.16.custom.min.js" />" ></script>
+<script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.core.min.js" />" ></script>
 
 <!-- cross-browser css compatibility util -->
 <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>
-
-<script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-string-functions.js" />" ></script>
-
-<script type="text/javascript" src="<spring:url value="login.js" />"></script>
+<script type="text/javascript">
+(function($){
+	$(document).ready(function() {
+		$("#signinBtn").off().on({
+			click: function(e){
+					e.preventDefault();
+					var username = $.trim($("#j_username").val());
+					var password = $.trim($("#j_password").val());
+					if(username.length==0 || password.length==0){
+						alert("Username and password are required.","Search Manager");
+					}else
+						$("#f").submit();	
+					}
+				});
+	});
+})(jQuery);	
+</script>
 
 </head>
 <body>
