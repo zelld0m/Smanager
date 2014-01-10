@@ -49,7 +49,6 @@
 						filter = filter + $("#targetFilter").val();
 					}
 					$("#filter").val(filter);
-					alert(filter);
 					var currentPage = $('#currentPageNumber').val();					
 					importRuleTask.changePage(currentPage);
 				},
