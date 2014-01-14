@@ -13,14 +13,10 @@ import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.model.BannerRule;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetSort;
-import com.search.manager.model.ImagePath;
-import com.search.manager.model.ImagePathType;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRule.RedirectType;
@@ -30,7 +26,6 @@ import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.solr.model.BannerRuleItemSolr;
 import com.search.manager.solr.model.FacetSortRuleSolr;
 import com.search.manager.solr.model.RedirectRuleSolr;
 import com.search.manager.solr.model.RelevancyRuleSolr;
@@ -292,6 +287,7 @@ public class SolrResultUtil {
 		return spellRules;
 	}
 
+	/*
 	public static List<BannerRuleItem> toBannerRuleItem(
 			List<BannerRuleItemSolr> bannerRuleItemsSolr) {
 		List<BannerRuleItem> bannerRuleItems = new ArrayList<BannerRuleItem>();
@@ -351,5 +347,6 @@ public class SolrResultUtil {
 
 		return bannerRuleItems;
 	}
+	*/
 
 }

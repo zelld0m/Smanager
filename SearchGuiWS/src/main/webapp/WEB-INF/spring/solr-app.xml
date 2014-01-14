@@ -75,4 +75,9 @@
 		</constructor-arg>
 	</bean>
 	
+	<bean id="solrSearchProcessor" class="com.search.manager.core.search.processor.SolrSearchProcessor" scope="singleton">
+		<constructor-arg>
+			<ref bean="solrServerFactory" />
+		</constructor-arg>
+	</bean>
 </beans>

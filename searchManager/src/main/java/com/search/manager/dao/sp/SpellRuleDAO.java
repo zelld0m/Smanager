@@ -290,6 +290,7 @@ public class SpellRuleDAO {
 
             ruleXmlUtil.ruleXmlToFile(store, RuleEntity.SPELL, "spell_rule_" + StringUtil.dateToStr(new Date(), "yyyyMMdd_hhmmss"), spellRulesXml, RuleVersionUtil.PUBLISH_PATH);
             configManager.setProperty("spell", store, "maxSpellSuggestions", String.valueOf(daoService.getMaxSuggest(store)));
+
             return true;
         } catch (Exception e) {
             logger.error("Error in publishing spell rules.", e);

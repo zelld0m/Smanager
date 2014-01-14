@@ -27,7 +27,6 @@ import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RedirectRuleVersionDAO;
 import com.search.manager.dao.file.SpellRuleVersionDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
-import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.DemoteDAO;
@@ -51,8 +50,6 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.model.AuditTrail;
-import com.search.manager.model.BannerRule;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
@@ -64,7 +61,6 @@ import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.Group;
-import com.search.manager.model.ImagePath;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -109,8 +105,6 @@ public class DaoServiceImpl implements DaoService {
     @Autowired
     private AuditTrailDAO auditTrailDAO;
     @Autowired
-    private BannerDAO bannerDAO;
-    @Autowired
     private RelevancyDAO relevancyDAO;
     @Autowired
     private RedirectRuleDAO redirectRuleDAO;
@@ -145,7 +139,7 @@ public class DaoServiceImpl implements DaoService {
     @Autowired
     private BannerVersionDAO bannerVersionDAO;
     @Autowired
- 	private SearchHelper searchHelper;
+    private SearchHelper searchHelper;
     
     private DaoServiceImpl instance;
     
@@ -187,11 +181,7 @@ public class DaoServiceImpl implements DaoService {
     public void setAuditTrailDAO(AuditTrailDAO auditTrailDAO) {
         this.auditTrailDAO = auditTrailDAO;
     }
-
-    public void setBannerDAO(BannerDAO bannerDAO) {
-        this.bannerDAO = bannerDAO;
-    }
-
+    
     public void setRelevancyDAO(RelevancyDAO relevancyDAO) {
         this.relevancyDAO = relevancyDAO;
     }
@@ -1085,11 +1075,7 @@ public class DaoServiceImpl implements DaoService {
     public AuditTrailDAO getAuditTrailDAO() {
         return auditTrailDAO;
     }
-
-    public BannerDAO getBannerDAO() {
-        return bannerDAO;
-    }
-
+    
     public RelevancyDAO getRelevancyDAO() {
         return relevancyDAO;
     }
@@ -1769,121 +1755,5 @@ public class DaoServiceImpl implements DaoService {
     @Override
     public boolean importSpellRule(String dest, String origin, String username, Integer maxSuggest) throws DaoException {
         return spellRuleDAO.importRule(dest, origin, username) && spellRuleDAO.setMaxSuggest(dest, maxSuggest);
-    }
-
-    @Override
-    public int addBannerRule(BannerRule rule) throws DaoException {
-        return bannerDAO.addRule(rule);
-    }
-
-    @Override
-    public int deleteBannerRule(BannerRule rule) throws DaoException {
-        return bannerDAO.deleteRule(rule);
-    }
-
-    @Override
-    public BannerRule getBannerRule(BannerRule rule) throws DaoException {
-        List<BannerRule> bannerRuleList = searchBannerRule(new SearchCriteria<BannerRule>(rule)).getList();
-
-        if (CollectionUtils.isNotEmpty(bannerRuleList)) {
-            return bannerRuleList.get(0);
-        }
-
-        return null;
-    }
-
-    @Override
-    public BannerRule getBannerRuleById(String storeId, String ruleId) throws DaoException {
-        BannerRule rule = new BannerRule();
-        rule.setStoreId(storeId);
-        rule.setRuleId(ruleId);
-        RecordSet<BannerRule> ruleRS = searchBannerRule(new SearchCriteria<BannerRule>(rule, MatchType.MATCH_ID, 1, 1));
-
-        return (BannerRule) CollectionUtils.get(ruleRS.getList(), 0);
-    }
-
-    @Override
-    public RecordSet<BannerRule> searchBannerRule(SearchCriteria<BannerRule> criteria) throws DaoException {
-        return bannerDAO.searchRule(criteria);
-    }
-
-    @Override
-    public int addBannerImagePath(ImagePath imagePath)
-            throws DaoException {
-        return bannerDAO.addImagePath(imagePath);
-    }
-
-    @Override
-    public int updateBannerImagePathAlias(ImagePath imagePath)
-            throws DaoException {
-        return bannerDAO.updateImagePath(imagePath);
-    }
-
-    @Override
-    public RecordSet<ImagePath> searchBannerImagePath(SearchCriteria<ImagePath> criteria)
-            throws DaoException {
-        return bannerDAO.searchImagePath(criteria);
-    }
-
-    @Override
-    public ImagePath getBannerImagePath(ImagePath imagePath)
-            throws DaoException {
-        List<ImagePath> imagePathList = searchBannerImagePath(new SearchCriteria<ImagePath>(imagePath)).getList();
-
-        if (CollectionUtils.isNotEmpty(imagePathList)) {
-            return imagePathList.get(0);
-        }
-
-        return null;
-    }
-
-    @Override
-    public int addBannerRuleItem(BannerRuleItem ruleItem) throws DaoException {
-        return bannerDAO.addRuleItem(ruleItem);
-    }
-
-    @Override
-    public int updateBannerRuleItem(BannerRuleItem ruleItem) throws DaoException {
-        return bannerDAO.updateRuleItem(ruleItem);
-    }
-
-    @Override
-    public BannerRuleItem getBannerRuleItem(BannerRuleItem ruleItem)
-            throws DaoException {
-
-        List<BannerRuleItem> bannerRuleItemList = searchBannerRuleItem(new SearchCriteria<BannerRuleItem>(ruleItem)).getList();
-
-        if (CollectionUtils.isNotEmpty(bannerRuleItemList)) {
-            return bannerRuleItemList.get(0);
-        }
-
-        return null;
-    }
-
-    @Override
-    public RecordSet<BannerRuleItem> searchBannerRuleItem(SearchCriteria<BannerRuleItem> criteria) throws DaoException {
-        return bannerDAO.searchRuleItem(criteria);
-    }
-
-    @Override
-    public int deleteBannerRuleItem(BannerRuleItem ruleItem)
-            throws DaoException {
-        return bannerDAO.deleteRuleItem(ruleItem);
-    }
-
-    @Override
-    public List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, DateTime currentDate)
-            throws DaoException {
-        BannerRuleItem bannerRuleItemFilter = new BannerRuleItem();
-        BannerRule bannerRule = new BannerRule();
-        bannerRule.setStoreId(store.getStoreId());
-        bannerRule.setRuleName(keyword);
-        bannerRuleItemFilter.setRule(bannerRule);
-        bannerRuleItemFilter.setDisabled(false);
-        SearchCriteria<BannerRuleItem> criteria = new SearchCriteria<BannerRuleItem>(
-                bannerRuleItemFilter, currentDate, currentDate, 0, 0);
-        List<BannerRuleItem> list = searchBannerRuleItem(criteria).getList();
-
-        return list;
     }
 }

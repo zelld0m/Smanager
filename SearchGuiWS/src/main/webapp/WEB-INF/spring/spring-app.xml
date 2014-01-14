@@ -22,16 +22,85 @@
     </bean>
     
     <import resource="./init-app.xml"/>
+	
+    <!-- core dao [production] -->
+	<bean id="imagePathDaoSp" class="com.search.manager.core.dao.sp.ImagePathDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	<bean id="bannerRuleDaoSp" class="com.search.manager.core.dao.sp.BannerRuleDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	<bean id="bannerRuleItemDaoSp" class="com.search.manager.core.dao.sp.BannerRuleItemDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	<bean id="ruleStatusDaoSp" class="com.search.manager.core.dao.sp.RuleStatusDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	<!-- core dao [staging] -->
+	<bean id="bannerRuleDaoSpStg" class="com.search.manager.core.dao.sp.BannerRuleDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplateStg" />
+	</bean>
+	<bean id="bannerRuleItemDaoSpStg" class="com.search.manager.core.dao.sp.BannerRuleItemDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplateStg" />
+	</bean>
+	<bean id="imagePathDaoSpStg" class="com.search.manager.core.dao.sp.ImagePathDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplateStg" />
+	</bean>
+	<bean id="ruleStatusDaoSpStg" class="com.search.manager.core.dao.sp.RuleStatusDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	
+	<!-- core service [production] -->
+    <bean id="ruleStatusServiceSp" class="com.search.manager.core.service.sp.RuleStatusServiceSpImpl" scope="singleton">
+    	<property name="ruleStatusDao" ref="ruleStatusDaoSp" />
+    </bean>
+    <bean id="imagePathServiceSp" class="com.search.manager.core.service.sp.ImagePathServiceSpImpl" scope="singleton">
+    	<property name="imagePathDao" ref="imagePathDaoSp" />
+    </bean>
+    <bean id="bannerRuleServiceSp" class="com.search.manager.core.service.sp.BannerRuleServiceSpImpl" scope="singleton">
+    	<property name="bannerRuleDao" ref="bannerRuleDaoSp" />
+    	<property name="bannerRuleItemService" ref="bannerRuleItemServiceSp" />
+    	<property name="ruleStatusService" ref="ruleStatusServiceSp" />
+    </bean>
+    <bean id="bannerRuleItemServiceSp" class="com.search.manager.core.service.sp.BannerRuleItemServiceSpImpl" scope="singleton">
+    	<property name="bannerRuleItemDao" ref="bannerRuleItemDaoSp" />
+    	<property name="bannerRuleService" ref="bannerRuleServiceSp" />
+    	<property name="imagePathService" ref="imagePathServiceSp" />
+    </bean>
+	<!-- core service [staging] -->
+	<bean id="ruleStatusServiceSpStg" class="com.search.manager.core.service.sp.RuleStatusServiceSpImpl" scope="singleton">
+    	<property name="ruleStatusDao" ref="ruleStatusDaoSpStg" />
+    </bean>
+    <bean id="imagePathServiceSpStg" class="com.search.manager.core.service.sp.ImagePathServiceSpImpl" scope="singleton">
+    	<property name="imagePathDao" ref="imagePathDaoSpStg" />
+    </bean>
+    <bean id="bannerRuleServiceSpStg" class="com.search.manager.core.service.sp.BannerRuleServiceSpImpl" scope="singleton">
+    	<property name="bannerRuleDao" ref="bannerRuleDaoSpStg" />
+    	<property name="bannerRuleItemService" ref="bannerRuleItemServiceSpStg" />
+    	<property name="ruleStatusService" ref="ruleStatusServiceSpStg" />
+    </bean>
+    <bean id="bannerRuleItemServiceSpStg" class="com.search.manager.core.service.sp.BannerRuleItemServiceSpImpl" scope="singleton">
+    	<property name="bannerRuleItemDao" ref="bannerRuleItemDaoSpStg" />
+    	<property name="bannerRuleService" ref="bannerRuleServiceSpStg" />
+    	<property name="imagePathService" ref="imagePathServiceSpStg" />
+    </bean>
+    
+    <!-- solr core -->
+    <bean id="bannerRuleItemDaoSolr" class="com.search.manager.core.dao.solr.BannerRuleItemDaoSolrImpl" scope="singleton" />
+	<bean id="bannerRuleItemServiceSolr" class="com.search.manager.core.service.solr.BannerRuleItemServiceSolrImpl" scope="singleton" />
     
     <!-- Scans within the base package of the application for @Components to configure as beans,
 		 @Controller, @Service, @Configuration, etc. -->
 	<context:component-scan base-package="com.search.manager.solr, com.search.service" />
 	
-    <import resource="./mail-app.xml"/>
-	<import resource="./db-app.xml"/>
-	<import resource="./solr-app.xml"/>
-	<import resource="./service-app.xml"/>
+    <import resource="./mail-app.xml" />
+	<import resource="./db-app.xml" />
+	<import resource="./solr-app.xml" />
+	<import resource="./service-app.xml" />
 	
-	<bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil" scope="singleton" />
+	<!-- TODO: remove version and xml util dependencies (Dummy) -->
+	<bean id="ruleXmlUtil" class="com.search.manager.xml.file.RuleXmlUtil" />
+	<bean id="ruleTransferUtil" class="com.search.manager.xml.file.RuleTransferUtil" />
+	<bean id="ruleVersionUtil" class="com.search.manager.dao.file.RuleVersionUtil" />
 	
 </beans>

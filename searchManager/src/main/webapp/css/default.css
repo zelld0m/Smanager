@@ -602,3 +602,27 @@ div.w300.security div.marB10 div div.floatL div.ss-wrapper input.ss-textbox {
 .w50p {	width: 50%;		}
 
 div.dockFooter div.footerFix div div.floatL.w50p.fsize12 {	text-align: center;	}
+
+#searchRuleMode > input[type="checkbox"]#enableProductionMode {
+	border: 0 none;
+	clip: rect(0px, 0px, 0px, 0px);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+#searchRuleMode > #searchRuleModeIcon {
+	width: 24px;
+	height: 24px;
+}
+
+#searchRuleMode > .disabled {
+	background: url("../images/globe_icon.png") no-repeat scroll 0 -24px transparent;
+}
+
+#searchRuleMode > .enabled {
+	background: url("../images/globe_icon.png") no-repeat scroll 0 0 transparent;
+}

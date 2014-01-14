@@ -36,10 +36,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.processor.FacetSortRequestProcessor;
 import com.search.manager.core.processor.RequestProcessorUtil;
 import com.search.manager.core.processor.RequestPropertyBean;
 import com.search.manager.core.processor.SearchWithinRequestProcessor;
+import com.search.manager.core.service.BannerRuleItemService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
@@ -48,7 +51,6 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -79,6 +81,13 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	@Autowired
 	@Qualifier("solrService")
 	private SearchDaoService solrService;
+	@Autowired
+    @Qualifier("bannerRuleItemServiceSp")
+	private BannerRuleItemService bannerRuleItemServiceSp;
+	@Autowired
+    @Qualifier("bannerRuleItemServiceSolr")
+	private BannerRuleItemService bannerRuleItemServiceSolr;
+	
 	@Autowired
 	protected ConfigManager configManager;
 	@Autowired
@@ -466,40 +475,49 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		return list;
 	}
 
-	protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws DaoException {
-		List<BannerRuleItem> bannerRuleItems = null;
-		try {
-			bannerRuleItems = getDaoService(fromSearchGui).getActiveBannerRuleItems(store, keyword, currentDate);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				if (!configManager.isSolrImplOnly()) {
-					try {
-						bannerRuleItems = daoService.getActiveBannerRuleItems(store, keyword, currentDate);
-					} catch (DaoException e1) {
-						logger.error("Failed to get active bannerRuleItems {}", e1);
-						return null;
-					}
-				} else {
-					return null;
-				}
-			}
-			throw e;
-		}
-		
-		String autoPrefixProtocol = configManager.getProperty("settings", store.getStoreId(),
-				DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
-		Boolean isAutoPrefixProtocol = BooleanUtils.toBoolean(StringUtils.defaultIfBlank(autoPrefixProtocol, "false"));
-		
-		if(bannerRuleItems != null && isAutoPrefixProtocol) {
-			for(int i=0; i<bannerRuleItems.size(); i++) {
-				String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings", store.getStoreId(),
-						DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http:");
-				bannerRuleItems.get(i).setLinkPath((protocol.endsWith(":")? protocol : protocol + ":") + bannerRuleItems.get(i).getLinkPath());
-			}
-		}
-		
-		return bannerRuleItems;
-	}
+    protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui,
+            DateTime currentDate) throws CoreServiceException {
+        List<BannerRuleItem> bannerRuleItems = null;
+        try {
+            if (fromSearchGui) {
+                bannerRuleItems = bannerRuleItemServiceSp.getActiveBannerRuleItems(store.getStoreId(), keyword,
+                        currentDate);
+            } else {
+                bannerRuleItems = bannerRuleItemServiceSolr.getActiveBannerRuleItems(store.getStoreId(), keyword,
+                        currentDate);
+            }
+        } catch (CoreServiceException e) {
+            if (!fromSearchGui) {
+                if (!configManager.isSolrImplOnly()) {
+                    try {
+                        bannerRuleItems = bannerRuleItemServiceSp.getActiveBannerRuleItems(store.getStoreId(), keyword,
+                                currentDate);
+                    } catch (CoreServiceException e1) {
+                        logger.error("Failed to get active bannerRuleItems {}", e1);
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            }
+            throw e;
+        }
+
+        String autoPrefixProtocol = configManager.getProperty("settings", store.getStoreId(),
+                DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
+        Boolean isAutoPrefixProtocol = BooleanUtils.toBoolean(StringUtils.defaultIfBlank(autoPrefixProtocol, "false"));
+
+        if (bannerRuleItems != null && isAutoPrefixProtocol) {
+            for (int i = 0; i < bannerRuleItems.size(); i++) {
+                String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings", store.getStoreId(),
+                        DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http:");
+                bannerRuleItems.get(i).setLinkPath(
+                        (protocol.endsWith(":") ? protocol : protocol + ":") + bannerRuleItems.get(i).getLinkPath());
+            }
+        }
+
+        return bannerRuleItems;
+    }
 
 	protected abstract String getRequestPath(HttpServletRequest request);
 

@@ -44,7 +44,7 @@ public class RuleTransferUtil {
     public List<RuleXml> getAllExportedRules(String storeId, String ruleType) {
         return (ArrayList<RuleXml>) getRules(storeId, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
     }
-
+    
     public RuleXml getRuleToImport(String storeId, RuleEntity ruleEntity, String ruleId) {
         return getRule(storeId, ruleEntity, ruleId, IMPORT_FILE_PATH);
     }
@@ -69,7 +69,7 @@ public class RuleTransferUtil {
         
         return ruleXml;
     }
-
+    
     public RuleXml getRule(String storeId, RuleEntity ruleEntity, File file, String path) {
         try {
             if (file != null && file.exists()) {
@@ -84,7 +84,7 @@ public class RuleTransferUtil {
         }
         return null;
     }
-
+    
     public List<RuleXml> getRules(String storeId, RuleEntity ruleEntity, String path) {
         List<RuleXml> ruleXmls = new ArrayList<RuleXml>();
         String dir = ruleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, storeId, ruleEntity);
@@ -125,16 +125,16 @@ public class RuleTransferUtil {
         logger.info(String.format("Exporting rule xml... [store = %s, ruleId = %s, path = %s]", targetStore, ruleId, IMPORT_FILE_PATH));
         return ruleXmlUtil.ruleXmlToFile(targetStore, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
     }
-
+    
     public boolean importRule(String storeId, String ruleId, RuleXml ruleXml) {
         logger.info(String.format("Importing rule xml... [store = %s, ruleId = %s]", storeId, ruleId));
         return ruleXmlUtil.importRule(ruleXml);
     }
-
+    
     public String getFilename(String storeId, RuleEntity ruleEntity, String ruleId) {
         return ruleXmlUtil.getFilename(IMPORT_FILE_PATH, storeId, ruleEntity, ruleId);
     }
-
+    
     public boolean deleteRuleFile(RuleEntity ruleEntity, String storeId, String ruleId, String comment) {
         boolean success = false;
         String id = ruleXmlUtil.getRuleId(ruleEntity, ruleId);
@@ -155,4 +155,5 @@ public class RuleTransferUtil {
         }
         return success;
     }
+    
 }

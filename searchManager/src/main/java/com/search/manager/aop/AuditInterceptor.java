@@ -13,9 +13,14 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.search.manager.core.model.BannerRule;
+import com.search.manager.core.model.BannerRuleItem;
+import com.search.manager.core.model.ImagePath;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.ReplaceKeywordMessageType;
@@ -24,15 +29,12 @@ import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
 import com.search.manager.model.AuditTrail;
-import com.search.manager.model.BannerRule;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
-import com.search.manager.model.ImagePath;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
@@ -46,8 +48,6 @@ import com.search.manager.model.User;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.service.UtilityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Aspect
 @Component("auditInterceptor")

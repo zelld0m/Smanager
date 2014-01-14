@@ -21,9 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.Relevancy.Parameter;
 import com.search.manager.model.Store;
@@ -176,7 +177,7 @@ public class EnterpriseSearchController extends AbstractSearchController {
     }
 
     @Override
-    protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws DaoException {
+    protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws CoreServiceException {
         // Enterprise Search does not need banners
         return null;
     }
