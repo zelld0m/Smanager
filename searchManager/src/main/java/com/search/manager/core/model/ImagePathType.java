@@ -10,25 +10,26 @@ import org.directwebremoting.convert.EnumConverter;
 
 @DataTransferObject(converter = EnumConverter.class)
 public enum ImagePathType {
-	IMAGE_LINK("IMAGE_LINK"), UPLOAD_LINK("IMAGE_UPLOAD");
+    IMAGE_LINK("IMAGE_LINK"),
+    UPLOAD_LINK("IMAGE_UPLOAD");
 
-	private final String displayText;
-	private static final Map<String, ImagePathType> lookup = new HashMap<String, ImagePathType>();
+    private final String displayText;
+    private static final Map<String, ImagePathType> lookup = new HashMap<String, ImagePathType>();
 
-	ImagePathType(String displayText) {
-		this.displayText = displayText;
-	}
+    ImagePathType(String displayText) {
+        this.displayText = displayText;
+    }
 
-	static {
-		for (ImagePathType iType : EnumSet.allOf(ImagePathType.class))
-			lookup.put(StringUtils.lowerCase(iType.getDisplayText()), iType);
-	}
+    static {
+        for (ImagePathType iType : EnumSet.allOf(ImagePathType.class))
+            lookup.put(StringUtils.lowerCase(iType.getDisplayText()), iType);
+    }
 
-	public static ImagePathType get(String displayText) {
-		return lookup.get(StringUtils.lowerCase(displayText));
-	}
+    public static ImagePathType get(String displayText) {
+        return lookup.get(StringUtils.lowerCase(displayText));
+    }
 
-	public String getDisplayText() {
-		return displayText;
-	}
+    public String getDisplayText() {
+        return displayText;
+    }
 }

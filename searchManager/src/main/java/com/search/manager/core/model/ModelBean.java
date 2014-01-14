@@ -11,59 +11,59 @@ import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 public class ModelBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected String comment;
-	protected String createdBy;
-	protected String lastModifiedBy;
-	protected DateTime createdDate;
-	protected DateTime lastModifiedDate;
+    protected String comment;
+    protected String createdBy;
+    protected String lastModifiedBy;
+    protected DateTime createdDate;
+    protected DateTime lastModifiedDate;
 
-	public String getComment() {
-		return comment;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public String getCreatedBy() {
-		return createdBy;
-	}
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
-	public String getLastModifiedBy() {
-		return lastModifiedBy;
-	}
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
 
-	public void setLastModifiedBy(String lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
 
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
-	public DateTime getCreatedDate() {
-		return createdDate;
-	}
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    public DateTime getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setCreatedDate(DateTime createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setCreatedDate(DateTime createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	@XmlJavaTypeAdapter(DateTimeAdapter.class)
-	public DateTime getLastModifiedDate() {
-		return lastModifiedDate;
-	}
+    @XmlJavaTypeAdapter(DateTimeAdapter.class)
+    public DateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 
-	public void setLastModifiedDate(DateTime lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
-	@Override
-	public String toString() {
-		return JsonUtil.toJson(this);
-	}
-	
+    public void setLastModifiedDate(DateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    @Override
+    public String toString() {
+        return JsonUtil.toJson(this);
+    }
+
 }

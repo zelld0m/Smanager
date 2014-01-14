@@ -10,51 +10,50 @@ import org.directwebremoting.convert.BeanConverter;
 @DataTransferObject(converter = BeanConverter.class)
 public class SearchResult<T> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private List<T> result;
-	private int totalCount;
+    private List<T> result;
+    private int totalCount;
 
-	public SearchResult() {
-		this.result = new ArrayList<T>();
-		this.totalCount = -1;
-	}
+    public SearchResult() {
+        this.result = new ArrayList<T>();
+        this.totalCount = -1;
+    }
 
-	public SearchResult(List<T> result, int totalCount) {
-		this.result = result;
-		this.totalCount = totalCount;
-	}
+    public SearchResult(List<T> result, int totalCount) {
+        this.result = result;
+        this.totalCount = totalCount;
+    }
 
-	public List<T> getResult() {
-		return result;
-	}
+    public List<T> getResult() {
+        return result;
+    }
 
-	public void setResult(List<T> result) {
-		this.result = result;
-	}
+    public void setResult(List<T> result) {
+        this.result = result;
+    }
 
-	public int getTotalCount() {
-		return totalCount;
-	}
+    public int getTotalCount() {
+        return totalCount;
+    }
 
-	public void setTotalCount(int totalCount) {
-		this.totalCount = totalCount;
-	}
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
 
-	// for javascript
+    // for javascript
 
-	public List<T> getList() {
-		return result;
-	}
+    public List<T> getList() {
+        return result;
+    }
 
-	public int getTotalSize() {
-		return totalCount;
-	}
+    public int getTotalSize() {
+        return totalCount;
+    }
 
-	@Override
-	public String toString() {
-		return totalCount
-				+ ((totalCount > 0) ? " " + this.result.toString() : "");
-	}
+    @Override
+    public String toString() {
+        return totalCount + ((totalCount > 0) ? " " + this.result.toString() : "");
+    }
 
 }

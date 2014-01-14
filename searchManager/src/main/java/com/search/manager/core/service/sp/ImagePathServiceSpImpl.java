@@ -25,264 +25,248 @@ import com.search.manager.service.UtilityService;
 @Service("imagePathServiceSp")
 public class ImagePathServiceSpImpl implements ImagePathService {
 
-	@Autowired
-	@Qualifier("imagePathDaoSp")
-	private ImagePathDao imagePathDao;
-	@Autowired
-	private UtilityService utilityService;
-	
-	// a setter method so that the Spring container can 'inject'
-	public void setImagePathDao(ImagePathDao imagePathDao) {
-		this.imagePathDao = imagePathDao;
-	}
+    @Autowired
+    @Qualifier("imagePathDaoSp")
+    private ImagePathDao imagePathDao;
+    @Autowired
+    private UtilityService utilityService;
 
-	@Override
-	public ImagePath add(ImagePath model) throws CoreServiceException {
-		try {
-			// Validate required fields.
-			if (!validateRequiredField(model, false)) {
-				throw new CoreServiceException("Required Field Exception.");
-			}
+    // a setter method so that the Spring container can 'inject'
+    public void setImagePathDao(ImagePathDao imagePathDao) {
+        this.imagePathDao = imagePathDao;
+    }
 
-			// Set CreatedBy and CreatedDate
-			if (StringUtils.isBlank(model.getCreatedBy())) {
-				model.setCreatedBy(utilityService.getUsername());
-			}
-			if (model.getCreatedDate() == null) {
-				model.setCreatedDate(new DateTime());
-			}
+    @Override
+    public ImagePath add(ImagePath model) throws CoreServiceException {
+        try {
+            // Validate required fields.
+            if (!validateRequiredField(model, false)) {
+                throw new CoreServiceException("Required Field Exception.");
+            }
 
-			return imagePathDao.add(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+            // Set CreatedBy and CreatedDate
+            if (StringUtils.isBlank(model.getCreatedBy())) {
+                model.setCreatedBy(utilityService.getUsername());
+            }
+            if (model.getCreatedDate() == null) {
+                model.setCreatedDate(new DateTime());
+            }
 
-	@Override
-	public List<ImagePath> add(Collection<ImagePath> models)
-			throws CoreServiceException {
-		try {
-			List<ImagePath> validatedModels = new ArrayList<ImagePath>();
-			for (ImagePath imagePath : models) {
-				if (validateRequiredField(imagePath, false)) {
-					// Set CreatedBy and CreatedDate
-					if (StringUtils.isBlank(imagePath.getCreatedBy())) {
-						imagePath.setCreatedBy(utilityService.getUsername());
-					}
-					if (imagePath.getCreatedDate() == null) {
-						imagePath.setCreatedDate(new DateTime());
-					}
-					validatedModels.add(imagePath);
-				}
-			}
-			return (List<ImagePath>) imagePathDao.add(validatedModels);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+            return imagePathDao.add(model);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-	@Override
-	public ImagePath update(ImagePath model) throws CoreServiceException {
-		try {
-			// Validate required field for update.
-			if (!validateRequiredField(model, true)) {
-				throw new CoreServiceException("Required Field Exception.");
-			}
+    @Override
+    public List<ImagePath> add(Collection<ImagePath> models) throws CoreServiceException {
+        try {
+            List<ImagePath> validatedModels = new ArrayList<ImagePath>();
+            for (ImagePath imagePath : models) {
+                if (validateRequiredField(imagePath, false)) {
+                    // Set CreatedBy and CreatedDate
+                    if (StringUtils.isBlank(imagePath.getCreatedBy())) {
+                        imagePath.setCreatedBy(utilityService.getUsername());
+                    }
+                    if (imagePath.getCreatedDate() == null) {
+                        imagePath.setCreatedDate(new DateTime());
+                    }
+                    validatedModels.add(imagePath);
+                }
+            }
+            return (List<ImagePath>) imagePathDao.add(validatedModels);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-			// Set LastModifiedBy and LastModifiedDate
-			if (StringUtils.isBlank(model.getLastModifiedBy())) {
-				model.setLastModifiedBy(utilityService.getUsername());
-			}
-			if (model.getLastModifiedDate() == null) {
-				model.setLastModifiedDate(new DateTime());
-			}
+    @Override
+    public ImagePath update(ImagePath model) throws CoreServiceException {
+        try {
+            // Validate required field for update.
+            if (!validateRequiredField(model, true)) {
+                throw new CoreServiceException("Required Field Exception.");
+            }
 
-			return imagePathDao.update(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+            // Set LastModifiedBy and LastModifiedDate
+            if (StringUtils.isBlank(model.getLastModifiedBy())) {
+                model.setLastModifiedBy(utilityService.getUsername());
+            }
+            if (model.getLastModifiedDate() == null) {
+                model.setLastModifiedDate(new DateTime());
+            }
 
-	@Override
-	public Collection<ImagePath> update(Collection<ImagePath> models)
-			throws CoreServiceException {
-		try {
-			// Validate required field for update.
-			List<ImagePath> validatedModels = new ArrayList<ImagePath>();
-			for (ImagePath imagePath : models) {
-				if (validateRequiredField(imagePath, true)) {
-					// Set LastModifiedBy and LastModifiedDate
-					if (StringUtils.isBlank(imagePath.getLastModifiedBy())) {
-						imagePath.setLastModifiedBy(utilityService
-								.getUsername());
-					}
-					if (imagePath.getLastModifiedDate() == null) {
-						imagePath.setLastModifiedDate(new DateTime());
-					}
-					validatedModels.add(imagePath);
-				}
-			}
+            return imagePathDao.update(model);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-			return imagePathDao.update(validatedModels);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+    @Override
+    public Collection<ImagePath> update(Collection<ImagePath> models) throws CoreServiceException {
+        try {
+            // Validate required field for update.
+            List<ImagePath> validatedModels = new ArrayList<ImagePath>();
+            for (ImagePath imagePath : models) {
+                if (validateRequiredField(imagePath, true)) {
+                    // Set LastModifiedBy and LastModifiedDate
+                    if (StringUtils.isBlank(imagePath.getLastModifiedBy())) {
+                        imagePath.setLastModifiedBy(utilityService.getUsername());
+                    }
+                    if (imagePath.getLastModifiedDate() == null) {
+                        imagePath.setLastModifiedDate(new DateTime());
+                    }
+                    validatedModels.add(imagePath);
+                }
+            }
 
-	@Override
-	public boolean delete(ImagePath model) throws CoreServiceException {
-		if (model != null) {
-			try {
-				return imagePathDao.delete(model);
-			} catch (CoreDaoException e) {
-				throw new CoreServiceException(e);
-			}
-		}
+            return imagePathDao.update(validatedModels);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-		return false;
-	}
+    @Override
+    public boolean delete(ImagePath model) throws CoreServiceException {
+        if (model != null) {
+            try {
+                return imagePathDao.delete(model);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
 
-	@Override
-	public Map<ImagePath, Boolean> delete(Collection<ImagePath> models)
-			throws CoreServiceException {
-		if (models != null) {
-			try {
-				return imagePathDao.delete(models);
-			} catch (CoreDaoException e) {
-				throw new CoreServiceException(e);
-			}
-		}
-		return null;
-	}
+        return false;
+    }
 
-	@Override
-	public SearchResult<ImagePath> search(Search search)
-			throws CoreServiceException {
-		try {
-			return imagePathDao.search(search);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+    @Override
+    public Map<ImagePath, Boolean> delete(Collection<ImagePath> models) throws CoreServiceException {
+        if (models != null) {
+            try {
+                return imagePathDao.delete(models);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public SearchResult<ImagePath> search(ImagePath model)
-			throws CoreServiceException {
-		if (model != null) {
-			try {
-				return imagePathDao.search(model);
-			} catch (CoreDaoException e) {
-				throw new CoreServiceException(e);
-			}
-		}
-		return null;
-	}
+    @Override
+    public SearchResult<ImagePath> search(Search search) throws CoreServiceException {
+        try {
+            return imagePathDao.search(search);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-	@Override
-	public SearchResult<ImagePath> search(ImagePath model, int pageNumber,
-			int maxRowCount) throws CoreServiceException {
-		if (model != null) {
-			try {
-				return imagePathDao.search(model, pageNumber, maxRowCount);
-			} catch (CoreDaoException e) {
-				throw new CoreServiceException(e);
-			}
-		}
-		return null;
-	}
+    @Override
+    public SearchResult<ImagePath> search(ImagePath model) throws CoreServiceException {
+        if (model != null) {
+            try {
+                return imagePathDao.search(model);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public ImagePath searchById(String storeId, String id)
-			throws CoreServiceException {
+    @Override
+    public SearchResult<ImagePath> search(ImagePath model, int pageNumber, int maxRowCount) throws CoreServiceException {
+        if (model != null) {
+            try {
+                return imagePathDao.search(model, pageNumber, maxRowCount);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
+        return null;
+    }
 
-		if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(id)) {
-			ImagePath imagePath = new ImagePath();
-			imagePath.setStoreId(storeId);
-			imagePath.setId(id);
+    @Override
+    public ImagePath searchById(String storeId, String id) throws CoreServiceException {
 
-			SearchResult<ImagePath> searchResult = search(imagePath, 1, 1);
-			if (searchResult.getTotalCount() > 0) {
-				return (ImagePath) CollectionUtils.get(
-						searchResult.getResult(), 0);
-			}
-		}
+        if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(id)) {
+            ImagePath imagePath = new ImagePath();
+            imagePath.setStoreId(storeId);
+            imagePath.setId(id);
 
-		return null;
-	}
+            SearchResult<ImagePath> searchResult = search(imagePath, 1, 1);
+            if (searchResult.getTotalCount() > 0) {
+                return (ImagePath) CollectionUtils.get(searchResult.getResult(), 0);
+            }
+        }
 
-	// ImagePathService specific method here...
+        return null;
+    }
 
-	@Override
-	public ImagePath transfer(ImagePath imagePath) throws CoreServiceException {
+    // ImagePathService specific method here...
 
-		if (StringUtils.isNotBlank(imagePath.getId())
-				&& StringUtils.isNotBlank(imagePath.getStoreId())
-				&& StringUtils.isNotBlank(imagePath.getCreatedBy())) {
-			try {
-				return imagePathDao.add(imagePath);
-			} catch (CoreDaoException e) {
-				throw new CoreServiceException(e);
-			}
-		}
+    @Override
+    public ImagePath transfer(ImagePath imagePath) throws CoreServiceException {
 
-		return null;
-	}
+        if (StringUtils.isNotBlank(imagePath.getId()) && StringUtils.isNotBlank(imagePath.getStoreId())
+                && StringUtils.isNotBlank(imagePath.getCreatedBy())) {
+            try {
+                return imagePathDao.add(imagePath);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
 
-	@Override
-	public ImagePath addImagePathLink(String imageUrl, String alias,
-			String imageSize) throws CoreServiceException {
-		String storeId = utilityService.getStoreId();
-		String username = utilityService.getUsername();
+        return null;
+    }
 
-		ImagePath imagePath = new ImagePath(storeId, null, imageUrl, imageSize,
-				ImagePathType.IMAGE_LINK, alias, username);
+    @Override
+    public ImagePath addImagePathLink(String imageUrl, String alias, String imageSize) throws CoreServiceException {
+        String storeId = utilityService.getStoreId();
+        String username = utilityService.getUsername();
 
-		return add(imagePath);
-	}
+        ImagePath imagePath = new ImagePath(storeId, null, imageUrl, imageSize, ImagePathType.IMAGE_LINK, alias,
+                username);
 
-	@Override
-	public ImagePath updateImagePathAlias(String imagePathId, String alias)
-			throws CoreServiceException {
-		String storeId = utilityService.getStoreId();
-		String username = utilityService.getUsername();
+        return add(imagePath);
+    }
 
-		ImagePath imagePath = new ImagePath(storeId, imagePathId, null, null,
-				null, alias, null, username);
+    @Override
+    public ImagePath updateImagePathAlias(String imagePathId, String alias) throws CoreServiceException {
+        String storeId = utilityService.getStoreId();
+        String username = utilityService.getUsername();
 
-		return update(imagePath);
-	}
+        ImagePath imagePath = new ImagePath(storeId, imagePathId, null, null, null, alias, null, username);
 
-	@Override
-	public ImagePath getImagePath(String storeId, String imageUrl)
-			throws CoreServiceException {
-		ImagePath imagePath = new ImagePath();
-		imagePath.setStoreId(storeId);
-		imagePath.setPath(imageUrl);
+        return update(imagePath);
+    }
 
-		SearchResult<ImagePath> searchResult = search(imagePath, 1, 1);
-		if (searchResult.getTotalCount() > 0) {
-			return (ImagePath) CollectionUtils.get(searchResult.getResult(), 0);
-		}
+    @Override
+    public ImagePath getImagePath(String storeId, String imageUrl) throws CoreServiceException {
+        ImagePath imagePath = new ImagePath();
+        imagePath.setStoreId(storeId);
+        imagePath.setPath(imageUrl);
 
-		return null;
-	}
+        SearchResult<ImagePath> searchResult = search(imagePath, 1, 1);
+        if (searchResult.getTotalCount() > 0) {
+            return (ImagePath) CollectionUtils.get(searchResult.getResult(), 0);
+        }
 
-	public boolean validateRequiredField(ImagePath imagePath, boolean updateFlag) {
-		boolean valid = true;
+        return null;
+    }
 
-		if (StringUtils.isBlank(imagePath.getPath())
-				|| StringUtils.isBlank(imagePath.getAlias())
-				|| StringUtils.isBlank(imagePath.getStoreId())
-				|| StringUtils.isBlank(imagePath.getSize())
-				|| imagePath.getPathType() == null) {
-			valid = false;
-		}
+    public boolean validateRequiredField(ImagePath imagePath, boolean updateFlag) {
+        boolean valid = true;
 
-		if (updateFlag && StringUtils.isBlank(imagePath.getId())) {
-			valid = false;
-		}
+        if (StringUtils.isBlank(imagePath.getPath()) || StringUtils.isBlank(imagePath.getAlias())
+                || StringUtils.isBlank(imagePath.getStoreId()) || StringUtils.isBlank(imagePath.getSize())
+                || imagePath.getPathType() == null) {
+            valid = false;
+        }
 
-		return valid;
-	}
+        if (updateFlag && StringUtils.isBlank(imagePath.getId())) {
+            valid = false;
+        }
+
+        return valid;
+    }
 
 }

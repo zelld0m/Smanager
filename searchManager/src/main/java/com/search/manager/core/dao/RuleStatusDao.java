@@ -7,9 +7,9 @@ import com.search.manager.core.model.RuleStatus;
 
 public interface RuleStatusDao extends GenericDao<RuleStatus> {
 
-	List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId,
-			String pStatus, String aStatus) throws CoreDaoException;
+    List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus)
+            throws CoreDaoException;
 
-	// Add RuleStatusDao specific method here...
+    // Add RuleStatusDao specific method here...
 
 }

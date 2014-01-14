@@ -10,5 +10,5 @@ import com.search.manager.model.constants.AuditTrailConstants.Entity;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Auditable {
-	Entity entity();
+    Entity entity();
 }

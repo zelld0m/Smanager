@@ -39,390 +39,351 @@ import com.search.manager.service.UtilityService;
 @Service("bannerRuleServiceSp")
 public class BannerRuleServiceSpImpl implements BannerRuleService {
 
-	@Autowired
-	@Qualifier("bannerRuleDaoSp")
-	private BannerRuleDao bannerRuleDao;
-	@Autowired
-	@Qualifier("bannerRuleItemServiceSp")
-	private BannerRuleItemService bannerRuleItemService;
-	@Autowired
-	@Qualifier("ruleStatusServiceSp")
-	private RuleStatusService ruleStatusService;
-	@Autowired
-	private UtilityService utilityService;
-	@Autowired
-	private JodaDateTimeUtil jodaDateTimeUtil;
-	
-	// a setter method so that the Spring container can 'inject'
-	public void setBannerRuleDao(BannerRuleDao bannerRuleDao) {
-		this.bannerRuleDao = bannerRuleDao;
-	}
+    @Autowired
+    @Qualifier("bannerRuleDaoSp")
+    private BannerRuleDao bannerRuleDao;
+    @Autowired
+    @Qualifier("bannerRuleItemServiceSp")
+    private BannerRuleItemService bannerRuleItemService;
+    @Autowired
+    @Qualifier("ruleStatusServiceSp")
+    private RuleStatusService ruleStatusService;
+    @Autowired
+    private UtilityService utilityService;
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
 
-	public void setBannerRuleItemService(
-			BannerRuleItemService bannerRuleItemService) {
-		this.bannerRuleItemService = bannerRuleItemService;
-	}
+    // a setter method so that the Spring container can 'inject'
+    public void setBannerRuleDao(BannerRuleDao bannerRuleDao) {
+        this.bannerRuleDao = bannerRuleDao;
+    }
 
-	public void setRuleStatusService(RuleStatusService ruleStatusService) {
-		this.ruleStatusService = ruleStatusService;
-	}
+    public void setBannerRuleItemService(BannerRuleItemService bannerRuleItemService) {
+        this.bannerRuleItemService = bannerRuleItemService;
+    }
 
-	@Override
-	public BannerRule add(BannerRule model) throws CoreServiceException {
-		try {
-			// TODO validation here...
-			// TODO add spring transaction...
-			// Validate required fields.
+    public void setRuleStatusService(RuleStatusService ruleStatusService) {
+        this.ruleStatusService = ruleStatusService;
+    }
 
-			// Set CreatedBy and CreatedDate
-			DateTime createdDate = new DateTime();
-			if (StringUtils.isBlank(model.getCreatedBy())) {
-				model.setCreatedBy(utilityService.getUsername());
-			}
-			if (model.getCreatedDate() == null) {
-				model.setCreatedDate(createdDate);
-			}
+    @Override
+    public BannerRule add(BannerRule model) throws CoreServiceException {
+        try {
+            // TODO validation here...
+            // TODO add spring transaction...
+            // Validate required fields.
 
-			model = bannerRuleDao.add(model);
+            // Set CreatedBy and CreatedDate
+            DateTime createdDate = new DateTime();
+            if (StringUtils.isBlank(model.getCreatedBy())) {
+                model.setCreatedBy(utilityService.getUsername());
+            }
+            if (model.getCreatedDate() == null) {
+                model.setCreatedDate(createdDate);
+            }
 
-			if (model != null) {
-				// Add rule status
-				RuleStatus ruleStatus = new RuleStatus(RuleEntity.BANNER,
-						utilityService.getStoreId(), model.getRuleId(),
-						model.getRuleName(), utilityService.getUsername(),
-						utilityService.getUsername(), RuleStatusEntity.ADD,
-						RuleStatusEntity.UNPUBLISHED);
-				ruleStatus.setCreatedBy(utilityService.getUsername());
-				ruleStatus.setCreatedDate(createdDate);
-				ruleStatusService.add(ruleStatus);
-			}
+            model = bannerRuleDao.add(model);
 
-			return model;
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+            if (model != null) {
+                // Add rule status
+                RuleStatus ruleStatus = new RuleStatus(RuleEntity.BANNER, utilityService.getStoreId(),
+                        model.getRuleId(), model.getRuleName(), utilityService.getUsername(),
+                        utilityService.getUsername(), RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED);
+                ruleStatus.setCreatedBy(utilityService.getUsername());
+                ruleStatus.setCreatedDate(createdDate);
+                ruleStatusService.add(ruleStatus);
+            }
 
-	@Override
-	public List<BannerRule> add(Collection<BannerRule> models)
-			throws CoreServiceException {
-		// TODO Auto-generated method stub
-		try {
-			return (List<BannerRule>) bannerRuleDao.add(models);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+            return model;
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-	@Override
-	public BannerRule update(BannerRule model) throws CoreServiceException {
-		try {
-			// TODO validation here...
+    @Override
+    public List<BannerRule> add(Collection<BannerRule> models) throws CoreServiceException {
+        // TODO Auto-generated method stub
+        try {
+            return (List<BannerRule>) bannerRuleDao.add(models);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-			// Validate required field for update.
+    @Override
+    public BannerRule update(BannerRule model) throws CoreServiceException {
+        try {
+            // TODO validation here...
 
-			// Set LastModifiedBy and LastModifiedDate
-			if (StringUtils.isBlank(model.getLastModifiedBy())) {
-				model.setLastModifiedBy(utilityService.getUsername());
-			}
-			if (model.getLastModifiedDate() == null) {
-				model.setLastModifiedDate(new DateTime());
-			}
+            // Validate required field for update.
 
-			return bannerRuleDao.update(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+            // Set LastModifiedBy and LastModifiedDate
+            if (StringUtils.isBlank(model.getLastModifiedBy())) {
+                model.setLastModifiedBy(utilityService.getUsername());
+            }
+            if (model.getLastModifiedDate() == null) {
+                model.setLastModifiedDate(new DateTime());
+            }
 
-	@Override
-	public List<BannerRule> update(Collection<BannerRule> models)
-			throws CoreServiceException {
-		try {
-			return (List<BannerRule>) bannerRuleDao.update(models);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+            return bannerRuleDao.update(model);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-	@Override
-	public boolean delete(BannerRule model) throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return bannerRuleDao.delete(model);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+    @Override
+    public List<BannerRule> update(Collection<BannerRule> models) throws CoreServiceException {
+        try {
+            return (List<BannerRule>) bannerRuleDao.update(models);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-	@Override
-	public Map<BannerRule, Boolean> delete(Collection<BannerRule> models)
-			throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return bannerRuleDao.delete(models);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+    @Override
+    public boolean delete(BannerRule model) throws CoreServiceException {
+        try {
+            // TODO validation here...
+            return bannerRuleDao.delete(model);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-	@Override
-	public SearchResult<BannerRule> search(Search search)
-			throws CoreServiceException {
-		try {
-			// TODO validation here...
-			return bannerRuleDao.search(search);
-		} catch (CoreDaoException e) {
-			throw new CoreServiceException(e);
-		}
-	}
+    @Override
+    public Map<BannerRule, Boolean> delete(Collection<BannerRule> models) throws CoreServiceException {
+        try {
+            // TODO validation here...
+            return bannerRuleDao.delete(models);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-	@Override
-	public SearchResult<BannerRule> search(BannerRule model)
-			throws CoreServiceException {
-		if (model != null) {
-			try {
-				return bannerRuleDao.search(model);
-			} catch (CoreDaoException e) {
-				throw new CoreServiceException(e);
-			}
-		}
-		return null;
-	}
+    @Override
+    public SearchResult<BannerRule> search(Search search) throws CoreServiceException {
+        try {
+            // TODO validation here...
+            return bannerRuleDao.search(search);
+        } catch (CoreDaoException e) {
+            throw new CoreServiceException(e);
+        }
+    }
 
-	@Override
-	public SearchResult<BannerRule> search(BannerRule model, int pageNumber,
-			int maxRowCount) throws CoreServiceException {
-		if (model != null) {
-			try {
-				return bannerRuleDao.search(model, pageNumber, maxRowCount);
-			} catch (CoreDaoException e) {
-				throw new CoreServiceException(e);
-			}
-		}
-		return null;
-	}
+    @Override
+    public SearchResult<BannerRule> search(BannerRule model) throws CoreServiceException {
+        if (model != null) {
+            try {
+                return bannerRuleDao.search(model);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public BannerRule searchById(String storeId, String id)
-			throws CoreServiceException {
+    @Override
+    public SearchResult<BannerRule> search(BannerRule model, int pageNumber, int maxRowCount)
+            throws CoreServiceException {
+        if (model != null) {
+            try {
+                return bannerRuleDao.search(model, pageNumber, maxRowCount);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
+        return null;
+    }
 
-		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(id)) {
-			return null;
-		}
+    @Override
+    public BannerRule searchById(String storeId, String id) throws CoreServiceException {
 
-		Search search = new Search(BannerRule.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, id));
-		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
-				MatchType.MATCH_ID.getIntValue()));
-		search.setPageNumber(1);
-		search.setMaxRowCount(1);
+        if (StringUtils.isBlank(storeId) || StringUtils.isBlank(id)) {
+            return null;
+        }
 
-		SearchResult<BannerRule> searchResult = search(search);
+        Search search = new Search(BannerRule.class);
+        search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+        search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, id));
+        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue()));
+        search.setPageNumber(1);
+        search.setMaxRowCount(1);
 
-		if (searchResult.getTotalCount() > 0) {
-			return (BannerRule) CollectionUtils
-					.get(searchResult.getResult(), 0);
-		}
+        SearchResult<BannerRule> searchResult = search(search);
 
-		return null;
-	}
+        if (searchResult.getTotalCount() > 0) {
+            return (BannerRule) CollectionUtils.get(searchResult.getResult(), 0);
+        }
 
-	// BannerRuleService specific method here...
+        return null;
+    }
 
-	@Override
-	public BannerRule transfer(BannerRule bannerRule)
-			throws CoreServiceException {
+    // BannerRuleService specific method here...
 
-		// Validate required fields for transfer method.
-		if (StringUtils.isNotBlank(bannerRule.getStoreId())
-				&& StringUtils.isNotBlank(bannerRule.getRuleId())
-				&& StringUtils.isNotBlank(bannerRule.getRuleName())
-				&& StringUtils.isNotBlank(bannerRule.getCreatedBy())) {
-			try {
-				return bannerRuleDao.add(bannerRule);
-			} catch (CoreDaoException e) {
-				throw new CoreServiceException(e);
-			}
-		}
+    @Override
+    public BannerRule transfer(BannerRule bannerRule) throws CoreServiceException {
 
-		return null;
-	}
+        // Validate required fields for transfer method.
+        if (StringUtils.isNotBlank(bannerRule.getStoreId()) && StringUtils.isNotBlank(bannerRule.getRuleId())
+                && StringUtils.isNotBlank(bannerRule.getRuleName())
+                && StringUtils.isNotBlank(bannerRule.getCreatedBy())) {
+            try {
+                return bannerRuleDao.add(bannerRule);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
 
-	@Override
-	public BannerRule addRule(String ruleName) throws CoreServiceException {
-		BannerRule bannerRule = new BannerRule(utilityService.getStoreId(),
-				ruleName, utilityService.getUsername());
+        return null;
+    }
 
-		return add(bannerRule);
-	}
+    @Override
+    public BannerRule addRule(String ruleName) throws CoreServiceException {
+        BannerRule bannerRule = new BannerRule(utilityService.getStoreId(), ruleName, utilityService.getUsername());
 
-	@Override
-	public SearchResult<BannerRule> getAllRules(String storeId,
-			String searchText, int page, int pageSize)
-			throws CoreServiceException {
-		Search search = new Search(BannerRule.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_SEARCH_TEXT, searchText));
-		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
-				MatchType.LIKE_NAME.getIntValue()));
-		search.setPageNumber(page);
-		search.setMaxRowCount(pageSize);
+        return add(bannerRule);
+    }
 
-		return search(search);
-	}
+    @Override
+    public SearchResult<BannerRule> getAllRules(String storeId, String searchText, int page, int pageSize)
+            throws CoreServiceException {
+        Search search = new Search(BannerRule.class);
+        search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+        search.addFilter(new Filter(DAOConstants.PARAM_SEARCH_TEXT, searchText));
+        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.LIKE_NAME.getIntValue()));
+        search.setPageNumber(page);
+        search.setMaxRowCount(pageSize);
 
-	@Override
-	public SearchResult<BannerRule> getRulesByImageId(String storeId,
-			String imagePathId, String imageAlias, int page, int pageSize)
-			throws CoreServiceException {
-		Search search = new Search(BannerRule.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID,
-				imagePathId));
-		search.setPageNumber(page);
-		search.setMaxRowCount(pageSize);
+        return search(search);
+    }
 
-		return search(search);
-	}
+    @Override
+    public SearchResult<BannerRule> getRulesByImageId(String storeId, String imagePathId, String imageAlias, int page,
+            int pageSize) throws CoreServiceException {
+        Search search = new Search(BannerRule.class);
+        search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+        search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId));
+        search.setPageNumber(page);
+        search.setMaxRowCount(pageSize);
 
-	@Override
-	public BannerRule getRuleByName(String storeId, String ruleName)
-			throws CoreServiceException {
-		Search search = new Search(BannerRule.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_SEARCH_TEXT, ruleName));
-		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
-				MatchType.LIKE_NAME.getIntValue()));
-		search.setPageNumber(1);
-		search.setMaxRowCount(1);
-		SearchResult<BannerRule> searchResult = search(search);
-		if (searchResult.getTotalCount() > 0) {
-			return (BannerRule) CollectionUtils
-					.get(searchResult.getResult(), 0);
-		}
-		return null;
-	}
+        return search(search);
+    }
 
-	@Override
-	public BannerRule getRuleById(String storeId, String ruleId)
-			throws CoreServiceException {
-		Search search = new Search(BannerRule.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
-		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE,
-				MatchType.MATCH_ID.getIntValue()));
-		search.setPageNumber(1);
-		search.setMaxRowCount(1);
-		SearchResult<BannerRule> searchResult = search(search);
-		if (searchResult.getTotalCount() > 0) {
-			return (BannerRule) CollectionUtils
-					.get(searchResult.getResult(), 0);
-		}
+    @Override
+    public BannerRule getRuleByName(String storeId, String ruleName) throws CoreServiceException {
+        Search search = new Search(BannerRule.class);
+        search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+        search.addFilter(new Filter(DAOConstants.PARAM_SEARCH_TEXT, ruleName));
+        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.LIKE_NAME.getIntValue()));
+        search.setPageNumber(1);
+        search.setMaxRowCount(1);
+        SearchResult<BannerRule> searchResult = search(search);
+        if (searchResult.getTotalCount() > 0) {
+            return (BannerRule) CollectionUtils.get(searchResult.getResult(), 0);
+        }
+        return null;
+    }
 
-		return null;
-	}
+    @Override
+    public BannerRule getRuleById(String storeId, String ruleId) throws CoreServiceException {
+        Search search = new Search(BannerRule.class);
+        search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+        search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
+        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue()));
+        search.setPageNumber(1);
+        search.setMaxRowCount(1);
+        SearchResult<BannerRule> searchResult = search(search);
+        if (searchResult.getTotalCount() > 0) {
+            return (BannerRule) CollectionUtils.get(searchResult.getResult(), 0);
+        }
 
-	@Override
-	public Integer getTotalRulesByImageId(String storeId, String imagePathId,
-			String imageAlias) throws CoreServiceException {
-		Search search = new Search(BannerRule.class);
-		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-		search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID,
-				imagePathId));
-		SearchResult<BannerRule> searchResult = search(search);
+        return null;
+    }
 
-		return searchResult.getTotalCount();
-	}
+    @Override
+    public Integer getTotalRulesByImageId(String storeId, String imagePathId, String imageAlias)
+            throws CoreServiceException {
+        Search search = new Search(BannerRule.class);
+        search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+        search.addFilter(new Filter(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId));
+        SearchResult<BannerRule> searchResult = search(search);
 
-	@Override
-	public List<String> copyToRule(String storeId, String[] keywords,
-			Map<String, String> params) throws CoreServiceException {
-		List<String> copiedToKeywordList = new ArrayList<String>();
+        return searchResult.getTotalCount();
+    }
 
-		for (String ruleName : keywords) {
-			try {
-				addRule(ruleName);
-			} catch (CoreServiceException e) {
-				// attempt to add..
-			}
-			BannerRule bannerRule = getRuleByName(storeId, ruleName);
-			if (bannerRule != null) {
-				RuleStatus ruleStatus = ruleStatusService.getRuleStatus(
-						RuleEntity.getValue(RuleEntity.BANNER.getCode()),
-						bannerRule.getRuleId());
+    @Override
+    public List<String> copyToRule(String storeId, String[] keywords, Map<String, String> params)
+            throws CoreServiceException {
+        List<String> copiedToKeywordList = new ArrayList<String>();
 
-				if (ruleStatus != null && !ruleStatus.isLocked()) {
-					params.put("ruleId", bannerRule.getRuleId());
-					params.put("ruleName", bannerRule.getRuleName());
+        for (String ruleName : keywords) {
+            try {
+                addRule(ruleName);
+            } catch (CoreServiceException e) {
+                // attempt to add..
+            }
+            BannerRule bannerRule = getRuleByName(storeId, ruleName);
+            if (bannerRule != null) {
+                RuleStatus ruleStatus = ruleStatusService.getRuleStatus(
+                        RuleEntity.getValue(RuleEntity.BANNER.getCode()), bannerRule.getRuleId());
 
-					BannerRuleItem bannerRuleItem = bannerRuleItemService
-							.addRuleItem(storeId, params);
-					if (bannerRuleItem != null) {
-						copiedToKeywordList.add(ruleName);
-					}
-				}
-			}
-		}
+                if (ruleStatus != null && !ruleStatus.isLocked()) {
+                    params.put("ruleId", bannerRule.getRuleId());
+                    params.put("ruleName", bannerRule.getRuleName());
 
-		return copiedToKeywordList;
-	}
+                    BannerRuleItem bannerRuleItem = bannerRuleItemService.addRuleItem(storeId, params);
+                    if (bannerRuleItem != null) {
+                        copiedToKeywordList.add(ruleName);
+                    }
+                }
+            }
+        }
 
-	// Banner statistic
+        return copiedToKeywordList;
+    }
 
-	@Override
-	public RecordSet<BannerStatistics> getBannerStats(String storeId,
-			String keyword, String memberId, String startDateText,
-			String endDateText, boolean aggregate) throws CoreServiceException {
-		RecordSet<BannerStatistics> rs = null;
+    // Banner statistic
 
-		DateTime startDateTime = jodaDateTimeUtil.toDateTimeFromStorePattern(
-				storeId, startDateText, JodaPatternType.DATE);
-		DateTime endDateTime = jodaDateTimeUtil.toDateTimeFromStorePattern(
-				storeId, endDateText, JodaPatternType.DATE);
+    @Override
+    public RecordSet<BannerStatistics> getBannerStats(String storeId, String keyword, String memberId,
+            String startDateText, String endDateText, boolean aggregate) throws CoreServiceException {
+        RecordSet<BannerStatistics> rs = null;
 
-		if (startDateTime == null && endDateTime == null) {
-			endDateTime = startDateTime = DateTime.now();
-		}
+        DateTime startDateTime = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDateText,
+                JodaPatternType.DATE);
+        DateTime endDateTime = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDateText, JodaPatternType.DATE);
 
-		List<BannerStatistics> list = new ArrayList<BannerStatistics>();
+        if (startDateTime == null && endDateTime == null) {
+            endDateTime = startDateTime = DateTime.now();
+        }
 
-		try {
-			list = StringUtils.isNotBlank(keyword) ? BannerStatisticsUtil
-					.getStatsPerBannerByKeyword(storeId, keyword,
-							startDateTime.toDate(), endDateTime.toDate(),
-							aggregate) : BannerStatisticsUtil
-					.getStatsPerKeywordByMemberId(storeId, memberId,
-							startDateTime.toDate(), endDateTime.toDate());
+        List<BannerStatistics> list = new ArrayList<BannerStatistics>();
 
-			rs = new RecordSet<BannerStatistics>(list,
-					(Integer) CollectionUtils.size(list));
-		} catch (FileNotFoundException e) {
-			throw new CoreServiceException(
-					"File not found for getStatsPerKeyword", e);
-		} catch (Exception e) {
-			throw new CoreServiceException("Exception for getStatsPerKeyword",
-					e);
-		}
+        try {
+            list = StringUtils.isNotBlank(keyword) ? BannerStatisticsUtil.getStatsPerBannerByKeyword(storeId, keyword,
+                    startDateTime.toDate(), endDateTime.toDate(), aggregate) : BannerStatisticsUtil
+                    .getStatsPerKeywordByMemberId(storeId, memberId, startDateTime.toDate(), endDateTime.toDate());
 
-		return rs;
-	}
+            rs = new RecordSet<BannerStatistics>(list, (Integer) CollectionUtils.size(list));
+        } catch (FileNotFoundException e) {
+            throw new CoreServiceException("File not found for getStatsPerKeyword", e);
+        } catch (Exception e) {
+            throw new CoreServiceException("Exception for getStatsPerKeyword", e);
+        }
 
-	@Override
-	public RecordSet<BannerStatistics> getStatsByKeyword(String storeId,
-			String keyword, String startDateText, String endDateText,
-			boolean aggregate) throws CoreServiceException {
-		return getBannerStats(storeId, keyword, null, startDateText,
-				endDateText, aggregate);
-	}
+        return rs;
+    }
 
-	@Override
-	public RecordSet<BannerStatistics> getStatsByMemberId(String storeId,
-			String memberId, String startDateText, String endDateText)
-			throws CoreServiceException {
-		return getBannerStats(storeId, null, memberId, startDateText,
-				endDateText, false);
-	}
+    @Override
+    public RecordSet<BannerStatistics> getStatsByKeyword(String storeId, String keyword, String startDateText,
+            String endDateText, boolean aggregate) throws CoreServiceException {
+        return getBannerStats(storeId, keyword, null, startDateText, endDateText, aggregate);
+    }
+
+    @Override
+    public RecordSet<BannerStatistics> getStatsByMemberId(String storeId, String memberId, String startDateText,
+            String endDateText) throws CoreServiceException {
+        return getBannerStats(storeId, null, memberId, startDateText, endDateText, false);
+    }
 
 }

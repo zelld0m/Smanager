@@ -10,5 +10,5 @@ import com.search.manager.model.constants.AuditTrailConstants.Operation;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AuditableMethod {
-	Operation operation();
+    Operation operation();
 }

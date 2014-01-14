@@ -12,31 +12,25 @@ import com.search.manager.enums.RuleStatusEntity;
 
 public interface RuleStatusService extends GenericService<RuleStatus> {
 
-	List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId,
-			String pStatus, String aStatus) throws CoreServiceException;
+    List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus)
+            throws CoreServiceException;
 
-	Map<String, Boolean> updateRuleStatus(RuleStatusEntity status,
-			List<RuleStatus> ruleStatusList, String requestBy,
-			DateTime requestDateTime) throws CoreServiceException;
+    Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy,
+            DateTime requestDateTime) throws CoreServiceException;
 
-	RuleStatus updateRuleStatusExportInfo(RuleStatus ruleStatus,
-			String exportBy, ExportType exportType, DateTime exportDateTime)
-			throws CoreServiceException;
+    RuleStatus updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType,
+            DateTime exportDateTime) throws CoreServiceException;
 
-	RuleStatus updateRuleStatusPublishInfo(RuleStatus ruleStatus,
-			RuleStatusEntity requestedPublishStatus, String requestBy,
-			DateTime requestDateTime) throws CoreServiceException;
+    RuleStatus updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus,
+            String requestBy, DateTime requestDateTime) throws CoreServiceException;
 
-	RuleStatus updateRuleStatusApprovalInfo(RuleStatus ruleStatus,
-			RuleStatusEntity requestedApprovalStatus, String requestBy,
-			DateTime requestDateTime) throws CoreServiceException;
+    RuleStatus updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,
+            String requestBy, DateTime requestDateTime) throws CoreServiceException;
 
-	boolean updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy)
-			throws CoreServiceException;
+    boolean updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws CoreServiceException;
 
-	RuleStatus getRuleStatus(String ruleType, String ruleRefId)
-			throws CoreServiceException;
+    RuleStatus getRuleStatus(String ruleType, String ruleRefId) throws CoreServiceException;
 
-	// Add RuleStatusService specific method here...
+    // Add RuleStatusService specific method here...
 
 }

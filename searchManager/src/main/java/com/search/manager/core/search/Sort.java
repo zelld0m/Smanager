@@ -2,83 +2,83 @@ package com.search.manager.core.search;
 
 public class Sort {
 
-	protected String property;
-	protected boolean desc = false;
-	protected boolean ignoreCase = false;
+    protected String property;
+    protected boolean desc = false;
+    protected boolean ignoreCase = false;
 
-	@SuppressWarnings("unused")
-	private Sort() {
-		// do nothing...
-	}
+    @SuppressWarnings("unused")
+    private Sort() {
+        // do nothing...
+    }
 
-	public Sort(String property, boolean desc, boolean ignoreCase) {
-		this.property = property;
-		this.desc = desc;
-		this.ignoreCase = ignoreCase;
-	}
+    public Sort(String property, boolean desc, boolean ignoreCase) {
+        this.property = property;
+        this.desc = desc;
+        this.ignoreCase = ignoreCase;
+    }
 
-	public Sort(String property, boolean desc) {
-		this.property = property;
-		this.desc = desc;
-	}
+    public Sort(String property, boolean desc) {
+        this.property = property;
+        this.desc = desc;
+    }
 
-	public Sort(String property) {
-		this.property = property;
-	}
+    public Sort(String property) {
+        this.property = property;
+    }
 
-	public static Sort asc(String property) {
-		return new Sort(property);
-	}
+    public static Sort asc(String property) {
+        return new Sort(property);
+    }
 
-	public static Sort asc(String property, boolean ignoreCase) {
-		return new Sort(property, ignoreCase);
-	}
+    public static Sort asc(String property, boolean ignoreCase) {
+        return new Sort(property, ignoreCase);
+    }
 
-	public static Sort desc(String property) {
-		return new Sort(property, true);
-	}
+    public static Sort desc(String property) {
+        return new Sort(property, true);
+    }
 
-	public static Sort desc(String property, boolean ignoreCase) {
-		return new Sort(property, true, ignoreCase);
-	}
+    public static Sort desc(String property, boolean ignoreCase) {
+        return new Sort(property, true, ignoreCase);
+    }
 
-	public String getProperty() {
-		return property;
-	}
+    public String getProperty() {
+        return property;
+    }
 
-	public void setProperty(String property) {
-		this.property = property;
-	}
+    public void setProperty(String property) {
+        this.property = property;
+    }
 
-	public boolean isDesc() {
-		return desc;
-	}
+    public boolean isDesc() {
+        return desc;
+    }
 
-	public void setDesc(boolean desc) {
-		this.desc = desc;
-	}
+    public void setDesc(boolean desc) {
+        this.desc = desc;
+    }
 
-	public boolean isIgnoreCase() {
-		return ignoreCase;
-	}
+    public boolean isIgnoreCase() {
+        return ignoreCase;
+    }
 
-	public void setIgnoreCase(boolean ignoreCase) {
-		this.ignoreCase = ignoreCase;
-	}
+    public void setIgnoreCase(boolean ignoreCase) {
+        this.ignoreCase = ignoreCase;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		if (property == null) {
-			sb.append("null");
-		} else {
-			sb.append("`");
-			sb.append(property);
-			sb.append("`");
-		}
-		sb.append(desc ? " desc" : " asc");
+        if (property == null) {
+            sb.append("null");
+        } else {
+            sb.append("`");
+            sb.append(property);
+            sb.append("`");
+        }
+        sb.append(desc ? " desc" : " asc");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

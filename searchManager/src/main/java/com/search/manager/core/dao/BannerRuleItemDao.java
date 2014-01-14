@@ -4,6 +4,6 @@ import com.search.manager.core.model.BannerRuleItem;
 
 public interface BannerRuleItemDao extends GenericDao<BannerRuleItem> {
 
-	// Add BannerRuleItemDao specific method here...
-	
+    // Add BannerRuleItemDao specific method here...
+
 }

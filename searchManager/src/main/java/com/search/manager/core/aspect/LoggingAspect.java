@@ -13,44 +13,43 @@ import org.springframework.stereotype.Component;
 @Component("loggingAspect")
 public class LoggingAspect {
 
-	private Logger getLogger(JoinPoint jp) {
-		return LoggerFactory.getLogger(jp.getTarget().getClass());
-	}
-	
-	@Before("Pointcuts.allCoreMethods()")
-	public void logBefore(JoinPoint joinPoint) {
-		Logger logger = this.getLogger(joinPoint);
-		String className = joinPoint.getTarget().getClass().getSimpleName();
-		String methodName = joinPoint.getSignature().getName();
+    private Logger getLogger(JoinPoint jp) {
+        return LoggerFactory.getLogger(jp.getTarget().getClass());
+    }
 
-		logger.info("BEGIN: " + className + "." + methodName + "()");
-	}
+    @Before("Pointcuts.allCoreMethods()")
+    public void logBefore(JoinPoint joinPoint) {
+        Logger logger = this.getLogger(joinPoint);
+        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String methodName = joinPoint.getSignature().getName();
 
-	@AfterReturning(pointcut = "Pointcuts.allCoreMethods()", returning = "result")
-	public void logAfterReturning(JoinPoint joinPoint, Object result) {
-		Logger logger = this.getLogger(joinPoint);
-		String className = joinPoint.getTarget().getClass().getSimpleName();
-		String methodName = joinPoint.getSignature().getName();
+        logger.info("BEGIN: " + className + "." + methodName + "()");
+    }
 
-		if (result != null) {
-			logger.info("RESULT: " + result.getClass().getSimpleName() + " = "
-					+ result);
-		} else {
-			logger.info("RESULT: " + "NULL");
-		}
+    @AfterReturning(pointcut = "Pointcuts.allCoreMethods()", returning = "result")
+    public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        Logger logger = this.getLogger(joinPoint);
+        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String methodName = joinPoint.getSignature().getName();
 
-		logger.info("END: " + className + "." + methodName + "()");
-	}
+        if (result != null) {
+            logger.info("RESULT: " + result.getClass().getSimpleName() + " = " + result);
+        } else {
+            logger.info("RESULT: " + "NULL");
+        }
 
-	@AfterThrowing(pointcut = "Pointcuts.allCoreMethods()", throwing = "e")
-	public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-		Logger logger = this.getLogger(joinPoint);
-		String className = joinPoint.getTarget().getClass().getName();
-		String methodName = joinPoint.getSignature().getName();
+        logger.info("END: " + className + "." + methodName + "()");
+    }
 
-		if (e != null) {
-			logger.error("ERROR:" + className + "." + methodName + "():", e);
-		}
-	}
-	
+    @AfterThrowing(pointcut = "Pointcuts.allCoreMethods()", throwing = "e")
+    public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
+        Logger logger = this.getLogger(joinPoint);
+        String className = joinPoint.getTarget().getClass().getName();
+        String methodName = joinPoint.getSignature().getName();
+
+        if (e != null) {
+            logger.error("ERROR:" + className + "." + methodName + "():", e);
+        }
+    }
+
 }
