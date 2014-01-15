@@ -3,6 +3,7 @@ package com.search.ws;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -123,12 +124,24 @@ public class ConfigManagerTest {
 
     @Test
     public void testGetStoreNames() {
-        assertEquals(Arrays.asList("PCM", "MacMall", "PCMall BD", "PCMG BD", "MacMall BD", "eCOST"), configManager.getStoreNames());
+        assertEquals(Arrays.asList("PCM", "MacMall", "PCM BD", "PCMG", "MacMall BD", "eCOST"), configManager.getStoreNames());
+    }
+    
+    @Test
+    public void testGetAllStoreDisplayName() {
+        Map<String,String> storesDisplayName = new HashMap<String, String>();
+        storesDisplayName.put("pcmall", "PCM");
+        storesDisplayName.put("pcmallcap", "PCM BD");
+        storesDisplayName.put("pcmallgov", "PCMG");
+        storesDisplayName.put("macmall", "MacMall");
+        storesDisplayName.put("macmallbd", "MacMall BD");
+        storesDisplayName.put("ecost", "eCOST");
+        assertEquals(storesDisplayName, configManager.getAllStoresDisplayName());
     }
 
     @Test
     public void testGetStoreParameter() {
-        assertEquals("MM/dd/yyyy hh:mm aa", configManager.getStoreParameter("pcmall",
+        assertEquals("MM/dd/yyyy HH:mm aa", configManager.getStoreParameter("pcmall",
                 "datetime-format"));
     }
 

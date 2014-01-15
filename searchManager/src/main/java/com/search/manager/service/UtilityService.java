@@ -250,7 +250,7 @@ public class UtilityService {
 		json.put("searchWithinTypes", configManager.getPropertyList("searchwithin", storeId, "searchwithin.type"));
 		json.put("searchWithinParamName", configManager.getProperty("searchwithin", storeId, "searchwithin.paramname"));
 		json.put("isTargetStore", configManager.getProperty("workflow", storeId, "targetStore"));
-
+		json.put("allStoresDisplayName", configManager.getAllStoresDisplayName());
 
 		return json.toString();
 	}

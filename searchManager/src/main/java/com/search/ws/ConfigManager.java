@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -162,6 +161,17 @@ public class ConfigManager {
 	public List<String> getStoreNames() {
 		return Arrays.asList(solrXMLConfig.getStringArray("/store/@name"));
 	}
+	
+	public Map<String, String> getAllStoresDisplayName() {
+	    Map<String, String> storeNames = new HashMap<String, String>();
+	    List<String> storeIds = getStoreIds();
+	  
+	    for(String storeId: storeIds){
+	        storeNames.put(storeId, solrXMLConfig.getString(String.format("/store[@id='%s']/@name",storeId)));
+	    }
+	    
+	    return storeNames; 
+    }
 
 	public List<String> getCoreNames() {
 		return getStoreAttributes("core", true);
