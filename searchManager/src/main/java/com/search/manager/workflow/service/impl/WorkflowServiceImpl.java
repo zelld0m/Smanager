@@ -42,6 +42,7 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.service.rules.FacetSortService;
 import com.search.manager.workflow.model.ImportRuleTask;
+import com.search.manager.workflow.model.TaskStatus;
 import com.search.manager.workflow.service.ExportRuleMapService;
 import com.search.manager.workflow.service.ImportRuleTaskService;
 import com.search.manager.workflow.service.RuleStatusService;
@@ -165,6 +166,19 @@ public class WorkflowServiceImpl implements WorkflowService{
 
 	private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
 		ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, utilityService.getStoreId(), importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
+		
+		List<ImportRuleTask> list = importRuleTaskService.getImportRuleTasks(new SearchCriteria<ImportRuleTask>(importRuleTask)).getList();
+		
+		if(list != null) {
+			for(ImportRuleTask item : list) {
+				TaskStatus status = item.getTaskExecutionResult().getTaskStatus();
+				if(!TaskStatus.COMPLETED.equals(status) && !TaskStatus.IN_PROCESS.equals(status)) {
+					item.getTaskExecutionResult().setTaskStatus(TaskStatus.CANCELED);
+					importRuleTaskService.update(item);
+				}
+			}
+		}
+		
 		importRuleTask.setCreatedBy(userName);
 		importRuleTask.setCreatedDate(new DateTime());
 		importRuleTaskService.addImportRuleTask(importRuleTask);
