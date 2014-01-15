@@ -18,6 +18,7 @@ import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.core.dao.RuleStatusDao;
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.search.Filter;
@@ -63,6 +64,7 @@ public class RuleStatusDaoSpImpl extends GenericDaoSpImpl<RuleStatus> implements
         @Override
         protected void declareParameters() {
             declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_SOURCE, Types.INTEGER));
             declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_STATUS, Types.VARCHAR));
@@ -83,6 +85,7 @@ public class RuleStatusDaoSpImpl extends GenericDaoSpImpl<RuleStatus> implements
         @Override
         protected void declareParameters() {
             declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
+            declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_SOURCE, Types.INTEGER));
             declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_STATUS, Types.VARCHAR));
@@ -150,6 +153,7 @@ public class RuleStatusDaoSpImpl extends GenericDaoSpImpl<RuleStatus> implements
                     }
                     return new RuleStatus(rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID),
                             rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID),
+                            RuleSource.values()[rs.getInt(DAOConstants.COLUMN_RULE_SOURCE)],
                             rs.getString(DAOConstants.COLUMN_REFERENCE_ID),
                             rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID),
                             rs.getString(DAOConstants.COLUMN_DESCRIPTION),
@@ -208,6 +212,8 @@ public class RuleStatusDaoSpImpl extends GenericDaoSpImpl<RuleStatus> implements
 
             // TODO generated id?
             inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleTypeId());
+            inputs.put(DAOConstants.PARAM_RULE_SOURCE, model.getRuleSource() != null ? model.getRuleSource().ordinal()
+                    : null);
             inputs.put(DAOConstants.PARAM_REFERENCE_ID, model.getRuleRefId());
             inputs.put(DAOConstants.PARAM_DESCRIPTION, model.getDescription());
             inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, model.getPublishedStatus());
@@ -246,6 +252,8 @@ public class RuleStatusDaoSpImpl extends GenericDaoSpImpl<RuleStatus> implements
         if (model != null) {
             inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleTypeId());
+            inputs.put(DAOConstants.PARAM_RULE_SOURCE, model.getRuleSource() != null ? model.getRuleSource().ordinal()
+                    : null);
             inputs.put(DAOConstants.PARAM_REFERENCE_ID, model.getRuleRefId());
             inputs.put(DAOConstants.PARAM_DESCRIPTION,
                     StringUtils.isNotBlank(model.getDescription()) ? model.getDescription() : null);
@@ -314,6 +322,7 @@ public class RuleStatusDaoSpImpl extends GenericDaoSpImpl<RuleStatus> implements
     protected Map<String, Object> getDefaultInParam() throws CoreDaoException {
         Map<String, Object> inParam = new HashMap<String, Object>();
         inParam.put(DAOConstants.PARAM_RULE_TYPE_ID, null);
+        inParam.put(DAOConstants.PARAM_RULE_SOURCE, null);
         inParam.put(DAOConstants.PARAM_REFERENCE_ID, null);
         inParam.put(DAOConstants.PARAM_PUBLISHED_STATUS, null);
         inParam.put(DAOConstants.PARAM_APPROVED_STATUS, null);
