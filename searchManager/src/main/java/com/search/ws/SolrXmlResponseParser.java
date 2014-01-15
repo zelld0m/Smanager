@@ -32,8 +32,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.enums.SortType;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;

@@ -153,7 +153,10 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/KeywordTrendsServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ReportGeneratorServiceJS.js"/>"></script>  
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
-  <script type="text/javascript" src="<spring:url value="/dwr/interface/BannerServiceJS.js"/>"></script>
+  <!--script type="text/javascript" src="<spring:url value="/dwr/interface/BannerServiceJS.js"/>"></script-->
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/BannerRuleServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/BannerRuleItemServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/ImagePathServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/SpellRuleServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ExcelFileUploadedServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ImportRuleTaskService.js"/>"></script>

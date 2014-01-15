@@ -21,9 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.Relevancy.Parameter;
 import com.search.manager.model.Store;
@@ -42,37 +43,37 @@ public class EnterpriseSearchController extends AbstractSearchController {
 
     // TODO: transfer to config file
     private final static String[] supportedCores = {
-        "pcmall",
-        "macmall",
-        "ecost",
-        "pcmallgov",
-        "enterpriseSearch"
+        "pcmall", "macmall", "ecost", "pcmallgov", "enterpriseSearch"
     };
 
     public void afterPropertiesSet() throws Exception {
-    	super.afterPropertiesSet();
+        super.afterPropertiesSet();
         enterpriseSearchConfigManager = EnterpriseSearchConfigManager.getInstance();
     }
 
     @RequestMapping("/enterpriseSearch/**")
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	super.handleRequest(request, response);
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException {
+        super.handleRequest(request, response);
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public String applyValueOverride(String value, HttpServletRequest request, RuleEntity ruleEntity) {
         if (StringUtils.isNotBlank(value)) {
-            Map<String, String> overrideMap = (Map<String, String>) request.getAttribute(getOverrideMapAttributeName(ruleEntity));
+            Map<String, String> overrideMap = (Map<String, String>) request
+                    .getAttribute(getOverrideMapAttributeName(ruleEntity));
             if (overrideMap != null) {
-                value = StringUtils.replaceEach(value, overrideMap.keySet().toArray(new String[0]),
-                        overrideMap.values().toArray(new String[0]));
+                value = StringUtils.replaceEach(value, overrideMap.keySet().toArray(new String[0]), overrideMap
+                        .values().toArray(new String[0]));
             }
         }
         return value;
     }
 
     @Override
-    protected void addDefaultParameters(String storeId, List<NameValuePair> nameValuePairs, Map<String, List<NameValuePair>> paramMap) {
+    protected void addDefaultParameters(String storeId, List<NameValuePair> nameValuePairs,
+            Map<String, List<NameValuePair>> paramMap) {
         String storeFlag = enterpriseSearchConfigManager.getStoreFlag(storeId);
         if (StringUtils.isNotBlank(storeFlag)) {
             NameValuePair nvp = new BasicNameValuePair("fq", String.format("%s:true", storeFlag));
@@ -149,12 +150,18 @@ public class EnterpriseSearchController extends AbstractSearchController {
         solrHelper.setElevateFieldOverrides(elevateFieldOverrides);
         solrHelper.setDemoteFieldOverrides(demoteFieldOverrides);
 
-        request.setAttribute(SolrConstants.REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP, enterpriseSearchConfigManager.getFieldOverrideMap(storeId,
-                enterpriseSearchConfigManager.getSearchRuleCore(storeId, RuleEntity.EXCLUDE)));
-        request.setAttribute(SolrConstants.REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP, enterpriseSearchConfigManager.getFieldOverrideMap(storeId,
-                enterpriseSearchConfigManager.getSearchRuleCore(storeId, RuleEntity.QUERY_CLEANING)));
-        request.setAttribute(SolrConstants.REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP, enterpriseSearchConfigManager.getFieldOverrideMap(storeId,
-                enterpriseSearchConfigManager.getSearchRuleCore(storeId, RuleEntity.RANKING_RULE)));
+        request.setAttribute(
+                SolrConstants.REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP,
+                enterpriseSearchConfigManager.getFieldOverrideMap(storeId,
+                        enterpriseSearchConfigManager.getSearchRuleCore(storeId, RuleEntity.EXCLUDE)));
+        request.setAttribute(
+                SolrConstants.REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP,
+                enterpriseSearchConfigManager.getFieldOverrideMap(storeId,
+                        enterpriseSearchConfigManager.getSearchRuleCore(storeId, RuleEntity.QUERY_CLEANING)));
+        request.setAttribute(
+                SolrConstants.REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP,
+                enterpriseSearchConfigManager.getFieldOverrideMap(storeId,
+                        enterpriseSearchConfigManager.getSearchRuleCore(storeId, RuleEntity.RANKING_RULE)));
     }
 
     @Override
@@ -171,21 +178,23 @@ public class EnterpriseSearchController extends AbstractSearchController {
     @Override
     protected void setDefaultQueryType(HttpServletRequest request, List<NameValuePair> nameValuePairs, String storeId) {
         if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
-            nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, enterpriseSearchConfigManager.getDismax(storeId)));
+            nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE,
+                    enterpriseSearchConfigManager.getDismax(storeId)));
         }
     }
 
     @Override
-    protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui, DateTime currentDate) throws DaoException {
+    protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui,
+            DateTime currentDate) throws CoreServiceException {
         // Enterprise Search does not need banners
         return null;
     }
-    
+
     @Override
     protected String getDefType(String storeId) throws DaoException {
-    	 return enterpriseSearchConfigManager.getDefType(storeId);
+        return enterpriseSearchConfigManager.getDefType(storeId);
     }
-    
+
     protected Relevancy getDefaultRelevancy(String storeId) {
         return enterpriseSearchConfigManager.getRelevancy(storeId);
     }
@@ -198,9 +207,10 @@ public class EnterpriseSearchController extends AbstractSearchController {
         return relevancy;
     }
 
-	protected String getRequestPath(HttpServletRequest request) {
-		String start = request.getContextPath() + "/enterpriseSearch";
-		int idx = request.getRequestURI().indexOf(start);
-		return "http:/" + request.getRequestURI().substring(start.length() + idx);
-	}
+    protected String getRequestPath(HttpServletRequest request) {
+        String start = request.getContextPath() + "/enterpriseSearch";
+        int idx = request.getRequestURI().indexOf(start);
+        return "http:/" + request.getRequestURI().substring(start.length() + idx);
+    }
+
 }

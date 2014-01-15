@@ -31,6 +31,7 @@ public class RuleVersionService {
 
     private static final Logger logger =
             LoggerFactory.getLogger(RuleVersionService.class);
+    
     @Autowired
     private DaoService daoService;
     @Autowired
@@ -90,7 +91,7 @@ public class RuleVersionService {
         boolean success = false;
         String storeId = utilityService.getStoreId();
         RuleXml rule = ruleVersionUtil.getRuleVersion(storeId, RuleEntity.find(ruleType), ruleId, version);
-
+        
         if (rule != null) {
             rule.setCreatedBy(utilityService.getUsername());
             success = daoService.restoreRuleVersion(rule);
@@ -116,7 +117,9 @@ public class RuleVersionService {
 
     @RemoteMethod
     public RuleXml getCurrentRuleXml(String ruleType, String ruleId) {
+        
         String store = utilityService.getStoreId();
+
         RuleXml rXml = ruleXmlUtil.currentRuleToXml(store, ruleType, ruleId);
 
         if (rXml instanceof ElevateRuleXml) {

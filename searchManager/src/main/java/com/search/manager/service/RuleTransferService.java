@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
         creatorParams =
         @Param(name = "beanName", value = "ruleTransferService"))
 public class RuleTransferService {
-
+    
     private static final Logger logger =
             LoggerFactory.getLogger(RuleTransferService.class);
 
@@ -76,8 +76,8 @@ public class RuleTransferService {
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
     @Autowired
-    private WorkflowService workflowService; 
-
+    private WorkflowService workflowService;
+    
     private static final int CREATE_RULE_STATUS = 0;
     private static final int SUBMIT_FOR_APPROVAL = 1;
     private static final int APPROVE_RULE = 2;

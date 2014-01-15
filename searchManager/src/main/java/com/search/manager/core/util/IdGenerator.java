@@ -6,7 +6,7 @@ import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import java.util.UUID;
 
 /**
- *
+ * 
  * @author Philip Mark Gutierrez
  * @since September 29, 2013
  * @version 1.0
@@ -14,16 +14,14 @@ import java.util.UUID;
 public class IdGenerator {
 
     /**
-     * <b>
-     * Generates a unique address based from the ethernet address and the date and time
-     * </b>
-     *
+     * <b> Generates a unique address based from the ethernet address and the date and time </b>
+     * 
      * See:
      * <ul>
      * <li>{@link EthernetAddress}</li>
      * <li>{@link Generators} timeBasedGenerator()</li>
      * </ul>
-     *
+     * 
      * @return
      */
     public static String generateUniqueId() {

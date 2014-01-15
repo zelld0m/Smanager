@@ -11,7 +11,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BannerRule;
+import com.search.manager.core.model.BannerRule;
 
 @XmlRootElement(name = "banner")
 @XmlType(propOrder={"itemXml"})

@@ -16,7 +16,7 @@ public abstract class RuleService {
 	private RuleVersionUtil ruleVersionUtil;
 	@Autowired
 	private RuleXmlUtil ruleXmlUtil;
-
+	
 	public abstract RuleEntity getRuleEntity();
 
 	@RemoteMethod

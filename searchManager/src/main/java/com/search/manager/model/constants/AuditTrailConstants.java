@@ -22,7 +22,10 @@ public class AuditTrailConstants {
 		facetSort,
 		spell,
 		excelFileUploaded,
-		excelFileReport
+		excelFileReport,
+		bannerRule,
+		bannerRuleItem,
+		imagePath
 	}
 	
 	public enum Operation {
