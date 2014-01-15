@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrResponseParser;
 
-@Component
+@Component("searchWithinRequestProcessor")
 public class SearchWithinRequestProcessor implements RequestProcessor {
     
     private static final Logger logger = LoggerFactory.getLogger(SearchWithinRequestProcessor.class);

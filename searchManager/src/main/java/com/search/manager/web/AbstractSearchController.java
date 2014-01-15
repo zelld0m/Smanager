@@ -38,10 +38,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRuleItem;
-import com.search.manager.core.processor.FacetSortRequestProcessor;
+import com.search.manager.core.processor.RequestProcessor;
 import com.search.manager.core.processor.RequestProcessorUtil;
 import com.search.manager.core.processor.RequestPropertyBean;
-import com.search.manager.core.processor.SearchWithinRequestProcessor;
 import com.search.manager.core.service.BannerRuleItemService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -95,9 +94,11 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
     @Autowired
     private RequestProcessorUtil requestProcessorUtil;
     @Autowired
-    private SearchWithinRequestProcessor searchWithinRequestProcessor;
+    @Qualifier("searchWithinRequestProcessor")
+    private RequestProcessor searchWithinRequestProcessor;
     @Autowired
-    private FacetSortRequestProcessor facetSortRequestProcessor;
+    @Qualifier("facetSortRequestProcessor")
+    private RequestProcessor facetSortRequestProcessor;
 
     protected final ExecutorService execService = Executors.newCachedThreadPool();
 

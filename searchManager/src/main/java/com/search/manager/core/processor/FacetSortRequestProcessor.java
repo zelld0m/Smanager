@@ -25,12 +25,11 @@ import com.search.ws.SearchException;
 import com.search.ws.SolrConstants;
 import com.search.ws.SolrResponseParser;
 
-@Component
+@Component("facetSortRequestProcessor")
 public class FacetSortRequestProcessor implements RequestProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(FacetSortRequestProcessor.class);
-
-    private static final String PROPERTY_MODULE_NET = "facetsort";
+    private static final String PROPERTY_MODULE_NAME = "facetsort";
 
     @Autowired
     private ConfigManager configManager;
@@ -41,7 +40,7 @@ public class FacetSortRequestProcessor implements RequestProcessor {
     public boolean isEnabled(RequestPropertyBean requestPropertyBean) {
         return (!requestPropertyBean.isDisableRule())
                 && BooleanUtils.toBooleanObject(StringUtils.defaultIfBlank(configManager.getProperty(
-                        PROPERTY_MODULE_NET, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
+                        PROPERTY_MODULE_NAME, requestPropertyBean.getStoreId(), "facetsort.enabled"), "false"));
     }
 
     @Override
