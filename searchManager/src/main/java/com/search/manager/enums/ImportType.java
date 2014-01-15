@@ -47,7 +47,7 @@ public enum ImportType {
     }
 	
 	public static ImportType[] PUBLISHER_LIST = new ImportType[]{
-//		ImportType.FOR_REVIEW,
+		ImportType.FOR_REVIEW,
 		ImportType.FOR_APPROVAL,
 		ImportType.AUTO_PUBLISH
 	};

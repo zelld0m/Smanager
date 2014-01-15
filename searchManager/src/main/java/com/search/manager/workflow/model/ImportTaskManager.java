@@ -85,7 +85,7 @@ public class ImportTaskManager {
 			
 			String importRuleRefId = importRuleQueueItem.getSourceRuleId();
 			String storeName = configManager.getStoreName(targetStoreId);
-			String importTypeSetting = configManager.getProperty("workflow", targetStoreId, "status."+ruleEntity.getXmlName());
+			String importTypeSetting = importRuleQueueItem.getImportType().getDisplayText();
 			String comment = MessageFormat.format("Imported from {0}.", importRuleQueueItem.getSourceStoreId());
 			
 			String[] importRuleRefIdList = {importRuleRefId};

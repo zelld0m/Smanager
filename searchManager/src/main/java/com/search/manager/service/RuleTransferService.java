@@ -293,7 +293,7 @@ public class RuleTransferService {
                                     logger.info("Remove delete rule status for " + currRuleStatus.getRuleStatusId());
                                 } else {
                                     logger.error("Failed to remove delete rule status for " + currRuleStatus.getRuleStatusId());
-                                };
+                                }
                             }
 
                         } else {
