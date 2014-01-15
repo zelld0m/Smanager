@@ -5,6 +5,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.workflow.model.ImportRuleTask;
 
 public interface ImportRuleTaskService {
-    void addImportRuleTask(ImportRuleTask importRuleTask);
-    RecordSet<ImportRuleTask> getImportRuleTasks(SearchCriteria<ImportRuleTask> criteria);
+    public void addImportRuleTask(ImportRuleTask importRuleTask);
+    public RecordSet<ImportRuleTask> getImportRuleTasks(SearchCriteria<ImportRuleTask> criteria);
+	public ImportRuleTask update(ImportRuleTask importRuleTask);
 }

@@ -21,8 +21,19 @@ public class ImportRuleTaskServiceImpl implements ImportRuleTaskService{
          try {
             importRuleTaskDAO.addImportRuleTask(importRuleTask);
         } catch (DaoException e) {
-           
+           e.printStackTrace();
         }
+    }
+    
+    @Override
+    public ImportRuleTask update(ImportRuleTask importRuleTask) {
+    	try {
+    		return importRuleTaskDAO.updateImportRuleTask(importRuleTask);
+    	} catch(DaoException e) {
+    		e.printStackTrace();
+    	}
+    	
+    	return null;
     }
     
     @Override

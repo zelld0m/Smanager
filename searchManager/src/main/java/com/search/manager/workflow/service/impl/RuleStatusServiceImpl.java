@@ -1,13 +1,17 @@
 package com.search.manager.workflow.service.impl;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.enums.RuleSource;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.workflow.service.RuleStatusService;
 
@@ -42,5 +46,15 @@ public class RuleStatusServiceImpl implements RuleStatusService{
 		ruleStatus.setLastModifiedBy(userName);
 		ruleStatus.setStoreId(storeId);
 		return ruleStatus;
+	}
+	
+	public RuleStatus addRuleStatus(RuleStatus ruleStatus)  throws DaoException {
+		
+		int result = daoService.addRuleStatus(ruleStatus);
+		
+		if(result > 0)
+			return ruleStatus;
+		else 
+			return null;
 	}
 }

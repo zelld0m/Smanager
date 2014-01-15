@@ -130,7 +130,7 @@
     -->
     
     <logger name="com.search" additivity="false" level="TRACE">
-        <appender-ref ref="searchManager-file"/>
+        <appender-ref ref="console"/>
     </logger>
 
     <logger name="com.search.manager.authentication.session" additivity="false">
@@ -170,7 +170,7 @@
     </logger>
 
 	<logger name="com.search.manager.workflow.model.ImportTaskManager" additivity="false">
-        <appender-ref ref="importTask-file" />
+        <appender-ref ref="console" />
     </logger>
 
     <root level="INFO">

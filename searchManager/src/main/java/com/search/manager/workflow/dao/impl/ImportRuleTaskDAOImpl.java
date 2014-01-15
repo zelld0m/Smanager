@@ -233,7 +233,7 @@ public class ImportRuleTaskDAOImpl
 			
 			if (StringUtils.isNumeric(importTypeVal)) {
 				try {
-					importType = ImportType.get(Integer.valueOf(importTypeVal));
+					importType = ImportType.get(Integer.valueOf(importTypeVal) + 1);
 				} catch (Exception e) {
 				}
 			}
@@ -264,6 +264,7 @@ public class ImportRuleTaskDAOImpl
 			result.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_CREATED_STAMP)));
 			result.setLastModifiedBy(rs.getString(WorkflowConstants.COLUMN_LAST_UPDATED_BY));
 			result.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_LAST_UPDATED_STAMP)));
+			
 			return result;
 		
 	}
