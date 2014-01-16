@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.core.enums.RuleSource;
+import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -44,7 +46,6 @@ import com.search.manager.service.rules.FacetSortService;
 import com.search.manager.workflow.model.ImportRuleTask;
 import com.search.manager.workflow.model.TaskStatus;
 import com.search.manager.workflow.service.ExportRuleMapService;
-import com.search.manager.workflow.service.ImportRuleTaskService;
 import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleTransferUtil;
@@ -132,8 +133,11 @@ public class WorkflowServiceImpl implements WorkflowService{
 				if(isAutoImport && isRuleEntityEnabled && isSourceAutoImport) {
 					
 					String importTypeSetting = configManager.getProperty("workflow", targetStore, "status."+ruleEntity.getXmlName());
-					
-					importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, importTypeSetting != null ? importTypeSetting : ImportType.FOR_APPROVAL.getDisplayText(), generateImportAsId(store, ruleId, rule.getRuleName(), targetStore, rule.getRuleName(), rule.getRuleEntity()), rule.getRuleName());
+					try {
+						importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, importTypeSetting != null ? importTypeSetting : ImportType.FOR_APPROVAL.getDisplayText(), generateImportAsId(store, ruleId, rule.getRuleName(), targetStore, rule.getRuleName(), rule.getRuleEntity()), rule.getRuleName());
+					} catch(CoreServiceException e) {
+						logger.error("Error in WorkflowService.exportRule: ", e);
+					}
 				}
 			}
 		}
@@ -164,16 +168,16 @@ public class WorkflowServiceImpl implements WorkflowService{
 		return exported;
 	}
 
-	private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) {
+	private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) throws CoreServiceException {
 		ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, utilityService.getStoreId(), importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
 		
-		List<ImportRuleTask> list = importRuleTaskService.getImportRuleTasks(new SearchCriteria<ImportRuleTask>(importRuleTask)).getList();
+		List<ImportRuleTask> list = importRuleTaskService.search(importRuleTask, 0, 0).getList();
 		
 		if(list != null) {
 			for(ImportRuleTask item : list) {
 				TaskStatus status = item.getTaskExecutionResult().getTaskStatus();
 				if(!TaskStatus.COMPLETED.equals(status) && !TaskStatus.IN_PROCESS.equals(status)) {
-					item.getTaskExecutionResult().setTaskStatus(TaskStatus.CANCELED);
+					item.getTaskExecutionResult().setTaskStatus(TaskStatus.AUTO_CANCELED);
 					importRuleTaskService.update(item);
 				}
 			}
@@ -181,7 +185,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 		
 		importRuleTask.setCreatedBy(userName);
 		importRuleTask.setCreatedDate(new DateTime());
-		importRuleTaskService.addImportRuleTask(importRuleTask);
+		importRuleTaskService.add(importRuleTask);
 	}
 
 	public RuleStatus processRuleStatus(String storeId, String username, RuleSource ruleSource, String ruleType, String ruleRefId, String description, Boolean isDelete) {

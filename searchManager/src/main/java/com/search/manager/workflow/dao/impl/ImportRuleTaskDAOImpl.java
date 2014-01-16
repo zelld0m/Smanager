@@ -3,7 +3,9 @@ package com.search.manager.workflow.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,28 +14,29 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
+import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.dao.ImportRuleTaskDao;
+import com.search.manager.core.dao.sp.GenericDaoSpImpl;
+import com.search.manager.core.exception.CoreDaoException;
+import com.search.manager.core.search.Filter;
+import com.search.manager.core.search.Search;
 import com.search.manager.core.util.IdGenerator;
-import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOConstants;
-import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
-import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.model.RecordSet;
-import com.search.manager.model.SearchCriteria;
 import com.search.manager.workflow.constant.WorkflowConstants;
-import com.search.manager.workflow.dao.ImportRuleTaskDAO;
 import com.search.manager.workflow.model.ImportRuleTask;
 import com.search.manager.workflow.model.TaskExecutionResult;
 import com.search.manager.workflow.model.TaskStatus;
 
 @Repository(value="importRuleTaskDAO")
 public class ImportRuleTaskDAOImpl 
-	implements ImportRuleTaskDAO{
+	extends GenericDaoSpImpl<ImportRuleTask>
+	implements ImportRuleTaskDao{
 
 	private GetImportRuleTaskStoredProcedure getImportRuleTaskStoredProcedure;
 	private AddImportRuleTaskStoredProcedure addImportRuleTaskStoredProcedure;
@@ -42,7 +45,6 @@ public class ImportRuleTaskDAOImpl
 	@Autowired
 	private JodaDateTimeUtil jodaDateTimeUtil;
 	
-	// needed by spring AOP
 	public ImportRuleTaskDAOImpl(){}
 	
 	@Autowired
@@ -50,106 +52,6 @@ public class ImportRuleTaskDAOImpl
 		addImportRuleTaskStoredProcedure = new AddImportRuleTaskStoredProcedure(jdbcTemplate);
 		getImportRuleTaskStoredProcedure = new GetImportRuleTaskStoredProcedure(jdbcTemplate);
 		updateImportRuleTaskStoredProcedure = new UpdateImportRuleTaskStoredProcedure(jdbcTemplate);
-	}
-	
-	public ImportRuleTask getImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
-		ImportRuleTask result = null;
-		
-		RecordSet<ImportRuleTask> rSet = getImportRuleTask(new SearchCriteria<ImportRuleTask>(importRuleTask, null, null, 1, 1), SortOrder.DESCRIPTION_ASCENDING);
-		
-		if (rSet.getList().size() > 0) {
-			result = rSet.getList().get(0);
-		}
-		
-		return result;
-	}
-		
-	public RecordSet<ImportRuleTask> getImportRuleTask(SearchCriteria<ImportRuleTask> searchCriteria, SortOrder sortOrder) throws DaoException {
-		
-		try{
-			ImportRuleTask importRuleTask = searchCriteria.getModel();
-			TaskExecutionResult taskExecutionResult = importRuleTask.getTaskExecutionResult();
-			Map<String, Object> inputs = new HashMap<String, Object>();
-			
-			inputs.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, importRuleTask.getRuleEntity() != null ? importRuleTask.getRuleEntity().getCode() : null);
-			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, importRuleTask.getSourceStoreId());
-			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, importRuleTask.getSourceRuleName());
-			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_ID, importRuleTask.getSourceRuleId());
-			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, importRuleTask.getTargetStoreId());
-			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, importRuleTask.getTargetRuleName());
-			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_ID, importRuleTask.getTargetRuleId());
-			inputs.put(WorkflowConstants.COLUMN_IMPORT_TYPE, importRuleTask.getImportType() != null ? importRuleTask.getImportType().ordinal() + 1 : null);
-			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult != null ? taskExecutionResult.getTaskStatus().ordinal() + 1 : null);
-			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, taskExecutionResult != null ? jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()) : null);
-			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, taskExecutionResult != null ? jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()) : null);
-			inputs.put(WorkflowConstants.COLUMN_CREATED_STAMP, jodaDateTimeUtil.toSqlDate(importRuleTask.getCreatedDate()));
-			inputs.put(WorkflowConstants.PARAM_START_ROW, searchCriteria.getStartRow());
-			inputs.put(WorkflowConstants.PARAM_END_ROW, searchCriteria.getEndRow());
-			inputs.put(DAOConstants.PARAM_SORT_BY, sortOrder != null ? sortOrder.getIntValue() : 0);
-			
-			return DAOUtils.getRecordSet(getImportRuleTaskStoredProcedure.execute(inputs));
-		} catch (Exception e) {
-			throw new DaoException("Failed during getImportRuleTask()", e);
-		}
-		
-	}
-	
-	public ImportRuleTask updateImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
-		
-		try {
-			Map<String, Object> inputs = new HashMap<String, Object>();
-			
-			inputs.put(WorkflowConstants.COLUMN_TASK_ID, importRuleTask.getTaskId());
-			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, importRuleTask.getSourceRuleName());
-			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, importRuleTask.getTargetRuleName());
-			
-			TaskExecutionResult taskExecutionResult = importRuleTask.getTaskExecutionResult();
-			
-			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult.getTaskStatus().ordinal() + 1);
-			inputs.put(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE, taskExecutionResult.getTaskErrorMessage());
-			inputs.put(WorkflowConstants.COLUMN_RUN_ATTEMPT, taskExecutionResult.getRunAttempt());
-			inputs.put(WorkflowConstants.COLUMN_STATE_COMPLETED, taskExecutionResult.getStateCompleted() != null ? taskExecutionResult.getStateCompleted().ordinal() + 1 : 0);
-			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()));
-			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()));
-			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_BY, importRuleTask.getLastModifiedBy());
-			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_STAMP, jodaDateTimeUtil.toSqlDate(importRuleTask.getLastModifiedDate()));
-						
-			RecordSet<ImportRuleTask> rSet = DAOUtils.getRecordSet(updateImportRuleTaskStoredProcedure.execute(inputs));
-			
-			ImportRuleTask result = rSet.getList().size() > 0 ? rSet.getList().get(0) : null;
-			
-			return result;
-		} catch (Exception e) {
-			throw new DaoException("Failed during updateImportRuleTask()", e);
-		}
-		
-	}
-	
-	public ImportRuleTask addImportRuleTask(ImportRuleTask importRuleTask) throws DaoException {
-		try {
-			Map<String, Object> inputs = new HashMap<String, Object>();
-			
-			inputs.put(WorkflowConstants.COLUMN_TASK_ID, IdGenerator.generateUniqueId());
-			inputs.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, importRuleTask.getRuleEntity().getCode());
-			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, importRuleTask.getSourceStoreId());
-			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_ID, importRuleTask.getSourceRuleId());
-			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, importRuleTask.getSourceRuleName());
-			
-			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, importRuleTask.getTargetStoreId());
-			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_ID, importRuleTask.getTargetRuleId());
-			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, importRuleTask.getTargetRuleName());
-			inputs.put(WorkflowConstants.COLUMN_IMPORT_TYPE, importRuleTask.getImportType().ordinal());
-			inputs.put(WorkflowConstants.COLUMN_CREATED_BY, importRuleTask.getCreatedBy());
-			inputs.put(WorkflowConstants.COLUMN_CREATED_STAMP, jodaDateTimeUtil.toSqlDate(importRuleTask.getCreatedDate()));
-			
-			RecordSet<ImportRuleTask> rSet = DAOUtils.getRecordSet(addImportRuleTaskStoredProcedure.execute(inputs));
-			
-			ImportRuleTask result = rSet.getList().size() > 0 ? rSet.getList().get(0) : null;
-			
-			return result;
-		} catch (Exception e) {
-			throw new DaoException("Failed during addImportRuleTask()", e);
-		}
 	}
 	
 	private class GetImportRuleTaskStoredProcedure extends GetStoredProcedure {
@@ -297,5 +199,146 @@ public class ImportRuleTaskDAOImpl
 				}
 			}));
 		}
+	}
+
+	@Override
+	protected StoredProcedure getAddStoredProcedure() throws CoreDaoException {
+		return addImportRuleTaskStoredProcedure;
+	}
+
+	@Override
+	protected StoredProcedure getUpdateStoredProcedure()
+			throws CoreDaoException {
+		return updateImportRuleTaskStoredProcedure;
+	}
+
+	@Override
+	protected StoredProcedure getDeleteStoredProcedure()
+			throws CoreDaoException {
+		return null;
+	}
+
+	@Override
+	protected StoredProcedure getSearchStoredProcedure()
+			throws CoreDaoException {
+		return getImportRuleTaskStoredProcedure;
+	}
+
+	@Override
+	protected Map<String, Object> generateAddInput(ImportRuleTask model)
+			throws CoreDaoException {
+		Map<String, Object> inputs = null;
+		
+		if(model != null) {
+			inputs = new HashMap<String, Object>();
+			inputs.put(WorkflowConstants.COLUMN_TASK_ID, IdGenerator.generateUniqueId());
+			inputs.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, model.getRuleEntity().getCode());
+			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, model.getSourceStoreId());
+			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_ID, model.getSourceRuleId());
+			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, model.getSourceRuleName());
+			
+			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, model.getTargetStoreId());
+			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_ID, model.getTargetRuleId());
+			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, model.getTargetRuleName());
+			inputs.put(WorkflowConstants.COLUMN_IMPORT_TYPE, model.getImportType().ordinal());
+			inputs.put(WorkflowConstants.COLUMN_CREATED_BY, model.getCreatedBy());
+			inputs.put(WorkflowConstants.COLUMN_CREATED_STAMP, jodaDateTimeUtil.toSqlDate(model.getCreatedDate()));
+		}
+		
+		return inputs;
+	}
+
+	@Override
+	protected Map<String, Object> generateUpdateInput(ImportRuleTask model)
+			throws CoreDaoException {
+		Map<String, Object> inputs = null;
+		
+		if(model != null) {
+			inputs = new HashMap<String, Object>();
+			
+			inputs.put(WorkflowConstants.COLUMN_TASK_ID, model.getTaskId());
+			inputs.put(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, model.getSourceRuleName());
+			inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, model.getTargetRuleName());
+			
+			TaskExecutionResult taskExecutionResult = model.getTaskExecutionResult();
+			
+			inputs.put(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult.getTaskStatus().ordinal() + 1);
+			inputs.put(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE, taskExecutionResult.getTaskErrorMessage());
+			inputs.put(WorkflowConstants.COLUMN_RUN_ATTEMPT, taskExecutionResult.getRunAttempt());
+			inputs.put(WorkflowConstants.COLUMN_STATE_COMPLETED, taskExecutionResult.getStateCompleted() != null ? taskExecutionResult.getStateCompleted().ordinal() + 1 : 0);
+			inputs.put(WorkflowConstants.COLUMN_TASK_START_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()));
+			inputs.put(WorkflowConstants.COLUMN_TASK_END_STAMP, jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()));
+			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_BY, model.getLastModifiedBy());
+			inputs.put(WorkflowConstants.COLUMN_LAST_UPDATED_STAMP, jodaDateTimeUtil.toSqlDate(model.getLastModifiedDate()));
+		}
+		return inputs;
+	}
+
+	@Override
+	protected Map<String, Object> generateDeleteInput(ImportRuleTask model)
+			throws CoreDaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Search generateSearchInput(ImportRuleTask model)
+			throws CoreDaoException {
+		Search search = new Search(model.getClass());
+		List<Filter> filters = new ArrayList<Filter>();
+		if(model != null) {
+			TaskExecutionResult taskExecutionResult = model.getTaskExecutionResult();
+			
+			filters.add(new Filter(WorkflowConstants.COLUMN_RULE_TYPE_ID, model.getRuleEntity() != null ? model.getRuleEntity().getCode() : null));
+			filters.add(new Filter(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, model.getSourceStoreId()));
+			filters.add(new Filter(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, model.getSourceRuleName()));
+			filters.add(new Filter(WorkflowConstants.COLUMN_SOURCE_RULE_ID, model.getSourceRuleId()));
+			filters.add(new Filter(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, model.getTargetStoreId()));
+			filters.add(new Filter(WorkflowConstants.COLUMN_TARGET_RULE_NAME, model.getTargetRuleName()));
+			filters.add(new Filter(WorkflowConstants.COLUMN_TARGET_RULE_ID, model.getTargetRuleId()));
+			filters.add(new Filter(WorkflowConstants.COLUMN_IMPORT_TYPE, model.getImportType() != null ? model.getImportType().ordinal() + 1 : null));
+			filters.add(new Filter(WorkflowConstants.COLUMN_TASK_STATUS, taskExecutionResult != null ? taskExecutionResult.getTaskStatus().ordinal() + 1 : null));
+			filters.add(new Filter(WorkflowConstants.COLUMN_TASK_START_STAMP, taskExecutionResult != null ? jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskStartDateTime()) : null));
+			filters.add(new Filter(WorkflowConstants.COLUMN_TASK_END_STAMP, taskExecutionResult != null ? jodaDateTimeUtil.toSqlDate(taskExecutionResult.getTaskEndDateTime()) : null));
+			filters.add(new Filter(WorkflowConstants.COLUMN_CREATED_STAMP, jodaDateTimeUtil.toSqlDate(model.getCreatedDate())));
+
+		}
+		search.addFilters(filters);
+		return search;
+	}
+
+	@Override
+	protected Map<String, Object> getDefaultInParam() throws CoreDaoException {
+		Map<String, Object> inParam = new HashMap<String, Object>();
+
+        inParam.put(WorkflowConstants.COLUMN_RULE_TYPE_ID, null);
+        inParam.put(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID, null);
+        inParam.put(WorkflowConstants.COLUMN_SOURCE_RULE_NAME, null);
+        inParam.put(WorkflowConstants.COLUMN_SOURCE_RULE_ID, null);
+        inParam.put(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, null);
+        inParam.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, null);
+        inParam.put(WorkflowConstants.COLUMN_TARGET_RULE_ID, null);
+        inParam.put(WorkflowConstants.COLUMN_IMPORT_TYPE, null);
+        inParam.put(WorkflowConstants.COLUMN_TASK_STATUS, null);
+        inParam.put(WorkflowConstants.COLUMN_TASK_START_STAMP, null);
+        inParam.put(WorkflowConstants.COLUMN_TASK_END_STAMP, null);
+        inParam.put(WorkflowConstants.COLUMN_CREATED_STAMP, null);
+        inParam.put(WorkflowConstants.PARAM_START_ROW, 0);
+        inParam.put(WorkflowConstants.PARAM_END_ROW, 0);
+
+        return inParam;
+	}
+
+	@Override
+	protected Search generateSearchById(String id, String storeId)
+			throws CoreDaoException {
+		ImportRuleTask importRuleTask = new ImportRuleTask();
+		
+		if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(storeId)) {
+			importRuleTask.setTargetStoreId(storeId);
+			importRuleTask.setTaskId(id);
+		}
+		
+		return generateSearchInput(importRuleTask);
 	}
 }
