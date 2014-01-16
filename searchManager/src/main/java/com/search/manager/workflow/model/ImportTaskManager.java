@@ -78,8 +78,10 @@ public class ImportTaskManager {
 				logger.info("Max run attempts has been reached, ignoring rule {}", importRuleQueueItem.getTargetRuleName());
 				return;
 			}
+
+			DateTime startDate = new DateTime();
 			
-			updateTaskExecution(importRuleQueueItem, TaskStatus.IN_PROCESS, new DateTime(), new DateTime(), null);
+			updateTaskExecution(importRuleQueueItem, TaskStatus.IN_PROCESS, startDate, startDate, null);
 			RuleEntity ruleEntity = importRuleQueueItem.getRuleEntity();
 			String ruleName = importRuleQueueItem.getTargetRuleName();
 			
@@ -103,8 +105,6 @@ public class ImportTaskManager {
 				updateTaskExecution(importRuleQueueItem, TaskStatus.FAILED, null, new DateTime(), "The rule is locked.");
 				return;
 			}
-
-			DateTime startDate = new DateTime();
 
 			if(taskExecutionResult.getStateCompleted() == null)
 				ruleTransferService.processImportRejectRules(targetStoreId, storeName, importRuleQueueItem.getCreatedBy(), RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefIdList, comment, importTypeList, importAsRefIdList, ruleNameList, null, null);
@@ -159,12 +159,13 @@ public class ImportTaskManager {
 		if(startDate != null) {
 			importRuleTask.setLastModifiedDate(startDate);
 			importRuleTask.getTaskExecutionResult().setTaskStartDateTime(startDate);
-
+			System.out.println("START: "+startDate);
 		}
 		
 		if(endDate != null) {
 			importRuleTask.setLastModifiedDate(endDate);
 			importRuleTask.getTaskExecutionResult().setTaskEndDateTime(endDate);
+			System.out.println("END: "+endDate);
 		}
 
 		importRuleTaskService.update(importRuleTask);
