@@ -17,8 +17,8 @@ import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchProcessor;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.search.processor.SpSearchProcessor;
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.model.RecordSet;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
@@ -60,18 +60,9 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
         Map<String, Object> inParams = generateAddInput(model);
 
         if (inParams != null) {
-            int status = DAOUtils.getUpdateCount(getAddStoredProcedure().execute(inParams));
-            if (status > 0) {
-                // TODO return added model in sp level
-                // add primary key per model
-                if (inParams.get(DAOConstants.MODEL_ID) != null) {
-                    SearchResult<T> searchResult = search(generateSearchById(inParams.get(DAOConstants.MODEL_ID)
-                            .toString(), inParams.get(DAOConstants.PARAM_STORE_ID).toString()));
-                    if (searchResult.getTotalCount() > 0) {
-                        return searchResult.getResult().get(0);
-                    }
-                }
-                return model;
+            RecordSet<T> result = DAOUtils.getRecordSet(getAddStoredProcedure().execute(inParams));
+            if (result.getTotalSize() > 0) {
+                return result.getList().get(0);
             }
         }
 
@@ -97,15 +88,9 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
         Map<String, Object> inParams = generateUpdateInput(model);
 
         if (inParams != null) {
-            int status = DAOUtils.getUpdateCount(getUpdateStoredProcedure().execute(inParams));
-            if (status > 0) {
-                // TODO return updated model in sp level
-                SearchResult<T> searchResult = search(generateSearchById(
-                        inParams.get(DAOConstants.MODEL_ID).toString(), inParams.get(DAOConstants.PARAM_STORE_ID)
-                                .toString()));
-                if (searchResult.getTotalCount() > 0) {
-                    return searchResult.getResult().get(0);
-                }
+            RecordSet<T> result = DAOUtils.getRecordSet(getAddStoredProcedure().execute(inParams));
+            if (result.getTotalSize() > 0) {
+                return result.getList().get(0);
             }
         }
 
