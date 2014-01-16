@@ -31,6 +31,6 @@ public class WorkflowConstants {
 	public static final String COLUMN_LAST_UPDATED_STAMP = "LAST_UPDATED_STAMP";
 	public static final String COLUMN_LAST_UPDATED_TX_STAMP = "LAST_UPDATED_TX_STAMP";
 	
-	public static final String PARAM_START_ROW = "Start_Row";
-	public static final String PARAM_END_ROW = "End_Row";
+	public static final String PARAM_START_ROW = "start_row";
+	public static final String PARAM_END_ROW = "end_row";
 }
