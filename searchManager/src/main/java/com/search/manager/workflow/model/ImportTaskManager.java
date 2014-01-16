@@ -159,13 +159,11 @@ public class ImportTaskManager {
 		if(startDate != null) {
 			importRuleTask.setLastModifiedDate(startDate);
 			importRuleTask.getTaskExecutionResult().setTaskStartDateTime(startDate);
-			System.out.println("START: "+startDate);
 		}
 		
 		if(endDate != null) {
 			importRuleTask.setLastModifiedDate(endDate);
 			importRuleTask.getTaskExecutionResult().setTaskEndDateTime(endDate);
-			System.out.println("END: "+endDate);
 		}
 
 		importRuleTaskService.update(importRuleTask);
