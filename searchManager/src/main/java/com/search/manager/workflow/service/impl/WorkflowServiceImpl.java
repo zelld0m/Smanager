@@ -177,7 +177,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 			for(ImportRuleTask item : list) {
 				TaskStatus status = item.getTaskExecutionResult().getTaskStatus();
 				if(!TaskStatus.COMPLETED.equals(status) && !TaskStatus.IN_PROCESS.equals(status)) {
-					item.getTaskExecutionResult().setTaskStatus(TaskStatus.CANCELED);
+					item.getTaskExecutionResult().setTaskStatus(TaskStatus.AUTO_CANCELED);
 					importRuleTaskService.update(item);
 				}
 			}
