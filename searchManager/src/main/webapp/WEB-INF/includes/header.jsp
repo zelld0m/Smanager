@@ -86,10 +86,11 @@
 	var GLOBAL_searchWithinTypes = GLOBAL_storeParameters["searchWithinTypes"];
 	var GLOBAL_searchWithinParamName = GLOBAL_storeParameters["searchWithinParamName"];
 	var GLOBAL_isTargetStore = GLOBAL_storeParameters["isTargetStore"];
+	var GLOBAL_allStoresDisplayName = GLOBAL_storeParameters["allStoresDisplayName"];
 	
         // FOR REDIRECT PAGE
-        var GLOBAL_storeRedirectSelfDomain = GLOBAL_storeParameters["storeRedirectSelfDomain"];
-        var GLOBAL_storeRedirectRelativePath = GLOBAL_storeParameters["storeRedirectRelativePath"];
+    var GLOBAL_storeRedirectSelfDomain = GLOBAL_storeParameters["storeRedirectSelfDomain"];
+    var GLOBAL_storeRedirectRelativePath = GLOBAL_storeParameters["storeRedirectRelativePath"];
         
 	var GLOBAL_storeGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
 	var GLOBAL_storeGroupTotal = GLOBAL_storeGroupMembership.length;
