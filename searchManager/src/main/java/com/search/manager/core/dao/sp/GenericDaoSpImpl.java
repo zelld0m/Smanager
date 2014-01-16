@@ -88,7 +88,7 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
         Map<String, Object> inParams = generateUpdateInput(model);
 
         if (inParams != null) {
-            RecordSet<T> result = DAOUtils.getRecordSet(getAddStoredProcedure().execute(inParams));
+            RecordSet<T> result = DAOUtils.getRecordSet(getUpdateStoredProcedure().execute(inParams));
             if (result.getTotalSize() > 0) {
                 return result.getList().get(0);
             }
