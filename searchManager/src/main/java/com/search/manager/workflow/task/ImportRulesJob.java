@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.search.manager.dao.DaoException;
+import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.utility.PropertiesUtils;
 import com.search.manager.workflow.model.ImportTaskManager;
 
@@ -22,7 +22,7 @@ public class ImportRulesJob {
 			logger.info("Running ImportRules job...");
 			try {
 				importTaskManager.importRules();
-			} catch (DaoException e) {
+			} catch (CoreServiceException e) {
 				logger.error("error in ImportRulesJob.importRules(", e);
 			}
 		} else {

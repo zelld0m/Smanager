@@ -9,16 +9,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.dao.ImportRuleTaskDao;
 import com.search.manager.core.enums.RuleSource;
-import com.search.manager.dao.DaoException;
-import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
+import com.search.manager.core.exception.CoreDaoException;
+import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.search.SearchResult;
+import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
-import com.search.manager.model.SearchCriteria;
 import com.search.manager.service.DeploymentService;
 import com.search.manager.service.RuleTransferService;
-import com.search.manager.workflow.dao.ImportRuleTaskDAO;
 import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.ws.ConfigManager;
@@ -36,7 +36,7 @@ public class ImportTaskManager {
 	@Autowired
 	private DeploymentService deploymentService;
 	@Autowired
-	private ImportRuleTaskDAO importRuleTaskDAO;
+	private ImportRuleTaskService importRuleTaskService;
 	@Autowired
 	private RuleStatusService ruleStatusService;
 	@Autowired
@@ -45,11 +45,11 @@ public class ImportTaskManager {
 	private WorkflowService workflowService;
 
 
-	public void importRules() throws DaoException {
+	public void importRules() throws CoreServiceException {
 
 		TaskExecutionResult taskExecutionResult = new TaskExecutionResult(TaskStatus.QUEUED, null, 0, null, null, null);
 		ImportRuleTask importRuleTask = new ImportRuleTask(null, null, null, null, null, null, null, null, null, taskExecutionResult);
-		RecordSet<ImportRuleTask> importRecords = importRuleTaskDAO.getImportRuleTask(new SearchCriteria<ImportRuleTask>(importRuleTask, null, null, 0, 0), SortOrder.DESCRIPTION_ASCENDING);
+		SearchResult<ImportRuleTask> importRecords = importRuleTaskService.search(importRuleTask, 0, 0);
 
 		logger.info("queued records: {}", importRecords.getTotalSize());
 
@@ -58,7 +58,7 @@ public class ImportTaskManager {
 		}
 
 		importRuleTask.getTaskExecutionResult().setTaskStatus(TaskStatus.FAILED);
-		importRecords = importRuleTaskDAO.getImportRuleTask(new SearchCriteria<ImportRuleTask>(importRuleTask, null, null, 0, 0), SortOrder.DESCRIPTION_ASCENDING);
+		importRecords = importRuleTaskService.search(importRuleTask, 0, 0);
 
 		logger.info("failed records: {}", importRecords.getTotalSize());
 
@@ -68,7 +68,7 @@ public class ImportTaskManager {
 
 	}
 
-	private void importQueueItems(ImportRuleTask importRuleQueueItem, String userName) throws DaoException {
+	private void importQueueItems(ImportRuleTask importRuleQueueItem, String userName) throws CoreServiceException {
 		try {
 
 			String targetStoreId = importRuleQueueItem.getTargetStoreId();
@@ -151,7 +151,7 @@ public class ImportTaskManager {
 		} 
 	}
 
-	private void updateTaskExecution(ImportRuleTask importRuleTask, TaskStatus taskStatus, DateTime startDate, DateTime endDate, String errorMessage) throws DaoException {
+	private void updateTaskExecution(ImportRuleTask importRuleTask, TaskStatus taskStatus, DateTime startDate, DateTime endDate, String errorMessage) throws CoreServiceException {
 
 		importRuleTask.getTaskExecutionResult().setTaskErrorMessage(errorMessage);
 		importRuleTask.getTaskExecutionResult().setTaskStatus(taskStatus);
@@ -167,6 +167,6 @@ public class ImportTaskManager {
 			importRuleTask.getTaskExecutionResult().setTaskEndDateTime(endDate);
 		}
 
-		importRuleTaskDAO.updateImportRuleTask(importRuleTask);
+		importRuleTaskService.update(importRuleTask);
 	}
 }
