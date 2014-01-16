@@ -27,7 +27,16 @@
 	    			<option value="${type.displayText}">${type.displayText}</option>
 	    		</c:forEach>	    		
 	    	</select>
-    	</label>    
+    	</label>
+    	<label class="txtLabel">Rule Type:<br/></label>
+    	<label class="details marR15">
+	    	<select class="w205" id="ruleTypeFilter">
+	    		<option value="">-- Select Rule Type --</option>
+	    		<c:forEach items="${ruleTypes}" var="ruleType"> 
+	    			<option value="${ruleType.name}">${ruleType.name}</option>
+	    		</c:forEach>	    		
+	    	</select>
+    	</label>      	    
     	<label class="txtLabel">Rule Name:<br/></label>
     	<label class="details marR15">
 	    	<input type="text" class="w200" id="targetRuleName" maxlength="200">

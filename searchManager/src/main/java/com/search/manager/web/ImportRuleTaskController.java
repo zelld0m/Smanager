@@ -3,7 +3,6 @@ package com.search.manager.web;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.ImportType;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.service.UtilityService;
@@ -59,8 +59,9 @@ public class ImportRuleTaskController {
 		model.addAttribute("currentPage", 1);
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		model.addAttribute("types", ImportType.values());
+		model.addAttribute("ruleTypes", RuleEntity.values());
 		model.addAttribute("statuses", TaskStatus.values());
-		model.addAttribute("filter", ",,,");
+		model.addAttribute("filter", ",,,,");
 		model.addAttribute("isTargetStore",isTargetStore());
 		if (!isTargetStore()){
 			model.addAttribute("targetStores",configManager.getPropertyList("workflow", store, DAOConstants.SETTINGS_EXPORT_TARGET));
@@ -122,14 +123,21 @@ public class ImportRuleTaskController {
 							searchCriteria.getModel().setImportType(null);
 						}
 						break;
-					case 2:						
+					case 2:
+						if(!arrFilter[ctr].isEmpty()){
+							searchCriteria.getModel().setRuleEntity(RuleEntity.find(arrFilter[ctr]));
+						}else{
+							searchCriteria.getModel().setRuleEntity(null);
+						}
+						break;						
+					case 3:						
 					try {
 						searchCriteria.getModel().setTargetRuleName(URLDecoder.decode( arrFilter[ctr], "UTF-8" ));
 					} catch (UnsupportedEncodingException e) {						
 						e.printStackTrace();
 					}
 						break;		
-					case 3:						
+					case 4:						
 						searchCriteria.getModel().setTargetStoreId(arrFilter[ctr]);
 						break;							
 				}
