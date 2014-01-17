@@ -10,12 +10,18 @@
             <tr class="alt">
                 <th>Rule</th>
                 <th>Source Rule</th>
-                <th>Target Store</th>
+                <th>
+                <c:if test="${!isTargetStore}">
+                	Target Store
+                </c:if>
+                <c:if test="${isTargetStore}">
+                	Source Store
+                </c:if>                
+                </th>
                 <th>Target Rule</th>
                 <th>Type</th>
                 <th>Status</th>
-                <th>Task Start</th>  
-                <th>Task End</th>            
+                <th>Duration</th>           
             </tr>
         </thead>
 		<tbody>
@@ -34,7 +40,12 @@
 							${importRuleTask.sourceRuleName}
 				        </td>
 				        <td align="center">
-				        	${importRuleTask.targetStoreId}
+							<c:if test="${!isTargetStore}">
+                				${importRuleTask.targetStoreId}
+                			</c:if>
+                			<c:if test="${isTargetStore}">
+                				${importRuleTask.sourceStoreId}
+                			</c:if>
 				        </td>
 				        <td align="center">
 				        	${importRuleTask.targetRuleName}
@@ -45,14 +56,16 @@
 				        <td align="center">
 				        	${importRuleTask.taskExecutionResult.taskStatus.displayText}
 				        	<c:if test="${importRuleTask.taskExecutionResult.taskStatus.displayText == 'Failed'}">
-				        		<a href="javascript:void(0);" onmousemove="$('#reason').val('${importRuleTask.taskExecutionResult.taskErrorMessage} <br/><br/>Run attempt/s:${importRuleTask.taskExecutionResult.runAttempt}')" class="failedReason" reason = "xx"><img src="/searchManager/images/icon_alert.png"/></a>
+				        		<a href="javascript:void(0);" onmousemove="$('#reason').val('${importRuleTask.taskExecutionResult.taskErrorMessage} <br/><br/>Run attempt/s:${importRuleTask.taskExecutionResult.runAttempt}')" class="failedReason"><img src="/searchManager/images/icon_alert.png"/></a>
 				        	</c:if>
 				        </td>
 				        <td align="center">
-				        	<joda:format pattern="${dateFormat}" value="${importRuleTask.taskExecutionResult.taskStartDateTime}"/>
-				        </td>
-				        <td align="center">
-				        	<joda:format pattern="${dateFormat}" value="${importRuleTask.taskExecutionResult.taskEndDateTime}"/>
+				        	 <c:forEach items="${importRuleTask.taskMessages}" var="taskMessage" varStatus="status">
+				        		<a href="javascript:void(0);" 
+				        		onmousemove="$('#reason').val('${taskMessage.dateLabel1}<joda:format pattern="${dateFormat}" value="${taskMessage.displayDate1}"/><c:if test="${!empty taskMessage.displayDate2}"><br/>${taskMessage.dateLabel2}<joda:format pattern="${dateFormat}" value="${taskMessage.displayDate2}"/></c:if>')" class="failedReason">
+									${taskMessage.message}
+								</a><br/>
+							</c:forEach>
 				        </td>		        		        		        		        		        		        		        		        			        			        			        			        
 				    </tr>        
 				</c:forEach>			    

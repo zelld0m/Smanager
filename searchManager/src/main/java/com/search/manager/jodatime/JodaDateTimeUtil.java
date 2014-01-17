@@ -207,4 +207,19 @@ public class JodaDateTimeUtil {
 		logger.info("-DTZ- User Timezone: " + getTimeZone().getID());
 		return formatter.parseDateTime(dateTimeText).withZone(getTimeZone());
 	} 
+    public static String getDateDiffMessage(DateTime startDateTime, DateTime endDateTime) {
+
+    	Period period = new Period(startDateTime, endDateTime);
+
+    	PeriodFormatter formatter = new PeriodFormatterBuilder()
+    		.appendYears().appendSuffix(" yr/s. ")    		
+    		.appendMonths().appendSuffix(" mon/s. ")
+    		.appendDays().appendSuffix(" day/s. ")
+    		.appendHours().appendSuffix(" hr/s. ")
+    		.appendMinutes().appendSuffix(" min/s. ")
+    	    .appendSeconds().appendSuffix(" sec/s. ")
+    	    .printZeroNever()
+    	    .toFormatter();
+        return formatter.print(period);
+    }	
 }

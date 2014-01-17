@@ -1,10 +1,17 @@
 package com.search.manager.workflow.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.ModelBean;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -127,5 +134,42 @@ public class ImportRuleTask extends ModelBean{
 
 	public void setTaskExecutionResult(TaskExecutionResult taskExecutionResult) {
 		this.taskExecutionResult = taskExecutionResult;
+	}
+	public List<Map<String,Object>> getTaskMessages(){
+		List<Map<String,Object>> listOfMap= new ArrayList<Map<String,Object>>();
+		Map<String,Object> mp = new HashMap<String,Object>();
+		
+		if (getTaskExecutionResult().getTaskStatus().equals(TaskStatus.QUEUED)){
+			mp = new HashMap<String,Object>();			
+			mp.put("message", "Awaiting action for " + JodaDateTimeUtil.getDateDiffMessage(this.getCreatedDate(), new DateTime()));
+			mp.put("dateLabel1", "Created Date:");
+			mp.put("displayDate1", this.getCreatedDate());
+			listOfMap.add(mp);
+		}
+		if (getTaskExecutionResult().getTaskStatus().equals(TaskStatus.IN_PROCESS)){
+			mp = new HashMap<String,Object>();
+			mp.put("message", "Awaited completion for " + JodaDateTimeUtil.getDateDiffMessage(this.getCreatedDate(), this.getTaskExecutionResult().getTaskStartDateTime()));
+			mp.put("dateLabel1", "Created Date:");
+			mp.put("displayDate1", this.getCreatedDate());
+			listOfMap.add(mp);
+		}
+		if (!getTaskExecutionResult().getTaskStatus().equals(TaskStatus.QUEUED)){
+			mp = new HashMap<String,Object>();			
+			mp.put("message", "Started " + JodaDateTimeUtil.getDateDiffMessage(this.getTaskExecutionResult().getTaskStartDateTime(),new DateTime()));
+			mp.put("dateLabel1", "Start Date:");
+			mp.put("displayDate1", this.getTaskExecutionResult().getTaskStartDateTime());
+			listOfMap.add(mp);
+		}
+		if (!getTaskExecutionResult().getTaskStatus().equals(TaskStatus.QUEUED) && !getTaskExecutionResult().getTaskStatus().equals(TaskStatus.IN_PROCESS)){
+			mp = new HashMap<String,Object>();			
+			mp.put("message", "Ended after" + JodaDateTimeUtil.getDateDiffMessage(this.getTaskExecutionResult().getTaskStartDateTime(),this.getTaskExecutionResult().getTaskEndDateTime()));
+			mp.put("dateLabel1", "Start Date:");
+			mp.put("displayDate1", this.getTaskExecutionResult().getTaskStartDateTime());
+			mp.put("dateLabel2", "End Date:");
+			mp.put("displayDate2", this.getTaskExecutionResult().getTaskEndDateTime());
+			listOfMap.add(mp);
+		}
+
+		return listOfMap;
 	}
 }
