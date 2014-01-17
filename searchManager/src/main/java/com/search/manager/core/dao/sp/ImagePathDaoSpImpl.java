@@ -26,11 +26,15 @@ import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 
 @Auditable(entity = Entity.imagePath)
 @Repository("imagePathDaoSp")
 public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements ImagePathDao {
+
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
 
     private AddStoredProcedure addSp;
     private UpdateStoredProcedure updateSp;
@@ -51,7 +55,7 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements I
         searchSp = new SearchStoredProcedure(jdbcTemplate);
     }
 
-    private class AddStoredProcedure extends CUDStoredProcedure {
+    private class AddStoredProcedure extends GetStoredProcedure {
 
         public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
             super(jdbcTemplate, DAOConstants.SP_ADD_BANNER_IMAGE_PATH);
@@ -67,9 +71,18 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements I
             declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
         }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ImagePath>() {
+                public ImagePath mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return buildModel(rs, rowNum);
+                }
+            }));
+        }
     }
 
-    private class UpdateStoredProcedure extends CUDStoredProcedure {
+    private class UpdateStoredProcedure extends GetStoredProcedure {
 
         public UpdateStoredProcedure(JdbcTemplate jdbcTemplate) {
             super(jdbcTemplate, DAOConstants.SP_UPDATE_BANNER_IMAGE_PATH);
@@ -81,6 +94,15 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements I
             declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_PATH_ALIAS, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));
+        }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ImagePath>() {
+                public ImagePath mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return buildModel(rs, rowNum);
+                }
+            }));
         }
     }
 
@@ -119,18 +141,29 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements I
         protected void declareSqlReturnResultSetParameters() {
             declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ImagePath>() {
                 public ImagePath mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    ImagePath imagePath = new ImagePath(rs.getString(DAOConstants.COLUMN_STORE_ID),
-                            rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID),
-                            rs.getString(DAOConstants.COLUMN_IMAGE_PATH), rs.getString(DAOConstants.COLUMN_IMAGE_SIZE),
-                            ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)),
-                            rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS),
-                            rs.getString(DAOConstants.COLUMN_CREATED_BY),
-                            rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
-
-                    return imagePath;
+                    return buildModel(rs, rowNum);
                 }
             }));
         }
+    }
+
+    private ImagePath buildModel(ResultSet rs, int rowNum) throws SQLException {
+        ImagePath imagePath = new ImagePath();
+
+        imagePath.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+        imagePath.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+        imagePath.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+        imagePath.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+
+        imagePath.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
+        imagePath.setId(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID));
+        imagePath.setPath(rs.getString(DAOConstants.COLUMN_IMAGE_PATH));
+        imagePath.setSize(rs.getString(DAOConstants.COLUMN_IMAGE_SIZE));
+        imagePath.setPathType(ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)));
+        imagePath.setAlias(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS));
+
+        return imagePath;
     }
 
     @Override
@@ -166,7 +199,6 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements I
                 imagePathId = DAOUtils.generateUniqueId();
             }
 
-            inputs.put(DAOConstants.MODEL_ID, imagePathId);
             inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, imagePathId);
             inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
             inputs.put(DAOConstants.PARAM_IMAGE_PATH, model.getPath());
@@ -186,7 +218,6 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements I
         if (model != null) {
             inputs = new HashMap<String, Object>();
 
-            inputs.put(DAOConstants.MODEL_ID, model.getId());
             inputs.put(DAOConstants.PARAM_IMAGE_PATH_ID, model.getId());
             inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
             inputs.put(DAOConstants.PARAM_IMAGE_PATH_ALIAS, model.getAlias());
