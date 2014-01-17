@@ -60,6 +60,8 @@
 						importRuleTask.changePage(currentPage);
 					}
 					$("#sortablePagingTop, #sortablePagingBottom").paginate({
+						type: "short",
+						pageStyle: "style2",
 						currentPage:currentPage, 
 						pageSize:self.rowPerPage,
 						totalItem:totalItem,
