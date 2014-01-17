@@ -135,7 +135,7 @@ public class ImportRuleTaskDAOImpl
 			
 			if (StringUtils.isNumeric(importTypeVal)) {
 				try {
-					importType = ImportType.get(Integer.valueOf(importTypeVal) + 1);
+					importType = ImportType.get(Integer.valueOf(importTypeVal));
 				} catch (Exception e) {
 				}
 			}
