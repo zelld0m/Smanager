@@ -41,10 +41,10 @@
 				        </td>
 				        <td align="center">
 							<c:if test="${!isTargetStore}">
-                				${importRuleTask.targetStoreId}
+                				<script type="text/javascript">document.write(GLOBAL_allStoresDisplayName['${importRuleTask.targetStoreId}']);</script>
                 			</c:if>
                 			<c:if test="${isTargetStore}">
-                				${importRuleTask.sourceStoreId}
+                				<script type="text/javascript">document.write(GLOBAL_allStoresDisplayName['${importRuleTask.sourceStoreId}']);</script>
                 			</c:if>
 				        </td>
 				        <td align="center">
