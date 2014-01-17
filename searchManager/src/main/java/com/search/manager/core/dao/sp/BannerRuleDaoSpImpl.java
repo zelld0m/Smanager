@@ -26,11 +26,15 @@ import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
+import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 
 @Auditable(entity = Entity.bannerRule)
 @Repository("bannerRuleDaoSp")
 public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements BannerRuleDao {
+
+    @Autowired
+    private JodaDateTimeUtil jodaDateTimeUtil;
 
     private AddStoredProcedure addSp;
     @SuppressWarnings("unused")
@@ -50,7 +54,7 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
         searchSp = new SearchStoredProcedure(jdbcTemplate);
     }
 
-    private class AddStoredProcedure extends CUDStoredProcedure {
+    private class AddStoredProcedure extends GetStoredProcedure {
 
         public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
             super(jdbcTemplate, DAOConstants.SP_ADD_BANNER_RULE);
@@ -62,6 +66,15 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
             declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
+        }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<BannerRule>() {
+                public BannerRule mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return buildModel(rs, rowNum);
+                }
+            }));
         }
     }
 
@@ -115,13 +128,27 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
         protected void declareSqlReturnResultSetParameters() {
             declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<BannerRule>() {
                 public BannerRule mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new BannerRule(rs.getString(DAOConstants.COLUMN_STORE_ID),
-                            rs.getString(DAOConstants.COLUMN_RULE_ID), rs.getString(DAOConstants.COLUMN_RULE_NAME),
-                            rs.getString(DAOConstants.COLUMN_CREATED_BY),
-                            rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+                    return buildModel(rs, rowNum);
                 }
             }));
         }
+    }
+
+    private BannerRule buildModel(ResultSet rs, int rowNum) throws SQLException {
+        BannerRule bannerRule = new BannerRule();
+
+        // bannerRule.setComment(rs.getString(DAOConstants.COLUMN_COMMENT));
+        bannerRule.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+        bannerRule.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+        bannerRule.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+        bannerRule.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+
+        bannerRule.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
+        bannerRule.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
+        bannerRule.setRuleName(rs.getString(DAOConstants.COLUMN_RULE_NAME));
+
+        return bannerRule;
     }
 
     @Override
@@ -155,8 +182,7 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
             if (StringUtils.isBlank(ruleId)) {
                 model.setRuleId(DAOUtils.generateUniqueId());
             }
-
-            inputs.put(DAOConstants.MODEL_ID, model.getRuleId());
+            // createdDate SP generated.
             inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
             inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
             inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
@@ -172,7 +198,6 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
 
         if (model != null) {
             inputs = new HashMap<String, Object>();
-            inputs.put(DAOConstants.MODEL_ID, model.getRuleId());
             inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
             inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
             inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());

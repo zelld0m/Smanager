@@ -46,10 +46,10 @@ public class CommentDaoSpImpl extends GenericDaoSpImpl<Comment> implements Comme
         searchSp = new SearchStoredProcedure(jdbcTemplate);
     }
 
-    private class AddStoredProcedure extends CUDStoredProcedure {
+    private class AddStoredProcedure extends GetStoredProcedure {
 
         public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
-            super(jdbcTemplate, DAOConstants.SP_ADD_COMMENT);
+            super(jdbcTemplate, DAOConstants.SP_ADD_COMMENT_FEB2014);
         }
 
         @Override
@@ -60,18 +60,36 @@ public class CommentDaoSpImpl extends GenericDaoSpImpl<Comment> implements Comme
             declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
         }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Comment>() {
+                public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return buildModel(rs, rowNum);
+                }
+            }));
+        }
     }
 
-    private class UpdateStoredProcedure extends CUDStoredProcedure {
+    private class UpdateStoredProcedure extends GetStoredProcedure {
 
         public UpdateStoredProcedure(JdbcTemplate jdbcTemplate) {
-            super(jdbcTemplate, DAOConstants.SP_UPDATE_COMMENT);
+            super(jdbcTemplate, DAOConstants.SP_UPDATE_COMMENT_FEB2014);
         }
 
         @Override
         protected void declareParameters() {
             declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
+        }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Comment>() {
+                public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return buildModel(rs, rowNum);
+                }
+            }));
         }
     }
 
@@ -107,15 +125,17 @@ public class CommentDaoSpImpl extends GenericDaoSpImpl<Comment> implements Comme
         protected void declareSqlReturnResultSetParameters() {
             declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Comment>() {
                 public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new Comment(rs.getInt(DAOConstants.COLUMN_COMMENT_ID),
-                            rs.getString(DAOConstants.COLUMN_REFERENCE_ID), rs.getString(DAOConstants.COLUMN_COMMENT),
-                            rs.getString(DAOConstants.COLUMN_CREATED_BY), jodaDateTimeUtil.toDateTime(rs
-                                    .getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
-                            rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID));
+                    return buildModel(rs, rowNum);
                 }
-
             }));
         }
+    }
+
+    private Comment buildModel(ResultSet rs, int rowNum) throws SQLException {
+        return new Comment(rs.getInt(DAOConstants.COLUMN_COMMENT_ID), rs.getString(DAOConstants.COLUMN_REFERENCE_ID),
+                rs.getString(DAOConstants.COLUMN_COMMENT), rs.getString(DAOConstants.COLUMN_CREATED_BY),
+                jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+                rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID));
     }
 
     @Override

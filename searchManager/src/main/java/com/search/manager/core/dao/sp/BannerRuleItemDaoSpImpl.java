@@ -57,7 +57,7 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem> im
         searchSp = new SearchStoredProcedure(jdbcTemplate);
     }
 
-    private class AddStoredProcedure extends CUDStoredProcedure {
+    private class AddStoredProcedure extends GetStoredProcedure {
 
         public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
             super(jdbcTemplate, DAOConstants.SP_ADD_BANNER_RULE_ITEM);
@@ -80,9 +80,18 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem> im
             declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
         }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<BannerRuleItem>() {
+                public BannerRuleItem mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return buildModel(rs, rowNum);
+                }
+            }));
+        }
     }
 
-    private class UpdateStoredProcedure extends CUDStoredProcedure {
+    private class UpdateStoredProcedure extends GetStoredProcedure {
 
         public UpdateStoredProcedure(JdbcTemplate jdbcTemplate) {
             super(jdbcTemplate, DAOConstants.SP_UPDATE_BANNER_RULE_ITEM);
@@ -104,6 +113,15 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem> im
             declareParameter(new SqlParameter(DAOConstants.PARAM_DISABLED, Types.INTEGER));
             declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_SIZE, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_UPDATED_BY, Types.VARCHAR));
+        }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<BannerRuleItem>() {
+                public BannerRuleItem mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return buildModel(rs, rowNum);
+                }
+            }));
         }
     }
 
@@ -148,39 +166,39 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem> im
         protected void declareSqlReturnResultSetParameters() {
             declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<BannerRuleItem>() {
                 public BannerRuleItem mapRow(ResultSet rs, int rowNum) throws SQLException {
-
-                    BannerRule rule = new BannerRule(rs.getString(DAOConstants.COLUMN_STORE_ID),
-                            rs.getString(DAOConstants.COLUMN_RULE_ID), rs.getString(DAOConstants.COLUMN_RULE_NAME),
-                            null);
-
-                    ImagePath imagePath = new ImagePath();
-                    imagePath.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
-                    imagePath.setId(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID));
-                    imagePath.setPath(rs.getString(DAOConstants.COLUMN_IMAGE_PATH));
-                    imagePath.setSize(rs.getString(DAOConstants.COLUMN_IMAGE_SIZE));
-                    imagePath.setPathType(ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)));
-                    imagePath.setAlias(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS));
-
-                    BannerRuleItem ruleItem = new BannerRuleItem(rule, rs.getString(DAOConstants.COLUMN_MEMBER_ID),
-                            rs.getInt(DAOConstants.COLUMN_PRIORITY), jodaDateTimeUtil.toDateTime(rs
-                                    .getTimestamp(DAOConstants.COLUMN_START_DATE)), jodaDateTimeUtil.toDateTime(rs
-                                    .getTimestamp(DAOConstants.COLUMN_END_DATE)),
-                            rs.getString(DAOConstants.COLUMN_IMAGE_ALT), rs.getString(DAOConstants.COLUMN_LINK_PATH),
-                            rs.getString(DAOConstants.COLUMN_DESCRIPTION), imagePath, BooleanUtils.toBoolean(rs
-                                    .getInt(DAOConstants.COLUMN_DISABLED)), BooleanUtils.toBoolean(rs
-                                    .getInt(DAOConstants.COLUMN_OPEN_NEW_WINDOW)));
-
-                    ruleItem.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
-                    ruleItem.setCreatedDate(jodaDateTimeUtil.toDateTime(rs
-                            .getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-                    ruleItem.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
-                    ruleItem.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
-                            .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
-
-                    return ruleItem;
+                    return buildModel(rs, rowNum);
                 }
             }));
         }
+    }
+
+    private BannerRuleItem buildModel(ResultSet rs, int rowNum) throws SQLException {
+        BannerRule rule = new BannerRule(rs.getString(DAOConstants.COLUMN_STORE_ID),
+                rs.getString(DAOConstants.COLUMN_RULE_ID), rs.getString(DAOConstants.COLUMN_RULE_NAME), null);
+
+        ImagePath imagePath = new ImagePath();
+        imagePath.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
+        imagePath.setId(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID));
+        imagePath.setPath(rs.getString(DAOConstants.COLUMN_IMAGE_PATH));
+        imagePath.setSize(rs.getString(DAOConstants.COLUMN_IMAGE_SIZE));
+        imagePath.setPathType(ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)));
+        imagePath.setAlias(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS));
+
+        BannerRuleItem ruleItem = new BannerRuleItem(rule, rs.getString(DAOConstants.COLUMN_MEMBER_ID),
+                rs.getInt(DAOConstants.COLUMN_PRIORITY), jodaDateTimeUtil.toDateTime(rs
+                        .getTimestamp(DAOConstants.COLUMN_START_DATE)), jodaDateTimeUtil.toDateTime(rs
+                        .getTimestamp(DAOConstants.COLUMN_END_DATE)), rs.getString(DAOConstants.COLUMN_IMAGE_ALT),
+                rs.getString(DAOConstants.COLUMN_LINK_PATH), rs.getString(DAOConstants.COLUMN_DESCRIPTION), imagePath,
+                BooleanUtils.toBoolean(rs.getInt(DAOConstants.COLUMN_DISABLED)), BooleanUtils.toBoolean(rs
+                        .getInt(DAOConstants.COLUMN_OPEN_NEW_WINDOW)));
+
+        ruleItem.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+        ruleItem.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+        ruleItem.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+        ruleItem.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+
+        return ruleItem;
     }
 
     @Override
@@ -217,7 +235,6 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem> im
                 model.setMemberId(DAOUtils.generateUniqueId());
             }
 
-            inputs.put(DAOConstants.MODEL_ID, model.getMemberId());
             inputs.put(DAOConstants.PARAM_STORE_ID, bannerRule.getStoreId());
             inputs.put(DAOConstants.PARAM_RULE_ID, bannerRule.getRuleId());
             inputs.put(DAOConstants.PARAM_MEMBER_ID, model.getMemberId());
@@ -248,7 +265,6 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem> im
             ImagePath imagePath = model.getImagePath();
             String memberId = model.getMemberId();
 
-            inputs.put(DAOConstants.MODEL_ID, model.getMemberId());
             inputs.put(DAOConstants.PARAM_STORE_ID, bannerRule.getStoreId());
             inputs.put(DAOConstants.PARAM_RULE_ID, bannerRule.getRuleId());
             inputs.put(DAOConstants.PARAM_MEMBER_ID, memberId);
