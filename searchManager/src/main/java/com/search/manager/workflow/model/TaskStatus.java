@@ -23,6 +23,8 @@ public enum TaskStatus {
 	
 	private static final Map<String,TaskStatus> lookup = new HashMap<String,TaskStatus>();
 
+	public static final TaskStatus[] AWAITING_COMPLETION_STATUSES = {QUEUED, IN_PROCESS};
+	
 	TaskStatus(String name, String displayText){
 		this.name = name;
 		this.displayText = displayText;

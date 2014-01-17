@@ -68,8 +68,9 @@ public class ImportRuleTaskController {
 		model.addAttribute("currentPage", 1);
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
 		model.addAttribute("types", ImportType.values());
+		model.addAttribute("ruleTypes", RuleEntity.values());
 		model.addAttribute("statuses", TaskStatus.values());
-		model.addAttribute("filter", ",,,");
+		model.addAttribute("filter", ",,,,");
 		model.addAttribute("isTargetStore",isTargetStore());
 		model.addAttribute("taskXmlMap", generateTaskXmlList(recordSet.getList()));
 		
@@ -157,14 +158,22 @@ public class ImportRuleTaskController {
 							model.setImportType(null);
 						}
 						break;
-					case 2:						
+					case 2:
+						if(!arrFilter[ctr].isEmpty()){
+							model.setRuleEntity(RuleEntity.find(arrFilter[ctr]));
+						}else{
+							model.setRuleEntity(null);
+						}
+						break;						
+					case 3:						
 					try {
 						model.setTargetRuleName(URLDecoder.decode( arrFilter[ctr], "UTF-8" ));
 					} catch (UnsupportedEncodingException e) {						
 						e.printStackTrace();
 					}
 						break;		
-					case 3:						
+
+					case 4:						
 						model.setTargetStoreId(arrFilter[ctr]);
 						break;							
 				}
