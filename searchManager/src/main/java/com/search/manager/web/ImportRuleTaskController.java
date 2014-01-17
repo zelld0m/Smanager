@@ -3,7 +3,9 @@ package com.search.manager.web;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,12 +24,15 @@ import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.ImportType;
-import com.search.manager.model.RecordSet;
-import com.search.manager.model.SearchCriteria;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.FileUtil;
+import com.search.manager.utility.PropertiesUtils;
+import com.search.manager.utility.StringUtil;
 import com.search.manager.workflow.model.ImportRuleTask;
 import com.search.manager.workflow.model.TaskExecutionResult;
 import com.search.manager.workflow.model.TaskStatus;
+import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
 
 /**
@@ -43,6 +48,8 @@ public class ImportRuleTaskController {
 	@Autowired private ConfigManager configManager;
 	@Autowired private ImportRuleTaskService importRuleTaskService;	
 	@Autowired private UtilityService utilityService;
+	@Autowired
+	private RuleXmlUtil ruleXmlUtil;
 	
 	private static final String PROPERTY_MODULE_NAME = "workflow";
 	private static final String PROPERTY_NAME = "targetStore";
@@ -55,7 +62,8 @@ public class ImportRuleTaskController {
 	    ImportRuleTask importRuleTask = new ImportRuleTask();
 	    importRuleTask = getStore(importRuleTask,storeId);    
 	    SearchResult<ImportRuleTask> recordSet = importRuleTaskService.search(importRuleTask, 1, 10);
-		model.addAttribute("importRuleTasks", recordSet.getList());
+		
+	    model.addAttribute("importRuleTasks", recordSet.getList());
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", 1);
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
@@ -63,6 +71,8 @@ public class ImportRuleTaskController {
 		model.addAttribute("statuses", TaskStatus.values());
 		model.addAttribute("filter", ",,,");
 		model.addAttribute("isTargetStore",isTargetStore());
+		model.addAttribute("taskXmlMap", generateTaskXmlList(recordSet.getList()));
+		
 		if (!isTargetStore()){
 			model.addAttribute("targetStores",configManager.getPropertyList("workflow", store, DAOConstants.SETTINGS_EXPORT_TARGET));
 		}	
@@ -78,14 +88,14 @@ public class ImportRuleTaskController {
 		pageNumber=pageNumber<=0?1:pageNumber;
 	    ImportRuleTask importRuleTask = new ImportRuleTask();
 	    importRuleTask = getStore(importRuleTask,storeId);
-        SearchCriteria<ImportRuleTask> searchCriteria = new SearchCriteria<ImportRuleTask>(importRuleTask, pageNumber, 10);
-        searchCriteria = setFilter(searchCriteria, filter);
+        importRuleTask = setFilter(importRuleTask, filter);
 		SearchResult<ImportRuleTask> recordSet = importRuleTaskService.search(importRuleTask, pageNumber, 10);
 		model.addAttribute("importRuleTasks", recordSet.getList());
 		model.addAttribute("totalCount", recordSet.getTotalSize());
 		model.addAttribute("currentPage", pageNumber);
 		model.addAttribute("filter", filter);
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
+		model.addAttribute("taskXmlMap", generateTaskXmlList(recordSet.getList()));
 		
 		return "importRuleTask/list";
 	}	
@@ -99,44 +109,68 @@ public class ImportRuleTaskController {
 		return importRuleTask;
 	}
 	
-	private SearchCriteria<ImportRuleTask> setFilter(SearchCriteria<ImportRuleTask> searchCriteria,String filter){
+	private Map<String, Boolean> generateTaskXmlList(List<ImportRuleTask> list) {
+		Map<String, Boolean> taskXmlMap = new HashMap<String, Boolean>();
+		
+		for(ImportRuleTask task : list) {
+			taskXmlMap.put(task.getTaskId(), hasXml(task.getTargetStoreId(), task.getRuleEntity(), task.getTargetRuleId()));
+		}
+		
+		return taskXmlMap;
+	}
+	
+	private Boolean hasXml(String storeId, RuleEntity ruleEntity,String ruleId) {
+		
+		if(StringUtils.isEmpty(ruleId) || StringUtils.isEmpty(storeId) || ruleEntity == null)
+			return false;
+		String fileName = ruleXmlUtil.getFilename(PropertiesUtils.getValue("importfilepath"), storeId, ruleEntity, StringUtil.escapeKeyword(ruleId));
+		try {
+			return FileUtil.isExist(fileName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	private ImportRuleTask setFilter(ImportRuleTask model,String filter){
 		if (!filter.isEmpty()){
 			String[] arrFilter=filter.split(",");
 			if (arrFilter.length==0){
-				searchCriteria.getModel().setTaskExecutionResult(null);
-				searchCriteria.getModel().setImportType(null);
+				model.setTaskExecutionResult(null);
+				model.setImportType(null);
 			}
 			for(int ctr = 0; ctr < arrFilter.length; ctr++){
 				switch(ctr){
 					case 0:
 						if(!arrFilter[ctr].isEmpty()){
 							TaskExecutionResult taskExecutionResult = new TaskExecutionResult(TaskStatus.getByDisplayText(arrFilter[ctr]),null,0,null,null,null);
-							searchCriteria.getModel().setTaskExecutionResult(taskExecutionResult);
+							model.setTaskExecutionResult(taskExecutionResult);
 						}else{
-							searchCriteria.getModel().setTaskExecutionResult(null);
+							model.setTaskExecutionResult(null);
 						}
 						break;
 					case 1:
 						if(!arrFilter[ctr].isEmpty()){
-							searchCriteria.getModel().setImportType(ImportType.getByDisplayText(arrFilter[ctr]));
+							model.setImportType(ImportType.getByDisplayText(arrFilter[ctr]));
 						}else{
-							searchCriteria.getModel().setImportType(null);
+							model.setImportType(null);
 						}
 						break;
 					case 2:						
 					try {
-						searchCriteria.getModel().setTargetRuleName(URLDecoder.decode( arrFilter[ctr], "UTF-8" ));
+						model.setTargetRuleName(URLDecoder.decode( arrFilter[ctr], "UTF-8" ));
 					} catch (UnsupportedEncodingException e) {						
 						e.printStackTrace();
 					}
 						break;		
 					case 3:						
-						searchCriteria.getModel().setTargetStoreId(arrFilter[ctr]);
+						model.setTargetStoreId(arrFilter[ctr]);
 						break;							
 				}
 			}
 		}
-		return searchCriteria;
+		return model;
 	}
 	
 	private boolean isTargetStore(){

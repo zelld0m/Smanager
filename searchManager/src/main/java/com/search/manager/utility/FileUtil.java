@@ -104,7 +104,7 @@ public class FileUtil {
 
     public static boolean isExist(String file) throws Exception {
         File fileHandler = new File(file);
-        return fileHandler.exists();
+        return fileHandler.isFile();
     }
 
     public static boolean isDirectoryExist(String dir) {

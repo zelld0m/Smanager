@@ -80,25 +80,25 @@ public class ImportTaskManager {
 			}
 
 			DateTime startDate = new DateTime();
-			
+
 			updateTaskExecution(importRuleQueueItem, TaskStatus.IN_PROCESS, startDate, startDate, null);
 			RuleEntity ruleEntity = importRuleQueueItem.getRuleEntity();
 			String ruleName = importRuleQueueItem.getTargetRuleName();
-			
+
 			String importRuleRefId = importRuleQueueItem.getSourceRuleId();
 			String storeName = configManager.getStoreName(targetStoreId);
 			String importTypeSetting = importRuleQueueItem.getImportType().getDisplayText();
 			String comment = MessageFormat.format("Imported from {0}.", importRuleQueueItem.getSourceStoreId());
-			
+
 			String[] importRuleRefIdList = {importRuleRefId};
 			String[] importTypeList = {importRuleQueueItem.getImportType().getDisplayText()};
 			String[] importAsRefIdList = {importRuleQueueItem.getTargetRuleId()};
 			String[] ruleNameList = {ruleName};
-			
+
 			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
 
 			TaskExecutionResult taskExecutionResult = importRuleQueueItem.getTaskExecutionResult();
-			
+
 			taskExecutionResult.setRunAttempt(taskExecutionResult.getRunAttempt() + 1);
 
 			if(ruleStatus.isLocked()) {
@@ -114,7 +114,7 @@ public class ImportTaskManager {
 			if(StringUtils.isEmpty(importTypeSetting)) {
 				importTypeSetting = "For Approval";
 			}
-			
+
 			switch(ImportType.getByDisplayText(importTypeSetting)) {
 			case FOR_APPROVAL: 
 				if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
@@ -160,7 +160,7 @@ public class ImportTaskManager {
 			importRuleTask.setLastModifiedDate(startDate);
 			importRuleTask.getTaskExecutionResult().setTaskStartDateTime(startDate);
 		}
-		
+
 		if(endDate != null) {
 			importRuleTask.setLastModifiedDate(endDate);
 			importRuleTask.getTaskExecutionResult().setTaskEndDateTime(endDate);

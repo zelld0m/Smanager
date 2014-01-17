@@ -54,4 +54,34 @@ public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService{
         serviceResponse.success(importRuleTaskList);
         return serviceResponse;
     }
+    
+    @RemoteMethod
+    public ServiceResponse<Boolean> cancelTask(String storeId, String taskId) throws CoreServiceException {
+    	ImportRuleTask importRuleTask = importRuleTaskService.searchById(storeId, taskId);
+    	
+    	importRuleTask.getTaskExecutionResult().setTaskStatus(TaskStatus.CANCELED);
+    	
+    	importRuleTask = importRuleTaskService.update(importRuleTask);
+    	
+    	ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
+    	
+    	serviceResponse.success(importRuleTask!= null && TaskStatus.CANCELED.equals(importRuleTask.getTaskExecutionResult().getTaskStatus()));
+    	 
+    	return serviceResponse;
+    }
+    
+    @RemoteMethod
+    public ServiceResponse<Boolean> resetAttempts(String storeId, String taskId) throws CoreServiceException {
+    	ImportRuleTask importRuleTask = importRuleTaskService.searchById(storeId, taskId);
+    	
+    	importRuleTask.getTaskExecutionResult().setRunAttempt(0);
+    	
+    	importRuleTask = importRuleTaskService.update(importRuleTask);
+    	
+    	ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
+    	
+    	serviceResponse.success(importRuleTask!= null && TaskStatus.CANCELED.equals(importRuleTask.getTaskExecutionResult().getTaskStatus()));
+    	 
+    	return serviceResponse;
+    }
 }
