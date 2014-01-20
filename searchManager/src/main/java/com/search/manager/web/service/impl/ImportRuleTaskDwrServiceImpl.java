@@ -10,6 +10,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.response.ServiceResponse;
+import com.search.manager.service.UtilityService;
 import com.search.manager.web.service.ImportRuleTaskDwrService;
 import com.search.manager.workflow.model.ImportRuleTask;
 import com.search.manager.workflow.model.TaskExecutionResult;
@@ -29,6 +31,8 @@ public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService{
 
     @Autowired
     private ImportRuleTaskService importRuleTaskService;
+    @Autowired
+    private UtilityService utilityService;
 
     @Override
     @RemoteMethod
@@ -56,32 +60,38 @@ public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService{
         return serviceResponse;
     }
     
+    @Override
     @RemoteMethod
     public ServiceResponse<Boolean> cancelTask(String storeId, String taskId) throws CoreServiceException {
-    	ImportRuleTask importRuleTask = importRuleTaskService.searchById(storeId, taskId);
-    	
-    	importRuleTask.getTaskExecutionResult().setTaskStatus(TaskStatus.CANCELED);
-    	
-    	importRuleTask = importRuleTaskService.update(importRuleTask);
-    	
-    	ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
-    	
-    	serviceResponse.success(importRuleTask!= null && TaskStatus.CANCELED.equals(importRuleTask.getTaskExecutionResult().getTaskStatus()));
     	 
-    	return serviceResponse;
+    	return updateQueueTask(storeId, taskId, TaskStatus.CANCELED, null);
     }
     
+    @Override
     @RemoteMethod
     public ServiceResponse<Boolean> resetAttempts(String storeId, String taskId) throws CoreServiceException {
+    	    	 
+    	return updateQueueTask(storeId, taskId, TaskStatus.QUEUED, 0);
+    }
+    
+    private ServiceResponse<Boolean> updateQueueTask(String storeId, String taskId, TaskStatus status, Integer runAttempt) throws CoreServiceException {
     	ImportRuleTask importRuleTask = importRuleTaskService.searchById(storeId, taskId);
-    	
-    	importRuleTask.getTaskExecutionResult().setRunAttempt(0);
+    	TaskExecutionResult result = importRuleTask.getTaskExecutionResult();
+    	if(runAttempt != null) {
+    		
+    		result.setRunAttempt(runAttempt);
+    		result.setTaskErrorMessage(null);
+    		result.setStateCompleted(null);
+    	}
+    	result.setTaskStatus(status);
+    	importRuleTask.setLastModifiedDate(new DateTime());
+    	importRuleTask.setLastModifiedBy(utilityService.getUsername());
     	
     	importRuleTask = importRuleTaskService.update(importRuleTask);
     	
     	ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
     	
-    	serviceResponse.success(importRuleTask!= null && TaskStatus.CANCELED.equals(importRuleTask.getTaskExecutionResult().getTaskStatus()));
+    	serviceResponse.success(importRuleTask!= null && status.equals(importRuleTask.getTaskExecutionResult().getTaskStatus()));
     	 
     	return serviceResponse;
     }

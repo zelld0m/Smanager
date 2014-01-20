@@ -86,7 +86,27 @@
 				var self = this;
 				var currentPage = $('#currentPageNumber').val();
 				self.changePage(currentPage);
-			},				
+			},
+			requeue: function(id) {
+				ImportRuleTaskService.resetAttempts(GLOBAL_storeId, id, 
+					{
+						callback:function(serviceResponse){
+							if(serviceResponse != null)
+								alert('success');
+						}
+					}
+				);
+			},
+			cancel: function(id) {
+				ImportRuleTaskService.cancelTask(GLOBAL_storeId, id, 
+					{
+						callback:function(serviceResponse){
+							if(serviceResponse != null)
+								alert('success');
+						}
+					}
+				);
+			},
 			init : function(pageNumber){		
 				var self = this;
 				$(".failedReason").on({
@@ -107,7 +127,17 @@
 						location.reload();
 					}
 				});
-			}				
+				$('.btnRequeue').on({
+					click: function(e){
+						self.requeue(this.id);
+					}
+				});
+				$('.btnCancel').on({
+					click: function(e){
+						self.cancel(this.id);
+					}
+				});
+			}
 	};
 
 	$(document).ready(function(){	
