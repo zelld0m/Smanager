@@ -87,25 +87,37 @@
 				var currentPage = $('#currentPageNumber').val();
 				self.changePage(currentPage);
 			},
-			requeue: function(id) {
-				ImportRuleTaskService.resetAttempts(GLOBAL_storeId, id, 
-					{
-						callback:function(serviceResponse){
-							if(serviceResponse != null)
-								alert('success');
-						}
+			requeue: function(id, moduleName, ruleName, reloadFunction) {
+				jConfirm('Are you sure you want to requeue the task "'+ruleName+'"?', "Requeue Task", function(result) {
+					if (result) {
+						ImportRuleTaskService.resetAttempts(GLOBAL_storeId, id, 
+							{
+								callback:function(serviceResponse){
+									if(serviceResponse.data == true) {
+										jAlert('The task for the rule "'+ruleName+'" was successfully requeued.', moduleName);
+										reloadFunction();
+									}
+								}
+							}
+						);
 					}
-				);
+				});
 			},
-			cancel: function(id) {
-				ImportRuleTaskService.cancelTask(GLOBAL_storeId, id, 
-					{
-						callback:function(serviceResponse){
-							if(serviceResponse != null)
-								alert('success');
-						}
+			cancel: function(id, moduleName, ruleName, reloadFunction) {
+				jConfirm('Are you sure you want to cancel the task "'+ruleName+'"?', "Cancel Task", function(result) {
+					if (result) {
+						ImportRuleTaskService.cancelTask(GLOBAL_storeId, id, 
+							{
+								callback:function(serviceResponse){
+									if(serviceResponse.data == true) {
+										jAlert('The task for the rule "'+ruleName+'" has been canceled.', moduleName);
+										reloadFunction();
+									}
+								}
+							}
+						);
 					}
-				);
+				});
 			},
 			init : function(pageNumber){		
 				var self = this;
@@ -129,12 +141,14 @@
 				});
 				$('.btnRequeue').on({
 					click: function(e){
-						self.requeue(this.id);
+						var ruleName = $(this).parents('.conTableItem ').children('.ruleName').html();
+						self.requeue(this.id, self.moduleName, ruleName, function(){self.filterPage();});
 					}
 				});
 				$('.btnCancel').on({
 					click: function(e){
-						self.cancel(this.id);
+						var ruleName = $(this).parents('.conTableItem ').children('.ruleName').html();
+						self.cancel(this.id, self.moduleName, ruleName, function(){self.filterPage();});
 					}
 				});
 			}

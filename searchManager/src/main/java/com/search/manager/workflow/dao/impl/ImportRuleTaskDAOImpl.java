@@ -69,6 +69,7 @@ public class ImportRuleTaskDAOImpl
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TARGET_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_IMPORT_TYPE, Types.INTEGER));
+			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_STATUS, Types.INTEGER));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_START_STAMP, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(WorkflowConstants.COLUMN_TASK_END_STAMP, Types.TIMESTAMP));
@@ -319,6 +320,7 @@ public class ImportRuleTaskDAOImpl
         inParam.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, null);
         inParam.put(WorkflowConstants.COLUMN_TARGET_RULE_ID, null);
         inParam.put(WorkflowConstants.COLUMN_IMPORT_TYPE, null);
+        inParam.put(WorkflowConstants.COLUMN_TASK_ID, null);
         inParam.put(WorkflowConstants.COLUMN_TASK_STATUS, null);
         inParam.put(WorkflowConstants.COLUMN_TASK_START_STAMP, null);
         inParam.put(WorkflowConstants.COLUMN_TASK_END_STAMP, null);

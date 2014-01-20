@@ -21,7 +21,8 @@
                 <th>Target Rule</th>
                 <th>Type</th>
                 <th>Status</th>
-                <th>Duration</th>           
+                <th>Duration</th>        
+                <th>Action</th>   
             </tr>
         </thead>
 		<tbody>
@@ -36,7 +37,7 @@
 				   		<td align="center">
 							${importRuleTask.ruleEntity.name}
 				        </td>
-				        <td align="center">
+				        <td align="center" class="ruleName">
 							${importRuleTask.sourceRuleName}
 				        </td>
 				        <td align="center">
@@ -66,6 +67,14 @@
 									${taskMessage.message}
 								</a><br/>
 							</c:forEach>
+				        </td>
+				        <td nowrap>
+				        	<c:set var="enableRequeue" value="${taskXmlMap[importRuleTask.taskId] && (importRuleTask.taskExecutionResult.taskStatus eq 'FAILED' || importRuleTask.taskExecutionResult.taskStatus eq 'CANCELED' || importRuleTask.taskExecutionResult.taskStatus eq 'AUTO_CANCELED')}"/>
+				        	<c:set var="enableCancel" value="${importRuleTask.taskExecutionResult.taskStatus eq 'QUEUED' || importRuleTask.taskExecutionResult.taskStatus eq 'FAILED'}"/>
+				        	
+				        	<input class="${enableRequeue ? 'btnRequeue' : 'btnRequeueOff' }" id="${importRuleTask.taskId }" type="image" src="<spring:url value="/images/icon_globe25${enableRequeue ? '_active' : '' }.png" />"/>
+				        	<input class="${enableCancel ? 'btnCancel' : 'btnCancelOff' }" id="${importRuleTask.taskId }" type="image" src="<spring:url value="/images/icon_delete2${enableCancel ? '' : '_gray' }.png" />"/>
+				        	
 				        </td>		        		        		        		        		        		        		        		        			        			        			        			        
 				    </tr>        
 				</c:forEach>			    
