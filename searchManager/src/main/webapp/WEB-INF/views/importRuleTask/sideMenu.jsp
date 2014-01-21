@@ -54,8 +54,8 @@
     	</c:if>   		
       	<div class="clearB"></div>
 		<div align="right" class="padR5 marT10">
-		    <a href="#" onclick="javascript:importRuleTask.filterPage();" class="buttons btnGray clearfix"><div class="buttons fontBold" id="goBtn">Filter</div></a>
-			<a href="../autoimport/pcmall" class="buttons btnGray clearfix"><div class="buttons fontBold" id="resetBtn">Reset</div></a>
+		    <a id="filterBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold" id="goBtn">Filter</div></a>
+			<a id="resetBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold" id="resetBtn">Reset</div></a>
 		</div>
     </div>
     <!--  end info -->

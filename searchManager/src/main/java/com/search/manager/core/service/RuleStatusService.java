@@ -31,6 +31,8 @@ public interface RuleStatusService extends GenericService<RuleStatus> {
 
     RuleStatus getRuleStatus(String ruleType, String ruleRefId) throws CoreServiceException;
 
+    RuleStatus getRuleStatus(String storeId, String ruleType, String ruleRefId) throws CoreServiceException;
+    
     // Add RuleStatusService specific method here...
 
 }

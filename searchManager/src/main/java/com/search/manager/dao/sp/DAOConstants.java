@@ -1,9 +1,6 @@
 package com.search.manager.dao.sp;
 
 public class DAOConstants {
-
-	/* Generated ID */
-	public static final String MODEL_ID = "model_id";
 	
     /* Result Set identifier */
     public static final String RESULT_SET_1 = "#result-set-1";
@@ -60,18 +57,19 @@ public class DAOConstants {
     public static final String SP_DELETE_FACET_GROUP_ITEM = "usp_Delete_Facet_Group_Item";
     public static final String SP_CLEAR_FACET_GROUP_ITEM = "usp_Clear_Facet_Group_Item";
     // BANNER
-    public static final String SP_ADD_BANNER_RULE = "usp_Add_Banner_Rule";
+    public static final String SP_ADD_BANNER_RULE = "usp_Add_Banner_Rule_FEB2014";
     public static final String SP_GET_BANNER_RULE = "usp_Get_Banner_Rule";
     public static final String SP_DELETE_BANNER_RULE = "usp_Delete_Banner_Rule";
-    public static final String SP_ADD_BANNER_RULE_ITEM = "usp_Add_Banner_Rule_Item";
-    public static final String SP_UPDATE_BANNER_RULE_ITEM = "usp_Update_Banner_Rule_Item";
+    public static final String SP_ADD_BANNER_RULE_ITEM = "usp_Add_Banner_Rule_Item_FEB2014";
+    public static final String SP_UPDATE_BANNER_RULE_ITEM = "usp_Update_Banner_Rule_Item_FEB2014";
     public static final String SP_GET_BANNER_RULE_ITEM = "usp_Get_Banner_Rule_Item";
     public static final String SP_DELETE_BANNER_RULE_ITEM = "usp_Delete_Banner_Rule_Item";
-    public static final String SP_ADD_BANNER_IMAGE_PATH = "usp_Add_Banner_Image_Path";
+    public static final String SP_ADD_BANNER_IMAGE_PATH = "usp_Add_Banner_Image_Path_FEB2014";
     public static final String SP_GET_BANNER_IMAGE_PATH = "usp_Get_Banner_Image_Path";
-    public static final String SP_UPDATE_BANNER_IMAGE_PATH = "usp_Update_Banner_Image_Path";
+    public static final String SP_UPDATE_BANNER_IMAGE_PATH = "usp_Update_Banner_Image_Path_FEB2014";
     // AUDIT_TRAIL
     public static final String SP_ADD_AUDIT_TRAIL = "usp_Add_Audit_Trail";
+    public static final String SP_ADD_AUDIT_TRAIL_FEB2014 = "usp_Add_Audit_Trail_FEB2014";
     public static final String SP_GET_AUDIT_TRAIL = "usp_Get_Audit_Trail";
     // RELEVANCY
     public static final String SP_ADD_RELEVANCY = "usp_Add_Relevancy";
@@ -106,12 +104,16 @@ public class DAOConstants {
     public static final String SP_DELETE_REDIRECT_CONDITION = "usp_Delete_Redirect_Rule_Condition_Relationship";
     //RULE STATUS
     public static final String SP_ADD_RULE_STATUS = "usp_Add_Rule_Status";
+    public static final String SP_ADD_RULE_STATUS_FEB2014 = "usp_Add_Rule_Status_FEB2014";
     public static final String SP_UPDATE_RULE_STATUS = "usp_Update_Rule_Status";
+    public static final String SP_UPDATE_RULE_STATUS_FEB2014 = "usp_Update_Rule_Status_FEB2014";
     public static final String SP_DELETE_RULE_STATUS = "usp_Delete_Rule_Status";
     public static final String SP_GET_RULE_STATUS = "usp_Get_Rule_Status";
     //COMMENT
     public static final String SP_ADD_COMMENT = "usp_Add_Comment_Status";
+    public static final String SP_ADD_COMMENT_FEB2014 = "usp_Add_Comment_Status_FEB2014";
     public static final String SP_UPDATE_COMMENT = "usp_Update_Comment_Status";
+    public static final String SP_UPDATE_COMMENT_FEB2014 = "usp_Update_Comment_Status_FEB2014";
     public static final String SP_DELETE_COMMENT = "usp_Delete_Comment_Status";
     public static final String SP_GET_COMMENT = "usp_Get_Comment_Status";
     //CATEGORY

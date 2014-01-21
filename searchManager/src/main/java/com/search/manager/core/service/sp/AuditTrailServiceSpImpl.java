@@ -53,7 +53,7 @@ public class AuditTrailServiceSpImpl implements AuditTrailService {
     }
 
     @Override
-    public Collection<AuditTrail> add(Collection<AuditTrail> models) throws CoreServiceException {
+    public List<AuditTrail> add(Collection<AuditTrail> models) throws CoreServiceException {
         if (models != null) {
             try {
                 List<AuditTrail> validatedModels = new ArrayList<AuditTrail>();
@@ -70,7 +70,7 @@ public class AuditTrailServiceSpImpl implements AuditTrailService {
                         validatedModels.add(auditTrail);
                     }
                 }
-                return auditTrailDao.add(validatedModels);
+                return (List<AuditTrail>) auditTrailDao.add(validatedModels);
             } catch (CoreDaoException e) {
                 throw new CoreServiceException(e);
             }
@@ -101,7 +101,7 @@ public class AuditTrailServiceSpImpl implements AuditTrailService {
     }
 
     @Override
-    public Collection<AuditTrail> update(Collection<AuditTrail> models) throws CoreServiceException {
+    public List<AuditTrail> update(Collection<AuditTrail> models) throws CoreServiceException {
         if (models != null) {
             try {
                 List<AuditTrail> validatedModels = new ArrayList<AuditTrail>();
@@ -118,7 +118,7 @@ public class AuditTrailServiceSpImpl implements AuditTrailService {
                         validatedModels.add(auditTrail);
                     }
                 }
-                return auditTrailDao.update(validatedModels);
+                return (List<AuditTrail>) auditTrailDao.update(validatedModels);
             } catch (CoreDaoException e) {
                 throw new CoreServiceException(e);
             }

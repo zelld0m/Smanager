@@ -3,10 +3,10 @@ package com.search.manager.workflow.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.model.ImportRuleTask;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.ExportRuleMapDAO;
 import com.search.manager.model.ExportRuleMap;
-import com.search.manager.workflow.model.ImportRuleTask;
 import com.search.manager.workflow.service.ExportRuleMapService;
 
 @Service

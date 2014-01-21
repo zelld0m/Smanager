@@ -103,7 +103,7 @@ public class ImagePathServiceSpImpl implements ImagePathService {
     }
 
     @Override
-    public Collection<ImagePath> update(Collection<ImagePath> models) throws CoreServiceException {
+    public List<ImagePath> update(Collection<ImagePath> models) throws CoreServiceException {
         try {
             // Validate required field for update.
             List<ImagePath> validatedModels = new ArrayList<ImagePath>();
@@ -120,7 +120,7 @@ public class ImagePathServiceSpImpl implements ImagePathService {
                 }
             }
 
-            return imagePathDao.update(validatedModels);
+            return (List<ImagePath>) imagePathDao.update(validatedModels);
         } catch (CoreDaoException e) {
             throw new CoreServiceException(e);
         }

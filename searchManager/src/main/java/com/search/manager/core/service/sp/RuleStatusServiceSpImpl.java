@@ -363,4 +363,24 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
         return null;
     }
 
+    @Override
+    public RuleStatus getRuleStatus(String storeId, String ruleType, String ruleRefId) throws CoreServiceException {
+        if (StringUtils.isNotBlank(storeId) && StringUtils.isNotBlank(ruleType) && StringUtils.isNotBlank(ruleRefId)) {
+            RuleStatus ruleStatus = new RuleStatus();
+            ruleStatus.setStoreId(storeId);
+            ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+            ruleStatus.setRuleRefId(ruleRefId);
+            
+            try {
+                SearchResult<RuleStatus> searchResult = ruleStatusDao.search(ruleStatus);
+                if (searchResult.getTotalCount() > 0) {
+                    return searchResult.getResult().get(0);
+                }
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
+        return null;
+    }
+
 }

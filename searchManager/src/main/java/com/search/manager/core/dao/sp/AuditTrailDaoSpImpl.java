@@ -22,7 +22,6 @@ import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.AuditTrail;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
-import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
@@ -57,10 +56,10 @@ public class AuditTrailDaoSpImpl extends GenericDaoSpImpl<AuditTrail> implements
         searchSp = new SearchStoredProcedure(jdbcTemplate);
     }
 
-    private class AddStoredProcedure extends CUDStoredProcedure {
+    private class AddStoredProcedure extends GetStoredProcedure {
 
         public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
-            super(jdbcTemplate, DAOConstants.SP_ADD_AUDIT_TRAIL);
+            super(jdbcTemplate, DAOConstants.SP_ADD_AUDIT_TRAIL_FEB2014);
         }
 
         @Override
@@ -73,6 +72,15 @@ public class AuditTrailDaoSpImpl extends GenericDaoSpImpl<AuditTrail> implements
             declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE, Types.VARCHAR));
             declareParameter(new SqlParameter(DAOConstants.PARAM_DATE, Types.TIMESTAMP));
             declareParameter(new SqlParameter(DAOConstants.PARAM_DETAILS, Types.VARCHAR));
+        }
+
+        @Override
+        protected void declareSqlReturnResultSetParameters() {
+            declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<AuditTrail>() {
+                public AuditTrail mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    return buildModel(rs, rowNum);
+                }
+            }));
         }
     }
 
@@ -101,14 +109,31 @@ public class AuditTrailDaoSpImpl extends GenericDaoSpImpl<AuditTrail> implements
         protected void declareSqlReturnResultSetParameters() {
             declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<AuditTrail>() {
                 public AuditTrail mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    return new AuditTrail(rs.getString(DAOConstants.COLUMN_USER_NAME), rs
-                            .getString(DAOConstants.COLUMN_ENTITY), rs.getString(DAOConstants.COLUMN_OPERATION), rs
-                            .getString(DAOConstants.COLUMN_STORE), rs.getString(DAOConstants.COLUMN_KEYWORD), rs
-                            .getString(DAOConstants.COLUMN_REFERENCE), jodaDateTimeUtil.toDateTime(rs
-                            .getTimestamp(DAOConstants.COLUMN_DATE)), rs.getString(DAOConstants.COLUMN_DETAILS));
+                    return buildModel(rs, rowNum);
                 }
             }));
         }
+    }
+
+    private AuditTrail buildModel(ResultSet rs, int rowNum) throws SQLException {
+        AuditTrail auditTrail = new AuditTrail();
+
+        // auditTrail.setComment(rs.getString(DAOConstants.COLUMN_COMMENT));
+        auditTrail.setCreatedBy(rs.getString(DAOConstants.COLUMN_USER_NAME));
+        // auditTrail.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
+        auditTrail.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+        auditTrail.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+
+        auditTrail.setUsername(rs.getString(DAOConstants.COLUMN_USER_NAME));
+        auditTrail.setOperation(rs.getString(DAOConstants.COLUMN_OPERATION));
+        auditTrail.setEntity(rs.getString(DAOConstants.COLUMN_ENTITY));
+        auditTrail.setStoreId(rs.getString(DAOConstants.COLUMN_STORE));
+        auditTrail.setKeyword(rs.getString(DAOConstants.COLUMN_KEYWORD));
+        auditTrail.setReferenceId(rs.getString(DAOConstants.COLUMN_REFERENCE));
+        auditTrail.setDetails(rs.getString(DAOConstants.COLUMN_DETAILS));
+
+        return auditTrail;
     }
 
     @Override
