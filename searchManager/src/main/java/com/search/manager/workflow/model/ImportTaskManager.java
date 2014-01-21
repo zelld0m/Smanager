@@ -9,12 +9,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.search.manager.core.dao.ImportRuleTaskDao;
 import com.search.manager.core.enums.RuleSource;
-import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.ImportRuleTask;
+import com.search.manager.core.model.TaskExecutionResult;
+import com.search.manager.core.model.TaskStatus;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.ImportRuleTaskService;
+import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.service.DeploymentService;
@@ -22,8 +24,6 @@ import com.search.manager.service.RuleTransferService;
 import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.ws.ConfigManager;
-
-import com.search.manager.enums.ImportType;
 
 @Repository(value="importTaskManager")
 public class ImportTaskManager {
