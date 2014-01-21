@@ -31,11 +31,6 @@
             target: WIDGET_TARGET_redirectUrl
         }));
         
-        Manager.addWidget(new AjaxSolr.SearchRuleModeWidget({
-        	id: WIDGET_ID_searchRuleMode,
-        	target: WIDGET_TARGET_searchRuleMode
-        }));
-        
         Manager.addWidget(new AjaxSolr.RedirectUrlToggleWidget({
             id: WIDGET_ID_redirectUrlToggle,
             target: WIDGET_TARGET_redirectUrlToggle,
@@ -114,6 +109,13 @@
             limit: 5,
             attribMap: null
         }));
+        Manager.addWidget(new AjaxSolr.AvailabilityFacetWidget({
+            id: 'availabilityFacets',
+            target: '#availabilityFacets',
+            limit: 5,
+            attribMap: null,
+            isDisplayWidget: (GLOBAL_storeId == 'macmall')
+        }));        
 
         Manager.addWidget(new AjaxSolr.CurrentSearchWidget({
             id: 'currentSearch',
@@ -149,9 +151,15 @@
 		if (GLOBAL_storeFacetTemplateType === 'IMS') {
         	// IMS
         	facetTemplate = ['Category', 'Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
+        	if (GLOBAL_storeId == 'macmall'){
+        		facetTemplate = ['Category', 'Manufacturer', 'Platform','InStock_Memphis','InStock_Chicago_Retail','InStock_Huntington_Beach_Retail','InStock_Santa_Monica_Retail','InStock_Torrance_Retail',GLOBAL_storeFacetTemplateName];
+        	}
         } else if(GLOBAL_storeFacetTemplateType === 'CNET') {
-        	// CNET
+        	// CNET        	
             facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
+            if (GLOBAL_storeId == 'macmall'){
+        		facetTemplate = ['Manufacturer', 'Platform','InStock_Memphis','InStock_Chicago_Retail','InStock_Huntington_Beach_Retail','InStock_Santa_Monica_Retail','InStock_Torrance_Retail',GLOBAL_storeFacetTemplateName];
+        	}
         }
 
         var params = {
@@ -170,7 +178,7 @@
             'gui': GLOBAL_isFromGUI,
             'json.nl': 'map'
         };
-
+        
         params[GLOBAL_solrSelectorParam] = GLOBAL_storeId;
 
         for (var name in params) {
