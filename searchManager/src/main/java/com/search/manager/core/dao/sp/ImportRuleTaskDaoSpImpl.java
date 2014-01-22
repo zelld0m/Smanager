@@ -42,6 +42,14 @@ public class ImportRuleTaskDaoSpImpl extends GenericDaoSpImpl<ImportRuleTask> im
     @Autowired
     private JodaDateTimeUtil jodaDateTimeUtil;
 
+    @Autowired(required = true)
+    public ImportRuleTaskDaoSpImpl(JdbcTemplate jdbcTemplate) {
+    	super();
+    	addSp = new AddStoredProcedure(jdbcTemplate);
+    	updateSp = new UpdateStoredProcedure(jdbcTemplate);
+    	searchSp = new SearchStoredProcedure(jdbcTemplate);
+    }
+    
     private class AddStoredProcedure extends GetStoredProcedure {
 
         public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -226,7 +234,7 @@ public class ImportRuleTaskDaoSpImpl extends GenericDaoSpImpl<ImportRuleTask> im
             inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID, model.getTargetStoreId());
             inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_ID, model.getTargetRuleId());
             inputs.put(WorkflowConstants.COLUMN_TARGET_RULE_NAME, model.getTargetRuleName());
-            inputs.put(WorkflowConstants.COLUMN_IMPORT_TYPE, model.getImportType().ordinal());
+            inputs.put(WorkflowConstants.COLUMN_IMPORT_TYPE, model.getImportType().ordinal() + 1);
             inputs.put(WorkflowConstants.COLUMN_CREATED_BY, model.getCreatedBy());
             inputs.put(WorkflowConstants.COLUMN_CREATED_STAMP, jodaDateTimeUtil.toSqlDate(model.getCreatedDate()));
         }
