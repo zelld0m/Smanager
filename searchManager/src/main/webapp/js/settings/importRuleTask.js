@@ -119,6 +119,9 @@
 					}
 				});
 			},
+			preview: function(id, moduleName, ruleName) {
+				
+			},
 			init : function(pageNumber){		
 				var self = this;
 				$(".failedReason").on({
