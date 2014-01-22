@@ -125,7 +125,7 @@
 								transferType: "import",
 								ruleId: task.sourceRuleId,
 								ruleName: task.sourceRuleName,
-								ruleType: task.entityName,
+								ruleType: task.entityName.replace(' ', '').toLowerCase(),
 								enablePreTemplate: true,
 								enablePostTemplate: true,
 								leftPanelSourceData: "xml",

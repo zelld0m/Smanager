@@ -107,7 +107,7 @@ public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService {
 		ImportRuleTask importRuleTask = importRuleTaskService.searchById(storeId, taskId);
 		ServiceResponse<RuleXml> serviceResponse = new ServiceResponse<RuleXml>();
 		if(importRuleTask != null) {
-			RuleXml ruleXml = ruleTransferUtil.getRuleToImport(importRuleTask.getTargetStoreId(), importRuleTask.getRuleEntity(),  StringUtil.escapeKeyword(importRuleTask.getTargetRuleId()));
+			RuleXml ruleXml = ruleTransferUtil.getRuleToImport(importRuleTask.getTargetStoreId(), importRuleTask.getRuleEntity(),  StringUtil.escapeKeyword(importRuleTask.getSourceRuleId()));
 			serviceResponse.success(ruleXml);
 		} else {
 			serviceResponse.error("Cannot find task. Please contact your system administrator.");
