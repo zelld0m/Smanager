@@ -65,7 +65,7 @@
                     self.rulePage = page;
                     self.ruleFilterText = ruleName;
                     self.selectedRulePage = page;
-                    BannerRuleServiceJS.getAllRules(GLOBAL_storeId, ruleName, page, base.options.pageSize, {
+                    BannerRuleService.getAllRules(GLOBAL_storeId, ruleName, page, base.options.pageSize, {
                         callback: function(sr) {
                             var data = sr["data"];
                             base.populateList(data, ruleName);
@@ -78,7 +78,7 @@
                 },
                 itemOptionCallback: function(base, item) {
 
-                    BannerRuleItemServiceJS.getTotalRuleItems(GLOBAL_storeId, item.model["ruleId"], {
+                    BannerRuleItemService.getTotalRuleItems(GLOBAL_storeId, item.model["ruleId"], {
                         callback: function(sr) {
                             var count = sr["data"];
                             if (count > 0)
@@ -105,13 +105,13 @@
                     self.setRule(item.model);
                 },
                 itemAddCallback: function(base, ruleName) {
-                    BannerRuleServiceJS.addRule(ruleName, {
+                    BannerRuleService.addRule(ruleName, {
                         callback: function(sr) {
                             switch (sr["status"]) {
                                 case 0:
                                 	// TODO added banner already in service response
                                     jAlert($.formatText(self.lookupMessages.successAddNewKeyword, ruleName), "Banner Rule", function() {
-                                        BannerRuleServiceJS.getRuleByName(GLOBAL_storeId, ruleName, {
+                                        BannerRuleService.getRuleByName(GLOBAL_storeId, ruleName, {
                                             callback: function(sr) {
                                                 self.setRule(sr["data"]);
                                             }
@@ -144,7 +144,7 @@
                 authorizeSubmitForApproval: allowModify,
                 postRestoreCallback: function(base, rule) {
                     base.api.destroy();
-                    BannerRuleServiceJS.getRuleById(GLOBAL_storeId, self.selectedRule["ruleId"], {
+                    BannerRuleService.getRuleById(GLOBAL_storeId, self.selectedRule["ruleId"], {
                         callback: function(response) {
                             if (response.status == 0) {
                                 self.setRule(response.data);
@@ -304,7 +304,7 @@
                 itemDataCallback: function(startDate, endDate, aggregate) {
                     var base = this;
                     aggregate = aggregate == null ? false : aggregate;
-                    BannerRuleServiceJS.getStatsByKeyword(GLOBAL_storeId, rule["ruleName"], startDate, endDate, aggregate, {
+                    BannerRuleService.getStatsByKeyword(GLOBAL_storeId, rule["ruleName"], startDate, endDate, aggregate, {
                         callback: function(sr) {
                             base.populateList.call(base, sr["data"], "keyword");
                         }
@@ -312,7 +312,7 @@
                 },
                 itemImagePathCallback: function(url) {
                     var u = this;
-                   ImagePathServiceJS.getImagePath(GLOBAL_storeId, url, {
+                   ImagePathService.getImagePath(GLOBAL_storeId, url, {
                         callback: function(sr) {
                             var imagePath = sr["data"];
                             if (imagePath) {
@@ -323,7 +323,7 @@
                 }
             });
 
-            BannerRuleItemServiceJS.getRuleItemsByFilter(GLOBAL_storeId, rule["ruleId"], self.getRuleItemFilter(), $("#filterByDate").val(), $("#filterBySize").val(), page, self.ruleItemPageSize, {
+            BannerRuleItemService.getRuleItemsByFilter(GLOBAL_storeId, rule["ruleId"], self.getRuleItemFilter(), $("#filterByDate").val(), $("#filterBySize").val(), page, self.ruleItemPageSize, {
                 callback: function(sr) {
                     var recordSet = sr["data"];
 
@@ -492,7 +492,7 @@
                 ruleItem: item,
                 itemDataCallback: function(startDate, endDate) {
                     var base = this;
-                    BannerRuleServiceJS.getStatsByMemberId(GLOBAL_storeId, item["memberId"], startDate, endDate, {
+                    BannerRuleService.getStatsByMemberId(GLOBAL_storeId, item["memberId"], startDate, endDate, {
                         callback: function(sr) {
                             base.populateList.call(base, sr["data"], "memberId");
                         }
@@ -500,7 +500,7 @@
                 },
                 itemScheduleCallback: function(ruleId, memberId) {
                     var u = this;
-                    BannerRuleItemServiceJS.getRuleItemByMemberId(GLOBAL_storeId, ruleId, memberId, {
+                    BannerRuleItemService.getRuleItemByMemberId(GLOBAL_storeId, ruleId, memberId, {
                         callback: function(sr) {
                             var rItem = sr["data"];
                             if (rItem) {
@@ -548,7 +548,7 @@
                         return;
                     jConfirm("Delete all " + $("#filterBySize").val() + " in keyword " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result) {
                         if (result) {
-                            BannerRuleItemServiceJS.deleteRuleItemsByImageSize(GLOBAL_storeId, self.selectedRule["ruleId"], $("#filterBySize").val(), {
+                            BannerRuleItemService.deleteRuleItemsByImageSize(GLOBAL_storeId, self.selectedRule["ruleId"], $("#filterBySize").val(), {
                                 callback: function(e) {
                                     self.getRuleItemList(1);
                                 },
@@ -743,7 +743,7 @@
                         "openNewWindow": params["openNewWindow"]
                     };
 
-                    BannerRuleServiceJS.copyToRule(GLOBAL_storeId, params["keywords"], mapParams, {
+                    BannerRuleService.copyToRule(GLOBAL_storeId, params["keywords"], mapParams, {
                         callback: function(sr) {
                             var keyList = sr["data"];
 
@@ -765,7 +765,7 @@
             var self = this;
             var count = 1;
 
-            BannerRuleServiceJS.getTotalRulesByImageId(GLOBAL_storeId, item["imagePath"]["id"], item["imagePath"]["alias"], {
+            BannerRuleService.getTotalRulesByImageId(GLOBAL_storeId, item["imagePath"]["id"], item["imagePath"]["alias"], {
                 callback: function(sr) {
                     var total = sr["data"];
                     if ($.isNumeric(total) && total > 1) {
@@ -797,7 +797,7 @@
                     var page = base.options.page;
                     var pageSize = base.options.pageSize;
 
-                    BannerRuleItemServiceJS.getRuleItemsByImageId(GLOBAL_storeId, baseItem["imagePath"]["id"], page, pageSize, {
+                    BannerRuleItemService.getRuleItemsByImageId(GLOBAL_storeId, baseItem["imagePath"]["id"], page, pageSize, {
                         callback: function(sr) {
                             var recordSet = sr["data"];
                             base.populateList(recordSet);
@@ -815,7 +815,7 @@
                     var base = this;
                     //var baseItem = base.options.ruleItem;
 
-                    BannerRuleItemServiceJS.deleteRuleItemByMemberId(GLOBAL_storeId, baseItem["rule"]["ruleId"], baseItem["memberId"], baseItem["imagePath"]["alias"], baseItem["imagePath"]["size"], {
+                    BannerRuleItemService.deleteRuleItemByMemberId(GLOBAL_storeId, baseItem["rule"]["ruleId"], baseItem["memberId"], baseItem["imagePath"]["alias"], baseItem["imagePath"]["size"], {
                         callback: function(e) {
                             base.getList(1);
                         },
@@ -883,7 +883,7 @@
                         "imageSize": params["imageSize"]
                     };
 
-                    BannerRuleItemServiceJS.addRuleItem(GLOBAL_storeId, mapParams, {
+                    BannerRuleItemService.addRuleItem(GLOBAL_storeId, mapParams, {
                         callback: function(sr) {
                             switch (sr["status"]) {
                                 case 0:
@@ -924,7 +924,7 @@
 
                     jConfirm("Delete banner " + e.data.item["imagePath"]["alias"] + " from " + self.selectedRule["ruleName"] + "?", self.moduleName, function(result) {
                         if (result) {
-                            BannerRuleItemServiceJS.deleteRuleItemByMemberId(GLOBAL_storeId, self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"], $("#filterBySize").val(), {
+                            BannerRuleItemService.deleteRuleItemByMemberId(GLOBAL_storeId, self.selectedRule["ruleId"], e.data.item["memberId"], e.data.item["imagePath"]["alias"], $("#filterBySize").val(), {
                                 callback: function(sr) {
                                     switch (sr["status"]) {
                                         case 0:
@@ -1063,7 +1063,7 @@
                                 params["memberId"] = e.data.item["memberId"];
                                 params["imageSize"] = $("#filterBySize > option:selected").val();
 
-                                BannerRuleItemServiceJS.updateRuleItem(GLOBAL_storeId, params, {
+                                BannerRuleItemService.updateRuleItem(GLOBAL_storeId, params, {
                                     callback: function(sr) {
                                         switch (sr["status"]) {
                                             case 0:

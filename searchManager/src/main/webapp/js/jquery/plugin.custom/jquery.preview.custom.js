@@ -389,7 +389,7 @@
 				break;
 			case "banner": 
 				var $table = $content.find("table#item");
-				BannerServiceJS.getAllRuleItems(GLOBAL_storeId, base.options.ruleId, {
+				BannerRuleItemService.getAllRuleItems(GLOBAL_storeId, base.options.ruleId, {
 					callback: function(sr){
 						if (sr.status == 0) {
 							base.populateBannerItem(sr["data"]);
