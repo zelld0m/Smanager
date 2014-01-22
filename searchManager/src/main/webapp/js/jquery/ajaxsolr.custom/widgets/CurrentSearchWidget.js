@@ -29,15 +29,14 @@
 			var keyword = self.manager.store.values('q'); 
 			
 			if ($.isBlank(keyword)) return;
-			
 			links.push(AjaxSolr.theme('createLink', "Search keyword: " + keyword, self.removeKeyword(keyword)));
 			
 			var fq = self.manager.store.values('fq');
 			var searchWithin = GLOBAL_searchWithinEnabled || self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"];
-			var dynamicAttr = self.manager.widgets['dynamicAttribute'].attribMap;
-			
+			var dynamicAttr = self.manager.widgets['dynamicAttribute'].attribMap;			
 			for (var i = 0, l = fq.length; i < l; i++) {
 				var facetValue = fq[i];
+
 				var filterFieldName = facetValue.substr(0, facetValue.indexOf(':'));
 				var filterFieldValue = facetValue.substr(facetValue.indexOf(':') + 1);
 				
@@ -66,9 +65,7 @@
 
 					displayFieldName = !$.isEmptyObject(conditionSelector) && conditionSelector.length > 0 ? "Condition" : displayFieldName;
 					displayFieldName = !$.isEmptyObject(pcmgSelector) && pcmgSelector.length > 0 ? "Catalog" : displayFieldName;
-					
 					links.push(AjaxSolr.theme('createLink', "Remove All " + displayFieldName, clickHandler, "removeMultiple"));
-					
 					//TODO: remove single value in one fq
 					var arrCurrentSelection = facetValue.split(' ');
 					if(!$.isEmptyObject(arrCurrentSelection)){
@@ -77,7 +74,7 @@
 							if($.isNotBlank(displayOverride)){
 								displayText = displayOverride;
 							}else{
-								displayText = arrCurrentSelection[i];
+									displayText = arrCurrentSelection[i];
 							}
 							links.push(AjaxSolr.theme('createLink', displayText, self.removeMultiFieldFacet(arrCurrentSelection, j, facetValue), "multiple"));
 						}
@@ -125,20 +122,45 @@
 						}
 						
 						selectedItem = selectedItem.replace(/\%\%\%/g,"\"");
-						links.push(AjaxSolr.theme('createLink', arrSelection.length==1? (hasDisplayOverride? displayOverrideText :  displayFieldName + ": " + selectedItem): selectedItem, clickHandler, isMultipleSelection && arrSelection.length > 1? "multiple" : "single"));
+						if (facetValue.indexOf('InStock') == 0){
+							continue;
+						}else{
+							links.push(AjaxSolr.theme('createLink', arrSelection.length==1? (hasDisplayOverride? displayOverrideText :  displayFieldName + ": " + selectedItem): selectedItem, clickHandler, isMultipleSelection && arrSelection.length > 1? "multiple" : "single"));
+						}					
+						
 					}
 				}
 			}
+			var availabilityCount = (fq + " ").split("InStock").length - 1;
+			if (availabilityCount > 1){
+				links.push(AjaxSolr.theme('createLink', "Remove All Availability" , self.removeAllAvailability(), "removeMultiple"));
+			} 
+			if (availabilityCount > 0){
+				for (var i = 0; i < fq.length; i++) {
+					if (fq[i].indexOf("InStock")== -1){
+						continue;
+					}else{
+						if (availabilityCount == 1){
+							var displayFacetValue = "Available in " + fq[i].replace("InStock_","").replace("_Retail","").replace("_"," ").replace(":true","");
+							links.push(AjaxSolr.theme('createLink', displayFacetValue , self.removeFacet(fq[i]), "single"));
+						}else{
+							var displayText = fq[i].replace("InStock_","").replace("_Retail","").replace("_"," ").replace(":true","");
+							
+							links.push(AjaxSolr.theme('createLink', displayText, self.removeFacet(fq[i]), "multiple"));
+						}
+					}
+				}				
+			}			
 
 			var multiSearchWithin = GLOBAL_searchWithinEnabled && self.manager.widgets[WIDGET_ID_searchWithin];
 
-			if (multiSearchWithin && !multiSearchWithin.isEmpty()) {
+			if (multiSearchWithin && !multiSearchWithin.isEmpty()) {				
 				links.push(AjaxSolr.theme('createLink', "Search Within", self.removeSearchWithin(), "removeMultiple"));
 
 				$.each(multiSearchWithin.params, function(idx) {
 					if (this.length > 0) {
 						links.push(AjaxSolr.theme('createLink', multiSearchWithin.getLabel(idx), self.removeSearchWithin(idx), "level1"));
-						$.each(this, function(){
+						$.each(this, function(){							
 							links.push(AjaxSolr.theme('createLink', this.toString(), self.removeSearchWithin(idx, this.toString()), "level2"));
 						});
 					}
@@ -157,6 +179,7 @@
 				}
 			}
 
+			
 		},
 
 		removeFacetFromSelection: function(arrSelection, facetName, facetValue, facetRemove) {
@@ -235,6 +258,19 @@
 				return false;
 			};
 		},
+		removeAllAvailability: function() { 
+			var self = this;
+			return function () {
+				var filters = self.manager.store.values('fq');
+				for (var i = 0;i < filters.length;i++){
+					if (filters[i].indexOf("InStock")!=-1){
+						self.manager.store.removeByValue('fq',filters[i]);	
+					}
+					
+				}
+				self.manager.doRequest(0);
+			};
+		},		
 		
 		removeMultiFieldFacet: function(arr, ind, fVal){
 			var self = this;
