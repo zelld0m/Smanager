@@ -36,16 +36,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.search.manager.core.exception.CoreServiceException;
-import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.processor.RequestProcessor;
 import com.search.manager.core.processor.RequestProcessorUtil;
 import com.search.manager.core.processor.RequestPropertyBean;
-import com.search.manager.core.service.BannerRuleItemService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -80,12 +76,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
     @Autowired
     @Qualifier("solrService")
     private SearchDaoService solrService;
-    @Autowired
-    @Qualifier("bannerRuleItemServiceSp")
-    private BannerRuleItemService bannerRuleItemServiceSp;
-    @Autowired
-    @Qualifier("bannerRuleItemServiceSolr")
-    private BannerRuleItemService bannerRuleItemServiceSolr;
 
     @Autowired
     protected ConfigManager configManager;
@@ -499,49 +489,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
         return list;
     }
 
-    protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui,
-            DateTime currentDate) throws CoreServiceException {
-        List<BannerRuleItem> bannerRuleItems = null;
-        try {
-            if (fromSearchGui) {
-                bannerRuleItems = bannerRuleItemServiceSp.getActiveBannerRuleItems(store.getStoreId(), keyword,
-                        currentDate);
-            } else {
-                bannerRuleItems = bannerRuleItemServiceSolr.getActiveBannerRuleItems(store.getStoreId(), keyword,
-                        currentDate);
-            }
-        } catch (CoreServiceException e) {
-            if (!fromSearchGui) {
-                if (!configManager.isSolrImplOnly()) {
-                    try {
-                        bannerRuleItems = bannerRuleItemServiceSp.getActiveBannerRuleItems(store.getStoreId(), keyword,
-                                currentDate);
-                    } catch (CoreServiceException e1) {
-                        logger.error("Failed to get active bannerRuleItems {}", e1);
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-            }
-            throw e;
-        }
-
-        String autoPrefixProtocol = configManager.getProperty("settings", store.getStoreId(),
-                DAOConstants.SETTINGS_AUTOPREFIX_BANNER_LINKPATH_PROTOCOL);
-        Boolean isAutoPrefixProtocol = BooleanUtils.toBoolean(StringUtils.defaultIfBlank(autoPrefixProtocol, "false"));
-
-        if (bannerRuleItems != null && isAutoPrefixProtocol) {
-            for (int i = 0; i < bannerRuleItems.size(); i++) {
-                String protocol = StringUtils.defaultIfBlank(configManager.getProperty("settings", store.getStoreId(),
-                        DAOConstants.SETTINGS_DEFAULT_BANNER_LINKPATH_PROTOCOL), "http:");
-                bannerRuleItems.get(i).setLinkPath(
-                        (protocol.endsWith(":") ? protocol : protocol + ":") + bannerRuleItems.get(i).getLinkPath());
-            }
-        }
-
-        return bannerRuleItems;
-    }
+    protected abstract void bannerRequestProcessor(HttpServletRequest request, SolrResponseParser solrHelper,
+            RequestPropertyBean requestPropertyBean, List<Map<String, String>> activeRules,
+            Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs);
 
     protected abstract String getRequestPath(HttpServletRequest request);
 
@@ -894,7 +844,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             List<String> expiredDemotedList = new ArrayList<String>();
             List<ExcludeResult> excludeList = null;
             List<String> expiredExcludedList = new ArrayList<String>();
-            List<BannerRuleItem> bannerList = null;
 
             String sort = request.getParameter(SolrConstants.SOLR_PARAM_SORT);
             boolean bestMatchFlag = StringUtils.isEmpty(sort)
@@ -1295,16 +1244,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
                     // BANNER
                     try {
-                        bannerList = getActiveBannerRuleItems(new Store(storeId), keyword, fromSearchGui, currentDate);
-                        if (bannerList != null && bannerList.size() > 0) {
-                            activeRules.add((requestProcessorUtil.generateActiveRule(
-                                    SolrConstants.TAG_VALUE_RULE_TYPE_BANNER, bannerList.get(0).getRule().getRuleId(),
-                                    keyword, !disableBanner)));
-                            if (!disableBanner) {
-                                solrHelper.setBannerRuleItems(bannerList);
-                                // TODO: also log expired and non-active banner
-                            }
-                        }
+                        RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId, keyword,
+                                keywordPresent, fromSearchGui, disableBanner, currentDate);
+                        bannerRequestProcessor(request, solrHelper, requestPropertyBean, activeRules, paramMap,
+                                nameValuePairs);
                     } catch (Exception e) {
                         logger.error("Failed to get banner for keyword: {} {}", originalKeyword, e);
                     }
@@ -1397,7 +1340,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             // FACETSORT
             if (!isRedirectToPage) {
                 RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId, keyword, keywordPresent,
-                        fromSearchGui, disableFacetSort);
+                        fromSearchGui, disableFacetSort, currentDate);
                 facetSortRequestProcessor.process(request, solrHelper, requestPropertyBean, activeRules, paramMap,
                         nameValuePairs);
             }
