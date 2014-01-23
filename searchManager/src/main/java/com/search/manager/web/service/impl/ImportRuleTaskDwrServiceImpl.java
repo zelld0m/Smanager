@@ -102,15 +102,15 @@ public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService {
 
 	@Override
 	@RemoteMethod
-	public ServiceResponse<RuleXml> getRule(String storeId, String taskId) throws CoreServiceException {
+	public ServiceResponse<RuleXml> getRule(String taskId) throws CoreServiceException {
 
-		ImportRuleTask importRuleTask = importRuleTaskService.searchById(storeId, taskId);
+		ImportRuleTask importRuleTask = importRuleTaskService.searchById(taskId);
 		ServiceResponse<RuleXml> serviceResponse = new ServiceResponse<RuleXml>();
 		if(importRuleTask != null) {
 			RuleXml ruleXml = ruleTransferUtil.getRuleToImport(importRuleTask.getTargetStoreId(), importRuleTask.getRuleEntity(),  StringUtil.escapeKeyword(importRuleTask.getSourceRuleId()));
 			serviceResponse.success(ruleXml);
 		} else {
-			serviceResponse.error("Cannot find task. Please contact your system administrator.");
+			serviceResponse.error("Cannot find rule task. Please contact your system administrator.");
 		}
 		
 		return serviceResponse;

@@ -18,6 +18,132 @@
 		base.init();
 	};
 	
+	$.rulestatusbar.prototype.getImportTaskPreview = function(){
+		var base = this;
+		var autoImportWarnContainer = base.$el.find("#autoImportWarningContainer");
+		
+		$('div.autoImportWarning').each(function() {
+			alert(this.id);
+			ImportRuleTaskService.getRule(this.id, {
+				callback:function(serviceResponse){
+					var ruleXml = serviceResponse.data;
+					
+					if(ruleXml != null) {
+						base.bindXmlPreview(this, ruleXml);
+					}
+				},
+				preHook:function(){
+					
+				},
+				postHook:function(){
+					
+				},
+			});
+		});
+	};
+	
+	$.rulestatusbar.prototype.bindXmlPreview = function(element, ruleXml) {
+		var ruleEntity = ruleXml.entityName.replace('_', '').toLowerCase();
+		$(element).xmlpreview({
+			transferType: "import",
+			ruleId: ruleXml.ruleId,
+			ruleName: ruleXml.ruleName,
+			ruleType: ruleEntity,
+			enablePreTemplate: true,
+			enablePostTemplate: true,
+			leftPanelSourceData: "xml",
+			enableRightPanel: true,
+			rightPanelSourceData: "database",
+			dbRuleId: task.targetRuleId,
+			ruleXml: ruleXml,
+			rule: ruleXml,
+			postTemplate: postTemplate,
+			preTemplate: preTemplate,
+			rightPanelTemplate: rightPanelTemplate,
+			viewOnly: true,
+			itemImportAsListCallback: function(base, contentHolder, sourceData) {
+				DeploymentServiceJS.getDeployedRules(ruleEntity, "published", {
+					callback: function(data) {
+						base.populateImportAsList(data, contentHolder, sourceData);
+					}
+				});
+			},
+			itemImportTypeListCallback: function(base, contentHolder) {
+				base.populateImportTypeList(self.importTypeList, contentHolder);
+			},
+			itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap) {
+				if (ruleEntity === "elevate") {
+					ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+						callback: function(data) {
+							base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+						},
+						preHook: function() {
+							base.prepareForceAddStatus(contentHolder);
+						}
+					});
+				}
+			},
+			itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap) {
+				if (ruleEntity === "elevate") {
+					ElevateServiceJS.isItemInNaturalResult(ruleName, memberIds, memberConditions, {
+						callback: function(data) {
+							base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+						},
+						preHook: function() {
+							base.prepareForceAddStatus(contentHolder);
+						}
+					});
+				}
+			},
+			checkUncheckCheckboxCallback: function(base, ruleId, pub) {
+				switch (pub) {
+				case 'import':
+					self.toggleImportCheckbox($.formatAsId(ruleId));
+					break;
+				case 'reject':
+					self.toggleRejectCheckbox($.formatAsId(ruleId));
+					break;
+				}
+			},
+			changeImportTypeCallback: function(base, ruleId, opt) {
+				$("#ruleItem" + $.formatAsId(ruleId) + " #type select").val(opt);
+			},
+			changeImportAsCallback: function(base, ruleId, importAs, ruleName, newName) {
+				if (importAs != 0 || newName.length > 0) {
+					$("#ruleItem" + $.formatAsId(ruleId) + " #importAs select").val(importAs).change();
+					$("#ruleItem" + $.formatAsId(ruleId) + " #importAs #replacement #newName").val(newName);
+				}
+			},
+			itemImportTypeListCallback: function(base, contentHolder) {
+				base.populateImportTypeList(self.importTypeList, contentHolder);
+			},
+			itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap) {
+				if (ruleEntity === "elevate") {
+					ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+						callback: function(data) {
+							base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+						},
+						preHook: function() {
+							base.prepareForceAddStatus(contentHolder);
+						}
+					});
+				}
+			},
+			itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap) {
+				if (ruleEntity === "elevate") {
+					ElevateServiceJS.isItemInNaturalResult(ruleName, memberIds, memberConditions, {
+						callback: function(data) {
+							base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+						},
+						preHook: function() {
+							base.prepareForceAddStatus(contentHolder);
+						}
+					});
+				}
+			}
+		});
+	}
+	
 	$.rulestatusbar.prototype.getImportTask = function(){
 		var base = this;
 		var autoImportWarnContainer = base.$el.find("#autoImportWarningContainer");
@@ -47,6 +173,7 @@
 			},
 			postHook:function(){
 				base.getRuleStatus();
+				base.getImportTaskPreview();
 			},
 			
 		});
