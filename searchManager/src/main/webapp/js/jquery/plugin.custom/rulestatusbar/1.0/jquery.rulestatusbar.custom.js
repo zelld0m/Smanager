@@ -20,10 +20,8 @@
 	
 	$.rulestatusbar.prototype.getImportTaskPreview = function(){
 		var base = this;
-		var autoImportWarnContainer = base.$el.find("#autoImportWarningContainer");
 		
 		$('div.autoImportWarning').each(function() {
-			alert(this.id);
 			ImportRuleTaskService.getRule(this.id, {
 				callback:function(serviceResponse){
 					var ruleXml = serviceResponse.data;
@@ -44,6 +42,7 @@
 	
 	$.rulestatusbar.prototype.bindXmlPreview = function(element, ruleXml) {
 		var ruleEntity = ruleXml.entityName.replace('_', '').toLowerCase();
+		alert(ruleEntity);
 		$(element).xmlpreview({
 			transferType: "import",
 			ruleId: ruleXml.ruleId,
