@@ -26,7 +26,6 @@ import com.search.manager.workflow.model.TaskStatus;
 @Component
 @RemoteProxy(name = "ImportRuleTaskService", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "importRuleTaskService"))
 public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService{
-
     @Autowired
     private ImportRuleTaskService importRuleTaskService;
 
