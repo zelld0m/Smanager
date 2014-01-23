@@ -219,6 +219,8 @@
 									}
 								}
 							});
+							
+							$(element).attr('src',$(element).attr('src').replace('ajax-loader-rect.gif', 'icon_reviewContent.png'));
 						}
 					}}
 				);
@@ -293,19 +295,19 @@
 						location.reload();
 					}
 				});
-				$('.btnRequeue').on({
+				$('input.btnRequeue').on({
 					click: function(e){
 						var ruleName = $(this).parents('.conTableItem ').children('.ruleName').html();
 						self.requeue(this.id, self.moduleName, ruleName, function(){self.filterPage();});
 					}
 				});
-				$('.btnCancel').on({
+				$('input.btnCancel').on({
 					click: function(e){
 						var ruleName = $(this).parents('.conTableItem ').children('.ruleName').html();
 						self.cancel(this.id, self.moduleName, ruleName, function(){self.filterPage();});
 					}
 				});
-				$('.btnPreview').each(function() {
+				$('input.btnPreview').each(function() {
 
 					var entityName = importRuleTaskList[this.id].entityName;
 					var importType = importRuleTaskList[this.id].importType;
@@ -313,6 +315,45 @@
 					var preTemplateString = self.getPreTemplate(importType, entityName);
 					var rightPanelStringTemplate = self.getRightPanelTemplate();
 					self.preview(this, postTemplateString, preTemplateString, rightPanelStringTemplate);
+				});
+				$('input.btnPreviewOff, input.btnRequeueOff, input.btnCancelOff').each(function() {
+					var id = this.id;
+					var buttonClassName = $(this).attr('class');
+					$(this).qtip({
+						content: { 
+							text: $('<div>')
+						},
+						show:{ modal:true },
+						style:{
+							width:'250px'
+						},
+						events: {
+							render:function(rEvt, api){
+								var $content = $("div", api.elements.content);
+								$content.html("");
+							},
+							show:function(rEvt, api){
+								var $content = $("div", api.elements.content);
+								var text = "";
+								var task = importRuleTaskList[id];
+								if(buttonClassName == 'btnPreviewOff') {
+									text = "Data for rule task '"+task.sourceRuleName+"' is not available.";
+								} else if(buttonClassName == 'btnRequeueOff') {
+									if(task.hasXml != true)
+										text = "Data for rule task '"+task.sourceRuleName+"' is not available.";
+									else
+										text = "The current status of rule task '"+task.sourceRuleName+"' does not allow requeueing.";
+								} else if(buttonClassName == 'btnCancelOff') {
+									text = "The current status of rule task '"+task.sourceRuleName+"' does not allow cancellation.";
+								}
+								
+								if(!$content.get(0))						
+									$content = api.elements.content;
+								$content.html(text);
+
+							}
+						}
+					});
 				});
 			}
 	};
