@@ -21,25 +21,38 @@
                 <th>Target Rule</th>
                 <th>Type</th>
                 <th>Status</th>
-                <th>Duration</th>           
+                <th>Duration</th>        
+                <th>Action</th>   
             </tr>
         </thead>
 		<tbody>
 		<c:choose>
-			<c:when test="${fn:length(importRuleTasks) > 0}">		
+			<c:when test="${fn:length(importRuleTasks) > 0}">	
+				
+				<script text="text/javascript">var importRuleTaskList = new Object();</script>	
+		        
 		        <c:forEach items="${importRuleTasks}" var="importRuleTask" varStatus="status">
+		        <script text="text/javascript">importRuleTaskList['${importRuleTask.taskId}'] = new Object();</script>	
 		        <c:set var="alt" value=""/>
 		        <c:if test="${status.count %2 == 0}">
 		        	<c:set var="alt" value="alt"/>
 		        </c:if>
 				    <tr class="conTableItem ${alt}">
 				   		<td align="center">
+				   			<script text="text/javascript">importRuleTaskList['${importRuleTask.taskId}'].entityName = '${importRuleTask.ruleEntity.name}';</script>
 							${importRuleTask.ruleEntity.name}
 				        </td>
-				        <td align="center">
-							${importRuleTask.sourceRuleName}
+				        <td align="center" class="ruleName">
+				        	<script text="text/javascript">
+				        		importRuleTaskList['${importRuleTask.taskId}'].sourceRuleName = '${importRuleTask.sourceRuleName}';
+				        		importRuleTaskList['${importRuleTask.taskId}'].sourceRuleId = '${importRuleTask.sourceRuleId}';
+				        		importRuleTaskList['${importRuleTask.taskId}'].targetRuleName = '${importRuleTask.targetRuleName}';
+				        		importRuleTaskList['${importRuleTask.taskId}'].targetRuleId = '${importRuleTask.targetRuleId}';
+				        	</script>
+				        	${importRuleTask.sourceRuleName}
 				        </td>
 				        <td align="center">
+				        	<script text="text/javascript">importRuleTaskList['${importRuleTask.taskId}'].targetStoreId = '${importRuleTask.targetStoreId}';</script>
 							<c:if test="${!isTargetStore}">
                 				${importRuleTask.targetStoreId}
                 			</c:if>
@@ -48,9 +61,11 @@
                 			</c:if>
 				        </td>
 				        <td align="center">
+				        	<script text="text/javascript">importRuleTaskList['${importRuleTask.taskId}'].targetRuleName = '${importRuleTask.targetRuleName}';</script>
 				        	${importRuleTask.targetRuleName}
 				        </td>
 				        <td align="center">
+				        	<script text="text/javascript">importRuleTaskList['${importRuleTask.taskId}'].importType = '${importRuleTask.importType.displayText}';</script>
 				        	${importRuleTask.importType.displayText}
 				        </td>	
 				        <td align="center">
@@ -66,6 +81,15 @@
 									${taskMessage.message}
 								</a><br/>
 							</c:forEach>
+				        </td>
+				        <td nowrap>
+				        	<c:set var="enableRequeue" value="${taskXmlMap[importRuleTask.taskId] && (importRuleTask.taskExecutionResult.taskStatus eq 'FAILED' || importRuleTask.taskExecutionResult.taskStatus eq 'CANCELED' || importRuleTask.taskExecutionResult.taskStatus eq 'AUTO_CANCELED')}"/>
+				        	<c:set var="enableCancel" value="${importRuleTask.taskExecutionResult.taskStatus eq 'QUEUED' || importRuleTask.taskExecutionResult.taskStatus eq 'FAILED'}"/>
+				        	<script text="text/javascript">importRuleTaskList['${importRuleTask.taskId}'].hasXml = ${taskXmlMap[importRuleTask.taskId] == true};</script>
+				        	<input class="${taskXmlMap[importRuleTask.taskId] ? 'btnPreview' : 'btnPreviewOff' }" type="image" id="${importRuleTask.taskId }" src="<spring:url value="/images/${taskXmlMap[importRuleTask.taskId] ? 'ajax-loader-rect.gif' : 'icon_notactive.png' }" />"/>
+				        	<input class="${enableRequeue ? 'btnRequeue' : 'btnRequeueOff' }" id="${importRuleTask.taskId }" type="image" src="<spring:url value="/images/icon_globe25${enableRequeue ? '_active' : '' }.png" />"/>
+				        	<input class="${enableCancel ? 'btnCancel' : 'btnCancelOff' }" id="${importRuleTask.taskId }" type="image" src="<spring:url value="/images/icon_delete2${enableCancel ? '' : '_gray' }.png" />"/>
+				        	
 				        </td>		        		        		        		        		        		        		        		        			        			        			        			        
 				    </tr>        
 				</c:forEach>			    

@@ -15,14 +15,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.search.manager.core.exception.CoreServiceException;
-import com.search.manager.core.model.BannerRuleItem;
+import com.search.manager.core.processor.RequestPropertyBean;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Relevancy;
@@ -184,13 +182,6 @@ public class EnterpriseSearchController extends AbstractSearchController {
     }
 
     @Override
-    protected List<BannerRuleItem> getActiveBannerRuleItems(Store store, String keyword, boolean fromSearchGui,
-            DateTime currentDate) throws CoreServiceException {
-        // Enterprise Search does not need banners
-        return null;
-    }
-
-    @Override
     protected String getDefType(String storeId) throws DaoException {
         return enterpriseSearchConfigManager.getDefType(storeId);
     }
@@ -211,6 +202,13 @@ public class EnterpriseSearchController extends AbstractSearchController {
         String start = request.getContextPath() + "/enterpriseSearch";
         int idx = request.getRequestURI().indexOf(start);
         return "http:/" + request.getRequestURI().substring(start.length() + idx);
+    }
+
+    @Override
+    protected void bannerRequestProcessor(HttpServletRequest request, SolrResponseParser solrHelper,
+            RequestPropertyBean requestPropertyBean, List<Map<String, String>> activeRules,
+            Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
+        // Do nothing...
     }
 
 }

@@ -246,7 +246,7 @@ public class BannerRuleItemServiceSpImpl implements BannerRuleItemService {
             search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, keyword));
             search.addFilter(new Filter(DAOConstants.PARAM_DISABLED, 0));
             search.addFilter(new Filter(DAOConstants.PARAM_START_DATE, jodaDateTimeUtil.toSqlDate(currentDate)));
-            search.addFilter(new Filter(DAOConstants.PARAM_START_DATE, jodaDateTimeUtil.toSqlDate(currentDate)));
+            search.addFilter(new Filter(DAOConstants.PARAM_END_DATE, jodaDateTimeUtil.toSqlDate(currentDate)));
 
             SearchResult<BannerRuleItem> searchResult = search(search);
 

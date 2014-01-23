@@ -7,14 +7,16 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-import com.search.manager.core.dao.ImportRuleTaskDao;
 import com.search.manager.core.enums.RuleSource;
-import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.ImportRuleTask;
+import com.search.manager.core.model.TaskExecutionResult;
+import com.search.manager.core.model.TaskStatus;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.ImportRuleTaskService;
+import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.service.DeploymentService;
@@ -23,9 +25,7 @@ import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.ws.ConfigManager;
 
-import com.search.manager.enums.ImportType;
-
-@Repository(value="importTaskManager")
+@Component(value="importTaskManager")
 public class ImportTaskManager {
 
 	private static final Logger logger =
@@ -80,25 +80,25 @@ public class ImportTaskManager {
 			}
 
 			DateTime startDate = new DateTime();
-			
+
 			updateTaskExecution(importRuleQueueItem, TaskStatus.IN_PROCESS, startDate, startDate, null);
 			RuleEntity ruleEntity = importRuleQueueItem.getRuleEntity();
 			String ruleName = importRuleQueueItem.getTargetRuleName();
-			
+
 			String importRuleRefId = importRuleQueueItem.getSourceRuleId();
 			String storeName = configManager.getStoreName(targetStoreId);
 			String importTypeSetting = importRuleQueueItem.getImportType().getDisplayText();
 			String comment = MessageFormat.format("Imported from {0}.", importRuleQueueItem.getSourceStoreId());
-			
+
 			String[] importRuleRefIdList = {importRuleRefId};
 			String[] importTypeList = {importRuleQueueItem.getImportType().getDisplayText()};
 			String[] importAsRefIdList = {importRuleQueueItem.getTargetRuleId()};
 			String[] ruleNameList = {ruleName};
-			
+
 			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
 
 			TaskExecutionResult taskExecutionResult = importRuleQueueItem.getTaskExecutionResult();
-			
+
 			taskExecutionResult.setRunAttempt(taskExecutionResult.getRunAttempt() + 1);
 
 			if(ruleStatus.isLocked()) {
@@ -114,7 +114,7 @@ public class ImportTaskManager {
 			if(StringUtils.isEmpty(importTypeSetting)) {
 				importTypeSetting = "For Approval";
 			}
-			
+
 			switch(ImportType.getByDisplayText(importTypeSetting)) {
 			case FOR_APPROVAL: 
 				if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
@@ -160,7 +160,7 @@ public class ImportTaskManager {
 			importRuleTask.setLastModifiedDate(startDate);
 			importRuleTask.getTaskExecutionResult().setTaskStartDateTime(startDate);
 		}
-		
+
 		if(endDate != null) {
 			importRuleTask.setLastModifiedDate(endDate);
 			importRuleTask.getTaskExecutionResult().setTaskEndDateTime(endDate);

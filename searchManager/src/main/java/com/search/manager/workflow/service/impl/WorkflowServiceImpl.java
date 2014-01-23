@@ -17,10 +17,13 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.core.enums.RuleSource;
 import com.search.manager.core.exception.CoreServiceException;
+import com.search.manager.core.model.ImportRuleTask;
+import com.search.manager.core.model.TaskStatus;
 import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -43,8 +46,6 @@ import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.service.rules.FacetSortService;
-import com.search.manager.workflow.model.ImportRuleTask;
-import com.search.manager.workflow.model.TaskStatus;
 import com.search.manager.workflow.service.ExportRuleMapService;
 import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
@@ -79,6 +80,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	@Autowired
 	private RuleTransferUtil ruleTransferUtil;
 	@Autowired
+	@Qualifier("importRuleTaskServiceSp")
 	private ImportRuleTaskService importRuleTaskService;
 
 	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment){

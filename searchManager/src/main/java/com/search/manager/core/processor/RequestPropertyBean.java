@@ -1,11 +1,14 @@
 package com.search.manager.core.processor;
 
+import org.joda.time.DateTime;
+
 public class RequestPropertyBean {
     private String storeId;
     private String keyword;
     private boolean isKeywordPresent;
     private boolean isGuiRequest;
     private boolean isDisableRule;
+    private DateTime currentDate;
 
     public RequestPropertyBean(String storeId) {
         super();
@@ -18,11 +21,12 @@ public class RequestPropertyBean {
     }
 
     public RequestPropertyBean(String storeId, String keyword, boolean isKeywordPresent, boolean isGuiRequest,
-            boolean isDisableRule) {
+            boolean isDisableRule, DateTime currentDate) {
         this(storeId, isDisableRule);
         this.keyword = keyword;
         this.isKeywordPresent = isKeywordPresent;
         this.isGuiRequest = isGuiRequest;
+        this.currentDate = currentDate;
     }
 
     public String getStoreId() {
@@ -63,6 +67,14 @@ public class RequestPropertyBean {
 
     public void setGuiRequest(boolean isGuiRequest) {
         this.isGuiRequest = isGuiRequest;
+    }
+
+    public DateTime getCurrentDate() {
+        return currentDate;
+    }
+
+    public void setCurrentDate(DateTime currentDate) {
+        this.currentDate = currentDate;
     }
 
 }
