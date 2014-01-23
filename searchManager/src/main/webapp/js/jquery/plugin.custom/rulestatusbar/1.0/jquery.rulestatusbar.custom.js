@@ -18,6 +18,35 @@
 		base.init();
 	};
 	
+	$.rulestatusbar.prototype.cancelRuleTask = function(){
+		var base = this;
+		
+		$('div.autoImportWarning').each(function() {
+			var container = this;
+			var link = $(this).find('a.cancel');
+			link.off().on({
+				click:function(e){
+					var id = container.id;
+					jConfirm('Are you sure you want to cancel the task for this rule?', "Cancel Task", function(result) {
+						if (result) {
+							ImportRuleTaskService.cancelTask(GLOBAL_storeId, id, {
+								callback:function(serviceResponse){
+									if(serviceResponse.data == true) {
+										
+										jAlert('The task for this rule has been canceled.', base.options.moduleName);
+									}
+								},
+								postHook: function() {
+									$(container).hide();
+								}
+							});
+						}
+					});
+				}
+			});
+		});
+	};
+	
 	$.rulestatusbar.prototype.getImportTaskPreview = function(){
 		var base = this;
 		
@@ -200,7 +229,7 @@
 		var base = this;
 		var autoImportWarnContainer = base.$el.find("#autoImportWarningContainer");
 		autoImportWarnContainer.find(".autoImportWarning:not(#autoImportWarningPattern)").remove();
-
+		
 		ImportRuleTaskService.getTasks(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], {
 			callback:function(serviceResponse){
 				var list = serviceResponse["data"];
@@ -226,6 +255,7 @@
 			postHook:function(){
 				base.getRuleStatus();
 				base.getImportTaskPreview();
+				base.cancelRuleTask();
 			},
 			
 		});
@@ -397,7 +427,7 @@
 		template += '			<span class="autoImportWarningText"></span>';
 		template += '			<span class="floatR">';
 		template += '				<a href="javascript:void(0);" class="compare">Compare</a>';
-		template += '				<a href="javascript:void(0);">Cancel</a>';
+		template += '				<a href="javascript:void(0);" class="cancel">Cancel</a>';
 		template += '			</span>';
 		template += '		</div>'; 
 		template += '	</div>'; 

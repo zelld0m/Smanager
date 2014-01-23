@@ -116,7 +116,7 @@ public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService{
 
     private ServiceResponse<Boolean> updateQueueTask(String storeId, String taskId, TaskStatus status,
             Integer runAttempt) throws CoreServiceException {
-        ImportRuleTask importRuleTask = importRuleTaskService.searchById(storeId, taskId);
+        ImportRuleTask importRuleTask = importRuleTaskService.searchById(taskId);
         TaskExecutionResult result = importRuleTask.getTaskExecutionResult();
         if (runAttempt != null) {
 
