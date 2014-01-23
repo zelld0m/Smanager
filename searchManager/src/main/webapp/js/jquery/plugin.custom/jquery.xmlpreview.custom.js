@@ -300,7 +300,7 @@
 				var $ruleInfo = $content.find("#ruleInfo");
 				$table.find("tr:not(#itemPattern)").remove();
 				
-				FacetSortServiceJS.getRuleByName(GOLBAL_storeId, ruleName, {
+				FacetSortServiceJS.getRuleByName(GLOBAL_storeId, ruleName, {
 					callback: function(data){
 						$table.find("tr:not(#itemPattern)").remove();
 						$table.find("tr").removeClass("alt");

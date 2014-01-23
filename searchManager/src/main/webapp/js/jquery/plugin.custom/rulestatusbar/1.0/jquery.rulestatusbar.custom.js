@@ -22,12 +22,12 @@
 		var base = this;
 		
 		$('div.autoImportWarning').each(function() {
+			var div = this;
 			ImportRuleTaskService.getRule(this.id, {
 				callback:function(serviceResponse){
 					var ruleXml = serviceResponse.data;
-					
 					if(ruleXml != null) {
-						base.bindXmlPreview(this, ruleXml);
+						base.bindXmlPreview($(div).find('a.compare')[0], ruleXml, base.getXmlPostTemplate(), base.getXmlPreTemplate(ruleXml.ruleEntity.replace('_', '').toLowerCase()), base.getXmlRightPanelTemplate());
 					}
 				},
 				preHook:function(){
@@ -40,9 +40,9 @@
 		});
 	};
 	
-	$.rulestatusbar.prototype.bindXmlPreview = function(element, ruleXml) {
-		var ruleEntity = ruleXml.entityName.replace('_', '').toLowerCase();
-		alert(ruleEntity);
+	$.rulestatusbar.prototype.bindXmlPreview = function(element, ruleXml, postTemplate, preTemplate, rightPanelTemplate) {
+		var ruleEntity = ruleXml.ruleEntity.replace('_', '').toLowerCase();
+		
 		$(element).xmlpreview({
 			transferType: "import",
 			ruleId: ruleXml.ruleId,
@@ -53,7 +53,7 @@
 			leftPanelSourceData: "xml",
 			enableRightPanel: true,
 			rightPanelSourceData: "database",
-			dbRuleId: task.targetRuleId,
+			dbRuleId: ruleXml.ruleId,
 			ruleXml: ruleXml,
 			rule: ruleXml,
 			postTemplate: postTemplate,
@@ -141,7 +141,60 @@
 				}
 			}
 		});
-	}
+	};
+	
+	$.rulestatusbar.prototype.getXmlPreTemplate = function(entityName) {
+		var template = '';
+
+		switch (entityName.toLowerCase()) {
+		case "facetsort":
+			template = '<div class="rulePreview w590 marB20">';
+			template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
+			template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+			template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+			template += '	<div class="clearB"></div>';
+			template += '	<label class="w110 floatL fbold">Rule Type:</label>';
+			template += '	<label class="wAuto floatL" id="ruleType"></label>';
+			template += '	<div class="clearB"></div>';
+			template += '	<div class="clearB"></div>';
+			template += '</div>';
+			break;
+		default:	//template for elevate, exclude, demote, redirect and relevancy rule
+			template = '<div class="rulePreview w590 marB20">';
+		template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
+		template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+		template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+		template += '	<div class="clearB"></div>';
+		template += '	<div class="clearB"></div>';
+		template += '</div>';
+		}
+		return template;
+	};
+	
+	$.rulestatusbar.prototype.getXmlPostTemplate = function() {
+		var template = "";
+
+		template = '<div>';
+	
+		template += '</div>';
+
+		return template;
+	};
+	
+	$.rulestatusbar.prototype.getXmlRightPanelTemplate = function() {
+		var template = "";
+
+		template += '	<div class="rulePreview w590 marB20">';
+		template += '		<div class="alert marB10">';
+		template += '			Selected rule below will be overwritten when import task is executed.';
+		template += '		</div>';
+		template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
+		template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
+		template += '		<div class="clearB"></div>';
+		template += '	</div>';
+
+		return template;
+	};
 	
 	$.rulestatusbar.prototype.getImportTask = function(){
 		var base = this;
@@ -306,7 +359,7 @@
 			}
 		});	
 	};
-
+	
 	$.rulestatusbar.prototype.init = function(){
 		var base = this;
 		base.$el.empty();
@@ -343,7 +396,7 @@
 		template += '		<div id="autoImportWarningPattern" class="autoImportWarning warning border fsize12 marT5" style="display:none">';
 		template += '			<span class="autoImportWarningText"></span>';
 		template += '			<span class="floatR">';
-		template += '				<a href="javascript:void(0);">Compare</a>';
+		template += '				<a href="javascript:void(0);" class="compare">Compare</a>';
 		template += '				<a href="javascript:void(0);">Cancel</a>';
 		template += '			</span>';
 		template += '		</div>'; 
