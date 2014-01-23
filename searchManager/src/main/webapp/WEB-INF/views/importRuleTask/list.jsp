@@ -85,8 +85,8 @@
 				        <td nowrap>
 				        	<c:set var="enableRequeue" value="${taskXmlMap[importRuleTask.taskId] && (importRuleTask.taskExecutionResult.taskStatus eq 'FAILED' || importRuleTask.taskExecutionResult.taskStatus eq 'CANCELED' || importRuleTask.taskExecutionResult.taskStatus eq 'AUTO_CANCELED')}"/>
 				        	<c:set var="enableCancel" value="${importRuleTask.taskExecutionResult.taskStatus eq 'QUEUED' || importRuleTask.taskExecutionResult.taskStatus eq 'FAILED'}"/>
-				        	
-				        	<input class="${taskXmlMap[importRuleTask.taskId] ? 'btnPreview' : 'btnPreviewOff' }" type="image" id="${importRuleTask.taskId }" src="<spring:url value="/images/${taskXmlMap[importRuleTask.taskId] ? 'icon_reviewContent.png' : 'icon_notactive.png' }" />"/>
+				        	<script text="text/javascript">importRuleTaskList['${importRuleTask.taskId}'].hasXml = ${taskXmlMap[importRuleTask.taskId] == true};</script>
+				        	<input class="${taskXmlMap[importRuleTask.taskId] ? 'btnPreview' : 'btnPreviewOff' }" type="image" id="${importRuleTask.taskId }" src="<spring:url value="/images/${taskXmlMap[importRuleTask.taskId] ? 'ajax-loader-rect.gif' : 'icon_notactive.png' }" />"/>
 				        	<input class="${enableRequeue ? 'btnRequeue' : 'btnRequeueOff' }" id="${importRuleTask.taskId }" type="image" src="<spring:url value="/images/icon_globe25${enableRequeue ? '_active' : '' }.png" />"/>
 				        	<input class="${enableCancel ? 'btnCancel' : 'btnCancelOff' }" id="${importRuleTask.taskId }" type="image" src="<spring:url value="/images/icon_delete2${enableCancel ? '' : '_gray' }.png" />"/>
 				        	
