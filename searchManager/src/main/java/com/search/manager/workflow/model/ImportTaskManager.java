@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import com.search.manager.core.enums.RuleSource;
 import com.search.manager.core.exception.CoreServiceException;
@@ -25,7 +25,7 @@ import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.ws.ConfigManager;
 
-@Repository(value="importTaskManager")
+@Component(value="importTaskManager")
 public class ImportTaskManager {
 
 	private static final Logger logger =

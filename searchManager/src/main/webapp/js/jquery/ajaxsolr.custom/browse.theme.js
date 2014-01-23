@@ -475,7 +475,64 @@
 
 		return output; 
 	};
+	AjaxSolr.theme.prototype.displayFacetMoreOptionsAvailability = function (value, title, facetFields,selectedFilters) {
+		var output = ''; 
 
+		output += '<div class="tblcontContainer">';
+		output += '<table cellspacing="0" cellpadding="0" border="0" width="360">';
+		output += '<tr>';
+		output += '<td>';
+		output += ' <table cellspacing="0" cellpadding="0" width="360px" class="marT10">';
+		output += '<tr>';
+		output += '<td colspan="2" class="top"><div class="floatL w240">Search: <input type="text" id="searchField" class="searchBoxIconBg"></div> <div class="searchCount fsize11 fgray w110 floatL txtAR padT3"></div></td>';
+		output += '</tr>';
+		output += '<tr><td colspan="2"> &nbsp; </td></tr>';
+		output += '<tr>';
+		output += '<th width="25%" class="pad3"></th>';
+		output += '<th class="pad3 txtAL fbold">Content Type</th>';
+		output += '</tr>';
+		output += '</table>';
+		output += '</td>';
+		output += '</tr>';
+		output += '<tr>'; 
+		output += '<td>';
+		output += '<div style="max-height:300px; overflow-y:auto; overflow-x:hidden" class="resultTable">';
+		output += '<table width="360px">';
+		var i=0;
+		var hasSelectedFilter = selectedFilters.indexOf('InStock') >= 0;
+		for (var facetField in facetFields) {
+			var itemCount=0;
+			if((!hasSelectedFilter && facetField.indexOf('InStock') != -1 ) || 
+					(hasSelectedFilter && (self.manager.store.values('fq') + " ").indexOf(facetField) != -1 && facetField.indexOf('InStock') != -1)){
+				facetValues = facetFields[facetField];
+				var availableLocation = facetField.replace("InStock_","").replace("_Retail","").replace("_"," ");
+				for (var facetValue in facetValues) {				
+					if (facetValue){
+						itemCount = facetValues[facetValue];
+					}						
+				}			
+				if (itemCount>1){							
+					output += '<tr>';
+					output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facetField + '"/></td>';
+					output += '<td class="values"><span class="value">' + availableLocation + '</span></td>';
+					output += '</tr>';		
+					i++;
+				}
+			}
+		}
+		output += '</table>';
+		output += '</div>';
+		output += '</td>	';
+		output += '</tr> ';
+		output += '<tr> ';
+		output += '<td align="right" style="padding:10px 20px 0 0"><a class="buttons btnGray clearfix" href="javascript:void(0);" id="continueBtn"><div class="buttons fontBold">Continue</div></a> <a class="buttons btnGray clearfix" href="javascript:void(0);" id="cancelBtn"><div class="buttons fontBold">Cancel</div></a> ';
+		output += '</td> ';
+		output += '</tr> ';
+		output += '</table>';
+		output += '</div>';
+
+		return output; 
+	};
 	AjaxSolr.theme.prototype.displayDoc = function (doc) {
 		var output = '';   
 		output += '<div class="farial">';

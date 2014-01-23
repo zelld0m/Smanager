@@ -1,7 +1,7 @@
 (function ($) {
 
-	AjaxSolr.DynamicFacetWidget = AjaxSolr.AbstractFacetWidget.extend({
-		moreOptionContainer: null,
+	AjaxSolr.AvailabilityFacetWidget = AjaxSolr.AbstractFacetWidget.extend({	
+moreOptionContainer: null,
 		afterRequest: function () {
 
 			var self = this;
@@ -10,8 +10,7 @@
 
 			if($.isNotBlank(self.manager.store.values('q'))){
 				if (self.manager.store.values('fq').length > 0) $('input#keepRefinement').prop("checked", true);
-				
-				if (self.manager.response.response.docs.length > 0){
+				if (self.manager.response.response.docs.length > 0 && this.isDisplayWidget){
 
 					var facetFields = this.manager.response.facet_counts.facet_fields;
 
@@ -21,43 +20,28 @@
 					}
 
 					$(this.target).empty();
-				
+					$(this.target).append(AjaxSolr.theme('createFacetHolder',"Availability", "Availability"));
+					var hasSelectedFilter = (self.manager.store.values('fq') + " ").indexOf('InStock') >= 0;							
+					var location = "";
+					var counter = 0;
 					for (var facetField in facetFields) {
-						var maxCount = 0;
-						var objectedItems = [];
-						var limit = this.limit;
-						var counter = 0;
-						facetValues = facetFields[facetField];
-						if($.isEmptyObject(facetValues) || facetField === GLOBAL_storeFacetTemplateName || facetField.indexOf('InStock') == 0)
-							continue;
-							
-						$(this.target).append(AjaxSolr.theme('createFacetHolder',facetField, facetField));
-
-						for (var facetValue in facetValues) {
-							if (counter == limit) break;
-
-							var count = parseInt(facetValues[facetValue]);
-							if (count > maxCount) {
-								maxCount = count;
+						var itemCount=0;
+						if((!hasSelectedFilter && facetField.indexOf('InStock') != -1 ) || 
+							(hasSelectedFilter && (self.manager.store.values('fq') + " ").indexOf(facetField) != -1 && facetField.indexOf('InStock') != -1)){
+							facetValues = facetFields[facetField];
+							location = facetField.replace("InStock_","").replace("_Retail","").replace("_"," ");
+							for (var facetValue in facetValues) {							
+								if (facetValue){
+									itemCount = facetValues[facetValue];
+								}						
+							}						
+							if (itemCount>1){
+								AjaxSolr.theme('createFacetLink', $.formatAsId("Availability") + counter,"Availability", location, itemCount, this.clickHandler(facetField, "true"));
+								counter++;							
 							}
-							objectedItems.push({ facet: facetValue, count: count });
-							counter++;
 						}
-
-						for (var i = 0, l = objectedItems.length; i < l; i++) {
-							var facet = objectedItems[i].facet;
-							var count = objectedItems[i].count;
-							
-							if ($.isNotBlank(facet)){
-								facetValue = (facet.match(/^["\(].*["\)]$/)) ? facet :  '"' + facet + '"';
-								AjaxSolr.theme('createFacetLink', $.formatAsId(facetField) + i,facetField, facet, count, this.clickHandler(facetField, facetValue));
-								if (i == l-1 && $.isNotBlank(self.manager.store.values('q'))){
-									AjaxSolr.theme('createFacetMoreOptionsLink', $.formatAsId(facetField), facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
-								}
-							}
-						
-						}
-					}	
+					}
+					AjaxSolr.theme('createFacetMoreOptionsLink',  $.formatAsId("Availability"), facetFields, '[+] More Options', this.moreOptionsHandler("Availability", facetFields));
 				}
 			}
 		},
@@ -75,17 +59,12 @@
 						if ($(this).hasClass("on")){
 							var sel = $.trim($('#' + $(this).attr('rel')).val());
 							if ($.isNotBlank(sel)){
-								i++;
-								sel = (sel.match(/^["\(].*["\)]$/)) ? sel :  '"' + sel + '"';
+								i++;								
 								selectedItems.push(AjaxSolr.Parameter.escapeValue(sel));
 							}
 						}
 					});
-
-					if (selectedItems.length == 0) {
-						return "";
-					}
-					return "(" + selectedItems.join(" ") + ")";
+					return selectedItems;
 				};
 
 				getFacetParams = function (){
@@ -98,7 +77,7 @@
 					var params = {
 							'facet': true,
 							'q': keyword,
-							'facet.field': ['Category','Manufacturer','Platform'],
+							'facet.field': ['InStock_Memphis','InStock_Chicago_Retail','InStock_Huntington_Beach_Retail','InStock_Santa_Monica_Retail','InStock_Torrance_Retail'],
 							'rows': 0,
 							'relevancyId': relId,
 							'facet.mincount': 1,
@@ -147,12 +126,11 @@
 								paramString += "&" + name + "=" + (name.toLowerCase()==='q' || name.toLowerCase()==='fq' ? encodeURIComponent(params[name]): params[name]);
 						}
 					}
-
 					return paramString;
 				};
 
 				handleResponse = function (contentHolder, data){
-					contentHolder.html(AjaxSolr.theme('displayFacetMoreOptions',facetField,facetField,data.facet_counts.facet_fields[facetField]));
+					contentHolder.html(AjaxSolr.theme('displayFacetMoreOptionsAvailability',facetField,facetField,data.facet_counts.facet_fields,self.manager.store.values('fq') + " "));
 					SearchableList(contentHolder);
 					contentHolder.find('.firerift-style-checkbox').slidecheckbox();
 				};
@@ -214,9 +192,18 @@
 										}
 
 										contentHolder.find('#continueBtn').click(function(e){
-											self.manager.store.removeByValue('fq', new RegExp('^-?' + facetField + ':'));
-											if ($.isNotBlank(getFacetSelected())) {
-												self.manager.store.addByValue('fq', self.fq(facetField, getFacetSelected()));												
+											var selectedFilters = getFacetSelected();
+											var filters = self.manager.store.values('fq');
+											for (var i = 0;i < filters.length;i++){
+												if (filters[i].indexOf("InStock")!=-1){
+													self.manager.store.removeByValue('fq',filters[i]);	
+												}
+												
+											}
+											for (var i = 0; i < selectedFilters.length; i++) {																							
+												if ($.isNotBlank(selectedFilters[i])) {
+													self.manager.store.addByValue('fq', self.fq(selectedFilters[i], "true"));												
+												}												
 											}
 											self.manager.store.addByValue('relevancyId', $("select#relevancy").val());
 											self.manager.doRequest(0);

@@ -53,11 +53,13 @@
 
 	<!-- Aspect -->
 	<bean id="loggingAspect" class="com.search.manager.core.aspect.LoggingAspect" />
-	
-	<!-- Loads DataSources configuration -->
-	<!-- import resource="spring-datasource-test.xml" / -->
-
-	<!-- Loads Solr configuration -->
-	<!-- import resource="search-solr-context-test.xml" / -->
+    
+	<!-- TODO move to core -->
+	<bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
+ 		<constructor-arg name="storeXMLFile" value="/home/solr/conf/store.xml" />
+ 		<constructor-arg name="solrXMLFile" value="/home/solr/conf/solr.xml" />
+    </bean>
+	<bean id="jodaDateTimeUtil" class="com.search.manager.jodatime.JodaDateTimeUtil" />
+	<bean id="utilityService" class="com.search.manager.service.UtilityService" />
 	
 </beans>

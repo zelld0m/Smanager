@@ -22,24 +22,29 @@ import com.search.manager.core.model.TaskStatus;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.StringUtil;
 import com.search.manager.web.service.ImportRuleTaskDwrService;
+import com.search.manager.xml.file.RuleTransferUtil;
 
 @Component
 @RemoteProxy(name = "ImportRuleTaskService", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "importRuleTaskService"))
-public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService {
+public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService{
 
     @Autowired
     @Qualifier("importRuleTaskServiceSp")
     private ImportRuleTaskService importRuleTaskService;
     @Autowired
+    private RuleTransferUtil ruleTransferUtil;
+    @Autowired
     private UtilityService utilityService;
 
     @Override
     @RemoteMethod
-    public ServiceResponse<List<ImportRuleTask>> getTasks(String storeId, String ruleEntityType, String ruleId)
-            throws CoreServiceException {
+    public ServiceResponse<List<ImportRuleTask>> getTasks(String storeId, String ruleEntityType, String ruleId) throws CoreServiceException {
+        
         ImportRuleTask importRuleTask = new ImportRuleTask();
         importRuleTask.setTargetStoreId(storeId);
         importRuleTask.setTargetRuleId(ruleId);
@@ -51,7 +56,7 @@ public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService {
         CollectionUtils.filter(importRuleTaskList, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
-                ImportRuleTask task = (ImportRuleTask) object;
+                ImportRuleTask task = (ImportRuleTask) object;   
                 TaskExecutionResult result = task.getTaskExecutionResult();
                 TaskStatus taskStatus = result.getTaskStatus();
                 return ArrayUtils.contains(TaskStatus.AWAITING_COMPLETION_STATUSES, taskStatus);
@@ -65,16 +70,48 @@ public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService {
 
     @Override
     @RemoteMethod
-    public ServiceResponse<Boolean> cancelTask(String storeId, String taskId) throws CoreServiceException {
+    public ServiceResponse<ImportRuleTask> getTask(String storeId, String taskId) {
 
+        ServiceResponse<ImportRuleTask> serviceResponse = new ServiceResponse<ImportRuleTask>();
+
+        ImportRuleTask importRuleTask;
+        try {
+            importRuleTask = importRuleTaskService.searchById(storeId, taskId);
+            serviceResponse.success(importRuleTask);
+        } catch (CoreServiceException e) {
+            e.printStackTrace();
+            serviceResponse.error("Unable to retrieve task. Please contact your system administrator.");
+        }
+
+        return serviceResponse;
+    }
+
+    @Override
+    @RemoteMethod
+    public ServiceResponse<Boolean> cancelTask(String storeId, String taskId) throws CoreServiceException {
         return updateQueueTask(storeId, taskId, TaskStatus.CANCELED, null);
     }
 
     @Override
     @RemoteMethod
     public ServiceResponse<Boolean> resetAttempts(String storeId, String taskId) throws CoreServiceException {
-
         return updateQueueTask(storeId, taskId, TaskStatus.QUEUED, 0);
+    }
+
+    @Override
+    @RemoteMethod
+    public ServiceResponse<RuleXml> getRule(String storeId, String taskId) throws CoreServiceException {
+       
+        ImportRuleTask importRuleTask = importRuleTaskService.searchById(storeId, taskId);
+        ServiceResponse<RuleXml> serviceResponse = new ServiceResponse<RuleXml>();
+        if(importRuleTask != null) {
+            RuleXml ruleXml = ruleTransferUtil.getRuleToImport(importRuleTask.getTargetStoreId(), importRuleTask.getRuleEntity(),  StringUtil.escapeKeyword(importRuleTask.getSourceRuleId()));
+            serviceResponse.success(ruleXml);
+        } else {
+            serviceResponse.error("Cannot find task. Please contact your system administrator.");
+        }
+
+        return serviceResponse;
     }
 
     private ServiceResponse<Boolean> updateQueueTask(String storeId, String taskId, TaskStatus status,

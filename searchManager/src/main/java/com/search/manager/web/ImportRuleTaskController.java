@@ -123,7 +123,7 @@ public class ImportRuleTaskController {
 
         for (ImportRuleTask task : list) {
             taskXmlMap.put(task.getTaskId(),
-                    hasXml(task.getTargetStoreId(), task.getRuleEntity(), task.getTargetRuleId()));
+                    hasXml(task.getTargetStoreId(), task.getRuleEntity(), task.getSourceRuleId()));
         }
 
         return taskXmlMap;
