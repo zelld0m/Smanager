@@ -118,7 +118,7 @@
 			},
 			preview: function(element, postTemplate, preTemplate, rightPanelTemplate) {
 				var task = importRuleTaskList[element.id];
-				ImportRuleTaskService.getRule(GLOBAL_storeId, element.id, {
+				ImportRuleTaskService.getRule(element.id, {
 					callback:function(serviceResponse){
 						if(serviceResponse.data != null) {
 							$(element).xmlpreview({
@@ -129,7 +129,7 @@
 								enablePreTemplate: true,
 								enablePostTemplate: true,
 								leftPanelSourceData: "xml",
-								enableRightPanel: true,
+								enableRightPanel: false,
 								rightPanelSourceData: "database",
 								dbRuleId: task.targetRuleId,
 								ruleXml: serviceResponse.data,

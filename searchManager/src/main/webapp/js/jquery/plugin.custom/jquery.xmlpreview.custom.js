@@ -135,7 +135,8 @@
 						}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 					}
 					
-					contentHolder.find("div#leftPreview").find("div#btnHolder").show();
+					if(options.viewOnly != true)
+						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
 					
 					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"], rs["ruleName"]);
 				}
@@ -183,7 +184,7 @@
 
 			$content.find("#ruleInfo").text($.trim(ruleName));
 
-			if(list.length==0 && base.options.ruleXml == null && base.XML_SOURCE === sourceData){
+			if(list == null || (list.length==0 && base.options.ruleXml == null && base.XML_SOURCE === sourceData)){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
 				$tr.find("td:not(#itemPosition)").remove();
 				$tr.find("td#itemPosition").attr("colspan", "6").html("Unable to find data for this rule. Please contact Search Manager Team.");
@@ -299,7 +300,7 @@
 				var $ruleInfo = $content.find("#ruleInfo");
 				$table.find("tr:not(#itemPattern)").remove();
 				
-				FacetSortServiceJS.getRuleByName(GOLBAL_storeId, ruleName, {
+				FacetSortServiceJS.getRuleByName(GLOBAL_storeId, ruleName, {
 					callback: function(data){
 						$table.find("tr:not(#itemPattern)").remove();
 						$table.find("tr").removeClass("alt");

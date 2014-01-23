@@ -62,6 +62,13 @@ showActionResponse = function(code, action, param){
 	default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
 	}
 };
+showActionCallBackJobResponse = function(code, action, param,callbackJob){
+	switch(code){
+	case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered",callbackJob); break;
+	case  0: jAlert("Failed " + action + " request for " + param, "Failed Request",callbackJob); break;
+	default: jAlert("Successful " + action + " request for " + param, "Successful Request",callbackJob); break;
+	}
+};
 
 showActionResponseFromMap = function(code, action, title, additionalFailMessage){
 	var message = "";
