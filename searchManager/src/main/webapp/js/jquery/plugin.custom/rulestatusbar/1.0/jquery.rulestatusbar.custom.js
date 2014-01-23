@@ -33,7 +33,7 @@
 						var autoImportWarnItem = autoImportWarnContainer.find("#autoImportWarningPattern").clone();
 						var storeId = task["sourceStoreId"];
 						var createdDate = $.toStoreFormat(task["createdDate"]);
-						var warningText = base.options.autoImportWarningText.replace(/storeId/g,storeId).replace(/createdDate/g,createdDate);
+						var warningText = base.options.autoImportWarningText.replace(/storeName/g,GLOBAL_allStoresDisplayName[storeId]).replace(/createdDate/g,createdDate);
 						autoImportWarnItem.prop({id: task["taskId"]});
 						autoImportWarnItem.find(".autoImportWarningText").text(warningText);
 						autoImportWarnItem.show();
@@ -216,6 +216,10 @@
 		template += '	<div id="autoImportWarningContainer">';
 		template += '		<div id="autoImportWarningPattern" class="autoImportWarning warning border fsize12 marT5" style="display:none">';
 		template += '			<span class="autoImportWarningText"></span>';
+		template += '			<span class="floatR">';
+		template += '				<a href="javascript:void(0);">Compare</a>';
+		template += '				<a href="javascript:void(0);">Cancel</a>';
+		template += '			</span>';
 		template += '		</div>'; 
 		template += '	</div>'; 
 		
@@ -275,7 +279,7 @@
 			preRestoreCallback: function(base){},
 			postRestoreCallback: function(base, rule){},
 			noPublishedDateText: "No data available",
-			autoImportWarningText: "Auto-import task from storeId created on createdDate will update this rule",
+			autoImportWarningText: "Rule from storeName is queued on createdDate to replace this rule",
 	};
 
 	$.fn.rulestatusbar = function(options){
