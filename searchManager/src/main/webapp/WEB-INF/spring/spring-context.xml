@@ -113,7 +113,7 @@
     <import resource="search-proxy-context.xml" />
     
     <!-- Loads tasks -->
-    <!--  <import resource="spring-task.xml" />-->
+    <import resource="spring-task.xml" />
 
     <!-- Velocity integration for template -->
     <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
