@@ -33,108 +33,128 @@ import com.search.manager.xml.file.RuleTransferUtil;
 @RemoteProxy(name = "ImportRuleTaskService", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "importRuleTaskService"))
 public class ImportRuleTaskDwrServiceImpl implements ImportRuleTaskDwrService{
 
-    @Autowired
-    @Qualifier("importRuleTaskServiceSp")
-    private ImportRuleTaskService importRuleTaskService;
-    @Autowired
-    private RuleTransferUtil ruleTransferUtil;
-    @Autowired
-    private UtilityService utilityService;
+	@Autowired
+	@Qualifier("importRuleTaskServiceSp")
+	private ImportRuleTaskService importRuleTaskService;
+	@Autowired
+	private RuleTransferUtil ruleTransferUtil;
+	@Autowired
+	private UtilityService utilityService;
 
-    @Override
-    @RemoteMethod
-    public ServiceResponse<List<ImportRuleTask>> getTasks(String storeId, String ruleEntityType, String ruleId) throws CoreServiceException {
-        
-        ImportRuleTask importRuleTask = new ImportRuleTask();
-        importRuleTask.setTargetStoreId(storeId);
-        importRuleTask.setTargetRuleId(ruleId);
-        importRuleTask.setRuleEntity(RuleEntity.find(ruleEntityType));
-        SearchResult<ImportRuleTask> recordSet = importRuleTaskService.search(importRuleTask, 0, 0);
+	@Override
+	@RemoteMethod
+	public ServiceResponse<List<ImportRuleTask>> getTasks(String storeId, String ruleEntityType, String ruleId) throws CoreServiceException {
 
-        List<ImportRuleTask> importRuleTaskList = new ArrayList<ImportRuleTask>(recordSet.getList());
+		ImportRuleTask importRuleTask = new ImportRuleTask();
+		importRuleTask.setTargetStoreId(storeId);
+		importRuleTask.setTargetRuleId(ruleId);
+		importRuleTask.setRuleEntity(RuleEntity.find(ruleEntityType));
+		SearchResult<ImportRuleTask> recordSet = importRuleTaskService.search(importRuleTask, 0, 0);
 
-        CollectionUtils.filter(importRuleTaskList, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                ImportRuleTask task = (ImportRuleTask) object;   
-                TaskExecutionResult result = task.getTaskExecutionResult();
-                TaskStatus taskStatus = result.getTaskStatus();
-                return ArrayUtils.contains(TaskStatus.AWAITING_COMPLETION_STATUSES, taskStatus);
-            }
-        });
+		List<ImportRuleTask> importRuleTaskList = new ArrayList<ImportRuleTask>(recordSet.getList());
 
-        ServiceResponse<List<ImportRuleTask>> serviceResponse = new ServiceResponse<List<ImportRuleTask>>();
-        serviceResponse.success(importRuleTaskList);
-        return serviceResponse;
-    }
+		CollectionUtils.filter(importRuleTaskList, new Predicate() {
+			@Override
+			public boolean evaluate(Object object) {
+				ImportRuleTask task = (ImportRuleTask) object;   
+				TaskExecutionResult result = task.getTaskExecutionResult();
+				TaskStatus taskStatus = result.getTaskStatus();
+				return ArrayUtils.contains(TaskStatus.AWAITING_COMPLETION_STATUSES, taskStatus);
+			}
+		});
 
-    @Override
-    @RemoteMethod
-    public ServiceResponse<ImportRuleTask> getTask(String storeId, String taskId) {
+		ServiceResponse<List<ImportRuleTask>> serviceResponse = new ServiceResponse<List<ImportRuleTask>>();
+		serviceResponse.success(importRuleTaskList);
+		return serviceResponse;
+	}
 
-        ServiceResponse<ImportRuleTask> serviceResponse = new ServiceResponse<ImportRuleTask>();
+	@Override
+	@RemoteMethod
+	public ServiceResponse<ImportRuleTask> getTask(String storeId, String taskId) {
 
-        ImportRuleTask importRuleTask;
-        try {
-            importRuleTask = importRuleTaskService.searchById(storeId, taskId);
-            serviceResponse.success(importRuleTask);
-        } catch (CoreServiceException e) {
-            e.printStackTrace();
-            serviceResponse.error("Unable to retrieve task. Please contact your system administrator.");
-        }
+		ServiceResponse<ImportRuleTask> serviceResponse = new ServiceResponse<ImportRuleTask>();
 
-        return serviceResponse;
-    }
+		ImportRuleTask importRuleTask;
+		try {
+			importRuleTask = importRuleTaskService.searchById(storeId, taskId);
+			serviceResponse.success(importRuleTask);
+		} catch (CoreServiceException e) {
+			e.printStackTrace();
+			serviceResponse.error("Unable to retrieve task. Please contact your system administrator.");
+		}
 
-    @Override
-    @RemoteMethod
-    public ServiceResponse<Boolean> cancelTask(String storeId, String taskId) throws CoreServiceException {
-        return updateQueueTask(storeId, taskId, TaskStatus.CANCELED, null);
-    }
+		return serviceResponse;
+	}
 
-    @Override
-    @RemoteMethod
-    public ServiceResponse<Boolean> resetAttempts(String storeId, String taskId) throws CoreServiceException {
-        return updateQueueTask(storeId, taskId, TaskStatus.QUEUED, 0);
-    }
+	@Override
+	@RemoteMethod
+	public ServiceResponse<Boolean> cancelTask(String storeId, String taskId){
+		try {
+			return updateQueueTask(storeId, taskId, TaskStatus.CANCELED, null);
+		} catch (CoreServiceException e) {
+			e.printStackTrace();
+			ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
+			serviceResponse.error("An error was encountered while cancelling the task. Please contanct your system administrator.");
+			return serviceResponse;
 
-    @Override
-    @RemoteMethod
-    public ServiceResponse<RuleXml> getRule(String taskId) throws CoreServiceException {
-       
-        ImportRuleTask importRuleTask = importRuleTaskService.searchById(taskId);
-        ServiceResponse<RuleXml> serviceResponse = new ServiceResponse<RuleXml>();
-        if(importRuleTask != null) {
-            RuleXml ruleXml = ruleTransferUtil.getRuleToImport(importRuleTask.getTargetStoreId(), importRuleTask.getRuleEntity(),  StringUtil.escapeKeyword(importRuleTask.getSourceRuleId()));
-            serviceResponse.success(ruleXml);
-        } else {
-            serviceResponse.error("Cannot find task. Please contact your system administrator.");
-        }
+		}
+	}
 
-        return serviceResponse;
-    }
+	@Override
+	@RemoteMethod
+	public ServiceResponse<Boolean> resetAttempts(String storeId, String taskId){
+		try {
+			return updateQueueTask(storeId, taskId, TaskStatus.QUEUED, 0);
+		} catch (CoreServiceException e) {
+			ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
+			serviceResponse.error("An error was encountered while updating the task. Please contanct your system administrator.");
+			return serviceResponse;
+		}
+	}
 
-    private ServiceResponse<Boolean> updateQueueTask(String storeId, String taskId, TaskStatus status,
-            Integer runAttempt) throws CoreServiceException {
-        ImportRuleTask importRuleTask = importRuleTaskService.searchById(taskId);
-        TaskExecutionResult result = importRuleTask.getTaskExecutionResult();
-        if (runAttempt != null) {
+	@Override
+	@RemoteMethod
+	public ServiceResponse<RuleXml> getRule(String taskId){
+		ServiceResponse<RuleXml> serviceResponse = new ServiceResponse<RuleXml>();
+		ImportRuleTask importRuleTask = null;
+		try {
+			importRuleTask = importRuleTaskService.searchById(taskId);
+		} catch (CoreServiceException e) {
+			serviceResponse.error("An error was encountered while retrieving the task. Please contanct your system administrator.");
+			return serviceResponse;
+		}
 
-            result.setRunAttempt(runAttempt);
-            result.setTaskErrorMessage(null);
-            result.setStateCompleted(null);
-        }
-        result.setTaskStatus(status);
-        importRuleTask.setLastModifiedDate(new DateTime());
-        importRuleTask.setLastModifiedBy(utilityService.getUsername());
+		if(importRuleTask != null) {
+			RuleXml ruleXml = ruleTransferUtil.getRuleToImport(importRuleTask.getTargetStoreId(), importRuleTask.getRuleEntity(),  StringUtil.escapeKeyword(importRuleTask.getSourceRuleId()));
+			serviceResponse.success(ruleXml);
+		} else {
+			serviceResponse.error("Cannot find task. Please contact your system administrator.");
+		}
 
-        importRuleTask = importRuleTaskService.update(importRuleTask);
+		return serviceResponse;
+	}
 
-        ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
+	private ServiceResponse<Boolean> updateQueueTask(String storeId, String taskId, TaskStatus status,
+			Integer runAttempt) throws CoreServiceException {
+		ImportRuleTask importRuleTask = importRuleTaskService.searchById(taskId);
+		TaskExecutionResult result = importRuleTask.getTaskExecutionResult();
+		if (runAttempt != null) {
 
-        serviceResponse.success(importRuleTask != null
-                && status.equals(importRuleTask.getTaskExecutionResult().getTaskStatus()));
+			result.setRunAttempt(runAttempt);
+			result.setTaskErrorMessage(null);
+			result.setStateCompleted(null);
+		}
+		result.setTaskStatus(status);
+		importRuleTask.setLastModifiedDate(new DateTime());
+		importRuleTask.setLastModifiedBy(utilityService.getUsername());
 
-        return serviceResponse;
-    }
+		importRuleTask = importRuleTaskService.update(importRuleTask);
+
+		ServiceResponse<Boolean> serviceResponse = new ServiceResponse<Boolean>();
+
+		serviceResponse.success(importRuleTask != null
+				&& status.equals(importRuleTask.getTaskExecutionResult().getTaskStatus()));
+
+		return serviceResponse;
+	}
 }
