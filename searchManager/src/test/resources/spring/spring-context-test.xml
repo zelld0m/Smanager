@@ -54,6 +54,17 @@
 	<!-- Aspect -->
 	<bean id="loggingAspect" class="com.search.manager.core.aspect.LoggingAspect" />
     
+    <!-- Static initalization of PropertiesUtils -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>com.search.manager.utility.PropertiesUtils</value></property>
+        <property name="targetMethod"><value>initPropertiesConfig</value></property>
+        <property name="arguments">
+            <list>
+                <value>src/test/resources/config/globalvar.properties</value>
+            </list>
+        </property>
+    </bean>
+
 	<!-- TODO move to core -->
 	<bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
  		<constructor-arg name="storeXMLFile" value="/home/solr/conf/store.xml" />
