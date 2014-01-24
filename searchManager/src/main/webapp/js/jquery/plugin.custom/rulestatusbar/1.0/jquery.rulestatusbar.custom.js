@@ -34,6 +34,8 @@
 									if(serviceResponse.data == true) {
 										
 										jAlert('The task for this rule has been canceled.', base.options.moduleName);
+									}  else if(serviceResponse.errorMessage != null) {
+										jAlert(serviceResponse.errorMessage, moduleName);
 									}
 								},
 								postHook: function() {
@@ -59,6 +61,8 @@
 					var ruleXml = serviceResponse.data;
 					if(ruleXml != null) {
 						base.bindXmlPreview(compareLink[0], ruleXml, base.getXmlPostTemplate(), base.getXmlPreTemplate(ruleXml.ruleEntity.replace('_', '').toLowerCase()), base.getXmlRightPanelTemplate());
+					} else if(serviceResponse.errorMessage != null) {
+						jAlert(serviceResponse.errorMessage, moduleName);
 					}
 				},
 				postHook:function(){
