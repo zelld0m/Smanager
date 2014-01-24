@@ -326,7 +326,7 @@
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
-					headerText : "Facet Sorting Rule",
+					headerText : "Facet Sort Rule",
 					customAddRule: true,
 					showAddButton: allowModify,
 					filterText: self.ruleFilterText,

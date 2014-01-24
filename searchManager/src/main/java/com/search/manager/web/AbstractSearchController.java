@@ -708,6 +708,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             }
 
             // parse the parameters, construct POST form
+            @SuppressWarnings("unchecked")
             Set<String> paramNames = (Set<String>) request.getParameterMap().keySet();
             for (String paramName : paramNames) {
                 for (String paramValue : request.getParameterValues(paramName)) {

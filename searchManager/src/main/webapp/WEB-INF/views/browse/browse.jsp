@@ -126,15 +126,15 @@
 	        	 	<div id="searchKeyword"></div>		        	
 	        	</div>
 	        	<div class="floatL w350 dropdownArea" >
-	        		<div class="floatL w150 padT5">Select Ranking Rule:</div>
+	        		<div class="floatL w150 padT5">Select Relevancy Rule:</div>
 		        	<div class="floatL w200">
 			        	<select id="rankingRule" class="w178 marT5"></select>
 		        	</div>	        	
 			  	</div>
 			  	<div id="redirectUrlToggle" class="floatL w350">
-            <div class="floatL w150 padT5">Query Cleaning:</div>
+            <div class="floatL w150 padT5">Redirect Rule:</div>
             <div class="floatL w200 padT5">
-                <input id="enableRedirectToPage" type="checkbox"/>&nbsp;Enable Redirect To Page
+                <input id="enableRedirectToPage" type="checkbox"/>&nbsp;Enable Page Redirection
             </div>
         </div>
 	      </div>
