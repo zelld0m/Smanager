@@ -52,6 +52,7 @@
 		
 		$('div.autoImportWarning').each(function() {
 			var div = this;
+			$(div).find('a.compare').hide();
 			ImportRuleTaskService.getRule(this.id, {
 				callback:function(serviceResponse){
 					var ruleXml = serviceResponse.data;
@@ -63,7 +64,8 @@
 					
 				},
 				postHook:function(){
-					
+					$(div).find('a.compare').show();
+					$(div).find('span.loading').hide();
 				},
 			});
 		});
@@ -426,6 +428,7 @@
 		template += '		<div id="autoImportWarningPattern" class="autoImportWarning warning border fsize12 marT5" style="display:none">';
 		template += '			<span class="autoImportWarningText"></span>';
 		template += '			<span class="floatR">';
+		template += '				<span class="loading"><img src="'+GLOBAL_contextPath+'/images/ajax-loader-rect.gif"/></span>';
 		template += '				<a href="javascript:void(0);" class="compare">Compare</a>';
 		template += '				<a href="javascript:void(0);" class="cancel">Cancel</a>';
 		template += '			</span>';
