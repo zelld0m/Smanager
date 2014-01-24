@@ -52,19 +52,17 @@
 		
 		$('div.autoImportWarning').each(function() {
 			var div = this;
-			$(div).find('a.compare').hide();
+			var compareLink = $(div).find('a.compare'); 
+			compareLink.hide();
 			ImportRuleTaskService.getRule(this.id, {
 				callback:function(serviceResponse){
 					var ruleXml = serviceResponse.data;
 					if(ruleXml != null) {
-						base.bindXmlPreview($(div).find('a.compare')[0], ruleXml, base.getXmlPostTemplate(), base.getXmlPreTemplate(ruleXml.ruleEntity.replace('_', '').toLowerCase()), base.getXmlRightPanelTemplate());
+						base.bindXmlPreview(compareLink[0], ruleXml, base.getXmlPostTemplate(), base.getXmlPreTemplate(ruleXml.ruleEntity.replace('_', '').toLowerCase()), base.getXmlRightPanelTemplate());
 					}
 				},
-				preHook:function(){
-					
-				},
 				postHook:function(){
-					$(div).find('a.compare').show();
+					compareLink.show();
 					$(div).find('span.loading').hide();
 				},
 			});
