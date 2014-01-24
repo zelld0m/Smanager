@@ -405,7 +405,7 @@
 				var $pLi = null;
 
 				$ul.parent().show();
-				$rowLabelUl.find("li#products").text("Products").show();
+				$rowLabelUl.find("div#products").text("Products").show();
 
 				for (var pXml in products){
 					var product = products[pXml];
@@ -838,9 +838,9 @@
 			template += '						<li id="verNote">Not Available</li>'; 
 			template += '						<li id="ruleId"></li>'; 
 			template += '						<li id="ruleName"></li>';
-			template += '						<li id="products" style="display:none;border:0;background:#f1f4fb;">';
+			template += '						<div id="products" style="display:none;border:0;background:#f1f4fb;">';
 			template += '							<ul id="prodList">';
-			template += '								<li id="prodPattern" class="prod" style="display:none">';
+			template += '								<li id="prodPattern" class="prod" style="display:none;background:#f1f4fb;">';
 			template += '									<img id="prodImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg"/>';
 			template += '									<div id="prodInfo">';
 			template += '										<p id="prodSKU"></p>';
@@ -849,7 +849,7 @@
 			template += '									<div>';
 			template += '								</li>';
 			template += '							</ul>';
-			template += '						</li>';
+			template += '						</div>';
 			template += '						<li class="groups" style="display:none;background:#ecf0f8;border:0">';
 			template += '							<ul id="groupList">';
 			template += '								<li id="groupPattern" class="group" style="display:none;border:0">';
