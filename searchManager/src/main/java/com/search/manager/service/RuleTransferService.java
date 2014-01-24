@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.enums.RuleSource;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -69,6 +70,8 @@ public class RuleTransferService {
     private DaoService daoService;
     @Autowired
     private FacetSortService facetSortService;
+    @Autowired
+    private RuleStatusService ruleStatusService;
     @Autowired
     private RuleTransferUtil ruleTransferUtil;
     @Autowired

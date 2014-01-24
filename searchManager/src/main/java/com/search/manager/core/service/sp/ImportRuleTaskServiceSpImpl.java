@@ -155,5 +155,22 @@ public class ImportRuleTaskServiceSpImpl implements ImportRuleTaskService {
         }
         return null;
     }
+    @Override
+    public ImportRuleTask searchById(String id) throws CoreServiceException {
+        if (StringUtils.isBlank(id)) {
+            return null;
+        }
+        Search search = new Search(ImportRuleTask.class);
+        search.addFilter(new Filter(WorkflowConstants.COLUMN_TASK_ID, id));
+        search.setPageNumber(1);
+        search.setMaxRowCount(1);
+
+        SearchResult<ImportRuleTask> searchResult = search(search);
+
+        if (searchResult.getTotalCount() > 0) {
+            return (ImportRuleTask) CollectionUtils.get(searchResult.getResult(), 0);
+        }
+        return null;
+    }
 
 }

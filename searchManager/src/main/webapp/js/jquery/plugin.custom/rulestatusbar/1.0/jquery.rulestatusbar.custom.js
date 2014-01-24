@@ -18,11 +18,218 @@
 		base.init();
 	};
 	
+	$.rulestatusbar.prototype.cancelRuleTask = function(){
+		var base = this;
+		
+		$('div.autoImportWarning').each(function() {
+			var container = this;
+			var link = $(this).find('a.cancel');
+			link.off().on({
+				click:function(e){
+					var id = container.id;
+					jConfirm('Are you sure you want to cancel the task for this rule?', "Cancel Task", function(result) {
+						if (result) {
+							ImportRuleTaskService.cancelTask(GLOBAL_storeId, id, {
+								callback:function(serviceResponse){
+									if(serviceResponse.data == true) {
+										
+										jAlert('The task for this rule has been canceled.', base.options.moduleName);
+									}
+								},
+								postHook: function() {
+									$(container).hide();
+								}
+							});
+						}
+					});
+				}
+			});
+		});
+	};
+	
+	$.rulestatusbar.prototype.getImportTaskPreview = function(){
+		var base = this;
+		
+		$('div.autoImportWarning').each(function() {
+			var div = this;
+			ImportRuleTaskService.getRule(this.id, {
+				callback:function(serviceResponse){
+					var ruleXml = serviceResponse.data;
+					if(ruleXml != null) {
+						base.bindXmlPreview($(div).find('a.compare')[0], ruleXml, base.getXmlPostTemplate(), base.getXmlPreTemplate(ruleXml.ruleEntity.replace('_', '').toLowerCase()), base.getXmlRightPanelTemplate());
+					}
+				},
+				preHook:function(){
+					
+				},
+				postHook:function(){
+					
+				},
+			});
+		});
+	};
+	
+	$.rulestatusbar.prototype.bindXmlPreview = function(element, ruleXml, postTemplate, preTemplate, rightPanelTemplate) {
+		var ruleEntity = ruleXml.ruleEntity.replace('_', '').toLowerCase();
+		
+		$(element).xmlpreview({
+			transferType: "import",
+			ruleId: ruleXml.ruleId,
+			ruleName: ruleXml.ruleName,
+			ruleType: ruleEntity,
+			enablePreTemplate: true,
+			enablePostTemplate: true,
+			leftPanelSourceData: "xml",
+			enableRightPanel: true,
+			rightPanelSourceData: "database",
+			dbRuleId: ruleXml.ruleId,
+			ruleXml: ruleXml,
+			rule: ruleXml,
+			postTemplate: postTemplate,
+			preTemplate: preTemplate,
+			rightPanelTemplate: rightPanelTemplate,
+			viewOnly: true,
+			itemImportAsListCallback: function(base, contentHolder, sourceData) {
+				DeploymentServiceJS.getDeployedRules(ruleEntity, "published", {
+					callback: function(data) {
+						base.populateImportAsList(data, contentHolder, sourceData);
+					}
+				});
+			},
+			itemImportTypeListCallback: function(base, contentHolder) {
+				base.populateImportTypeList(self.importTypeList, contentHolder);
+			},
+			itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap) {
+				if (ruleEntity === "elevate") {
+					ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+						callback: function(data) {
+							base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+						},
+						preHook: function() {
+							base.prepareForceAddStatus(contentHolder);
+						}
+					});
+				}
+			},
+			itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap) {
+				if (ruleEntity === "elevate") {
+					ElevateServiceJS.isItemInNaturalResult(ruleName, memberIds, memberConditions, {
+						callback: function(data) {
+							base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+						},
+						preHook: function() {
+							base.prepareForceAddStatus(contentHolder);
+						}
+					});
+				}
+			},
+			checkUncheckCheckboxCallback: function(base, ruleId, pub) {
+				switch (pub) {
+				case 'import':
+					self.toggleImportCheckbox($.formatAsId(ruleId));
+					break;
+				case 'reject':
+					self.toggleRejectCheckbox($.formatAsId(ruleId));
+					break;
+				}
+			},
+			changeImportTypeCallback: function(base, ruleId, opt) {
+				$("#ruleItem" + $.formatAsId(ruleId) + " #type select").val(opt);
+			},
+			changeImportAsCallback: function(base, ruleId, importAs, ruleName, newName) {
+				if (importAs != 0 || newName.length > 0) {
+					$("#ruleItem" + $.formatAsId(ruleId) + " #importAs select").val(importAs).change();
+					$("#ruleItem" + $.formatAsId(ruleId) + " #importAs #replacement #newName").val(newName);
+				}
+			},
+			itemImportTypeListCallback: function(base, contentHolder) {
+				base.populateImportTypeList(self.importTypeList, contentHolder);
+			},
+			itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap) {
+				if (ruleEntity === "elevate") {
+					ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+						callback: function(data) {
+							base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+						},
+						preHook: function() {
+							base.prepareForceAddStatus(contentHolder);
+						}
+					});
+				}
+			},
+			itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap) {
+				if (ruleEntity === "elevate") {
+					ElevateServiceJS.isItemInNaturalResult(ruleName, memberIds, memberConditions, {
+						callback: function(data) {
+							base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+						},
+						preHook: function() {
+							base.prepareForceAddStatus(contentHolder);
+						}
+					});
+				}
+			}
+		});
+	};
+	
+	$.rulestatusbar.prototype.getXmlPreTemplate = function(entityName) {
+		var template = '';
+
+		switch (entityName.toLowerCase()) {
+		case "facetsort":
+			template = '<div class="rulePreview w590 marB20">';
+			template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
+			template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+			template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+			template += '	<div class="clearB"></div>';
+			template += '	<label class="w110 floatL fbold">Rule Type:</label>';
+			template += '	<label class="wAuto floatL" id="ruleType"></label>';
+			template += '	<div class="clearB"></div>';
+			template += '	<div class="clearB"></div>';
+			template += '</div>';
+			break;
+		default:	//template for elevate, exclude, demote, redirect and relevancy rule
+			template = '<div class="rulePreview w590 marB20">';
+		template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
+		template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+		template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+		template += '	<div class="clearB"></div>';
+		template += '	<div class="clearB"></div>';
+		template += '</div>';
+		}
+		return template;
+	};
+	
+	$.rulestatusbar.prototype.getXmlPostTemplate = function() {
+		var template = "";
+
+		template = '<div>';
+	
+		template += '</div>';
+
+		return template;
+	};
+	
+	$.rulestatusbar.prototype.getXmlRightPanelTemplate = function() {
+		var template = "";
+
+		template += '	<div class="rulePreview w590 marB20">';
+		template += '		<div class="alert marB10">';
+		template += '			Selected rule below will be overwritten when import task is executed.';
+		template += '		</div>';
+		template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
+		template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
+		template += '		<div class="clearB"></div>';
+		template += '	</div>';
+
+		return template;
+	};
+	
 	$.rulestatusbar.prototype.getImportTask = function(){
 		var base = this;
 		var autoImportWarnContainer = base.$el.find("#autoImportWarningContainer");
 		autoImportWarnContainer.find(".autoImportWarning:not(#autoImportWarningPattern)").remove();
-
+		
 		ImportRuleTaskService.getTasks(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], {
 			callback:function(serviceResponse){
 				var list = serviceResponse["data"];
@@ -47,6 +254,8 @@
 			},
 			postHook:function(){
 				base.getRuleStatus();
+				base.getImportTaskPreview();
+				base.cancelRuleTask();
 			},
 			
 		});
@@ -180,7 +389,7 @@
 			}
 		});	
 	};
-
+	
 	$.rulestatusbar.prototype.init = function(){
 		var base = this;
 		base.$el.empty();
@@ -217,8 +426,8 @@
 		template += '		<div id="autoImportWarningPattern" class="autoImportWarning warning border fsize12 marT5" style="display:none">';
 		template += '			<span class="autoImportWarningText"></span>';
 		template += '			<span class="floatR">';
-		template += '				<a href="javascript:void(0);">Compare</a>';
-		template += '				<a href="javascript:void(0);">Cancel</a>';
+		template += '				<a href="javascript:void(0);" class="compare">Compare</a>';
+		template += '				<a href="javascript:void(0);" class="cancel">Cancel</a>';
 		template += '			</span>';
 		template += '		</div>'; 
 		template += '	</div>'; 

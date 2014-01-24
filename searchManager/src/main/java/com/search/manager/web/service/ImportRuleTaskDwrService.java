@@ -18,7 +18,6 @@ public interface ImportRuleTaskDwrService {
 
 	ServiceResponse<ImportRuleTask> getTask(String storeId, String taskId);
 
-	ServiceResponse<RuleXml> getRule(String storeId, String taskId)
-			throws CoreServiceException;
+	ServiceResponse<RuleXml> getRule(String taskId) throws CoreServiceException;
 
 }
