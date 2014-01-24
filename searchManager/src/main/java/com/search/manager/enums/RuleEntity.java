@@ -26,6 +26,17 @@ public enum RuleEntity {
 
 	private final int code;
 	private final List<String> values;
+	
+	public static final RuleEntity[] SEARCH_RULES = {
+	    ELEVATE,
+	    EXCLUDE,
+	    DEMOTE,
+	    FACET_SORT,
+	    QUERY_CLEANING,
+	    RANKING_RULE,
+	    SPELL,
+	    BANNER
+	};
    
 	private RuleEntity(int code, String ...values) {
 		this.code = code;

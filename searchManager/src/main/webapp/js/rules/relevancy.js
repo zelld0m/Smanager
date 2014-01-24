@@ -1,12 +1,12 @@
 (function($){
-	var moduleName="Ranking Rule";
+	var moduleName="Relevancy Rule";
 	var selectedRule = null;
 	var selectedRuleStatus = null;
 	var rulePageSize = 5;
 	var ruleKeywordPageSize = 5;
 	var keywordInRulePageSize = 5;
-	var deleteRuleConfirmText = "Delete this ranking rule?";
-	var ruleNameErrorText = "Please provide a valid ranking rule name.";
+	var deleteRuleConfirmText = "Delete this relevancy rule?";
+	var ruleNameErrorText = "Please provide a valid relevancy rule name.";
 
 	var schemaFieldsPageSize = 8;
 	var schemaFieldsTotal = 0;
@@ -1047,7 +1047,7 @@
 								RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
 									callback: function(data){
 										if (data==true){
-											jAlert("Another ranking rule is already using the name provided.","Ranking Rule");
+											jAlert("Another relevancy rule is already using the name provided.","Ranking Rule");
 										}else{
 											RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
 												callback:function(data){
@@ -1130,7 +1130,7 @@
 				RelevancyServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
 					callback: function(data){
 						if (data==true){
-							jAlert("Another ranking rule is already using the name provided.","Ranking Rule");
+							jAlert("Another relevancy rule is already using the name provided.","Ranking Rule");
 						}else{
 							RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
 								callback: function(data){
@@ -1342,7 +1342,7 @@
 			page: rulePage,
 			pageSize: rulePageSize,
 			customAddRule: true,
-			headerText : "Ranking Rule",
+			headerText : "Relevancy Rule",
 			searchText : "Search Name",
 			showAddButton: allowModify,
 			filterText: ruleFilterText,
@@ -1420,7 +1420,7 @@
 										RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
 											callback: function(data){
 												if (data==true){
-													jAlert("Another ranking rule is already using the name provided.","Ranking Rule");
+													jAlert("Another relevancy rule is already using the name provided.","Ranking Rule");
 												}else{
 													RelevancyServiceJS.cloneRule("",popName, popStartDate, popEndDate, popDescription, {
 														callback: function(data){
@@ -1520,7 +1520,7 @@
 			fieldName: "keyword",
 			page: keywordPage,
 			pageSize: ruleKeywordPageSize,
-			headerText : "Ranking Rule Keyword",
+			headerText : "Keyword",
 			showAddButton: false,
 			showStatus: false,
 			filterText: keywordFilterText,

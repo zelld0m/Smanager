@@ -148,7 +148,7 @@
 
             if (self.selectedRule == null) {
                 $("#noSelected").show();
-                $("#titleText").html(self.moduleName);
+                $("#titleText").html("Redirect Rule");
                 return;
             }
 
@@ -312,7 +312,7 @@
                 fieldName: "keyword",
                 page: self.ruleKeywordPage,
                 pageSize: self.ruleKeywordPageSize,
-                headerText: "Redirect Rule Keyword",
+                headerText: "Keyword",
                 showAddButton: false,
                 showStatus: false,
                 filterText: self.ruleKeywordFilterText,
