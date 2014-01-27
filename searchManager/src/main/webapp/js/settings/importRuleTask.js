@@ -96,6 +96,8 @@
 								if(serviceResponse.data == true) {
 									jAlert('The task for the rule "'+ruleName+'" was successfully requeued.', moduleName);
 									reloadFunction();
+								} else if(serviceResponse.errorMessage != null) {
+									jAlert(serviceResponse.errorMessage, moduleName);
 								}
 							}}
 						);
@@ -110,6 +112,8 @@
 								if(serviceResponse.data == true) {
 									jAlert('The task for the rule "'+ruleName+'" has been canceled.', moduleName);
 									reloadFunction();
+								} else if(serviceResponse.errorMessage != null) {
+									jAlert(serviceResponse.errorMessage, moduleName);
 								}
 							}}
 						);
@@ -221,6 +225,8 @@
 							});
 							
 							$(element).attr('src',$(element).attr('src').replace('ajax-loader-rect.gif', 'icon_reviewContent.png'));
+						} else if(serviceResponse.errorMessage != null) {
+							jAlert(serviceResponse.errorMessage, moduleName);
 						}
 					}}
 				);

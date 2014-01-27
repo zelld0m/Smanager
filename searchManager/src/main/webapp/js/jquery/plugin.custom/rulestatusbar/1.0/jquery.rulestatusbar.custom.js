@@ -34,6 +34,8 @@
 									if(serviceResponse.data == true) {
 										
 										jAlert('The task for this rule has been canceled.', base.options.moduleName);
+									}  else if(serviceResponse.errorMessage != null) {
+										jAlert(serviceResponse.errorMessage, moduleName);
 									}
 								},
 								postHook: function() {
@@ -52,18 +54,20 @@
 		
 		$('div.autoImportWarning').each(function() {
 			var div = this;
+			var compareLink = $(div).find('a.compare'); 
+			compareLink.hide();
 			ImportRuleTaskService.getRule(this.id, {
 				callback:function(serviceResponse){
 					var ruleXml = serviceResponse.data;
 					if(ruleXml != null) {
-						base.bindXmlPreview($(div).find('a.compare')[0], ruleXml, base.getXmlPostTemplate(), base.getXmlPreTemplate(ruleXml.ruleEntity.replace('_', '').toLowerCase()), base.getXmlRightPanelTemplate());
+						base.bindXmlPreview(compareLink[0], ruleXml, base.getXmlPostTemplate(), base.getXmlPreTemplate(ruleXml.ruleEntity.replace('_', '').toLowerCase()), base.getXmlRightPanelTemplate());
+					} else if(serviceResponse.errorMessage != null) {
+						jAlert(serviceResponse.errorMessage, moduleName);
 					}
 				},
-				preHook:function(){
-					
-				},
 				postHook:function(){
-					
+					compareLink.show();
+					$(div).find('span.loading').hide();
 				},
 			});
 		});
@@ -426,6 +430,7 @@
 		template += '		<div id="autoImportWarningPattern" class="autoImportWarning warning border fsize12 marT5" style="display:none">';
 		template += '			<span class="autoImportWarningText"></span>';
 		template += '			<span class="floatR">';
+		template += '				<span class="loading"><img src="'+GLOBAL_contextPath+'/images/ajax-loader-rect.gif"/></span>';
 		template += '				<a href="javascript:void(0);" class="compare">Compare</a>';
 		template += '				<a href="javascript:void(0);" class="cancel">Cancel</a>';
 		template += '			</span>';

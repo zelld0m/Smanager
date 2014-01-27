@@ -12,12 +12,12 @@ public interface ImportRuleTaskDwrService {
     ServiceResponse<List<ImportRuleTask>> getTasks(String storeId, String ruleEntityType, String ruleId)
             throws CoreServiceException;
 
-    ServiceResponse<Boolean> cancelTask(String storeId, String taskId) throws CoreServiceException;
+    ServiceResponse<Boolean> cancelTask(String storeId, String taskId);
 
-    ServiceResponse<Boolean> resetAttempts(String storeId, String taskId) throws CoreServiceException;
+    ServiceResponse<Boolean> resetAttempts(String storeId, String taskId);
 
 	ServiceResponse<ImportRuleTask> getTask(String storeId, String taskId);
 
-	ServiceResponse<RuleXml> getRule(String taskId) throws CoreServiceException;
+	ServiceResponse<RuleXml> getRule(String taskId);
 
 }

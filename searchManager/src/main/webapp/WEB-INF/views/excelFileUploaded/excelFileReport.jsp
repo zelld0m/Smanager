@@ -25,10 +25,10 @@
 	  	<tr>
 	  		<td>
 	  			<div>
-	  				[<a href="javascript:void(0);" onclick="$('#keyword').val('${keyword.key}');" class="showHide">+</a>]
+	  				[<a href="javascript:void(0);" onclick="$('#keyword').val('${status.index}');" class="showHide">+</a>]
 	  				${keyword.key} 
 	  			</div>
-	  			<div id="${keyword.key}" style="display:none;">
+	  			<div id="${status.index}" style="display:none;">
 					<table id="uploadedRules" class="tblItems w100p marT5">
 						<thead>
 		            		<tr class="alt">			                
