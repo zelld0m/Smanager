@@ -87,7 +87,7 @@
 				        	<c:set var="enableRequeue" value="${taskXmlMap[importRuleTask.taskId] && (importRuleTask.taskExecutionResult.taskStatus eq 'FAILED' || importRuleTask.taskExecutionResult.taskStatus eq 'CANCELED' || importRuleTask.taskExecutionResult.taskStatus eq 'AUTO_CANCELED')}"/>
 				        	<c:set var="enableCancel" value="${importRuleTask.taskExecutionResult.taskStatus eq 'QUEUED' || importRuleTask.taskExecutionResult.taskStatus eq 'FAILED'}"/>
 				        	<script text="text/javascript">importRuleTaskList['${importRuleTask.taskId}'].hasXml = ${taskXmlMap[importRuleTask.taskId] == true};</script>
-				        	<c:if test="${importRuleTask.ruleEntity ne 'SPELL'}">
+				        	<c:if test="${importRuleTask.ruleEntity ne 'SPELL' and importRuleTask.ruleEntity ne 'BANNER'}">
 				        		<input class="${taskXmlMap[importRuleTask.taskId] ? 'btnPreview' : 'btnPreviewOff' }" type="image" id="${importRuleTask.taskId }" src="<spring:url value="/images/${taskXmlMap[importRuleTask.taskId] ? 'ajax-loader-rect.gif' : 'icon_notactive.png' }" />"/>
 				        	</c:if>
 				        	<input class="${enableRequeue ? 'btnRequeue' : 'btnRequeueOff' }" id="${importRuleTask.taskId }" type="image" src="<spring:url value="/images/icon_globe25${enableRequeue ? '_active' : '' }.png" />"/>
