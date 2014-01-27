@@ -291,7 +291,7 @@ public class ExcludeService extends RuleService {
             String store = utilityService.getStoreId();
             ExcludeResult e = new ExcludeResult();
             e.setStoreKeyword(new StoreKeyword(store, keyword));
-            SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, DateTime.now().minusDays(1), page, itemsPerPage);
+            SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, DateTime.now(), page, itemsPerPage);
             return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
         } catch (DaoException e) {
             logger.error("Failed during getExpiredExcludedProducts()", e);

@@ -471,7 +471,7 @@ public class ElevateService extends RuleService {
             String server = utilityService.getServerName();
             String store = utilityService.getStoreId();
             ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-            SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateTime.now().minusDays(1), page, itemsPerPage);
+            SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateTime.now(), page, itemsPerPage);
             return daoService.getElevatedProducts(server, criteria);
         } catch (DaoException e) {
             logger.error("Failed during getExpiredElevatedProducts()", e);
