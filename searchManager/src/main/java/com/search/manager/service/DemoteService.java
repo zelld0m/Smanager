@@ -421,7 +421,7 @@ public class DemoteService extends RuleService {
             String store = utilityService.getStoreId();
             DemoteResult e = new DemoteResult();
             e.setStoreKeyword(new StoreKeyword(store, keyword));
-            SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, DateTime.now().minusDays(1), page, itemsPerPage);
+            SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, DateTime.now(), page, itemsPerPage);
             return daoService.getDemotedProductsIgnoreKeyword(server, criteria);
         } catch (DaoException e) {
             logger.error("Failed during getExpiredProducts()", e);
