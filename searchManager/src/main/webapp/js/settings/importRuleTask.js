@@ -47,7 +47,9 @@
 				filter = filter + $("#typeFilter").val()  + ",";
 				filter = filter + $("#ruleTypeFilter").val()  + ",";
 				filter = filter + $("#targetRuleName").val() + ",";
-				filter = filter + $("#targetFilter").val();
+				if($("#targetFilter").length > 0){
+					filter = filter + $("#targetFilter").val();
+				}				
 				$("#filter").val(filter);
 				var currentPage = $('#currentPageNumber').val();
 				self.changePage(currentPage);
