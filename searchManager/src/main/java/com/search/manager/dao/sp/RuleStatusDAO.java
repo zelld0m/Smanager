@@ -27,6 +27,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
+@Deprecated
 @Repository(value="ruleStatusDAO")
 public class RuleStatusDAO {
 
