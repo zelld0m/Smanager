@@ -83,7 +83,11 @@ public class EnterpriseConfigManagerTest {
     public void testGetStoreParameterValue(){
         assertEquals("linear(MacMall_PopularityScale,1,0)^50", enterpriseConfigManager.getStoreParameterValue("macmall", "/store[@id='%s']/relevancy-default/bf"));
     }
-        
+    
+    @Test
+    public void testGetAllParentStore(){
+        assertEquals(Arrays.asList(SOLR_CORES), enterpriseConfigManager.getAllParentStore());
+    }
         
     @Test
     public void testGetParentStoreIdByAlias(){

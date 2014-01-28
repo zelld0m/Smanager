@@ -3,9 +3,7 @@ package com.search.ws;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
@@ -48,22 +46,21 @@ public class EnterpriseConfigManager {
     public List<String> getAllCores(){
         return Arrays.asList(enterpriseXMLConfig.getStringArray("/store/@core"));
     }
+    
+    public List<String> getAllParentStore(){
+        return Arrays.asList(enterpriseXMLConfig.getStringArray("/store[@core and string-length(@core)!=0]/@id"));
+    }
 
-    @SuppressWarnings("unchecked")
     public String getParentStoreIdByAlias(String storeId) {
         
-        List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) enterpriseXMLConfig.configurationsAt("/store");
-
-        if (CollectionUtils.isNotEmpty(hcList)) {
-            for (HierarchicalConfiguration hc : hcList) {
-                String[] storeIdAliases = StringUtils.split(StringUtils.trim(StringUtils.defaultIfBlank(hc.getString("store-id-aliases"),StringUtils.EMPTY)).replaceAll("\\s+", " "),',');
-                if (ArrayUtils.isNotEmpty(storeIdAliases) && ArrayUtils.contains(storeIdAliases, storeId)) {
-                    storeId = hc.getString("@id");
-                    break;
-                }
+        for(String sId: getAllParentStore()){
+            String[] storeIdAliases = StringUtils.split(StringUtils.trim(StringUtils.defaultIfBlank(enterpriseXMLConfig.getString(String.format("/store[@id='%s']/store-id-aliases",sId)),StringUtils.EMPTY)).replaceAll("\\s+", " "),',');
+            if(ArrayUtils.contains(storeIdAliases, storeId)){
+                storeId = sId;
+                break;
             }
         }
-
+        
         return storeId;
     }
     
