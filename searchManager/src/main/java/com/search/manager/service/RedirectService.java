@@ -15,9 +15,12 @@ import org.directwebremoting.spring.SpringCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.ReplaceKeywordMessageType;
@@ -47,6 +50,9 @@ public class RedirectService extends RuleService {
     private DaoService daoService;
     @Autowired
     private UtilityService utilityService;
+    @Autowired
+    @Qualifier("ruleStatusServiceSp")
+    private RuleStatusService ruleStatusService;
     
     @Override
     public RuleEntity getRuleEntity() {
@@ -67,9 +73,9 @@ public class RedirectService extends RuleService {
                 ruleId = rule.getRuleId();
             }
             try {
-                daoService.addRuleStatus(new RuleStatus(RuleEntity.QUERY_CLEANING, store, rule.getRuleId(), ruleName,
+                ruleStatusService.add(new RuleStatus(RuleEntity.QUERY_CLEANING, store, rule.getRuleId(), ruleName,
                         userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
-            } catch (DaoException de) {
+            } catch (CoreServiceException de) {
                 logger.error("Failed to create rule status for query cleaning: " + ruleName);
             }
         } catch (DaoException e) {
@@ -199,9 +205,9 @@ public class RedirectService extends RuleService {
                 ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
                 ruleStatus.setRuleRefId(rule.getRuleId());
                 ruleStatus.setStoreId(storeId);
-                daoService.updateRuleStatusDeletedInfo(ruleStatus, username);
+                ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, username);
             }
-        } catch (DaoException e) {
+        } catch (Exception e) {
             logger.error("Failed during deleteRule()", e);
         }
         return result;

@@ -20,11 +20,14 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.Comment;
 import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.model.Store;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOUtils;
@@ -62,6 +65,9 @@ public class ElevateService extends RuleService {
     private DateAndTimeUtils dateAndTimeUtils;
     @Autowired
     private SearchHelper searchHelper;
+    @Autowired
+    @Qualifier("ruleStatusServiceSp")
+    private RuleStatusService ruleStatusService;
     
     @Override
     public RuleEntity getRuleEntity() {
@@ -191,9 +197,9 @@ public class ElevateService extends RuleService {
                 }
                 try {
                     // TODO: add checking if existing rule status?
-                    daoService.addRuleStatus(new RuleStatus(RuleEntity.ELEVATE, DAOUtils.getStoreId(e.getStoreKeyword()),
+                    ruleStatusService.add(new RuleStatus(RuleEntity.ELEVATE, DAOUtils.getStoreId(e.getStoreKeyword()),
                             keyword, keyword, userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
-                } catch (DaoException de) {
+                } catch (CoreServiceException de) {
                     logger.error("Failed to create rule status for elevate: " + keyword);
                 }
             }
