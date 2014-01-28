@@ -51,6 +51,10 @@
         </property>
     </bean>
     
+    <bean id="enterpriseConfigManager" class="com.search.ws.EnterpriseConfigManager" scope="singleton">
+ 		<constructor-arg name="enterpriseXMLFile" value="/home/solr/conf/enterprise.xml" />
+    </bean>
+    
     <bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
  		<constructor-arg name="storeXMLFile" value="/home/solr/conf/store.xml" />
  		<constructor-arg name="solrXMLFile" value="/home/solr/conf/solr.xml" />
@@ -60,7 +64,7 @@
     <bean class="com.search.manager.utility.UtilityInitializer" scope="singleton" lazy-init="false" init-method="initialize">
         <!-- property name="globalVarFile" value="/home/solr/conf/globalvar.properties" / -->
         <!-- property name="storeSolrPropertiesFile" value="/home/solr/conf/solr.xml" / -->
-        <property name="enterpriseSearchConfigFile" value="/home/solr/conf/enterpriseSearch.xml" />
+        <!-- property name="enterpriseSearchConfigFile" value="/home/solr/conf/enterpriseSearch.xml"  / -->
         <property name="relevancyConfigFile" value="/home/solr/conf/relevancy.xml" />
         <property name="messagesConfigFile" value="/home/solr/conf/messages.xml" />
     </bean>

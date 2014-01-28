@@ -29,6 +29,10 @@
         <constructor-arg name="storePropertiesFolder" value="src/test/resources/home/solr/conf"/>
     </bean>
     
+    <bean id="enterpriseConfigManager" class="com.search.ws.EnterpriseConfigManager">
+		<constructor-arg name="enterpriseXMLFile" value="src/test/resources/home/solr/conf/enterprise.xml" />
+    </bean>
+    
     <bean id="configManager" class="com.search.ws.ConfigManager">
         <constructor-arg name="storeXMLFile" value="src/test/resources/home/solr/conf/store.xml"/>
  		<constructor-arg name="solrXMLFile" value="src/test/resources/home/solr/conf/solr.xml"/>
