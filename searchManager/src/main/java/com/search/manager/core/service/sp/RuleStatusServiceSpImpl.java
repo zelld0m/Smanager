@@ -197,15 +197,38 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
     @Override
     public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList,
             String requestBy, DateTime requestDateTime) throws CoreServiceException {
-        Map<String, Boolean> statusMap = new HashMap<String, Boolean>();
         // TODO validation here...
+        switch (status) {
+            case PUBLISHED:
+            case UNPUBLISHED:
+                return publishRuleStatusList(status, ruleStatusList, requestBy, requestDateTime);
+            case APPROVED:
+            case REJECTED:
+                return approveRuleStatusList(status, ruleStatusList, requestBy, requestDateTime);
+        }
+
+        return new HashMap<String, Boolean>();
+    }
+
+    private Map<String, Boolean> approveRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList,
+            String requestBy, DateTime requestDateTime) throws CoreServiceException {
+        Map<String, Boolean> statusMap = new HashMap<String, Boolean>();
         for (RuleStatus ruleStatus : ruleStatusList) {
             statusMap
                     .put(ruleStatus.getRuleRefId(),
                             updateRuleStatusApprovalInfo(ruleStatus, status, requestBy, requestDateTime) != null ? true
                                     : false);
         }
+        return statusMap;
+    }
 
+    private Map<String, Boolean> publishRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList,
+            String requestBy, DateTime requestDateTime) throws CoreServiceException {
+        Map<String, Boolean> statusMap = new HashMap<String, Boolean>();
+        for (RuleStatus ruleStatus : ruleStatusList) {
+            statusMap.put(ruleStatus.getRuleRefId(),
+                    updateRuleStatusPublishInfo(ruleStatus, status, requestBy, requestDateTime) != null ? true : false);
+        }
         return statusMap;
     }
 
@@ -370,7 +393,7 @@ public class RuleStatusServiceSpImpl implements RuleStatusService {
             ruleStatus.setStoreId(storeId);
             ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
             ruleStatus.setRuleRefId(ruleRefId);
-            
+
             try {
                 SearchResult<RuleStatus> searchResult = ruleStatusDao.search(ruleStatus);
                 if (searchResult.getTotalCount() > 0) {
