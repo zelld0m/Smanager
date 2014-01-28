@@ -26,6 +26,7 @@ import com.search.manager.core.model.ImportRuleTask;
 import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.model.TaskStatus;
 import com.search.manager.core.service.ImportRuleTaskService;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -47,7 +48,6 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.service.rules.FacetSortService;
 import com.search.manager.workflow.service.ExportRuleMapService;
-import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
@@ -70,6 +70,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	@Autowired
 	private FacetSortService facetSortService;
 	@Autowired
+	@Qualifier("ruleStatusServiceSp")
 	private RuleStatusService ruleStatusService;
 	@Autowired
 	private RuleXmlUtil ruleXmlUtil;
@@ -193,7 +194,11 @@ public class WorkflowServiceImpl implements WorkflowService{
 	public RuleStatus processRuleStatus(String storeId, String username, RuleSource ruleSource, String ruleType, String ruleRefId, String description, Boolean isDelete) {
 		int result = -1;
 		try {
-			RuleStatus ruleStatus = ruleStatusService.createRuleStatus(storeId, username);
+			RuleStatus ruleStatus = new RuleStatus();
+	        ruleStatus.setCreatedBy(username);
+	        ruleStatus.setLastModifiedBy(username);
+	        ruleStatus.setStoreId(storeId);
+	        
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setDescription(description);
@@ -370,7 +375,11 @@ public class WorkflowServiceImpl implements WorkflowService{
 		List<RuleStatus> rsList = new ArrayList<RuleStatus>();
 		for (Map.Entry<String, Boolean> e : ruleRefIdMap.entrySet()) {
 			if (e.getValue()) {
-				RuleStatus ruleStatus = ruleStatusService.createRuleStatus(storeId, userName);
+				RuleStatus ruleStatus = new RuleStatus();
+	            ruleStatus.setCreatedBy(userName);
+	            ruleStatus.setLastModifiedBy(userName);
+	            ruleStatus.setStoreId(storeId);
+	            
 				ruleStatus.setRuleTypeId(ruleTypeId);
 				ruleStatus.setRuleRefId(e.getKey());
 				ruleStatus.setPublishedStatus(status);

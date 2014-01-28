@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.search.manager.core.enums.RuleSource;
@@ -17,11 +18,11 @@ import com.search.manager.core.model.TaskExecutionResult;
 import com.search.manager.core.model.TaskStatus;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.ImportRuleTaskService;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.service.DeploymentService;
 import com.search.manager.service.RuleTransferService;
-import com.search.manager.workflow.service.RuleStatusService;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.ws.ConfigManager;
 
@@ -38,6 +39,7 @@ public class ImportTaskManager {
 	@Autowired
 	private ImportRuleTaskService importRuleTaskService;
 	@Autowired
+	@Qualifier("ruleStatusServiceSp")
 	private RuleStatusService ruleStatusService;
 	@Autowired
 	private RuleTransferService ruleTransferService;
