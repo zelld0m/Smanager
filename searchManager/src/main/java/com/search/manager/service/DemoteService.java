@@ -12,9 +12,14 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.model.Comment;
+import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOUtils;
@@ -23,18 +28,13 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
-import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRuleCondition;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "demoteService")
 @RemoteProxy(

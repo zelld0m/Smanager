@@ -20,12 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.core.processor.RequestPropertyBean;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.Relevancy.Parameter;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.ParameterUtils;
 import com.search.ws.EnterpriseSearchConfigManager;

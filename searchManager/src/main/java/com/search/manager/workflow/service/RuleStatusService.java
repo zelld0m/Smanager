@@ -1,6 +1,6 @@
 package com.search.manager.workflow.service;
 
-import com.search.manager.model.RuleStatus;
+import com.search.manager.core.model.RuleStatus;
 
 public interface RuleStatusService {
 

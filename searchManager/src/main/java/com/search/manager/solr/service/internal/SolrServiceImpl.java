@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleType;
 import com.search.manager.model.DemoteResult;
@@ -22,7 +25,6 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.SpellRule;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.dao.DemoteDao;
 import com.search.manager.solr.dao.ElevateDao;
@@ -33,8 +35,6 @@ import com.search.manager.solr.dao.RelevancyDao;
 import com.search.manager.solr.dao.SpellRuleDao;
 import com.search.manager.solr.service.SolrService;
 import com.search.ws.ConfigManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service("solrService")
 public class SolrServiceImpl implements SolrService {

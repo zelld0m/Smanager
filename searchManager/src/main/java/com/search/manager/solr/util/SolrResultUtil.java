@@ -8,6 +8,7 @@ import java.util.Map;
 import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Component;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleType;
@@ -24,7 +25,6 @@ import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SpellRule;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.model.FacetSortRuleSolr;
 import com.search.manager.solr.model.RedirectRuleSolr;

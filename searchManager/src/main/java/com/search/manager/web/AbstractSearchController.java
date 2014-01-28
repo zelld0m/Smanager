@@ -36,6 +36,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.core.processor.RequestProcessor;
 import com.search.manager.core.processor.RequestProcessorUtil;
 import com.search.manager.core.processor.RequestPropertyBean;
@@ -55,7 +56,6 @@ import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.SpellRule;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.ParameterUtils;
 import com.search.manager.utility.QueryValidator;

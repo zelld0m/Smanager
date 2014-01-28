@@ -1,7 +1,7 @@
 package com.search.manager.report.model;
 
-import com.search.manager.model.Comment;
-import com.search.manager.model.RuleStatus;
+import com.search.manager.core.model.Comment;
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.report.annotation.ReportField;
 
 public class ApprovalRuleStatusReportBean extends ReportBean<RuleStatus> {

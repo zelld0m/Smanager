@@ -26,13 +26,13 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.enums.RuleSource;
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.util.ServerUtil;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.User;

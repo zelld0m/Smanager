@@ -6,20 +6,20 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.xml.file.RuleXmlUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service("ruleVersionService")
 @RemoteProxy(

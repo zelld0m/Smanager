@@ -16,10 +16,13 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.enums.RuleSource;
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -36,7 +39,6 @@ import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.ExportRuleMap;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.DBRuleVersion;
@@ -47,9 +49,6 @@ import com.search.manager.workflow.service.WorkflowService;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.ConfigManager;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "ruleTransferService")
 @RemoteProxy(

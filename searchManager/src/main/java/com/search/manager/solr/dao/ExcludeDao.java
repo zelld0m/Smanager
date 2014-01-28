@@ -3,9 +3,9 @@ package com.search.manager.solr.dao;
 import java.util.Collection;
 import java.util.Map;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.ExcludeResult;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 public interface ExcludeDao {

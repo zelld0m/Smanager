@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.model.Comment;
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 
 @Service(value = "commentService")
 @RemoteProxy(

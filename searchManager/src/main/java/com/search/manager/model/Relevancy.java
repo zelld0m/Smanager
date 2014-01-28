@@ -15,9 +15,8 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.core.model.Store;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 import com.search.manager.report.model.xml.RankingRuleXml;
 

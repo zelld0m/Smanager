@@ -1,8 +1,8 @@
 package com.search.manager.solr.dao;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.SpellRule;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 public interface SpellRuleDao {

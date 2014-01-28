@@ -14,13 +14,15 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.constants.Constants;
 import com.search.manager.solr.dao.BaseDaoSolr;
@@ -28,8 +30,6 @@ import com.search.manager.solr.dao.ExcludeDao;
 import com.search.manager.solr.model.RuleSolrResult;
 import com.search.manager.solr.util.SolrDocUtil;
 import com.search.manager.solr.util.SolrResultUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Repository("excludeDaoSolr")
 public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {

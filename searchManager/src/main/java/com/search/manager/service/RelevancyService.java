@@ -13,9 +13,13 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
@@ -27,11 +31,9 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.SolrSchemaUtility;
@@ -43,8 +45,6 @@ import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryField;
 import com.search.manager.schema.model.qf.QueryFieldsModel;
 import com.search.ws.SearchHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "relevancyService")
 @RemoteProxy(

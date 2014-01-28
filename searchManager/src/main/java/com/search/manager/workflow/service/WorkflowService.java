@@ -1,12 +1,12 @@
 package com.search.manager.workflow.service;
 
 import com.search.manager.core.enums.RuleSource;
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.RuleXml;
 
 public interface WorkflowService {

@@ -11,16 +11,16 @@ import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.uuid.EthernetAddress;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedGenerator;
+import com.search.manager.core.model.Store;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DAOUtils {
 

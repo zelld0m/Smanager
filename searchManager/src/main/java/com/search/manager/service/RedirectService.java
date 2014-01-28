@@ -12,9 +12,12 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.ReplaceKeywordMessageType;
@@ -25,13 +28,10 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRule.RedirectType;
 import com.search.manager.model.RedirectRuleCondition;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "redirectService")
 @RemoteProxy(

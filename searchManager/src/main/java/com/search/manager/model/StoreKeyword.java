@@ -6,6 +6,8 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.RemoteProperty;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.core.model.Store;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class StoreKeyword implements Serializable {
 

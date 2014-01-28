@@ -18,13 +18,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.search.manager.dao.file.RuleVersionUtil;
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
@@ -34,9 +36,6 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRuleVersionDAO<T> {
 

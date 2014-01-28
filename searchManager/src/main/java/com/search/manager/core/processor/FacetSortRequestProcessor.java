@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.FacetSort;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchException;

@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.report.model.xml.FacetSortGroupXml;

@@ -2,6 +2,8 @@ package com.search.manager.dao.sp;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
@@ -13,9 +15,7 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
-import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 public class DAOValidation {

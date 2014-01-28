@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Product;
-import com.search.manager.model.RuleStatus;
 
 @XmlSeeAlso({
 	ElevateRuleXml.class,

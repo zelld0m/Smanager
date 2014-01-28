@@ -17,6 +17,7 @@ import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -24,7 +25,6 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;

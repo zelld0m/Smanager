@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import com.search.manager.model.RuleStatus;
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.report.annotation.ReportField;
 
 public class ExportRuleReportBean extends ReportBean<RuleStatus> {

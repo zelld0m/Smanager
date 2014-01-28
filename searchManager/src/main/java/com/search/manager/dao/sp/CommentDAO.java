@@ -13,9 +13,9 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.model.Comment;
 import com.search.manager.dao.DaoException;
 import com.search.manager.jodatime.JodaDateTimeUtil;
-import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 

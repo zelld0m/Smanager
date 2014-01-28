@@ -2,6 +2,7 @@ package com.search.manager.dao;
 
 import java.util.List;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -9,7 +10,6 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.SpellRule;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 public interface SearchDaoService {

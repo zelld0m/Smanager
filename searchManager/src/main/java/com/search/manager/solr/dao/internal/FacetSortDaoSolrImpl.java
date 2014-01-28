@@ -12,23 +12,23 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleType;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.model.Store;
 import com.search.manager.solr.constants.Constants;
 import com.search.manager.solr.dao.BaseDaoSolr;
 import com.search.manager.solr.dao.FacetSortDao;
 import com.search.manager.solr.model.FacetSortRuleSolr;
 import com.search.manager.solr.util.SolrDocUtil;
 import com.search.manager.solr.util.SolrResultUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Repository("facetSortDaoSolr")
 public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {

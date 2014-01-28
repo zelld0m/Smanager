@@ -3,10 +3,10 @@ package com.search.manager.solr.dao;
 import java.util.Collection;
 import java.util.Map;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleType;
 import com.search.manager.model.FacetSort;
-import com.search.manager.model.Store;
 
 public interface FacetSortDao {
 
