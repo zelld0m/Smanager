@@ -6,9 +6,12 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
@@ -17,7 +20,6 @@ import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.service.UtilityService;
-import com.search.manager.xml.file.RuleXmlUtil;
 
 @Repository("spellRuleVersionDAO")
 @SuppressWarnings("unchecked")
@@ -34,9 +36,11 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 	@Autowired
 	private RuleVersionUtil ruleVersionUtil;
 	@Autowired
-	private RuleXmlUtil ruleXmlUtil;
-	@Autowired
 	private UtilityService utilityService;
+	
+	@Autowired
+    @Qualifier("ruleStatusServiceSp")
+    private RuleStatusService ruleStatusService;
 	
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
@@ -84,12 +88,18 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 
 	                DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
 	                        ruleId, RuleEntity.SPELL);
-	                RuleStatus ruleStatus = ruleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
-	                version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
-	                version.setRuleStatus(ruleStatus);
-	                ruleVersions.getVersions().add(version);
+	                
+	                RuleStatus ruleStatus;
+                    try {
+                        ruleStatus = ruleStatusService.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+                        version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
+                        version.setRuleStatus(ruleStatus);
+                        ruleVersions.getVersions().add(version);
 
-	                return ruleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersions);
+                        return ruleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersions);
+                    } catch (CoreServiceException e) {
+                        logger.error("Error getting rule status. ", e);
+                    }
 	            } catch (DaoException e) {
 	                logger.error("Unable to create new published version.", e);
 	            }

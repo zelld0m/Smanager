@@ -21,11 +21,14 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
@@ -48,6 +51,10 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
     private UtilityService utilityService;
     @Autowired
     private RuleVersionUtil ruleVersionUtil;
+    
+    @Autowired
+    @Qualifier("ruleStatusServiceSp")
+    private RuleStatusService ruleStatusService;
     
     protected abstract RuleEntity getRuleEntity();
 
@@ -86,9 +93,13 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
 
             if (versions != null) {
                 RuleXml latestRuleXml = (RuleXml) versions.get(versions.size() - 1);
-                RuleStatus ruleStatus = ruleXmlUtil.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
-
-                latestRuleXml.setRuleStatus(ruleStatus);
+                RuleStatus ruleStatus;
+                try {
+                    ruleStatus = ruleStatusService.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+                    latestRuleXml.setRuleStatus(ruleStatus);
+                } catch (CoreServiceException e) {
+                    logger.error("Error getting rule status. ", e);
+                }
             }
         }
 

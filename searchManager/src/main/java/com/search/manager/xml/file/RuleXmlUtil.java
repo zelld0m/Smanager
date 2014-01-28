@@ -28,7 +28,6 @@ import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.ImagePath;
-import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.model.Store;
 import com.search.manager.core.service.BannerRuleItemService;
 import com.search.manager.core.service.BannerRuleService;
@@ -1152,24 +1151,4 @@ public class RuleXmlUtil {
         return ruleId;
     }
 
-    public RuleStatus getRuleStatus(String ruleEntity, String store, String ruleId) {
-        RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleEntity), store, ruleId);
-        SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
-
-        try {
-
-            RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
-
-            if (approvedRset.getTotalSize() > 0) {
-                ruleStatus = approvedRset.getList().get(0);
-            } else {
-                logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
-            }
-
-        } catch (DaoException e) {
-            logger.error("Failed to update rule status for " + ruleEntity + " : " + ruleId, e);
-        }
-
-        return ruleStatus;
-    }
 }
