@@ -1,6 +1,7 @@
 package com.search.manager.core.service.sp;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,8 @@ import com.search.manager.core.model.Store;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.CommentService;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 
 @Service("commentServiceSp")
 public class CommentServiceSpImpl implements CommentService {
@@ -148,6 +151,60 @@ public class CommentServiceSpImpl implements CommentService {
             return searchResult.getResult().get(0);
         }
         return null;
+    }
+
+    @Override
+    public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String store, String username,
+            String pComment, String... ruleStatusId) throws CoreServiceException {
+        Map<String, Integer> resultMap = new HashMap<String, Integer>();
+        String formatString = "%s";
+        if (ruleStatus != null) {
+            switch (ruleStatus) {
+                case APPROVED:
+                    formatString = "[APPROVED] %s";
+                    break;
+                case REJECTED:
+                    formatString = "[REJECTED] %s";
+                    break;
+                case PUBLISHED:
+                    formatString = "[PUBLISHED] %s";
+                    break;
+                case UNPUBLISHED:
+                    formatString = "[UNPUBLISHED] %s";
+                    break;
+                case PENDING:
+                    formatString = "[REQUEST] %s";
+                    break;
+                case IMPORTED:
+                    formatString = "[IMPORTED] %s";
+                    break;
+                case EXPORTED:
+                    formatString = "[EXPORTED] %s";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        Comment comment = new Comment();
+        comment.setRuleTypeId(RuleEntity.RULE_STATUS.getCode());
+        comment.setUsername(username);
+        comment.setComment(String.format(formatString, pComment));
+        comment.setStore(new Store(store));
+        for (String rsId : ruleStatusId) {
+            comment.setReferenceId(rsId);
+            int result = -1;
+            try {
+                if (add(comment) != null) {
+                    result = 1;
+                }
+            } catch (CoreServiceException e) {
+            }
+
+            resultMap.put(rsId, result);
+        }
+
+        return resultMap;
     }
 
 }
