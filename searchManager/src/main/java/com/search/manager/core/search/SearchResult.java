@@ -17,7 +17,7 @@ public class SearchResult<T> implements Serializable {
 
     public SearchResult() {
         this.result = new ArrayList<T>();
-        this.totalCount = -1;
+        this.totalCount = 0;
     }
 
     public SearchResult(List<T> result, int totalCount) {
