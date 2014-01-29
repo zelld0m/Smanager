@@ -51,7 +51,7 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements SearchPr
         SolrServer solrServer = null;
 
         try {
-            SolrCore solrCore = (SolrCore) search.getSearchClass().getAnnotation(SolrCore.class);
+            SolrCore solrCore = search.getSearchClass().getAnnotation(SolrCore.class);
 
             if (solrCore != null) {
                 SolrQuery solrQuery = new SolrQuery();
@@ -173,7 +173,7 @@ public class SolrSearchProcessor extends BaseSearchProcessor implements SearchPr
     // From Clause
     @Override
     protected String generateFromClause(Search search) throws CoreSearchException {
-        SolrCore solrCore = (SolrCore) search.getSearchClass().getAnnotation(SolrCore.class);
+        SolrCore solrCore = search.getSearchClass().getAnnotation(SolrCore.class);
 
         if (solrCore != null) {
             return solrCore.name() + "/select?";

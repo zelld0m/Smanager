@@ -46,7 +46,7 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 
     private SolrServer getSolrServer() throws CoreDaoException {
         String core;
-        SolrCore solrCore = (SolrCore) modelClass.getAnnotation(SolrCore.class);
+        SolrCore solrCore = modelClass.getAnnotation(SolrCore.class);
 
         if (solrCore != null) {
             core = solrCore.name();
@@ -185,7 +185,7 @@ public abstract class GenericDaoSolrImpl<T> implements GenericDao<T> {
 
     @Override
     public SearchResult<T> search(T model) throws CoreDaoException {
-        return (SearchResult<T>) search(model, -1, -1);
+        return search(model, -1, -1);
     }
 
     @SuppressWarnings("unchecked")
