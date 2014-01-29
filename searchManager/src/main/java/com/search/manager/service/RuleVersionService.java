@@ -9,9 +9,12 @@ import org.directwebremoting.spring.SpringCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
@@ -42,6 +45,9 @@ public class RuleVersionService {
     private RuleVersionUtil ruleVersionUtil;
     @Autowired
     private RuleXmlUtil ruleXmlUtil;
+    @Autowired
+    @Qualifier("ruleStatusServiceSp")
+    private RuleStatusService ruleStatusService;
     
     @RemoteMethod
     public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
@@ -105,10 +111,16 @@ public class RuleVersionService {
                     break;
                 case RANKING_RULE:
                     // what is this for?
-                    RuleStatus ruleStatus = deploymentService.getRuleStatus(storeId, "Ranking Rule", ruleId);
-                    if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
-                        deploymentService.submitRuleForApproval(utilityService.getStoreId(), "Ranking Rule", ruleId, null, false);
+                    RuleStatus ruleStatus;
+                    try {
+                        ruleStatus = ruleStatusService.getRuleStatus(storeId, "Ranking Rule", ruleId);
+                        if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
+                            deploymentService.submitRuleForApproval(utilityService.getStoreId(), "Ranking Rule", ruleId, null, false);
+                        }
+                    } catch (CoreServiceException e) {
+                        logger.error("Error getting rule status. ", e);
                     }
+                    
                     break;
             }
         }

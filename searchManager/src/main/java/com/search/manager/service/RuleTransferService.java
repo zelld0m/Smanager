@@ -19,10 +19,14 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.enums.RuleSource;
+import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.search.SearchResult;
+import com.search.manager.core.service.CommentService;
 import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -70,8 +74,6 @@ public class RuleTransferService {
     @Autowired
     private FacetSortService facetSortService;
     @Autowired
-    private RuleStatusService ruleStatusService;
-    @Autowired
     private RuleTransferUtil ruleTransferUtil;
     @Autowired
     private UtilityService utilityService;
@@ -79,6 +81,12 @@ public class RuleTransferService {
     private RuleXmlUtil ruleXmlUtil;
     @Autowired
     private WorkflowService workflowService;
+    @Autowired
+    @Qualifier("ruleStatusServiceSp")
+    private RuleStatusService ruleStatusService;
+    @Autowired
+    @Qualifier("commentServiceSp")
+    private CommentService commentService;
     
     private static final int CREATE_RULE_STATUS = 0;
     private static final int SUBMIT_FOR_APPROVAL = 1;
@@ -191,6 +199,8 @@ public class RuleTransferService {
                 String ruleName = getRuleName(ruleEntity, ruleId, ruleXml == null ? null : ruleXml.getRuleName());
                 if (ruleName == null) {
                     // get from ruleStatus
+                    /*
+                     * [old impl]
                     SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(new RuleStatus(RuleEntity.getId(ruleType), store, ruleId));
                     try {
                         RecordSet<RuleStatus> rSet = daoService.getRuleStatus(searchCriteria);
@@ -198,6 +208,14 @@ public class RuleTransferService {
                             ruleName = rSet.getList().get(0).getRuleName();
                         }
                     } catch (DaoException e) {
+                        logger.error(String.format("Failed to get rule status for %s %s %s", store, ruleEntity, ruleId));
+                    }*/
+                    try {
+                        SearchResult<RuleStatus> searchResult = ruleStatusService.search(new RuleStatus(RuleEntity.getId(ruleType), store, ruleId));
+                        if (searchResult.getTotalCount() > 0) {
+                            ruleName = searchResult.getResult().get(0).getRuleName();
+                        }
+                    } catch (CoreServiceException e) {
                         logger.error(String.format("Failed to get rule status for %s %s %s", store, ruleEntity, ruleId));
                     }
                 }
@@ -265,18 +283,24 @@ public class RuleTransferService {
                     RuleStatus rsAfterImport = new RuleStatus(ruleEntity, store, importAsId, ruleName, userName, userName,
                             RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED);
                     rsAfterImport.setRuleSource(ruleSource);
-                    daoService.addRuleStatus(rsAfterImport);
+                    // [old impl] daoService.addRuleStatus(rsAfterImport);
+                    ruleStatusService.add(rsAfterImport);
+                    
                     status = SUBMIT_FOR_APPROVAL;
                     RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, importAsId);
-                    SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
+                    // [old impl] SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
                     RuleStatus currRuleStatus = null;
 
                     try {
-                        RecordSet<RuleStatus> rSet = daoService.getRuleStatus(searchCriteria);
-
-                        if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
-                            currRuleStatus = rSet.getList().get(0);
-                            daoService.addRuleStatusComment(RuleStatusEntity.IMPORTED, store, userName, comment, currRuleStatus.getRuleStatusId());
+                        // [old impl] RecordSet<RuleStatus> rSet = daoService.getRuleStatus(searchCriteria);
+                        SearchResult<RuleStatus> searchResult = ruleStatusService.search(ruleStatus);
+                        
+                        // if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
+                        // currRuleStatus = rSet.getList().get(0);    
+                        if (searchResult.getTotalCount() > 0) {
+                            currRuleStatus = searchResult.getResult().get(0);
+                            // [old impl] daoService.addRuleStatusComment(RuleStatusEntity.IMPORTED, store, userName, comment, currRuleStatus.getRuleStatusId());
+                            commentService.addRuleStatusComment(RuleStatusEntity.IMPORTED, store, userName, comment, currRuleStatus.getRuleStatusId());
                             auditTrail.setCreatedDate(DateTime.now());
                             auditTrail.setReferenceId(ruleStatus.getRuleRefId());
                             if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
@@ -291,7 +315,7 @@ public class RuleTransferService {
                                 rStatus.setApprovalStatus("");
                                 rStatus.setUpdateStatus("");
 
-                                if (daoService.updateRuleStatus(rStatus) > 0) {
+                                if (ruleStatusService.update(rStatus) != null) {
                                     logger.info("Remove delete rule status for " + currRuleStatus.getRuleStatusId());
                                 } else {
                                     logger.error("Failed to remove delete rule status for " + currRuleStatus.getRuleStatusId());
@@ -302,7 +326,7 @@ public class RuleTransferService {
                             logger.error("No rule status found for " + ruleEntity + " : " + importAsId);
                         }
 
-                    } catch (DaoException e) {
+                    } catch (Exception e) {
                         logger.error("Failed to get rule status for " + ruleEntity + " : " + importAsId, e);
                     }
 
@@ -321,7 +345,7 @@ public class RuleTransferService {
                         status = IMPORT_SUCCESS;
                     }
 
-                } catch (DaoException de) {
+                } catch (Exception de) {
                     String msg = "";
                     switch (status) {
                         case CREATE_RULE_STATUS:

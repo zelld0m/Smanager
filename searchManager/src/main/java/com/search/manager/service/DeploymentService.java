@@ -21,11 +21,16 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.enums.RuleSource;
+import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.Comment;
 import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.search.SearchResult;
+import com.search.manager.core.service.CommentService;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -66,7 +71,13 @@ public class DeploymentService {
 	private RuleXmlUtil ruleXmlUtil;
 	@Autowired
 	private WorkflowService workflowService;
-
+	@Autowired
+    @Qualifier("ruleStatusServiceSp")
+    private RuleStatusService ruleStatusService;
+    @Autowired
+    @Qualifier("commentServiceSp")
+    private CommentService commentService;
+    
 	@RemoteMethod
 	public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {
 		RecordSet<RuleStatus> rSet = null;
@@ -80,9 +91,14 @@ public class DeploymentService {
 			} else {
 				ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			}
-			SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus, null, null, null, null);
-			rSet = daoService.getRuleStatus(searchCriteria);
-		} catch (DaoException e) {
+			// [old impl] SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus, null, null, null, null);
+			// [old impl] rSet = daoService.getRuleStatus(searchCriteria);
+			
+			SearchResult<RuleStatus> searchResult = ruleStatusService.search(ruleStatus);
+			if (searchResult.getTotalCount() > 0) {
+			    rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+			}
+		} catch (CoreServiceException e) {
 			logger.error("Failed during getApprovalList()", e);
 		}
 		return rSet;
@@ -104,8 +120,13 @@ public class DeploymentService {
 	public List<String> approveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
 		List<String> result = approveRule(storeId, RuleSource.USER, ruleType, Arrays.asList(ruleRefIdList), comment);
-		daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
-
+		// [old impl] daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+		
+		try {
+            commentService.addRuleStatusComment(RuleStatusEntity.APPROVED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+        } catch (CoreServiceException e) {
+            logger.error("Error adding rule status comment. ", e);
+        }
 
 		return result;
 	}
@@ -114,8 +135,9 @@ public class DeploymentService {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(storeId, ruleSource, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
-			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
-
+			// [old impl] getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
+			getSuccessList(result, ruleStatusService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
+			
 			try {
 				if (result != null && result.size() > 0 && mailService.isApprovalNotificationEnable(storeId)) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
@@ -124,7 +146,7 @@ public class DeploymentService {
 			} catch (Exception e) {
 				logger.error("Failed during sending approval notification. approveRule()", e);
 			}
-		} catch (DaoException e) {
+		} catch (CoreServiceException e) {
 			logger.error("Failed during approveRule()", e);
 		}
 		return result;
@@ -142,7 +164,14 @@ public class DeploymentService {
 	public List<String> unapproveRule(String storeId, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
 		List<String> result = unapproveRule(storeId, ruleType, Arrays.asList(ruleRefIdList), comment);
-		daoService.addRuleStatusComment(RuleStatusEntity.REJECTED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+		// [old impl] daoService.addRuleStatusComment(RuleStatusEntity.REJECTED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+		
+		try {
+            commentService.addRuleStatusComment(RuleStatusEntity.REJECTED, storeId, utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
+        } catch (CoreServiceException e) {
+            logger.error("Error adding rule status comment. ", e);
+        }
+		
 		return result;
 	}
 
@@ -150,8 +179,9 @@ public class DeploymentService {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(storeId, RuleSource.USER, ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.REJECTED.toString());
-			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
-
+			// [old impl] getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
+			getSuccessList(result, ruleStatusService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, utilityService.getUsername(), DateTime.now()));
+			
 			try {
 				if (result != null && result.size() > 0 && mailService.isApprovalNotificationEnable(storeId)) {
 					List<RuleStatus> ruleStatusInfoList = getRuleStatusInfo(result, ruleStatusList);
@@ -160,7 +190,7 @@ public class DeploymentService {
 			} catch (Exception e) {
 				logger.error("Failed during sending approval notification. unapproveRule()", e);
 			}
-		} catch (DaoException e) {
+		} catch (CoreServiceException e) {
 			logger.error("Failed during unapproveRule()", e);
 		}
 		return result;
@@ -173,31 +203,46 @@ public class DeploymentService {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setStoreId(utilityService.getStoreId());
-			SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus, null, null, null, null);
+			// [old impl] SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus, null, null, null, null);
+			SearchResult<RuleStatus> searchResult;
+			
 			if (StringUtils.isBlank(filterBy)) {
 				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
 				ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
-				RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
+				// [old impl] RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
+				searchResult = ruleStatusService.search(ruleStatus);
+				RecordSet<RuleStatus> approvedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+				
 				ruleStatus.setApprovalStatus(null);
 				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
-				RecordSet<RuleStatus> publishedRset = daoService.getRuleStatus(searchCriteria);
+				// [old impl] RecordSet<RuleStatus> publishedRset = daoService.getRuleStatus(searchCriteria);
+				searchResult = ruleStatusService.search(ruleStatus);
+                RecordSet<RuleStatus> publishedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+                
 				rSet = combineRecordSet(approvedRset, publishedRset);
 			} else if (filterBy.equalsIgnoreCase(RuleStatusEntity.APPROVED.toString())) {
 				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
 				ruleStatus.setUpdateStatus("ADD,UPDATE");
-				rSet = daoService.getRuleStatus(searchCriteria);
+				// [old impl] rSet = daoService.getRuleStatus(searchCriteria);
+				searchResult = ruleStatusService.search(ruleStatus);
+				rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
 			} else if (filterBy.equalsIgnoreCase(RuleStatusEntity.PUBLISHED.toString())) {
 				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
 				ruleStatus.setUpdateStatus("ADD,UPDATE");
-				rSet = daoService.getRuleStatus(searchCriteria);
+				// [old impl] rSet = daoService.getRuleStatus(searchCriteria);
+				searchResult = ruleStatusService.search(ruleStatus);
+                rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
 			} else if ("DELETE".equalsIgnoreCase(filterBy)) {
 				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
 				ruleStatus.setUpdateStatus("DELETE");
-				rSet = daoService.getRuleStatus(searchCriteria);
+				// [old impl] rSet = daoService.getRuleStatus(searchCriteria);
+				searchResult = ruleStatusService.search(ruleStatus);
+                rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
 			}
-		} catch (DaoException e) {
+		} catch (CoreServiceException e) {
 			logger.error("Failed during getDeployedRules()", e);
 		}
+		
 		return rSet;
 	}
 
@@ -221,9 +266,10 @@ public class DeploymentService {
 			} else if (ArrayUtils.getLength(ruleRefIdList) != ArrayUtils.getLength(ruleStatusIdList)) {
 				logger.error(String.format("Inconsistent rule id & rule status id count, RuleID: %s, RuleStatusID: %s", StringUtils.join(ruleRefIdList), StringUtils.join(ruleStatusIdList)));
 			} else {
-				approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+				// [old impl] approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+			    approvedRuleList = ruleStatusService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
 			}
-		} catch (DaoException e) {
+		} catch (CoreServiceException e) {
 			logger.error("Failed during retrieval of approved rules list", e);
 		}
 
@@ -264,7 +310,13 @@ public class DeploymentService {
 				}
 
 				if (daoService.createPublishedVersion(store, ruleEntity, ruleId, username, name, comment)) {
-					daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
+					// [old impl] daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
+				    try {
+                        commentService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
+                    } catch (CoreServiceException e) {
+                        logger.error("Error adding rule status comment. ", e);
+                    }
+				    
 					logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));
 					if (isAutoExport) {
 						RuleXml ruleXml = ruleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
@@ -315,8 +367,9 @@ public class DeploymentService {
 			}
 
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, publishWSMap(storeId, ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
-			Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
-
+			// [old impl] Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
+			Map<String, Boolean> ruleMap = ruleStatusService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
+			
 			List<String> result = new ArrayList<String>();
 			getSuccessList(result, ruleMap);
 
@@ -350,11 +403,14 @@ public class DeploymentService {
 			List<String> cleanList = null;
 			List<String> publishedRuleIds = new ArrayList<String>();
 			List<DeploymentModel> deployList = new ArrayList<DeploymentModel>();
+			
 			try {
-				cleanList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString(), null);
-			} catch (DaoException e) {
+				// [old impl] cleanList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString(), null);
+			    cleanList = ruleStatusService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString(), null);
+			} catch (CoreServiceException e) {
 				logger.error("Failed during getCleanList()", e);
 			}
+			
 			Map<String, Boolean> ruleMap = processUnpublishRule(storeId, RuleSource.USER, ruleType, cleanList, comment);
 
 			for (String ruleId : ruleRefIdList) {
@@ -372,7 +428,14 @@ public class DeploymentService {
 				}
 				deployList.add(deploy);
 			}
-			daoService.addRuleStatusComment(RuleStatusEntity.UNPUBLISHED, utilityService.getStoreId(), utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, publishedRuleIds));
+			// [old impl] daoService.addRuleStatusComment(RuleStatusEntity.UNPUBLISHED, utilityService.getStoreId(), utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, publishedRuleIds));
+			
+			try {
+                commentService.addRuleStatusComment(RuleStatusEntity.UNPUBLISHED, utilityService.getStoreId(), utilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, publishedRuleIds));
+            } catch (CoreServiceException e) {
+                logger.error("Error adding rule status comment.", e);
+            }
+			
 			return new RecordSet<DeploymentModel>(deployList, deployList.size());
 		} finally {
 			if (obtainedLock) {
@@ -385,8 +448,9 @@ public class DeploymentService {
 	private Map<String, Boolean> processUnpublishRule(String storeId, RuleSource ruleSource, String ruleType, List<String> ruleRefIdList, String comment) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
-			Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
-
+			// [old impl] Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
+			Map<String, Boolean> ruleMap = ruleStatusService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, utilityService.getUsername(), DateTime.now());
+			
 			List<String> result = new ArrayList<String>();
 			getSuccessList(result, ruleMap);
 
@@ -409,6 +473,7 @@ public class DeploymentService {
 		return Collections.EMPTY_MAP;
 	}
 
+	
 	@RemoteMethod //TODO: move to RuleStatusServiceImpl
 	public RuleStatus getRuleStatus(String storeId, String ruleType, String ruleRefId) {
 		RuleStatus result = null;
@@ -419,12 +484,14 @@ public class DeploymentService {
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setStoreId(storeId);
 
-			result = daoService.getRuleStatus(ruleStatus);
-		} catch (DaoException e) {
+			// [old impl] result = daoService.getRuleStatus(ruleStatus);
+			return ruleStatusService.getRuleStatus(storeId, ruleType, ruleRefId);
+		} catch (CoreServiceException e) {
 			logger.error("Failed during getRuleStatus()", e);
 		}
 		return result == null ? new RuleStatus() : result;
 	}
+	
 
 	@RemoteMethod
 	public RecordSet<RuleStatus> getAllRuleStatus(String ruleType) {
@@ -432,8 +499,14 @@ public class DeploymentService {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setStoreId(utilityService.getStoreId());
-			return daoService.getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus));
-		} catch (DaoException e) {
+			
+			// [old impl] return daoService.getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus));
+			SearchResult<RuleStatus> searchResult = ruleStatusService.search(ruleStatus);
+			
+			if (searchResult.getTotalCount() > 0) {
+			    return new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+			}
+		} catch (CoreServiceException e) {
 			logger.error("Failed during getAllRuleStatus()", e);
 		}
 		return null;
@@ -443,7 +516,7 @@ public class DeploymentService {
 	@RemoteMethod
 	// Used by Submit For Approval and Delete Rule
 	public RuleStatus submitRuleForApproval(String storeId, String ruleType, String ruleRefId, String description, Boolean isDelete) {
-	    int result = -1;
+	    boolean result;
         try {
             String username = utilityService.getUsername();
             RuleStatus ruleStatus = createRuleStatus(storeId);
@@ -453,11 +526,20 @@ public class DeploymentService {
             ruleStatus.setLastModifiedBy(username);
             ruleStatus.setRuleSource(RuleSource.USER);
             ruleStatus.setStoreId(storeId);
+            /*
+             * [old impl]
             result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
                     : daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
-
-            if (result > 0) {
-                RuleStatus ruleStatusInfo = getRuleStatus(storeId, ruleType, ruleRefId);
+             */
+            
+            if (isDelete) {
+                result = ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, username);
+            } else {
+                result = ruleStatusService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now()) != null;
+            }
+            
+            if (result) {
+                RuleStatus ruleStatusInfo = ruleStatusService.getRuleStatus(storeId, ruleType, ruleRefId);
                 try {
                     if (!isDelete && mailService.isPendingNotificationEnable(storeId)) {
                         List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
@@ -470,11 +552,10 @@ public class DeploymentService {
 
                 return ruleStatusInfo;
             }
-        } catch (DaoException e) {
-            logger.error("Failed during processRuleStatus()", e);
-        } catch (Exception e) {
+        } catch (CoreServiceException e) {
             logger.error("Failed during processRuleStatus()", e);
         }
+        
         return null;
 	}
 
@@ -554,16 +635,21 @@ public class DeploymentService {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
 		return service.unDeployRulesMap(utilityService.getStoreId(), ruleList, ruleType);
 	}
+	
 	//TODO: Transfer to WorkflowServiceImpl
 	private List<RuleStatus> getRuleStatusInfo(List<String> results, List<RuleStatus> ruleStatusList) {
 		List<RuleStatus> ruleStatusInfoList = new ArrayList<RuleStatus>();
 		for (RuleStatus ruleStatus : ruleStatusList) {
 			try {
 				if (results.contains(ruleStatus.getRuleRefId())) {
-					ruleStatus = daoService.getRuleStatus(ruleStatus);
-					ruleStatusInfoList.add(ruleStatus);
+					// [old impl] ruleStatus = daoService.getRuleStatus(ruleStatus);
+				    SearchResult<RuleStatus> searchResult = ruleStatusService.search(ruleStatus);
+				    
+				    if (searchResult.getTotalCount() > 0) {
+				        ruleStatusInfoList.add(searchResult.getResult().get(0));
+				    }
 				}
-			} catch (DaoException e) {
+			} catch (CoreServiceException e) {
 				logger.error("Error getting rule status info.", e);
 			}
 		}
