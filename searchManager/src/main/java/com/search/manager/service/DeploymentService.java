@@ -95,9 +95,7 @@ public class DeploymentService {
 			// [old impl] rSet = daoService.getRuleStatus(searchCriteria);
 			
 			SearchResult<RuleStatus> searchResult = ruleStatusService.search(ruleStatus);
-			if (searchResult.getTotalCount() > 0) {
-			    rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
-			}
+			rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
 		} catch (CoreServiceException e) {
 			logger.error("Failed during getApprovalList()", e);
 		}
@@ -485,7 +483,7 @@ public class DeploymentService {
 			ruleStatus.setStoreId(storeId);
 
 			// [old impl] result = daoService.getRuleStatus(ruleStatus);
-			return ruleStatusService.getRuleStatus(storeId, ruleType, ruleRefId);
+			result = ruleStatusService.getRuleStatus(storeId, ruleType, ruleRefId);
 		} catch (CoreServiceException e) {
 			logger.error("Failed during getRuleStatus()", e);
 		}
