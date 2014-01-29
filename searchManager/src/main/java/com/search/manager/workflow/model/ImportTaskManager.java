@@ -126,7 +126,7 @@ public class ImportTaskManager {
 				break;
 			case AUTO_PUBLISH: 
 
-				RuleStatus ruleStatusInfo = deploymentService.getRuleStatus(targetStoreId, ruleEntity.toString(), importRuleQueueItem.getTargetRuleId());
+				RuleStatus ruleStatusInfo = ruleStatusService.getRuleStatus(targetStoreId, ruleEntity.toString(), importRuleQueueItem.getTargetRuleId());
 				String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
 
 				if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
