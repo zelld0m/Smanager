@@ -25,6 +25,8 @@ import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.ImportRuleTask;
 import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.model.TaskStatus;
+import com.search.manager.core.search.SearchResult;
+import com.search.manager.core.service.CommentService;
 import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.dao.DaoException;
@@ -42,7 +44,6 @@ import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.ExportRuleMap;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
@@ -83,6 +84,9 @@ public class WorkflowServiceImpl implements WorkflowService{
 	@Autowired
 	@Qualifier("importRuleTaskServiceSp")
 	private ImportRuleTaskService importRuleTaskService;
+	@Autowired
+    @Qualifier("commentServiceSp")
+	private CommentService commentService;
 
 	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment){
 		// TODO: change return type to Map
@@ -99,6 +103,8 @@ public class WorkflowServiceImpl implements WorkflowService{
 
 		RuleStatus ruleStatus = null;
 		try {
+		    /*
+		     *  [old impl] 
 			SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(
 					new RuleStatus(ruleEntity.getCode(), store, ruleId), null, null, null, null);
 			RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
@@ -106,8 +112,14 @@ public class WorkflowServiceImpl implements WorkflowService{
 				ruleStatus = approvedRset.getList().get(0);
 			} else {
 				logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
-			}
-		} catch (DaoException e) {
+			}*/
+		    SearchResult<RuleStatus> searchResult = ruleStatusService.search(new RuleStatus(ruleEntity.getCode(), store, ruleId));
+		    if (searchResult.getTotalCount() > 0) {
+		        ruleStatus = searchResult.getResult().get(0);
+		    } else {
+		        logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
+		    }
+		} catch (CoreServiceException e) {
 			logger.error("Failed to retrieve rule status for " + ruleEntity + " : " + ruleId, e);
 		}
 
@@ -149,7 +161,9 @@ public class WorkflowServiceImpl implements WorkflowService{
 			try {
 				if (ruleStatus != null) {
 					// RULE STATUS
-					daoService.updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDateTime);
+					// [old impl] daoService.updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDateTime);
+					ruleStatusService.updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDateTime);
+					
 					// AUDIT TRAIL
 					auditTrail.setCreatedDate(exportDateTime);
 					auditTrail.setReferenceId(ruleStatus.getRuleRefId());
@@ -159,12 +173,14 @@ public class WorkflowServiceImpl implements WorkflowService{
 					auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].",
 							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.AUTOMATIC));
 					daoService.addAuditTrail(auditTrail);
+					
 					// COMMENT
-					daoService.addRuleStatusComment(RuleStatusEntity.EXPORTED, store, username, comment, ruleStatus.getRuleStatusId());
+					// [old impl] daoService.addRuleStatusComment(RuleStatusEntity.EXPORTED, store, username, comment, ruleStatus.getRuleStatusId());
+					commentService.addRuleStatusComment(RuleStatusEntity.EXPORTED, store, username, comment, ruleStatus.getRuleStatusId());
 				} else {
 					logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
 				}
-			} catch (DaoException e) {
+			} catch (Exception e) {
 				logger.error("Failed to update rule status for " + ruleEntity + " : " + ruleId, e);
 			}
 		}
@@ -192,7 +208,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	}
 
 	public RuleStatus processRuleStatus(String storeId, String username, RuleSource ruleSource, String ruleType, String ruleRefId, String description, Boolean isDelete) {
-		int result = -1;
+		boolean result;
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 	        ruleStatus.setCreatedBy(username);
@@ -205,10 +221,19 @@ public class WorkflowServiceImpl implements WorkflowService{
 			ruleStatus.setLastModifiedBy(username);
 			ruleStatus.setStoreId(storeId);
 			ruleStatus.setRuleSource(ruleSource);
+			/*
+			 *  [old impl] 
 			result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
 					: daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now());
-
-			if (result > 0) {
+            */
+			
+			if (isDelete) {
+			    result = ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, username);
+			} else {
+			    result = ruleStatusService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now()) != null;
+			}
+			
+			if (result) {
 				RuleStatus ruleStatusInfo = ruleStatusService.getRuleStatus(storeId, ruleType, ruleRefId);
 				try {
 					if (!isDelete && "1".equals(configManager.getProperty("mail", storeId, "pendingNotification"))) {
@@ -222,7 +247,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 
 				return ruleStatusInfo;
 			}
-		} catch (DaoException e) {
+		} catch (CoreServiceException e) {
 			logger.error("Failed during processRuleStatus()", e);
 		} catch (Exception e) {
 			logger.error("Failed during processRuleStatus()", e);
@@ -255,9 +280,10 @@ public class WorkflowServiceImpl implements WorkflowService{
 			} else if (ArrayUtils.getLength(ruleRefIdList) != ArrayUtils.getLength(ruleStatusIdList)) {
 				logger.error(String.format("Inconsistent rule id & rule status id count, RuleID: %s, RuleStatusID: %s", StringUtils.join(ruleRefIdList), StringUtils.join(ruleStatusIdList)));
 			} else {
-				approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+				// [old impl] approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+			    approvedRuleList = ruleStatusService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
 			}
-		} catch (DaoException e) {
+		} catch (CoreServiceException e) {
 			logger.error("Failed during retrieval of approved rules list", e);
 		}
 
@@ -298,7 +324,14 @@ public class WorkflowServiceImpl implements WorkflowService{
 				}
 
 				if (daoService.createPublishedVersion(store, ruleEntity, ruleId, username, name, comment)) {
-					daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
+					// [old impl] daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
+				    
+				    try {
+                        commentService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
+                    } catch (CoreServiceException e) {
+                        logger.error("Error adding rule status comment. ", e);
+                    }
+				    
 					logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));
 					if (isAutoExport) {
 						RuleXml ruleXml = ruleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
@@ -332,7 +365,9 @@ public class WorkflowServiceImpl implements WorkflowService{
 			}
 
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, userName, publishWSMap(storeId, ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
-			Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, userName, DateTime.now());
+			// [old impl] Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, userName, DateTime.now());
+			Map<String, Boolean> ruleMap = ruleStatusService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, userName, DateTime.now());
+			
 			List<String> result = new ArrayList<String>();
 			getSuccessList(result, ruleMap);
 			
@@ -360,10 +395,14 @@ public class WorkflowServiceImpl implements WorkflowService{
 		for (RuleStatus ruleStatus : ruleStatusList) {
 			try {
 				if (results.contains(ruleStatus.getRuleRefId())) {
-					ruleStatus = daoService.getRuleStatus(ruleStatus);
-					ruleStatusInfoList.add(ruleStatus);
+					// [old impl] ruleStatus = daoService.getRuleStatus(ruleStatus);
+				    SearchResult<RuleStatus> searchResult = ruleStatusService.search(ruleStatus);
+				    if (searchResult.getTotalCount() > 0) {
+				        ruleStatus = searchResult.getResult().get(0);
+	                    ruleStatusInfoList.add(ruleStatus);
+				    }
 				}
-			} catch (DaoException e) {
+			} catch (CoreServiceException e) {
 				logger.error("Error getting rule status info.", e);
 			}
 		}
