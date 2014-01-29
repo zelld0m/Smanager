@@ -203,18 +203,31 @@ public interface DaoService extends SearchDaoService {
     public List<String> getRefIDs(String ent, String opt, String storeId) throws DaoException;
     
     /* Rule Status */
+    @Deprecated
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
+    @Deprecated
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException;
+    @Deprecated
 	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
+    @Deprecated
 	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
+    @Deprecated
 	public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) throws DaoException;
+    @Deprecated
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
+    @Deprecated
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
+    @Deprecated
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
+    @Deprecated
 	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, String requestBy, DateTime requestDateTime) throws DaoException;
+    @Deprecated
 	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, DateTime requestDateTime) throws DaoException;
+    @Deprecated
 	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, DateTime exportDateTime) throws DaoException;
+    @Deprecated
 	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException;
+    @Deprecated
 	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String store, String username, String pComment, String ...ruleStatusId);
 
     /* Comment */
