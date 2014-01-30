@@ -80,12 +80,12 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
     }
 
     @Override
-    public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
-        RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
+    public boolean createPublishedRuleVersion(String storeId, String ruleId, String username, String name, String notes) {
+        RuleVersionListXml<?> ruleVersionListXml = getPublishedList(storeId, ruleId);
         RuleEntity entity = getRuleEntity();
 
         if (ruleVersionListXml != null) {
-            if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes, false)) {
+            if (!addLatestVersion(ruleVersionListXml, storeId, ruleId, username, name, notes, false)) {
                 return false;
             }
 
@@ -95,7 +95,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
                 RuleXml latestRuleXml = (RuleXml) versions.get(versions.size() - 1);
                 RuleStatus ruleStatus;
                 try {
-                    ruleStatus = ruleStatusService.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
+                    ruleStatus = ruleStatusService.getRuleStatus(storeId, RuleEntity.getValue(entity.getCode()), ruleId);
                     latestRuleXml.setRuleStatus(ruleStatus);
                 } catch (CoreServiceException e) {
                     logger.error("Error getting rule status. ", e);
@@ -103,7 +103,7 @@ public abstract class AbstractRuleVersionDAO<T extends RuleXml> implements IRule
             }
         }
 
-        return ruleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersionListXml);
+        return ruleVersionUtil.addPublishedVersion(storeId, entity, ruleId, ruleVersionListXml);
     }
 
     @Override

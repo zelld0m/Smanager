@@ -79,24 +79,24 @@ public class SpellRuleVersionDAO implements IRuleVersionDAO<SpellRules> {
 	}
 
 	@Override
-	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
-		  RuleVersionListXml<DBRuleVersion> ruleVersions = ruleVersionUtil.getPublishedList(store, entity, ruleId);
+	public boolean createPublishedRuleVersion(String storeId, String ruleId, String username, String name, String notes) {
+		  RuleVersionListXml<DBRuleVersion> ruleVersions = ruleVersionUtil.getPublishedList(storeId, entity, ruleId);
 
 	        if (ruleVersions != null) {
 	            try {
 	                long nextVersion = ruleVersions.getNextVersion();
 
-	                DBRuleVersion version = new DBRuleVersion(store, nextVersion, name, notes, username, new DateTime(),
+	                DBRuleVersion version = new DBRuleVersion(storeId, nextVersion, name, notes, username, new DateTime(),
 	                        ruleId, RuleEntity.SPELL);
 	                
 	                RuleStatus ruleStatus;
                     try {
-                        ruleStatus = ruleStatusService.getRuleStatus(RuleEntity.getValue(entity.getCode()), store, ruleId);
-                        version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(store)));
+                        ruleStatus = ruleStatusService.getRuleStatus(storeId, RuleEntity.getValue(entity.getCode()), ruleId);
+                        version.getProps().put(MAX_SUGGEST, String.valueOf(daoService.getMaxSuggest(storeId)));
                         version.setRuleStatus(ruleStatus);
                         ruleVersions.getVersions().add(version);
 
-                        return ruleVersionUtil.addPublishedVersion(store, entity, ruleId, ruleVersions);
+                        return ruleVersionUtil.addPublishedVersion(storeId, entity, ruleId, ruleVersions);
                     } catch (CoreServiceException e) {
                         logger.error("Error getting rule status. ", e);
                     }
