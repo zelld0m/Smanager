@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.enums.RuleType;
-import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.service.SolrService;
 import com.search.service.solr.BannerRuleItemMigratorService;

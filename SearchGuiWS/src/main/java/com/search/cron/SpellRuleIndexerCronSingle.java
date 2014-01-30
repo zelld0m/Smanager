@@ -18,13 +18,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.commons.lang.math.NumberUtils;
-
-import com.search.manager.dao.DaoException;
-import com.search.manager.model.Store;
-import com.search.manager.solr.service.SolrService;
-import com.search.manager.utility.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.search.manager.core.model.Store;
+import com.search.manager.dao.DaoException;
+import com.search.manager.solr.service.SolrService;
+import com.search.manager.utility.PropertiesUtils;
 
 public class SpellRuleIndexerCronSingle extends TimerTask {
 
