@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.joda.time.DateTime;
 
+import com.search.manager.core.model.ModelBean;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 import com.search.manager.report.model.xml.RuleItemXml;

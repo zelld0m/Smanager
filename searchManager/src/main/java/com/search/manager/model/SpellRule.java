@@ -6,6 +6,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
+import com.search.manager.core.model.ModelBean;
 import com.search.manager.report.model.xml.SpellRuleXml;
 import com.search.manager.utility.StringUtil;
 

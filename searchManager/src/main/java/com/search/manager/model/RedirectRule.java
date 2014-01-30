@@ -10,6 +10,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 import org.joda.time.DateTime;
 
+import com.search.manager.core.model.ModelBean;
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 

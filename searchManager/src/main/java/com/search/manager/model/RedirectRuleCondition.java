@@ -16,6 +16,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.search.manager.core.model.ModelBean;
 import com.search.manager.exception.DataException;
 import com.search.manager.service.CategoryService;
 import com.search.manager.utility.CatCodeUtil.Attribute;

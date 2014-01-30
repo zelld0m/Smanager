@@ -8,6 +8,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import com.search.manager.core.model.ModelBean;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;

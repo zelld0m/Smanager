@@ -8,6 +8,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
+import com.search.manager.core.model.ModelBean;
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
 @DataTransferObject(converter = BeanConverter.class)

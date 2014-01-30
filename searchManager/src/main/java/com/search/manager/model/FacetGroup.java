@@ -3,6 +3,7 @@ package com.search.manager.model;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.core.model.ModelBean;
 import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.SortType;
 import com.search.manager.report.model.xml.FacetSortGroupXml;

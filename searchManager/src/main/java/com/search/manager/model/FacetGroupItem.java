@@ -3,6 +3,8 @@ package com.search.manager.model;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.core.model.ModelBean;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class FacetGroupItem extends ModelBean{
 

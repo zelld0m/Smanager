@@ -4,6 +4,8 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
+import com.search.manager.core.model.ModelBean;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class RelevancyKeyword extends ModelBean {
 

@@ -2,12 +2,15 @@ package com.search.manager.model;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.joda.time.DateTime;
 
 import com.search.manager.jodatime.jaxbadapter.DateTimeAdapter;
 
+@Deprecated
+@XmlType(name="ModelBeanOld")
 public class ModelBean implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
