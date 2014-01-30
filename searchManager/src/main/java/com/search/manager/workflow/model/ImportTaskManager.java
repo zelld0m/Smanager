@@ -103,7 +103,7 @@ public class ImportTaskManager {
 
 			taskExecutionResult.setRunAttempt(taskExecutionResult.getRunAttempt() + 1);
 
-			if(ruleStatus.isLocked()) {
+			if(ruleStatus != null && Boolean.TRUE.equals(ruleStatus.isLocked())) {
 				updateTaskExecution(importRuleQueueItem, TaskStatus.FAILED, null, new DateTime(), "The rule is locked.");
 				return;
 			}
