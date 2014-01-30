@@ -449,19 +449,29 @@
 		};
 
 		base.createVersion = function(name, notes){
-			RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.rule["ruleId"], name, notes, {
+			RuleVersionServiceJS.isNameExist(base.options.ruleType, base.options.rule["ruleId"], name,{
 				callback: function(data){
 					if (data) {
-						jAlert("Successfully created back up!", "Create Version");
-						base.getAvailableVersion();
+						jAlert("Name already exist.", "Create Version");
+						requestOngoing = false;
 					} else {
-						jAlert("Failed creating back up!", "Create Version");
+						RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.rule["ruleId"], name, notes, {
+							callback: function(data){
+								if (data) {
+									jAlert("Successfully created back up!", "Create Version");
+									base.getAvailableVersion();
+								} else {
+									jAlert("Failed creating back up!", "Create Version");
+								}
+							},
+							postHook:function(){
+								requestOngoing = false;
+							}
+						});						
 					}
-				},
-				postHook:function(){
-					requestOngoing = false;
 				}
 			});
+			
 		};
 
 		base.addDeleteVersionListener = function(tr, item){
