@@ -3,6 +3,7 @@ package com.search.manager.core.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.search.manager.core.model.Comment;
 import com.search.manager.core.search.Search;
 import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 
@@ -160,8 +162,18 @@ public class CommentDaoSpImpl extends GenericDaoSpImpl<Comment> implements Comme
 
     @Override
     protected Map<String, Object> generateAddInput(Comment model) throws CoreDaoException {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Object> inputs = null;
+
+        if (model != null) {
+            inputs = new HashMap<String, Object>();
+            inputs.put(DAOConstants.PARAM_REFERENCE_ID, model.getReferenceId());
+            inputs.put(DAOConstants.PARAM_COMMENT, model.getComment());
+            inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleTypeId());
+            inputs.put(DAOConstants.PARAM_CREATED_BY, model.getUsername());
+            inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(model.getStore()));
+        }
+
+        return inputs;
     }
 
     @Override
