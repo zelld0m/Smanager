@@ -232,7 +232,7 @@ public class RuleStatusDaoSpImpl extends GenericDaoSpImpl<RuleStatus> implements
             // TODO generated id?
             inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleTypeId());
             inputs.put(DAOConstants.PARAM_RULE_SOURCE, model.getRuleSource() != null ? model.getRuleSource().ordinal()
-                    : null);
+                    : RuleSource.USER.ordinal());
             inputs.put(DAOConstants.PARAM_REFERENCE_ID, model.getRuleRefId());
             inputs.put(DAOConstants.PARAM_DESCRIPTION, model.getDescription());
             inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, model.getPublishedStatus());
