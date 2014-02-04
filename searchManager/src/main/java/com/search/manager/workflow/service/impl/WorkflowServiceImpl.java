@@ -364,7 +364,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 				daoService.publishSpellRules(storeId);
 			}
 
-			List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, userName, publishWSMap(storeId, ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
+			List<RuleStatus> ruleStatusList = getPublishingListFromMap(storeId, userName, ruleSource, publishWSMap(storeId, ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
 			// [old impl] Map<String, Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, userName, DateTime.now());
 			Map<String, Boolean> ruleMap = ruleStatusService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, userName, DateTime.now());
 			
@@ -410,7 +410,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 		return ruleStatusInfoList;
 	}
 
-	private List<RuleStatus> getPublishingListFromMap(String storeId, String userName, Map<String, Boolean> ruleRefIdMap, Integer ruleTypeId, String status) {
+	private List<RuleStatus> getPublishingListFromMap(String storeId, String userName, RuleSource ruleSource, Map<String, Boolean> ruleRefIdMap, Integer ruleTypeId, String status) {
 		List<RuleStatus> rsList = new ArrayList<RuleStatus>();
 		for (Map.Entry<String, Boolean> e : ruleRefIdMap.entrySet()) {
 			if (e.getValue()) {
@@ -418,7 +418,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	            ruleStatus.setCreatedBy(userName);
 	            ruleStatus.setLastModifiedBy(userName);
 	            ruleStatus.setStoreId(storeId);
-	            
+	            ruleStatus.setRuleSource(ruleSource);
 				ruleStatus.setRuleTypeId(ruleTypeId);
 				ruleStatus.setRuleRefId(e.getKey());
 				ruleStatus.setPublishedStatus(status);
