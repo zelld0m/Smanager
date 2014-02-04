@@ -60,7 +60,8 @@
 
             $container.empty();
 
-            if ((self.manager.response.response.docs.length > 0 && $.isNotBlank(keyword))
+            var enabled = (GLOBAL_searchWithinEnabled == "true");
+            if ((self.manager.response.response.docs.length > 0 && $.isNotBlank(keyword) && enabled)
                     || ($.isNotBlank(keyword) && !self.isEmpty())) {
                 $container.html(TEMPLATE);
 

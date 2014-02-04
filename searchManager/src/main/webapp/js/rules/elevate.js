@@ -742,8 +742,10 @@
 				ElevateServiceJS.updateElevate(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
 						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
-						showActionResponse(code, "update position", updateMessage);
-						self.populateRuleItem();
+						showActionCallBackJobResponse(code, "update position", updateMessage,
+						function(){
+							self.populateRuleItem();
+						});
 					},
 					preHook: function(){
 						self.preShowRuleContent();

@@ -53,6 +53,16 @@ public class RuleVersionService {
     public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
         return daoService.createRuleVersion(utilityService.getStoreId(), RuleEntity.find(ruleType), ruleId, utilityService.getUsername(), name, reason);
     }
+    @RemoteMethod
+    public boolean isNameExist(String ruleType, String ruleId, String name) {
+    	List<RuleXml> ruleXmls = getRuleVersions(ruleType,ruleId);
+    	for(RuleXml ruleXml:ruleXmls){
+    		if (name.trim().equals(ruleXml.getName().trim())){
+    			return true;
+    		}
+    	}
+        return false;
+    }    
 
     @RemoteMethod
     public boolean deleteRuleVersion(String ruleType, String ruleId, int version) {
