@@ -280,11 +280,16 @@ public class RuleTransferService {
 
             if (importRule(ruleEntity, store, userName, ruleId, comment, importType, importAsId, ruleName)) {
                 try {
-                    RuleStatus rsAfterImport = new RuleStatus(ruleEntity, store, importAsId, ruleName, userName, userName,
-                            RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED);
-                    rsAfterImport.setRuleSource(ruleSource);
-                    // [old impl] daoService.addRuleStatus(rsAfterImport);
-                    ruleStatusService.add(rsAfterImport);
+                    
+                    RuleStatus existing = new RuleStatus(ruleEntity, store, importAsId, null, null, null);
+                    // Check if existing
+                    if(ruleStatusService.search(existing, 1, 1).getTotalCount() < 1) {
+                    	RuleStatus rsAfterImport = new RuleStatus(ruleEntity, store, importAsId, ruleName, userName, userName,
+                                RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED);
+                    	rsAfterImport.setRuleSource(ruleSource);
+	                    // [old impl] daoService.addRuleStatus(rsAfterImport);
+	                    ruleStatusService.add(rsAfterImport);
+                    }
                     
                     status = SUBMIT_FOR_APPROVAL;
                     RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, importAsId);
