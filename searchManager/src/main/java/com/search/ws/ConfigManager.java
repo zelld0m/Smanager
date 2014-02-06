@@ -20,6 +20,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -322,6 +323,14 @@ public class ConfigManager {
 		return "1".equals(PropertiesUtils.getValue("solrImplOnly"));
 	}
 
+	public boolean enabledExactMfrPnElevation() {
+	    return BooleanUtils.toBoolean(PropertiesUtils.getValue("enabledExactMfrPnElevation"));
+	}
+	
+	public String getMfrPnFieldName() {
+	    return PropertiesUtils.getValue("mfrPnFieldName");
+	}
+	
 	public boolean isMemberOf(String groupName, String storeId) {
 		List<String> storeGroups = getStoreParameterList(storeId, "group-membership/group");
 
