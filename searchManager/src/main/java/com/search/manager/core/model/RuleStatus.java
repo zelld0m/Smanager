@@ -119,6 +119,19 @@ public class RuleStatus extends ModelBean {
         this.exportBy = exportBy;
         this.lastExportDate = lastExportDateTime;
     }
+    
+    //Use this constructor for searching
+    public RuleStatus(RuleEntity ruleEntity, String storeId, String ruleRefId, String publishStatus, String approvalStatus, String updateStatus) {
+        
+        this.storeId = storeId;
+        this.ruleRefId = ruleRefId;
+        if (ruleEntity != null) {
+            this.ruleTypeId = ruleEntity.getCode();
+        }
+        this.publishedStatus = publishStatus;
+        this.approvalStatus = approvalStatus; 
+        this.updateStatus = updateStatus;
+    }
 
     public String getRuleStatusId() {
         return ruleStatusId;
