@@ -1,6 +1,7 @@
 package com.search.manager.web;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -26,6 +27,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.BannerRuleItem;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.Relevancy.Parameter;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.ParameterUtils;
@@ -56,7 +58,9 @@ public class EnterpriseSearchController extends AbstractSearchController {
 
     @RequestMapping("/enterpriseSearch/**")
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	super.handleRequest(request, response);
+        final Long start = new Date().getTime();
+        super.handleRequest(request, response);
+        logger.info("Request completion time: {}ms", new Date().getTime()-start);
     }
     @SuppressWarnings("unchecked")
     @Override
@@ -71,6 +75,11 @@ public class EnterpriseSearchController extends AbstractSearchController {
         return value;
     }
 
+    @Override
+    protected SpellRule getSpellRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
+        return null;
+    }
+    
     @Override
     protected void addDefaultParameters(String storeId, List<NameValuePair> nameValuePairs, Map<String, List<NameValuePair>> paramMap) {
         String storeFlag = enterpriseSearchConfigManager.getStoreFlag(storeId);
