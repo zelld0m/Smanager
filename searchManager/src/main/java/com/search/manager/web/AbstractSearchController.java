@@ -365,7 +365,24 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 return null;
             }
         }
+        
+        if (configManager.enabledExactMfrPnElevation()) {
+            // For elevation of exact MfrPN
+            RedirectRuleCondition mfrPnRedirectRuleCondition = new RedirectRuleCondition(String.format(
+                    "MfrPN:(_query_:\"{!%s qf=%s v=$searchKeyword}\")", getDefType(storeKeyword.getStoreId()),
+                    configManager.getMfrPnFieldName()));
+            ElevateResult mfrPnElevateResult = new ElevateResult();
+            mfrPnElevateResult.setForceAdd(true);
+            mfrPnElevateResult.setCondition(mfrPnRedirectRuleCondition);
+            mfrPnElevateResult.setEntity(MemberTypeEntity.FACET);
+            if (CollectionUtils.isEmpty(list)) {
+                list = new ArrayList<ElevateResult>();
+            }
+            list.add(0, mfrPnElevateResult);
+        }
+        
         setFacetTemplateValues(list, facetMap);
+        
         return list;
     }
 
@@ -1323,6 +1340,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             forceAddFilter.toString()));
                     nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, newRedirectFilter
                             .toString()));
+                    
+                    if (StringUtils.isNotBlank(keyword)) {
+                        nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+                    }
                 }
 
                 NameValuePair keywordNvp = ParameterUtils.getNameValuePairFromMap(paramMap,
