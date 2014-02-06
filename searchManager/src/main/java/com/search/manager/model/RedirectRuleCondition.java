@@ -253,6 +253,12 @@ public class RedirectRuleCondition extends ModelBean {
             builder.append(" AND ");
         }
 
+        if (map.containsKey("MfrPN")) {
+            String value = map.get("MfrPN").get(0);
+            builder.append(value);
+            builder.append(" AND ");
+        }
+        
         if (builder.length() > 0) {
             builder.replace(builder.length() - 5, builder.length(), "");
         }
@@ -584,7 +590,7 @@ public class RedirectRuleCondition extends ModelBean {
         // if any of the following fields are present return them;
         // Platform, Condition, Availability, License, ImageExists
         LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-        String[] keys = {"Platform", "Condition", "Availability", "License", "ImageExists", "Name", "Description"};
+        String[] keys = {"MfrPN", "Platform", "Condition", "Availability", "License", "ImageExists", "Name", "Description"};
         for (String key : keys) {
             List<String> value = conditionMap.get(key);
             if (value != null && !value.isEmpty()) {
