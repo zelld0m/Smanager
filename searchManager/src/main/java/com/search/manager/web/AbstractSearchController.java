@@ -369,7 +369,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
         if (configManager.enabledExactMfrPnElevation()) {
             // For elevation of exact MfrPN
             RedirectRuleCondition mfrPnRedirectRuleCondition = new RedirectRuleCondition(String.format(
-                    "MfrPN:(_query_:\"{!%s qf=%s v=$searchKeyword}\")", getDefType(storeKeyword.getStoreId()),
+                    "MfrPN:_query_:\"{!%s qf=%s v=$searchKeyword}\"", getDefType(storeKeyword.getStoreId()),
                     configManager.getMfrPnFieldName()));
             ElevateResult mfrPnElevateResult = new ElevateResult();
             mfrPnElevateResult.setForceAdd(true);
@@ -725,7 +725,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             }
 
             // parse the parameters, construct POST form
-            @SuppressWarnings("unchecked")
             Set<String> paramNames = (Set<String>) request.getParameterMap().keySet();
             for (String paramName : paramNames) {
                 for (String paramValue : request.getParameterValues(paramName)) {
@@ -1336,7 +1335,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 if (redirectFqNvp != null) {
                     nameValuePairs.remove(redirectFqNvp);
                     StringBuilder newRedirectFilter = new StringBuilder();
-                    newRedirectFilter.append(String.format("(%s) OR (%s)", redirectFqNvp.getValue(),
+                    newRedirectFilter.append(String.format("(%s) OR %s", redirectFqNvp.getValue(),
                             forceAddFilter.toString()));
                     nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, newRedirectFilter
                             .toString()));
@@ -1351,7 +1350,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 if (keywordNvp != null && nameValuePairs.remove(defTypeNVP)) {
                     nameValuePairs.remove(keywordNvp);
                     StringBuilder newQuery = new StringBuilder();
-                    newQuery.append(String.format("(_query_:\"{!%s v=$searchKeyword}\") OR (%s)", getDefType(storeId),
+                    newQuery.append(String.format("(_query_:\"{!%s v=$searchKeyword}\") OR %s", getDefType(storeId),
                             forceAddFilter.toString()));
                     nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
                     nameValuePairs.add(new BasicNameValuePair("searchKeyword", StringUtils.isBlank(keyword) ? "*:*"
