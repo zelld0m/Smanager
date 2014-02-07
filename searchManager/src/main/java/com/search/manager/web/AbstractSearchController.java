@@ -375,6 +375,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             mfrPnElevateResult.setForceAdd(true);
             mfrPnElevateResult.setCondition(mfrPnRedirectRuleCondition);
             mfrPnElevateResult.setEntity(MemberTypeEntity.FACET);
+            mfrPnElevateResult.setLocation(0);
             if (CollectionUtils.isEmpty(list)) {
                 list = new ArrayList<ElevateResult>();
             }
