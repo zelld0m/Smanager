@@ -34,8 +34,8 @@
 		        <li><a href="#excludeTab"><span>Exclude</span></a></li>
 		        <li><a href="#demoteTab"><span>Demote</span></a></li>
 		        <li><a href="#facetSortTab"><span>Facet Sort</span></a></li>
-		        <li><a href="#queryCleaningTab"><span>Query Cleaning</span></a></li>
-		        <li><a href="#rankingRuleTab"><span>Ranking Rule</span></a></li>
+		        <li><a href="#queryCleaningTab"><span>Redirect Rule</span></a></li>
+		        <li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
 		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
 		        <li><a href="#bannerTab"><span>Banner</span></a></li>
 		    </ul>
