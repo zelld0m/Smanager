@@ -1,5 +1,6 @@
 (function($){
-	var moduleName="Relevancy Rule";
+	var moduleName="Ranking Rule";
+	var headerText = "Relevancy Rule";
 	var selectedRule = null;
 	var selectedRuleStatus = null;
 	var rulePageSize = 5;
@@ -1104,27 +1105,27 @@
 		if (checkIfUpdateAllowed() && isRelevancyFieldsValid){
 			var response = 0;
 			if ($.isBlank(ruleName)){
-				jAlert("Rule name is required.", moduleName);
+				jAlert("Rule name is required.", headerText);
 			}
 			else if (!isAllowedName(ruleName)){
-				jAlert("Rule name contains invalid value.", moduleName);
+				jAlert("Rule name contains invalid value.", headerText);
 			}
 			else if (ruleName.length>100){
-				jAlert("Name should not exceed 100 characters.", moduleName);
+				jAlert("Name should not exceed 100 characters.", headerText);
 			}
 			else if (!isAscii(description)) {
-				jAlert("Description contains non-ASCII characters.", moduleName);
+				jAlert("Description contains non-ASCII characters.", headerText);
 			}
 			else if (!isXSSSafe(description)){
-				jAlert("Description contains XSS.", moduleName);
+				jAlert("Description contains XSS.", headerText);
 			}
 			else if (description.length>255){
-				jAlert("Description should not exceed 255 characters.", moduleName);
+				jAlert("Description should not exceed 255 characters.", headerText);
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
-				jAlert("Please provide a valid date range!",moduleName);
+				jAlert("Please provide a valid date range!",headerText);
 			} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
-				jAlert("End date cannot be earlier than start date!",moduleName);
+				jAlert("End date cannot be earlier than start date!",headerText);
 			}
 			else {
 				RelevancyServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
@@ -1187,7 +1188,7 @@
 		clearAllQtip();
 		$("#preloader").show();
 		$("#submitForApproval, #relevancy, #noSelected").hide();
-		$("#titleText").html(moduleName);
+		$("#titleText").html(headerText);
 		$("#versions,#titleHeader").empty();
 	};
 
@@ -1199,7 +1200,7 @@
 		if(selectedRule==null){
 			$("#preloader, #relevancy").hide();
 			$("#noSelected").show();
-			$("#titleText").html(moduleName);
+			$("#titleText").html(headerText);
 			$("#titleHeader").html("");
 			$("#submitForApproval").hide();
 			return;
@@ -1241,7 +1242,7 @@
 				$("#relevancy").show();
 				selectedRuleStatus = ruleStatus;
 
-				$("#titleText").html(moduleName + " for ");
+				$("#titleText").html(headerText + " for ");
 				$("#titleHeader").text(selectedRule.ruleName);
 
 				$("#name").val(selectedRule.ruleName);
