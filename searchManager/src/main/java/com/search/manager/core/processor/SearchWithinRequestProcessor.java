@@ -1,6 +1,7 @@
 package com.search.manager.core.processor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,8 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void process(HttpServletRequest request, SolrResponseParser solrHelper, RequestPropertyBean requestPropertyBean, List<Map<String, String>> activeRules, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
-		Map<String, List<String>> swParamsMap = new HashMap<String, List<String>>();
+	    final Long start = new Date().getTime();     
+        Map<String, List<String>> swParamsMap = new HashMap<String, List<String>>();
 		List<String> swTypeList= new ArrayList<String>();
 		String[] paramValues= request.getParameterValues(getRequestParamName(requestPropertyBean));
 		JsonSlurper slurper = new JsonSlurper();
@@ -64,11 +66,13 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 
 		if(!isEnabled(requestPropertyBean) ||  ArrayUtils.getLength(paramValues)==0 || StringUtils.isBlank(swValues = paramValues[paramValues.length-1])){
 			logger.info("Skipped: Enabled? {}, Empty params? {}", BooleanUtils.toStringYesNo(isEnabled(requestPropertyBean)),BooleanUtils.toStringYesNo(StringUtils.isBlank(swValues)));
+			logger.info("Processing: {}ms", new Date().getTime()-start);
 			return;
 		}
 
 		if(CollectionUtils.isEmpty(solrFieldToSearchList = getFields(requestPropertyBean)) || CollectionUtils.isEmpty(swTypeList = getSearchWithinType(requestPropertyBean))){
 			logger.info("Skipped: Empty search fields? {} , Empty allowed params? {}", BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(solrFieldToSearchList)), BooleanUtils.toStringYesNo(CollectionUtils.isEmpty(getSearchWithinType(requestPropertyBean))));
+			logger.info("Processing: {}ms", new Date().getTime()-start);
 			return;
 		}
 
@@ -83,6 +87,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 
 			if(JSONUtils.isNull(swJSONParam)){
 				logger.info("Skipped: Field to convert to JSON using param {}", swValues);
+				logger.info("Processing: {}ms", new Date().getTime()-start);
 				return;
 			}
 
@@ -103,6 +108,7 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 
 			if(MapUtils.isEmpty(swParamsMap)){
 				logger.info("Skipped: Empty processed request param");
+				logger.info("Processing: {}ms", new Date().getTime()-start);
 				return;
 			}
 
@@ -133,6 +139,8 @@ public class SearchWithinRequestProcessor implements RequestProcessor {
 				logger.error("No search within applied for {}={}", getRequestParamName(requestPropertyBean), swValues);
 			}
 		}
+		logger.info("Processing: {}ms", new Date().getTime()-start);
+		return;
 	}
 	
 	public List<String> getFields(RequestPropertyBean requestPropertyBean){

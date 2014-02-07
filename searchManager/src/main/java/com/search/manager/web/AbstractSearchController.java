@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -676,7 +675,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 final Long start = new Date().getTime();
                 final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, keyword);
                 final List<ExcludeResult> excludeRuleList = getExcludeRules(sk, isGuiRequest, requestProcessorUtil.getFacetMap(sk.getStoreId()));
-                logger.info("Retrieval of exclude rule with {} item(s) took {}ms", CollectionUtils.size(excludeRuleList), new Date().getTime() - start);
+                logger.info("Retrieval of {} exclude item(s): {}ms", CollectionUtils.size(excludeRuleList), new Date().getTime() - start);
                 return excludeRuleList;
             }
         });
@@ -687,7 +686,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 final Long start = new Date().getTime();
                 final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, keyword);
                 final List<DemoteResult> demoteRuleList = getDemoteRules(sk, isGuiRequest, requestProcessorUtil.getFacetMap(sk.getStoreId()));
-                logger.info("Retrieval of demote rule with {} item(s) took {}ms", CollectionUtils.size(demoteRuleList), new Date().getTime() - start);
+                logger.info("Retrieval of {} demote item(s): {}ms", CollectionUtils.size(demoteRuleList), new Date().getTime() - start);
                 return demoteRuleList;
             }
         });
@@ -698,7 +697,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 final Long start = new Date().getTime();
                 final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, keyword);
                 final List<ElevateResult> elevateRuleList = getElevateRules(sk, isGuiRequest, requestProcessorUtil.getFacetMap(sk.getStoreId()));
-                logger.info("Retrieval of elevate rule with {} item(s) took {}ms",CollectionUtils.size(elevateRuleList), new Date().getTime() - start);
+                logger.info("Retrieval of {} elevate item(s): {}ms",CollectionUtils.size(elevateRuleList), new Date().getTime() - start);
                 return elevateRuleList;
             }
         });
@@ -722,15 +721,18 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             }
         } catch(InterruptedException e){
             e.printStackTrace();
+            logger.info("Interrupted {}ms after invocation", new Date().getTime()-start);  
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
             e.printStackTrace();
+            logger.info("Interrupted {}ms after invocation", new Date().getTime()-start);  
             Thread.currentThread().interrupt();
         } finally{
-            ruleExecService.shutdownNow();
+            List<Runnable> awaitingExecution = ruleExecService.shutdownNow();
+            logger.info("Awaiting execution: {} ; Shutdown completed: {}", CollectionUtils.size(awaitingExecution), ruleExecService.isShutdown());  
+            logger.info("Parallel rule retrieval completion time for {}: {}ms", keyword, new Date().getTime()-start);  
         }
 
-        logger.info("Asynchronous retrieval of 3 rules took {}ms for {}", new Date().getTime() - start, keyword);
         return map;
     }
 
@@ -756,7 +758,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
         final ExecutorService execService = Executors.newCachedThreadPool();
         final ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
 
-        int tasks = 0;
+        final ExecutorService countExecService = Executors.newCachedThreadPool();
+        final ExecutorCompletionService<Integer> countCompletionService = new ExecutorCompletionService<Integer>(countExecService);
+      
         DateTime currentDate = DateTime.now();
         final String storeId;
         final Long start = new Date().getTime();
@@ -1372,24 +1376,24 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             Future<Integer> getTemplateCount = null;
             Future<Integer> getElevatedCount = null;
             Future<Integer> getDemotedCount = null;
-
+            final Long startCountRetrieval = new Date().getTime();
             // TASK 1A - get total number of items
             final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-            getTemplateCount = completionService.submit(new Callable<Integer>() {
+            getTemplateCount = countCompletionService.submit(new Callable<Integer>() {
                 @Override
                 public Integer call() throws Exception {
                     Long start = new Date().getTime();     
                     int count = solrHelper.getTemplateCounts(getTemplateCountParams);
-                    logger.info("Template count {}ms", new Date().getTime()-start);
+                    logger.info("Retrieval of template count: {}ms", new Date().getTime()-start);
                     return count;
                 }
             });
-            tasks++;
 
             nameValuePairs.remove(ParameterUtils.getNameValuePairFromMap(paramMap, "facet"));
 
             // TASK 1B - get spellcheck if requested
             /* Run spellcheck if needed */
+            Future<Integer> getSpellCount = null;
             if (!isRedirectToPage && performSpellCheck) {
                 StoreKeyword sk = getStoreKeywordOverride(RuleEntity.SPELL, storeId, originalKeyword);
                 SpellRule spellRule = getSpellRule(sk, fromSearchGui);
@@ -1417,7 +1421,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     getSpellingSuggestionsParams.remove(spellCount);
                 }
                 getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_SPELLCHECK_COUNT, String.valueOf(suggestCount)));
-                completionService.submit(new Callable<Integer>() {
+                getSpellCount = countCompletionService.submit(new Callable<Integer>() {
                     @Override
                     public Integer call() throws Exception { // TODO here...
                         Long start = new Date().getTime();     
@@ -1426,7 +1430,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                         return 0;
                     }
                 });
-                tasks++;
             }
 
             // Collate Elevate and Demote items 
@@ -1451,16 +1454,15 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     // TASK 1C - get count of elevated items (sans excluded items)
                     final ArrayList<NameValuePair> getElevatedCountParams = filterParamsForNumFoundRequest(nameValuePairs);
                     getElevatedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFilters.toString()));
-                    getElevatedCount = completionService.submit(new Callable<Integer>() {
+                    getElevatedCount = countCompletionService.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
                             Long start = new Date().getTime();     
                             int count = solrHelper.getCount(getElevatedCountParams);
-                            logger.info("Elevate rule count {}ms", new Date().getTime()-start);
+                            logger.info("Retrieval of elevate item count: {}ms", new Date().getTime()-start);
                             return count;
                         }
                     });
-                    tasks++;
                 }
 
                 if (requestedRows != 0 && (demoteFilters.length() > 0)) {
@@ -1468,21 +1470,21 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     final ArrayList<NameValuePair> getDemotedCountParams = filterParamsForNumFoundRequest(nameValuePairs);
                     getDemotedCountParams.remove(excludeDemoteNameValuePair);
                     getDemotedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilters.toString()));
-                    getDemotedCount = completionService.submit(new Callable<Integer>() {
+                    getDemotedCount = countCompletionService.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
                             Long start = new Date().getTime();     
                             int count = solrHelper.getCount(getDemotedCountParams);
-                            logger.info("Demote rule count {}ms", new Date().getTime()-start);
+                            logger.info("Retrieval of demote item count: {}ms", new Date().getTime()-start);
                             return count;
                         }
                     });
-                    tasks++;
                 }
             }
 
-            while (tasks > 0) {
-                Future<Integer> completed = completionService.take();
+            countExecService.shutdown();
+            while (!countExecService.isTerminated()) {
+                Future<Integer> completed = countCompletionService.take();
                 if (completed.equals(getTemplateCount)) {
                     numFound = completed.get();
                     logger.debug("Results found: {}", numFound);
@@ -1492,16 +1494,19 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 } else if (getDemotedCount != null && completed.equals(getDemotedCount)) {
                     numDemoteFound = completed.get();
                     logger.debug("Demote result size: {}", numDemoteFound);
+                } else if (getSpellCount != null && completed.equals(getSpellCount)) {
+                    logger.debug("Spell rule done");
                 }
-                tasks--;
             }
-
+            
+            logger.info("Parallel retrieval of template/elevate/demote item count: {}ms", new Date().getTime()-startCountRetrieval);  
             numNormalFound = numFound - numElevateFound - numDemoteFound;
 
             // cleanup request parameters, remove start and row
             nameValuePairs.remove(paramMap.get(SolrConstants.SOLR_PARAM_START).get(0));
             nameValuePairs.remove(paramMap.get(SolrConstants.SOLR_PARAM_ROWS).get(0));
 
+            final Long startItemRetrieval = new Date().getTime();
             if (requestedRows != 0 && (numFound + numElevateFound) != 0) {
 
                 Future<Integer> getElevatedItems = null;
@@ -1525,7 +1530,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             return count;
                         }
                     });
-                    tasks++;
                     requestedRows -= (numElevateFound - startRow);
                 }
 
@@ -1561,7 +1565,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             return count;
                         }
                     });
-                    tasks++;
 
                     requestedRows -= (numNormalFound - startRow);
                     requestedRows = requestedRows < 0 ? 0 : requestedRows;
@@ -1587,10 +1590,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             return count;
                         }
                     });
-                    tasks++;
                 }
 
-                while (tasks > 0) {
+                execService.shutdown();
+                while (!execService.isTerminated()) {
                     Future<Integer> completed = completionService.take();
                     if (completed.equals(getElevatedItems)) {
                         logger.debug("Elevated item count: {}", completed.get());
@@ -1599,42 +1602,25 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     } else if (completed.equals(getDemotedItems)) {
                         logger.debug("Demoted item count: {}", completed.get());
                     }
-                    tasks--;
                 }
+                logger.info("Parallel retrieval of elevate/normal/demote item: {}ms", new Date().getTime()-startItemRetrieval);  
             }
 
             /* Generate response */
-            Long qtime = new Date().getTime() - start;
+            final Long qtime = new Date().getTime() - start;
+            final Long startGenResponse = new Date().getTime();
             solrHelper.generateServletResponse(response, qtime);
+            logger.info("Response generation: {}ms", new Date().getTime()-startGenResponse);
             SearchLogger.logInfo(fromSearchGui, startRow, requestedRows, originalKeyword);
+            logger.info("Search logger: {}ms", new Date().getTime()-startGenResponse);
         }catch(InterruptedException e){
             e.printStackTrace();
+            logger.info("Interrupted {}s after request started", new Date().getTime()-start);
+            Thread.currentThread().interrupt();
             throw new ServletException(e);
         }catch (Throwable t) {
             logger.error("Failed to send solr request {}", t);
             throw new ServletException(t);
-        }finally{
-            execService.shutdown();
-            logger.info("Invoked shutdown {}ms after request start", new Date().getTime()-start);  
-            Long afterShutdown = new Date().getTime();
-            Long afterShutdownNow = 0L; 
-            try {  
-                execService.awaitTermination(5000L, TimeUnit.MILLISECONDS);  
-                logger.info("Invoked shutdownNow at {}ms after shutdown", new Date().getTime()-afterShutdown);  
-                List<Runnable> runnableList = execService.shutdownNow();  
-                logger.info("{} tasks never commenced execution after invoked of 1st shutdownNow ", CollectionUtils.size(runnableList));  
-                afterShutdownNow = new Date().getTime();
-            } catch (InterruptedException ex) {  
-                logger.info("Interrupted at {}ms", new Date().getTime());  
-                logger.info("Invoked shutdownNow at {}ms after shutdownNow", new Date().getTime()-afterShutdownNow);  
-                List<Runnable> runnableList = execService.shutdownNow();  
-                logger.info("{} tasks never commenced execution after invoked of 1st shutdownNow ", CollectionUtils.size(runnableList));  
-                Thread.currentThread().interrupt();
-            } finally{
-                Long shutdownCompleted = new Date().getTime();
-                logger.info("Completed {}ms after shutdown", shutdownCompleted-afterShutdown);  
-                logger.info("{}ms after request start", shutdownCompleted-start);  
-            }  
         }
 
         logger.info("Request completion time: {}ms", new Date().getTime()-start);  

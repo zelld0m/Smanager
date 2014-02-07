@@ -186,6 +186,6 @@ public class EnterpriseSearchController extends AbstractSearchController {
 	protected String getRequestPath(HttpServletRequest request) {
 		String start = request.getContextPath() + "/enterpriseSearch";
 		int idx = request.getRequestURI().indexOf(start);
-		return "http:/" + request.getRequestURI().substring(start.length() + idx);
+		return String.format("http:/%s", request.getRequestURI().substring(start.length() + idx));
 	}
 }

@@ -1,6 +1,7 @@
 package com.search.manager.core.processor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -44,9 +45,10 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 
 	@Override
 	public void process(HttpServletRequest request, SolrResponseParser solrHelper, RequestPropertyBean requestPropertyBean, List<Map<String, String>> activeRules, Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs) {
-		
+	    final Long start = new Date().getTime();     
 	    if(!isEnabled(requestPropertyBean)){
             logger.info("Enabled? {}", BooleanUtils.toStringYesNo(isEnabled(requestPropertyBean)));
+            logger.info("Processing: {}ms", new Date().getTime()-start);
             return;
         }
 	    
@@ -128,7 +130,11 @@ public class FacetSortRequestProcessor implements RequestProcessor {
 		}catch (Exception e) {
 			logger.error("Error encountered {}", e);
 			return;
+		}finally{
+		    logger.info("Processing: {}ms", new Date().getTime()-start);
 		}
+		
+		return;
 	}
 	
 	private FacetSort getFacetSortRule(RequestPropertyBean requestPropertyBean, StoreKeyword storeKeyword) throws DaoException {
