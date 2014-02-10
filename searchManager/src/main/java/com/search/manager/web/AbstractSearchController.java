@@ -662,6 +662,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
     @SuppressWarnings("unchecked")
     protected Map<String, List<? extends SearchResult>> getItemBasedRules(RequestPropertyBean requestPropertyBean){
         final Long start = new Date().getTime();
+        int tasks = 0;
         final ExecutorService ruleExecService = Executors.newCachedThreadPool();
         final ExecutorCompletionService<List<? extends SearchResult>> ruleCompletionService = new ExecutorCompletionService<List<? extends SearchResult>>(ruleExecService);
         final Map<String, List<? extends SearchResult>> map = new HashMap<String, List<? extends SearchResult>>();
@@ -679,6 +680,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 return excludeRuleList;
             }
         });
+        tasks++;
 
         ruleCompletionService.submit(new Callable<List<? extends SearchResult>>() {
             @Override
@@ -690,6 +692,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 return demoteRuleList;
             }
         });
+        tasks++;
 
         ruleCompletionService.submit(new Callable<List<? extends SearchResult>>() {
             @Override
@@ -701,10 +704,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 return elevateRuleList;
             }
         });
-
+        tasks++;
+        
         try{
-            ruleExecService.shutdown();
-            while(!ruleExecService.isTerminated()){
+            map.put("elevate", new ArrayList<ElevateResult>());
+            map.put("exclude", new ArrayList<ExcludeResult>());
+            map.put("demote", new ArrayList<DemoteResult>());
+            
+            while (tasks>0) {
                 Future<List<? extends SearchResult>> completed = ruleCompletionService.take();
                 List<? extends SearchResult> completedList = completed.get();
                 if(CollectionUtils.isNotEmpty(completedList)){
@@ -718,7 +725,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                         map.put("demote", (List<DemoteResult>) completedList);
                     }
                 }
+                tasks--;
             }
+            
         } catch(InterruptedException e){
             e.printStackTrace();
             logger.info("Interrupted {}ms after invocation", new Date().getTime()-start);  
@@ -757,10 +766,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
         final ExecutorService execService = Executors.newCachedThreadPool();
         final ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
-
-        final ExecutorService countExecService = Executors.newCachedThreadPool();
-        final ExecutorCompletionService<Integer> countCompletionService = new ExecutorCompletionService<Integer>(countExecService);
-      
+        int tasks = 0;
         DateTime currentDate = DateTime.now();
         final String storeId;
         final Long start = new Date().getTime();
@@ -1377,9 +1383,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             Future<Integer> getElevatedCount = null;
             Future<Integer> getDemotedCount = null;
             final Long startCountRetrieval = new Date().getTime();
+            
             // TASK 1A - get total number of items
             final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-            getTemplateCount = countCompletionService.submit(new Callable<Integer>() {
+            getTemplateCount = completionService.submit(new Callable<Integer>() {
                 @Override
                 public Integer call() throws Exception {
                     Long start = new Date().getTime();     
@@ -1388,6 +1395,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     return count;
                 }
             });
+            tasks++;
 
             nameValuePairs.remove(ParameterUtils.getNameValuePairFromMap(paramMap, "facet"));
 
@@ -1421,7 +1429,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     getSpellingSuggestionsParams.remove(spellCount);
                 }
                 getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_SPELLCHECK_COUNT, String.valueOf(suggestCount)));
-                getSpellCount = countCompletionService.submit(new Callable<Integer>() {
+                getSpellCount = completionService.submit(new Callable<Integer>() {
                     @Override
                     public Integer call() throws Exception { // TODO here...
                         Long start = new Date().getTime();     
@@ -1430,6 +1438,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                         return 0;
                     }
                 });
+                tasks++;
             }
 
             // Collate Elevate and Demote items 
@@ -1454,7 +1463,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     // TASK 1C - get count of elevated items (sans excluded items)
                     final ArrayList<NameValuePair> getElevatedCountParams = filterParamsForNumFoundRequest(nameValuePairs);
                     getElevatedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFilters.toString()));
-                    getElevatedCount = countCompletionService.submit(new Callable<Integer>() {
+                    getElevatedCount = completionService.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
                             Long start = new Date().getTime();     
@@ -1463,6 +1472,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             return count;
                         }
                     });
+                    tasks++;
                 }
 
                 if (requestedRows != 0 && (demoteFilters.length() > 0)) {
@@ -1470,7 +1480,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     final ArrayList<NameValuePair> getDemotedCountParams = filterParamsForNumFoundRequest(nameValuePairs);
                     getDemotedCountParams.remove(excludeDemoteNameValuePair);
                     getDemotedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilters.toString()));
-                    getDemotedCount = countCompletionService.submit(new Callable<Integer>() {
+                    getDemotedCount = completionService.submit(new Callable<Integer>() {
                         @Override
                         public Integer call() throws Exception {
                             Long start = new Date().getTime();     
@@ -1479,12 +1489,12 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             return count;
                         }
                     });
+                    tasks++;
                 }
             }
 
-            countExecService.shutdown();
-            while (!countExecService.isTerminated()) {
-                Future<Integer> completed = countCompletionService.take();
+            while (tasks > 0) {
+                Future<Integer> completed = completionService.take();
                 if (completed.equals(getTemplateCount)) {
                     numFound = completed.get();
                     logger.debug("Results found: {}", numFound);
@@ -1497,6 +1507,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 } else if (getSpellCount != null && completed.equals(getSpellCount)) {
                     logger.debug("Spell rule done");
                 }
+                tasks--;
             }
             
             logger.info("Parallel retrieval of template/elevate/demote item count: {}ms", new Date().getTime()-startCountRetrieval);  
@@ -1530,6 +1541,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             return count;
                         }
                     });
+                    tasks++;
                     requestedRows -= (numElevateFound - startRow);
                 }
 
@@ -1565,6 +1577,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             return count;
                         }
                     });
+                    tasks++;
 
                     requestedRows -= (numNormalFound - startRow);
                     requestedRows = requestedRows < 0 ? 0 : requestedRows;
@@ -1590,10 +1603,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             return count;
                         }
                     });
+                    tasks++;
                 }
 
-                execService.shutdown();
-                while (!execService.isTerminated()) {
+                while (tasks>0) {
                     Future<Integer> completed = completionService.take();
                     if (completed.equals(getElevatedItems)) {
                         logger.debug("Elevated item count: {}", completed.get());
@@ -1602,6 +1615,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     } else if (completed.equals(getDemotedItems)) {
                         logger.debug("Demoted item count: {}", completed.get());
                     }
+                    tasks--;
                 }
                 logger.info("Parallel retrieval of elevate/normal/demote item: {}ms", new Date().getTime()-startItemRetrieval);  
             }
@@ -1621,6 +1635,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
         }catch (Throwable t) {
             logger.error("Failed to send solr request {}", t);
             throw new ServletException(t);
+        }finally{
+            List<Runnable> awaitingExecution = execService.shutdownNow();
+            logger.error("ShutdownNow invoked, awaiting execution: {}", CollectionUtils.size(awaitingExecution));
         }
 
         logger.info("Request completion time: {}ms", new Date().getTime()-start);  
