@@ -85,7 +85,7 @@
 					
 					if(!validateUsername('Username',aduser, 4))
 						return;
-					else if(!validateField('Fullname',adfull, 1))
+					else if(!validateFullname('Fullname',adfull, 1))
 						return;
 					else if(!validateEmail('Email',ademail, 1))
 						return;
