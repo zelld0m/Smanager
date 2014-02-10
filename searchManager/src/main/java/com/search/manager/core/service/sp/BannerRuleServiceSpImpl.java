@@ -318,7 +318,12 @@ public class BannerRuleServiceSpImpl implements BannerRuleService {
 
         for (String ruleName : keywords) {
             try {
-                addRule(ruleName);
+            	BannerRule existingRule = new BannerRule();
+            	existingRule.setRuleName(ruleName);
+            	existingRule.setStoreId(storeId);
+            	
+            	if(search(existingRule).getTotalCount() < 1)
+            		addRule(ruleName);
             } catch (CoreServiceException e) {
                 // attempt to add..
             }
