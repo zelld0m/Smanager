@@ -134,10 +134,17 @@ public class CommentDaoSpImpl extends GenericDaoSpImpl<Comment> implements Comme
     }
 
     private Comment buildModel(ResultSet rs, int rowNum) throws SQLException {
-        return new Comment(rs.getInt(DAOConstants.COLUMN_COMMENT_ID), rs.getString(DAOConstants.COLUMN_REFERENCE_ID),
-                rs.getString(DAOConstants.COLUMN_COMMENT), rs.getString(DAOConstants.COLUMN_CREATED_BY),
-                jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
-                rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID));
+        Comment comment = null;
+
+        if (rs != null && rs.getMetaData().getColumnCount() > 1) {
+            comment = new Comment(rs.getInt(DAOConstants.COLUMN_COMMENT_ID),
+                    rs.getString(DAOConstants.COLUMN_REFERENCE_ID), rs.getString(DAOConstants.COLUMN_COMMENT),
+                    rs.getString(DAOConstants.COLUMN_CREATED_BY), jodaDateTimeUtil.toDateTime(rs
+                            .getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+                    rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID));
+        }
+
+        return comment;
     }
 
     @Override

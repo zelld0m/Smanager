@@ -44,12 +44,12 @@ public class ImportRuleTaskDaoSpImpl extends GenericDaoSpImpl<ImportRuleTask> im
 
     @Autowired(required = true)
     public ImportRuleTaskDaoSpImpl(JdbcTemplate jdbcTemplate) {
-    	super();
-    	addSp = new AddStoredProcedure(jdbcTemplate);
-    	updateSp = new UpdateStoredProcedure(jdbcTemplate);
-    	searchSp = new SearchStoredProcedure(jdbcTemplate);
+        super();
+        addSp = new AddStoredProcedure(jdbcTemplate);
+        updateSp = new UpdateStoredProcedure(jdbcTemplate);
+        searchSp = new SearchStoredProcedure(jdbcTemplate);
     }
-    
+
     private class AddStoredProcedure extends GetStoredProcedure {
 
         public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -148,54 +148,58 @@ public class ImportRuleTaskDaoSpImpl extends GenericDaoSpImpl<ImportRuleTask> im
     }
 
     private ImportRuleTask buildModel(ResultSet rs, int rowNum) throws SQLException {
+        ImportRuleTask importRuleTask = null;
 
-        int taskStatusVal = rs.getInt(WorkflowConstants.COLUMN_TASK_STATUS);
-        String importTypeVal = rs.getString(WorkflowConstants.COLUMN_IMPORT_TYPE);
-        String ruleTypeVal = rs.getString(WorkflowConstants.COLUMN_RULE_TYPE_ID);
+        if (rs != null && rs.getMetaData().getColumnCount() > 1) {
+            int taskStatusVal = rs.getInt(WorkflowConstants.COLUMN_TASK_STATUS);
+            String importTypeVal = rs.getString(WorkflowConstants.COLUMN_IMPORT_TYPE);
+            String ruleTypeVal = rs.getString(WorkflowConstants.COLUMN_RULE_TYPE_ID);
 
-        TaskStatus taskStatus = null;
-        ImportType importType = null;
-        RuleEntity ruleEntity = null;
+            TaskStatus taskStatus = null;
+            ImportType importType = null;
+            RuleEntity ruleEntity = null;
 
-        try {
-            taskStatus = TaskStatus.get(taskStatusVal);
-        } catch (Exception e) {
-        }
-
-        if (StringUtils.isNumeric(importTypeVal)) {
             try {
-                importType = ImportType.get(Integer.valueOf(importTypeVal));
+                taskStatus = TaskStatus.get(taskStatusVal);
             } catch (Exception e) {
             }
-        }
-        if (StringUtils.isNumeric(ruleTypeVal)) {
-            try {
-                ruleEntity = RuleEntity.get(Integer.valueOf(ruleTypeVal));
-            } catch (Exception e) {
+
+            if (StringUtils.isNumeric(importTypeVal)) {
+                try {
+                    importType = ImportType.get(Integer.valueOf(importTypeVal));
+                } catch (Exception e) {
+                }
             }
+            if (StringUtils.isNumeric(ruleTypeVal)) {
+                try {
+                    ruleEntity = RuleEntity.get(Integer.valueOf(ruleTypeVal));
+                } catch (Exception e) {
+                }
+            }
+
+            importRuleTask = new ImportRuleTask(rs.getString(WorkflowConstants.COLUMN_TASK_ID), ruleEntity,
+                    rs.getString(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID),
+                    rs.getString(WorkflowConstants.COLUMN_SOURCE_RULE_ID),
+                    rs.getString(WorkflowConstants.COLUMN_SOURCE_RULE_NAME),
+                    rs.getString(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID),
+                    rs.getString(WorkflowConstants.COLUMN_TARGET_RULE_ID),
+                    rs.getString(WorkflowConstants.COLUMN_TARGET_RULE_NAME), importType, new TaskExecutionResult(
+                            taskStatus, rs.getString(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE),
+                            rs.getInt(WorkflowConstants.COLUMN_RUN_ATTEMPT),
+                            rs.getInt(WorkflowConstants.COLUMN_STATE_COMPLETED) != 0 ? ImportType.get(rs
+                                    .getInt(WorkflowConstants.COLUMN_STATE_COMPLETED)) : null,
+                            jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_START_STAMP)),
+                            jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_END_STAMP))));
+
+            importRuleTask.setCreatedBy(rs.getString(WorkflowConstants.COLUMN_CREATED_BY));
+            importRuleTask.setCreatedDate(jodaDateTimeUtil.toDateTime(rs
+                    .getTimestamp(WorkflowConstants.COLUMN_CREATED_STAMP)));
+            importRuleTask.setLastModifiedBy(rs.getString(WorkflowConstants.COLUMN_LAST_UPDATED_BY));
+            importRuleTask.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                    .getTimestamp(WorkflowConstants.COLUMN_LAST_UPDATED_STAMP)));
         }
 
-        ImportRuleTask result = new ImportRuleTask(rs.getString(WorkflowConstants.COLUMN_TASK_ID), ruleEntity,
-                rs.getString(WorkflowConstants.COLUMN_SOURCE_RULE_STORE_ID),
-                rs.getString(WorkflowConstants.COLUMN_SOURCE_RULE_ID),
-                rs.getString(WorkflowConstants.COLUMN_SOURCE_RULE_NAME),
-                rs.getString(WorkflowConstants.COLUMN_TARGET_RULE_STORE_ID),
-                rs.getString(WorkflowConstants.COLUMN_TARGET_RULE_ID),
-                rs.getString(WorkflowConstants.COLUMN_TARGET_RULE_NAME), importType, new TaskExecutionResult(
-                        taskStatus, rs.getString(WorkflowConstants.COLUMN_TASK_ERROR_MESSAGE),
-                        rs.getInt(WorkflowConstants.COLUMN_RUN_ATTEMPT),
-                        rs.getInt(WorkflowConstants.COLUMN_STATE_COMPLETED) != 0 ? ImportType.get(rs
-                                .getInt(WorkflowConstants.COLUMN_STATE_COMPLETED)) : null,
-                        jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_START_STAMP)),
-                        jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_TASK_END_STAMP))));
-
-        result.setCreatedBy(rs.getString(WorkflowConstants.COLUMN_CREATED_BY));
-        result.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(WorkflowConstants.COLUMN_CREATED_STAMP)));
-        result.setLastModifiedBy(rs.getString(WorkflowConstants.COLUMN_LAST_UPDATED_BY));
-        result.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
-                .getTimestamp(WorkflowConstants.COLUMN_LAST_UPDATED_STAMP)));
-
-        return result;
+        return importRuleTask;
 
     }
 

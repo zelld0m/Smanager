@@ -148,20 +148,23 @@ public class ImagePathDaoSpImpl extends GenericDaoSpImpl<ImagePath> implements I
     }
 
     private ImagePath buildModel(ResultSet rs, int rowNum) throws SQLException {
-        ImagePath imagePath = new ImagePath();
+        ImagePath imagePath = null;
 
-        imagePath.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
-        imagePath.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
-        imagePath.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-        imagePath.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
-                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+        if (rs != null && rs.getMetaData().getColumnCount() > 1) {
+            imagePath = new ImagePath();
+            imagePath.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+            imagePath.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+            imagePath.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+            imagePath.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                    .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 
-        imagePath.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
-        imagePath.setId(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID));
-        imagePath.setPath(rs.getString(DAOConstants.COLUMN_IMAGE_PATH));
-        imagePath.setSize(rs.getString(DAOConstants.COLUMN_IMAGE_SIZE));
-        imagePath.setPathType(ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)));
-        imagePath.setAlias(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS));
+            imagePath.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
+            imagePath.setId(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID));
+            imagePath.setPath(rs.getString(DAOConstants.COLUMN_IMAGE_PATH));
+            imagePath.setSize(rs.getString(DAOConstants.COLUMN_IMAGE_SIZE));
+            imagePath.setPathType(ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)));
+            imagePath.setAlias(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS));
+        }
 
         return imagePath;
     }

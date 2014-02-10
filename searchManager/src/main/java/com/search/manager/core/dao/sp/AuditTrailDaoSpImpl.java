@@ -116,22 +116,25 @@ public class AuditTrailDaoSpImpl extends GenericDaoSpImpl<AuditTrail> implements
     }
 
     private AuditTrail buildModel(ResultSet rs, int rowNum) throws SQLException {
-        AuditTrail auditTrail = new AuditTrail();
+        AuditTrail auditTrail = null;
 
-        // auditTrail.setComment(rs.getString(DAOConstants.COLUMN_COMMENT));
-        auditTrail.setCreatedBy(rs.getString(DAOConstants.COLUMN_USER_NAME));
-        // auditTrail.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
-        auditTrail.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-        auditTrail.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
-                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+        if (rs != null && rs.getMetaData().getColumnCount() > 1) {
+            auditTrail = new AuditTrail();
+            // auditTrail.setComment(rs.getString(DAOConstants.COLUMN_COMMENT));
+            auditTrail.setCreatedBy(rs.getString(DAOConstants.COLUMN_USER_NAME));
+            // auditTrail.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
+            auditTrail.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+            auditTrail.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                    .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 
-        auditTrail.setUsername(rs.getString(DAOConstants.COLUMN_USER_NAME));
-        auditTrail.setOperation(rs.getString(DAOConstants.COLUMN_OPERATION));
-        auditTrail.setEntity(rs.getString(DAOConstants.COLUMN_ENTITY));
-        auditTrail.setStoreId(rs.getString(DAOConstants.COLUMN_STORE));
-        auditTrail.setKeyword(rs.getString(DAOConstants.COLUMN_KEYWORD));
-        auditTrail.setReferenceId(rs.getString(DAOConstants.COLUMN_REFERENCE));
-        auditTrail.setDetails(rs.getString(DAOConstants.COLUMN_DETAILS));
+            auditTrail.setUsername(rs.getString(DAOConstants.COLUMN_USER_NAME));
+            auditTrail.setOperation(rs.getString(DAOConstants.COLUMN_OPERATION));
+            auditTrail.setEntity(rs.getString(DAOConstants.COLUMN_ENTITY));
+            auditTrail.setStoreId(rs.getString(DAOConstants.COLUMN_STORE));
+            auditTrail.setKeyword(rs.getString(DAOConstants.COLUMN_KEYWORD));
+            auditTrail.setReferenceId(rs.getString(DAOConstants.COLUMN_REFERENCE));
+            auditTrail.setDetails(rs.getString(DAOConstants.COLUMN_DETAILS));
+        }
 
         return auditTrail;
     }

@@ -167,37 +167,41 @@ public class RuleStatusDaoSpImpl extends GenericDaoSpImpl<RuleStatus> implements
     }
 
     private RuleStatus buildModel(ResultSet rs, int rowNum) throws SQLException {
-        String exportTypeVal = rs.getString(DAOConstants.COLUMN_EXPORT_TYPE);
-        ExportType exportType = null;
-        if (StringUtils.isNumeric(exportTypeVal)) {
-            try {
-                exportType = ExportType.get(Integer.valueOf(exportTypeVal));
-            } catch (Exception e) {
-            }
-        }
-        RuleStatus ruleStatus = new RuleStatus(rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID),
-                rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID),
-                RuleSource.values()[rs.getInt(DAOConstants.COLUMN_RULE_SOURCE)],
-                rs.getString(DAOConstants.COLUMN_REFERENCE_ID), rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID),
-                rs.getString(DAOConstants.COLUMN_DESCRIPTION), rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
-                rs.getString(DAOConstants.COLUMN_REQUEST_BY), jodaDateTimeUtil.toDateTime(rs
-                        .getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE)),
-                rs.getString(DAOConstants.COLUMN_APPROVED_STATUS), rs.getString(DAOConstants.COLUMN_APPROVAL_BY),
-                jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE)),
-                rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), rs.getString(DAOConstants.COLUMN_PUBLISHED_BY),
-                jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE)), exportType,
-                rs.getString(DAOConstants.COLUMN_EXPORT_BY), jodaDateTimeUtil.toDateTime(rs
-                        .getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE)),
-                rs.getString(DAOConstants.COLUMN_CREATED_BY), rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-                jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
-                jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+        RuleStatus ruleStatus = null;
 
-        // ruleStatus.setComment(rs.getString(DAOConstants.COLUMN_COMMENT));
-        ruleStatus.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
-        ruleStatus.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
-        ruleStatus.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-        ruleStatus.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
-                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+        if (rs != null && rs.getMetaData().getColumnCount() > 1) {
+            String exportTypeVal = rs.getString(DAOConstants.COLUMN_EXPORT_TYPE);
+            ExportType exportType = null;
+            if (StringUtils.isNumeric(exportTypeVal)) {
+                try {
+                    exportType = ExportType.get(Integer.valueOf(exportTypeVal));
+                } catch (Exception e) {
+                }
+            }
+            ruleStatus = new RuleStatus(rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID),
+                    rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID),
+                    RuleSource.values()[rs.getInt(DAOConstants.COLUMN_RULE_SOURCE)],
+                    rs.getString(DAOConstants.COLUMN_REFERENCE_ID), rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID),
+                    rs.getString(DAOConstants.COLUMN_DESCRIPTION), rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
+                    rs.getString(DAOConstants.COLUMN_REQUEST_BY), jodaDateTimeUtil.toDateTime(rs
+                            .getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE)),
+                    rs.getString(DAOConstants.COLUMN_APPROVED_STATUS), rs.getString(DAOConstants.COLUMN_APPROVAL_BY),
+                    jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE)),
+                    rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), rs.getString(DAOConstants.COLUMN_PUBLISHED_BY),
+                    jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE)), exportType,
+                    rs.getString(DAOConstants.COLUMN_EXPORT_BY), jodaDateTimeUtil.toDateTime(rs
+                            .getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE)),
+                    rs.getString(DAOConstants.COLUMN_CREATED_BY), rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
+                    jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
+                    jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+
+            // ruleStatus.setComment(rs.getString(DAOConstants.COLUMN_COMMENT));
+            ruleStatus.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+            ruleStatus.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
+            ruleStatus.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+            ruleStatus.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                    .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+        }
 
         return ruleStatus;
     }

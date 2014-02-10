@@ -135,18 +135,21 @@ public class BannerRuleDaoSpImpl extends GenericDaoSpImpl<BannerRule> implements
     }
 
     private BannerRule buildModel(ResultSet rs, int rowNum) throws SQLException {
-        BannerRule bannerRule = new BannerRule();
+        BannerRule bannerRule = null;
 
-        // bannerRule.setComment(rs.getString(DAOConstants.COLUMN_COMMENT));
-        bannerRule.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
-        bannerRule.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
-        bannerRule.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-        bannerRule.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
-                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+        if (rs != null && rs.getMetaData().getColumnCount() > 1) {
+            bannerRule = new BannerRule();
+            // bannerRule.setComment(rs.getString(DAOConstants.COLUMN_COMMENT));
+            bannerRule.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+            bannerRule.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+            bannerRule.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+            bannerRule.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                    .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 
-        bannerRule.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
-        bannerRule.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
-        bannerRule.setRuleName(rs.getString(DAOConstants.COLUMN_RULE_NAME));
+            bannerRule.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
+            bannerRule.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
+            bannerRule.setRuleName(rs.getString(DAOConstants.COLUMN_RULE_NAME));
+        }
 
         return bannerRule;
     }

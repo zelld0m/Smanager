@@ -173,30 +173,34 @@ public class BannerRuleItemDaoSpImpl extends GenericDaoSpImpl<BannerRuleItem> im
     }
 
     private BannerRuleItem buildModel(ResultSet rs, int rowNum) throws SQLException {
-        BannerRule rule = new BannerRule(rs.getString(DAOConstants.COLUMN_STORE_ID),
-                rs.getString(DAOConstants.COLUMN_RULE_ID), rs.getString(DAOConstants.COLUMN_RULE_NAME), null);
+        BannerRuleItem ruleItem = null;
 
-        ImagePath imagePath = new ImagePath();
-        imagePath.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
-        imagePath.setId(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID));
-        imagePath.setPath(rs.getString(DAOConstants.COLUMN_IMAGE_PATH));
-        imagePath.setSize(rs.getString(DAOConstants.COLUMN_IMAGE_SIZE));
-        imagePath.setPathType(ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)));
-        imagePath.setAlias(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS));
+        if (rs != null && rs.getMetaData().getColumnCount() > 1) {
+            BannerRule rule = new BannerRule(rs.getString(DAOConstants.COLUMN_STORE_ID),
+                    rs.getString(DAOConstants.COLUMN_RULE_ID), rs.getString(DAOConstants.COLUMN_RULE_NAME), null);
 
-        BannerRuleItem ruleItem = new BannerRuleItem(rule, rs.getString(DAOConstants.COLUMN_MEMBER_ID),
-                rs.getInt(DAOConstants.COLUMN_PRIORITY), jodaDateTimeUtil.toDateTime(rs
-                        .getTimestamp(DAOConstants.COLUMN_START_DATE)), jodaDateTimeUtil.toDateTime(rs
-                        .getTimestamp(DAOConstants.COLUMN_END_DATE)), rs.getString(DAOConstants.COLUMN_IMAGE_ALT),
-                rs.getString(DAOConstants.COLUMN_LINK_PATH), rs.getString(DAOConstants.COLUMN_DESCRIPTION), imagePath,
-                BooleanUtils.toBoolean(rs.getInt(DAOConstants.COLUMN_DISABLED)), BooleanUtils.toBoolean(rs
-                        .getInt(DAOConstants.COLUMN_OPEN_NEW_WINDOW)));
+            ImagePath imagePath = new ImagePath();
+            imagePath.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
+            imagePath.setId(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ID));
+            imagePath.setPath(rs.getString(DAOConstants.COLUMN_IMAGE_PATH));
+            imagePath.setSize(rs.getString(DAOConstants.COLUMN_IMAGE_SIZE));
+            imagePath.setPathType(ImagePathType.get(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_TYPE)));
+            imagePath.setAlias(rs.getString(DAOConstants.COLUMN_IMAGE_PATH_ALIAS));
 
-        ruleItem.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
-        ruleItem.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
-        ruleItem.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
-        ruleItem.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
-                .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+            ruleItem = new BannerRuleItem(rule, rs.getString(DAOConstants.COLUMN_MEMBER_ID),
+                    rs.getInt(DAOConstants.COLUMN_PRIORITY), jodaDateTimeUtil.toDateTime(rs
+                            .getTimestamp(DAOConstants.COLUMN_START_DATE)), jodaDateTimeUtil.toDateTime(rs
+                            .getTimestamp(DAOConstants.COLUMN_END_DATE)), rs.getString(DAOConstants.COLUMN_IMAGE_ALT),
+                    rs.getString(DAOConstants.COLUMN_LINK_PATH), rs.getString(DAOConstants.COLUMN_DESCRIPTION),
+                    imagePath, BooleanUtils.toBoolean(rs.getInt(DAOConstants.COLUMN_DISABLED)),
+                    BooleanUtils.toBoolean(rs.getInt(DAOConstants.COLUMN_OPEN_NEW_WINDOW)));
+
+            ruleItem.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+            ruleItem.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
+            ruleItem.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+            ruleItem.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
+                    .getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
+        }
 
         return ruleItem;
     }
