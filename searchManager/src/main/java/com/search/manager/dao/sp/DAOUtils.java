@@ -24,8 +24,7 @@ import com.search.manager.model.StoreKeyword;
 
 public class DAOUtils {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(DAOUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(DAOUtils.class);
     private static final SecureRandom random = new SecureRandom();
     private static final String ENCODING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int BASE = 62; // ENCODING.length();
@@ -98,12 +97,14 @@ public class DAOUtils {
                 .append(StringUtils.leftPad(encodeString(random.nextInt(MAX_RANDOM_INT)), 3, "0")); // random int
         return builder.toString();
     }
+
     public static String generateUniqueId64Char() {
-   	 EthernetAddress nic = EthernetAddress.fromInterface();
-   	 TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(nic);
-   	 UUID uuid = uuidGenerator.generate();
-   	 return uuid.toString();
-   }
+        EthernetAddress nic = EthernetAddress.fromInterface();
+        TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(nic);
+        UUID uuid = uuidGenerator.generate();
+        return uuid.toString();
+    }
+
     @SuppressWarnings("unchecked")
     public static int getUpdateCount(Map<String, Object> result) {
         int i = -1;
@@ -122,8 +123,12 @@ public class DAOUtils {
         ArrayList<T> list = new ArrayList<T>();
         int size = 0;
         if (result != null) {
-            list.addAll((List<T>) result.get(DAOConstants.RESULT_SET_1));
-            size = ((List<Integer>) result.get(DAOConstants.RESULT_SET_TOTAL)).get(0);
+            if (result.get(DAOConstants.RESULT_SET_1) != null) {
+                list.addAll((List<T>) result.get(DAOConstants.RESULT_SET_1));
+            }
+            if (result.get(DAOConstants.RESULT_SET_TOTAL) != null) {
+                size = ((List<Integer>) result.get(DAOConstants.RESULT_SET_TOTAL)).get(0);
+            }
         }
         return new RecordSet<T>(list, size);
     }
