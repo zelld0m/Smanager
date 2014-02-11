@@ -317,19 +317,26 @@
 		
 		if ($.isNotBlank(doc.Elevate)){		  
 			var displayText = (doc["ForceAdd"]!=undefined? "Force add": "Elevated") + " at position " + doc["Elevate"];
-			
-			if(doc["ElevateType"] === "FACET")
-				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule</span></a> ' + (doc["ForceAdd"]!=undefined? "force add": "elevated") + ' at position '+ doc["Elevate"];
+			if(doc["ElevateType"] === "FACET"){
+				if(doc["Elevate"] === '0'){
+					displayText = 'Elevation caused by exact <strong>Mfr Part #</strong>';
+				}	
+				else{
+					displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule</span></a> ' + (doc["ForceAdd"]!=undefined? "force add": "elevated") + ' at position '+ doc["Elevate"];
+				}
+			}
 
 			secObj.find("div#elevatePosition").html(displayText);
-			secObj.find("div#elevatePosition a").off().on({
-				click: function(e){
-					showMessage(this, e.data.doc["ElevateCondition"]);
-				},
-				mouseenter: function(e){
-					showMessage(this, e.data.doc["ElevateCondition"]);
-				}
-			}, {doc: doc});
+			if(doc["Elevate"] === '0'){
+				secObj.find("div#elevatePosition a").off().on({
+					click: function(e){
+						showMessage(this, e.data.doc["ElevateCondition"]);
+					},
+					mouseenter: function(e){
+						showMessage(this, e.data.doc["ElevateCondition"]);
+					}
+				}, {doc: doc});
+			}
 		}
 		
 		if ($.isNotBlank(doc.Demote)){		  
