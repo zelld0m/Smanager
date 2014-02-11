@@ -186,6 +186,10 @@
     <url>http://afs-pl-schpd08.afservice.org:8080/solr4/(core)/</url><!-- Solr 1.4: solr14 , Solr 4.3: solr4 -->
     <store>pcmall,pcmallcap,pcmallgov,macmall,macmallbd,ecost</store>
   </server>
+  <server name='afs-pl-schmstr'>
+    <url>http://afs-pl-schmstr.afservice.org:8080/solr4/(core)/</url><!-- Solr 1.4: solr14 , Solr 4.3: solr4 -->
+    <store>pcmall,pcmallcap,pcmallgov,macmall,macmallbd,ecost</store>
+  </server>
   
   <!-- El Segundo Solr Server Production-->
   <server name='search.pcmall.com'><!-- Solr Server F5 -->
