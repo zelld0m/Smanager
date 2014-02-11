@@ -136,6 +136,25 @@ validateUsername = function(fieldName, fieldValue, length) {
 			return false;
 		}
 	}
+	
+	return true;
+};
+
+validateFullname = function(fieldName, fieldValue, length) {
+	if (!validateGeneric(fieldName, fieldValue, length)) {
+		return false;
+	};
+	if (!$.isBlank(fieldValue)) {
+		if(!isAllowedName(fieldValue)){
+			jAlert(fieldName + " contains invalid value.", fieldName);
+			return false;
+		}
+	}
+	if (!isAlphanumeric(fieldValue)) {
+		jAlert("Invalid characters detected in " + fieldName + ".\nAcceptable characters are alphanumeric characters. ", fieldName);
+		return false;
+	}
+	
 	return true;
 };
 

@@ -26,4 +26,8 @@ public class Pointcuts {
     public void allCoreMethods() {
     }
 
+    // Process Core Request Processor Methods
+    @Pointcut("execution(* *.process*(..)) && within(com.search.manager.core.processor.*)")
+    public void processRequestProcessor() {
+    }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -89,8 +90,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
     @Autowired
     @Qualifier("facetSortRequestProcessor")
     private RequestProcessor facetSortRequestProcessor;
-
-    protected final ExecutorService execService = Executors.newCachedThreadPool();
 
     protected final static String[] uniqueFields = {
         SolrConstants.SOLR_PARAM_ROWS, SolrConstants.SOLR_PARAM_KEYWORD, SolrConstants.SOLR_PARAM_WRITER_TYPE,
@@ -365,7 +364,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 return null;
             }
         }
-        
+
         if (configManager.enabledExactMfrPnElevation()) {
             // For elevation of exact MfrPN
             RedirectRuleCondition mfrPnRedirectRuleCondition = new RedirectRuleCondition(String.format(
@@ -381,9 +380,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             }
             list.add(0, mfrPnElevateResult);
         }
-        
+
         setFacetTemplateValues(list, facetMap);
-        
+
         return list;
     }
 
@@ -680,16 +679,116 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
         return matcher.group(3);
     }
 
+    /**
+     * Asynchronous retrieval of item based rules - Elevate, Exclude, and Demote
+     * 
+     * @param requestPropertyBean
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected Map<String, List<? extends SearchResult>> getItemBasedRules(RequestPropertyBean requestPropertyBean) {
+        final Long start = new Date().getTime();
+        int tasks = 0;
+        final ExecutorService ruleExecService = Executors.newCachedThreadPool();
+        final ExecutorCompletionService<List<? extends SearchResult>> ruleCompletionService = new ExecutorCompletionService<List<? extends SearchResult>>(
+                ruleExecService);
+        final Map<String, List<? extends SearchResult>> map = new HashMap<String, List<? extends SearchResult>>();
+        final boolean isGuiRequest = requestPropertyBean.isGuiRequest();
+        final String storeId = requestPropertyBean.getStoreId();
+        final String keyword = requestPropertyBean.getKeyword();
+
+        ruleCompletionService.submit(new Callable<List<? extends SearchResult>>() {
+            @Override
+            public List<? extends SearchResult> call() throws Exception {
+                final Long start = new Date().getTime();
+                final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, keyword);
+                final List<ExcludeResult> excludeRuleList = getExcludeRules(sk, isGuiRequest,
+                        requestProcessorUtil.getFacetMap(sk.getStoreId()));
+                logger.info("Retrieval of {} exclude item(s): {}ms", CollectionUtils.size(excludeRuleList),
+                        new Date().getTime() - start);
+                return excludeRuleList;
+            }
+        });
+        tasks++;
+
+        ruleCompletionService.submit(new Callable<List<? extends SearchResult>>() {
+            @Override
+            public List<? extends SearchResult> call() throws Exception {
+                final Long start = new Date().getTime();
+                final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, keyword);
+                final List<DemoteResult> demoteRuleList = getDemoteRules(sk, isGuiRequest,
+                        requestProcessorUtil.getFacetMap(sk.getStoreId()));
+                logger.info("Retrieval of {} demote item(s): {}ms", CollectionUtils.size(demoteRuleList),
+                        new Date().getTime() - start);
+                return demoteRuleList;
+            }
+        });
+        tasks++;
+
+        ruleCompletionService.submit(new Callable<List<? extends SearchResult>>() {
+            @Override
+            public List<? extends SearchResult> call() throws Exception {
+                final Long start = new Date().getTime();
+                final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, keyword);
+                final List<ElevateResult> elevateRuleList = getElevateRules(sk, isGuiRequest,
+                        requestProcessorUtil.getFacetMap(sk.getStoreId()));
+                logger.info("Retrieval of {} elevate item(s): {}ms", CollectionUtils.size(elevateRuleList),
+                        new Date().getTime() - start);
+                return elevateRuleList;
+            }
+        });
+        tasks++;
+
+        try {
+            map.put("elevate", new ArrayList<ElevateResult>());
+            map.put("exclude", new ArrayList<ExcludeResult>());
+            map.put("demote", new ArrayList<DemoteResult>());
+
+            while (tasks > 0) {
+                Future<List<? extends SearchResult>> completed = ruleCompletionService.take();
+                List<? extends SearchResult> completedList = completed.get();
+                if (CollectionUtils.isNotEmpty(completedList)) {
+                    if (completedList.get(0) instanceof ElevateResult) {
+                        map.put("elevate", (List<ElevateResult>) completedList);
+                    } else if (completedList.get(0) instanceof ExcludeResult) {
+                        map.put("exclude", (List<ExcludeResult>) completedList);
+                    } else if (completedList.get(0) instanceof DemoteResult) {
+                        map.put("demote", (List<DemoteResult>) completedList);
+                    }
+                }
+                tasks--;
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            logger.info("Interrupted {}ms after invocation", new Date().getTime() - start);
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            logger.info("Interrupted {}ms after invocation", new Date().getTime() - start);
+            Thread.currentThread().interrupt();
+        } finally {
+            List<Runnable> awaitingExecution = ruleExecService.shutdownNow();
+            logger.info("Awaiting execution: {} ; Shutdown completed: {}", CollectionUtils.size(awaitingExecution),
+                    ruleExecService.isShutdown());
+            logger.info("Parallel rule retrieval completion time for {}: {}ms", keyword, new Date().getTime() - start);
+        }
+
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
         // TODO: support for json if json.nl != map
+        final ExecutorService execService = Executors.newCachedThreadPool();
+        final ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
+        final Long start = new Date().getTime();
 
-        ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
         int tasks = 0;
         DateTime currentDate = DateTime.now();
 
         try {
-            Long start = new Date().getTime();
             NameValuePair nvp;
             final SolrResponseParser solrHelper;
             NameValuePair redirectFqNvp = null;
@@ -858,9 +957,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
             List<String> expiredElevatedList = new ArrayList<String>();
             List<String> forceAddedEDPs = new ArrayList<String>();
-            List<DemoteResult> demoteList = null;
+            List<DemoteResult> demotedList = null;
             List<String> expiredDemotedList = new ArrayList<String>();
-            List<ExcludeResult> excludeList = null;
+            List<ExcludeResult> excludedList = null;
             List<String> expiredExcludedList = new ArrayList<String>();
 
             String sort = request.getParameter(SolrConstants.SOLR_PARAM_SORT);
@@ -1156,6 +1255,15 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 }
 
                 if (keywordPresent) {
+                    RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId);
+                    requestPropertyBean.setGuiRequest(fromSearchGui);
+                    requestPropertyBean.setKeyword(keyword);
+                    Map<String, List<? extends SearchResult>> ruleMap = getItemBasedRules(requestPropertyBean);
+
+                    elevatedList = (List<ElevateResult>) ruleMap.get("elevate");
+                    demotedList = (List<DemoteResult>) ruleMap.get("demote");
+                    excludedList = (List<ExcludeResult>) ruleMap.get("exclude");
+
                     // EXCLUDE
                     if (isActiveSearchRule(storeId, RuleEntity.EXCLUDE)) {
                         StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, keyword);
@@ -1164,9 +1272,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                                     SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
                         }
                         if (!disableExclude) {
-                            excludeList = getExcludeRules(sk, fromSearchGui,
-                                    requestProcessorUtil.getFacetMap(sk.getStoreId()));
-
                             // TODO: refactor to method
                             if (fromSearchGui) {
                                 List<ExcludeResult> expiredList = getExpiredExcludeRules(sk, fromSearchGui,
@@ -1198,8 +1303,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                                     SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
                         }
                         if (!disableDemote && bestMatchFlag) {
-                            demoteList = getDemoteRules(sk, fromSearchGui,
-                                    requestProcessorUtil.getFacetMap(sk.getStoreId()));
                             if (fromSearchGui) {
                                 List<DemoteResult> expiredList = getExpiredDemoteRules(sk, fromSearchGui,
                                         requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1226,8 +1329,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                                     SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
                         }
                         if (!disableElevate) {
-                            elevatedList = getElevateRules(sk, fromSearchGui,
-                                    requestProcessorUtil.getFacetMap(sk.getStoreId()));
                             if (CollectionUtils.isNotEmpty(elevatedList)) {
                                 // prepare force added list
                                 for (ElevateResult elevateResult : elevatedList) {
@@ -1262,8 +1363,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
                     // BANNER
                     try {
-                        RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId, keyword,
-                                keywordPresent, fromSearchGui, disableBanner, currentDate);
+                        requestPropertyBean = new RequestPropertyBean(storeId, keyword, keywordPresent, fromSearchGui,
+                                disableBanner, currentDate);
                         bannerRequestProcessor(request, solrHelper, requestPropertyBean, activeRules, paramMap,
                                 nameValuePairs);
                     } catch (Exception e) {
@@ -1282,7 +1383,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             solrHelper.setElevatedItems(elevatedList);
             solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
             solrHelper.setForceAddedEDPs(forceAddedEDPs);
-            solrHelper.setDemotedItems(demoteList);
+            solrHelper.setDemotedItems(demotedList);
             solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
             solrHelper.setFacetTemplate(facetTemplate);
             solrHelper.setCNETImplementation(configManager.isMemberOf("PCM", storeId));
@@ -1316,8 +1417,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     "0", uniqueFields);
 
             // collate exclude list
-            if (excludeList != null && !excludeList.isEmpty()) {
-                StringBuilder excludeFilters = toSolrFilterQueryValue(request, excludeList);
+            if (excludedList != null && !excludedList.isEmpty()) {
+                StringBuilder excludeFilters = toSolrFilterQueryValue(request, excludedList);
                 if (excludeFilters.length() > 0) {
                     excludeFilters.insert(0, "-");
                     nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeFilters.toString());
@@ -1340,7 +1441,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                             forceAddFilter.toString()));
                     nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, newRedirectFilter
                             .toString()));
-                    
+
                     if (StringUtils.isNotBlank(keyword)) {
                         nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
                     }
@@ -1431,7 +1532,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
             // Collate Elevate and Demote items
             StringBuilder elevateFilters = toSolrFilterQueryValue(request, elevatedList);
-            StringBuilder demoteFilters = toSolrFilterQueryValue(request, demoteList);
+            StringBuilder demoteFilters = toSolrFilterQueryValue(request, demotedList);
 
             Integer numFound = 0;
             Integer numElevateFound = 0;
@@ -1598,9 +1699,18 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             Long qtime = new Date().getTime() - start;
             solrHelper.generateServletResponse(response, qtime);
             SearchLogger.logInfo(fromSearchGui, startRow, requestedRows, originalKeyword);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            logger.info("Interrupted {}s after request started", new Date().getTime() - start);
+            Thread.currentThread().interrupt();
+            throw new ServletException(e);
         } catch (Throwable t) {
             logger.error("Failed to send solr request {}", t);
             throw new ServletException(t);
+        } finally {
+            List<Runnable> awaitingExecution = execService.shutdownNow();
+            logger.info("ShutdownNow invoked, awaiting execution: {}", CollectionUtils.size(awaitingExecution));
         }
     }
+
 }
