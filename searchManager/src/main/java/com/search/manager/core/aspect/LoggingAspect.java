@@ -1,8 +1,12 @@
 package com.search.manager.core.aspect;
 
+import java.util.Date;
+
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
@@ -50,6 +54,20 @@ public class LoggingAspect {
         if (e != null) {
             logger.error("ERROR:" + className + "." + methodName + "():", e);
         }
+    }
+
+    // Request Processor Logging
+
+    @Around("Pointcuts.processRequestProcessor()")
+    public void logArroundRequestProcessor(ProceedingJoinPoint joinPoint) throws Throwable {
+        Logger logger = this.getLogger(joinPoint);
+        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String methodName = joinPoint.getSignature().getName();
+
+        Long processTime = new Date().getTime();
+        joinPoint.proceed();
+        logger.info("END: " + className + "." + methodName + "() execution time: "
+                + (new Date().getTime() - processTime) + "ms");
     }
 
 }
