@@ -1709,7 +1709,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             throw new ServletException(t);
         } finally {
             List<Runnable> awaitingExecution = execService.shutdownNow();
-            logger.error("ShutdownNow invoked, awaiting execution: {}", CollectionUtils.size(awaitingExecution));
+            logger.info("ShutdownNow invoked, awaiting execution: {}", CollectionUtils.size(awaitingExecution));
         }
     }
+
 }
