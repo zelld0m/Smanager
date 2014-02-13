@@ -150,7 +150,10 @@ validateFullname = function(fieldName, fieldValue, length) {
 			return false;
 		}
 	}
-	if (!isAlphanumeric(fieldValue)) {
+	
+	var validRegex= /^[a-zA-Z0-9\s\.]*$/;
+	
+	if (!validRegex.test(fieldValue)) {
 		jAlert("Invalid characters detected in " + fieldName + ".\nAcceptable characters are alphanumeric characters. ", fieldName);
 		return false;
 	}
