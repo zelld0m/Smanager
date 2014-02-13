@@ -438,7 +438,7 @@
 														
 														switch($(evt.currentTarget).attr("id")){
 														case "approveBtn": 
-															DeploymentServiceJS.approveRule(GLOBAL_storeId, tabSelectedText, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
+															DeploymentServiceJS.approveRule(GLOBAL_storeId, entityName, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
 																callback: function(data){
 																	postMsg(data,true);	
 																	getApprovalList();
@@ -453,7 +453,7 @@
 																jAlert("Deleted rules cannot be rejected!","Approval");
 																return;
 															}
-															DeploymentServiceJS.unapproveRule(GLOBAL_storeId, tabSelectedText, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
+															DeploymentServiceJS.unapproveRule(GLOBAL_storeId, entityName, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
 																callback: function(data){
 																	postMsg(data,false);	
 																	getApprovalList();
