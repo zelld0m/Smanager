@@ -563,7 +563,7 @@
                                             self.importRejectRules();
                                         } else {
                                             self.showData();
-                                            jAlert("The following Ranking Rule names already exist:<ul class='mar0 padL30'><li> " + data.join("</li><li>") + "</li></ul>", self.moduleName);
+                                            jAlert("The following Relevancy Rule names already exist:<ul class='mar0 padL30'><li> " + data.join("</li><li>") + "</li></ul>", self.moduleName);
                                         }
                                     }
                                 });
