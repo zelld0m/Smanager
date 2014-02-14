@@ -548,7 +548,7 @@
                                             self.importRejectRules();
                                         } else {
                                             self.showData();
-                                            jAlert("The following Query Cleaning Rule names already exist:<ul class='mar0 padL30'><li>" + data.join("</li><li>") + "</li></ul>", self.moduleName);
+                                            jAlert("The following Redirect Rule names already exist:<ul class='mar0 padL30'><li>" + data.join("</li><li>") + "</li></ul>", self.moduleName);
                                         }
                                     }
                                 });
