@@ -510,6 +510,46 @@
                 </property>
             </properties>
         </module>
+        <module name="typeahead" title="Type-ahead">
+        	<groups>
+        		<group name="Threshold">
+                    <member property-id="daily_search_count_threshold"/>
+                    <member property-id="weekly_search_count_threshold"/>
+                </group>
+                <group name="Display">
+                    <member property-id="typeahead_suggestion_max"/>
+                    <member property-id="typeahead_brand_max"/>
+                    <member property-id="typeahead_keyword_seggestion_max"/>
+                    <member property-id="typeahead_keyword_brand_max"/>
+                </group>
+        	</groups>
+        	<properties>
+        		<property id="daily_search_count_threshold" type="String" multiValued="false">
+                    <label>Daily Search Count Threshold</label>
+                    <defaultValue>2000</defaultValue>
+                </property>
+                <property id="weekly_search_count_threshold" type="String" multiValued="false">
+                    <label>Weekly Search Count Threshold</label>
+                    <defaultValue>7000</defaultValue>
+                </property>
+    			<property id="typeahead_suggestion_max" type="String" multiValued="false">
+                    <label>Suggestion Max Display</label>
+                    <defaultValue>5</defaultValue>
+                </property>
+                <property id="typeahead_brand_max" type="String" multiValued="false">
+                    <label>Brand Max Display</label>
+                    <defaultValue>5</defaultValue>
+                </property>
+    			<property id="typeahead_keyword_seggestion_max" type="String" multiValued="false">
+                    <label>Keyword Suggestion Max Display</label>
+                    <defaultValue>5</defaultValue>
+                </property>
+                <property id="typeahead_keyword_brand_max" type="String" multiValued="false">
+                    <label>Brand Suggestion Max Display</label>
+                    <defaultValue>5</defaultValue>
+                </property>
+    		</properties>
+        </module>
         <module name="workflow" title="Workflow">
     		<groups>
     			<group name="Export Feature">
