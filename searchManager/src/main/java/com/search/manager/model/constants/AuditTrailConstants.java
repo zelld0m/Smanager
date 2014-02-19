@@ -25,7 +25,10 @@ public class AuditTrailConstants {
 		excelFileReport,
 		bannerRule,
 		bannerRuleItem,
-		imagePath
+		imagePath,
+		typeaheadRule,
+		typeaheadSuggestion,
+		typeaheadBrand
 	}
 	
 	public enum Operation {

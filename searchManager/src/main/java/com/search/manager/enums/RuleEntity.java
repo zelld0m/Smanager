@@ -22,7 +22,8 @@ public enum RuleEntity {
 	RULE_STATUS(9, "Rule Status", "ruleStatus"),
 	DEMOTE(10, "Demote", "demote"),
 	FACET_SORT(11, "Facet Sort", "facetSort"),
-    SPELL(12, "Did You Mean", "didYouMean");
+    SPELL(12, "Did You Mean", "didYouMean"),
+    TYPEAHEAD(13, "Type-ahead", "typeahead");
 
 	private final int code;
 	private final List<String> values;

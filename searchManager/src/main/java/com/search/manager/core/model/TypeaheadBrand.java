@@ -1,5 +1,9 @@
 package com.search.manager.core.model;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
+@DataTransferObject(converter = BeanConverter.class)
 public class TypeaheadBrand extends ModelBean{
 
 	private static final long serialVersionUID = -2621695396142439556L;

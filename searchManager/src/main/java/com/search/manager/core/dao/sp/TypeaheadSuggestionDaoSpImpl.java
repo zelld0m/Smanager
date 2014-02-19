@@ -24,6 +24,7 @@ import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
@@ -39,6 +40,15 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 	private UpdateStoredProcedure updateStoredProcedure;
 	private SearchStoredProcedure searchStoredProcedure;
 
+	public TypeaheadSuggestionDaoSpImpl() {};
+	
+	@Autowired(required = true)
+	public TypeaheadSuggestionDaoSpImpl(JdbcTemplate jdbcTemplate) {
+		addStoredProcedure = new AddStoredProcedure(jdbcTemplate);
+		updateStoredProcedure = new UpdateStoredProcedure(jdbcTemplate);
+		searchStoredProcedure = new SearchStoredProcedure(jdbcTemplate);
+	}
+	
 	private class AddStoredProcedure extends GetStoredProcedure {
 
 		public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -68,7 +78,6 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 
 	private class UpdateStoredProcedure extends CUDStoredProcedure {
 
-		// TODO create update sp
 		public UpdateStoredProcedure(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, TypeaheadDaoConstant.SP_UPDATE_TYPEAHEAD_SUGGESTION);
 		}
@@ -145,8 +154,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 	@Override
 	protected StoredProcedure getDeleteStoredProcedure()
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new CoreDaoException("Method has no implementation.");
 	}
 
 	@Override
@@ -159,6 +167,10 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 	protected Map<String, Object> generateAddInput(TypeaheadSuggestion model)
 			throws CoreDaoException {
 		Map<String, Object> inputs = new HashMap<String, Object>();
+		
+		if(model.getTypeaheadSuggestionId() == null) {
+			model.setTypeaheadSuggestionId(DAOUtils.generateUniqueId());
+		}
 		
 		inputs.put(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_SUGGESTION_ID, model.getTypeaheadSuggestionId());
 		inputs.put(DAOConstants.COLUMN_RULE_ID, model.getRuleId());
@@ -177,7 +189,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		
 		inputs.put(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_SUGGESTION_ID, model.getTypeaheadSuggestionId());
-		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, model.getMemberType() != null ? model.getMemberType().ordinal() : null);
+		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, model.getMemberType() != null ? model.getMemberType().ordinal() + 1 : null);
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, model.getMemberValue());
 		inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
 		inputs.put(DAOConstants.COLUMN_LAST_UPDATED_BY, model.getLastModifiedBy());
@@ -199,7 +211,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 		
 		search.addFilter(new Filter(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_SUGGESTION_ID, model.getTypeaheadSuggestionId()));
 		search.addFilter(new Filter(DAOConstants.COLUMN_RULE_ID, model.getRuleId()));
-		search.addFilter(new Filter(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, model.getMemberType() != null ? model.getMemberType().ordinal() : null));
+		search.addFilter(new Filter(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, model.getMemberType() != null ? model.getMemberType().ordinal() + 1 : null));
 		search.addFilter(new Filter(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, model.getMemberValue()));
 		search.addFilter(new Filter(DAOConstants.COLUMN_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null));
 		search.addFilter(new Filter(DAOConstants.PARAM_START_ROW, 0));

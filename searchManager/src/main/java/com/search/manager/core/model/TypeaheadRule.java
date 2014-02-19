@@ -1,7 +1,11 @@
 package com.search.manager.core.model;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 import com.search.manager.enums.RuleType;
 
+@DataTransferObject(converter = BeanConverter.class)
 public class TypeaheadRule extends ModelBean{
 
 	private static final long serialVersionUID = 7840812498092574024L;

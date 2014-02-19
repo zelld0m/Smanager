@@ -24,6 +24,7 @@ import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
 import com.search.manager.enums.RuleType;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -104,7 +105,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.INTEGER));
@@ -125,7 +126,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 	private TypeaheadRule buildModel(ResultSet rs, int rowNum) throws SQLException {
 		if(rs.getMetaData().getColumnCount() < 2)
 			return null;
-		
+
 		TypeaheadRule typeaheadRule = new TypeaheadRule();
 
 		typeaheadRule.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
@@ -137,7 +138,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		typeaheadRule.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
 		typeaheadRule.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
 		typeaheadRule.setRuleName(rs.getString(DAOConstants.COLUMN_RULE_NAME));
-		typeaheadRule.setRuleType(RuleType.values()[rs.getInt(DAOConstants.COLUMN_RULE_TYPE)]);
+		typeaheadRule.setRuleType(RuleType.values()[rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID) - 1]);
 		return typeaheadRule;
 	}
 
@@ -171,9 +172,19 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		Map<String, Object> inputs = null;
 
 		if (model != null) {
+			String ruleId = model.getRuleId();
+
+			if (StringUtils.isBlank(ruleId)) {
+				model.setRuleId(DAOUtils.generateUniqueId());
+			}
+			
+			if(model.getRuleType() == null) {
+				model.setRuleType(RuleType.KEYWORD);
+			}
 			inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
-			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleType() != null ? model.getRuleType().ordinal() : null);
+			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleType() != null ? model.getRuleType().ordinal() + 1 : null);
+			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null);

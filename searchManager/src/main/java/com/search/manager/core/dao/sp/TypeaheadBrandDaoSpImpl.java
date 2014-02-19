@@ -23,6 +23,7 @@ import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
@@ -38,6 +39,15 @@ public class TypeaheadBrandDaoSpImpl extends GenericDaoSpImpl<TypeaheadBrand> im
 	private UpdateStoredProcedure updateStoredProcedure;
 	private SearchStoredProcedure searchStoredProcedure;
 
+	public TypeaheadBrandDaoSpImpl() {};
+	
+	@Autowired(required = true)
+	public TypeaheadBrandDaoSpImpl(JdbcTemplate jdbcTemplate) {
+		addStoredProcedure = new AddStoredProcedure(jdbcTemplate);
+		updateStoredProcedure = new UpdateStoredProcedure(jdbcTemplate);
+		searchStoredProcedure = new SearchStoredProcedure(jdbcTemplate);
+	}
+	
 	private class AddStoredProcedure extends GetStoredProcedure {
 
 		public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -46,10 +56,12 @@ public class TypeaheadBrandDaoSpImpl extends GenericDaoSpImpl<TypeaheadBrand> im
 
 		@Override
 		protected void declareParameters() {
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_BRAND_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_BRAND_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_VENDOR_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_PRODUCT_COUNT, Types.INTEGER));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_SORT_ORDER, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
 		}
@@ -113,7 +125,7 @@ public class TypeaheadBrandDaoSpImpl extends GenericDaoSpImpl<TypeaheadBrand> im
 			return null;
 		
 		TypeaheadBrand typeaheadBrand = new TypeaheadBrand();
-
+		
 		typeaheadBrand.setTypeaheadBrandId(rs.getString(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_BRAND_ID));
 		typeaheadBrand.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
 		typeaheadBrand.setBrandName(rs.getString(TypeaheadDaoConstant.COLUMN_BRAND_NAME));
@@ -160,6 +172,10 @@ public class TypeaheadBrandDaoSpImpl extends GenericDaoSpImpl<TypeaheadBrand> im
 		Map<String, Object> inputs = null;
 
 		if(model != null) {
+
+			if(model.getTypeaheadBrandId() == null) {
+				model.setTypeaheadBrandId(DAOUtils.generateUniqueId());
+			}
 			inputs = new HashMap<String, Object>();
 			inputs.put(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_BRAND_ID, model.getTypeaheadBrandId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());

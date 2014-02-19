@@ -3,6 +3,9 @@ package com.search.manager.core.service.sp;
 import java.util.Collection;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.search.manager.core.dao.TypeaheadSuggestionDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
@@ -11,8 +14,10 @@ import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.TypeaheadSuggestionService;
 
+@Service("typeaheadSuggestionServiceSp")
 public class TypeaheadSuggestionServiceSpImpl implements TypeaheadSuggestionService{
 
+	@Autowired
 	private TypeaheadSuggestionDao dao;
 	
 	@Override

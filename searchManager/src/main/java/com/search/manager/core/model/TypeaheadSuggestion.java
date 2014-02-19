@@ -1,7 +1,11 @@
 package com.search.manager.core.model;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 import com.search.manager.core.enums.MemberType;
 
+@DataTransferObject(converter = BeanConverter.class)
 public class TypeaheadSuggestion extends ModelBean{
 
 	private static final long serialVersionUID = 1601411811965046795L;
