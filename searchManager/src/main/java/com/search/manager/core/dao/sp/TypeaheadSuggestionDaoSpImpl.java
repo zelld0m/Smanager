@@ -6,6 +6,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -58,7 +59,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_SUGGESTION_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, Types.INTEGER));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_SORT_ORDER, Types.INTEGER));
@@ -172,13 +173,17 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 			model.setTypeaheadSuggestionId(DAOUtils.generateUniqueId());
 		}
 		
+		if(model.getCreatedDate() == null) {
+			model.setCreatedDate(new DateTime());
+		}
+		
 		inputs.put(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_SUGGESTION_ID, model.getTypeaheadSuggestionId());
 		inputs.put(DAOConstants.COLUMN_RULE_ID, model.getRuleId());
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, model.getMemberType() != null ? model.getMemberType().ordinal() : null);
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, model.getMemberValue());
 		inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
-		inputs.put(DAOConstants.COLUMN_CREATED_BY, model.getCreatedBy());
-		inputs.put(DAOConstants.COLUMN_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null);
+		inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
+		inputs.put(DAOConstants.PARAM_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null);
 		
 		return inputs;
 	}
