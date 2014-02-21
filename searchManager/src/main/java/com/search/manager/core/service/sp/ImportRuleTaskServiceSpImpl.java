@@ -21,122 +21,13 @@ import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.workflow.constant.WorkflowConstants;
 
 @Service("importRuleTaskServiceSp")
-public class ImportRuleTaskServiceSpImpl implements ImportRuleTaskService {
+public class ImportRuleTaskServiceSpImpl extends GenericServiceSpImpl<ImportRuleTask> implements ImportRuleTaskService {
 
-    @Autowired
-    @Qualifier("importRuleTaskDaoSp")
-    private ImportRuleTaskDao importRuleTaskDao;
-
-    @Override
-    public ImportRuleTask add(ImportRuleTask model) throws CoreServiceException {
-        try {
-            if (model != null) {
-                // TODO Validate required fields.
-                return importRuleTaskDao.add(model);
-            }
-
-            return model;
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
-    @Override
-    public List<ImportRuleTask> add(Collection<ImportRuleTask> models) throws CoreServiceException {
-        try {
-            if (CollectionUtils.isNotEmpty(models)) {
-                // TODO Validate required fields.
-                return (List<ImportRuleTask>) importRuleTaskDao.add(models);
-            }
-
-            return null;
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
-    @Override
-    public ImportRuleTask update(ImportRuleTask model) throws CoreServiceException {
-        try {
-            if (model != null) {
-                // TODO Validate required fields.
-                return importRuleTaskDao.update(model);
-            }
-
-            return model;
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
-    @Override
-    public List<ImportRuleTask> update(Collection<ImportRuleTask> models) throws CoreServiceException {
-        try {
-            if (CollectionUtils.isNotEmpty(models)) {
-                // TODO Validate required fields.
-                return (List<ImportRuleTask>) importRuleTaskDao.update(models);
-            }
-
-            return null;
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
-    @Override
-    public boolean delete(ImportRuleTask model) throws CoreServiceException {
-        try {
-            if (model != null) {
-                // TODO Validate required fields.
-                return importRuleTaskDao.delete(model);
-            }
-            return false;
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
-    @Override
-    public Map<ImportRuleTask, Boolean> delete(Collection<ImportRuleTask> models) throws CoreServiceException {
-        try {
-            if (CollectionUtils.isNotEmpty(models)) {
-                // TODO Validate required fields.
-                return importRuleTaskDao.delete(models);
-            }
-            return null;
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
-    @Override
-    public SearchResult<ImportRuleTask> search(Search search) throws CoreServiceException {
-        try {
-            return importRuleTaskDao.search(search);
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
-    @Override
-    public SearchResult<ImportRuleTask> search(ImportRuleTask model) throws CoreServiceException {
-        try {
-            return importRuleTaskDao.search(model);
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
-    @Override
-    public SearchResult<ImportRuleTask> search(ImportRuleTask model, int pageNumber, int maxRowCount)
-            throws CoreServiceException {
-        try {
-            return importRuleTaskDao.search(model, pageNumber, maxRowCount);
-        } catch (CoreDaoException e) {
-            throw new CoreServiceException(e);
-        }
-    }
-
+	@Autowired
+    public ImportRuleTaskServiceSpImpl(@Qualifier("importRuleTaskDaoSp") ImportRuleTaskDao dao) {
+		super(dao);
+	}
+	
     @Override
     public ImportRuleTask searchById(String storeId, String id) throws CoreServiceException {
         if (StringUtils.isBlank(id) || StringUtils.isBlank(storeId)) {

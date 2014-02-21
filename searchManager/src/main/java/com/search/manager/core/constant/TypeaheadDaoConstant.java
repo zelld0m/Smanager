@@ -12,6 +12,8 @@ public class TypeaheadDaoConstant {
 	public static final String COLUMN_PRODUCT_COUNT = "PRODUCT_COUNT";
 	public static final String COLUMN_SORT_ORDER = "SORT_ORDER";
 	
+	public static final String COLUMN_CATEGORY = "CATEGORY";
+	
 	public static final String SP_ADD_TYPEAHEAD_RULE = "dbo.usp_Add_Typeahead_Rule";
 	public static final String SP_UPDATE_TYPEAHEAD_RULE = "dbo.usp_Update_Typeahead_Rule";
 	public static final String SP_GET_TYPEAHEAD_RULE = "dbo.usp_Get_Typeahead_Rule";
