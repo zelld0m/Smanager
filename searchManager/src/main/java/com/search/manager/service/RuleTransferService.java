@@ -25,9 +25,11 @@ import org.springframework.stereotype.Service;
 import com.search.manager.core.enums.RuleSource;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.RuleStatus;
+import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.CommentService;
 import com.search.manager.core.service.RuleStatusService;
+import com.search.manager.core.service.TypeaheadRuleService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -87,6 +89,8 @@ public class RuleTransferService {
 	@Autowired
 	@Qualifier("commentServiceSp")
 	private CommentService commentService;
+	@Autowired
+	private TypeaheadRuleService typeaheadRuleService;
 
 	private static final int CREATE_RULE_STATUS = 0;
 	private static final int SUBMIT_FOR_APPROVAL = 1;
@@ -273,6 +277,25 @@ public class RuleTransferService {
 				if (StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)) {
 					importAsId = DAOUtils.generateUniqueId();
 				}
+				break;
+			case TYPEAHEAD:
+				TypeaheadRule rule = new TypeaheadRule();
+				
+				rule.setStoreId(store);
+				rule.setRuleName(ruleName);
+				
+				try {
+					SearchResult<TypeaheadRule> result = typeaheadRuleService.search(rule);
+					
+					if(result.getTotalSize() > 0)
+						importAsId = result.getList().get(0).getRuleId();
+					else
+						importAsId = DAOUtils.generateUniqueId();
+					
+				} catch (CoreServiceException e1) { 
+					e1.printStackTrace();
+				}
+								
 				break;
 			default:
 				break;

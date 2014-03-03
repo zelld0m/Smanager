@@ -14,7 +14,9 @@ import com.search.manager.model.RedirectRuleCondition;
 	ExcludeItemXml.class,
 	DemoteItemXml.class,
 	RedirectRuleCondition.class,
-	BannerItemXml.class
+	BannerItemXml.class,
+	TypeaheadSuggestionXml.class,
+	TypeaheadBrandXml.class
 })
 public class RuleItemXml extends BaseEntityXml{
 	

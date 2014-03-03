@@ -23,7 +23,8 @@ import com.search.manager.model.Product;
 	Product.class,
 	BannerRuleXml.class,
 	SpellRules.class,
-	DBRuleVersion.class
+	DBRuleVersion.class,
+	TypeaheadRuleXml.class
 })
 @DataTransferObject(converter = BeanConverter.class)
 public class RuleXml extends BaseEntityXml{

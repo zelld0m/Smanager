@@ -29,6 +29,7 @@ import com.search.manager.dao.file.IRuleVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RedirectRuleVersionDAO;
 import com.search.manager.dao.file.SpellRuleVersionDAO;
+import com.search.manager.dao.file.TypeaheadRuleVersionDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
@@ -87,6 +88,7 @@ import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
+import com.search.manager.report.model.xml.TypeaheadRuleXml;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -138,6 +140,8 @@ public class DaoServiceImpl implements DaoService {
     private SpellRuleVersionDAO spellRuleVersionDAO;
     @Autowired
     private BannerVersionDAO bannerVersionDAO;
+    @Autowired
+    private TypeaheadRuleVersionDAO typeaheadRuleVersionDAO;
     @Autowired
     private SearchHelper searchHelper;
     
@@ -1350,6 +1354,8 @@ public class DaoServiceImpl implements DaoService {
                 return spellRuleVersionDAO;
             case BANNER:
                 return bannerVersionDAO;
+            case TYPEAHEAD:
+            	return typeaheadRuleVersionDAO;
         }
         return null;
     }
@@ -1372,6 +1378,8 @@ public class DaoServiceImpl implements DaoService {
             return spellRuleVersionDAO;
         } else if (xml instanceof BannerRuleXml) {
             return bannerVersionDAO;
+        } else if(xml instanceof TypeaheadRuleXml) {
+        	return typeaheadRuleVersionDAO;
         }
         return null;
     }

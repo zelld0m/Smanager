@@ -240,6 +240,7 @@
 			case "elevate": 
 			case "exclude":
 			case "demote":
+			case "typeahead":
 				template  = '<div class="rulePreview w600">';
 				template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
 				template += '	<label class="w110 floatL fbold">Rule Name:</label>';

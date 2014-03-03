@@ -31,7 +31,7 @@
 			keywordIconPath: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_keyword.png'/>",
 			templateIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_template.png'/>",
 
-			prepareFacetSort : function(){
+			prepareTypeahead : function(){
 				clearAllQtip();
 				$("#preloader").show();
 				$("#submitForApproval, #noSelected").hide();
@@ -43,7 +43,7 @@
 			showFacetSort : function(){
 				var self = this;
 
-				self.prepareFacetSort();
+				self.prepareTypeahead();
 				self.getFacetSortRuleList(1);
 
 				if(self.selectedRule==null){
@@ -56,18 +56,18 @@
 				$("#submitForApproval").rulestatusbar({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
-					ruleType: "Facet Sort",
+					ruleType: "Type-ahead",
 					enableVersion: true,
 					authorizeRuleBackup: allowModify,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
-						FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
+						TypeaheadRuleServiceJS.getRuleById(self.selectedRule["ruleId"],{
 							callback: function(data){
 								self.setFacetSort(data);
 							},
 							preHook: function(){
-								self.prepareFacetSort();
+								self.prepareTypeahead();
 							}
 						});
 					},
@@ -75,7 +75,7 @@
 						self.showFacetSort();
 					},
 					beforeRuleStatusRequest: function(){
-						self.prepareFacetSort();	
+						self.prepareTypeahead();	
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						$("#preloader").hide();
@@ -84,10 +84,10 @@
 						$("#titleHeader").text(self.selectedRule["ruleName"]);
 						$("#readableString").html(self.selectedRule["readableString"]);
 
-						switch(self.selectedRule["ruleType"].toLowerCase()){
-						case "keyword":	$("#ruleTypeIcon").append(self.keywordIconPath); break;
-						case "template": $("#ruleTypeIcon").append(self.templateIconPath); break;
-						}
+//						switch(self.selectedRule["ruleType"].toLowerCase()){
+//						case "keyword":	$("#ruleTypeIcon").append(self.keywordIconPath); break;
+//						case "template": $("#ruleTypeIcon").append(self.templateIconPath); break;
+//						}
 
 						var $facetSortOrder = $('#facetSortOrder');
 						self.populateSortOrderList($facetSortOrder, self.selectedRule["sortType"]);
@@ -509,10 +509,8 @@
 						var iconPath = "";
 
 						item.ui.find("#itemLinkValue").empty();
-						switch(item.model["ruleType"].toLowerCase()){
-						case "keyword": iconPath = self.keywordIconPath; break;
-						case "template": iconPath = self.templateIconPath; break;
-						}
+						iconPath = self.keywordIconPath;
+						
 						if ($.isNotBlank(iconPath)) item.ui.find(".itemIcon").html(iconPath);
 					}
 				});
@@ -725,7 +723,7 @@
 									showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
 								},
 								preHook: function(){
-									self.prepareFacetSort();
+									self.prepareTypeahead();
 								},
 								postHook: function(){
 									if(response>0){
@@ -734,7 +732,7 @@
 												self.setFacetSort(data);
 											},
 											preHook: function(){
-												self.prepareFacetSort();
+												self.prepareTypeahead();
 											}
 										});
 									}

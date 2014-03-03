@@ -28,7 +28,8 @@ public class AuditTrailConstants {
 		imagePath,
 		typeaheadRule,
 		typeaheadSuggestion,
-		typeaheadBrand
+		typeaheadBrand,
+		typeaheadCategory
 	}
 	
 	public enum Operation {

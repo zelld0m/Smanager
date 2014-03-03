@@ -41,7 +41,8 @@ public class RuleVersionListXml<T>{
 		@XmlElementRef(name="rankingrule", type=RankingRuleXml.class),
 		@XmlElementRef(name="spellrule", type=SpellRules.class),
 		@XmlElementRef(name="dbruleversion", type=DBRuleVersion.class),
-        @XmlElementRef(name="banner", type=BannerRuleXml.class)
+        @XmlElementRef(name="banner", type=BannerRuleXml.class),
+        @XmlElementRef(name="banner", type=TypeaheadRuleXml.class)
 	})
 	public List<T> getVersions() {
 		return versions;

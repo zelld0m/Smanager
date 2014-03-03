@@ -117,6 +117,7 @@ public class RuleVersionService {
                 case DEMOTE:
                 case FACET_SORT:
                 case QUERY_CLEANING:
+                case TYPEAHEAD:
                 default:
                     break;
                 case RANKING_RULE:

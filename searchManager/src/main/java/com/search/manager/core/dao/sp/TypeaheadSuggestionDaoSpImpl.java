@@ -218,7 +218,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 		search.addFilter(new Filter(DAOConstants.COLUMN_RULE_ID, model.getRuleId()));
 		search.addFilter(new Filter(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, model.getMemberType() != null ? model.getMemberType().ordinal() + 1 : null));
 		search.addFilter(new Filter(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, model.getMemberValue()));
-		search.addFilter(new Filter(DAOConstants.COLUMN_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null));
+		search.addFilter(new Filter(DAOConstants.PARAM_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null));
 		search.addFilter(new Filter(DAOConstants.PARAM_START_ROW, 0));
 		search.addFilter(new Filter(DAOConstants.PARAM_END_ROW, 0));
 		
@@ -233,7 +233,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 		inputs.put(DAOConstants.COLUMN_RULE_ID, null);
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, null);
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, null);
-		inputs.put(DAOConstants.COLUMN_CREATED_STAMP, null);
+		inputs.put(DAOConstants.PARAM_CREATED_STAMP, null);
 		inputs.put(DAOConstants.PARAM_START_ROW, 0);
 		inputs.put(DAOConstants.PARAM_END_ROW, 0);
 		

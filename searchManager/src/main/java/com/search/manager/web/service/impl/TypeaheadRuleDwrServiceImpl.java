@@ -1,6 +1,5 @@
 package com.search.manager.web.service.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -16,11 +15,14 @@ import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.TypeaheadBrand;
 import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.model.TypeaheadSuggestion;
+import com.search.manager.core.search.Filter;
+import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
+import com.search.manager.core.search.Filter.MatchType;
 import com.search.manager.core.service.TypeaheadBrandService;
 import com.search.manager.core.service.TypeaheadRuleService;
 import com.search.manager.core.service.TypeaheadSuggestionService;
-import com.search.manager.enums.RuleType;
+import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.UtilityService;
 import com.search.manager.web.service.TypeaheadRuleDwrService;
@@ -59,7 +61,6 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 			typeaheadRule.setCreatedBy(utilityService.getUsername());
 			typeaheadRule.setCreatedDate(new DateTime());
-			typeaheadRule.setRuleType(RuleType.KEYWORD);
 
 
 			typeaheadRule = typeaheadRuleService.add(typeaheadRule);
@@ -135,14 +136,36 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 			String storeId = utilityService.getStoreId();
 
-			TypeaheadRule typeaheadRule = new TypeaheadRule();
+			Search search = new Search(TypeaheadRule.class);
+			search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+	        search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, name));
+	        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.LIKE_NAME.getIntValue()));
+	        search.setPageNumber(page);
+	        search.setMaxRowCount(itemsPerPage);
+			
+			serviceResponse.success(typeaheadRuleService.search(search));
 
-			if(StringUtils.isNotBlank(name)) {
-				typeaheadRule.setRuleName(name);
-			}
+		} catch (CoreServiceException e) {
+			logger.error("getAllRule() failed.", e);
+			serviceResponse.error("Unable to add typeahead rule.");
+		}
+		return serviceResponse;
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<TypeaheadRule> getByRuleId(String ruleId) {
+		ServiceResponse<TypeaheadRule> serviceResponse = new ServiceResponse<TypeaheadRule>();
+		try {
 
-			typeaheadRule.setStoreId(storeId);
-			serviceResponse.success(typeaheadRuleService.search(typeaheadRule, page, itemsPerPage));
+			String storeId = utilityService.getStoreId();
+
+			Search search = new Search(TypeaheadRule.class);
+			search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
+	        search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, ruleId));
+	        search.setPageNumber(1);
+	        search.setMaxRowCount(1);
+			
+			serviceResponse.success(typeaheadRuleService.search(search).getList().get(0));
 
 		} catch (CoreServiceException e) {
 			logger.error("getAllRule() failed.", e);

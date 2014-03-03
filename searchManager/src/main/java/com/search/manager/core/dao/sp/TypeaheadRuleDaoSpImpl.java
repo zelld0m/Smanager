@@ -22,11 +22,11 @@ import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
+import com.search.manager.core.search.Filter.MatchType;
 import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.GetStoredProcedure;
-import com.search.manager.enums.RuleType;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 
@@ -62,9 +62,9 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_SORT_ORDER, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
 		}
@@ -89,8 +89,8 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_SORT_ORDER, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.COLUMN_LAST_UPDATED_STAMP, Types.TIMESTAMP));
 		}
@@ -105,9 +105,9 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
@@ -134,11 +134,10 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		typeaheadRule.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
 		typeaheadRule.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
 				.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
-
+		typeaheadRule.setSortOrder(rs.getInt(TypeaheadDaoConstant.COLUMN_SORT_ORDER));
 		typeaheadRule.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
 		typeaheadRule.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
 		typeaheadRule.setRuleName(rs.getString(DAOConstants.COLUMN_RULE_NAME));
-		typeaheadRule.setRuleType(RuleType.values()[rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID) - 1]);
 		return typeaheadRule;
 	}
 
@@ -178,14 +177,11 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 				model.setRuleId(DAOUtils.generateUniqueId());
 			}
 			
-			if(model.getRuleType() == null) {
-				model.setRuleType(RuleType.KEYWORD);
-			}
 			inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
-			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleType() != null ? model.getRuleType().ordinal() + 1 : null);
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
+			inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null);
 		}
@@ -201,9 +197,10 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		if (model != null) {
 			inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
-			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleType() != null ? model.getRuleType().ordinal() : null);
 			inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
+			inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, model.getLastModifiedBy());
+			inputs.put(DAOConstants.COLUMN_LAST_UPDATED_STAMP, model.getLastModifiedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getLastModifiedDate()): null);
 		}
 
 		return inputs;
@@ -223,9 +220,11 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		Search search = new Search(TypeaheadRule.class);
 
 		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, model.getRuleId()));
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_TYPE_ID, model.getRuleType() != null ? model.getRuleType().ordinal() : null));
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, model.getStoreId()));
-		search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, model.getRuleName()));
+		if (StringUtils.isNotBlank(model.getRuleName())) {
+            search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, model.getRuleName()));
+            search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_NAME.getIntValue()));
+        }
 		search.addFilter(new Filter(DAOConstants.PARAM_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null));
 
 
@@ -237,9 +236,9 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		Map<String, Object> inParam = new HashMap<String, Object>();
 
 		inParam.put(DAOConstants.PARAM_RULE_ID, null);
-		inParam.put(DAOConstants.PARAM_RULE_TYPE_ID, null);
 		inParam.put(DAOConstants.PARAM_STORE_ID, null);
 		inParam.put(DAOConstants.PARAM_RULE_NAME, null);
+		inParam.put(DAOConstants.PARAM_MATCH_TYPE, null);
 		inParam.put(DAOConstants.PARAM_CREATED_STAMP, null);
 		inParam.put(DAOConstants.PARAM_START_ROW, 0);
 		inParam.put(DAOConstants.PARAM_END_ROW, 0);

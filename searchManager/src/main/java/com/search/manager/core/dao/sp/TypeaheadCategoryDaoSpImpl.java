@@ -11,7 +11,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
+import com.search.manager.core.annotation.Auditable;
 import com.search.manager.core.constant.TypeaheadDaoConstant;
 import com.search.manager.core.dao.TypeaheadCategoryDao;
 import com.search.manager.core.exception.CoreDaoException;
@@ -21,7 +23,10 @@ import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.GetStoredProcedure;
 import com.search.manager.jodatime.JodaDateTimeUtil;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
 
+@Auditable(entity = Entity.typeaheadCategory)
+@Repository("typeaheadCategoryDaoSp")
 public class TypeaheadCategoryDaoSpImpl extends GenericDaoSpImpl<TypeaheadCategory> implements TypeaheadCategoryDao{
 
 	@Autowired

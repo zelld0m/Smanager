@@ -38,6 +38,8 @@
 		        <li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
 		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
 		        <li><a href="#bannerTab"><span>Banner</span></a></li>
+		        <li><a href="#typeaheadTab"><span>Type-ahead</span></a></li>
+		        
 		    </ul>
 		   
 			<div class="minHeight400" id="elevateTab"></div>
@@ -48,6 +50,7 @@
 			<div class="minHeight400" id="rankingRuleTab"></div>
 			<div class="minHeight400" id="didYouMeanTab"></div>
 			<div class="minHeight400" id="bannerTab"></div>
+			<div class="minHeight400" id="typeaheadTab"></div>
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">
