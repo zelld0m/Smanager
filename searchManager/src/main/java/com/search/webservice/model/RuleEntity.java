@@ -35,6 +35,7 @@ public class RuleEntity implements Serializable {
 	public static final String _QUERY_CLEANING = "QUERY_CLEANING";
 	public static final String _RANKING_RULE = "RANKING_RULE";
 	public static final String _SPELL = "SPELL";
+	public static final String _TYPEAHEAD = "TYPEAHEAD";
 	public static final RuleEntity ELEVATE = new RuleEntity(_ELEVATE);
 	public static final RuleEntity EXCLUDE = new RuleEntity(_EXCLUDE);
 	public static final RuleEntity DEMOTE = new RuleEntity(_DEMOTE);
@@ -46,6 +47,7 @@ public class RuleEntity implements Serializable {
 	public static final RuleEntity QUERY_CLEANING = new RuleEntity(_QUERY_CLEANING);
 	public static final RuleEntity RANKING_RULE = new RuleEntity(_RANKING_RULE);
 	public static final RuleEntity SPELL = new RuleEntity(_SPELL);
+	public static final RuleEntity TYPEAHEAD = new RuleEntity(_TYPEAHEAD);
 
 	public String getValue() {
 		return _value_;

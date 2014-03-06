@@ -14,6 +14,10 @@ public abstract class GenericServiceSpImpl<T extends ModelBean> {
 
 	protected GenericDao<T> dao;
 	
+	public GenericServiceSpImpl() {
+		
+	}
+	
 	public GenericServiceSpImpl(GenericDao<T> dao) {
 		this.dao = dao;
 	}

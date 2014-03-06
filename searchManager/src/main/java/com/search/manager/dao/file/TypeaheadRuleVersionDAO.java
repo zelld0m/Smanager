@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.search.manager.core.exception.CoreServiceException;
@@ -23,10 +24,13 @@ public class TypeaheadRuleVersionDAO extends AbstractRuleVersionDAO<TypeaheadRul
 			.getLogger(TypeaheadRuleVersionDAO.class);
 
 	@Autowired
+	@Qualifier("typeaheadRuleServiceSp")
 	private TypeaheadRuleService typeaheadRuleService;
 	@Autowired
+	@Qualifier("typeaheadBrandServiceSp")
 	private TypeaheadBrandService typeaheadBrandService;
 	@Autowired
+	@Qualifier("typeaheadSuggestionServiceSp")
 	private TypeaheadSuggestionService typeaheadSuggestionService;
 
 	@Override
@@ -61,8 +65,6 @@ public class TypeaheadRuleVersionDAO extends AbstractRuleVersionDAO<TypeaheadRul
 				return true;
 
 			} catch (CoreServiceException e) {
-				logger.error("Error occurred in addLatestVersion.", e);
-			} catch (Exception e) {
 				logger.error("Error occurred in addLatestVersion.", e);
 			}
 		}

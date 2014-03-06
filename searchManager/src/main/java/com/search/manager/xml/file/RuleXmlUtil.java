@@ -113,10 +113,13 @@ public class RuleXmlUtil {
 	@Qualifier("imagePathServiceSp")
 	private ImagePathService imagePathService;
 	@Autowired
+	@Qualifier("typeaheadRuleServiceSp")
 	private TypeaheadRuleService typeaheadRuleService;
 	@Autowired
+	@Qualifier("typeaheadBrandServiceSp")
 	private TypeaheadBrandService typeaheadBrandService;
 	@Autowired
+	@Qualifier("typeaheadSuggestionServiceSp")
 	private TypeaheadSuggestionService typeaheadSuggestionService;
 	@Autowired
 	private ConfigManager configManager;

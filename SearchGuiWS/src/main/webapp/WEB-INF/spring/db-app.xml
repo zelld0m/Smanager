@@ -90,6 +90,7 @@
 	<beans:bean name="rankingRuleVersionDAO" id="rankingRuleVersionDAO" class="com.search.manager.dao.file.RankingRuleVersionDAO" scope="singleton" />
 	<beans:bean name="exportRuleMapDAO" id="exportRuleMapDAO" class="com.search.manager.dao.sp.ExportRuleMapDAO" scope="singleton" />
 	<beans:bean name="bannerVersionDAO" id="bannerVersionDAO" class="com.search.manager.dao.file.BannerVersionDAO" scope="singleton" />
+	<beans:bean name="typeaheadRuleVersionDAO" id="typeaheadRuleVersionDAO" class="com.search.manager.dao.file.TypeaheadRuleVersionDAO" scope="singleton" />
 	<beans:bean name="searchHelper" id="searchHelper" class="com.search.ws.SearchHelper" scope="singleton" />
 	
 	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.internal.DaoServiceImpl" scope="singleton">

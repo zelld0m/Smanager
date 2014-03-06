@@ -3,6 +3,7 @@ package com.search.manager.core.service.sp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.constant.TypeaheadDaoConstant;
@@ -20,7 +21,7 @@ import com.search.manager.dao.sp.DAOConstants;
 public class TypeaheadSuggestionServiceSpImpl extends GenericServiceSpImpl<TypeaheadSuggestion> implements TypeaheadSuggestionService{
 
 	@Autowired
-	public TypeaheadSuggestionServiceSpImpl(TypeaheadSuggestionDao dao) {
+	public TypeaheadSuggestionServiceSpImpl(@Qualifier("typeaheadSuggestionDaoSp")TypeaheadSuggestionDao dao) {
 		super(dao);
 	}
 

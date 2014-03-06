@@ -140,6 +140,8 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService {
                 return "FACET_SORT";
             case 12:
                 return "SPELL";
+            case 13:
+                return "TYPEAHEAD";
             default:
                 break;
         }

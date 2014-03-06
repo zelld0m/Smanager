@@ -36,6 +36,15 @@
 	<bean id="ruleStatusDaoSp" class="com.search.manager.core.dao.sp.RuleStatusDaoSpImpl" scope="singleton">
 		<constructor-arg ref="jdbcTemplate" />
 	</bean>
+	<bean id="typeaheadRuleDaoSp" class="com.search.manager.core.dao.sp.TypeaheadRuleDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	<bean id="typeaheadBrandDaoSp" class="com.search.manager.core.dao.sp.TypeaheadBrandDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	<bean id="typeaheadSuggestionDaoSp" class="com.search.manager.core.dao.sp.TypeaheadSuggestionDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
 	<!-- core dao [staging] -->
 	<bean id="bannerRuleDaoSpStg" class="com.search.manager.core.dao.sp.BannerRuleDaoSpImpl" scope="singleton">
 		<constructor-arg ref="jdbcTemplateStg" />
@@ -44,6 +53,9 @@
 		<constructor-arg ref="jdbcTemplateStg" />
 	</bean>
 	<bean id="imagePathDaoSpStg" class="com.search.manager.core.dao.sp.ImagePathDaoSpImpl" scope="singleton">
+		<constructor-arg ref="jdbcTemplateStg" />
+	</bean>
+	<bean id="typeaheadRuleDaoSpStg" class="com.search.manager.core.dao.sp.TypeaheadRuleDaoSpImpl" scope="singleton">
 		<constructor-arg ref="jdbcTemplateStg" />
 	</bean>
 	<bean id="ruleStatusDaoSpStg" class="com.search.manager.core.dao.sp.RuleStatusDaoSpImpl" scope="singleton">
@@ -67,6 +79,18 @@
     	<property name="bannerRuleService" ref="bannerRuleServiceSp" />
     	<property name="imagePathService" ref="imagePathServiceSp" />
     </bean>
+    <bean id="typeaheadRuleServiceSp" class="com.search.manager.core.service.sp.TypeaheadRuleServiceSpImpl" scope="singleton">
+    	<constructor-arg ref="typeaheadRuleDaoSp"/>
+    	<property name="ruleStatusService" ref="ruleStatusServiceSp" />
+    	<property name="utilityService" ref="utilityService" />
+    </bean>
+    <bean id="typeaheadBrandServiceSp" class="com.search.manager.core.service.sp.TypeaheadBrandServiceSpImpl" scope="singleton">
+    	<constructor-arg ref="typeaheadRuleDaoSp"/>
+    </bean>
+    <bean id="typeaheadSuggestionServiceSp" class="com.search.manager.core.service.sp.TypeaheadSuggestionServiceSpImpl" scope="singleton">
+    	<constructor-arg ref="typeaheadRuleDaoSp"/>
+    </bean>
+    
 	<!-- core service [staging] -->
 	<bean id="ruleStatusServiceSpStg" class="com.search.manager.core.service.sp.RuleStatusServiceSpImpl" scope="singleton">
     	<property name="ruleStatusDao" ref="ruleStatusDaoSpStg" />
@@ -83,6 +107,9 @@
     	<property name="bannerRuleItemDao" ref="bannerRuleItemDaoSpStg" />
     	<property name="bannerRuleService" ref="bannerRuleServiceSpStg" />
     	<property name="imagePathService" ref="imagePathServiceSpStg" />
+    </bean>
+    <bean id="typeaheadRuleServiceSpStg" class="com.search.manager.core.service.sp.TypeaheadRuleServiceSpImpl" scope="singleton">
+    	<constructor-arg ref="typeaheadRuleDaoSpStg"/>
     </bean>
     
     <!-- solr core -->

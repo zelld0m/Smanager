@@ -20,6 +20,8 @@ public interface DeploymentRuleService {
     public Map<String, Boolean> publishDidYouMeanRulesMap(String store, List<String> list);
 
     public Map<String, Boolean> publishBannerRulesMap(String store, List<String> list);
+    
+    public Map<String, Boolean> publishTypeaheadRule(String store, List<String> ids);
 
     public boolean loadElevateRules(String store);
 

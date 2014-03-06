@@ -3,6 +3,7 @@ package com.search.manager.core.service.sp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.constant.TypeaheadDaoConstant;
@@ -13,7 +14,6 @@ import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
-import com.search.manager.core.search.Filter.MatchType;
 import com.search.manager.core.service.TypeaheadBrandService;
 import com.search.manager.dao.sp.DAOConstants;
 
@@ -21,7 +21,7 @@ import com.search.manager.dao.sp.DAOConstants;
 public class TypeaheadBrandServiceSpImpl extends GenericServiceSpImpl<TypeaheadBrand> implements TypeaheadBrandService{
 
 	@Autowired
-	public TypeaheadBrandServiceSpImpl(TypeaheadBrandDao dao) {
+	public TypeaheadBrandServiceSpImpl(@Qualifier("typeaheadBrandDaoSp")TypeaheadBrandDao dao) {
 		super(dao);
 	}
 

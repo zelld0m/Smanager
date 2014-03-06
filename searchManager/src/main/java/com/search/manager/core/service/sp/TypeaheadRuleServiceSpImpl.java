@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.dao.TypeaheadRuleDao;
@@ -26,15 +27,27 @@ import com.search.manager.service.UtilityService;
 public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRule> implements TypeaheadRuleService{
 
 	@Autowired
+	@Qualifier("ruleStatusServiceSp")
 	private RuleStatusService ruleStatusService;
 	@Autowired
-	private TypeaheadRuleDao dao;
-	@Autowired
+	@Qualifier("utilityService")
 	private UtilityService utilityService;
 
+	public TypeaheadRuleServiceSpImpl() {
+		super();
+	}
+	
 	@Autowired
-	public TypeaheadRuleServiceSpImpl(TypeaheadRuleDao dao) {
+	public TypeaheadRuleServiceSpImpl(@Qualifier("typeaheadRuleDaoSp") TypeaheadRuleDao dao) {
 		super(dao);
+	}
+
+	public void setRuleStatusService(RuleStatusService ruleStatusService) {
+		this.ruleStatusService = ruleStatusService;
+	}
+
+	public void setUtilityService(UtilityService utilityService) {
+		this.utilityService = utilityService;
 	}
 
 	@Override
@@ -78,20 +91,20 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 		if (StringUtils.isBlank(storeId) || StringUtils.isBlank(id)) {
 			return null;
 		}
-		
+
 		Search search = new Search(TypeaheadRule.class);
 		search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
-        search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, id));
-        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue()));
-        search.setPageNumber(1);
-        search.setMaxRowCount(1);
-        
-        SearchResult<TypeaheadRule> searchResult = search(search);
+		search.addFilter(new Filter(DAOConstants.PARAM_RULE_ID, id));
+		search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.MATCH_ID.getIntValue()));
+		search.setPageNumber(1);
+		search.setMaxRowCount(1);
 
-        if (searchResult.getTotalCount() > 0) {
-            return (TypeaheadRule) CollectionUtils.get(searchResult.getResult(), 0);
-        }
-        
+		SearchResult<TypeaheadRule> searchResult = search(search);
+
+		if (searchResult.getTotalCount() > 0) {
+			return (TypeaheadRule) CollectionUtils.get(searchResult.getResult(), 0);
+		}
+
 		return null;
 	}
 
