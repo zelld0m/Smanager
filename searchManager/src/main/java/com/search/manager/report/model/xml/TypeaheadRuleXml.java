@@ -29,7 +29,7 @@ public class TypeaheadRuleXml extends RuleXml{
 	
 	private Integer sortOrder;
 	
-	private Boolean visible;
+	private Boolean disabled;
 	
 	public TypeaheadRuleXml() {
 		super();
@@ -94,11 +94,11 @@ public class TypeaheadRuleXml extends RuleXml{
 		this.sortOrder = sortOrder;
 	}
 
-	public Boolean getVisible() {
-		return visible;
+	public Boolean getDisabled() {
+		return disabled;
 	}
 
-	public void setVisible(Boolean visible) {
-		this.visible = visible;
+	public void setDisabled(Boolean disabled) {
+		this.disabled = disabled;
 	}
 }

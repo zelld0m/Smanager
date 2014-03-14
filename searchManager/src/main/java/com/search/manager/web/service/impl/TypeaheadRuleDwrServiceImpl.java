@@ -88,7 +88,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
 
 			existingRule.setSortOrder(typeaheadRule.getSortOrder());
-			existingRule.setVisible(typeaheadRule.getVisible());
+			existingRule.setDisabled(typeaheadRule.getDisabled());
 			existingRule.setRuleName(typeaheadRule.getRuleName());
 			existingRule.setLastModifiedDate(new DateTime());
 			existingRule.setLastModifiedBy(utilityService.getUsername());

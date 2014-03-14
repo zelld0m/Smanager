@@ -87,25 +87,6 @@
 						$("#titleHeader").text(self.selectedRule["ruleName"]);
 						$("#readableString").html(self.selectedRule["readableString"]);
 
-//						switch(self.selectedRule["ruleType"].toLowerCase()){
-//						case "keyword":	$("#ruleTypeIcon").append(self.keywordIconPath); break;
-//						case "template": $("#ruleTypeIcon").append(self.templateIconPath); break;
-//						}
-
-						var $facetSortOrder = $('#facetSortOrder');
-						self.populateSortOrderList($facetSortOrder, self.selectedRule["sortType"]);
-						self.selectedRuleStatus = ruleStatus;
-
-						$facetSortOrder.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
-
-						$("#facetsorting").show();
-						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
-
-						self.createFacetGroupTabs();
-						self.addSaveRuleListener();
-						self.addDeleteRuleListener();
-						self.addDownloadListener();
-
 						$('#auditIcon').off().on({
 							click: function(e){
 								$(e.currentTarget).viewaudit({
@@ -127,7 +108,21 @@
 					}
 				});
 			},
-
+			populateSortOrderList : function(contentHolder, selectedOrder){
+				var self = this;
+				contentHolder.find("option").remove();
+				
+				if($.isNotBlank(selectedOrder)){
+					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
+						contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
+					});
+				}
+				else{
+					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
+						contentHolder.append($("<option>", {value: sortDisplayText}).text(sortDisplayText));
+					});
+				}
+			},			
 			setTypeahead : function(rule){
 				var self = this;
 				self.selectedRule = rule;
@@ -139,7 +134,7 @@
 
 //				$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
 
-//				self.showTypeahead();
+				self.showTypeahead();
 			},
 			loadRuleList: function(matchType, page) {
 				var self = this;
@@ -234,7 +229,7 @@
 			},
 			updateTypeaheadRule: function($divRow) {
 				var self = this;
-				var typeaheadRule = {ruleId : $divRow.find('.ruleId').val(), sortOrder : $divRow.find('.sortOrder').val(), storeId: GLOBAL_storeId, visible: $divRow.find('.ruleVisibility')};
+				var typeaheadRule = {ruleId : $divRow.find('.ruleId').val(), sortOrder : $divRow.find('.sortOrder').val(), storeId: GLOBAL_storeId, disabled: $divRow.find('.ruleVisibility')};
 				TypeaheadRuleServiceJS.updateRule(typeaheadRule, {
 					callback: function(response){
 						if(response && response.success != null)
@@ -399,23 +394,6 @@
 					}
 				});
 			},
-
-			populateSortOrderList : function(contentHolder, selectedOrder){
-				var self = this;
-				contentHolder.find("option").remove();
-
-				if($.isNotBlank(selectedOrder)){
-					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
-						contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
-					});
-				}
-				else{
-					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
-						contentHolder.append($("<option>", {value: sortDisplayText}).text(sortDisplayText));
-					});
-				}
-			},
-
 			getTypeaheadRuleList : function(page) { 
 				var self = this;
 
