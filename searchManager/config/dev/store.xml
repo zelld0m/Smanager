@@ -513,38 +513,48 @@
         <module name="typeahead" title="Type-ahead">
         	<groups>
         		<group name="Threshold">
-                    <member property-id="daily_search_count_threshold"/>
-                    <member property-id="weekly_search_count_threshold"/>
+                    <member property-id="typeahead.dailySearchCountThreshold"/>
+                    <member property-id="typeahead.dailyDefaultStatus"/>
+                    <member property-id="typeahead.weeklySearchCountThreshold"/>
+                    <member property-id="typeahead.weeklyDefaultStatus"/>
                 </group>
                 <group name="Display">
-                    <member property-id="typeahead_suggestion_max"/>
-                    <member property-id="typeahead_brand_max"/>
-                    <member property-id="typeahead_keyword_seggestion_max"/>
-                    <member property-id="typeahead_keyword_brand_max"/>
+                    <member property-id="typeahead.suggestionMax"/>
+                    <member property-id="typeahead.brandMax"/>
+                    <member property-id="typeahead.keywordSuggestionMax"/>
+                    <member property-id="typeahead.keywordBrandMax"/>
                 </group>
         	</groups>
         	<properties>
-        		<property id="daily_search_count_threshold" type="String" multiValued="false">
+        		<property id="typeahead.dailySearchCountThreshold" type="String" multiValued="false">
                     <label>Daily Search Count Threshold</label>
                     <defaultValue>2000</defaultValue>
                 </property>
-                <property id="weekly_search_count_threshold" type="String" multiValued="false">
+                <property id="typeahead.dailyDefaultStatus" type="DropDown" required="true">
+                    <label>Daily Defauly Status</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+                <property id="typeahead.weeklySearchCountThreshold" type="String" multiValued="false">
                     <label>Weekly Search Count Threshold</label>
                     <defaultValue>7000</defaultValue>
                 </property>
-    			<property id="typeahead_suggestion_max" type="String" multiValued="false">
+                <property id="typeahead.weeklyDefaultStatus" type="DropDown" required="true">
+                    <label>Weekly Defauly Status</label>
+                    <defaultValue>For Review</defaultValue>
+                </property>
+    			<property id="typeahead.suggestioMax" type="String" multiValued="false">
                     <label>Suggestion Max Display</label>
                     <defaultValue>5</defaultValue>
                 </property>
-                <property id="typeahead_brand_max" type="String" multiValued="false">
+                <property id="typeahead.brandMax" type="String" multiValued="false">
                     <label>Brand Max Display</label>
                     <defaultValue>5</defaultValue>
                 </property>
-    			<property id="typeahead_keyword_seggestion_max" type="String" multiValued="false">
+    			<property id="typeahead.keywordSuggestionMax" type="String" multiValued="false">
                     <label>Keyword Suggestion Max Display</label>
                     <defaultValue>5</defaultValue>
                 </property>
-                <property id="typeahead_keyword_brand_max" type="String" multiValued="false">
+                <property id="typeahead.keywordBrandMax" type="String" multiValued="false">
                     <label>Brand Suggestion Max Display</label>
                     <defaultValue>5</defaultValue>
                 </property>

@@ -1,6 +1,6 @@
 (function($){
 
-	var FacetSort = {
+	var Typeahead = {
 			moduleName: "Typeahead",
 			selectedRule:  null,
 			selectedRuleStatus: null,
@@ -30,6 +30,9 @@
 
 			keywordIconPath: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_keyword.png'/>",
 			templateIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_template.png'/>",
+			saveIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_disk.png'/>",
+			rectLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
+			magniIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_magniGlass13.png'/>",
 
 			prepareTypeahead : function(){
 				clearAllQtip();
@@ -40,11 +43,10 @@
 				$("#ruleTypeIcon").html("");
 			},
 
-			showFacetSort : function(){
+			showTypeahead : function(){
 				var self = this;
-
 				self.prepareTypeahead();
-				self.getFacetSortRuleList(1);
+				self.getTypeaheadRuleList(1);
 
 				if(self.selectedRule==null){
 					$("#preloader").hide();
@@ -64,7 +66,7 @@
 						base.api.destroy();
 						TypeaheadRuleServiceJS.getRuleById(self.selectedRule["ruleId"],{
 							callback: function(data){
-								self.setFacetSort(data);
+								self.setTypeahead(data);
 							},
 							preHook: function(){
 								self.prepareTypeahead();
@@ -72,10 +74,11 @@
 						});
 					},
 					afterSubmitForApprovalRequest:function(ruleStatus){
-						self.showFacetSort();
+						self.showTypeahead();
 					},
 					beforeRuleStatusRequest: function(){
-						self.prepareTypeahead();	
+						self.prepareTypeahead();
+
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						$("#preloader").hide();
@@ -125,115 +128,69 @@
 				});
 			},
 
-			setFacetSort : function(rule){
+			setTypeahead : function(rule){
 				var self = this;
 				self.selectedRule = rule;
-				self.keyword = "";
-				self.fq = "";
+				$('input.searchTextInput').val(rule.ruleName);
+				self.startIndex = 0;
+				self.loadRuleList(0, self.rulePage);
+//				self.keyword = "";
+//				self.fq = "";
 
-				if(self.selectedRule!=null && self.selectedRule["ruleType"]){
-					if("KEYWORD" === self.selectedRule["ruleType"]){
-						self.keyword = encodeURIComponent(self.selectedRule["ruleName"]);
-					}
-					else if("TEMPLATE" === self.selectedRule["ruleType"]){
-						self.fq = GLOBAL_storeFacetTemplateName + ":\"" + encodeURIComponent(self.selectedRule["ruleName"]) + "\"";
-					}
-				}
+//				$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
 
-				self.showFacetSort();
+//				self.showTypeahead();
 			},
-
-			populateFacetListDropdown: function(){
+			loadRuleList: function(matchType, page) {
 				var self = this;
-				var $facetDiv = $("div#facetsort div#"+self.tabSelectedId);
-
-				var $select = $facetDiv.find("select#facetValuesPattern");
-				$select.find("option").remove();
-				//$select.prop({id : "_items"+self.tabSelectedId});
-
-				if(self.facetValueList){
-					var facetValues = self.facetValueList[self.tabSelectedName];
-
-					$select.append($("<option>", {value: ""}).text("-Select " + self.tabSelectedName + "-"));
-					for (var facetValue in facetValues){
-						$select.append($("<option>", {value: facetValue}).text(facetValue));
-					}
-				}
-
-			},
-
-			populateTabContent : function(){
-				var self = this;
-				var facetTabId = self.tabSelectedId;
-				var tabContainer = $("#"+facetTabId);
-
-				//if there exists tempItems, tab is already populated, do not refresh
-				if(tabContainer.find("li.tempItem").length > 0) return;
-
-				tabContainer.show();
-				if(!tabContainer.hasClass("isShown")){
-					tabContainer.addClass("isShown");
-				}
-				tabContainer.find("div#facetvaluelist").prop({id : facetTabId +'_list'});
-				tabContainer.find("span#addFacetSortTitleHeader").text("");
-				tabContainer.find("span#addNewLink").text("");
-				tabContainer.find("ul#selectedFacetValueList li:not(#addFacetValuePattern)").remove();
-
-				$("#"+facetTabId+"_list").viewfacetvalues({
-					headerText: "Facet Preview of " + self.tabSelectedName,
-					keyword: self.keyword,
-					facetField: self.tabSelectedName,
-					fq: self.fq,
-					afterSolrRequestCallback: function(json){
-						self.facetValueList = json.facet_counts.facet_fields;
-
-						if(GLOBAL_PCMGroup){
-							self.facetValueList["Category"] = [];
-
-							if(json.FacetTemplate){
-								self.facetValueList["Category"] = json.FacetTemplate.Level1;
-							}
+				var $searchDiv = $('div.listSearchDiv');
+				var searchText = $searchDiv.find('.searchTextInput').val();
+				$('div#listContainer').html('');
+				$("div#fieldsBottomPaging, , div#fieldsTopPaging").html('');
+				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, page, self.rulePageSize, {
+					callback: function(response){
+						var data = response["data"];
+						var list = data.list;
+						$('div#listContainer').html(self.getListTemplate());
+						var $divList = $("div#itemList");
+						$divList.find("div.items:not(#itemPattern1, #itemPattern2)").remove();
+						if (list.length > 0){
+							self.resetHeader();
+							self.loadTypeaheadList($divList, list, self.startIndex, self.initialNoOfItems);
+						}else{
+							$empty = '<div id="empty" class="items txtAC borderB">File selected has no records to display</div>';
+							$divList.append($empty);
+							$("div#countSec").hide();
 						}
+						
 
-						self.populateFacetListDropdown();
-						self.populateSelectedValues(tabContainer, facetTabId.split("_")[1]);
-						self.addNewFacetValueListener(tabContainer, facetTabId.split("_")[1]);
-						self.addSortableOption(tabContainer);
-
-						tabContainer.find("span#addFacetSortTitleHeader").text("Highlighted " + self.tabSelectedName + " Values");
+						$("div#fieldsBottomPaging, div#fieldsTopPaging").paginate({
+							currentPage: page, 
+							pageSize: self.rulePageSize,
+							totalItem: data.totalSize,
+							type: 'short',
+							pageStyle: 'style2',
+							callbackText: function(itemStart, itemEnd, itemTotal){
+								return itemStart + "-" + itemEnd + " of " + itemTotal;
+							},
+							pageLinkCallback: function(e){ self.loadRuleList(matchType, e.data.page); },
+							nextLinkCallback: function(e){ self.loadRuleList(matchType, e.data.page+1);},
+							prevLinkCallback: function(e){ self.loadRuleList(matchType, e.data.page-1);},
+							firstLinkCallback: function(e){self.loadRuleList(matchType, 1);},
+							lastLinkCallback: function(e){ self.loadRuleList(matchType, e.data.totalPages);}
+						});
+					},
+					preHook:function(){
+						$('div#preloader').show();
+					},
+					postHook:function(){
+						$('div#preloader').hide();
 					}
 				});
-			},
-
-			addSortableOption : function(contentHolder){
-				var self = this;
-				contentHolder.find('ul#selectedFacetValueList').sortable("destroy").sortable({
-					//handle : '.handle',
-					cursor : 'move',
-					axis: 'y',
-					tolerance: 'intersect',
-					placeholder: 'placeHolder_small',
-					forceHelperSize: true,
-					forcePlaceholderSize: true,
-					disabled: self.selectedRuleStatus["locked"] || !allowModify
-				});
-
-			},
-
-			checkDuplicateFacet : function (e, u, facetGroupId){
-				if($("div#_" + facetGroupId).hasClass("isShown")){
-					var value = u.value;
-					$("select#_items_"+facetGroupId).not($(e.currentTarget)).each(function() {
-						if ($(this).val() === value && $.isNotBlank(value)) {
-							jAlert(value + " is already selected.", self.moduleName);
-							$(e.currentTarget).prop("selectedIndex", 0);
-							return;
-						}
-					});
-				}
 			},
 			loadSplunkData: function() {
 				var self = this;
+				$('div#listContainer').html(self.getListTemplate());
 				TopKeywordServiceJS.getFileList({
 					callback: function(files){
 						self.latestFile = files[0];
@@ -275,6 +232,56 @@
 					}}
 				);
 			},
+			updateTypeaheadRule: function($divRow) {
+				var self = this;
+				var typeaheadRule = {ruleId : $divRow.find('.ruleId').val(), sortOrder : $divRow.find('.sortOrder').val(), storeId: GLOBAL_storeId, visible: $divRow.find('.ruleVisibility')};
+				TypeaheadRuleServiceJS.updateRule(typeaheadRule, {
+					callback: function(response){
+						if(response && response.success != null)
+							jAlert('Rule successfuly saved.', self.moduleName);
+						else
+							jAlert('Rule was not successfuly saved.', self.moduleName);
+					},
+					preHook:function(){
+						$divRow.find("a.toggle").html(self.rectLoader);
+					},
+					postHook:function(){
+						$divRow.find("a.toggle").html(self.saveIconPath);
+					},
+					errorHandler:function(){
+						jAlert('Rule was not successfuly saved.', self.moduleName);
+					}
+				});
+			},
+			loadTypeaheadList: function($divList, list, start, noOfItems, type){
+				var listLen = list.length;
+				var patternId;
+				var self = this;
+				patternId = "div#itemPattern2";
+
+				for (var i=start; i < start + noOfItems ; i++){
+					if(i == listLen)
+						break;
+
+					var $divItem = $divList.find(patternId).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
+					var checked = list[i]["visible"] == 'false' ? 'CHECKED' : '';
+					
+					$divItem.find("label.iter").html(parseInt(i)+1);
+					$divItem.find("label.keyword").html(list[i]["ruleName"]);
+					$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="0"/><input type="hidden" class="ruleId" value="'+list[i]["ruleId"]+'"/>');
+					$divItem.find("a.toggle").html(self.saveIconPath);
+					$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
+					$divItem.find("a.toggle").off().on({click : function() {
+						self.updateTypeaheadRule($(this).parent().parent());
+					}});
+					$divItem.show();
+					$divList.append($divItem);
+				}
+
+				$divList.find("div.items").removeClass("alt");
+				$divList.find("div.items:even").addClass("alt");
+
+			},
 			loadItems: function($divList, list, start, noOfItems, type){
 				var listLen = list.length;
 				var patternId;
@@ -292,7 +299,7 @@
 						break;
 
 					var $divItem = $divList.find(patternId).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
-					$divItem.find("label.iter").html(parseInt(i)+1);
+					$divItem.find("label.iter").html('<input type="checkbox" class="ruleVisibility" value="false"/>');
 					$divItem.find("label.keyword").html(list[i]["keyword"]);
 					$divItem.find("label.count").html(list[i]["count"]);
 
@@ -336,13 +343,20 @@
 			},
 
 			resetHeader: function() {
-				var $divHeader1 = $("div#itemHeader1");
-				var $divHeader2 = $("div#itemHeader2");
+				var $divHeader1 = $('div#itemHeaderMain').find("div#itemHeader1");
+				var $divHeader2 = $('div#itemHeaderMain').find("div#itemHeader2");
+				var $divHeader3 = $('div#itemHeaderMain').find("div#itemHeader3");
 				var self = this;
-				if (self.latestFile.indexOf("-splunk") > 0) {
+				if(!self.latestFile) {
+					$divHeader3.show();
+					$divHeader1.hide();
+					$divHeader2.hide();
+				} else if (self.latestFile.indexOf("-splunk") > 0) {
 					$divHeader1.hide();
 					$divHeader2.show();
+					$divHeader3.hide();
 				} else {
+					$divHeader3.hide();
 					$divHeader2.hide();
 					$divHeader1.show();
 				}
@@ -386,15 +400,6 @@
 				});
 			},
 
-			getSortOrderList : function(){
-				var self = this;
-				FacetSortServiceJS.getSortOrderList({
-					callback: function(data){
-						self.sortOrderList = data;
-					}
-				});
-			},
-
 			populateSortOrderList : function(contentHolder, selectedOrder){
 				var self = this;
 				contentHolder.find("option").remove();
@@ -411,35 +416,7 @@
 				}
 			},
 
-			populateTemplateNameList: function(contentHolder){
-				var $select = contentHolder.find('select[id="popName"]');
-				var count = 0;
-
-				CategoryServiceJS.getTemplateNamesByStore(GLOBAL_storeId, {
-					callback: function(data){
-						var list = data;
-						count = list.length;
-
-						if(count>0)
-							$select.append($("<option>", {value: ""}).text("-Select Template-"));
-
-						for(var i=0; i<count; i++){
-							$select.append($("<option>", {value: list[i]}).text(list[i]));
-						}
-					},
-					preHook: function(){
-						$select.find("option").remove();
-						$select.prop("disabled", true);
-					},
-					postHook: function(){
-						if(count>0){
-							$select.prop("disabled", false).searchable({});
-						}
-					}
-				});
-			},
-
-			getFacetSortRuleList : function(page) { 
+			getTypeaheadRuleList : function(page) { 
 				var self = this;
 
 				$("#keywordSidePanel").sidepanel({
@@ -455,7 +432,7 @@
 					itemDataCallback: function(base, ruleName, page){
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
-						TypeaheadRuleServiceJS.getAllRules(ruleName, page, base.options.pageSize, {
+						TypeaheadRuleServiceJS.getAllRules(ruleName, 0, page, base.options.pageSize, {
 							callback: function(response){
 								var data = response["data"];
 								base.populateList(data, ruleName);
@@ -481,13 +458,13 @@
 								callback: function(response){
 									if(response.status < 0) {
 										jAlert(response.errorMessage.message, self.moduleName);
-										self.getFacetSortRuleList(1);
+										self.getTypeaheadRuleList(1);
 									} else {
 										var data = response['data'];
 										if (data != null){
 											showActionResponse(1, "add", popName);
-											self.setFacetSort(data);
-											self.getFacetSortRuleList(1);
+											self.setTypeahead(data);
+											self.getTypeaheadRuleList(1);
 										}
 
 									}
@@ -497,12 +474,10 @@
 								}
 							});
 						}
-
-
 					},
 
 					itemNameCallback: function(base, item){
-						self.setFacetSort(item.model);
+						self.setTypeahead(item.model);
 					},
 
 					itemOptionCallback: function(base, item){
@@ -510,83 +485,8 @@
 
 						item.ui.find("#itemLinkValue").empty();
 						iconPath = self.keywordIconPath;
-						
+
 						if ($.isNotBlank(iconPath)) item.ui.find(".itemIcon").html(iconPath);
-					}
-				});
-			},
-
-			createFacetGroupTabs : function(){
-				var self = this;
-				var $facetSortDiv = $("div#facetsort");
-				var $ul = $facetSortDiv.find("ul#facetGroupTab"); 
-				$ul.find("li:not('.facetGroupTabPattern')").remove();
-				$facetSortDiv.find("div.facetTab").remove();
-
-				self.facetGroupIdList = new Array();
-
-				FacetSortServiceJS.getAllFacetGroup(self.selectedRule["ruleId"], {
-					callback: function(data){
-						var facetGroups = data.list;
-						for(var index in facetGroups){
-							var facetGroup = facetGroups[index];
-							var facetGroupId = $.formatAsId(facetGroup["id"]);
-							var $li = $ul.find("li.facetGroupTabPattern").clone();
-
-							self.facetGroupIdList[index] = facetGroup["id"];
-
-							$li.show();
-							$li.removeClass("facetGroupTabPattern");
-							$li.find("span.facetGroupName").html(facetGroup["name"]);
-							$li.find("a").prop({href: "#"+facetGroupId});
-							$ul.find("li.facetGroupTabPattern").before($li);
-
-							if($facetSortDiv.find("div#"+facetGroupId)){
-								$facetSortDiv.find("div#"+facetGroupId).remove();
-							}
-
-							var $facetDiv = $facetSortDiv.find("div.facetTabPattern").clone();
-							var $facetSort = $facetDiv.find("select.facetGroupSortOrder");
-
-							$facetDiv.show();
-							$facetDiv.removeClass("facetTabPattern");
-							$facetDiv.prop({id : facetGroupId});
-							$facetDiv.addClass("facetTab");
-
-							$facetDiv.find("input#facetGroupCheckbox").prop({checked: (facetGroup["sortType"] != null), disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
-								click:function(e){
-									if (e.data.locked) return;
-
-									var $this = e.data.ui;
-									if ($this.attr('disabled')) $this.removeAttr('disabled');
-									else $this.attr('disabled', 'disabled');
-								},
-								mouseenter: showHoverInfo
-							}, {locked: self.selectedRuleStatus["locked"] || !allowModify, ui : $facetSort});
-
-							self.populateSortOrderList($facetSort, facetGroup["sortType"]);
-							$facetSort.prop({disabled: (facetGroup["sortType"] == null || (self.selectedRuleStatus["locked"] || !allowModify))});
-
-							$("div.facetTabPattern").before($facetDiv);
-						}
-					},
-					postHook: function() { self.addTabListener(); }
-				});
-			},
-
-			addTabListener: function(){
-				var self = this;
-
-				$("#facetsort").tabs("destroy").tabs({
-					cookie: {
-						expires: 0
-					},
-					show: function(event, ui){
-						if(ui.panel){
-							self.tabSelectedId = ui.panel.id;
-							self.tabSelectedName = $(ui.tab).find("span.facetGroupName").text();
-							self.populateTabContent();
-						}
 					}
 				});
 			},
@@ -598,52 +498,6 @@
 					return items ? items.length : -1; //return -1 if input element not found
 				}
 				return -1; //div is not shown
-			},
-
-			addNewFacetValueListener : function(content, facetGroupId){
-				var self = this;
-				var ul = content.find('ul#selectedFacetValueList');
-				var facetValues = self.facetValueList[self.tabSelectedName];
-
-				if($.isEmptyObject(facetValues)){
-					content.find("span#addNewLink").hide();
-					return;
-				}
-
-				content.find("span#addNewLink").text("[add new " + self.tabSelectedName.toLowerCase() + " value]");
-				content.find("a#addNewFacetValue").off().on({
-					click: function(e){
-						if (!e.data.locked){
-							var conditionCount = self.checkNumberOfHighlightedItems(content, facetGroupId);
-							if(conditionCount < 0){
-								return;
-							}
-							if (conditionCount >= self.maxHighlightedFacet) {
-								jAlert("Maximum allowed number of highlighted facet values is "+self.maxHighlightedFacet+"!",self.moduleName);
-								return;
-							}
-
-							var $li = content.find('li#addFacetValuePattern').clone();
-
-							$li.show();
-							$li.removeClass("addFacetValuePattern");
-							$li.addClass("tempItem");
-							$li.prop({id: ""});
-
-							ul.append($li);
-
-							$li.find("select.selectCombo").prop({id: "_items_"+facetGroupId});
-							$li.find("select.selectCombo").searchable({
-								change: function(u, e){
-									self.checkDuplicateFacet(e, u, facetGroupId);
-								}
-							});
-
-							self.addDeleteFacetValueListener($li);
-						}
-					},
-					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
 			addDeleteFacetValueListener : function(contentHolder){
@@ -704,50 +558,6 @@
 
 				return itemMap;
 			},
-
-			addSaveRuleListener: function(){
-				var self = this;
-				$("#saveBtn").off().on({
-					click: function(e){
-						if (e.data.locked) return;
-
-						setTimeout(function() {
-							var sortType = $("select#facetSortOrder option:selected").val();
-							var facetGroupItems = self.buildFacetGroupItemsMap();
-							var sortOrders = self.buildFacetGroupSortTypeMap();
-
-							var response = 0;
-							FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], sortType, facetGroupItems, sortOrders,  {
-								callback: function(data){
-									response = data;
-									showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
-								},
-								preHook: function(){
-									self.prepareTypeahead();
-								},
-								postHook: function(){
-									if(response>0){
-										FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
-											callback: function(data){
-												self.setFacetSort(data);
-											},
-											preHook: function(){
-												self.prepareTypeahead();
-											}
-										});
-									}
-									else{
-										self.setFacetSort(self.selectedRule);
-									}
-
-								}
-							});
-						}, 500 );
-					},
-					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
-			},
-
 			addDownloadListener: function(){
 				var self = this;
 				$("a#downloadIcon").download({
@@ -785,7 +595,7 @@
 									callback: function(code){
 										showActionResponse(code, "delete", self.selectedRule["ruleName"]);
 										if(code==1) {
-											self.setFacetSort(null);
+											self.setTypeahead(null);
 										}
 									}
 								});
@@ -795,16 +605,75 @@
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
+			getListTemplate: function() {
+				var template = '';
+				template += '<div id="itemHeaderMain" class="w100p padT0 marT5 marL15 fsize12" style="max-height:365px;">';
+				template += '	<div id="itemHeader1" class="items border clearfix" style="display:none">';
+				template += '		<label class="iter floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> &nbsp; </label>';
+				template += '		<label class="count floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Count</label>';
+				template += '		<label class="floatL w535 txtAC fbold padTB5" style="background:#eee">Keyword</label>';
+				template += '	</div>';
+				template += '	<div id="itemHeader2" class="items border clearfix" style="display:none">';
+				template += '		<label class="iter floatL w45 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> &nbsp; </label>';
+				template += '		<label class="count floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Count</label>';
+				template += '		<label class="floatL w320 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>';
+				template += '		<label class="results floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Results</label>';
+				template += '		<label class="sku floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">SKU</label>';
+				template += '		<label class="toggle floatL w120 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>';
+				template += '	</div>';
+				template += '	<div id="itemHeader3" class="items border clearfix" style="display:none">';
+				template += '		<label class="iter floatL w45 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Hide </label>';
+				template += '		<label class="count floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
+				template += '		<label class="floatL w460 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>';
+				template += '		<label class="toggle floatL w115 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>';
+				template += '	</div>';
+				template += '</div>';	
+				template += '<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:565px;">';
+				template += '	<div id="itemPattern1" class="items pad5 borderB mar0 clearfix" style="display:none">';
+				template += '		<label class="iter floatL w80"></label>';
+				template += '		<label class="count floatL w80"></label>';
+				template += '		<label class="floatL w500">';
+				template += '			<label class="keyword floatL w400"></label>'; 
+				template += '			<label class="floatL fsize11 w100">';
+				template += '				<a class="toggle" href="javascript:void(0);"></a>';
+				template += '			</label>';
+				template += '			<div class="rules" style="display:none"></div>';
+				template += '		</label>';
+				template += '	</div>';
+				template += '	<div id="itemPattern2" class="items pad5 borderB mar0 clearfix" style="display:none">';
+				template += '		<label class="iter floatL w45"></label>';
+				template += '		<label class="count floatL w70"></label>';
+				template += '		<label class="floatL w320">';
+				template += '			<label class="keyword floatL w310"></label>'; 
+				template += '			<div class="rules" style="display:none"></div>';
+				template += '		</label>';
+				template += '		<label class="results floatL w70"></label>';
+				template += '		<label class="sku floatL w70"></label>'; 
+				template += '		<label class="floatR fsize11 w110 txtAC">';
+				template += '			<a class="toggle" href="javascript:void(0);"></a>';
+				template += '		</label>';
+				template += '	</div>';
+				template += '</div>';
 
+				return template;
+			},
 			init : function() {
 				var self = this;
-				self.getSortOrderList();
-				self.showFacetSort();
-				self.loadSplunkData();
+				self.showTypeahead();
+				//self.loadSplunkData();
+				self.loadRuleList(0, self.rulePage);
+
+				var $searchDiv = $('div.listSearchDiv');
+				$searchDiv.find('a.searchButton').off().on({
+					click : function() {
+						self.startIndex = 0;
+						self.loadRuleList(0, self.rulePage);
+					}
+				});
 			}
 	};
 
 	$(document).ready(function() {
-		FacetSort.init();
+		Typeahead.init();
 	});
 })(jQuery);	

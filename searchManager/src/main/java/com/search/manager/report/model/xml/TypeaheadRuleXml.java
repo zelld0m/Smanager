@@ -29,6 +29,8 @@ public class TypeaheadRuleXml extends RuleXml{
 	
 	private Integer sortOrder;
 	
+	private Boolean visible;
+	
 	public TypeaheadRuleXml() {
 		super();
 	}
@@ -90,5 +92,13 @@ public class TypeaheadRuleXml extends RuleXml{
 
 	public void setSortOrder(Integer sortOrder) {
 		this.sortOrder = sortOrder;
+	}
+
+	public Boolean getVisible() {
+		return visible;
+	}
+
+	public void setVisible(Boolean visible) {
+		this.visible = visible;
 	}
 }

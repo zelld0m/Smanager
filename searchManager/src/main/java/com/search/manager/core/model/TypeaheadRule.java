@@ -16,6 +16,8 @@ public class TypeaheadRule extends ModelBean{
 	private String ruleName;
 	
 	private Integer sortOrder;
+	
+	private Boolean visible;
 
 	public TypeaheadRule() {
 		super();
@@ -28,6 +30,7 @@ public class TypeaheadRule extends ModelBean{
 		this.storeId = xml.getStore();
 		this.ruleName = xml.getRuleName();
 		this.createdBy = xml.getCreatedBy();
+		this.visible = xml.getVisible();
 	}
 	
 	public String getRuleId() {
@@ -57,6 +60,12 @@ public class TypeaheadRule extends ModelBean{
 	public void setSortOrder(Integer sortOrder) {
 		this.sortOrder = sortOrder;
 	}
-	
-	
+
+	public Boolean getVisible() {
+		return visible;
+	}
+
+	public void setVisible(Boolean visible) {
+		this.visible = visible;
+	}
 }

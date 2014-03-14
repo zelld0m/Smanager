@@ -18,7 +18,6 @@ import com.search.manager.core.model.TypeaheadSuggestion;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;
-import com.search.manager.core.search.Filter.MatchType;
 import com.search.manager.core.service.TypeaheadBrandService;
 import com.search.manager.core.service.TypeaheadRuleService;
 import com.search.manager.core.service.TypeaheadSuggestionService;
@@ -78,6 +77,37 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 		return response;
 	}
+	
+	@RemoteMethod
+	public ServiceResponse<TypeaheadRule> updateRule(TypeaheadRule typeaheadRule) {
+		
+		ServiceResponse<TypeaheadRule> response = new ServiceResponse<TypeaheadRule>();
+
+		try {
+
+			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
+
+			existingRule.setSortOrder(typeaheadRule.getSortOrder());
+			existingRule.setVisible(typeaheadRule.getVisible());
+			existingRule.setRuleName(typeaheadRule.getRuleName());
+			existingRule.setLastModifiedDate(new DateTime());
+			existingRule.setLastModifiedBy(utilityService.getUsername());
+
+			existingRule = typeaheadRuleService.update(existingRule);
+
+			if(existingRule != null)
+				response.success(existingRule);
+			else
+				response.error("Unable to add keyword. Please contact your system administrator.");
+
+
+		} catch (CoreServiceException e) {
+			logger.error("failed at TypeaheadRuleServiceDwr.updateRule", e);
+			response.error("Unable to add keyword. Please contact your system administrator.");
+		}
+
+		return response;
+	}
 
 	@RemoteMethod
 	public ServiceResponse<TypeaheadBrand> addBrand(String ruleId, String brandName, String vendorId, Integer productCount, Integer sortOrder) {
@@ -129,7 +159,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String name, int page, int itemsPerPage) {
+	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String name, int matchType, int page, int itemsPerPage) {
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
 		ServiceResponse<SearchResult<TypeaheadRule>> serviceResponse = new ServiceResponse<SearchResult<TypeaheadRule>>();
 		try {
@@ -139,7 +169,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			Search search = new Search(TypeaheadRule.class);
 			search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 	        search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, name));
-	        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, MatchType.LIKE_NAME.getIntValue()));
+	        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, matchType));
 	        search.setPageNumber(page);
 	        search.setMaxRowCount(itemsPerPage);
 			
@@ -169,7 +199,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 		} catch (CoreServiceException e) {
 			logger.error("getAllRule() failed.", e);
-			serviceResponse.error("Unable to add typeahead rule.");
+			serviceResponse.error("Unable to retrieve typeahead rule(s).");
 		}
 		return serviceResponse;
 	}

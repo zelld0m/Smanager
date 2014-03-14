@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -213,6 +215,31 @@ public class FileUtil {
         StringBuilder dir = new StringBuilder();
         dir.append(path).append(File.separator).append(type).append(File.separator).append(file).append(File.separator).append(child);
         return dir.toString();
+    }
+    
+    public static List<String> getFileList(String directory) {
+    	List<String> filenameList = new ArrayList<String>();
+		File dir = new File(directory);
+
+		File[] files = dir.listFiles();
+
+		if (files != null) {
+			Arrays.sort(files, new Comparator<File>() {
+				public int compare(File f1, File f2) {
+					return -Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+				}
+			});
+			int ctr = 1;
+			for (File file : files) {
+				if (!file.isDirectory()) {
+					filenameList.add(file.getName());
+					if (ctr++ > 12) {
+						break;
+					}
+				}
+			}
+		}
+		return filenameList;
     }
 
     private static Object[] getFileExtentions() {
