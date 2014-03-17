@@ -131,14 +131,14 @@
 				self.loadRuleList(0, self.rulePage);
 //				self.keyword = "";
 //				self.fq = "";
-
+				$('div.listSearchDiv').hide();
 //				$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
 
 				self.showTypeahead();
 			},
 			loadRuleList: function(matchType, page) {
 				var self = this;
-				var $searchDiv = $('div.listSearchDiv');
+				var $searchDiv = $('div.listSearchDiv').show();
 				var searchText = $searchDiv.find('.searchTextInput').val();
 				$('div#listContainer').html('');
 				$("div#fieldsBottomPaging, , div#fieldsTopPaging").html('');
@@ -264,7 +264,7 @@
 					$divItem.find("label.iter").html(parseInt(i)+1);
 					$divItem.find("label.keyword").html(list[i]["ruleName"]);
 					$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="0"/><input type="hidden" class="ruleId" value="'+list[i]["ruleId"]+'"/>');
-					$divItem.find("a.toggle").html(self.saveIconPath);
+					//$divItem.find("a.toggle").html(self.saveIconPath);
 					$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
 					$divItem.find("a.toggle").off().on({click : function() {
 						self.updateTypeaheadRule($(this).parent().parent());
