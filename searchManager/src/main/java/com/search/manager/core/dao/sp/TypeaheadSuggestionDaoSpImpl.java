@@ -62,7 +62,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, Types.INTEGER));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, Types.VARCHAR));
-			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_SORT_ORDER, Types.INTEGER));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
 		}
@@ -130,7 +130,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 		typeaheadSuggestion.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
 		typeaheadSuggestion.setMemberType(MemberType.values()[rs.getInt(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE)]);
 		typeaheadSuggestion.setMemberValue(rs.getString(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE));
-		typeaheadSuggestion.setSortOrder(rs.getInt(TypeaheadDaoConstant.COLUMN_SORT_ORDER));
+		typeaheadSuggestion.setSortOrder(rs.getInt(TypeaheadDaoConstant.COLUMN_PRIORITY));
 		typeaheadSuggestion.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
 		typeaheadSuggestion.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
 		typeaheadSuggestion.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
@@ -181,7 +181,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 		inputs.put(DAOConstants.COLUMN_RULE_ID, model.getRuleId());
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, model.getMemberType() != null ? model.getMemberType().ordinal() : null);
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, model.getMemberValue());
-		inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
+		inputs.put(TypeaheadDaoConstant.COLUMN_PRIORITY, model.getSortOrder());
 		inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
 		inputs.put(DAOConstants.PARAM_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null);
 		
@@ -196,7 +196,7 @@ public class TypeaheadSuggestionDaoSpImpl extends GenericDaoSpImpl<TypeaheadSugg
 		inputs.put(TypeaheadDaoConstant.COLUMN_TYPEAHEAD_SUGGESTION_ID, model.getTypeaheadSuggestionId());
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_TYPE, model.getMemberType() != null ? model.getMemberType().ordinal() + 1 : null);
 		inputs.put(TypeaheadDaoConstant.COLUMN_MEMBER_VALUE, model.getMemberValue());
-		inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
+		inputs.put(TypeaheadDaoConstant.COLUMN_PRIORITY, model.getSortOrder());
 		inputs.put(DAOConstants.COLUMN_LAST_UPDATED_BY, model.getLastModifiedBy());
 		inputs.put(DAOConstants.COLUMN_LAST_UPDATED_STAMP, model.getLastModifiedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getLastModifiedDate()) : null);
 		

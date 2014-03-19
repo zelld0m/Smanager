@@ -49,4 +49,6 @@ public interface DeploymentRuleService {
 
     public Map<String, Boolean> unpublishBannerRulesMap(String store, List<String> list);
 
+    Map<String, Boolean> unpublisTypeaheadRulesMap(String store, List<String> ruleIds);
+
 }

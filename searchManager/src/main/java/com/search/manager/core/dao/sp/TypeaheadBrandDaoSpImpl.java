@@ -61,7 +61,7 @@ public class TypeaheadBrandDaoSpImpl extends GenericDaoSpImpl<TypeaheadBrand> im
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_BRAND_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_VENDOR_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_PRODUCT_COUNT, Types.INTEGER));
-			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_SORT_ORDER, Types.INTEGER));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
 		}
@@ -131,7 +131,7 @@ public class TypeaheadBrandDaoSpImpl extends GenericDaoSpImpl<TypeaheadBrand> im
 		typeaheadBrand.setBrandName(rs.getString(TypeaheadDaoConstant.COLUMN_BRAND_NAME));
 		typeaheadBrand.setVendorId(rs.getString(TypeaheadDaoConstant.COLUMN_VENDOR_ID));
 		typeaheadBrand.setProductCount(rs.getInt(TypeaheadDaoConstant.COLUMN_PRODUCT_COUNT));
-		typeaheadBrand.setSortOrder(rs.getInt(TypeaheadDaoConstant.COLUMN_SORT_ORDER));
+		typeaheadBrand.setSortOrder(rs.getInt(TypeaheadDaoConstant.COLUMN_PRIORITY));
 		typeaheadBrand.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
 		typeaheadBrand.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
 		typeaheadBrand.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
@@ -182,7 +182,7 @@ public class TypeaheadBrandDaoSpImpl extends GenericDaoSpImpl<TypeaheadBrand> im
 			inputs.put(TypeaheadDaoConstant.COLUMN_BRAND_NAME, model.getBrandName());
 			inputs.put(TypeaheadDaoConstant.COLUMN_VENDOR_ID, model.getVendorId());
 			inputs.put(TypeaheadDaoConstant.COLUMN_PRODUCT_COUNT, model.getProductCount());
-			inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
+			inputs.put(TypeaheadDaoConstant.COLUMN_PRIORITY, model.getSortOrder());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null);
 		}
@@ -201,7 +201,7 @@ public class TypeaheadBrandDaoSpImpl extends GenericDaoSpImpl<TypeaheadBrand> im
 			inputs.put(TypeaheadDaoConstant.COLUMN_BRAND_NAME, model.getBrandName());
 			inputs.put(TypeaheadDaoConstant.COLUMN_VENDOR_ID, model.getVendorId());
 			inputs.put(TypeaheadDaoConstant.COLUMN_PRODUCT_COUNT, model.getProductCount());
-			inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
+			inputs.put(TypeaheadDaoConstant.COLUMN_PRIORITY, model.getSortOrder());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, model.getLastModifiedBy());
 			inputs.put(DAOConstants.COLUMN_LAST_MODIFIED_DATE, model.getLastModifiedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getLastModifiedDate()) : null);
 		}
