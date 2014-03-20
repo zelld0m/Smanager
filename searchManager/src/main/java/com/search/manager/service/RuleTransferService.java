@@ -90,6 +90,7 @@ public class RuleTransferService {
 	@Qualifier("commentServiceSp")
 	private CommentService commentService;
 	@Autowired
+	@Qualifier("typeaheadRuleServiceSp")
 	private TypeaheadRuleService typeaheadRuleService;
 
 	private static final int CREATE_RULE_STATUS = 0;

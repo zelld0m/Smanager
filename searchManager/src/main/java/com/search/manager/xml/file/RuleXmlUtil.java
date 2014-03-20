@@ -1068,7 +1068,7 @@ public class RuleXmlUtil {
 			typeaheadSuggestionService.delete(typeaheadSuggestionList);
 			typeaheadBrandService.delete(typeaheadBrandList);
 
-			typeaheadRule.setSortOrder(typeaheadRuleXml.getSortOrder());
+			typeaheadRule.setPriority(typeaheadRuleXml.getPriority());
 			typeaheadRule.setLastModifiedBy(username);
 			typeaheadRule.setLastModifiedDate(new DateTime());
 			typeaheadRuleService.update(typeaheadRule);

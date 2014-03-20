@@ -19,16 +19,12 @@ import com.search.manager.enums.RuleEntity;
 @DataTransferObject(converter = BeanConverter.class)
 public class TypeaheadRuleXml extends RuleXml{
 
-	
 	private static final long serialVersionUID = 1L;
 	private static final RuleEntity RULE_ENTITY = RuleEntity.TYPEAHEAD;
-
 	
 	private List<TypeaheadSuggestionXml> suggestions;
 	private List<TypeaheadBrandXml> brands;
-	
-	private Integer sortOrder;
-	
+	private Integer priority;
 	private Boolean disabled;
 	
 	public TypeaheadRuleXml() {
@@ -46,6 +42,7 @@ public class TypeaheadRuleXml extends RuleXml{
         this.setRuleName(rule.getRuleName());
         this.setRuleId(rule.getRuleId());
         this.setStore(rule.getStoreId());
+        this.setPriority(rule.getPriority());
                 
         if(brandList != null && !brandList.isEmpty()) {
         	List<TypeaheadBrandXml> brands = new ArrayList<TypeaheadBrandXml>();
@@ -86,12 +83,12 @@ public class TypeaheadRuleXml extends RuleXml{
 		this.brands = brands;
 	}
 
-	public Integer getSortOrder() {
-		return sortOrder;
+	public Integer getPriority() {
+		return priority;
 	}
 
-	public void setSortOrder(Integer sortOrder) {
-		this.sortOrder = sortOrder;
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 
 	public Boolean getDisabled() {

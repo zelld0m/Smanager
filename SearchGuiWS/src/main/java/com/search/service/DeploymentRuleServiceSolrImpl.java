@@ -46,6 +46,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.service.SolrService;
 import com.search.service.solr.BannerRuleItemMigratorService;
+import com.search.service.solr.TypeaheadRuleMigratorService;
 
 @Service("deploymentRuleServiceSolrImpl")
 public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
@@ -94,6 +95,9 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 	// Rule Migrator Service
 	@Autowired
 	private BannerRuleItemMigratorService bannerRuleItemMigratorService;
+
+	@Autowired
+	private TypeaheadRuleMigratorService typeaheadRuleMigratorService;
 
 	public void setSolrService(SolrService solrService) {
 		this.solrService = solrService;
@@ -649,8 +653,11 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 	public Map<String, Boolean> publishTypeaheadRule(String store, List<String> ids) {
 		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ids);
+		List<String> publishedRules = new ArrayList<String>();
 		
 		try{
+            StringBuffer errorMsg = new StringBuffer();
+
 			for(String id : ids) {
 				keywordStatus.put(id, false);
 				TypeaheadRule typeaheadRule = new TypeaheadRule();
@@ -665,20 +672,31 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 				}
 				
 				TypeaheadRule currentTypeahead = new TypeaheadRule();
+
 				currentTypeahead.setRuleName(typeaheadRule.getRuleName());
 				currentTypeahead.setStoreId(store);
 				
 				typeaheadRuleServiceProd.delete(currentTypeahead);
-				
-				currentTypeahead.setSortOrder(typeaheadRule.getSortOrder());
-				
+
+				currentTypeahead.setPriority(typeaheadRule.getPriority());
+				currentTypeahead.setDisabled(typeaheadRule.getDisabled());
 				currentTypeahead = typeaheadRuleServiceProd.add(currentTypeahead);
-				
+
 				if(currentTypeahead != null) {
 					keywordStatus.put(id, true);
+					publishedRules.add(id);
 				}
-										
 			}
+
+            try {
+                // Delete existing solr index data, Retrieve production data then index.
+                typeaheadRuleMigratorService.resetByRuleIds(store, publishedRules);
+            } catch (Exception e) {
+                for (String id : publishedRules) {
+                    errorMsg.append(" - " + id + "\n");
+                }
+                sendIndexStatus("Failed to index the following typeahead rules: \n" + errorMsg.toString(), store);
+            }
 		} catch(Exception e) {
 			logger.error("Error in DeploymentRuleServiceSolrImpl.publishTypeaheadRule", e);
 		}
@@ -1138,6 +1156,49 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 		return keywordStatus;
 	}
+
+    @Override
+    public Map<String, Boolean> unpublisTypeaheadRulesMap(String store, List<String> ruleIds) {
+        Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleIds);
+        List<String> unpublishedIds = new ArrayList<String>();
+        // TODO: test
+        try {
+            if (CollectionUtils.isNotEmpty(ruleIds)) {
+                StringBuffer errorMsg = new StringBuffer();
+
+                for (String id : ruleIds) {
+                    try {
+                        TypeaheadRule rule = new TypeaheadRule();
+                        rule.setStoreId(store);
+                        rule.setRuleId(id);
+
+                        // Delete existing data from production.
+                        typeaheadRuleServiceProd.delete(rule);
+
+                        unpublishedIds.add(id);
+                        keywordStatus.put(id, true);
+                    } catch (Exception e) {
+                        logger.error("Failed to unpublish typeahead rule: " + id, e);
+                        keywordStatus.put(id, false);
+                    }
+                }
+
+                try {
+                    // Delete existing solr index data.
+                    typeaheadRuleMigratorService.deleteByRuleIds(store, unpublishedIds);
+                } catch (Exception e) {
+                    for (String id : unpublishedIds) {
+                        errorMsg.append(" - " + id + "\n");
+                    }
+                    sendIndexStatus("Failed to unpublish the following typeahead rules: \n" + errorMsg.toString(), store);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+
+        return keywordStatus;
+    }
 
 	private Map<String, Boolean> getKeywordStatusMap(List<String> keywords) {
 		Map<String, Boolean> keywordStatus = new HashMap<String, Boolean>();

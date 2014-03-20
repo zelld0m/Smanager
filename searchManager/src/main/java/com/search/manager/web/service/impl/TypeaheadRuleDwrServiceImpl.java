@@ -3,27 +3,21 @@ package com.search.manager.web.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.directwebremoting.annotations.Param;
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.annotations.*;
 import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.enums.MemberType;
 import com.search.manager.core.exception.CoreServiceException;
-import com.search.manager.core.model.TypeaheadBrand;
-import com.search.manager.core.model.TypeaheadRule;
-import com.search.manager.core.model.TypeaheadSuggestion;
+import com.search.manager.core.model.*;
+import com.search.manager.core.search.*;
 import com.search.manager.core.search.Filter;
-import com.search.manager.core.search.Search;
-import com.search.manager.core.search.SearchResult;
-import com.search.manager.core.service.TypeaheadBrandService;
-import com.search.manager.core.service.TypeaheadRuleService;
-import com.search.manager.core.service.TypeaheadSuggestionService;
+import com.search.manager.core.service.*;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.UtilityService;
@@ -39,6 +33,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	@Autowired
 	private TypeaheadBrandService typeaheadBrandService;
 	@Autowired
+	@Qualifier("typeaheadRuleServiceSp")
 	private TypeaheadRuleService typeaheadRuleService;
 	@Autowired
 	private TypeaheadSuggestionService typeaheadSuggestionService;
@@ -105,7 +100,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
 
-			existingRule.setSortOrder(typeaheadRule.getSortOrder());
+			existingRule.setPriority(typeaheadRule.getPriority());
 			existingRule.setDisabled(typeaheadRule.getDisabled());
 			existingRule.setRuleName(typeaheadRule.getRuleName());
 			existingRule.setLastModifiedDate(new DateTime());

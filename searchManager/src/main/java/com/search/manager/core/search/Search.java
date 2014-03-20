@@ -91,62 +91,104 @@ public class Search implements Serializable {
     public void setDisjunction(boolean disjunction) {
         this.disjunction = disjunction;
     }
-
-    // Filters
-    public Search addFilter(Filter filter) {
-        SearchUtil.addFilter(this, filter);
-        return this;
+    
+    private void ensureFiltersNotNull() {
+        if (filters == null) {
+            filters = new ArrayList<Filter>();
+        }
     }
 
-    public Search addFilters(List<Filter> filters) {
-        SearchUtil.addFilters(this, filters);
-        return this;
+    // Filters
+    public void addFilter(Filter filter) {
+        if (filter != null) {
+            ensureFiltersNotNull();
+            filters.add(filter);
+        }
+    }
+
+    public void addFilters(List<Filter> filters) {
+        if (filters != null) {
+            ensureFiltersNotNull();
+            this.filters.addAll(filters);
+        }
     }
 
     public void removeFilter(Filter filter) {
-        SearchUtil.removeFilter(this, filter);
+        if (filters != null) {
+            filters.remove(filter);
+        }
     }
 
     public void clearFilters() {
-        SearchUtil.clearFilters(this);
+        if (filters != null) {
+            filters.clear();
+        }
+    }
+    
+    private void ensureSortsNotNull() {
+        if (sorts == null) {
+            sorts = new ArrayList<Sort>();
+        }
     }
 
     // Sorts
-    public Search addSort(Sort sort) {
-        SearchUtil.addSort(this, sort);
-        return this;
+    public void addSort(Sort sort) {
+        if (sort != null) {
+            ensureSortsNotNull();
+            sorts.add(sort);
+        }
     }
 
-    public Search addSorts(List<Sort> sorts) {
-        SearchUtil.addSorts(this, sorts);
-        return this;
+    public void addSorts(List<Sort> sorts) {
+        if (sorts != null) {
+            ensureSortsNotNull();
+            this.sorts.addAll(sorts);
+        }
     }
 
     public void removeSort(Sort sort) {
-        SearchUtil.removeSort(this, sort);
+        if (sorts != null) {
+            sorts.remove(sort);
+        }
     }
 
     public void clearSorts() {
-        SearchUtil.clearSorts(this);
+        if (sorts != null) {
+            sorts.clear();
+        }
+    }
+    private void ensureFieldsNotNull() {
+        if (fields == null) {
+            fields = new ArrayList<Field>();
+        }
     }
 
     // Fields
-    public Search addField(Field field) {
-        SearchUtil.addField(this, field);
-        return this;
+    public void addField(Field field) {
+        if (field != null) {
+            ensureFieldsNotNull();
+            fields.add(field);
+        }
     }
 
-    public Search addFields(List<Field> fields) {
-        SearchUtil.addFields(this, fields);
-        return this;
+
+    public void addFields(List<Field> fields) {
+        if (fields != null) {
+            ensureFieldsNotNull();
+            this.fields.addAll(fields);
+        }
     }
 
     public void removeField(Field field) {
-        SearchUtil.removeField(this, field);
+        if (fields != null) {
+            fields.remove(field);
+        }
     }
 
     public void clearFields() {
-        SearchUtil.clearFields(this);
+        if (fields != null) {
+            fields.clear();
+        }
     }
 
 }
