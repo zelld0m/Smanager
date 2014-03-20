@@ -4,6 +4,7 @@
 			moduleName: "Typeahead",
 			selectedRule:  null,
 			selectedRuleStatus: null,
+			currentRuleMap: null,
 			maxHighlightedFacet: 5,
 
 			initialNoOfItems: 100,
@@ -16,8 +17,8 @@
 			tabSelectedName: "",
 			keyword: "",
 			fq: "",
-
-
+			elContainer: "listContainer",
+			$elObject: null,
 			rulePage: 1,
 			rulePageSize: 15,
 
@@ -33,6 +34,7 @@
 			saveIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_disk.png'/>",
 			rectLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
 			magniIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_magniGlass13.png'/>",
+
 
 			prepareTypeahead : function(){
 				clearAllQtip();
@@ -111,7 +113,7 @@
 			populateSortOrderList : function(contentHolder, selectedOrder){
 				var self = this;
 				contentHolder.find("option").remove();
-				
+
 				if($.isNotBlank(selectedOrder)){
 					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
 						contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
@@ -136,30 +138,50 @@
 
 				self.showTypeahead();
 			},
+			resetRuleListTable: function() {
+				var self = this;
+				$('#updateDialog').dialog('destroy').remove();
+				self.$elObject.empty();
+				$("div#fieldsBottomPaging, , div#fieldsTopPaging").empty();
+			},
+			setCurrentRuleList: function(list) {
+				var self = this;
+				var newMap = new Object();
+
+				for(var i = 0; i<list.length; i++) {
+					newMap[list[i].ruleId] = list[i];
+				}
+
+				self.currentRuleMap = newMap;
+			},
 			loadRuleList: function(matchType, page) {
 				var self = this;
-				var $searchDiv = $('div.listSearchDiv').show();
+				var $searchDiv = self.$elObject.find('div.listSearchDiv').show();
 				var searchText = $searchDiv.find('.searchTextInput').val();
-				$('div#listContainer').html('');
-				$("div#fieldsBottomPaging, , div#fieldsTopPaging").html('');
+
+				self.resetRuleListTable();
+
 				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, page, self.rulePageSize, {
 					callback: function(response){
 						var data = response["data"];
 						var list = data.list;
-						$('div#listContainer').html(self.getListTemplate());
-						var $divList = $("div#itemList");
-						$divList.find("div.items:not(#itemPattern1, #itemPattern2)").remove();
+
+						self.setCurrentRuleList(list);
+						self.$elObject.html(self.getListTemplate());
+						var $divList = self.$elObject.find("div#itemList");
+						$divList.find("div.items:not(#itemPattern1, #itemPattern2, #itemPattern3)").remove();
 						if (list.length > 0){
 							self.resetHeader();
 							self.loadTypeaheadList($divList, list, self.startIndex, self.initialNoOfItems);
+							self.initializeTypeaheadAction();
 						}else{
 							$empty = '<div id="empty" class="items txtAC borderB">File selected has no records to display</div>';
 							$divList.append($empty);
 							$("div#countSec").hide();
 						}
-						
 
-						$("div#fieldsBottomPaging, div#fieldsTopPaging").paginate({
+
+						self.$elObject.find("div#fieldsBottomPaging, div#fieldsTopPaging").paginate({
 							currentPage: page, 
 							pageSize: self.rulePageSize,
 							totalItem: data.totalSize,
@@ -185,15 +207,15 @@
 			},
 			loadSplunkData: function() {
 				var self = this;
-				$('div#listContainer').html(self.getListTemplate());
+				self.$elObject.html(self.getListTemplate());
 				TopKeywordServiceJS.getFileList({
 					callback: function(files){
 						self.latestFile = files[0];
 						TopKeywordServiceJS.getFileContents(self.latestFile, {
 							callback: function(data){
 								var list = data.list;
-								var $divList = $("div#itemList");
-								$divList.find("div.items:not(#itemPattern1, #itemPattern2)").remove();
+								var $divList = self.$elObject.find("div#itemList");
+								$divList.find("div.items:not(#itemPattern1, #itemPattern2, #itemPattern3)").remove();
 								if (list.length > 0){
 									self.resetHeader();
 									self.loadItems($divList, list, self.startIndex, self.initialNoOfItems);
@@ -259,11 +281,11 @@
 						break;
 
 					var $divItem = $divList.find(patternId).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
-					var checked = list[i]["visible"] == 'false' ? 'CHECKED' : '';
-					
+					var checked = list[i]["disabled"] == 'false' ? 'CHECKED' : '';
+
 					$divItem.find("label.iter").html(parseInt(i)+1);
 					$divItem.find("label.keyword").html(list[i]["ruleName"]);
-					$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="0"/><input type="hidden" class="ruleId" value="'+list[i]["ruleId"]+'"/>');
+					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="0"/><input type="hidden" class="ruleId" value="'+list[i]["ruleId"]+'"/>0');
 					//$divItem.find("a.toggle").html(self.saveIconPath);
 					$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
 					$divItem.find("a.toggle").off().on({click : function() {
@@ -276,6 +298,111 @@
 				$divList.find("div.items").removeClass("alt");
 				$divList.find("div.items:even").addClass("alt");
 
+			},
+			getRulesToUpdate: function() {
+				var $container = $('#updateDialog');
+				var array = new Array();
+
+				$container.find('div.items').each(function() {
+					var $row = $(this);
+					var rule = {
+							ruleId: $row.find('input.ruleId').val(),
+							ruleName: $row.find('label.keyword').html(),
+							storeId: GLOBAL_storeId,
+							priority: $row.find('input.sortOrder').val(),
+							disabled: $row.find('input.ruleVisibility').is(':checked')
+					};
+
+					array[array.length] = rule;
+				});
+
+				return array;
+			},
+			updateTypeaheadList: function(array) {
+				var self = this;
+
+				var dwrFunction = self.$elObject.find('select.actionType').val();
+				var action = dwrFunction == 'updateRules' ? 'updated' : 'deleted';
+
+				TypeaheadRuleServiceJS[dwrFunction](array, {
+					callback: function(result){
+						var data = result['data'];
+						var errorMessage = '';
+						for(var i=0; i<array.length; i++) {
+							var response = data[array[i]['ruleId']];
+
+							if(response.errorMessage != null) {
+								errorMessage += response.errorMessage.message + '<br/><br/>';
+							}
+						}
+
+						if(errorMessage != '') {
+							jAlert(errorMessage, self.moduleName);
+						} else {
+							jAlert('The selected rules were successfuly '+action+'.', self.moduleName);
+						}
+					},
+					errorHandler: function(e) {
+						jAlert('An error occurred while processing the request. Please contact your system administrator.', self.moduleName);
+					}
+				});
+			},
+			initializeTypeaheadAction: function() {
+				var self = this;
+				self.$elObject.find('div#updateDialog').dialog({
+					title: self.moduleName,
+					autoOpen: false,
+					modal: true,
+					width:695,
+					buttons: {
+						"Submit": function() {
+							self.updateTypeaheadList(self.getRulesToUpdate());
+						},
+						Cancel: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				});
+				self.$elObject.find('a.dialogBtn').off().on({
+					click: function() {
+						if($('input.ruleVisibility:checked').size() < 1) {
+							jAlert('Please select a rule.', self.moduleName);
+							return;
+						}
+						$('div#updateDialog').html(self.initializeDialogContent());	
+						$('div#updateDialog').dialog('open');
+					}
+				});
+			},
+			initializeDialogContent: function() {
+				var html = '';
+				var self = this;
+				var actionType = self.$elObject.find('select.actionType').val();
+				var isDelete = actionType == 'deleteRules';
+				if(isDelete)
+					html += '<label>Are you sure you want to delete these items?</label>';
+
+				self.$elObject.find('div#itemList').find('input.ruleVisibility:checked').each(function(i) {
+					var $divRow = $(this).parent().parent();
+					var ruleId = $divRow.find('input.ruleId').val();
+					var currentRuleMap = self.currentRuleMap;
+					var priority = currentRuleMap[ruleId].priority == null ? 0 : currentRuleMap[ruleId].priorit;
+					var keyword = currentRuleMap[ruleId].ruleName;
+					var checked = currentRuleMap[ruleId].disabled == true ? 'CHECKED' : '';
+					var itemPattern = isDelete ? "#itemPattern3" : "#itemPattern2";
+					
+					var $divItem = self.$elObject.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
+
+					$divItem.find("label.keyword").html(keyword);
+					$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
+					$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
+
+					$divItem.show();
+
+					html += $('<div></div>').append($divItem).html();
+				});
+
+				return html;
 			},
 			loadItems: function($divList, list, start, noOfItems, type){
 				var listLen = list.length;
@@ -338,9 +465,10 @@
 			},
 
 			resetHeader: function() {
-				var $divHeader1 = $('div#itemHeaderMain').find("div#itemHeader1");
-				var $divHeader2 = $('div#itemHeaderMain').find("div#itemHeader2");
-				var $divHeader3 = $('div#itemHeaderMain').find("div#itemHeader3");
+				var self = this;
+				var $divHeader1 = self.$elObject.find('div#itemHeaderMain').find("div#itemHeader1");
+				var $divHeader2 = self.$elObject.find('div#itemHeaderMain').find("div#itemHeader2");
+				var $divHeader3 = self.$elObject.find('div#itemHeaderMain').find("div#itemHeader3");
 				var self = this;
 				if(!self.latestFile) {
 					$divHeader3.show();
@@ -468,16 +596,6 @@
 					}
 				});
 			},
-
-			checkNumberOfHighlightedItems : function(content, facetGroupId){
-				var self = this;
-				if(content.hasClass("isShown")){
-					var items = content.find("select#_items_"+facetGroupId);
-					return items ? items.length : -1; //return -1 if input element not found
-				}
-				return -1; //div is not shown
-			},
-
 			addDeleteFacetValueListener : function(contentHolder){
 				var self = this;
 
@@ -585,6 +703,17 @@
 			},
 			getListTemplate: function() {
 				var template = '';
+				template += '<div class="padT20 fsize14">';
+				template += '	<label class="txtAC fbold">Action: </label>';
+				template += '	<select class="actionType">';
+				template += '		<option value="updateRules">Update</option>';
+				template += '		<option value="deleteRules">Delete</option>';
+				template += '	</select>';
+				template += '   <a href="javascript:void(0);" class="dialogBtn" style="background: url(\'image/orange_gradient.png\') repeat-x scroll 0 0 rgba(0, 0, 0, 0);">Submit</a>';
+				template += '</div>';
+				template += '<div class="clearB"></div>';
+				template += '<div id="fieldsTopPaging"></div>';
+				template += '<div class="clearB"></div>';
 				template += '<div id="itemHeaderMain" class="w100p padT0 marT5 marL15 fsize12" style="max-height:365px;">';
 				template += '	<div id="itemHeader1" class="items border clearfix" style="display:none">';
 				template += '		<label class="iter floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> &nbsp; </label>';
@@ -600,7 +729,7 @@
 				template += '		<label class="toggle floatL w120 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>';
 				template += '	</div>';
 				template += '	<div id="itemHeader3" class="items border clearfix" style="display:none">';
-				template += '		<label class="iter floatL w45 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Hide </label>';
+				template += '		<label class="iter floatL w45 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
 				template += '		<label class="count floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
 				template += '		<label class="floatL w460 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>';
 				template += '		<label class="toggle floatL w115 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>';
@@ -631,12 +760,29 @@
 				template += '			<a class="toggle" href="javascript:void(0);"></a>';
 				template += '		</label>';
 				template += '	</div>';
+				template += '	<div id="itemPattern3" class="items pad5 borderB mar0 clearfix" style="display:none">';
+				template += '		<label class="iter floatL w45" style="display:none;"></label>';
+				template += '		<label class="count floatL w70" style="display:none;"></label>';
+				template += '		<label class="floatL w435">';
+				template += '			<label class="keyword floatL w310"></label>'; 
+				template += '			<div class="rules" style="display:none"></div>';
+				template += '		</label>';
+				template += '		<label class="results floatL w70"></label>';
+				template += '		<label class="sku floatL w70"></label>'; 
+				template += '		<label class="floatR fsize11 w110 txtAC">';
+				template += '			<a class="toggle" href="javascript:void(0);"></a>';
+				template += '		</label>';
+				template += '	</div>';
 				template += '</div>';
+				template += '<div class="clearB"></div>';
+				template += '<div id="fieldsBottomPaging"></div>';
+				template += '<div id="updateDialog" class="w95p marRLauto padT0 marT0 fsize12"></div>';
 
 				return template;
 			},
 			init : function() {
 				var self = this;
+				self.$elObject = $('#'+self.elContainer);
 				self.showTypeahead();
 				//self.loadSplunkData();
 				self.loadRuleList(0, self.rulePage);

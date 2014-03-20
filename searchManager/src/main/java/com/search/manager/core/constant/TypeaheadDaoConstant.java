@@ -10,6 +10,7 @@ public class TypeaheadDaoConstant {
 	public static final String COLUMN_BRAND_NAME = "BRAND_NAME";
 	public static final String COLUMN_VENDOR_ID = "VENDOR_ID";
 	public static final String COLUMN_PRODUCT_COUNT = "PRODUCT_COUNT";
+	public static final String COLUMN_PRIORITY = "PRIORITY";
 	public static final String COLUMN_SORT_ORDER = "SORT_ORDER";
 	
 	public static final String COLUMN_CATEGORY = "CATEGORY";

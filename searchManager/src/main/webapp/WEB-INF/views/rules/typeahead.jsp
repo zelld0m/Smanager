@@ -41,11 +41,8 @@
 		<img src="<spring:url value="/images/ajax-loader-circ.gif" />">
 	</div>
 	<div class="clearB"></div>
-	<div></div>
-	<div class="clearB"></div>
-	<div id="fieldsTopPaging"></div>
+	
 	<div id="listContainer"></div>
-	<div id="fieldsBottomPaging"></div>
 	<!--  <div id="noSelected"><img id="no-items-img" src="../images/facetSortRuleGuidelines.jpg"></div>-->
 
 	<div id="facetsorting"

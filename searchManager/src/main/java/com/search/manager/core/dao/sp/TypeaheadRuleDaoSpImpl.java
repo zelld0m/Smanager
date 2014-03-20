@@ -64,7 +64,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
-			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_SORT_ORDER, Types.INTEGER));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
 		}
@@ -90,7 +90,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
-			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_SORT_ORDER, Types.INTEGER));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.COLUMN_LAST_UPDATED_STAMP, Types.TIMESTAMP));
 		}
@@ -134,7 +134,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		typeaheadRule.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
 		typeaheadRule.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs
 				.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
-		typeaheadRule.setSortOrder(rs.getInt(TypeaheadDaoConstant.COLUMN_SORT_ORDER));
+		typeaheadRule.setSortOrder(rs.getInt(TypeaheadDaoConstant.COLUMN_PRIORITY));
 		typeaheadRule.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
 		typeaheadRule.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
 		typeaheadRule.setRuleName(rs.getString(DAOConstants.COLUMN_RULE_NAME));
@@ -155,8 +155,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 	@Override
 	protected StoredProcedure getDeleteStoredProcedure()
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override
@@ -181,7 +180,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
-			inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
+			inputs.put(TypeaheadDaoConstant.COLUMN_PRIORITY, model.getSortOrder());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_STAMP, model.getCreatedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getCreatedDate()) : null);
 		}
@@ -198,7 +197,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 			inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
-			inputs.put(TypeaheadDaoConstant.COLUMN_SORT_ORDER, model.getSortOrder());
+			inputs.put(TypeaheadDaoConstant.COLUMN_PRIORITY, model.getSortOrder());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, model.getLastModifiedBy());
 			inputs.put(DAOConstants.COLUMN_LAST_UPDATED_STAMP, model.getLastModifiedDate() != null ? jodaDateTimeUtil.toSqlDate(model.getLastModifiedDate()): null);
 		}
@@ -209,8 +208,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 	@Override
 	protected Map<String, Object> generateDeleteInput(TypeaheadRule model)
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new CoreDaoException("Unsupported Operation.");
 	}
 
 	@Override

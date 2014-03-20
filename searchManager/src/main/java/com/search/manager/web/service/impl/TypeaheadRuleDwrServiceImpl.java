@@ -1,5 +1,8 @@
 package com.search.manager.web.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -79,6 +82,21 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	}
 	
 	@RemoteMethod
+	public ServiceResponse<Map<String, ServiceResponse<TypeaheadRule>>> updateRules(TypeaheadRule[] rules) {
+		
+		Map<String, ServiceResponse<TypeaheadRule>> ruleIdResponseMap = new HashMap<String, ServiceResponse<TypeaheadRule>>();
+		ServiceResponse<Map<String, ServiceResponse<TypeaheadRule>>> result = new ServiceResponse<Map<String,ServiceResponse<TypeaheadRule>>>();
+		
+		for(TypeaheadRule rule : rules) {
+			ruleIdResponseMap.put(rule.getRuleId(), updateRule(rule));
+		}
+		
+		result.success(ruleIdResponseMap);
+		
+		return result;
+	}
+	
+	@RemoteMethod
 	public ServiceResponse<TypeaheadRule> updateRule(TypeaheadRule typeaheadRule) {
 		
 		ServiceResponse<TypeaheadRule> response = new ServiceResponse<TypeaheadRule>();
@@ -98,15 +116,51 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			if(existingRule != null)
 				response.success(existingRule);
 			else
-				response.error("Unable to add keyword. Please contact your system administrator.");
+				response.error("Unable to update the rule '"+typeaheadRule.getRuleName()+"'.");
 
 
-		} catch (CoreServiceException e) {
+		} catch (Exception e) {
 			logger.error("failed at TypeaheadRuleServiceDwr.updateRule", e);
-			response.error("Unable to add keyword. Please contact your system administrator.");
+			response.error("Unable to update the rule '"+typeaheadRule.getRuleName()+"'. Please contact your system administrator.");
 		}
 
 		return response;
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<Boolean> deleteRule(TypeaheadRule typeaheadRule) {
+		ServiceResponse<Boolean> response = new ServiceResponse<Boolean>();
+		try {
+			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
+			
+			Boolean success = typeaheadRuleService.delete(existingRule);
+			
+			if(success) {
+				response.success(success);
+			} else {
+				response.error("Unable to delete the rule '"+typeaheadRule.getRuleName()+"'", success);
+			}
+			
+		} catch (Exception e) {
+			logger.error("failed at TypeaheadRuleServiceDwr.deleteRule", e);
+			response.error("Unable to delete the rule '"+typeaheadRule.getRuleName()+"'");
+		}
+		
+		return response;
+	}
+	
+	@RemoteMethod
+	public ServiceResponse<Map<String, ServiceResponse<Boolean>>> deleteRules(TypeaheadRule[] rules) {
+		Map<String, ServiceResponse<Boolean>> ruleIdResponseMap = new HashMap<String, ServiceResponse<Boolean>>();
+		ServiceResponse<Map<String, ServiceResponse<Boolean>>> result = new ServiceResponse<Map<String,ServiceResponse<Boolean>>>();
+		
+		for(TypeaheadRule rule : rules) {
+			ruleIdResponseMap.put(rule.getRuleId(), deleteRule(rule));
+		}
+		
+		result.success(ruleIdResponseMap);
+		
+		return result;
 	}
 
 	@RemoteMethod
