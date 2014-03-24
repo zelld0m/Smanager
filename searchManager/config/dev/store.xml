@@ -113,6 +113,7 @@
 					<member property-id="enable.didYouMean"/>
 					<member property-id="enable.banner"/>
 					<member property-id="enable.rankingRule"/>
+					<member property-id="enable.typeahead"/>
                 </group>
                 <group name="Default Import Status">
                     <member property-id="status.elevate"/>
@@ -123,6 +124,7 @@
 					<member property-id="status.didYouMean"/>
 					<member property-id="status.banner"/>
 					<member property-id="status.rankingRule"/>
+					<member property-id="status.typeahead"/>
                 </group>
             </groups>
             
@@ -171,6 +173,10 @@
                     <label>Relevancy Rule</label>
                     <defaultValue>true</defaultValue>
                 </property>
+                <property id="enable.typeahead" type="Boolean" required="true">
+                    <label>Typeahead Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
 			
                 <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
@@ -202,6 +208,10 @@
                 </property>
 				<property id="status.rankingRule" type="DropDown" required="true">
                     <label>Relevancy Rule</label>
+                    <defaultValue>For Approval</defaultValue>
+                </property>
+                <property id="status.typeahead" type="DropDown" required="true">
+                    <label>Typeahead Rule</label>
                     <defaultValue>For Approval</defaultValue>
                 </property>
 			</properties>
@@ -241,6 +251,7 @@
 					<member property-id="enable.didYouMean"/>
 					<member property-id="enable.banner"/>
 					<member property-id="enable.rankingRule"/>
+					<member property-id="enable.typeahead"/>
                 </group>
                 <group name="Default Import Status">
                     <member property-id="status.elevate"/>
@@ -251,6 +262,7 @@
 					<member property-id="status.didYouMean"/>
 					<member property-id="status.banner"/>
 					<member property-id="status.rankingRule"/>
+					<member property-id="status.typeahead"/>
                 </group>
             </groups>
             
@@ -299,6 +311,10 @@
                     <label>Relevancy Rule</label>
                     <defaultValue>true</defaultValue>
                 </property>
+                <property id="enable.typeahead" type="Boolean" required="true">
+                    <label>Typeahead Rule</label>
+                    <defaultValue>true</defaultValue>
+                </property>
 			
                 <property id="status.elevate" type="DropDown" required="true">
                     <label>Elevate</label>
@@ -330,6 +346,10 @@
                 </property>
 				<property id="status.rankingRule" type="DropDown" required="true">
                     <label>Relevancy Rule</label>
+                    <defaultValue>For Approval</defaultValue>
+                </property>
+                <property id="status.typeahead" type="DropDown" required="true">
+                    <label>Typeahead Rule</label>
                     <defaultValue>For Approval</defaultValue>
                 </property>
 			</properties>

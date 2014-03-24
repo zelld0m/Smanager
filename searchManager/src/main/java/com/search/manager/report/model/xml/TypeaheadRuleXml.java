@@ -14,7 +14,7 @@ import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.model.TypeaheadSuggestion;
 import com.search.manager.enums.RuleEntity;
 
-@XmlRootElement(name = "typeaheadRuleXml")
+@XmlRootElement(name = "typeahead")
 //@XmlType(propOrder={"brands, suggestions"})
 @DataTransferObject(converter = BeanConverter.class)
 public class TypeaheadRuleXml extends RuleXml{
@@ -29,6 +29,7 @@ public class TypeaheadRuleXml extends RuleXml{
 	
 	public TypeaheadRuleXml() {
 		super();
+		this.setRuleEntity(RULE_ENTITY);
 	}
 	
 	public TypeaheadRuleXml(TypeaheadRule rule, List<TypeaheadBrand> brandList, List<TypeaheadSuggestion> suggestionList) {
@@ -42,6 +43,7 @@ public class TypeaheadRuleXml extends RuleXml{
         this.setRuleName(rule.getRuleName());
         this.setRuleId(rule.getRuleId());
         this.setStore(rule.getStoreId());
+        this.setDisabled(rule.getDisabled());
         this.setPriority(rule.getPriority());
                 
         if(brandList != null && !brandList.isEmpty()) {

@@ -10,14 +10,15 @@ public class TypeaheadDaoConstant {
     public static final String COLUMN_BRAND_NAME = "BRAND_NAME";
     public static final String COLUMN_VENDOR_ID = "VENDOR_ID";
     public static final String COLUMN_PRODUCT_COUNT = "PRODUCT_COUNT";
-    public static final String COLUMN_PRIORITY = "SORT_ORDER";
+    public static final String COLUMN_PRIORITY = "PRIORITY";
     public static final String COLUMN_DISABLED = "DISABLED";
 
     public static final String COLUMN_CATEGORY = "CATEGORY";
 
-    public static final String PARAM_ORDER_BY = "Order_By";
+    public static final String PARAM_ORDER_BY = "ORDER_BY";
 
     public static final String SP_ADD_TYPEAHEAD_RULE = "dbo.usp_Add_Typeahead_Rule";
+    public static final String SP_DELETE_TYPEAHEAD_RULE = "dbo.usp_Delete_Typeahead_Rule";
     public static final String SP_UPDATE_TYPEAHEAD_RULE = "dbo.usp_Update_Typeahead_Rule";
     public static final String SP_GET_TYPEAHEAD_RULE = "dbo.usp_Get_Typeahead_Rule";
 

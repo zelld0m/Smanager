@@ -36,7 +36,7 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 	public TypeaheadRuleServiceSpImpl() {
 		super();
 	}
-	
+
 	@Autowired
 	public TypeaheadRuleServiceSpImpl(@Qualifier("typeaheadRuleDaoSp") TypeaheadRuleDao dao) {
 		super(dao);
@@ -107,5 +107,21 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 
 		return null;
 	}
+
+	@Override
+    public TypeaheadRule transfer(TypeaheadRule typeaheadRule) throws CoreServiceException {
+
+        // Validate required fields for transfer method.
+        if (StringUtils.isNotBlank(typeaheadRule.getStoreId()) && StringUtils.isNotBlank(typeaheadRule.getRuleName())
+                && StringUtils.isNotBlank(typeaheadRule.getCreatedBy())) {
+            try {
+                return dao.add(typeaheadRule);
+            } catch (CoreDaoException e) {
+                throw new CoreServiceException(e);
+            }
+        }
+
+        return null;
+    }
 
 }

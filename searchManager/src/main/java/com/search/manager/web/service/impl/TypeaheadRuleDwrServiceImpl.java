@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.core.constant.TypeaheadDaoConstant;
 import com.search.manager.core.enums.MemberType;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.*;
@@ -95,11 +96,11 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	public ServiceResponse<TypeaheadRule> updateRule(TypeaheadRule typeaheadRule) {
 		
 		ServiceResponse<TypeaheadRule> response = new ServiceResponse<TypeaheadRule>();
-
+		String ruleName = null;
 		try {
 
 			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
-
+			ruleName = existingRule.getRuleName();
 			existingRule.setPriority(typeaheadRule.getPriority());
 			existingRule.setDisabled(typeaheadRule.getDisabled());
 			existingRule.setRuleName(typeaheadRule.getRuleName());
@@ -116,7 +117,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 		} catch (Exception e) {
 			logger.error("failed at TypeaheadRuleServiceDwr.updateRule", e);
-			response.error("Unable to update the rule '"+typeaheadRule.getRuleName()+"'. Please contact your system administrator.");
+			response.error("Unable to update the rule '"+ruleName+"'. Please contact your system administrator.");
 		}
 
 		return response;
@@ -125,20 +126,23 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	@RemoteMethod
 	public ServiceResponse<Boolean> deleteRule(TypeaheadRule typeaheadRule) {
 		ServiceResponse<Boolean> response = new ServiceResponse<Boolean>();
+		String ruleName = null;
 		try {
 			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
+			
+			ruleName = existingRule.getRuleName();
 			
 			Boolean success = typeaheadRuleService.delete(existingRule);
 			
 			if(success) {
 				response.success(success);
 			} else {
-				response.error("Unable to delete the rule '"+typeaheadRule.getRuleName()+"'", success);
+				response.error("Unable to delete the rule '"+ruleName+"'", success);
 			}
 			
 		} catch (Exception e) {
 			logger.error("failed at TypeaheadRuleServiceDwr.deleteRule", e);
-			response.error("Unable to delete the rule '"+typeaheadRule.getRuleName()+"'");
+			response.error("Unable to delete the rule '"+ruleName+"'");
 		}
 		
 		return response;
@@ -208,7 +212,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String name, int matchType, int page, int itemsPerPage) {
+	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String name, int matchType, int orderBy, int page, int itemsPerPage) {
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
 		ServiceResponse<SearchResult<TypeaheadRule>> serviceResponse = new ServiceResponse<SearchResult<TypeaheadRule>>();
 		try {
@@ -219,6 +223,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));
 	        search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, name));
 	        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, matchType));
+	        search.addFilter(new Filter(TypeaheadDaoConstant.PARAM_ORDER_BY, orderBy));
 	        search.setPageNumber(page);
 	        search.setMaxRowCount(itemsPerPage);
 			

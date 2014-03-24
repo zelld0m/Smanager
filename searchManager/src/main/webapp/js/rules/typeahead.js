@@ -19,6 +19,7 @@
 			fq: "",
 			elContainer: "listContainer",
 			$elObject: null,
+			$dialogObject: null,
 			rulePage: 1,
 			rulePageSize: 15,
 
@@ -34,6 +35,7 @@
 			saveIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_disk.png'/>",
 			rectLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
 			magniIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_magniGlass13.png'/>",
+			lockIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_alert.png'/>",
 
 
 			prepareTypeahead : function(){
@@ -130,10 +132,11 @@
 				self.selectedRule = rule;
 				$('input.searchTextInput').val(rule.ruleName);
 				self.startIndex = 0;
-				self.loadRuleList(0, self.rulePage);
+//				self.loadRuleList(0, self.rulePage);
 //				self.keyword = "";
 //				self.fq = "";
 				$('div.listSearchDiv').hide();
+				$('div#listContainer').hide();
 //				$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
 
 				self.showTypeahead();
@@ -156,12 +159,13 @@
 			},
 			loadRuleList: function(matchType, page) {
 				var self = this;
-				var $searchDiv = self.$elObject.find('div.listSearchDiv').show();
+				var $searchDiv = $('div.listSearchDiv').show();
 				var searchText = $searchDiv.find('.searchTextInput').val();
-
+				
+				$("#submitForApproval").html('');
 				self.resetRuleListTable();
 
-				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, page, self.rulePageSize, {
+				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, 1, page, self.rulePageSize, {
 					callback: function(response){
 						var data = response["data"];
 						var list = data.list;
@@ -202,6 +206,7 @@
 					},
 					postHook:function(){
 						$('div#preloader').hide();
+						$elObject.show();
 					}
 				});
 			},
@@ -281,13 +286,10 @@
 						break;
 
 					var $divItem = $divList.find(patternId).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
-					var checked = list[i]["disabled"] == 'false' ? 'CHECKED' : '';
-
-					$divItem.find("label.iter").html(parseInt(i)+1);
+					
 					$divItem.find("label.keyword").html(list[i]["ruleName"]);
-					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="0"/><input type="hidden" class="ruleId" value="'+list[i]["ruleId"]+'"/>0');
+					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="'+list[i]['priority']+'"/><input type="hidden" class="ruleId" value="'+list[i]["ruleId"]+'"/>'+list[i]['priority']);
 					//$divItem.find("a.toggle").html(self.saveIconPath);
-					$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
 					$divItem.find("a.toggle").off().on({click : function() {
 						self.updateTypeaheadRule($(this).parent().parent());
 					}});
@@ -298,16 +300,40 @@
 				$divList.find("div.items").removeClass("alt");
 				$divList.find("div.items:even").addClass("alt");
 
+				self.checkRuleStatus($divList);
+			},
+			checkRuleStatus: function($divList) {
+				var self = this;
+				
+				$divList.find('input.ruleId').each(function() {
+					var $element = $(this);
+					var $checkboxDiv = $element.parent().parent().find('label.iter');
+					
+					DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, self.moduleName, $element.val(), {
+						callback: function(ruleStatus) {
+							if(ruleStatus.locked) {
+								$checkboxDiv.html(self.lockIcon);
+							} else {
+								$checkboxDiv.html('<input type="checkbox" class="ruleVisibility" value="false"/>');
+							}
+						},
+						preHook: function() {
+							$checkboxDiv.html(self.rectLoader);
+						},
+						postHook: function() {
+							
+						}
+					});
+				});
 			},
 			getRulesToUpdate: function() {
 				var $container = $('#updateDialog');
 				var array = new Array();
 
-				$container.find('div.items').each(function() {
+				$container.find('div:not(.border).items').each(function() {
 					var $row = $(this);
 					var rule = {
 							ruleId: $row.find('input.ruleId').val(),
-							ruleName: $row.find('label.keyword').html(),
 							storeId: GLOBAL_storeId,
 							priority: $row.find('input.sortOrder').val(),
 							disabled: $row.find('input.ruleVisibility').is(':checked')
@@ -342,6 +368,10 @@
 							jAlert('The selected rules were successfuly '+action+'.', self.moduleName);
 						}
 					},
+					postHook: function() {
+						self.$dialogObject.dialog('close');
+						self.loadRuleList(0, self.rulePage);
+					},
 					errorHandler: function(e) {
 						jAlert('An error occurred while processing the request. Please contact your system administrator.', self.moduleName);
 					}
@@ -353,7 +383,7 @@
 					title: self.moduleName,
 					autoOpen: false,
 					modal: true,
-					width:695,
+					width:715,
 					buttons: {
 						"Submit": function() {
 							self.updateTypeaheadList(self.getRulesToUpdate());
@@ -363,6 +393,9 @@
 						}
 					}
 				});
+				
+				self.$dialogObject = $('div#updateDialog');
+				
 				self.$elObject.find('a.dialogBtn').off().on({
 					click: function() {
 						if($('input.ruleVisibility:checked').size() < 1) {
@@ -370,6 +403,8 @@
 							return;
 						}
 						$('div#updateDialog').html(self.initializeDialogContent());	
+						$('div#updateDialog').find("div.items").removeClass("alt");
+						$('div#updateDialog').find("div.items:even").addClass("alt");
 						$('div#updateDialog').dialog('open');
 					}
 				});
@@ -379,14 +414,17 @@
 				var self = this;
 				var actionType = self.$elObject.find('select.actionType').val();
 				var isDelete = actionType == 'deleteRules';
+				
 				if(isDelete)
 					html += '<label>Are you sure you want to delete these items?</label>';
-
+				
+				html += $('<div></div>').append(self.$elObject.find('div#itemHeaderMain').clone()).html();
+				
 				self.$elObject.find('div#itemList').find('input.ruleVisibility:checked').each(function(i) {
 					var $divRow = $(this).parent().parent();
 					var ruleId = $divRow.find('input.ruleId').val();
 					var currentRuleMap = self.currentRuleMap;
-					var priority = currentRuleMap[ruleId].priority == null ? 0 : currentRuleMap[ruleId].priorit;
+					var priority = currentRuleMap[ruleId].priority == null ? 0 : currentRuleMap[ruleId].priority;
 					var keyword = currentRuleMap[ruleId].ruleName;
 					var checked = currentRuleMap[ruleId].disabled == true ? 'CHECKED' : '';
 					var itemPattern = isDelete ? "#itemPattern3" : "#itemPattern2";
@@ -538,7 +576,7 @@
 					itemDataCallback: function(base, ruleName, page){
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
-						TypeaheadRuleServiceJS.getAllRules(ruleName, 0, page, base.options.pageSize, {
+						TypeaheadRuleServiceJS.getAllRules(ruleName, 0, 0, page, base.options.pageSize, {
 							callback: function(response){
 								var data = response["data"];
 								base.populateList(data, ruleName);
@@ -761,8 +799,8 @@
 				template += '		</label>';
 				template += '	</div>';
 				template += '	<div id="itemPattern3" class="items pad5 borderB mar0 clearfix" style="display:none">';
-				template += '		<label class="iter floatL w45" style="display:none;"></label>';
-				template += '		<label class="count floatL w70" style="display:none;"></label>';
+				template += '		<label class="iter floatL w45"></label>';
+				template += '		<label class="count floatL w70"></label>';
 				template += '		<label class="floatL w435">';
 				template += '			<label class="keyword floatL w310"></label>'; 
 				template += '			<div class="rules" style="display:none"></div>';
@@ -776,7 +814,7 @@
 				template += '</div>';
 				template += '<div class="clearB"></div>';
 				template += '<div id="fieldsBottomPaging"></div>';
-				template += '<div id="updateDialog" class="w95p marRLauto padT0 marT0 fsize12"></div>';
+				template += '<div id="updateDialog" class="w95p marRLauto padT0 marT0 fsize12"><img class="itemIcon" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif"/></div>';
 
 				return template;
 			},
