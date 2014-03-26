@@ -57,9 +57,11 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	@Autowired
 	private RequestProcessorUtil requestProcessorUtil;
 	@Autowired
-	private SearchWithinRequestProcessor searchWithinRequestProcessor;
+	@Qualifier("searchWithinRequestProcessor")
+	private RequestProcessor searchWithinRequestProcessor;
 	@Autowired
-	private FacetSortRequestProcessor facetSortRequestProcessor;
+	@Qualifier("facetSortRequestProcessor")
+	private RequestProcessor facetSortRequestProcessor;
 	
 	protected final ExecutorService execService = Executors.newCachedThreadPool();
 
