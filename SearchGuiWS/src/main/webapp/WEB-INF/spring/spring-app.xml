@@ -115,7 +115,8 @@
     <!-- solr core -->
     <bean id="bannerRuleItemDaoSolr" class="com.search.manager.core.dao.solr.BannerRuleItemDaoSolrImpl" scope="singleton" />
 	<bean id="bannerRuleItemServiceSolr" class="com.search.manager.core.service.solr.BannerRuleItemServiceSolrImpl" scope="singleton" />
-    
+	<bean id="typeaheadRuleDaoSolr" class="com.search.manager.core.dao.solr.TypeaheadRuleDaoSolrImpl" scope="singleton" />
+    <bean id="typeaheadRuleServiceSolr" class="com.search.manager.core.service.solr.TypeaheadRuleServiceSolrImpl" scope="singleton" />
     <!-- Scans within the base package of the application for @Components to configure as beans,
 		 @Controller, @Service, @Configuration, etc. -->
 	<context:component-scan base-package="com.search.manager.solr, com.search.service" />

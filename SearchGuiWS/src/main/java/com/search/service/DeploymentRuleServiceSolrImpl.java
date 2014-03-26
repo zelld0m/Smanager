@@ -676,15 +676,21 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 				currentTypeahead.setRuleName(typeaheadRule.getRuleName());
 				currentTypeahead.setStoreId(store);
 				
-				typeaheadRuleServiceProd.delete(currentTypeahead);
-
+				SearchResult<TypeaheadRule> result = typeaheadRuleServiceProd.search(currentTypeahead);
+				
+				if(result.getTotalSize() > 0) {
+					currentTypeahead = result.getList().get(0);
+					typeaheadRuleServiceProd.delete(currentTypeahead);
+					currentTypeahead.setRuleId(null);
+				}
 				currentTypeahead.setPriority(typeaheadRule.getPriority());
 				currentTypeahead.setDisabled(typeaheadRule.getDisabled());
-				currentTypeahead = typeaheadRuleServiceProd.add(currentTypeahead);
+				currentTypeahead.setCreatedBy(typeaheadRule.getCreatedBy());
+				currentTypeahead = typeaheadRuleServiceProd.transfer(currentTypeahead);
 
 				if(currentTypeahead != null) {
 					keywordStatus.put(id, true);
-					publishedRules.add(id);
+					publishedRules.add(currentTypeahead.getRuleId());
 				}
 			}
 

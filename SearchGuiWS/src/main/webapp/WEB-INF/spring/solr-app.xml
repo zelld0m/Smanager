@@ -42,6 +42,9 @@
 	<bean id="bannerSolrServer" parent="localSolrServerRunner" scope="singleton">
 		<property name="coreName" value="${solr.core.banner}" />
 	</bean>
+	<bean id="typeaheadSolrServer" parent="localSolrServerRunner" scope="singleton">
+		<property name="coreName" value="${solr.core.typeaheadpub}" />
+	</bean>
 	
 	<!-- Solr Server Factory -->
 	<bean id="solrServerFactory" class="com.search.manager.solr.util.SolrServerFactory" scope="singleton">
@@ -55,6 +58,7 @@
 				<ref bean="relevancySolrServer" />
 				<ref bean="spellSolrServer" />
 				<ref bean="bannerSolrServer" />
+				<ref bean="typeaheadSolrServer" />
 			</list>
 		</constructor-arg>
 	</bean>
