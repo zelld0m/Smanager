@@ -161,7 +161,7 @@
 				var self = this;
 				var $searchDiv = $('div.listSearchDiv').show();
 				var searchText = $searchDiv.find('.searchTextInput').val();
-				
+
 				$("#submitForApproval").html('');
 				self.resetRuleListTable();
 
@@ -286,7 +286,7 @@
 						break;
 
 					var $divItem = $divList.find(patternId).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
-					
+
 					$divItem.find("label.keyword").html(list[i]["ruleName"]);
 					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="'+list[i]['priority']+'"/><input type="hidden" class="ruleId" value="'+list[i]["ruleId"]+'"/>'+list[i]['priority']);
 					//$divItem.find("a.toggle").html(self.saveIconPath);
@@ -304,11 +304,11 @@
 			},
 			checkRuleStatus: function($divList) {
 				var self = this;
-				
+
 				$divList.find('input.ruleId').each(function() {
 					var $element = $(this);
 					var $checkboxDiv = $element.parent().parent().find('label.iter');
-					
+
 					DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, self.moduleName, $element.val(), {
 						callback: function(ruleStatus) {
 							if(ruleStatus.locked) {
@@ -321,7 +321,7 @@
 							$checkboxDiv.html(self.rectLoader);
 						},
 						postHook: function() {
-							
+
 						}
 					});
 				});
@@ -393,9 +393,9 @@
 						}
 					}
 				});
-				
+
 				self.$dialogObject = $('div#updateDialog');
-				
+
 				self.$elObject.find('a.dialogBtn').off().on({
 					click: function() {
 						if($('input.ruleVisibility:checked').size() < 1) {
@@ -414,11 +414,15 @@
 				var self = this;
 				var actionType = self.$elObject.find('select.actionType').val();
 				var isDelete = actionType == 'deleteRules';
-				
+
 				if(isDelete)
 					html += '<label>Are you sure you want to delete these items?</label>';
-				
+
 				html += $('<div></div>').append(self.$elObject.find('div#itemHeaderMain').clone()).html();
+
+				var $divItemTable = self.$elObject.find("div#itemList").clone();
+				
+				$divItemTable.html('');
 				
 				self.$elObject.find('div#itemList').find('input.ruleVisibility:checked').each(function(i) {
 					var $divRow = $(this).parent().parent();
@@ -428,17 +432,25 @@
 					var keyword = currentRuleMap[ruleId].ruleName;
 					var checked = currentRuleMap[ruleId].disabled == true ? 'CHECKED' : '';
 					var itemPattern = isDelete ? "#itemPattern3" : "#itemPattern2";
-					
-					var $divItem = self.$elObject.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
 
+					var $divItem = self.$elObject.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
+					
+					
 					$divItem.find("label.keyword").html(keyword);
-					$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
-					$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
+					if(isDelete) {
+						$divItem.find("label.count").html('&nbsp;&nbsp;&nbsp;'+priority);
+						$divItem.find("label.iter").html(currentRuleMap[ruleId].disabled == true ? 'Disabled' : 'Enabled');
+					} else {
+						$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
+						$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
+					}
 
 					$divItem.show();
-
-					html += $('<div></div>').append($divItem).html();
+					$divItemTable.append($divItem);
+					
 				});
+				
+				html += $('<div></div>').append($divItemTable).html();
 
 				return html;
 			},
