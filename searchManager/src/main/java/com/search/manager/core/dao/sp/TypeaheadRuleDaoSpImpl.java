@@ -207,8 +207,8 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 			inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
-			inputs.put(TypeaheadDaoConstant.COLUMN_PRIORITY, model.getPriority());
-			inputs.put(TypeaheadDaoConstant.COLUMN_DISABLED, model.getDisabled());
+			inputs.put(TypeaheadDaoConstant.COLUMN_PRIORITY, model.getPriority() != null ? model.getPriority() : 1);
+			inputs.put(TypeaheadDaoConstant.COLUMN_DISABLED, model.getDisabled() != null ? model.getDisabled() : false);
 			inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_STAMP, jodaDateTimeUtil.toSqlDate(model.getCreatedDate()));
 		}

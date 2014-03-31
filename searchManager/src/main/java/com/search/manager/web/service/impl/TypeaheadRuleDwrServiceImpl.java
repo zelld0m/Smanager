@@ -20,6 +20,7 @@ import com.search.manager.core.search.*;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.service.*;
 import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.UtilityService;
 import com.search.manager.web.service.TypeaheadRuleDwrService;
@@ -31,6 +32,8 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 	private static final Logger logger =
 			LoggerFactory.getLogger(TypeaheadRuleDwrServiceImpl.class);
+	@Autowired
+	private RuleStatusService ruleStatusService;
 	@Autowired
 	private TypeaheadBrandService typeaheadBrandService;
 	@Autowired
@@ -129,8 +132,11 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 		String ruleName = null;
 		try {
 			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
+			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(existingRule.getStoreId(), RuleEntity.TYPEAHEAD.getName(), existingRule.getRuleId());
 			
-			ruleName = existingRule.getRuleName();
+			ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, utilityService.getUsername());
+//			if(ruleStatus.getp)
+			//			ruleName = existingRule.getRuleName();
 			
 			Boolean success = typeaheadRuleService.delete(existingRule);
 			

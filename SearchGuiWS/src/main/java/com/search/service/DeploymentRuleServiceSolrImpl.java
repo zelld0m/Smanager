@@ -681,11 +681,12 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 				if(result.getTotalSize() > 0) {
 					currentTypeahead = result.getList().get(0);
 					typeaheadRuleServiceProd.delete(currentTypeahead);
-					currentTypeahead.setRuleId(null);
 				}
 				currentTypeahead.setPriority(typeaheadRule.getPriority());
 				currentTypeahead.setDisabled(typeaheadRule.getDisabled());
 				currentTypeahead.setCreatedBy(typeaheadRule.getCreatedBy());
+				currentTypeahead.setRuleId(typeaheadRule.getRuleId());
+				
 				currentTypeahead = typeaheadRuleServiceProd.transfer(currentTypeahead);
 
 				if(currentTypeahead != null) {
@@ -1164,7 +1165,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 	}
 
     @Override
-    public Map<String, Boolean> unpublisTypeaheadRulesMap(String store, List<String> ruleIds) {
+    public Map<String, Boolean> unpublishTypeaheadRulesMap(String store, List<String> ruleIds) {
         Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleIds);
         List<String> unpublishedIds = new ArrayList<String>();
         // TODO: test

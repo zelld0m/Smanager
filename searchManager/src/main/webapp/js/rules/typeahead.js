@@ -35,7 +35,7 @@
 			saveIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_disk.png'/>",
 			rectLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
 			magniIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_magniGlass13.png'/>",
-			lockIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_alert.png'/>",
+			lockIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_lock.png'/>",
 
 
 			prepareTypeahead : function(){
@@ -50,7 +50,6 @@
 			showTypeahead : function(){
 				var self = this;
 				self.prepareTypeahead();
-				self.getTypeaheadRuleList(1);
 
 				if(self.selectedRule==null){
 					$("#preloader").hide();
@@ -131,15 +130,23 @@
 				var self = this;
 				self.selectedRule = rule;
 				$('input.searchTextInput').val(rule.ruleName);
+				$('a.searchButtonList').show();
 				self.startIndex = 0;
 //				self.loadRuleList(0, self.rulePage);
 //				self.keyword = "";
 //				self.fq = "";
-				$('div.listSearchDiv').hide();
+				$('input.searchTextInput, a.searchButton').hide();
 				$('div#listContainer').hide();
 //				$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
 
 				self.showTypeahead();
+			},
+			resetTypeahead : function() {
+				var self = this;
+				self.selectedRule = null;
+				$('input.searchTextInput').val('');
+				$('span#titleHeader').html('');
+				$('span#titleText').html(self.moduleName);
 			},
 			resetRuleListTable: function() {
 				var self = this;
@@ -159,12 +166,13 @@
 			},
 			loadRuleList: function(matchType, page) {
 				var self = this;
-				var $searchDiv = $('div.listSearchDiv').show();
-				var searchText = $searchDiv.find('.searchTextInput').val();
+				var searchText = $('input.searchTextInput').val();
+				$('input.searchTextInput, a.searchButton').show();
 
+				$('a.searchButtonList').hide();
 				$("#submitForApproval").html('');
 				self.resetRuleListTable();
-
+				
 				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, 1, page, self.rulePageSize, {
 					callback: function(response){
 						var data = response["data"];
@@ -206,7 +214,7 @@
 					},
 					postHook:function(){
 						$('div#preloader').hide();
-						$elObject.show();
+						self.$elObject.show();
 					}
 				});
 			},
@@ -284,11 +292,18 @@
 				for (var i=start; i < start + noOfItems ; i++){
 					if(i == listLen)
 						break;
-
+					var rule = list[i];
 					var $divItem = $divList.find(patternId).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
 
-					$divItem.find("label.keyword").html(list[i]["ruleName"]);
-					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="'+list[i]['priority']+'"/><input type="hidden" class="ruleId" value="'+list[i]["ruleId"]+'"/>'+list[i]['priority']);
+					$divItem.find("label.keyword").html(rule["ruleName"]);
+					$divItem.find("label.keyword").html('<a href="javascript:void(0);" class="keywordLink">'+rule["ruleName"]+'</a>');
+					
+					$divItem.find('a.keywordLink').off().on({
+						click : function() {
+							self.setTypeahead(rule);
+						}
+					});
+					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="'+rule['priority']+'"/><input type="hidden" class="ruleId" value="'+rule["ruleId"]+'"/>'+rule['priority']);
 					//$divItem.find("a.toggle").html(self.saveIconPath);
 					$divItem.find("a.toggle").off().on({click : function() {
 						self.updateTypeaheadRule($(this).parent().parent());
@@ -307,8 +322,11 @@
 
 				$divList.find('input.ruleId').each(function() {
 					var $element = $(this);
-					var $checkboxDiv = $element.parent().parent().find('label.iter');
-
+					var $row = $element.parent().parent();
+					var $checkboxDiv = $row.find('label.iter');
+					var $statusDiv = $row.find('label.txtAC');
+					var $keywordDiv = $row.find('label.keyword');
+					
 					DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, self.moduleName, $element.val(), {
 						callback: function(ruleStatus) {
 							if(ruleStatus.locked) {
@@ -316,6 +334,9 @@
 							} else {
 								$checkboxDiv.html('<input type="checkbox" class="ruleVisibility" value="false"/>');
 							}
+							var status = ruleStatus['approvalStatus'];
+							$statusDiv.html(status != null && status != '' ? status : 'Setup a Rule');
+							
 						},
 						preHook: function() {
 							$checkboxDiv.html(self.rectLoader);
@@ -421,35 +442,34 @@
 				html += $('<div></div>').append(self.$elObject.find('div#itemHeaderMain').clone()).html();
 
 				var $divItemTable = self.$elObject.find("div#itemList").clone();
-				
+
 				$divItemTable.html('');
-				
+
 				self.$elObject.find('div#itemList').find('input.ruleVisibility:checked').each(function(i) {
 					var $divRow = $(this).parent().parent();
 					var ruleId = $divRow.find('input.ruleId').val();
 					var currentRuleMap = self.currentRuleMap;
 					var priority = currentRuleMap[ruleId].priority == null ? 0 : currentRuleMap[ruleId].priority;
 					var keyword = currentRuleMap[ruleId].ruleName;
-					var checked = currentRuleMap[ruleId].disabled == true ? 'CHECKED' : '';
 					var itemPattern = isDelete ? "#itemPattern3" : "#itemPattern2";
-
 					var $divItem = self.$elObject.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
-					
-					
+
 					$divItem.find("label.keyword").html(keyword);
 					if(isDelete) {
-						$divItem.find("label.count").html('&nbsp;&nbsp;&nbsp;'+priority);
+						$divItem.find("label.count").html('&nbsp;&nbsp;&nbsp;'+priority+'<input type="hidden" class="ruleId" value="'+ruleId+'"/>');
 						$divItem.find("label.iter").html(currentRuleMap[ruleId].disabled == true ? 'Disabled' : 'Enabled');
 					} else {
+						var checked = currentRuleMap[ruleId].disabled == true ? 'CHECKED' : '';
+
 						$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
 						$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
 					}
 
 					$divItem.show();
 					$divItemTable.append($divItem);
-					
+
 				});
-				
+
 				html += $('<div></div>').append($divItemTable).html();
 
 				return html;
@@ -826,13 +846,14 @@
 				template += '</div>';
 				template += '<div class="clearB"></div>';
 				template += '<div id="fieldsBottomPaging"></div>';
-				template += '<div id="updateDialog" class="w95p marRLauto padT0 marT0 fsize12"><img class="itemIcon" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif"/></div>';
+				template += '<div id="updateDialog" class="w95p marRLauto padT0 marT0 fsize12" style="display:none;"><img class="itemIcon" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif"/></div>';
 
 				return template;
 			},
 			init : function() {
 				var self = this;
 				self.$elObject = $('#'+self.elContainer);
+				self.getTypeaheadRuleList(1);
 				self.showTypeahead();
 				//self.loadSplunkData();
 				self.loadRuleList(0, self.rulePage);
@@ -842,6 +863,14 @@
 					click : function() {
 						self.startIndex = 0;
 						self.loadRuleList(0, self.rulePage);
+					}
+				});
+				
+				$searchDiv.find('a.searchButtonList').off().on({
+					click : function() {
+						self.resetTypeahead();
+						self.loadRuleList(0, self.rulePage);
+						$searchDiv.find('a.searchButtonList').hide();
 					}
 				});
 			}

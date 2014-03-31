@@ -25,10 +25,12 @@ import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.ImportRuleTask;
 import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.model.TaskStatus;
+import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.CommentService;
 import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.core.service.RuleStatusService;
+import com.search.manager.core.service.TypeaheadRuleService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
@@ -87,6 +89,9 @@ public class WorkflowServiceImpl implements WorkflowService{
 	@Autowired
     @Qualifier("commentServiceSp")
 	private CommentService commentService;
+	@Autowired
+	@Qualifier("typeaheadRuleServiceSp")
+	private TypeaheadRuleService typeaheadRuleService;
 
 	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment){
 		// TODO: change return type to Map
@@ -188,7 +193,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	}
 
 	private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) throws CoreServiceException {
-		ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, utilityService.getStoreId(), importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
+		ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, storeId, importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
 		
 		List<ImportRuleTask> list = importRuleTaskService.search(importRuleTask, 0, 0).getList();
 		
@@ -458,6 +463,24 @@ public class WorkflowServiceImpl implements WorkflowService{
 			} else {
 				importAsId = DAOUtils.generateUniqueId();
 			}
+			break;
+		case TYPEAHEAD: 
+			TypeaheadRule typeahead = new TypeaheadRule();
+			typeahead.setStoreId(storeIdTarget);
+			typeahead.setRuleName(ruleNameTarget);
+			
+			try {
+				SearchResult<TypeaheadRule> result = typeaheadRuleService.search(typeahead);
+				
+				if(result.getTotalCount() > 0) {
+					importAsId = result.getList().get(0).getRuleId();
+				} else {
+					importAsId = DAOUtils.generateUniqueId();
+				}
+			} catch (CoreServiceException e) {
+				logger.error("Error executing WorkflowService.getImportAsId ", e);
+			}
+			
 			break;
 		case QUERY_CLEANING:
 		case RANKING_RULE:

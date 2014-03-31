@@ -68,7 +68,7 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 			rule = dao.add(model);
 
 			if(rule != null) {
-				RuleStatus ruleStatus = new RuleStatus(RuleEntity.TYPEAHEAD, utilityService.getStoreId(),
+				RuleStatus ruleStatus = new RuleStatus(RuleEntity.TYPEAHEAD, model.getStoreId(),
 						model.getRuleId(), model.getRuleName(), utilityService.getUsername(),
 						utilityService.getUsername(), RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED);
 				ruleStatus.setCreatedBy(utilityService.getUsername());

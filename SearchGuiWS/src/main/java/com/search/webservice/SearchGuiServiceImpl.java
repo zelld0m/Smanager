@@ -105,6 +105,8 @@ public class SearchGuiServiceImpl implements SearchGuiService {
                             return deploymentRuleService.unpublishRedirectRulesMap(list.getStore(), ruleList);
                         case RANKING_RULE:
                             return deploymentRuleService.unpublishRankingRulesMap(list.getStore(), ruleList);
+                        case TYPEAHEAD: 
+                        	return deploymentRuleService.unpublishTypeaheadRulesMap(list.getStore(), ruleList);
                         default:
                             break;
                     }
