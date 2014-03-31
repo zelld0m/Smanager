@@ -440,7 +440,7 @@
 					html += '<label>Are you sure you want to delete these items?</label>';
 
 				$header = self.$elObject.find('div#itemHeaderMain').clone();
-				$header.find('label.iter').html('Disable');
+				$header.find('label.iter').html('Disabled');
 				$header.find('label.toggle').html('&nbsp;');
 				html += $('<div></div>').append($header).html();
 
@@ -460,7 +460,7 @@
 					$divItem.find("label.keyword").html(keyword);
 					if(isDelete) {
 						$divItem.find("label.count").html('&nbsp;&nbsp;&nbsp;'+priority+'<input type="hidden" class="ruleId" value="'+ruleId+'"/>');
-						$divItem.find("label.iter").html(currentRuleMap[ruleId].disabled == true ? 'Disabled' : 'Enabled');
+						$divItem.find("label.iter").html(currentRuleMap[ruleId].disabled == true ? 'Yes' : 'No');
 					} else {
 						var checked = currentRuleMap[ruleId].disabled == true ? 'CHECKED' : '';
 
@@ -802,8 +802,8 @@
 				template += '		<label class="toggle floatL w120 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>';
 				template += '	</div>';
 				template += '	<div id="itemHeader3" class="items border clearfix" style="display:none">';
-				template += '		<label class="iter floatL w45 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
-				template += '		<label class="count floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
+				template += '		<label class="iter floatL w50 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
+				template += '		<label class="count floatL w65 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
 				template += '		<label class="floatL w460 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>';
 				template += '		<label class="toggle floatL w115 txtAC fbold padTB5" style="background:#eee"> Status </label>';
 				template += '	</div>';
