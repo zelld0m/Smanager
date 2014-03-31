@@ -1054,7 +1054,6 @@ public class RuleXmlUtil {
 
 	private boolean restoreTypeaheadRule(String path, RuleXml xml, boolean createPreRestore) {
 		String username = utilityService.getUsername();
-		String store = utilityService.getStoreId();
 
 		try {
 			TypeaheadRuleXml typeaheadRuleXml = (TypeaheadRuleXml) xml;
