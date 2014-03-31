@@ -1061,6 +1061,17 @@ public class RuleXmlUtil {
 			String ruleId = xml.getRuleId();
 
 			TypeaheadRule typeaheadRule = typeaheadRuleService.searchById(xml.getStore(), xml.getRuleId());
+			
+			if(typeaheadRule == null) {
+				typeaheadRule = new TypeaheadRule();
+				typeaheadRule.setStoreId(xml.getStore());
+				typeaheadRule.setRuleName(xml.getRuleName());
+				typeaheadRule.setCreatedBy(xml.getCreatedBy());
+				typeaheadRule.setRuleId(xml.getRuleId());
+				
+				typeaheadRuleService.add(typeaheadRule);
+			}
+			
 			List<TypeaheadSuggestion> typeaheadSuggestionList = typeaheadSuggestionService.searchByRuleId(ruleId).getList();
 			List<TypeaheadBrand> typeaheadBrandList = typeaheadBrandService.searchByRuleId(ruleId).getList();
 
@@ -1071,32 +1082,32 @@ public class RuleXmlUtil {
 			typeaheadRule.setLastModifiedBy(username);
 			typeaheadRule.setLastModifiedDate(new DateTime());
 			typeaheadRuleService.update(typeaheadRule);
-			
-			for(TypeaheadSuggestionXml suggestionXml : typeaheadRuleXml.getSuggestions()) {
-				TypeaheadSuggestion suggestion = new TypeaheadSuggestion();
-				
-				suggestion.setRuleId(ruleId);
-				suggestion.setMemberValue(suggestionXml.getMemberValue());
-				suggestion.setMemberType(suggestionXml.getTypeaheadMemberType());
-				suggestion.setSortOrder(suggestionXml.getSortOrder());
-				suggestion.setCreatedBy(username);
-				
-				typeaheadSuggestionService.add(suggestion);
-			}
-			
-			for(TypeaheadBrandXml brandXml : typeaheadRuleXml.getBrands()) {
-				TypeaheadBrand brand = new TypeaheadBrand();
-				
-				brand.setRuleId(ruleId);
-				brand.setProductCount(brandXml.getProductCount());
-				brand.setVendorId(brandXml.getVendorId());
-				brand.setSortOrder(brandXml.getSortOrder());
-				brand.setBrandName(brandXml.getBrandName());
-				brand.setCreatedBy(brandXml.getCreatedBy());
-				
-				typeaheadBrandService.add(brand);
-				
-			}
+//			
+//			for(TypeaheadSuggestionXml suggestionXml : typeaheadRuleXml.getSuggestions()) {
+//				TypeaheadSuggestion suggestion = new TypeaheadSuggestion();
+//				
+//				suggestion.setRuleId(ruleId);
+//				suggestion.setMemberValue(suggestionXml.getMemberValue());
+//				suggestion.setMemberType(suggestionXml.getTypeaheadMemberType());
+//				suggestion.setSortOrder(suggestionXml.getSortOrder());
+//				suggestion.setCreatedBy(username);
+//				
+//				typeaheadSuggestionService.add(suggestion);
+//			}
+//			
+//			for(TypeaheadBrandXml brandXml : typeaheadRuleXml.getBrands()) {
+//				TypeaheadBrand brand = new TypeaheadBrand();
+//				
+//				brand.setRuleId(ruleId);
+//				brand.setProductCount(brandXml.getProductCount());
+//				brand.setVendorId(brandXml.getVendorId());
+//				brand.setSortOrder(brandXml.getSortOrder());
+//				brand.setBrandName(brandXml.getBrandName());
+//				brand.setCreatedBy(brandXml.getCreatedBy());
+//				
+//				typeaheadBrandService.add(brand);
+//				
+//			}
 			
 			return true;
 		} catch (CoreServiceException e) {

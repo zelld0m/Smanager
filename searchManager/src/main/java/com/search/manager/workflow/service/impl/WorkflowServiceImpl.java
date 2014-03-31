@@ -154,7 +154,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 					
 					String importTypeSetting = configManager.getProperty("workflow", targetStore, "status."+ruleEntity.getXmlName());
 					try {
-						importExportedRule(targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, importTypeSetting != null ? importTypeSetting : ImportType.FOR_APPROVAL.getDisplayText(), generateImportAsId(store, ruleId, rule.getRuleName(), targetStore, rule.getRuleName(), rule.getRuleEntity()), rule.getRuleName());
+						importExportedRule(store, targetStore, configManager.getStoreName(targetStore), username, rule.getRuleEntity(), rule.getRuleId(), comment, importTypeSetting != null ? importTypeSetting : ImportType.FOR_APPROVAL.getDisplayText(), generateImportAsId(store, ruleId, rule.getRuleName(), targetStore, rule.getRuleName(), rule.getRuleEntity()), rule.getRuleName());
 					} catch(CoreServiceException e) {
 						logger.error("Error in WorkflowService.exportRule: ", e);
 					}
@@ -192,8 +192,8 @@ public class WorkflowServiceImpl implements WorkflowService{
 		return exported;
 	}
 
-	private void importExportedRule(String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) throws CoreServiceException {
-		ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, storeId, importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
+	private void importExportedRule(String sourceStoreId, String storeId, String storeName, String userName, RuleEntity ruleEntity, String importRuleRefId, String comment, String importType, String importAsRefId, String ruleName) throws CoreServiceException {
+		ImportRuleTask importRuleTask = new ImportRuleTask(null, ruleEntity, sourceStoreId, importRuleRefId, ruleName, storeId, importAsRefId, ruleName, ImportType.getByDisplayText(importType), null);
 		
 		List<ImportRuleTask> list = importRuleTaskService.search(importRuleTask, 0, 0).getList();
 		
