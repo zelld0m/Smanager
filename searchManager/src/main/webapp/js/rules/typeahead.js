@@ -299,10 +299,10 @@
 					$divItem.find("label.keyword").html('<a href="javascript:void(0);" class="keywordLink">'+rule["ruleName"]+'</a>');
 					
 					$divItem.find('a.keywordLink').off().on({
-						click : function() {
-							self.setTypeahead(rule);
+						click : function(e) {
+							self.setTypeahead(e.data.rule);
 						}
-					});
+					}, {rule: rule});
 					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="'+rule['priority']+'"/><input type="hidden" class="ruleId" value="'+rule["ruleId"]+'"/>'+rule['priority']);
 					//$divItem.find("a.toggle").html(self.saveIconPath);
 					$divItem.find("a.toggle").off().on({click : function() {
@@ -335,7 +335,7 @@
 								$checkboxDiv.html('<input type="checkbox" class="ruleVisibility" value="false"/>');
 							}
 							var status = ruleStatus['approvalStatus'];
-							$statusDiv.html(status != null && status != '' ? status : 'Setup a Rule');
+							$statusDiv.html(getRuleNameSubTextStatus(ruleStatus));
 							
 						},
 						preHook: function() {
@@ -404,7 +404,7 @@
 					title: self.moduleName,
 					autoOpen: false,
 					modal: true,
-					width:715,
+					width:735,
 					buttons: {
 						"Submit": function() {
 							self.updateTypeaheadList(self.getRulesToUpdate());
@@ -439,7 +439,10 @@
 				if(isDelete)
 					html += '<label>Are you sure you want to delete these items?</label>';
 
-				html += $('<div></div>').append(self.$elObject.find('div#itemHeaderMain').clone()).html();
+				$header = self.$elObject.find('div#itemHeaderMain').clone();
+				$header.find('label.iter').html('Disable');
+				$header.find('label.toggle').html('&nbsp;');
+				html += $('<div></div>').append($header).html();
 
 				var $divItemTable = self.$elObject.find("div#itemList").clone();
 
@@ -802,7 +805,7 @@
 				template += '		<label class="iter floatL w45 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
 				template += '		<label class="count floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
 				template += '		<label class="floatL w460 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>';
-				template += '		<label class="toggle floatL w115 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>';
+				template += '		<label class="toggle floatL w115 txtAC fbold padTB5" style="background:#eee"> Status </label>';
 				template += '	</div>';
 				template += '</div>';	
 				template += '<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:565px;">';
