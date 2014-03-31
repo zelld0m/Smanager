@@ -5,11 +5,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -23,10 +25,10 @@ import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
 import com.search.manager.service.DeploymentService;
-import com.search.manager.utility.FileUtil;
 import com.search.manager.workflow.service.WorkflowService;
 import com.search.ws.ConfigManager;
 
+@Component("typeaheadSplunkParse")
 public class TypeaheadSplunkParser {
 
 	private static final Logger logger =
@@ -47,39 +49,45 @@ public class TypeaheadSplunkParser {
 	private static String FOLDER_WEEKLY = "weekly";
 	private static String FOLDER_DAILY = "daily";
 
-	private static final String[] FOLDER_TYPES = {FOLDER_WEEKLY, FOLDER_DAILY};
-	
-	private static String FOLDER_HOME = "";
+	private static final String[] FOLDER_TYPES = {FOLDER_DAILY, FOLDER_WEEKLY};
+
+	private static String FOLDER_HOME = "/home/solr/utilities/typeahead";
 
 	private int WEEKLY_KEYWORD_COLUMN = 1;
-	private int WEEKLY_COUNT_COLUMN = 2;
+	private int WEEKLY_COUNT_COLUMN = 0;
 
-	private int DAILY_KEYWORD_COLUMN = 1;
-	private int DAILY_COUNT_COLUMN = 2;
+	private int DAILY_KEYWORD_COLUMN = 0;
+	private int DAILY_COUNT_COLUMN = 1;
 
 	public void scanSplunkFolder(String store) {
+		logger.info("Scanning keywords for store {}.", store);
 		for(String folderType : FOLDER_TYPES) {
 
 			String folder = getStoreFolder(store, folderType);
-			List<String> fileList = FileUtil.getFileList(folder);
-
+			logger.info("scanning the folder {}", folder);
+			File[] fileList = new File(folder).listFiles();
+			logger.info("File list: {}", fileList);
 			if(fileList == null)
 				return;
 
-			for(String file : fileList) {
-				saveTypeheadRules(store, folder + File.separator + file, folderType);
+			for(File file : fileList) {
+				saveTypeheadRules(store, file, folderType);
 			}
 		}
 	}
 
-	private void saveTypeheadRules(String storeId, String file, String folderType) {
+	private void saveTypeheadRules(String storeId, File file, String folderType) {
 		List<String[]> csvData;
+		Boolean hasError = false;
 		try {
-			csvData = getCsvData(file);
+			csvData = getCsvData(file.getAbsolutePath());
 			if(csvData != null) {
 				for(String[] csvRow : csvData) {
 					TypeaheadRule typeaheadRule = null;
-
+					
+					if(FOLDER_DAILY.equals(folderType) && csvRow == csvData.get(0))
+						continue;
+					
 					if(FOLDER_DAILY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, DAILY_COUNT_COLUMN)) {
 						typeaheadRule = saveTypeaheadRule(storeId, csvRow, folderType, DAILY_KEYWORD_COLUMN);
 					} else if(FOLDER_WEEKLY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, WEEKLY_COUNT_COLUMN)) {
@@ -91,10 +99,22 @@ public class TypeaheadSplunkParser {
 					}
 				}
 			}
+
 		} catch (IOException e) {
+			hasError = true;
 			logger.error("Error in TypeaheadSplunkParser.saveTypeaheadRules", e);
 		} catch (CoreServiceException e) {
+			hasError = true;
 			logger.error("Error inserting TypeaheadSplunkParser.saveTypeaheadRules", e);
+		}
+
+		if(hasError) {
+			File renameFile = new File(file + ".error");
+			File currentFile = file;
+			
+			currentFile.renameTo(renameFile);
+		} else {
+			FileUtils.deleteQuietly(file);
 		}
 	}
 
@@ -102,6 +122,11 @@ public class TypeaheadSplunkParser {
 		TypeaheadRule typeaheadRule = new TypeaheadRule();
 
 		typeaheadRule.setRuleName(csvRow[keywordColumn]);
+		typeaheadRule.setStoreId(storeId);
+
+		if(typeaheadRuleService.search(typeaheadRule).getTotalCount() > 0)
+			return null;
+
 		typeaheadRule.setCreatedDate(new DateTime());
 		typeaheadRule.setCreatedBy("system");
 
@@ -110,10 +135,10 @@ public class TypeaheadSplunkParser {
 
 	private void processTypeaheadRule(String storeId, String folderType, TypeaheadRule typeaheadRule) throws CoreServiceException {
 		String defaultStatus = configManager.getProperty("typeahead", storeId, FOLDER_DAILY.equals(folderType) ? "typeahead.dailyDefaultStatus" : "typeahead.weeklyDefaultStatus" );
-		
+
 		if(defaultStatus == null)
 			defaultStatus = "For Review";
-		
+
 		String ruleType = RuleEntity.TYPEAHEAD.getName();
 		RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, ruleType, typeaheadRule.getRuleId());
 		ImportType importType = ImportType.getByDisplayText(defaultStatus);
@@ -154,6 +179,8 @@ public class TypeaheadSplunkParser {
 		try {
 			reader = new CSVReader(new FileReader(filePath), ',', '\"', '\0', 0, true);
 			data = reader.readAll();
+		} catch (Exception e) {
+			logger.error("Error in TypeaheadSplunkParser.getCsvData", e);
 		} finally {
 			if (reader != null) {
 				reader.close();

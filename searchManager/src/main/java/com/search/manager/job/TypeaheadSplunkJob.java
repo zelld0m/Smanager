@@ -1,6 +1,6 @@
 package com.search.manager.job;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +14,7 @@ public class TypeaheadSplunkJob {
 	private ConfigManager configManager;
 	
 	public void runJob() {
-		List<String> storeList = configManager.getStoreNames();
+		Set<String> storeList = configManager.getAllStoresDisplayName().keySet();
 		
 		for(String store: storeList) {
 			typeaheadSplunkParser.scanSplunkFolder(store);

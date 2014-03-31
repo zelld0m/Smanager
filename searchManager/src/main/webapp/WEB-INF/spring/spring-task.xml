@@ -16,10 +16,17 @@
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<bean id="importRulesJob" class="com.search.manager.workflow.task.ImportRulesJob"/>
+	
+	<bean id="typeaheadSplunkJob" class="com.search.manager.job.TypeaheadSplunkJob"/>
 
 	<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 	  <property name="targetObject" ref="importRulesJob" />
 	  <property name="targetMethod" value="importRules" />
+	  <property name="concurrent" value="false" />
+	</bean>
+	<bean id="jobDetail2" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	  <property name="targetObject" ref="typeaheadSplunkJob" />
+	  <property name="targetMethod" value="runJob" />
 	  <property name="concurrent" value="false" />
 	</bean>
 
@@ -31,11 +38,20 @@
 	    <!-- repeat every 50 seconds -->
 	    <property name="repeatInterval" value="60000" />
 	</bean>
+	<bean id="simpleTrigger2" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	    <!-- see the example of method invoking job above -->
+	    <property name="jobDetail" ref="jobDetail2" />
+	    <!-- 10 seconds -->
+	    <property name="startDelay" value="10000" />
+	    <!-- repeat every 50 seconds -->
+	    <property name="repeatInterval" value="600000" />
+	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">
 	        <list>
 	            <ref bean="simpleTrigger" />
+	            <ref bean="simpleTrigger2" />
 	        </list>
 	    </property>
 	</bean>
