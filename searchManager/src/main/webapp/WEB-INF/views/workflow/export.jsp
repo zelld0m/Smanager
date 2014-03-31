@@ -8,18 +8,10 @@
 
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 
-<!-- Start Left Side -->
-<div class="clearB floatL minW240 sideMenuArea">
-    <div class="clearB floatL w240">
-		<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>
-    </div>
-</div>
-<!-- End Left Side -->
-
 <!-- Start Right Side -->
-<div class="floatL w730 marL10 marT27 txtAL">
+<div class="floatL w980 marL10 marT27 txtAL">
 
-	<div class="floatL w730 titlePlacer breakWord">
+	<div class="floatL w980 titlePlacer breakWord">
 	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
@@ -41,7 +33,7 @@
 	</div>
 	<div class="clearB"></div>
 	
-	<div style="width:95%" class="dashboard marT20 mar0 fsize12">
+	<div style="width:100%" class="dashboard marT20 mar0 fsize12">
 	These are all the rules that are available for Export. You can manually export rules by selecting the checkboxes and clicking on the 'Export' button.
 	<ul class="marL15">
 		<li>If you have Auto-Export turned on, all rules that you publish to ${storeName} will be automatically exported. There is no need to manually export any rules.</li>
@@ -52,7 +44,7 @@
 	<div class="clearB"></div>
 	
 	<!-- Start Main Content -->
-	<div style="width:95%" class="dashboard marT20 mar0">
+	<div style="width:100%" class="dashboard marT20 mar0">
 		<!-- tabs -->
 		<div id="export" class="tabs">
       		<ul>
@@ -63,6 +55,7 @@
 		        <li><a href="#queryCleaningTab"><span>Redirect Rule</span></a></li>
 		        <li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
 		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
+		        <li><a href="#typeaheadTab"><span>Typeahead</span></a></li>
 		    </ul>
 		   
 			<div class="minHeight400" id="elevateTab"></div>
@@ -72,6 +65,7 @@
 			<div class="minHeight400" id="queryCleaningTab"></div>
 			<div class="minHeight400" id="rankingRuleTab"></div>
 			<div class="minHeight400" id="didYouMeanTab"></div>
+			<div class="minHeight400" id="typeaheadTab"></div>
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">
@@ -118,7 +112,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="background: #f3f3f3;">
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w950 marB20" style="background: #f3f3f3;">
 				<h3 style="border:none;">Export Rule Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
 					<p align="justify">

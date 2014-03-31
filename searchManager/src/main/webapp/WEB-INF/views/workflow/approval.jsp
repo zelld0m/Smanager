@@ -8,25 +8,17 @@
 
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 
-<!-- Start Left Side -->
-<div class="clearB floatL minW240 sideMenuArea">
-    <div class="clearB floatL w240">
-		<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>
-    </div>
-</div>
-<!-- End Left Side -->
-
 <!-- Start Right Side -->
-<div class="floatL w730 marL10 marT27 txtAL">
+<div class="floatL w980 marL10 marT27 txtAL">
 
-	<div class="floatL w730 titlePlacer breakWord">
+	<div class="floatL w980 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">Pending Approval</h1>
 	</div>
 	
 	<div class="clearB"></div>
 	
 	<!-- Start Main Content -->
-	<div style="width:95%" class="dashboard marT20 mar0">
+	<div style="width:100%" class="dashboard marT20 mar0">
 		<!-- tabs -->
 		<div id="approval" class="tabs">
       		<ul>
@@ -38,7 +30,7 @@
 		        <li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
 		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
 		        <li><a href="#bannerTab"><span>Banner</span></a></li>
-		        <li><a href="#typeaheadTab"><span>Type-ahead</span></a></li>
+		        <li><a href="#typeaheadTab"><span>Typeahead</span></a></li>
 		        
 		    </ul>
 		   
@@ -88,7 +80,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="background: #f3f3f3;">
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w950 marB20" style="background: #f3f3f3;">
 				<h3 style="border:none;">Approval Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
 					<p align="justify">

@@ -59,7 +59,7 @@
 <%--                       <li ${submenu eq 'feature'? 'class="active"': ''}><a href="<spring:url value="/feature/"/>${storeId}">Feature</a></li> --%>
                       <li ${submenu eq 'redirect'? 'class="active"': ''}><a href="<spring:url value="/redirect/"/>${storeId}">Redirect Rule</a></li>
                       <li ${submenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/"/>${storeId}">Relevancy Rule</a></li>
-                      <li ${submenu eq 'typeahead'? 'class="active"': ''}><a href="<spring:url value="/typeahead/"/>${storeId}">Type-ahead</a></li>
+                      
 <%--                       <li ${submenu eq 'catalog'? 'class="active"': ''}><a href="<spring:url value="/catalog/"/>${storeId}">Catalog</a></li>                         --%>
                </ul>
           </c:if>
@@ -107,6 +107,7 @@
                       <li ${submenu eq 'stopword'? 'class="active"': ''}><a href="<spring:url value="/stopword/"/>${storeId}">Stopword</a></li>
                       <li ${submenu eq 'protword'? 'class="active"': ''}><a href="<spring:url value="/protword/"/>${storeId}">Protword</a></li>
                       <li ${submenu eq 'spell'? 'class="active"': ''}><a href="<spring:url value="/spell/"/>${store}">Did You Mean</a></li>
+                      <li ${submenu eq 'typeahead'? 'class="active"': ''}><a href="<spring:url value="/typeahead/"/>${storeId}">Type-ahead</a></li>
                </ul>
           </c:if>
 

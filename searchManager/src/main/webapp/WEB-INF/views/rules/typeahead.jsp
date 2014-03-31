@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/includes/includes.jsp"%>
 <%@ include file="/WEB-INF/includes/header.jsp"%>
-<c:set var="topmenu" value="rules" />
+<c:set var="topmenu" value="lexicon" />
 <c:set var="submenu" value="typeahead" />
 <%@ include file="/WEB-INF/includes/menu.jsp"%>
 
@@ -28,10 +28,12 @@
 			<span id="titleText"></span> <span id="titleHeader"
 				class="fLblue fnormal"></span>
 		</div>
-		<div class="listSearchDiv padT10 floatR" style="display: none;">
+		<div class="listSearchDiv padT10 floatR">
 			<input type="text" class="searchTextInput" /><a
 				href="javascript:void(0);" class="searchButton"><img
-				src="<spring:url value="/images/icon_magniGlass13.png" />"></a>
+				src="<spring:url value="/images/icon_magniGlass13.png" />"></a> 
+				<a href="javascript:void(0);" class="searchButtonList" style="display:none;"><img
+				src="<spring:url value="/images/icon_list.png" />">Back to list</a>
 
 		</div>
 	</div>
@@ -41,7 +43,7 @@
 		<img src="<spring:url value="/images/ajax-loader-circ.gif" />">
 	</div>
 	<div class="clearB"></div>
-	
+
 	<div id="listContainer"></div>
 	<!--  <div id="noSelected"><img id="no-items-img" src="../images/facetSortRuleGuidelines.jpg"></div>-->
 
