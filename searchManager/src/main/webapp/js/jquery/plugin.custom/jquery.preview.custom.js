@@ -198,6 +198,16 @@
 					}
 				});
 				break;
+			case "typeahead": 
+				DemoteServiceJS.getAllProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
+					callback: function(data){
+						base.populateItemTable("Typeahead", data);
+					},
+					postHook:function(){
+						base.options.templateEvent(base);
+					}
+				});
+				break;
 			case "facetsort": 
 			case "facet sort": 
 				var $table = $content.find("table#item");

@@ -371,6 +371,16 @@
 				var dwrFunction = self.$elObject.find('select.actionType').val();
 				var action = dwrFunction == 'updateRules' ? 'updated' : 'deleted';
 
+				if('updateRules' == dwrFunction) {
+					for(var i=0; i<array.length; i++) {
+						if(!validateIntegerValue(array[i].priority)) {
+							jAlert('Please enter a valid integer value.', self.moduleName);
+							
+							return;
+						}
+					}
+				}
+				
 				TypeaheadRuleServiceJS[dwrFunction](array, {
 					callback: function(result){
 						var data = result['data'];

@@ -257,7 +257,7 @@ validateSearchKeyword = function(fieldName, fieldValue, required) {
 validateInteger = function(fieldName, fieldValue, min, max) {
 	var regex = /^[\-\+]{0,1}[0-9]{1,}[\.]{0,1}[0]{0,}$/;
 	var value = $.trim(fieldValue);
-	var valid = regex.test(value) && $.isNotBlank(value);
+	var valid = validateIntegerValue(fieldValue);
 
 	if (!valid) {
 		jAlert(fieldName + " is not a valid value.", fieldName);
@@ -276,3 +276,10 @@ validateInteger = function(fieldName, fieldValue, min, max) {
 	
 	return true;
 };
+
+validateIntegerValue = function(fieldValue) {
+	var regex = /^[\-\+]{0,1}[0-9]{1,}[\.]{0,1}[0]{0,}$/;
+	var value = $.trim(fieldValue);
+	
+	return regex.test(value) && $.isNotBlank(value);
+}
