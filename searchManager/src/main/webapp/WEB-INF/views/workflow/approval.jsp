@@ -52,7 +52,7 @@
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
 							<th width="50px">Content</th>
-							<th width="230px">Rule Info</th>
+							<th width="430px">Rule Info</th>
 							<th width="85px">Request Type</th>
 							<th>Request Details</th>
 						</tr>
@@ -67,12 +67,12 @@
 							<td class="txtAC" width="50px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
-							<td width="230px" id="ruleRefId">
+							<td width="430px" id="ruleRefId">
 								<p class="w230 breakWord" id="ruleName"></p>
 								<p id="ruleId" class="fsize11 w230 breakWord"></p>
 							</td>
 							<td width="85px" class="txtAC" id="type"></td>
-							<td class="txtAL" id="requested">
+							<td class="txtAC" id="requested">
 								<p id="requestedBy"></p>
 								<p id="requestedDate" class="fsize11"></p>
 							</td>

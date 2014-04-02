@@ -79,9 +79,9 @@
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
 							<th width="52px">Content</th>
-							<th width="230px">Rule Info</th>
-							<th width="87px">Published Date</th>
-							<th width="86px">Export Date</th>
+							<th width="400px">Rule Info</th>
+							<th width="110px">Published Date</th>
+							<th width="110px">Export Date</th>
 							<th>Export Type</th>
 						</tr>
 					<tbody>
@@ -95,15 +95,15 @@
 							<td class="txtAC" width="50px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
-							<td width="230px" id="ruleRefId">
+							<td width="400px" id="ruleRefId">
 								<p class="w230 breakWord" id="ruleName"></p>
 								<p id="ruleId" class="fsize11 w230 breakWord"></p>
 							</td>
-							<td width="85px" class="txtAL" id="publishDate">
+							<td width="110px" class="txtAL" id="publishDate">
 								<p id="requestedBy"></p>
 								<p id="requestedDate" class="fsize11"></p>
 							</td>
-							<td width="85px" class="txtAL" id="exportDate">
+							<td width="110px" class="txtAL" id="exportDate">
 								<p id="requestedBy"></p>
 								<p id="requestedDate" class="fsize11"></p>
 							</td>
@@ -112,7 +112,9 @@
 					</tbody>
 				</table>
 			</div>
-			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w950 marB20" style="background: #f3f3f3;">
+			<div id="actionBtn"
+				class="floatR marT10 fsize12 border pad10 marB20"
+				style="background: #f3f3f3; width:97.5%">
 				<h3 style="border:none;">Export Rule Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
 					<p align="justify">

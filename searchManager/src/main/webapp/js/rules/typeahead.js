@@ -324,7 +324,7 @@
 					var $element = $(this);
 					var $row = $element.parent().parent();
 					var $checkboxDiv = $row.find('label.iter');
-					var $statusDiv = $row.find('label.txtAC');
+					var $statusDiv = $row.find('label.status');
 					var $keywordDiv = $row.find('label.keyword');
 					
 					DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, self.moduleName, $element.val(), {
@@ -404,7 +404,9 @@
 					title: self.moduleName,
 					autoOpen: false,
 					modal: true,
-					width:735,
+					width:755,
+					open: function(event, ui){$(ui).css('overflow','hidden');$('.ui-widget-overlay').css('width','100%'); }, 
+					close: function(event, ui){$(ui).css('overflow','auto'); } ,
 					buttons: {
 						"Submit": function() {
 							self.updateTypeaheadList(self.getRulesToUpdate());
@@ -802,13 +804,13 @@
 				template += '		<label class="toggle floatL w120 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>';
 				template += '	</div>';
 				template += '	<div id="itemHeader3" class="items border clearfix" style="display:none">';
-				template += '		<label class="iter floatL w50 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
-				template += '		<label class="count floatL w65 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
-				template += '		<label class="floatL w460 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>';
+				template += '		<label class="iter floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
+				template += '		<label class="count floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
+				template += '		<label class="floatL w450 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>';
 				template += '		<label class="toggle floatL w115 txtAC fbold padTB5" style="background:#eee"> Status </label>';
 				template += '	</div>';
 				template += '</div>';	
-				template += '<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:565px;">';
+				template += '<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:565px; overflow-y:auto;">';
 				template += '	<div id="itemPattern1" class="items pad5 borderB mar0 clearfix" style="display:none">';
 				template += '		<label class="iter floatL w80"></label>';
 				template += '		<label class="count floatL w80"></label>';
@@ -821,16 +823,16 @@
 				template += '		</label>';
 				template += '	</div>';
 				template += '	<div id="itemPattern2" class="items pad5 borderB mar0 clearfix" style="display:none">';
-				template += '		<label class="iter floatL w45"></label>';
-				template += '		<label class="count floatL w70"></label>';
-				template += '		<label class="floatL w320">';
+				template += '		<label class="iter floatL w60"></label>';
+				template += '		<label class="count floatL w60"></label>';
+				template += '		<label class="floatL w310">';
 				template += '			<label class="keyword floatL w310"></label>'; 
 				template += '			<div class="rules" style="display:none"></div>';
 				template += '		</label>';
-				template += '		<label class="results floatL w70"></label>';
-				template += '		<label class="sku floatL w70"></label>'; 
-				template += '		<label class="floatR fsize11 w110 txtAC">';
-				template += '			<a class="toggle" href="javascript:void(0);"></a>';
+				template += '		<label class="results floatL w70">&nbsp;</label>';
+				template += '		<label class="sku floatL w60">&nbsp;</label>'; 
+				template += '		<label class="floatR fsize11 w110 status txtAL">';
+				template += '			&nbsp;<a class="toggle" href="javascript:void(0);"></a>';
 				template += '		</label>';
 				template += '	</div>';
 				template += '	<div id="itemPattern3" class="items pad5 borderB mar0 clearfix" style="display:none">';
@@ -849,7 +851,7 @@
 				template += '</div>';
 				template += '<div class="clearB"></div>';
 				template += '<div id="fieldsBottomPaging"></div>';
-				template += '<div id="updateDialog" class="w95p marRLauto padT0 marT0 fsize12" style="display:none;"><img class="itemIcon" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif"/></div>';
+				template += '<div id="updateDialog" class="marRLauto padT0 marT0 fsize12" style="display:none; width:755; overflow:hidden"><img class="itemIcon" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif"/></div>';
 
 				return template;
 			},

@@ -44,7 +44,7 @@
 	</div>
 	<div class="clearB"></div>
 
-	<div id="listContainer"></div>
+	<div id="listContainer" class="floatL w730 marL10 marT27"></div>
 	<!--  <div id="noSelected"><img id="no-items-img" src="../images/facetSortRuleGuidelines.jpg"></div>-->
 
 	<div id="facetsorting"

@@ -77,7 +77,7 @@
 						<th width="24px" id="selectAll">
 						<input type="checkbox">
 						</th>
-						<th width="230px">Rule Info</th>
+						<th width="430px">Rule Info</th>
 						<th width="100px">Approval Status</th>
 						<th width="100px">Request Type</th>
 						<th>Production Status</th>
@@ -91,14 +91,14 @@
 							<td width="24px" class="txtAC" id="select"><input
 								type="checkbox">
 							</td>
-							<td width="230px" id="ruleRefId">
+							<td width="430px" id="ruleRefId">
 								<p id="ruleName" class="w230 breakWord"></p>
 								<p id="ruleId" class="fsize11 w230 breakWord">
 									<a href="javascript:void(0);"></a>
 								</p></td>
 							<td width="100px" class="txtAC" id="approvalStatus"></td>
 							<td width="100px" class="txtAC" id="requestType"></td>
-							<td class="txtAL" id="production">
+							<td class="txtAC" id="production">
 								<p id="productionStatus"></p>
 								<p id="productionDate" class="fsize11"></p></td>
 						</tr>
@@ -106,8 +106,8 @@
 				</table>
 			</div>
 			<div id="actionBtn"
-				class="floatR marT10 fsize12 border pad10 w950 marB20"
-				style="background: #f3f3f3;">
+				class="floatR marT10 fsize12 border pad10 marB20"
+				style="background: #f3f3f3; width:97.5%">
 				<h3 style="border: none">Publishing Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
 					<div id="pgApprovedForPublishing" class="publishingGuidelines" style="display:none">To push previously approved rules to production:<br>
