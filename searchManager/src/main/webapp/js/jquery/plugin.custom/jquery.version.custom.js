@@ -411,7 +411,7 @@
 			$rowLabelUl.find("li#disabled").text("Disabled").show();
 			$li.find("#disabled").show();
 
-			$li.find("#disabled").text(item["disabled"] == 'true' ? 'Yes' : 'No');
+			$li.find("#disabled").text(item["disabled"] == true ? 'Yes' : 'No');
 		};
 
 		base.setProductCompare = function(li, rowlabel, item){

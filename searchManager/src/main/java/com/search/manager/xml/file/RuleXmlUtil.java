@@ -1078,10 +1078,13 @@ public class RuleXmlUtil {
 			typeaheadSuggestionService.delete(typeaheadSuggestionList);
 			typeaheadBrandService.delete(typeaheadBrandList);
 
+			//Update SP will not work if the ruleName is the same.
+			typeaheadRule.setRuleName(null);
 			typeaheadRule.setPriority(typeaheadRuleXml.getPriority());
 			typeaheadRule.setLastModifiedBy(username);
 			typeaheadRule.setLastModifiedDate(new DateTime());
-			typeaheadRuleService.update(typeaheadRule);
+			typeaheadRule.setDisabled(typeaheadRuleXml.getDisabled());
+			typeaheadRule = typeaheadRuleService.update(typeaheadRule);
 //			
 //			for(TypeaheadSuggestionXml suggestionXml : typeaheadRuleXml.getSuggestions()) {
 //				TypeaheadSuggestion suggestion = new TypeaheadSuggestion();

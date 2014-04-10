@@ -68,9 +68,9 @@
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
-						TypeaheadRuleServiceJS.getByRuleId(self.selectedRule["ruleId"],{
+						TypeaheadRuleServiceJS.getByRuleId(rule["ruleId"],{
 							callback: function(data){
-								self.setTypeahead(data);
+								self.setTypeahead(data['data']);
 							},
 							preHook: function(){
 								self.prepareTypeahead();
