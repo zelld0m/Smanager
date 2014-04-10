@@ -107,7 +107,7 @@
                       <li ${submenu eq 'stopword'? 'class="active"': ''}><a href="<spring:url value="/stopword/"/>${storeId}">Stopword</a></li>
                       <li ${submenu eq 'protword'? 'class="active"': ''}><a href="<spring:url value="/protword/"/>${storeId}">Protword</a></li>
                       <li ${submenu eq 'spell'? 'class="active"': ''}><a href="<spring:url value="/spell/"/>${store}">Did You Mean</a></li>
-                      <li ${submenu eq 'typeahead'? 'class="active"': ''}><a href="<spring:url value="/typeahead/"/>${storeId}">Type-ahead</a></li>
+                      <li ${submenu eq 'typeahead'? 'class="active"': ''}><a href="<spring:url value="/typeahead/"/>${storeId}">Typeahead</a></li>
                </ul>
           </c:if>
 

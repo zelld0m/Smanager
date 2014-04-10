@@ -61,13 +61,13 @@
 				$("#submitForApproval").rulestatusbar({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
-					ruleType: "Type-ahead",
+					ruleType: "Typeahead",
 					enableVersion: true,
 					authorizeRuleBackup: allowModify,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
-						TypeaheadRuleServiceJS.getRuleById(self.selectedRule["ruleId"],{
+						TypeaheadRuleServiceJS.getByRuleId(self.selectedRule["ruleId"],{
 							callback: function(data){
 								self.setTypeahead(data);
 							},
@@ -615,7 +615,7 @@
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
-					headerText : "Type-ahead Rule",
+					headerText : "Typeahead Rule",
 					customAddRule: true,
 					showAddButton: allowModify,
 					filterText: self.ruleFilterText,

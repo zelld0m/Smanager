@@ -5,7 +5,7 @@
 		// to reference this class from internal events and functions.
 		var base = this;
 		var requestOngoing = false;
-		
+
 		// Access to jQuery and DOM versions of element
 		base.$el = $(el);
 		base.el = el;
@@ -41,7 +41,7 @@
 						base.api = api;
 						base.contentHolder = $("div", api.elements.content);
 						base.contentHolder.html(base.getTemplate());
-						
+
 						if (base.options.enableCompare) {
 							base.contentHolder.find("#versionWrapper").before(base.getItemListTemplate());
 						}
@@ -68,7 +68,7 @@
 					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='radio']:checked").each(function(index, value){
 						base.selectedVersion.push($(value).parents("tr.itemRow").attr("id").split("_")[1]);
 					});
-					
+
 					if(base.selectedVersion.length != 2){
 						jAlert("Please select a version to compare.", "Compare Version");
 					}
@@ -133,10 +133,10 @@
 				if($.isNotBlank(item["createdBy"])) $li.find("#verCreatedBy").text(item["createdBy"]);
 				if($li.find("#restoreLink").hide()){
 					$('li#ver_current').css('margin-top', '31px');
-					
+
 				}
-				
-				
+
+
 				if(index !== "current"){
 					$li.find("label.restoreIcon").off().on({
 						click:function(e){
@@ -176,6 +176,8 @@
 					base.setRankingRuleCompare($li, $rowLabelUl, item); break; 
 				case "Banner":
 					base.setBannerCompare($li, $rowLabelUl, item); break;
+				case "Typeahead":
+					base.setTypeaheadCompare($li, $rowLabelUl, item); break;
 				}
 
 				$li.show();
@@ -316,11 +318,11 @@
 			}
 
 		};
-		
+
 		base.setProduct = function(li, item){
 			var $pLi = li;
 			var product = item;
-			
+
 			if(product["memberType"]==="FACET"){
 				var imagePath ="";
 				switch(base.getItemType(product)){
@@ -331,11 +333,11 @@
 
 				if($.isNotBlank(imagePath)){
 					setTimeout(function(){
-					$pLi.find("#prodImage").attr("src", imagePath).off().on({
-						error:function(){ 
-							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
-						}
-					});
+						$pLi.find("#prodImage").attr("src", imagePath).off().on({
+							error:function(){ 
+								$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
+							}
+						});
 					},10);
 				}
 
@@ -344,11 +346,11 @@
 				if($.isNotBlank(product["dpNo"])){
 					if($.isNotBlank(product["imagePath"])){
 						setTimeout(function(){
-						$pLi.find("#prodImage").attr("src", product["imagePath"]).off().on({
-							error:function(){ 
-								$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
-							}
-						});
+							$pLi.find("#prodImage").attr("src", product["imagePath"]).off().on({
+								error:function(){ 
+									$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
+								}
+							});
 						},10);
 					}
 					$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
@@ -364,19 +366,19 @@
 				}
 			}
 		};
-		
+
 		base.setBannerCompare = function(li, rowlabel, item) {
 			var $li = li;
 			var banners = item["itemXml"];
 			var $rowLabelUl = rowlabel;
-			
+
 			if (banners && banners.length) {
 				var $ul = $li.find("ul#bannerList");
 				var $pattern = $ul.find("li#bannerPattern");
-				
+
 				$ul.parent().show();
 				$rowLabelUl.find("li#banners").text("Banners").show();
-				
+
 				for (var idx in banners) {
 					var $itemLi = $pattern.clone();
 					var xml = banners[idx];
@@ -392,6 +394,24 @@
 					$ul.append($itemLi);
 				}
 			}
+		};
+
+		base.setTypeaheadCompare = function(li, rowLabelUl, item) {
+			var $li = li;
+			var $rowLabelUl = rowLabelUl;
+			base.setRuleKeyword(li, rowLabelUl, item);
+
+			$rowLabelUl.find("li#priority").text("Priority").show();
+			$li.find("#priority").show();
+
+			if ($.isNotBlank(item["priority"])){
+				$li.find("#priority").text(item["priority"]);
+			}
+
+			$rowLabelUl.find("li#disabled").text("Disabled").show();
+			$li.find("#disabled").show();
+
+			$li.find("#disabled").text(item["disabled"] == 'true' ? 'Yes' : 'No');
 		};
 
 		base.setProductCompare = function(li, rowlabel, item){
@@ -432,7 +452,7 @@
 					case "saveBtn":
 						if (!requestOngoing) {
 							requestOngoing = true;
-							
+
 							if(!validateGeneric('Name', name, 1, 100) || !validateGeneric('Notes', notes, 1, 255)){
 								requestOngoing = false;
 								return;
@@ -471,7 +491,7 @@
 					}
 				}
 			});
-			
+
 		};
 
 		base.addDeleteVersionListener = function(tr, item){
@@ -497,7 +517,7 @@
 										}
 									}
 								});
-								
+
 							} else {
 								RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
 									callback:function(data){
@@ -593,12 +613,12 @@
 			base.ruleMap = {};
 
 			$content.find("#preloader").show();
-			
+
 			$content.find("input#name").val('');
 			$content.find("textarea#notes").val('');
-			
+
 			$content.find("#compareSection").hide();
-			
+
 			if (base.options.enableCompare) {
 				RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
 					callback: function(data){
@@ -655,7 +675,7 @@
 				},
 				postHook:function(){
 					$table.find("tr#preloader").remove();
-					
+
 					if (base.options.enableCompare) {
 						base.addCompareButtonListener();
 						$table.find("input.selectOne").off().on({
@@ -734,7 +754,7 @@
 			} else {
 				template += '						<td width="auto" style="min-width:40px" class="txtAC">';
 			}
-			
+
 			template += '							<label class="restoreIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
 			template += '							<label class="deleteIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			template += '						</td>';
@@ -752,7 +772,7 @@
 			template += '				</tbody>';
 			template += '			</table>';
 			template += '		</div>';
-			
+
 			template += '	<div id="addVersion">';
 			template += '		<div id="actionBtn" class="floatL marT10 fsize12 border marB20" style="background: #f3f3f3; width:400px;" >';
 			template += '			<table class="tblItems" style="width:100%;">';
@@ -834,6 +854,8 @@
 			template += '				<li id="redirectKeyword" style="display:none"></li>';
 			template += '				<li id="conditions" style="display:none"></li>';
 			template += '				<li id="banners" style="display:none"></li>';
+			template += '				<li id="priority" style="display:none"></li>';
+			template += '				<li id="disabled" style="display:none"></li>';
 			template += '			</ul>';
 			template += '		</div>';// end label
 
@@ -910,6 +932,8 @@
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';
+			template += '						<li id="priority" style="display:none">UNKNOWN</li>';
+			template += '						<li id="disabled" style="display:none">YES</li>';
 			template += '					</ul>';
 			template += '				</li>';
 			template += '			</ul>';
