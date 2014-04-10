@@ -36,7 +36,8 @@
 			rectLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
 			magniIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_magniGlass13.png'/>",
 			lockIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_lock.png'/>",
-
+			searchReloadRate: 1000,
+			typingTimer: null,
 
 			prepareTypeahead : function(){
 				clearAllQtip();
@@ -172,7 +173,6 @@
 				$('a.searchButtonList').hide();
 				$("#submitForApproval").html('');
 				self.resetRuleListTable();
-				
 				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, 1, page, self.rulePageSize, {
 					callback: function(response){
 						var data = response["data"];
@@ -210,11 +210,13 @@
 						});
 					},
 					preHook:function(){
+						self.searchTriggered = true;
 						$('div#preloader').show();
 					},
 					postHook:function(){
 						$('div#preloader').hide();
 						self.$elObject.show();
+						self.searchTriggered = false;
 					}
 				});
 			},
@@ -297,7 +299,7 @@
 
 					$divItem.find("label.keyword").html(rule["ruleName"]);
 					$divItem.find("label.keyword").html('<a href="javascript:void(0);" class="keywordLink">'+rule["ruleName"]+'</a>');
-					
+
 					$divItem.find('a.keywordLink').off().on({
 						click : function(e) {
 							self.setTypeahead(e.data.rule);
@@ -326,7 +328,7 @@
 					var $checkboxDiv = $row.find('label.iter');
 					var $statusDiv = $row.find('label.status');
 					var $keywordDiv = $row.find('label.keyword');
-					
+
 					DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, self.moduleName, $element.val(), {
 						callback: function(ruleStatus) {
 							if(ruleStatus.locked) {
@@ -336,7 +338,7 @@
 							}
 							var status = ruleStatus['approvalStatus'];
 							$statusDiv.html(getRuleNameSubTextStatus(ruleStatus));
-							
+
 						},
 						preHook: function() {
 							$checkboxDiv.html(self.rectLoader);
@@ -375,12 +377,12 @@
 					for(var i=0; i<array.length; i++) {
 						if(!validateIntegerValue(array[i].priority)) {
 							jAlert('Please enter a valid integer value.', self.moduleName);
-							
+
 							return;
 						}
 					}
 				}
-				
+
 				TypeaheadRuleServiceJS[dwrFunction](array, {
 					callback: function(result){
 						var data = result['data'];
@@ -880,7 +882,20 @@
 						self.loadRuleList(0, self.rulePage);
 					}
 				});
-				
+
+				$searchDiv.find('input.searchTextInput').on({
+					keyup: function() {
+						clearTimeout(self.typingTimer);
+						self.typingTimer = setTimeout(function(){
+							self.startIndex = 0;
+							self.loadRuleList(0, self.rulePage);
+						}, self.searchReloadRate);
+					},
+					keydown: function() {
+						clearTimeout(self.typingTimer);
+					}
+				});
+
 				$searchDiv.find('a.searchButtonList').off().on({
 					click : function() {
 						self.resetTypeahead();
