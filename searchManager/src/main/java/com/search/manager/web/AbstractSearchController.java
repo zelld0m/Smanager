@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -679,104 +678,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
         return matcher.group(3);
     }
 
-    /**
-     * Asynchronous retrieval of item based rules - Elevate, Exclude, and Demote
-     * 
-     * @param requestPropertyBean
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    protected Map<String, List<? extends SearchResult>> getItemBasedRules(RequestPropertyBean requestPropertyBean) {
-        final Long start = new Date().getTime();
-        int tasks = 0;
-        final ExecutorService ruleExecService = Executors.newCachedThreadPool();
-        final ExecutorCompletionService<List<? extends SearchResult>> ruleCompletionService = new ExecutorCompletionService<List<? extends SearchResult>>(
-                ruleExecService);
-        final Map<String, List<? extends SearchResult>> map = new HashMap<String, List<? extends SearchResult>>();
-        final boolean isGuiRequest = requestPropertyBean.isGuiRequest();
-        final String storeId = requestPropertyBean.getStoreId();
-        final String keyword = requestPropertyBean.getKeyword();
-
-        ruleCompletionService.submit(new Callable<List<? extends SearchResult>>() {
-            @Override
-            public List<? extends SearchResult> call() throws Exception {
-                final Long start = new Date().getTime();
-                final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, keyword);
-                final List<ExcludeResult> excludeRuleList = getExcludeRules(sk, isGuiRequest,
-                        requestProcessorUtil.getFacetMap(sk.getStoreId()));
-                logger.info("Retrieval of {} exclude item(s): {}ms", CollectionUtils.size(excludeRuleList),
-                        new Date().getTime() - start);
-                return excludeRuleList;
-            }
-        });
-        tasks++;
-
-        ruleCompletionService.submit(new Callable<List<? extends SearchResult>>() {
-            @Override
-            public List<? extends SearchResult> call() throws Exception {
-                final Long start = new Date().getTime();
-                final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, keyword);
-                final List<DemoteResult> demoteRuleList = getDemoteRules(sk, isGuiRequest,
-                        requestProcessorUtil.getFacetMap(sk.getStoreId()));
-                logger.info("Retrieval of {} demote item(s): {}ms", CollectionUtils.size(demoteRuleList),
-                        new Date().getTime() - start);
-                return demoteRuleList;
-            }
-        });
-        tasks++;
-
-        ruleCompletionService.submit(new Callable<List<? extends SearchResult>>() {
-            @Override
-            public List<? extends SearchResult> call() throws Exception {
-                final Long start = new Date().getTime();
-                final StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, keyword);
-                final List<ElevateResult> elevateRuleList = getElevateRules(sk, isGuiRequest,
-                        requestProcessorUtil.getFacetMap(sk.getStoreId()));
-                logger.info("Retrieval of {} elevate item(s): {}ms", CollectionUtils.size(elevateRuleList),
-                        new Date().getTime() - start);
-                return elevateRuleList;
-            }
-        });
-        tasks++;
-
-        try {
-            map.put("elevate", new ArrayList<ElevateResult>());
-            map.put("exclude", new ArrayList<ExcludeResult>());
-            map.put("demote", new ArrayList<DemoteResult>());
-
-            while (tasks > 0) {
-                Future<List<? extends SearchResult>> completed = ruleCompletionService.take();
-                List<? extends SearchResult> completedList = completed.get();
-                if (CollectionUtils.isNotEmpty(completedList)) {
-                    if (completedList.get(0) instanceof ElevateResult) {
-                        map.put("elevate", (List<ElevateResult>) completedList);
-                    } else if (completedList.get(0) instanceof ExcludeResult) {
-                        map.put("exclude", (List<ExcludeResult>) completedList);
-                    } else if (completedList.get(0) instanceof DemoteResult) {
-                        map.put("demote", (List<DemoteResult>) completedList);
-                    }
-                }
-                tasks--;
-            }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            logger.info("Interrupted {}ms after invocation", new Date().getTime() - start);
-            Thread.currentThread().interrupt();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            logger.info("Interrupted {}ms after invocation", new Date().getTime() - start);
-            Thread.currentThread().interrupt();
-        } finally {
-            List<Runnable> awaitingExecution = ruleExecService.shutdownNow();
-            logger.info("Awaiting execution: {} ; Shutdown completed: {}", CollectionUtils.size(awaitingExecution),
-                    ruleExecService.isShutdown());
-            logger.info("Parallel rule retrieval completion time for {}: {}ms", keyword, new Date().getTime() - start);
-        }
-
-        return map;
-    }
-
     @SuppressWarnings("unchecked")
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
@@ -953,13 +854,13 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             final List<Map<String, String>> activeRules = new ArrayList<Map<String, String>>();
             boolean disableBanner = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_BANNER) != null;
 
-            List<ElevateResult> elevatedList = null;
+            List<ElevateResult> elevateList = null;
             List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
             List<String> expiredElevatedList = new ArrayList<String>();
             List<String> forceAddedEDPs = new ArrayList<String>();
-            List<DemoteResult> demotedList = null;
+            List<DemoteResult> demoteList = null;
             List<String> expiredDemotedList = new ArrayList<String>();
-            List<ExcludeResult> excludedList = null;
+            List<ExcludeResult> excludeList = null;
             List<String> expiredExcludedList = new ArrayList<String>();
 
             String sort = request.getParameter(SolrConstants.SOLR_PARAM_SORT);
@@ -1258,11 +1159,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId);
                     requestPropertyBean.setGuiRequest(fromSearchGui);
                     requestPropertyBean.setKeyword(keyword);
-                    Map<String, List<? extends SearchResult>> ruleMap = getItemBasedRules(requestPropertyBean);
-
-                    elevatedList = (List<ElevateResult>) ruleMap.get("elevate");
-                    demotedList = (List<DemoteResult>) ruleMap.get("demote");
-                    excludedList = (List<ExcludeResult>) ruleMap.get("exclude");
 
                     // EXCLUDE
                     if (isActiveSearchRule(storeId, RuleEntity.EXCLUDE)) {
@@ -1272,6 +1168,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                                     SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
                         }
                         if (!disableExclude) {
+                            excludeList = getExcludeRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
                             // TODO: refactor to method
                             if (fromSearchGui) {
                                 List<ExcludeResult> expiredList = getExpiredExcludeRules(sk, fromSearchGui,
@@ -1303,6 +1200,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                                     SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
                         }
                         if (!disableDemote && bestMatchFlag) {
+                            demoteList = getDemoteRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
                             if (fromSearchGui) {
                                 List<DemoteResult> expiredList = getExpiredDemoteRules(sk, fromSearchGui,
                                         requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1329,9 +1227,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                                     SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
                         }
                         if (!disableElevate) {
-                            if (CollectionUtils.isNotEmpty(elevatedList)) {
+                            elevateList = getElevateRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
+                            if (CollectionUtils.isNotEmpty(elevateList)) {
                                 // prepare force added list
-                                for (ElevateResult elevateResult : elevatedList) {
+                                for (ElevateResult elevateResult : elevateList) {
                                     if (elevateResult.isForceAdd()) {
                                         forceAddList.add(elevateResult);
                                         // TODO:
@@ -1342,7 +1241,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                                 }
                             }
                             if (!bestMatchFlag) {
-                                elevatedList.clear();
+                                elevateList.clear();
                             } else if (fromSearchGui) { // && bestMatchFlag //TODO:
                                 List<ElevateResult> expiredList = getExpiredElevateRules(sk, fromSearchGui,
                                         requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1380,10 +1279,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             // set Solr URL
             solrHelper.setSolrUrl(getRequestPath(request));
             solrHelper.setSolrQueryParameters(paramMap);
-            solrHelper.setElevatedItems(elevatedList);
+            solrHelper.setElevatedItems(elevateList);
             solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
             solrHelper.setForceAddedEDPs(forceAddedEDPs);
-            solrHelper.setDemotedItems(demotedList);
+            solrHelper.setDemotedItems(demoteList);
             solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
             solrHelper.setFacetTemplate(facetTemplate);
             solrHelper.setCNETImplementation(configManager.isMemberOf("PCM", storeId));
@@ -1417,8 +1316,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                     "0", uniqueFields);
 
             // collate exclude list
-            if (excludedList != null && !excludedList.isEmpty()) {
-                StringBuilder excludeFilters = toSolrFilterQueryValue(request, excludedList);
+            if (excludeList != null && !excludeList.isEmpty()) {
+                StringBuilder excludeFilters = toSolrFilterQueryValue(request, excludeList);
                 if (excludeFilters.length() > 0) {
                     excludeFilters.insert(0, "-");
                     nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeFilters.toString());
@@ -1531,8 +1430,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
             }
 
             // Collate Elevate and Demote items
-            StringBuilder elevateFilters = toSolrFilterQueryValue(request, elevatedList);
-            StringBuilder demoteFilters = toSolrFilterQueryValue(request, demotedList);
+            StringBuilder elevateFilters = toSolrFilterQueryValue(request, elevateList);
+            StringBuilder demoteFilters = toSolrFilterQueryValue(request, demoteList);
 
             Integer numFound = 0;
             Integer numElevateFound = 0;
