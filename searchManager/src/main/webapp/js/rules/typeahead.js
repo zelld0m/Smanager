@@ -34,10 +34,14 @@
 			templateIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_template.png'/>",
 			saveIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_disk.png'/>",
 			rectLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
+			roundLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-circ.gif'/>",
 			magniIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_magniGlass13.png'/>",
 			lockIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_lock.png'/>",
 			searchReloadRate: 1000,
 			typingTimer: null,
+			typeaheadManager: null,
+			typeaheadBrandManager: null,
+			typeaheadCategoryManager: null,
 
 			prepareTypeahead : function(){
 				clearAllQtip();
@@ -139,7 +143,35 @@
 				$('input.searchTextInput, a.searchButton').hide();
 				$('div#listContainer').hide();
 //				$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
-
+				
+				self.typeaheadManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
+				self.typeaheadManager.store.addByValue('rows', 5);
+				self.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
+				self.typeaheadManager.doRequest(0);
+				
+				self.typeaheadBrandManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
+				self.typeaheadBrandManager.store.addByValue('rows', 5);
+				self.typeaheadBrandManager.store.addByValue('json.nl', "map");
+				self.typeaheadBrandManager.store.addByValue('group', 'true'); 
+				self.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
+				self.typeaheadBrandManager.store.addByValue('group.limit', 1);
+				self.typeaheadBrandManager.store.addByValue('group.main', 'true');
+				self.typeaheadBrandManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
+				self.typeaheadBrandManager.store.addByValue('facet', 'true');
+				self.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
+				self.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
+				self.typeaheadBrandManager.doRequest(0);
+				
+				self.typeaheadCategoryManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
+				self.typeaheadCategoryManager.store.addByValue('rows', 1);
+				self.typeaheadCategoryManager.store.addByValue('json.nl', "map");
+				self.typeaheadCategoryManager.store.addByValue('facet', 'true');
+				self.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
+				self.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
+				self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
+				self.typeaheadCategoryManager.store.addByValue('facet.limit', 5);
+				self.typeaheadCategoryManager.doRequest(0);
+				
 				self.showTypeahead();
 			},
 			resetTypeahead : function() {
@@ -172,6 +204,8 @@
 
 				$('a.searchButtonList').hide();
 				$("#submitForApproval").html('');
+				$('div#docs').html('');
+				
 				self.resetRuleListTable();
 				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, 1, page, self.rulePageSize, {
 					callback: function(response){
@@ -571,44 +605,6 @@
 					$divHeader1.show();
 				}
 			},
-			populateSelectedValues : function(facetDiv, facetGroupId){
-				var self = this;
-				var $ul = facetDiv.find("ul#selectedFacetValueList");
-				$ul.find('li:not(#addFacetValuePattern)').remove();
-
-				FacetSortServiceJS.getAllFacetGroupItem(self.selectedRule["ruleId"], facetGroupId, {
-					callback: function(data){
-						var facetGroupItems = data.list;
-
-						$ul.find('li:not(#addFacetValuePattern)').remove();
-						for(var index in facetGroupItems){
-							var item = facetGroupItems[index];
-							var itemName = item["name"];
-
-							var $li = facetDiv.find('li#addFacetValuePattern').clone();
-							$li.show();
-							$li.removeClass("addFacetValuePattern");
-							$li.prop({id : ""});
-
-							var $select = $li.find("select.selectCombo");
-							$select.prop({id: "_items_"+facetGroupId});
-
-							$select.searchable({
-								change: function(u, e){
-									self.checkDuplicateFacet(e, u, facetGroupId);
-								}
-							});
-
-							$li.find("select#_items_" + facetGroupId + " option:contains('" + itemName + "')")
-							.filter(function() { return $(this).text() === itemName; })
-							.prop("selected", true);
-
-							$ul.append($li);
-							self.addDeleteFacetValueListener($li);
-						}
-					}
-				});
-			},
 			getTypeaheadRuleList : function(page) { 
 				var self = this;
 
@@ -682,64 +678,6 @@
 						if ($.isNotBlank(iconPath)) item.ui.find(".itemIcon").html(iconPath);
 					}
 				});
-			},
-			addDeleteFacetValueListener : function(contentHolder){
-				var self = this;
-
-				contentHolder.find("img.delFacetValueIcon").off().on({
-					click: function(e){
-						if (e.data.locked) return;
-
-						jConfirm(self.removeFacetGroupItemConfirmText, self.moduleName, function(result){
-							if(result) contentHolder.remove();
-						});
-					},
-					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
-			},
-
-			buildFacetGroupItemsMap: function(){
-				var self = this;
-
-				var itemMap = new Object();
-
-				for(var index in self.facetGroupIdList){
-					var facetItems = [];
-
-					if($("div#_" + self.facetGroupIdList[index]).hasClass("isShown")){
-						var items = $("select#_items_"+self.facetGroupIdList[index]);
-
-						for(var i = 0; i < items.length; i++){
-							var itemVal = $(items[i]).find("option:gt(0):selected:eq(0)").text();
-							if($.isNotBlank(itemVal) && $.inArray(itemVal, facetItems) ==-1 && isXSSSafeAllowNonAscii(itemVal)){
-								facetItems.push(itemVal);
-							}
-						}
-						itemMap[self.facetGroupIdList[index]] = facetItems;
-					}
-				}
-
-				return itemMap;
-			},
-
-			buildFacetGroupSortTypeMap: function(){
-				var self = this;
-
-				var itemMap = new Object();
-
-				for(var index in self.facetGroupIdList){
-					if($("div#_" + self.facetGroupIdList[index]).hasClass("isShown")){
-						var sortType = null;
-						var isChecked = $("div#_"+self.facetGroupIdList[index] +" input#facetGroupCheckbox").is(":checked");
-
-						if(isChecked){
-							sortType = $("div#_"+self.facetGroupIdList[index] +" select.facetGroupSortOrder option:selected").val();
-						}
-						itemMap[self.facetGroupIdList[index]] = sortType;
-					}
-				}
-
-				return itemMap;
 			},
 			addDownloadListener: function(){
 				var self = this;
@@ -903,6 +841,36 @@
 						$searchDiv.find('a.searchButtonList').hide();
 					}
 				});
+				
+				self.typeaheadManager = new AjaxSolr.Manager({
+					solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+					store: (new AjaxSolr.ParameterStore())
+				});
+								
+				self.typeaheadManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
+		            id: WIDGET_ID_searchResult,
+		            target: WIDGET_TARGET_searchResult
+		        }));
+				
+				self.typeaheadBrandManager = new AjaxSolr.Manager({
+					solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+					store: (new AjaxSolr.ParameterStore())
+				});
+								
+				self.typeaheadBrandManager.addWidget(new AjaxSolr.TypeaheadBrandWidget({
+		            id: WIDGET_ID_brand,
+		            target: WIDGET_TARGET_brand
+		        }));
+				
+				self.typeaheadCategoryManager = new AjaxSolr.Manager({
+					solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+					store: (new AjaxSolr.ParameterStore())
+				});
+								
+				self.typeaheadCategoryManager.addWidget(new AjaxSolr.TypeaheadCategoryWidget({
+		            id: WIDGET_ID_category,
+		            target: WIDGET_TARGET_category
+		        }));
 			}
 	};
 
