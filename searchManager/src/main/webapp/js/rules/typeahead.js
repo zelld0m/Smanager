@@ -373,42 +373,68 @@
 				var dwrFunction = self.$elObject.find('select.actionType').val();
 				var action = dwrFunction == 'updateRules' ? 'updated' : 'deleted';
 
-				if('updateRules' == dwrFunction) {
-					for(var i=0; i<array.length; i++) {
-						if(!validateIntegerValue(array[i].priority)) {
-							jAlert('Please enter a valid integer value.', self.moduleName);
+				if('submitForApproval' == dwrFunction) {
+					var completedRequests = 0;
+					for(var i=0; i < array.length; i++) {
+						DeploymentServiceJS.submitRuleForApproval(GLOBAL_storeId, "typeahead", array[i].ruleId, "batch", false, {
+							callback: function(ruleStatus) {
+								completedRequests++;
 
-							return;
-						}
+								if(completedRequests == array.length) {
+									jAlert("The rules were succesfully submitted.", self.moduleName);
+								}
+							},
+							errorHandler: function(e) {
+								completedRequests++;
+								jAlert('An error occurred while processing the request. Please contact your system administrator.', self.moduleName);
+							},
+							postHook: function() {
+								if(completedRequests == array.length) {
+									self.$dialogObject.dialog('close');
+									self.loadRuleList(0, self.rulePage);
+								}
+							},
+						});
 					}
-				}
+				} else {
 
-				TypeaheadRuleServiceJS[dwrFunction](array, {
-					callback: function(result){
-						var data = result['data'];
-						var errorMessage = '';
+					if('updateRules' == dwrFunction) {
 						for(var i=0; i<array.length; i++) {
-							var response = data[array[i]['ruleId']];
+							if(!validateIntegerValue(array[i].priority)) {
+								jAlert('Please enter a valid integer value.', self.moduleName);
 
-							if(response.errorMessage != null) {
-								errorMessage += response.errorMessage.message + '<br/><br/>';
+								return;
 							}
 						}
-
-						if(errorMessage != '') {
-							jAlert(errorMessage, self.moduleName);
-						} else {
-							jAlert('The selected rules were successfuly '+action+'.', self.moduleName);
-						}
-					},
-					postHook: function() {
-						self.$dialogObject.dialog('close');
-						self.loadRuleList(0, self.rulePage);
-					},
-					errorHandler: function(e) {
-						jAlert('An error occurred while processing the request. Please contact your system administrator.', self.moduleName);
 					}
-				});
+
+					TypeaheadRuleServiceJS[dwrFunction](array, {
+						callback: function(result){
+							var data = result['data'];
+							var errorMessage = '';
+							for(var i=0; i<array.length; i++) {
+								var response = data[array[i]['ruleId']];
+
+								if(response.errorMessage != null) {
+									errorMessage += response.errorMessage.message + '<br/><br/>';
+								}
+							}
+
+							if(errorMessage != '') {
+								jAlert(errorMessage, self.moduleName);
+							} else {
+								jAlert('The selected rules were successfuly '+action+'.', self.moduleName);
+							}
+						},
+						postHook: function() {
+							self.$dialogObject.dialog('close');
+							self.loadRuleList(0, self.rulePage);
+						},
+						errorHandler: function(e) {
+							jAlert('An error occurred while processing the request. Please contact your system administrator.', self.moduleName);
+						}
+					});
+				}
 			},
 			initializeTypeaheadAction: function() {
 				var self = this;
@@ -449,9 +475,13 @@
 				var self = this;
 				var actionType = self.$elObject.find('select.actionType').val();
 				var isDelete = actionType == 'deleteRules';
+				var isForApproval = actionType == 'submitForApproval';
 
-				if(isDelete)
+				if(isDelete) {
 					html += '<label>Are you sure you want to delete these items?</label>';
+				} else if(isForApproval) {
+					html += '<label>Are you sure you want to submit these items for approval?</label>';
+				}
 
 				$header = self.$elObject.find('div#itemHeaderMain').clone();
 				$header.find('label.iter').html('Disabled');
@@ -468,11 +498,11 @@
 					var currentRuleMap = self.currentRuleMap;
 					var priority = currentRuleMap[ruleId].priority == null ? 0 : currentRuleMap[ruleId].priority;
 					var keyword = currentRuleMap[ruleId].ruleName;
-					var itemPattern = isDelete ? "#itemPattern3" : "#itemPattern2";
+					var itemPattern = (isDelete || isForApproval) ? "#itemPattern3" : "#itemPattern2";
 					var $divItem = self.$elObject.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
 
 					$divItem.find("label.keyword").html(keyword);
-					if(isDelete) {
+					if(isDelete || isForApproval) {
 						$divItem.find("label.count").html('&nbsp;&nbsp;&nbsp;'+priority+'<input type="hidden" class="ruleId" value="'+ruleId+'"/>');
 						$divItem.find("label.iter").html(currentRuleMap[ruleId].disabled == true ? 'Yes' : 'No');
 					} else {
@@ -794,6 +824,7 @@
 				template += '	<label class="txtAC fbold">Action: </label>';
 				template += '	<select class="actionType">';
 				template += '		<option value="updateRules">Update</option>';
+				template += '		<option value="submitForApproval">Submit for Approval</option>';
 				template += '		<option value="deleteRules">Delete</option>';
 				template += '	</select>';
 				template += '   <a href="javascript:void(0);" class="dialogBtn" style="background: url(\'image/orange_gradient.png\') repeat-x scroll 0 0 rgba(0, 0, 0, 0);">Submit</a>';
