@@ -49,5 +49,10 @@
             <artifactId>dwr</artifactId>
             <version>${dwr.version}</version>
         </dependency>
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-jdbc</artifactId>
+        	<version>3.0.3.RELEASE</version>
+        </dependency>
     </dependencies>
 </project>

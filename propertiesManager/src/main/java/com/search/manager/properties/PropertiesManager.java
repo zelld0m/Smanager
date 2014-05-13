@@ -1,16 +1,10 @@
 package com.search.manager.properties;
 
 import com.google.common.collect.Lists;
+import com.search.manager.properties.dao.PropertiesDao;
 import com.search.manager.properties.exception.NotDirectoryException;
 import com.search.manager.properties.exception.PropertyException;
-import com.search.manager.properties.model.Group;
-import com.search.manager.properties.model.Member;
-import com.search.manager.properties.model.Module;
-import com.search.manager.properties.model.Property;
-import com.search.manager.properties.model.Store;
-import com.search.manager.properties.model.StoreProperties;
-import com.search.manager.properties.model.StorePropertiesFile;
-import com.search.manager.properties.model.StoreProperty;
+import com.search.manager.properties.model.*;
 import com.search.manager.properties.util.Modules;
 import com.search.manager.properties.util.Propertys;
 import com.search.manager.properties.util.Stores;
@@ -18,8 +12,7 @@ import com.search.manager.properties.util.Stores;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -27,7 +20,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -44,6 +36,8 @@ public class PropertiesManager {
     private SolrXmlReader solrXmlReader;
     private String storePropertiesFile;
     private String storePropertiesFolder;
+    @Autowired
+    private PropertiesDao propertiesDao;
 
     public PropertiesManager(String storePropertiesFile,
             String storePropertiesFolder) {
@@ -165,11 +159,42 @@ public class PropertiesManager {
                 String filePath = Stores.getFormattedSaveLocation(
                         getStorePropertiesFolder(), storeId, moduleName);
 
+                saveToDB(store.getId(), module.getName(), properties);
                 // save the properties file to the appropriate directory
                 savePropertiesFile(properties, filePath, false);
             } catch (NotDirectoryException e) {
                 logger.error(String.format("%s is not a valid file path",
                         e.getFile().getPath()), e);
+            }
+        }
+    }
+
+    private void saveToDB(String store, String module, Properties properties) {
+        Set<String> keySet = new HashSet<String>();
+
+        keySet.addAll(propertiesDao.getKeys(store));
+
+        for (String key : properties.stringPropertyNames()) {
+            String actualKey = module + "." + key;
+            
+            if (keySet.contains(actualKey)) {
+                DBProperty prop = propertiesDao.getProperty(store, actualKey);
+                
+                prop.setValue(properties.getProperty(key));
+                prop.setLastModifiedDate(new Date());
+                prop.setLastModifiedBy("system");
+                
+                propertiesDao.update(prop);
+            } else {
+                DBProperty prop = new DBProperty();
+                
+                prop.setStore(store);
+                prop.setKey(actualKey);
+                prop.setValue(properties.getProperty(key));
+                prop.setCreatedBy("system");
+                prop.setCreatedDate(new Date());
+
+                propertiesDao.save(prop);
             }
         }
     }
