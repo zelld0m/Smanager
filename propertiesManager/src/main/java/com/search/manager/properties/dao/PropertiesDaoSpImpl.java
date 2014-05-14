@@ -24,12 +24,12 @@ public class PropertiesDaoSpImpl implements PropertiesDao {
 
     @Override
     public List<String> getKeys(String store) {
-        return jdbcTemplate.queryForList("SELECT KEY FROM PROPERTIES WHERE STORE_ID = ?", String.class, store);
+        return jdbcTemplate.queryForList("SELECT [KEY] FROM PROPERTIES WHERE STORE_ID = ?", String.class, store);
     }
 
     @Override
     public DBProperty getProperty(String store, String key) {
-        return jdbcTemplate.query("SELECT STORE_ID, KEY, TYPE, VALUE, CREATED_BY, CREATED_STAMP, LAST_MODIFIED_BY,"
+        return jdbcTemplate.query("SELECT STORE_ID, [KEY], TYPE, VALUE, CREATED_BY, CREATED_STAMP, LAST_MODIFIED_BY,"
                 + " LAST_MODIFIED_STAMP FROM PROPERTIES WHERE STORE_ID = ? AND KEY = ?", new Object[] {
             store, key
         }, new ResultSetExtractor<DBProperty>() {
@@ -57,7 +57,7 @@ public class PropertiesDaoSpImpl implements PropertiesDao {
 
     @Override
     public void save(DBProperty property) {
-        jdbcTemplate.update("INSERT INTO PROPERTIES ( STORE_ID, KEY, TYPE, VALUE, CREATED_BY, CREATED_DATE ) "
+        jdbcTemplate.update("INSERT INTO PROPERTIES ( STORE_ID, [KEY], TYPE, VALUE, CREATED_BY, CREATED_STAMP ) "
                 + "VALUES ( ?, ?, ?, ?, ?, ? )", new Object[] {
             property.getStore(), property.getKey(), property.getType(), property.getValue(), property.getCreatedBy(),
             property.getCreatedDate()
@@ -67,7 +67,7 @@ public class PropertiesDaoSpImpl implements PropertiesDao {
     @Override
     public void update(DBProperty property) {
         jdbcTemplate.update("UPDATE PROPERTIES SET TYPE = ?, VALUE = ?, LAST_MODIFIED_BY = ?, LAST_MODIFIED_STAMP = ? "
-                + "WHERE STORE_ID = ? AND KEY = ?", new Object[] {
+                + "WHERE STORE_ID = ? AND [KEY] = ?", new Object[] {
             property.getType(), property.getValue(), property.getLastModifiedBy(), property.getLastModifiedDate(),
             property.getStore(), property.getKey()
         });
@@ -75,7 +75,7 @@ public class PropertiesDaoSpImpl implements PropertiesDao {
 
     @Override
     public void delete(String store, String key) {
-        jdbcTemplate.update("DELETE FROM PROPERTIES WHERE STORE_ID = ? AND KEY = ?", new Object[] {
+        jdbcTemplate.update("DELETE FROM PROPERTIES WHERE STORE_ID = ? AND [KEY] = ?", new Object[] {
             store, key
         });
     }
