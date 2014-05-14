@@ -8,6 +8,8 @@ public interface PropertiesDao {
 
     List<String> getKeys(String store);
 
+    List<DBProperty> getAllProperties(String store);
+
     DBProperty getProperty(String store, String key);
 
     void save(DBProperty property);

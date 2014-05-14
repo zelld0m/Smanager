@@ -353,32 +353,36 @@ $(function() {
 	                 // hides the error messages
 	                 hideErrorMessages();
 	                 // remove the loading icon
-                     store_settings.cleanUpTabContent();
+                     store_settings.unbusy();
 	             }
              );
     	}
     }
 
     var store_settings = {
-        prepareTabContent: function() {
+        prepare: function() {
             var storeConfig = $("#store_config");
-
-            if (!$("div.circlePreloader").is(":visible")) {
-                $('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo(storeConfig);
-            }
-
             storeConfig.find('table.tblItems, div#actionBtn').hide();
             storeConfig.find("div#ruleCount").html("");
         },
-        cleanUpTabContent: function() {
-            $('div.circlePreloader').remove();
+        busy: function() {
+        	if (!$("#loader-image").is(":visible")) {
+                $.blockUI({"message": '<img id="loader-image" src="../images/ajax-loader-circ32x32.gif">',
+                           "css": {border: "none", "background-color":"transparent", color:"transparent"}});
+            }
+        },
+        unbusy: function() {
+            $.unblockUI();
         },
         init: function() {
+        	var base = this;
+        	
             PropertiesManagerServiceJS.getStoreProperties(function(data) {
                 var stores = data.stores;
 
                 // show the loading icon
-                store_settings.prepareTabContent();
+                store_settings.busy();
+                store_settings.prepare();
 
                 // for generating the labels and fields
                 UtilityServiceJS.getStoreId({
@@ -451,6 +455,7 @@ $(function() {
             });
 
             $("#settingsSaveBtn").click(function() {
+            	base.busy();
                 for (var i = 0; i < tabObjects.length; i++) {
                     var tabObject = tabObjects[i];
                     var tabName = tabObject.name;
@@ -462,8 +467,9 @@ $(function() {
                     storePropertiesFile.storeProperties = storeProperties;
                 }
                
-                PropertiesManagerServiceJS.saveStoreProperties(storePropertiesFilesArray,
+                PropertiesManagerServiceJS.saveStoreProperties(GLOBAL_storeId, storePropertiesFilesArray, GLOBAL_username,
                         function(result) {
+                	        base.unbusy();
                             jAlert("Store settings saved", "Saved");
                         }
                 );

@@ -48,7 +48,7 @@ public class PropertiesManagerService {
      * Stores the properties in their specific properties file
      * @param storePropertiesFile the properties file to save
      */
-    public void saveStoreProperties(List<StorePropertiesFile> storePropertiesFile) {
-        propertiesManager.saveStoreProperties(storePropertiesFile);
+    public void saveStoreProperties(String store, List<StorePropertiesFile> storePropertiesFile, String username) {
+        propertiesManager.saveStoreProperties(store, storePropertiesFile, username);
     }
 }

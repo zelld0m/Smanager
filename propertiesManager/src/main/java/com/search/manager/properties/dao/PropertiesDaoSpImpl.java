@@ -2,7 +2,7 @@ package com.search.manager.properties.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -28,9 +28,33 @@ public class PropertiesDaoSpImpl implements PropertiesDao {
     }
 
     @Override
+    public List<DBProperty> getAllProperties(String store) {
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList("SELECT STORE_ID, [KEY], TYPE, VALUE, CREATED_BY,"
+                + " CREATED_STAMP, LAST_UPDATED_BY, LAST_UPDATED_STAMP FROM PROPERTIES WHERE STORE_ID = ?", store);
+        List<DBProperty> properties = new ArrayList<DBProperty>();
+
+        for (Map<String, Object> row : rows) {
+            DBProperty property = new DBProperty();
+
+            property.setStore((String) row.get("STORE_ID"));
+            property.setKey((String) row.get("KEY"));
+            property.setType((Integer) row.get("TYPE"));
+            property.setValue((String) row.get("VALUE"));
+            property.setCreatedBy((String) row.get("CREATED_BY"));
+            property.setCreatedDate((Date) row.get("CREATED_STAMP"));
+            property.setLastModifiedBy((String) row.get("LAST_UPDATED_BY"));
+            property.setLastModifiedDate((Date) row.get("LAST_UPDATED_STAMP"));
+
+            properties.add(property);
+        }
+
+        return properties;
+    }
+
+    @Override
     public DBProperty getProperty(String store, String key) {
-        return jdbcTemplate.query("SELECT STORE_ID, [KEY], TYPE, VALUE, CREATED_BY, CREATED_STAMP, LAST_MODIFIED_BY,"
-                + " LAST_MODIFIED_STAMP FROM PROPERTIES WHERE STORE_ID = ? AND KEY = ?", new Object[] {
+        return jdbcTemplate.query("SELECT STORE_ID, [KEY], TYPE, VALUE, CREATED_BY, CREATED_STAMP, LAST_UPDATED_BY,"
+                + " LAST_UPDATED_STAMP FROM PROPERTIES WHERE STORE_ID = ? AND [KEY] = ?", new Object[] {
             store, key
         }, new ResultSetExtractor<DBProperty>() {
             @Override
@@ -66,7 +90,7 @@ public class PropertiesDaoSpImpl implements PropertiesDao {
 
     @Override
     public void update(DBProperty property) {
-        jdbcTemplate.update("UPDATE PROPERTIES SET TYPE = ?, VALUE = ?, LAST_MODIFIED_BY = ?, LAST_MODIFIED_STAMP = ? "
+        jdbcTemplate.update("UPDATE PROPERTIES SET TYPE = ?, VALUE = ?, LAST_UPDATED_BY = ?, LAST_UPDATED_STAMP = ? "
                 + "WHERE STORE_ID = ? AND [KEY] = ?", new Object[] {
             property.getType(), property.getValue(), property.getLastModifiedBy(), property.getLastModifiedDate(),
             property.getStore(), property.getKey()

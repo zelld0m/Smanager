@@ -30,14 +30,14 @@
 
     <div class="clearB"></div>
     
-    <div id="no_store_message" style="width:95%" class="dashboard marT20 mar0 fsize14">
+    <div id="no_store_message" style="width:95%;display:none;" class="dashboard marT20 mar0 fsize14">
         <p>
             Unable to find the store properties XML file, please check if it is in the 
             appropriate directory and reload the page.
         </p>
     </div>
     
-    <div id="store_config" style="width:95%" class="dashboard marT20 mar0">
+    <div id="store_config" style="width:95%;" class="dashboard marT20 mar0">
         <div id="store_tabs" class="tabs">
             <ul>
                 <!-- Dynamic tabs to be added here! -->  
