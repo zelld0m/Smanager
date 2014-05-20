@@ -8,11 +8,11 @@
 		brandCountMap: null,
 
 		beforeRequest: function () {
-			$(this.target).html(this.roundLoader);
+			$(this.target).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
 		},
 
 		errorRequest: function () {
-			$(this.target).empty().append(AjaxSolr.theme('errorRequest', this.manager.response));
+			//$(this.target).empty().append(AjaxSolr.theme('errorRequest', this.manager.response));
 		},
 
 		afterRequest: function () {
@@ -23,8 +23,6 @@
 			
 			var categories = self.manager.response.facet_counts.facet_fields.Category;
 			
-			$(self.target).wrapInner("<ul class='searchList'>");
-			
 			for(obj in categories) {
 				$(self.target).append(self.getContent(obj, categories[obj]));
 			}
@@ -34,10 +32,7 @@
 			var html = '';
 			
 			html += '<div>';
-			html += '	<ul>';
-			html += '		<li>'+category+' ('+count+')';
-			html += '		</li>';
-			html += '	</ul>';
+			html += '		'+category+' ('+count+')';
 			html += '</div>';
 			
 			return html;

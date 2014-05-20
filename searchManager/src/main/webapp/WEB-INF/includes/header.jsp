@@ -121,6 +121,13 @@
   <!--  theme -->
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/theme/default/style.css" />">
 
+<!-- New Ajax solr dependencies -->
+<%@ include file="/WEB-INF/includes/ajaxsolr.jsp"%>
+<!-- Typeahead ajax solr widgets -->
+<script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadSearchResult.js" />"></script>
+<script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadBrand.js" />"></script>
+<script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadCategory.js" />"></script>
+
   <!-- cross-browser css compatibility util -->
   <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>
   <script type="text/javascript" src="<spring:url value="/js/init-validate.js" />" ></script>

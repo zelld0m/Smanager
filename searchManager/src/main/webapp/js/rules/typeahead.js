@@ -136,6 +136,7 @@
 				self.selectedRule = rule;
 				$('input.searchTextInput').val(rule.ruleName);
 				$('a.searchButtonList').show();
+				$('div#searchResult, div#category, div#brand').show();
 				self.startIndex = 0;
 //				self.loadRuleList(0, self.rulePage);
 //				self.keyword = "";
@@ -143,12 +144,32 @@
 				$('input.searchTextInput, a.searchButton').hide();
 				$('div#listContainer').hide();
 //				$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
+
+				$('#searchResult, #category, #brand').find(':not(#docs, #categoryDocs, #brandDocs)').remove();
 				
+				TypeaheadRuleServiceJS.getAllRules(rule.ruleName, 0, 0, 1, 5, {
+					callback: function(response) {
+						var data = response["data"];
+						var list = data.list;
+
+						if(list.length > 0) {
+							for(var i=0; i < list.length; i++) {
+								var html = '<div class="fsize15"><strong>'+list[i].ruleName+'</strong></div>';
+								if(i == 0) {
+									$('#category, #brand').prepend(html);
+								} else {
+									$('#category, #brand').append(html);
+								}
+							}
+						}
+					}
+				});
+
 				self.typeaheadManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
 				self.typeaheadManager.store.addByValue('rows', 5);
 				self.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
 				self.typeaheadManager.doRequest(0);
-				
+
 				self.typeaheadBrandManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
 				self.typeaheadBrandManager.store.addByValue('rows', 5);
 				self.typeaheadBrandManager.store.addByValue('json.nl', "map");
@@ -161,7 +182,7 @@
 				self.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
 				self.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
 				self.typeaheadBrandManager.doRequest(0);
-				
+
 				self.typeaheadCategoryManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
 				self.typeaheadCategoryManager.store.addByValue('rows', 1);
 				self.typeaheadCategoryManager.store.addByValue('json.nl', "map");
@@ -171,7 +192,9 @@
 				self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
 				self.typeaheadCategoryManager.store.addByValue('facet.limit', 5);
 				self.typeaheadCategoryManager.doRequest(0);
-				
+
+
+
 				self.showTypeahead();
 			},
 			resetTypeahead : function() {
@@ -204,8 +227,8 @@
 
 				$('a.searchButtonList').hide();
 				$("#submitForApproval").html('');
-				$('div#docs').html('');
-				
+				$('div#searchResult, div#category, div#brand').hide();
+
 				self.resetRuleListTable();
 				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, 1, page, self.rulePageSize, {
 					callback: function(response){
@@ -841,36 +864,36 @@
 						$searchDiv.find('a.searchButtonList').hide();
 					}
 				});
-				
+
 				self.typeaheadManager = new AjaxSolr.Manager({
 					solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
 					store: (new AjaxSolr.ParameterStore())
 				});
-								
+
 				self.typeaheadManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
-		            id: WIDGET_ID_searchResult,
-		            target: WIDGET_TARGET_searchResult
-		        }));
-				
+					id: WIDGET_ID_searchResult,
+					target: WIDGET_TARGET_searchResult
+				}));
+
 				self.typeaheadBrandManager = new AjaxSolr.Manager({
 					solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
 					store: (new AjaxSolr.ParameterStore())
 				});
-								
+
 				self.typeaheadBrandManager.addWidget(new AjaxSolr.TypeaheadBrandWidget({
-		            id: WIDGET_ID_brand,
-		            target: WIDGET_TARGET_brand
-		        }));
-				
+					id: WIDGET_ID_brand,
+					target: WIDGET_TARGET_brand
+				}));
+
 				self.typeaheadCategoryManager = new AjaxSolr.Manager({
 					solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
 					store: (new AjaxSolr.ParameterStore())
 				});
-								
+
 				self.typeaheadCategoryManager.addWidget(new AjaxSolr.TypeaheadCategoryWidget({
-		            id: WIDGET_ID_category,
-		            target: WIDGET_TARGET_category
-		        }));
+					id: WIDGET_ID_category,
+					target: WIDGET_TARGET_category
+				}));
 			}
 	};
 

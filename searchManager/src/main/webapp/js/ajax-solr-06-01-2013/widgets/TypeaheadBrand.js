@@ -8,11 +8,11 @@
 		brandCountMap: null,
 
 		beforeRequest: function () {
-			$(this.target).html(this.roundLoader);
+			$(this.target).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
 		},
 
 		errorRequest: function () {
-			$(this.target).empty().append(AjaxSolr.theme('errorRequest', this.manager.response));
+			//$(this.target).empty().append(AjaxSolr.theme('errorRequest', this.manager.response));
 		},
 
 		afterRequest: function () {
@@ -29,30 +29,16 @@
 
 				$(self.target).append(self.getContent(doc, manufacturers));
 
-				if (i+1 == l){
-					$(self.target).wrapInner("<ul class='searchList'>");
-				}
 			}
-			
-			$(self.target).find("img.itemImg").on({
-				error:function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); 
-				}
-			});	
+
 		},
 		getContent: function(doc, brandCountMap) {
 			var html = '';
 			
 			html += '<div>';
-			html += '	<ul>';
-			html += '		<li><span class="fsize13">'+doc.Manufacturer+' ('+brandCountMap[doc.Manufacturer]+')</span>';
-			html += '			<ul>';
-			html += '				<li>';
-			html += '					<img class="itemImg" style="width:40%; height:40%;" src="'+doc.ImagePath_2+'"/>&nbsp;'+doc.Name;
-			html += '				</li>';
-			html += '			</ul>';
-			html += '		</li>';
-			html += '	</ul>';
+			html += '		'+doc.Manufacturer+' ('+brandCountMap[doc.Manufacturer]+')';
 			html += '</div>';
+			html += '<div class="clearB"></div>';
 			
 			return html;
 		}

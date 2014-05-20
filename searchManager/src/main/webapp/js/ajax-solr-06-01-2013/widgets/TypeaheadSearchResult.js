@@ -7,11 +7,11 @@
 		roundLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-circ.gif'/>",
 
 		beforeRequest: function () {
-			$(this.target).html(this.roundLoader);
+			$(this.target).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
 		},
 
 		errorRequest: function () {
-			$(this.target).empty().append(AjaxSolr.theme('errorRequest', this.manager.response));
+			//$(this.target).empty().append(AjaxSolr.theme('errorRequest', this.manager.response));
 		},
 
 		afterRequest: function () {
@@ -31,21 +31,18 @@
 					error:function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); 
 					}
 				});						
-
-				if (i+1 == l){
-					$(self.target).wrapInner("<ul class='searchList'>");
-				}
+				
 			}
+						
 		},
 		getContent: function(doc) {
 			var html = '';
 			
-			html += '<div>';
-			html += '	<ul>';
-			html += '		<li"><img class="itemImg" style="width:40%; height:40%;" src="'+doc.ImagePath_2+'"/>';
-			html += '		'+doc.Name+'</li>';
-			html += '	</ul>';
+			html += '<div class="floatL">';
+			html += '		<img class="itemImg" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
+			html += '		'+doc.Name+'';
 			html += '</div>';
+			html += '<div class="clearB"></div>';
 			
 			return html;
 		}

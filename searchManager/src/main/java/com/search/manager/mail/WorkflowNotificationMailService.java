@@ -46,6 +46,8 @@ public class WorkflowNotificationMailService {
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern PATTERN = Pattern.compile(EMAIL_PATTERN);
 	private static final String MODULE_NAME = "mail";
+	private static final String USER_SYSTEM = "system";
+	private static final String SEARCHMANAGER_EMAIL = "searchteam@pcmall.com";
 
 	@Autowired
 	private EmailSender emailSender;
@@ -235,6 +237,25 @@ public class WorkflowNotificationMailService {
 									user);
 							userRuleStatus.get(recipientUsername).add(
 									ruleStatus);
+						} else {
+							if(USER_SYSTEM.equalsIgnoreCase(recipientUsername)) {
+								
+								String defaultEmail = getDefaultEmail(storeId, status);
+								String email = StringUtils.isNotEmpty(defaultEmail) ? defaultEmail : configManager.getProperty("mail", storeId, "mail.workflow.cc");
+								
+								User defaultUser = new User();
+								defaultUser.setFullName(USER_SYSTEM);
+								defaultUser.setEmail(StringUtils.isNotBlank(email) ? email : SEARCHMANAGER_EMAIL);
+								
+								users.put(recipientUsername, defaultUser);
+								
+								userRuleStatus.put(
+										StringUtils.trim(recipientUsername),
+										new ArrayList<RuleStatus>());
+								
+								userRuleStatus.get(recipientUsername).add(
+										ruleStatus);
+							}
 						}
 					} else {
 						userRuleStatus.get(recipientUsername).add(ruleStatus);
@@ -270,6 +291,28 @@ public class WorkflowNotificationMailService {
 		}
 
 		return flag;
+	}
+	
+	private String getDefaultEmail(String storeId, RuleStatusEntity status) {
+		switch (status) {
+		case PENDING:
+			return configManager.getProperty(MODULE_NAME, storeId,
+					"mail.workflow.pendingCc");
+		case APPROVED:
+			return configManager.getProperty(MODULE_NAME, storeId,
+					"mail.workflow.approvedCc");
+		case REJECTED:
+			return configManager.getProperty(MODULE_NAME, storeId,
+					"mail.workflow.rejectedCc");
+		case PUBLISHED:
+			return configManager.getProperty(MODULE_NAME, storeId,
+					"mail.workflow.publishedCc");
+		case UNPUBLISHED:
+			return configManager.getProperty(MODULE_NAME, storeId,
+					"mail.workflow.unpublishedCc");
+		default:
+			return null;
+		}
 	}
 
 	private void validateEmail(Collection<String> col) {

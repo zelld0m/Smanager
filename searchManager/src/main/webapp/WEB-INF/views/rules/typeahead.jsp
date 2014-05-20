@@ -1,6 +1,5 @@
 <%@ include file="/WEB-INF/includes/includes.jsp"%>
 <%@ include file="/WEB-INF/includes/header.jsp"%>
-<%@ include file="/WEB-INF/includes/ajaxsolr.jsp"%>
 <c:set var="topmenu" value="lexicon" />
 <c:set var="submenu" value="typeahead" />
 <%@ include file="/WEB-INF/includes/menu.jsp"%>
@@ -15,12 +14,6 @@
 	var WIDGET_ID_category = 'category';
 	var WIDGET_TARGET_category = '#categoryDocs';
 </script>
-<script type="text/javascript"
-	src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadSearchResult.js" />"></script>
-	<script type="text/javascript"
-	src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadBrand.js" />"></script>
-	<script type="text/javascript"
-	src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadCategory.js" />"></script>
 <!-- page specific dependencies -->
 <link type="text/css" rel="stylesheet"
 	href="<spring:url value="/css/bigbets/facet.css" />">
@@ -62,10 +55,11 @@
 	<div class="clearB"></div>
 
 	<div id="listContainer" class="floatL w730 marL10 marT27"></div>
-	<div id="searchResult" class="floatL w215 marL10 marT27 fsize11">
+	<div id="searchResult" class="floatL w245 marL10 marT27 fsize11">
 		<div id="docs">
 		
 		</div>
+		
 	</div>
 	<div id="category" class="floatR w215 marL10 marT27 fsize11">
 		<div id="categoryDocs">

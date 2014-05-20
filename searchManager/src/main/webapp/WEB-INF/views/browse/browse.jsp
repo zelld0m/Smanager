@@ -68,10 +68,22 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/AvailabilityWidget.js" />" ></script>  
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadSearchResult.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadBrand.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadCategory.js" />"></script> 
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/search/search.css" />">
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/ajaxsolr.custom/css/browse.css" />">
-	
+  <style>
+	  .ui-autocomplete {
+	  		list-style:none;
+    		padding-left:5px;
+		    max-height: 1080px!important;
+		    overflow-x: hidden;
+		    overflow-y: hidden!important;
+		    width: 330px;
+	  }
+  </style>	
     <!-- Start Left Side -->	   
 	<div class="clearB floatL minW240 sideMenuArea">
 	    <div class="clearB marT27"></div>
@@ -201,6 +213,5 @@
 				</div>
 		  </div>
  </div>
-<!-- End Right Side -->	  
-
+<!-- End Right Side -->
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

@@ -18,6 +18,36 @@
 			base.$el.off().on({
 				click: base.showQtipPreview()
 			});
+
+			base.typeaheadManager = new AjaxSolr.Manager({
+				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+				store: (new AjaxSolr.ParameterStore())
+			});
+
+			base.typeaheadManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
+				id: 'suggestion',
+				target: '#suggestionFirst'
+			}));
+
+			base.typeaheadBrandManager = new AjaxSolr.Manager({
+				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+				store: (new AjaxSolr.ParameterStore())
+			});
+
+			base.typeaheadBrandManager.addWidget(new AjaxSolr.TypeaheadBrandWidget({
+				id: 'brand',
+				target: '#brandFirst'
+			}));
+
+			base.typeaheadCategoryManager = new AjaxSolr.Manager({
+				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+				store: (new AjaxSolr.ParameterStore())
+			});
+
+			base.typeaheadCategoryManager.addWidget(new AjaxSolr.TypeaheadCategoryWidget({
+				id: 'category',
+				target: '#categoryFirst'
+			}));
 		};
 
 		base.prepareForceAddStatus = function(){
@@ -121,7 +151,7 @@
 						.removeClass("txtAC")
 						.addClass("txtAL")
 						.attr("width", "363px");
-						
+
 						$tr.find("#itemValidity").html(formattedExpiryDate); 
 
 						if ($.isBlank(list[i]["isExpired"])){
@@ -199,14 +229,74 @@
 				});
 				break;
 			case "typeahead": 
-				DemoteServiceJS.getAllProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
-					callback: function(data){
-						base.populateItemTable("Typeahead", data);
+				var $table = $content.find("table#item");
+				var $rulePreview = $content.find("div#leftPreview");
+
+				$rulePreview.find("#ruleInfo").text($.trim(base.options.ruleInfo));
+				$rulePreview.find("#requestType").text(base.options.requestType);
+
+				TypeaheadRuleServiceJS.getAllRules(base.options.ruleInfo, 0, 0, 1, 5, {
+					callback:function(response) {
+						var data = response['data'];
+						var list = data.list;
+
+						var $trClone = $table.find("tr#itemPattern")
+
+						for(var i = 0; i < list.length; i++) {
+							var $tr = $trClone.clone();
+
+							$tr.find("#brand").text(list[i].ruleName);
+							$tr.find("#category").text(list[i].ruleName);
+
+							if(i == 0) {
+								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
+								$tr.find("#brand").append('<div id="brandFirst"></div>')
+								$tr.find("#category").append('<div id="categoryFirst"></div>')
+
+								$tr.show();
+								$table.append($tr);
+
+								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
+								base.typeaheadManager.store.addByValue('rows', 5);
+								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
+								base.typeaheadManager.doRequest(0);
+
+								base.typeaheadBrandManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
+								base.typeaheadBrandManager.store.addByValue('rows', 5);
+								base.typeaheadBrandManager.store.addByValue('json.nl', "map");
+								base.typeaheadBrandManager.store.addByValue('group', 'true'); 
+								base.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
+								base.typeaheadBrandManager.store.addByValue('group.limit', 1);
+								base.typeaheadBrandManager.store.addByValue('group.main', 'true');
+								base.typeaheadBrandManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
+								base.typeaheadBrandManager.store.addByValue('facet', 'true');
+								base.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
+								base.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
+								base.typeaheadBrandManager.doRequest(0);
+
+								base.typeaheadCategoryManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
+								base.typeaheadCategoryManager.store.addByValue('rows', 1);
+								base.typeaheadCategoryManager.store.addByValue('json.nl', "map");
+								base.typeaheadCategoryManager.store.addByValue('facet', 'true');
+								base.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
+								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
+								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
+								base.typeaheadCategoryManager.store.addByValue('facet.limit', 5);
+								base.typeaheadCategoryManager.doRequest(0);
+							} else {
+
+								$tr.show();
+								$table.append($tr);
+							}
+
+						}
 					},
-					postHook:function(){
+					postHook: function() {
+						$table.find("tr#preloader").hide();
 						base.options.templateEvent(base);
 					}
 				});
+
 				break;
 			case "facetsort": 
 			case "facet sort": 
@@ -307,7 +397,7 @@
 						if ($.isNotBlank(data["redirectUrl"])){
 							$content.find("div#rulePage").find("#redirectUrlVal").html(data["redirectUrl"]);
 						}
-						
+
 						$content.find("div#ruleChange").find("#searchHeaderTextOpt").text(
 								data["replaceKeywordMessageType"]["intValue"] == 3 ? 
 										data["replaceKeywordMessageCustomText"] :
@@ -377,12 +467,12 @@
 						if (response.status == 0) {
 							var $tr = $content.find("tr#itemPattern").clone();
 							var data = response.data;
-							
+
 							var list1 = data["searchTerms"];
 							for(var i=0; i<list1.length; i++) {
 								$tr.find("td#itemSearchTerms").append("<span class='term' >" + list1[i] + "</span>");
 							}
-							
+
 							var list2 = data["suggestions"];
 							for(var i=0; i<list2.length; i++) {
 								$tr.find("td#itemSuggestions").append("<span class='term' >" + list2[i] + "</span>");
@@ -452,11 +542,11 @@
 
 			if (data.list && data.list.length > 0) {
 				var $pattern = $table.find("tr#itemPattern");
-				
+
 				$.each(data.list, function() {
 					var $item = $pattern.clone();
 					var item = this;
-	
+
 					$item.attr("id", item.memberId);
 					$item.find("#itemPriority").text(item.priority);
 					$item.find("#itemImage img").attr("src", item.imagePath.path);
@@ -478,7 +568,7 @@
 
 						if (!expired && started) {
 							daysLeft = Math.floor((itemEndDate.getTime() - $.simCurrDate.getTime()) / (24 * 60 * 60 * 1000) + 1);
-							
+
 							if (daysLeft > 1) {
 								daysLeft = daysLeft + " days left";
 							} else {
@@ -498,17 +588,17 @@
 					if (item.disabled) {
 						$item.addClass("forceAddErrorClass");
 					}
-					
+
 					$("tr#preloader").before($item);
 					$item.show();
 				});
 			} else {
 				$table.find("tr#nonFound").show();
 			}
-			
+
 			base.$el.qtip('reposition');
 		};
-		
+
 		base.getPreTemplate = function(){
 			if (base.options.enablePreTemplate){
 				return base.options.preTemplate(base);
@@ -693,7 +783,7 @@
 				template += '		</div>';
 				template += '		<div class="clearB"></div>';
 				template += '	</div>';
-				
+
 				template += '	<div id="ruleChange" class="ruleChange marB10 w602">';
 				template += '		<div id="replaceKeyword" class="txtAL border bgf6f6f6 pad5 mar10">';
 				template += '			<span>Replacement Keyword:</span>';
@@ -765,7 +855,7 @@
 				template += '		</div>	';
 				template += '	</div>';
 				break;
-			// TODO 
+				// TODO 
 			case "did you mean":
 				template += '	<div class="w600 mar0 pad0">';
 				template += '		<table class="tblItems w100p marT5">';
@@ -845,6 +935,35 @@
 				template += '		</table>';
 				template += '</div>';
 				break;	
+			case "typeahead":
+				template += '	<div class="w600 mar0 pad0">';
+				template += '		<table class="tblItems w100p marT5">';
+				template += '			<tbody>';
+				template += '				<tr>';
+				template += '					<th width="34%">Suggestions</th>';
+				template += '					<th width="33%">Brands</th>';
+				template += '					<th width="33%">Categories</th>';
+				template += '				</tr>';
+				template += '			<tbody>';
+				template += '		</table>';
+				template += '	</div>';
+				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '		<table id="item" class="tblItems w100p">';
+				template += '			<tbody>';
+				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
+				template += '					<td width="34%" class="txtAL valignTop" id="suggestion"></td>';
+				template += '					<td width="33%" class="txtAL valignTop" id="brand"></td>';
+				template += '					<td width="33%" class="txtAL valignTop" id="category"></td>';
+				template += '				</tr>';
+				template += '				<tr id="preloader">';
+				template += '					<td colspan="6" class="txtAC">';
+				template += '						<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
+				template += '					</td>';
+				template += '				</tr>';
+				template += '			</tbody>';
+				template += '		</table>';
+				template += '	</div>';
+				break;
 			}
 
 			return template;
@@ -859,7 +978,7 @@
 				base.contentHolder.html($div);
 				base.getDatabaseData();
 			};
-			
+
 			if(base.options.center){
 				base.$el.qtip({
 					id: "rule-preview",
