@@ -30,17 +30,32 @@
 				$(self.target).append(self.getContent(doc, manufacturers));
 
 			}
-
+			if(self.mode == 'simulator')
+				self.addListener('.keywordListener');
 		},
 		getContent: function(doc, brandCountMap) {
+			var self = this;
 			var html = '';
 			
 			html += '<div>';
-			html += '		'+doc.Manufacturer+' ('+brandCountMap[doc.Manufacturer]+')';
+			if(self.mode == 'simulator')
+				html += '<a href="javascript:void(0);" class="keywordListener">';
+			html += '		<span>'+doc.Manufacturer+'</span> ('+brandCountMap[doc.Manufacturer]+')';
+			if(self.mode == 'simulator')
+				html += '</a">';
 			html += '</div>';
 			html += '<div class="clearB"></div>';
 			
 			return html;
+		},
+		addListener: function(selector) {
+			$(selector).on({
+				click: function() {
+					$('#keyword').val($(this).find('span').html());
+					$('#searchKeyword').find('a#searchBtn').click();
+					$("#keyword").autocomplete("close");
+				}
+			});
 		}
 	});
 

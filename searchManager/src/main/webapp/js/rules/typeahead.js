@@ -147,7 +147,7 @@
 
 				$('#searchResult, #category, #brand').find(':not(#docs, #categoryDocs, #brandDocs)').remove();
 				
-				TypeaheadRuleServiceJS.getAllRules(rule.ruleName, 0, 0, 1, 5, {
+				TypeaheadRuleServiceJS.getAllRules(rule.ruleName, 0, 1, 1, 5, {
 					callback: function(response) {
 						var data = response["data"];
 						var list = data.list;
@@ -158,42 +158,42 @@
 								if(i == 0) {
 									$('#category, #brand').prepend(html);
 								} else {
-									$('#category, #brand').append(html);
+									if(i < GLOBAL_storeKeywordMaxBrand)
+										$('#brand').append(html);
+									$('#category').append(html);
 								}
 							}
+							
+							self.typeaheadManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
+							self.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
+							self.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
+							self.typeaheadManager.doRequest(0);
+
+							self.typeaheadBrandManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
+							self.typeaheadBrandManager.store.addByValue('rows', GLOBAL_storeMaxBrand);
+							self.typeaheadBrandManager.store.addByValue('json.nl', "map");
+							self.typeaheadBrandManager.store.addByValue('group', 'true'); 
+							self.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
+							self.typeaheadBrandManager.store.addByValue('group.limit', 1);
+							self.typeaheadBrandManager.store.addByValue('group.main', 'true');
+							self.typeaheadBrandManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
+							self.typeaheadBrandManager.store.addByValue('facet', 'true');
+							self.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
+							self.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
+							self.typeaheadBrandManager.doRequest(0);
+
+							self.typeaheadCategoryManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
+							self.typeaheadCategoryManager.store.addByValue('rows', 1);
+							self.typeaheadCategoryManager.store.addByValue('json.nl', "map");
+							self.typeaheadCategoryManager.store.addByValue('facet', 'true');
+							self.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
+							self.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
+							self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
+							self.typeaheadCategoryManager.store.addByValue('facet.limit', 5);
+							self.typeaheadCategoryManager.doRequest(0);
 						}
 					}
 				});
-
-				self.typeaheadManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
-				self.typeaheadManager.store.addByValue('rows', 5);
-				self.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
-				self.typeaheadManager.doRequest(0);
-
-				self.typeaheadBrandManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
-				self.typeaheadBrandManager.store.addByValue('rows', 5);
-				self.typeaheadBrandManager.store.addByValue('json.nl', "map");
-				self.typeaheadBrandManager.store.addByValue('group', 'true'); 
-				self.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
-				self.typeaheadBrandManager.store.addByValue('group.limit', 1);
-				self.typeaheadBrandManager.store.addByValue('group.main', 'true');
-				self.typeaheadBrandManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
-				self.typeaheadBrandManager.store.addByValue('facet', 'true');
-				self.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
-				self.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
-				self.typeaheadBrandManager.doRequest(0);
-
-				self.typeaheadCategoryManager.store.addByValue('q', $.trim(rule['ruleName'])); //AjaxSolr.Parameter.escapeValue(value.trim())
-				self.typeaheadCategoryManager.store.addByValue('rows', 1);
-				self.typeaheadCategoryManager.store.addByValue('json.nl', "map");
-				self.typeaheadCategoryManager.store.addByValue('facet', 'true');
-				self.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
-				self.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
-				self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-				self.typeaheadCategoryManager.store.addByValue('facet.limit', 5);
-				self.typeaheadCategoryManager.doRequest(0);
-
-
 
 				self.showTypeahead();
 			},

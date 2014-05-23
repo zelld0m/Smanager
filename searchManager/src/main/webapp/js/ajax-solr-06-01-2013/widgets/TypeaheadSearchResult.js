@@ -33,18 +33,36 @@
 				});						
 				
 			}
+			
+			if(self.mode == 'simulator')
+				self.addListener('.keywordListener');
 						
 		},
 		getContent: function(doc) {
+			var self = this;
+			
 			var html = '';
 			
 			html += '<div class="floatL">';
+			if(self.mode == 'simulator')
+				html += '<a href="javascript:void(0);" class="keywordListener">';
 			html += '		<img class="itemImg" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
-			html += '		'+doc.Name+'';
+			html += '		<span>'+doc.Name+'</span>';
+			if(self.mode == 'simulator')
+				html += '</a>';
 			html += '</div>';
 			html += '<div class="clearB"></div>';
 			
 			return html;
+		},
+		addListener: function(selector) {
+			$(selector).on({
+				click: function() {
+					$('#keyword').val($(this).find('span').html());
+					$('#searchKeyword').find('a#searchBtn').click();
+					$("#keyword").autocomplete("close");
+				}
+			});
 		}
 	});
 

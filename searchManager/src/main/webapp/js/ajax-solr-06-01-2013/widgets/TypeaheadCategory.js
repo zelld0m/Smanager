@@ -26,16 +26,31 @@
 			for(obj in categories) {
 				$(self.target).append(self.getContent(obj, categories[obj]));
 			}
-							
+			if(self.mode == 'simulator')
+				self.addListener('.keywordListener');		
 		},
 		getContent: function(category, count) {
+			var self = this;
 			var html = '';
 			
 			html += '<div>';
-			html += '		'+category+' ('+count+')';
+			if(self.mode == 'simulator')
+				html += '<a href="javascript:void(0);" class="keywordListener">';
+			html += '		<span>'+category+'</span> ('+count+')';
+			if(self.mode == 'simulator')
+				html += '</a>';
 			html += '</div>';
 			
 			return html;
+		},
+		addListener: function(selector) {
+			$(selector).on({
+				click: function() {
+					$('#keyword').val($(this).find('span').html());
+					$('#searchKeyword').find('a#searchBtn').click();
+					$("#keyword").autocomplete("close");
+				}
+			});
 		}
 	});
 

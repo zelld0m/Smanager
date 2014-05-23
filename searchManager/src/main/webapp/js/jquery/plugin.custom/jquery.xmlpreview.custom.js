@@ -333,7 +333,7 @@
 				$rulePreview.find("#ruleInfo").text($.trim(base.options.ruleInfo));
 				$rulePreview.find("#requestType").text(base.options.requestType);
 
-				TypeaheadRuleServiceJS.getAllRules(ruleName, 0, 0, 1, 5, {
+				TypeaheadRuleServiceJS.getAllRules(ruleName, 0, 1, 1, 5, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -355,12 +355,12 @@
 								$table.append($tr);
 
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadManager.store.addByValue('rows', 5);
+								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
 								base.typeaheadManager.doRequest(0);
 
 								base.typeaheadBrandManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadBrandManager.store.addByValue('rows', 5);
+								base.typeaheadBrandManager.store.addByValue('rows', GLOBAL_storeMaxBrand);
 								base.typeaheadBrandManager.store.addByValue('json.nl', "map");
 								base.typeaheadBrandManager.store.addByValue('group', 'true'); 
 								base.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
@@ -634,7 +634,7 @@
 				$ruleType.text($.trim(xml.ruleEntity));
 				$content.find("#requestType").text(base.options.requestType);
 
-				TypeaheadRuleServiceJS.getAllRules(xml.ruleName, 0, 0, 1, 5, {
+				TypeaheadRuleServiceJS.getAllRules(xml.ruleName, 0, 1, 1, 5, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -656,12 +656,12 @@
 								$table.append($tr);
 
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadManager.store.addByValue('rows', 5);
+								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
 								base.typeaheadManager.doRequest(0);
 
 								base.typeaheadBrandManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadBrandManager.store.addByValue('rows', 5);
+								base.typeaheadBrandManager.store.addByValue('rows', GLOBAL_storeMaxBrand);
 								base.typeaheadBrandManager.store.addByValue('json.nl', "map");
 								base.typeaheadBrandManager.store.addByValue('group', 'true'); 
 								base.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');

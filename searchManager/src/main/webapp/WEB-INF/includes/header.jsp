@@ -30,6 +30,8 @@
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/timezone-js/0.4.4/date.js" />" ></script>
 
+
+  <spring:eval expression="@propertiesDwrService.getStoreProperties()" var="storeProperties" />
   <spring:eval expression="@utilityService.getSolrConfig()" var="solrConfig" />
   <spring:eval expression="@utilityService.getStoreParameters()" var="storeParameters" />
   <spring:eval expression="@utilityService.getIndexedSchemaFields()" var="schemaFields" />
@@ -50,6 +52,8 @@
 	timezoneJS.timezone.zoneFileBasePath = GLOBAL_contextPath + '/tz';
 	timezoneJS.timezone.init();
 	var GLOBAL_currentDate = new timezoneJS.Date('${year}', '${month-1}', '${day}', '${hour}', '${min}', GLOBAL_timeZoneId);
+	
+	var GLOBAL_storeProperties = $.parseJSON('${storeProperties}');
 	
 	//store schema indexed fields
 	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
@@ -88,6 +92,12 @@
 	var GLOBAL_isTargetStore = GLOBAL_storeParameters["isTargetStore"];
 	var GLOBAL_allStoresDisplayName = GLOBAL_storeParameters["allStoresDisplayName"];
 	
+		// FOR TYPEAHEAD
+	var GLOBAL_storeKeywordMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
+	var GLOBAL_storeKeywordMaxBrand = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
+	var GLOBAL_storeMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
+	var GLOBAL_storeMaxBrand = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
+		
         // FOR REDIRECT PAGE
     var GLOBAL_storeRedirectSelfDomain = GLOBAL_storeParameters["storeRedirectSelfDomain"];
     var GLOBAL_storeRedirectRelativePath = GLOBAL_storeParameters["storeRedirectRelativePath"];
@@ -167,6 +177,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ExcelFileUploadedServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ImportRuleTaskService.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/TypeaheadRuleServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/PropertiesServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
   <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-array-functions.js" />" ></script>

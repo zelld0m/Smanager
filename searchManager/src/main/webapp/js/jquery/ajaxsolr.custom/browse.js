@@ -9,7 +9,8 @@
 
 		typeaheadManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
 			id: 'suggestion',
-			target: '#suggestionFirst'
+			target: '#suggestionFirst',
+			mode: 'simulator'
 		}));
 
 		var typeaheadBrandManager = new AjaxSolr.Manager({
@@ -19,7 +20,8 @@
 
 		typeaheadBrandManager.addWidget(new AjaxSolr.TypeaheadBrandWidget({
 			id: 'brand',
-			target: '#brandFirst'
+			target: '#brandFirst',
+			mode: 'simulator'
 		}));
 
 		var typeaheadCategoryManager = new AjaxSolr.Manager({
@@ -29,7 +31,8 @@
 
 		typeaheadCategoryManager.addWidget(new AjaxSolr.TypeaheadCategoryWidget({
 			id: 'category',
-			target: '#categoryFirst'
+			target: '#categoryFirst',
+			mode: 'simulator'
 		}));
 
 		// Initialize manager
@@ -267,10 +270,22 @@
 
 							brandRow.value = 'Brands';
 							brandRow.label = 'Brands';
-							brandRow.rowClass = 'brandFirst';
-							brandRow.keyword = list[0].ruleName;
-
+							brandRow.clickable = false;
+							
 							responseArray[responseArray.length] = brandRow;
+							
+							for(var i=0; i < GLOBAL_storeKeywordMaxBrand; i++) {
+								var object = new Object();
+								var ruleName = list[i].ruleName;
+
+								object.value = ruleName;
+								object.label = ruleName;
+								object.rowClass = i == 0 ? 'brandFirst' : '';
+								object.keyword = i == 0 ? ruleName : '';
+
+								responseArray[responseArray.length] = object;
+							}
+							
 
 							var suggestionRow = new Object();
 
@@ -278,6 +293,7 @@
 							suggestionRow.label = 'Suggestions';
 							suggestionRow.rowClass = 'suggestionFirst';
 							suggestionRow.keyword = list[0].ruleName;
+							suggestionRow,clickable = false;
 
 							responseArray[responseArray.length] = suggestionRow;
 
@@ -293,15 +309,17 @@
 
 			var row = $( "<div></div>" );
 
+			var classString = item.clickable != false ? 'autocompleteLink' : '';
+			
 			if(item.rowClass == '') {
-				row.data("item.autocomplete", item).append('<strong class="fsize13"><a href="javascript:void(0);" class="autocompleteLink">' + item.value + '</a></strong>' + '<div></div>');
+				row.data("item.autocomplete", item).append('<strong class="fsize13"><a href="javascript:void(0);" class="'+classString+'">' + item.value + '</a></strong>' + '<div></div>');
 			} else {
-				row.data("item.autocomplete", item).append('<strong class="fsize14"><a href="javascript:void(0);" class="autocompleteLink">' + item.value + '</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');
+				row.data("item.autocomplete", item).append('<strong class="fsize14"><a href="javascript:void(0);" class="'+classString+'">' + item.value + '</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');
 			}
 
 			var result = row.appendTo(ul);
-
-			$('a.autocompleteLink').on({
+					
+			result.find('a.autocompleteLink').on({
 				click: function() {
 					$('#keyword').val($(this).html());
 					$('#searchKeyword').find('a#searchBtn').click();
@@ -312,13 +330,13 @@
 			if(item.rowClass == 'suggestionFirst') {
 
 				typeaheadManager.store.addByValue('q', $.trim(item.keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
-				typeaheadManager.store.addByValue('rows', 5);
+				typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 				typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
 				typeaheadManager.doRequest(0);
 			} else if(item.rowClass == 'brandFirst') {
 
 				typeaheadBrandManager.store.addByValue('q', $.trim(item.keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
-				typeaheadBrandManager.store.addByValue('rows', 5);
+				typeaheadBrandManager.store.addByValue('rows', GLOBAL_storeMaxBrand);
 				typeaheadBrandManager.store.addByValue('json.nl', "map");
 				typeaheadBrandManager.store.addByValue('group', 'true'); 
 				typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
@@ -345,4 +363,7 @@
 			return result;
 		};
 	});
+	
+
+	
 })(jQuery);
