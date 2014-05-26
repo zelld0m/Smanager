@@ -333,7 +333,7 @@
 				$rulePreview.find("#ruleInfo").text($.trim(base.options.ruleInfo));
 				$rulePreview.find("#requestType").text(base.options.requestType);
 
-				TypeaheadRuleServiceJS.getAllRules(ruleName, 0, 1, 1, 5, {
+				TypeaheadRuleServiceJS.getAllRules(ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -343,8 +343,10 @@
 						for(var i = 0; i < list.length; i++) {
 							var $tr = $trClone.clone();
 
-							$tr.find("#brand").text(list[i].ruleName);
-							$tr.find("#category").text(list[i].ruleName);
+							if(i < GLOBAL_storeKeywordMaxBrand)
+								$tr.find("#brand").text(list[i].ruleName);
+							if(i < GLOBAL_storeKeywordMaxCategory)
+								$tr.find("#category").text(list[i].ruleName);
 
 							if(i == 0) {
 								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
@@ -379,7 +381,7 @@
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
 								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadCategoryManager.store.addByValue('facet.limit', 5);
+								base.typeaheadCategoryManager.store.addByValue('facet.limit', GLOBAL_storeMaxCategory);
 								base.typeaheadCategoryManager.doRequest(0);
 							} else {
 
@@ -634,7 +636,7 @@
 				$ruleType.text($.trim(xml.ruleEntity));
 				$content.find("#requestType").text(base.options.requestType);
 
-				TypeaheadRuleServiceJS.getAllRules(xml.ruleName, 0, 1, 1, 5, {
+				TypeaheadRuleServiceJS.getAllRules(xml.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -644,8 +646,10 @@
 						for(var i = 0; i < list.length; i++) {
 							var $tr = $trClone.clone();
 
-							$tr.find("#brand").text(list[i].ruleName);
-							$tr.find("#category").text(list[i].ruleName);
+							if(i < GLOBAL_storeKeywordMaxBrand)
+								$tr.find("#brand").text(list[i].ruleName);
+							if(i < GLOBAL_storeKeywordMaxCategory)
+								$tr.find("#category").text(list[i].ruleName);
 
 							if(i == 0) {
 								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
@@ -680,7 +684,7 @@
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
 								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadCategoryManager.store.addByValue('facet.limit', 5);
+								base.typeaheadCategoryManager.store.addByValue('facet.limit', GLOBAL_storeMaxCategory);
 								base.typeaheadCategoryManager.doRequest(0);
 							} else {
 

@@ -147,7 +147,7 @@
 
 				$('#searchResult, #category, #brand').find(':not(#docs, #categoryDocs, #brandDocs)').remove();
 				
-				TypeaheadRuleServiceJS.getAllRules(rule.ruleName, 0, 1, 1, 5, {
+				TypeaheadRuleServiceJS.getAllRules(rule.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback: function(response) {
 						var data = response["data"];
 						var list = data.list;
@@ -160,7 +160,8 @@
 								} else {
 									if(i < GLOBAL_storeKeywordMaxBrand)
 										$('#brand').append(html);
-									$('#category').append(html);
+									if(i < GLOBAL_storeKeywordMaxCategory)
+										$('#category').append(html);
 								}
 							}
 							
@@ -189,7 +190,7 @@
 							self.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
 							self.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
 							self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-							self.typeaheadCategoryManager.store.addByValue('facet.limit', 5);
+							self.typeaheadCategoryManager.store.addByValue('facet.limit', GLOBAL_storeMaxCategory);
 							self.typeaheadCategoryManager.doRequest(0);
 						}
 					}

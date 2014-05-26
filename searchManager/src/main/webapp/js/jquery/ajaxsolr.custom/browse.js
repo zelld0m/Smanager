@@ -244,7 +244,7 @@
 		$('#keyword').autocomplete({
 			delay: 500
 			,source: function(request, response) {
-				TypeaheadRuleServiceJS.getAllRules($('#keyword').val(), 0, 1, 1, 5, {
+				TypeaheadRuleServiceJS.getAllRules($('#keyword').val(), 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback:function(data) {
 						var list =  data['data'].list;
 
@@ -255,15 +255,17 @@
 
 
 							for(var i=0; i < list.length; i++) {
-								var object = new Object();
-								var ruleName = list[i].ruleName;
+								if(i < GLOBAL_storeKeywordMaxCategory) {
+									var object = new Object();
+									var ruleName = list[i].ruleName;
 
-								object.value = ruleName;
-								object.label = ruleName;
-								object.rowClass = i == 0 ? 'categoryFirst' : '';
-								object.keyword = i == 0 ? ruleName : '';
+									object.value = ruleName;
+									object.label = ruleName;
+									object.rowClass = i == 0 ? 'categoryFirst' : '';
+									object.keyword = i == 0 ? ruleName : '';
 
-								responseArray[responseArray.length] = object;
+									responseArray[responseArray.length] = object;
+								}
 							}
 
 							var brandRow = new Object();
@@ -271,9 +273,9 @@
 							brandRow.value = 'Brands';
 							brandRow.label = 'Brands';
 							brandRow.clickable = false;
-							
+
 							responseArray[responseArray.length] = brandRow;
-							
+
 							for(var i=0; i < GLOBAL_storeKeywordMaxBrand; i++) {
 								var object = new Object();
 								var ruleName = list[i].ruleName;
@@ -285,7 +287,7 @@
 
 								responseArray[responseArray.length] = object;
 							}
-							
+
 
 							var suggestionRow = new Object();
 
@@ -301,7 +303,7 @@
 						} else {
 							$("#keyword").autocomplete("close");
 						}
-						
+
 					}
 				});
 			}
@@ -310,7 +312,7 @@
 			var row = $( "<div></div>" );
 
 			var classString = item.clickable != false ? 'autocompleteLink' : '';
-			
+
 			if(item.rowClass == '') {
 				row.data("item.autocomplete", item).append('<strong class="fsize13"><a href="javascript:void(0);" class="'+classString+'">' + item.value + '</a></strong>' + '<div></div>');
 			} else {
@@ -318,7 +320,7 @@
 			}
 
 			var result = row.appendTo(ul);
-					
+
 			result.find('a.autocompleteLink').on({
 				click: function() {
 					$('#keyword').val($(this).html());
@@ -326,7 +328,7 @@
 					$("#keyword").autocomplete("close");
 				}
 			});
-			
+
 			if(item.rowClass == 'suggestionFirst') {
 
 				typeaheadManager.store.addByValue('q', $.trim(item.keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
@@ -356,14 +358,14 @@
 				typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
 				typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
 				typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-				typeaheadCategoryManager.store.addByValue('facet.limit', 5);
+				typeaheadCategoryManager.store.addByValue('facet.limit', GLOBAL_storeMaxCategory);
 				typeaheadCategoryManager.doRequest(0);
 			}
 
 			return result;
 		};
 	});
-	
 
-	
+
+
 })(jQuery);
