@@ -218,12 +218,10 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String name, int matchType, int orderBy, int page, int itemsPerPage) {
+	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String storeId, String name, int matchType, int orderBy, int page, int itemsPerPage) {
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
 		ServiceResponse<SearchResult<TypeaheadRule>> serviceResponse = new ServiceResponse<SearchResult<TypeaheadRule>>();
 		try {
-
-			String storeId = utilityService.getStoreId();
 
 			Search search = new Search(TypeaheadRule.class);
 			search.addFilter(new Filter(DAOConstants.PARAM_STORE_ID, storeId));

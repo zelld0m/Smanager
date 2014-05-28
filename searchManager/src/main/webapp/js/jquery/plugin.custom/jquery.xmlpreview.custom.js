@@ -31,7 +31,7 @@
 
 			base.typeaheadManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
 				id: 'suggestion',
-				target: '#suggestionFirst'
+				target: '.suggestionFirst'
 			}));
 
 			base.typeaheadBrandManager = new AjaxSolr.Manager({
@@ -41,7 +41,7 @@
 
 			base.typeaheadBrandManager.addWidget(new AjaxSolr.TypeaheadBrandWidget({
 				id: 'brand',
-				target: '#brandFirst'
+				target: '.brandFirst'
 			}));
 
 			base.typeaheadCategoryManager = new AjaxSolr.Manager({
@@ -51,7 +51,7 @@
 
 			base.typeaheadCategoryManager.addWidget(new AjaxSolr.TypeaheadCategoryWidget({
 				id: 'category',
-				target: '#categoryFirst'
+				target: '.categoryFirst'
 			}));
 
 		};
@@ -330,10 +330,10 @@
 				var $table = $content.find("table#item");
 				var $rulePreview = $content.find("div#leftPreview");
 
-				$rulePreview.find("#ruleInfo").text($.trim(base.options.ruleInfo));
+				$rulePreview.find("#ruleInfo").text(ruleName);
 				$rulePreview.find("#requestType").text(base.options.requestType);
-
-				TypeaheadRuleServiceJS.getAllRules(ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+								
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -349,10 +349,10 @@
 								$tr.find("#category").text(list[i].ruleName);
 
 							if(i == 0) {
-								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
-								$tr.find("#brand").append('<div id="brandFirst"></div>')
-								$tr.find("#category").append('<div id="categoryFirst"></div>')
-
+								$tr.find("#suggestion").append('<div class="suggestionFirst"></div>');
+								$tr.find("#brand").append('<div class="brandFirst"></div>')
+								$tr.find("#category").append('<div class="categoryFirst"></div>')
+								
 								$tr.show();
 								$table.append($tr);
 
@@ -635,8 +635,11 @@
 				$ruleInfo.text($.trim(xml.ruleName));
 				$ruleType.text($.trim(xml.ruleEntity));
 				$content.find("#requestType").text(base.options.requestType);
+				
+				$content.find("#rulePriority").text($.trim(xml.priority));
+				$content.find("#ruleDisabled").text(xml.disabled);
 
-				TypeaheadRuleServiceJS.getAllRules(xml.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+				TypeaheadRuleServiceJS.getAllRules(xml.store, xml.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -652,9 +655,9 @@
 								$tr.find("#category").text(list[i].ruleName);
 
 							if(i == 0) {
-								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
-								$tr.find("#brand").append('<div id="brandFirst"></div>')
-								$tr.find("#category").append('<div id="categoryFirst"></div>')
+								$tr.find("#suggestion").append('<div class="suggestionFirst"></div>');
+								$tr.find("#brand").append('<div class="brandFirst"></div>')
+								$tr.find("#category").append('<div class="categoryFirst"></div>')
 
 								$tr.show();
 								$table.append($tr);
@@ -967,6 +970,14 @@
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 
+					template += '	<label class="w110 floatL fbold">Priority:</label>';
+					template += '	<label class="wAuto floatL" id="rulePriority"></label>';
+					template += '	<div class="clearB"></div>';
+					
+					template += '	<label class="w110 floatL fbold">Disablede:</label>';
+					template += '	<label class="wAuto floatL" id="ruleDisabled"></label>';
+					template += '	<div class="clearB"></div>';
+					
 					template += '</div>';
 					template += '<div class="clearB"></div>';
 					break;
@@ -1206,15 +1217,16 @@
 				template += '		</div>	';
 				template += '	</div>';
 				break;
+			case 'type-ahead' :
 			case 'typeahead' :
 				template += '<div id="forceAdd" class="loadingWrapper" style="display:none"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ16x16.gif"><span class="fsize12 posRel topn3 padL5">Retrieving Force Add Status</span></div>';
 				template += '	<div class="w600 mar0 pad0">';
 				template += '		<table class="tblItems w100p marT5">';
 				template += '			<tbody>';
 				template += '				<tr>';
-				template += '					<th width="34%">#</th>';
-				template += '					<th width="33%" id="selectAll">Image</th>';
-				template += '					<th width="33%">Manufacturer</th>';
+				template += '					<th width="34%">Suggestions</th>';
+				template += '					<th width="33%" id="selectAll">Brands</th>';
+				template += '					<th width="33%">Categories</th>';
 				template += '				</tr>';
 				template += '			<tbody>';
 				template += '		</table>';
@@ -1402,7 +1414,11 @@
 									switch(base.options.ruleType.toLowerCase()){ //do only if ruleType is either Query Cleaning or Ranking Rule
 									case "querycleaning":
 									case "rankingrule":
-										base.getRuleData(base.contentHolder.find("#rightPreview"));
+										base.getDatabaseData(base.contentHolder.find("#rightPreview"));
+										break;
+									case "typeahead":
+									case "type-ahead":
+										base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.rule.id, base.options.rule.ruleName);
 										break;
 									default: break;
 									}

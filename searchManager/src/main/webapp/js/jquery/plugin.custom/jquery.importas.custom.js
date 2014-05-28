@@ -223,6 +223,12 @@
 				}
 				
 				break;
+			case "TYPEAHEAD":
+				$option.attr({value: rule["ruleName"], selected: true});
+				$option.text(rule["ruleName"]);
+				$replacement.find("input#newName").val(rule["ruleName"]);
+				$importAsSelect.prop("disabled", true);
+				break;
 			}
 
 			$importAsSelect.searchable({

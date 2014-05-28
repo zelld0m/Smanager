@@ -244,7 +244,7 @@
 		$('#keyword').autocomplete({
 			delay: 500
 			,source: function(request, response) {
-				TypeaheadRuleServiceJS.getAllRules($('#keyword').val(), 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, $('#keyword').val(), 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback:function(data) {
 						var list =  data['data'].list;
 

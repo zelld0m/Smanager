@@ -249,46 +249,6 @@
 					template += '	<div class="clearB"></div>';
 					template += '</div>';
 					break;
-				case "typeahead":
-				case "type-ahead":
-					template = '<div class="rulePreview w590 marB20">';
-					template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
-					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
-					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL fbold">Rule Type:</label>';
-					template += '	<label class="wAuto floatL" id="ruleType"></label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<div class="clearB"></div>';
-					template += '	<div class="w600 mar0 pad0">';
-					template += '		<table class="tblItems w100p marT5">';
-					template += '			<tbody>';
-					template += '				<tr>';
-					template += '					<th width="34%">#</th>';
-					template += '					<th width="33%" id="selectAll">Image</th>';
-					template += '					<th width="33%">Manufacturer</th>';
-					template += '				</tr>';
-					template += '			<tbody>';
-					template += '		</table>';
-					template += '	</div>';
-					template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
-					template += '		<table id="item" class="tblItems w100p">';
-					template += '			<tbody>';
-					template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
-					template += '					<td width="34%" class="txtAL valignTop" id="suggestion"></td>';
-					template += '					<td width="33%" class="txtAL valignTop" id="brand"></td>';
-					template += '					<td width="33%" class="txtAL valignTop" id="category"></td>';
-					template += '				</tr>';
-					template += '				<tr>';
-					template += '					<td colspan="6" class="txtAC">';
-					template += '						<img id="preloader" alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
-					template += '					</td>';
-					template += '				</tr>';
-					template += '			</tbody>';
-					template += '		</table>';
-					template += '</div>';
-					template += '</div>';
-					break;
 				default:	//template for elevate, exclude, demote, redirect and relevancy rule
 					template = '<div class="rulePreview w590 marB20">';
 				template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';

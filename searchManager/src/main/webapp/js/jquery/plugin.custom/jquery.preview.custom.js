@@ -235,7 +235,7 @@
 				$rulePreview.find("#ruleInfo").text($.trim(base.options.ruleInfo));
 				$rulePreview.find("#requestType").text(base.options.requestType);
 
-				TypeaheadRuleServiceJS.getAllRules(base.options.ruleInfo, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, base.options.ruleInfo, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;

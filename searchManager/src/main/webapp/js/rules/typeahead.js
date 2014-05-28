@@ -147,7 +147,7 @@
 
 				$('#searchResult, #category, #brand').find(':not(#docs, #categoryDocs, #brandDocs)').remove();
 				
-				TypeaheadRuleServiceJS.getAllRules(rule.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, rule.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback: function(response) {
 						var data = response["data"];
 						var list = data.list;
@@ -231,7 +231,7 @@
 				$('div#searchResult, div#category, div#brand').hide();
 
 				self.resetRuleListTable();
-				TypeaheadRuleServiceJS.getAllRules(searchText, matchType, 1, page, self.rulePageSize, {
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, searchText, matchType, 1, page, self.rulePageSize, {
 					callback: function(response){
 						var data = response["data"];
 						var list = data.list;
@@ -675,7 +675,7 @@
 					itemDataCallback: function(base, ruleName, page){
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
-						TypeaheadRuleServiceJS.getAllRules(ruleName, 0, 0, page, base.options.pageSize, {
+						TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, ruleName, 0, 0, page, base.options.pageSize, {
 							callback: function(response){
 								var data = response["data"];
 								base.populateList(data, ruleName);

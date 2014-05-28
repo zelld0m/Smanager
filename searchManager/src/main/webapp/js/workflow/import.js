@@ -717,6 +717,26 @@
                     template += '	<div class="clearB"></div>';
                     template += '</div>';
                     break;
+                case "typeahead":
+                case "type-ahead":	//template for elevate, exclude, demote, redirect and relevancy rule
+                    template = '<div class="rulePreview w590 marB20">';
+                    template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
+                    template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+                    template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+                    template += '	<div class="clearB"></div>';
+                    template += '	<label class="w110 floatL fbold">Priority:</label>';
+					template += '	<label class="wAuto floatL" id="rulePriority"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL fbold">Disabled:</label>';
+					template += '	<label class="wAuto floatL" id="ruleDisabled"></label>';
+					template += '	<div class="clearB"></div>';
+                    template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
+                    template += '	<label class="wAuto floatL" id="importType">';
+                    template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+                    template += '	</label>';
+                    template += '	<div class="clearB"></div>';
+                    template += '</div>';
+                    break;
                 default:	//template for elevate, exclude, demote, redirect and relevancy rule
                     template = '<div class="rulePreview w590 marB20">';
                     template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';

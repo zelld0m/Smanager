@@ -21,8 +21,8 @@
 <!-- End Left Side -->
 
 <!-- Start Right Side -->
-<div class="floatL w730 marL10 marT27 txtAL">
-    <div class="floatL w730 titlePlacer breakWord">
+<div class="floatL w980 marL10 marT27 txtAL">
+    <div class="floatL w980 titlePlacer breakWord">
         <h1 id="titleText" class="padT7 padL15 fsize20 fnormal floatL"></h1>
         <div class="floatR padT7 autoImportDiv">
 		  	<div class="floatL fbold fsize14 marT4 marR5"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-import: </div>
@@ -34,7 +34,7 @@
     <div class="clearB"></div>
 
     <!-- Start Main Content -->
-    <div style="width:95%" class="dashboard marT20 mar0">
+    <div style="width:100%" class="dashboard marT20 mar0">
         <!-- tabs -->
         <div id="import" class="tabs">
             <ul>
@@ -45,6 +45,7 @@
                 <li><a href="#queryCleaningTab"><span>Redirect Rule</span></a></li>
                 <li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
                 <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
+                <li><a href="#typeaheadTab"><span>Typeahead</span></a></li>
             </ul>
 
             <div class="minHeight400" id="elevateTab"></div>
@@ -54,6 +55,7 @@
             <div class="minHeight400" id="queryCleaningTab"></div>
             <div class="minHeight400" id="rankingRuleTab"></div>
             <div class="minHeight400" id="didYouMeanTab"></div>
+            <div class="minHeight400" id="typeaheadTab"></div>
         </div><!--  end tabs -->
 
         <div id="tabContentTemplate" style="display: none">
@@ -133,7 +135,7 @@
             <div class="mar0">
                 <div id="resultsBottomPaging"></div>	
             </div>
-            <div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="background: #f3f3f3;">
+            <div id="actionBtn" class="floatR marT10 fsize12 border pad10 marB20" style="background: #f3f3f3;width:97.5%"">
                 <h3 style="border:none;">Import Rule Guidelines</h3>
                 <div class="fgray padL10 padR10 padB15 fsize11">
                     <p align="justify">
