@@ -55,13 +55,13 @@
 	<div class="clearB"></div>
 
 	<div id="listContainer" class="floatL w730 marL10 marT27"></div>
-	<div id="searchResult" class="floatL w245 marL10 marT27 fsize11">
+	<div id="searchResult" class="floatR w245 marL10 marT27 fsize11">
 		<div id="docs">
 		
 		</div>
 		
 	</div>
-	<div id="category" class="floatR w215 marL10 marT27 fsize11">
+	<div id="category" class="floatL w215 marL10 marT27 fsize11">
 		<div id="categoryDocs">
 		
 		</div>

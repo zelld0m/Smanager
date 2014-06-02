@@ -843,14 +843,14 @@
 				template += '	<div id="itemPattern3" class="items pad5 borderB mar0 clearfix" style="display:none">';
 				template += '		<label class="iter floatL w45"></label>';
 				template += '		<label class="count floatL w70"></label>';
-				template += '		<label class="floatL w435">';
+				template += '		<label class="floatL w315">';
 				template += '			<label class="keyword floatL w310"></label>'; 
 				template += '			<div class="rules" style="display:none"></div>';
 				template += '		</label>';
-				template += '		<label class="results floatL w70"></label>';
-				template += '		<label class="sku floatL w70"></label>'; 
+				template += '		<label class="results floatL w70">&nbsp;</label>';
+				template += '		<label class="sku floatL w60">&nbsp;</label>'; 
 				template += '		<label class="floatR fsize11 w110 txtAC">';
-				template += '			<a class="toggle" href="javascript:void(0);"></a>';
+				template += '			&nbsp;<a class="toggle" href="javascript:void(0);"></a>';
 				template += '		</label>';
 				template += '	</div>';
 				template += '</div>';

@@ -942,9 +942,9 @@
 				template += '		<table class="tblItems w100p marT5">';
 				template += '			<tbody>';
 				template += '				<tr>';
-				template += '					<th width="34%">Suggestions</th>';
-				template += '					<th width="33%">Brands</th>';
 				template += '					<th width="33%">Categories</th>';
+				template += '					<th width="33%">Brands</th>';
+				template += '					<th width="34%">Suggestions</th>';
 				template += '				</tr>';
 				template += '			<tbody>';
 				template += '		</table>';
@@ -953,9 +953,9 @@
 				template += '		<table id="item" class="tblItems w100p">';
 				template += '			<tbody>';
 				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
-				template += '					<td width="34%" class="txtAL valignTop" id="suggestion"></td>';
-				template += '					<td width="33%" class="txtAL valignTop" id="brand"></td>';
 				template += '					<td width="33%" class="txtAL valignTop" id="category"></td>';
+				template += '					<td width="33%" class="txtAL valignTop" id="brand"></td>';
+				template += '					<td width="34%" class="txtAL valignTop" id="suggestion"></td>';
 				template += '				</tr>';
 				template += '				<tr id="preloader">';
 				template += '					<td colspan="6" class="txtAC">';

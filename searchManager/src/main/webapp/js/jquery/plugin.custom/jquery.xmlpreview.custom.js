@@ -974,7 +974,7 @@
 					template += '	<label class="wAuto floatL" id="rulePriority"></label>';
 					template += '	<div class="clearB"></div>';
 					
-					template += '	<label class="w110 floatL fbold">Disablede:</label>';
+					template += '	<label class="w110 floatL fbold">Disabled:</label>';
 					template += '	<label class="wAuto floatL" id="ruleDisabled"></label>';
 					template += '	<div class="clearB"></div>';
 					
@@ -1224,9 +1224,9 @@
 				template += '		<table class="tblItems w100p marT5">';
 				template += '			<tbody>';
 				template += '				<tr>';
-				template += '					<th width="34%">Suggestions</th>';
-				template += '					<th width="33%" id="selectAll">Brands</th>';
 				template += '					<th width="33%">Categories</th>';
+				template += '					<th width="33%" id="selectAll">Brands</th>';
+				template += '					<th width="34%">Suggestions</th>';
 				template += '				</tr>';
 				template += '			<tbody>';
 				template += '		</table>';
@@ -1235,9 +1235,9 @@
 				template += '		<table id="item" class="tblItems w100p">';
 				template += '			<tbody>';
 				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
-				template += '					<td width="34%" class="txtAL valignTop" id="suggestion"></td>';
-				template += '					<td width="33%" class="txtAL valignTop" id="brand"></td>';
 				template += '					<td width="33%" class="txtAL valignTop" id="category"></td>';
+				template += '					<td width="33%" class="txtAL valignTop" id="brand"></td>';
+				template += '					<td width="34%" class="txtAL valignTop" id="suggestion"></td>';
 				template += '				</tr>';
 				template += '				<tr>';
 				template += '					<td colspan="6" class="txtAC">';

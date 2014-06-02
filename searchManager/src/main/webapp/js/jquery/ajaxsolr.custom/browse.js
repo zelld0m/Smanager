@@ -255,17 +255,19 @@
 
 
 							for(var i=0; i < list.length; i++) {
-								if(i < GLOBAL_storeKeywordMaxCategory) {
-									var object = new Object();
-									var ruleName = list[i].ruleName;
+								if(i == GLOBAL_storeKeywordMaxCategory)
+									continue;
 
-									object.value = ruleName;
-									object.label = ruleName;
-									object.rowClass = i == 0 ? 'categoryFirst' : '';
-									object.keyword = i == 0 ? ruleName : '';
+								var object = new Object();
+								var ruleName = list[i].ruleName;
 
-									responseArray[responseArray.length] = object;
-								}
+								object.value = ruleName;
+								object.label = ruleName;
+								object.rowClass = i == 0 ? 'categoryFirst' : '';
+								object.keyword = i == 0 ? ruleName : '';
+
+								responseArray[responseArray.length] = object;
+
 							}
 
 							var brandRow = new Object();
@@ -276,7 +278,10 @@
 
 							responseArray[responseArray.length] = brandRow;
 
-							for(var i=0; i < GLOBAL_storeKeywordMaxBrand; i++) {
+							for(var i=0; i < list.length; i++) {
+								if(i == GLOBAL_storeKeywordMaxBrand)
+									continue;
+
 								var object = new Object();
 								var ruleName = list[i].ruleName;
 
@@ -286,6 +291,7 @@
 								object.keyword = i == 0 ? ruleName : '';
 
 								responseArray[responseArray.length] = object;
+
 							}
 
 
