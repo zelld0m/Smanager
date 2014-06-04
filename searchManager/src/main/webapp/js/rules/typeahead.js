@@ -417,7 +417,8 @@
 							ruleId: $row.find('input.ruleId').val(),
 							storeId: GLOBAL_storeId,
 							priority: $row.find('input.sortOrder').val(),
-							disabled: $row.find('input.ruleVisibility').is(':checked')
+							disabled: $row.find('input.ruleVisibility').is(':checked'),
+							ruleName: $row.find('label.keyword').html()
 					};
 
 					array[array.length] = rule;
@@ -434,7 +435,7 @@
 				if('submitForApproval' == dwrFunction) {
 					var completedRequests = 0;
 					for(var i=0; i < array.length; i++) {
-						DeploymentServiceJS.submitRuleForApproval(GLOBAL_storeId, "typeahead", array[i].ruleId, "batch", false, {
+						DeploymentServiceJS.submitRuleForApproval(GLOBAL_storeId, "typeahead", array[i].ruleId, array[i].ruleName, false, {
 							callback: function(ruleStatus) {
 								completedRequests++;
 
