@@ -39,12 +39,6 @@
 		</property>
 	</bean>
 
-	<bean id="propertiesManager" class="com.search.manager.properties.PropertiesManager"
-		init-method="saveStoreProperties">
-		<constructor-arg name="storePropertiesFile" value="/home/solr/conf/store.xml" />
-		<constructor-arg name="storePropertiesFolder" value="/home/solr/conf" />
-	</bean>
-
 	<bean id="propertiesUtils"
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="staticMethod"
@@ -55,6 +49,12 @@
 			</list>
 		</property>
 	</bean>
+
+    <bean id="propertiesManager" class="com.search.manager.properties.PropertiesManager"
+        init-method="saveStoreProperties">
+        <constructor-arg name="storePropertiesFile" value="/home/solr/conf/store.xml" />
+        <constructor-arg name="storePropertiesFolder" value="/home/solr/conf" />
+    </bean>
 
 	<bean id="configManager" class="com.search.ws.ConfigManager"
 		scope="singleton">
