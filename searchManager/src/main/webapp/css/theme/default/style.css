@@ -897,6 +897,43 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .pointer:hover, .sideMenuArea .ui-datepicker-trigger, .conditionItem img:hover, .relevancy .ui-datepicker-trigger:hover { cursor: pointer }
 
 
+/* linguistics typehead */ 
+.cssReset .itemNameCat {margin-left: 5px;padding: 5px;}
+.cssReset .itemNameBrand {margin-left: 5px;padding: 5px;}
+.cssReset .itemNameSuggest {display: block;float: left;margin-left: 80px;margin-top: -53px;}
+
+/* workflow typehead */ 
+.qtip .tblItems td .itemNameCat , .itemNameBrand {margin-left: 5px;padding: 3px 5px 3px 5px;}
+.qtip .tblItems td .itemNameCat:hover{ background-color: #f1f1f1;}
+.qtip .tblItems td .itemNameBrand:hover{ background-color: #f1f1f1;}
+.ui-autocomplete .itemNameCat:hover { background-color: #f1f1f1;}
+.ui-autocomplete .itemNameBrand:hover { background-color: #f1f1f1;}
+
+.qtip .tblItems td .floatL:hover .itemImg { opacity:0.6;}
+.qtip .tblItems td .floatL:hover .itemNameSuggest { opacity:0.6;}
+.qtip .tblItems td .itemNameSuggest {display: block;float: left;margin-left: 80px;margin-top: -53px;}
+
+/* simulator typehead */ 
+.ui-autocomplete  .floatL:hover .itemImg { opacity:0.6;}
+.ui-autocomplete  .floatL:hover .itemNameSuggest { opacity:0.6;}
+.ui-autocomplete .itemNameCat {padding-left: 15px; line-height: 24px; }
+.ui-autocomplete .itemNameCat a { text-decoration: none;  color: #666;}
+.ui-autocomplete .itemNameBrand {padding-left: 15px;line-height: 24px; }
+.ui-autocomplete .itemNameBrand a { text-decoration: none; color: #666;}
+.ui-autocomplete .itemNameSuggest {display: block;float: left;margin-left: 80px;margin-top: -53px;}
+
+.ui-autocomplete .first-lvl a { text-decoration: none; font-size: 12px !important; line-height: 31px; padding-left: 15px;}
+.ui-autocomplete .first-lvl-sub a { text-decoration: none; font-size: 12px !important; line-height: 31px; padding-left: 15px;}
+.ui-autocomplete .sep{height: 1px; width: 337px; background-color: #dbdbdb; margin-left: -16px;}
+.ui-autocomplete .itemImgWp{padding: 10px 0px;}
+.ui-autocomplete .itemImgWp a{ text-decoration: none;}
+.ui-autocomplete .itemNameSuggest:hover { color: #08c;}
+.ui-autocomplete h3{ background-color: #f1f1f1; margin-left: -5px}
+.ui-autocomplete .topHead{background-color: #f1f1f1; margin-left: -5px; padding: 6px 0px 10px 20px; margin-top: 1px; font-size: 12px; font-weight: bold;}
+
+
+
+
 /* Elevate Rule Preview */
 .rulePreview								{ padding:0; margin:0; display:block }
 .rulePreview label							{ line-height: 14px; margin:3px 0 }

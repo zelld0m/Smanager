@@ -33,7 +33,7 @@
 			var self = this;
 			var html = '';
 			
-			html += '<div>';
+			html += '<div class="itemNameCat">';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="keywordListener">';
 			html += '		<span>'+category+'</span> ('+count+')';
