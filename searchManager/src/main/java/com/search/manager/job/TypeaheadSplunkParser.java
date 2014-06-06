@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ public class TypeaheadSplunkParser {
 	private static String FOLDER_HOME = "/home/solr/utilities/typeahead";
 
 	private int WEEKLY_KEYWORD_COLUMN = 1;
-	private int WEEKLY_COUNT_COLUMN = 2;
+	private int WEEKLY_COUNT_COLUMN = 0;
 
 	private int DAILY_KEYWORD_COLUMN = 0;
 	private int DAILY_COUNT_COLUMN = 1;
@@ -90,9 +89,9 @@ public class TypeaheadSplunkParser {
 						continue;
 					
 					if(FOLDER_DAILY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, DAILY_COUNT_COLUMN)) {
-						typeaheadRule = saveTypeaheadRule(storeId, csvRow, folderType, DAILY_KEYWORD_COLUMN, false);
+						typeaheadRule = saveTypeaheadRule(storeId, csvRow, folderType, DAILY_KEYWORD_COLUMN);
 					} else if(FOLDER_WEEKLY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, WEEKLY_COUNT_COLUMN)) {
-						typeaheadRule = saveTypeaheadRule(storeId, csvRow, folderType, WEEKLY_KEYWORD_COLUMN, true);
+						typeaheadRule = saveTypeaheadRule(storeId, csvRow, folderType, WEEKLY_KEYWORD_COLUMN);
 					}
 
 					if(typeaheadRule != null) {
@@ -119,7 +118,7 @@ public class TypeaheadSplunkParser {
 		}
 	}
 
-	private TypeaheadRule saveTypeaheadRule(String storeId, String[] csvRow, String folderType, int keywordColumn, Boolean hasPriority) throws CoreServiceException {
+	private TypeaheadRule saveTypeaheadRule(String storeId, String[] csvRow, String folderType, int keywordColumn) throws CoreServiceException {
 		TypeaheadRule typeaheadRule = new TypeaheadRule();
 
 		typeaheadRule.setRuleName(csvRow[keywordColumn]);
@@ -130,10 +129,6 @@ public class TypeaheadSplunkParser {
 
 		typeaheadRule.setCreatedDate(new DateTime());
 		typeaheadRule.setCreatedBy("system");
-		
-		if(hasPriority && StringUtils.isNotEmpty(csvRow[0])) {
-			typeaheadRule.setPriority(Integer.parseInt(csvRow[0]));
-		}
 
 		return typeaheadRuleService.add(typeaheadRule);
 	}
