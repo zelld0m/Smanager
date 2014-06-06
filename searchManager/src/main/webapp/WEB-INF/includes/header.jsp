@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=100" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Search Manager</title>
 
@@ -140,6 +140,7 @@
 <script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadSearchResult.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadBrand.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/ajax-solr-06-01-2013/widgets/TypeaheadCategory.js" />"></script>
+
 
   <!-- cross-browser css compatibility util -->
   <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>

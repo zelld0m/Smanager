@@ -43,15 +43,16 @@
 			
 			var html = '';
 			
-			html += '<div class="floatL">';
+			html += '<div class="itemImgWp floatL">';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="keywordListener">';
 			html += '		<img class="itemImg" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
-			html += '		<span>'+doc.Name+'</span>';
+			html += '		<div class="itemNameSuggest">'+doc.Name+'</div>';
 			if(self.mode == 'simulator')
 				html += '</a>';
 			html += '</div>';
 			html += '<div class="clearB"></div>';
+			html += '<div class="sep"></div>';
 			
 			return html;
 		},
