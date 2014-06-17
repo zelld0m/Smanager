@@ -28,6 +28,9 @@ public class PropertiesUtils {
         try {
             config = new PropertiesConfiguration(path);
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
+            
+            boolean guiFlag = "1".equals(config.getString("isFmSolrGui"));
+            System.setProperty("GUISERVER", String.valueOf(guiFlag));
         } catch (ConfigurationException e) {
             logger.error(String.format("Unable to load file %s", path), e);
         }

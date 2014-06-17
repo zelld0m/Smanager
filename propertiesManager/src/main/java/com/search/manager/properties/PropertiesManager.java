@@ -33,10 +33,12 @@ public class PropertiesManager {
     private String storePropertiesFolder;
     @Autowired
     private PropertiesDao propertiesDao;
+    private boolean isGui;
 
     public PropertiesManager(String storePropertiesFile, String storePropertiesFolder) {
         this.storePropertiesFile = storePropertiesFile;
         this.storePropertiesFolder = storePropertiesFolder;
+        this.isGui = "true".equals(System.getProperty("GUISERVER"));
     }
 
     public String getStorePropertiesFile() {
@@ -147,7 +149,9 @@ public class PropertiesManager {
             try {
                 String filePath = Stores.getFormattedSaveLocation(getStorePropertiesFolder(), storeId, moduleName);
 
-                saveToDB(store.getId(), module.getName(), properties, null);
+                if (isGui) {
+                    saveToDB(store.getId(), module.getName(), properties, null);
+                }
                 // save the properties file to the appropriate directory
                 savePropertiesFile(properties, filePath, false);
             } catch (NotDirectoryException e) {
@@ -225,7 +229,10 @@ public class PropertiesManager {
     public void saveStoreProperties(String store, List<StorePropertiesFile> storePropertiesFiles, String username) {
         for (StorePropertiesFile storePropertiesFile : storePropertiesFiles) {
             Properties properties = getPropertiesByStorePropertiesFile(storePropertiesFile);
-            saveToDB(store, storePropertiesFile.getModuleName(), properties, username);
+            
+            if (isGui) {
+                saveToDB(store, storePropertiesFile.getModuleName(), properties, username);
+            }
             // save the properties file
             savePropertiesFile(properties, storePropertiesFile.getFilePath());
         }
