@@ -106,7 +106,8 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			ruleName = existingRule.getRuleName();
 			existingRule.setPriority(typeaheadRule.getPriority());
 			existingRule.setDisabled(typeaheadRule.getDisabled());
-			existingRule.setRuleName(typeaheadRule.getRuleName());
+			//Update will not work if rule name is the same.
+//			existingRule.setRuleName(typeaheadRule.getRuleName());
 			existingRule.setLastModifiedDate(new DateTime());
 			existingRule.setLastModifiedBy(utilityService.getUsername());
 

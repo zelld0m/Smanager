@@ -165,9 +165,16 @@
 								}
 							}
 							
+							var params = GLOBAL_typeaheadSolrParams;
+							
 							self.typeaheadManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 							self.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 							self.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
+							self.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
+
+							for(name in params) {
+								self.typeaheadManager.store.addByValue(name, params[name]);
+							}
 							self.typeaheadManager.doRequest(0);
 
 							self.typeaheadBrandManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
@@ -181,6 +188,11 @@
 							self.typeaheadBrandManager.store.addByValue('facet', 'true');
 							self.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
 							self.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
+							self.typeaheadBrandManager.store.addByValue('storeAlias', GLOBAL_storeId);
+
+							for(name in params) {
+								self.typeaheadBrandManager.store.addByValue(name, params[name]);
+							}
 							self.typeaheadBrandManager.doRequest(0);
 
 							self.typeaheadCategoryManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
@@ -188,9 +200,13 @@
 							self.typeaheadCategoryManager.store.addByValue('json.nl', "map");
 							self.typeaheadCategoryManager.store.addByValue('facet', 'true');
 							self.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
-							self.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
+							self.typeaheadCategoryManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplate); 
 							self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-							self.typeaheadCategoryManager.store.addByValue('facet.limit', GLOBAL_storeMaxCategory);
+							self.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
+
+							for(name in params) {
+								self.typeaheadCategoryManager.store.addByValue(name, params[name]);
+							}
 							self.typeaheadCategoryManager.doRequest(0);
 						}
 					}
@@ -543,6 +559,8 @@
 				}
 
 				$header = self.$elObject.find('div#itemHeaderMain').clone();
+				$header.find('div#itemHeader4').show();
+				$header.find('div#itemHeader3').hide();
 				$header.find('label.iter').html('Disabled');
 				$header.find('label.toggle').html('&nbsp;');
 				html += $('<div></div>').append($header).html();
@@ -795,7 +813,7 @@
 				template += '<div class="clearB"></div>';
 				template += '<div id="fieldsTopPaging"></div>';
 				template += '<div class="clearB"></div>';
-				template += '<div id="itemHeaderMain" class="w100p padT0 marT5 marL15 fsize12" style="max-height:365px;">';
+				template += '<div id="itemHeaderMain" class="w100p padT0 marT5 fsize12" style="max-height:365px;">';
 				template += '	<div id="itemHeader1" class="items border clearfix" style="display:none">';
 				template += '		<label class="iter floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> &nbsp; </label>';
 				template += '		<label class="count floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Count</label>';
@@ -812,11 +830,16 @@
 				template += '	<div id="itemHeader3" class="items border clearfix" style="display:none">';
 				template += '		<label class="iter floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
 				template += '		<label class="count floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
-				template += '		<label class="floatL w450 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>';
-				template += '		<label class="toggle floatL w115 txtAC fbold padTB5" style="background:#eee"> Status </label>';
+				template += '		<label class="floatL txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee; width:485px;">Keyword</label>';
+				template += '		<label class="toggle floatL w130 txtAC fbold padTB5" style="background:#eee"> Status </label>';
+				template += '	</div>';
+				template += '	<div id="itemHeader4" class="items border clearfix" style="display:none">';
+				template += '		<label class="iter floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
+				template += '		<label class="count floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
+				template += '		<label class="floatL txtAC fbold padTB5" style="width:615px;border-right:1px solid #cccccc; background:#eee">Keyword</label>';
 				template += '	</div>';
 				template += '</div>';	
-				template += '<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:565px; overflow-y:auto;">';
+				template += '<div id="itemList" class="w100p marRLauto padT0 marT0 fsize12" style="max-height:565px; overflow-y:auto;">';
 				template += '	<div id="itemPattern1" class="items pad5 borderB mar0 clearfix" style="display:none">';
 				template += '		<label class="iter floatL w80"></label>';
 				template += '		<label class="count floatL w80"></label>';
@@ -831,21 +854,19 @@
 				template += '	<div id="itemPattern2" class="items pad5 borderB mar0 clearfix" style="display:none">';
 				template += '		<label class="iter floatL w60"></label>';
 				template += '		<label class="count floatL w60"></label>';
-				template += '		<label class="floatL w310">';
-				template += '			<label class="keyword floatL w310"></label>'; 
+				template += '		<label class="float" style="width:480px;">';
+				template += '			<label class="keyword floatL" style="width:480px;"></label>'; 
 				template += '			<div class="rules" style="display:none"></div>';
 				template += '		</label>';
-				template += '		<label class="results floatL w70">&nbsp;</label>';
-				template += '		<label class="sku floatL w60">&nbsp;</label>'; 
-				template += '		<label class="floatR fsize11 w110 status txtAL">';
+				template += '		<label class="floatR fsize11 w120 status txtAL">';
 				template += '			&nbsp;<a class="toggle" href="javascript:void(0);"></a>';
 				template += '		</label>';
 				template += '	</div>';
 				template += '	<div id="itemPattern3" class="items pad5 borderB mar0 clearfix" style="display:none">';
 				template += '		<label class="iter floatL w45"></label>';
 				template += '		<label class="count floatL w70"></label>';
-				template += '		<label class="floatL w315">';
-				template += '			<label class="keyword floatL w310"></label>'; 
+				template += '		<label class="floatL" style="width:365px">';
+				template += '			<label class="keyword floatL" style="width:365px"></label>'; 
 				template += '			<div class="rules" style="display:none"></div>';
 				template += '		</label>';
 				template += '		<label class="results floatL w70">&nbsp;</label>';

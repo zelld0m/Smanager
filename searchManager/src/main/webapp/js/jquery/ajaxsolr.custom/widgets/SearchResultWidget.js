@@ -5,6 +5,7 @@
 		expDateMaxDate: "+1Y",
 
 		beforeRequest: function () {
+			$("#keyword").autocomplete("close");
 			$(this.target).html(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
 		},
 

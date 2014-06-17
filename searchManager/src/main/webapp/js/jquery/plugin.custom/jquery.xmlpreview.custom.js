@@ -356,9 +356,14 @@
 								$tr.show();
 								$table.append($tr);
 
+
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
-								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
+								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
+								base.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								for(name in GLOBAL_typeaheadSolrParams) {
+									base.typeaheadManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
+								}
 								base.typeaheadManager.doRequest(0);
 
 								base.typeaheadBrandManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
@@ -372,6 +377,10 @@
 								base.typeaheadBrandManager.store.addByValue('facet', 'true');
 								base.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
 								base.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
+								base.typeaheadBrandManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								for(name in GLOBAL_typeaheadSolrParams) {
+									base.typeaheadBrandManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
+								}
 								base.typeaheadBrandManager.doRequest(0);
 
 								base.typeaheadCategoryManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
@@ -381,7 +390,10 @@
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
 								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadCategoryManager.store.addByValue('facet.limit', GLOBAL_storeMaxCategory);
+								base.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								for(name in GLOBAL_typeaheadSolrParams) {
+									base.typeaheadCategoryManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
+								}
 								base.typeaheadCategoryManager.doRequest(0);
 							} else {
 
@@ -664,7 +676,11 @@
 
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
-								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
+								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
+								base.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								for(name in GLOBAL_typeaheadSolrParams) {
+									base.typeaheadManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
+								}
 								base.typeaheadManager.doRequest(0);
 
 								base.typeaheadBrandManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
@@ -678,6 +694,10 @@
 								base.typeaheadBrandManager.store.addByValue('facet', 'true');
 								base.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
 								base.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
+								base.typeaheadBrandManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								for(name in GLOBAL_typeaheadSolrParams) {
+									base.typeaheadBrandManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
+								}
 								base.typeaheadBrandManager.doRequest(0);
 
 								base.typeaheadCategoryManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
@@ -687,7 +707,10 @@
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
 								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadCategoryManager.store.addByValue('facet.limit', GLOBAL_storeMaxCategory);
+								base.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								for(name in GLOBAL_typeaheadSolrParams) {
+									base.typeaheadCategoryManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
+								}
 								base.typeaheadCategoryManager.doRequest(0);
 							} else {
 

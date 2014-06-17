@@ -118,8 +118,8 @@
 											$.each(data.list, function() {
 												this.rName = $("tr#ruleItem" + $.formatAsId(this.ruleId) + " > td#ruleRefId > p#ruleName").text();
 											});								
-											
-											getForProductionList(selRuleFltr, function() { postMsg(data,true); });	
+											postMsg(data,true);
+											getForProductionList(selRuleFltr, function() {  });	
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -154,7 +154,8 @@
 											$.each(data.list, function() {
 												this.rName = $("tr#ruleItem" + $.formatAsId(this.ruleId) + " > td#ruleRefId > p#ruleName").text();
 											});
-											getForProductionList(selRuleFltr, function() { postMsg(data, false); });
+											postMsg(data, false); 
+											getForProductionList(selRuleFltr, function() { });
 										},
 										preHook:function(){ 
 											prepareTabContent(); 

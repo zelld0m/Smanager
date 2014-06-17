@@ -38,6 +38,18 @@ public enum RuleEntity {
 	    SPELL,
 	    BANNER
 	};
+	
+	public static final RuleEntity[] RULE_TYPES = {
+	    ELEVATE,
+	    EXCLUDE,
+	    DEMOTE,
+	    FACET_SORT,
+	    QUERY_CLEANING,
+	    RANKING_RULE,
+	    SPELL,
+	    BANNER,
+	    TYPEAHEAD
+	};
    
 	private RuleEntity(int code, String ...values) {
 		this.code = code;

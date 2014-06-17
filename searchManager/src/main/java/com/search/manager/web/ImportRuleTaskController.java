@@ -74,7 +74,7 @@ public class ImportRuleTaskController {
         model.addAttribute("currentPage", 1);
         model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
         model.addAttribute("types", ImportType.values());
-        model.addAttribute("ruleTypes", RuleEntity.values());
+        model.addAttribute("ruleTypes", RuleEntity.RULE_TYPES);
         model.addAttribute("statuses", TaskStatus.values());
         model.addAttribute("filter", ",,,,");
         model.addAttribute("isTargetStore", isTargetStore());

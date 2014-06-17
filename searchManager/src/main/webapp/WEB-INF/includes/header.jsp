@@ -91,16 +91,7 @@
 	var GLOBAL_searchWithinParamName = GLOBAL_storeParameters["searchWithinParamName"];
 	var GLOBAL_isTargetStore = GLOBAL_storeParameters["isTargetStore"];
 	var GLOBAL_allStoresDisplayName = GLOBAL_storeParameters["allStoresDisplayName"];
-	
-		// FOR TYPEAHEAD
-	var GLOBAL_storeKeywordMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
-	var GLOBAL_storeKeywordMaxBrand = GLOBAL_storeProperties['typeahead.typeahead.keywordBrandMax'];
-	var GLOBAL_storeKeywordMaxCategory = GLOBAL_storeProperties['typeahead.typeahead.keywordCategoryMax'];
-	var GLOBAL_storeMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
-	var GLOBAL_storeMaxBrand = GLOBAL_storeProperties['typeahead.typeahead.brandMax'];
-	var GLOBAL_storeMaxCategory = GLOBAL_storeProperties['typeahead.typeahead.categoryMax'];
-	var GLOBAL_storeMaxTypeahead = GLOBAL_storeKeywordMaxBrand > GLOBAL_storeKeywordMaxCategory ? GLOBAL_storeKeywordMaxBrand : GLOBAL_storeKeywordMaxCategory; 
-	
+		
         // FOR REDIRECT PAGE
     var GLOBAL_storeRedirectSelfDomain = GLOBAL_storeParameters["storeRedirectSelfDomain"];
     var GLOBAL_storeRedirectRelativePath = GLOBAL_storeParameters["storeRedirectRelativePath"];
@@ -127,6 +118,48 @@
 	
 	var GLOBAL_storeFacetTemplateNameField = GLOBAL_PCMGroup ? "FacetTemplateName" : "TemplateName";
 	var GLOBAL_storeFacetTemplateType = GLOBAL_storeParameters["storeFacetTemplateType"];
+	
+
+	// FOR TYPEAHEAD
+	var GLOBAL_storeKeywordMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
+	var GLOBAL_storeKeywordMaxBrand = GLOBAL_storeProperties['typeahead.typeahead.keywordBrandMax'];
+	var GLOBAL_storeKeywordMaxCategory = GLOBAL_storeProperties['typeahead.typeahead.keywordCategoryMax'];
+	var GLOBAL_storeMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
+	var GLOBAL_storeMaxBrand = GLOBAL_storeProperties['typeahead.typeahead.brandMax'];
+	var GLOBAL_storeMaxCategory = GLOBAL_storeProperties['typeahead.typeahead.categoryMax'];
+	var GLOBAL_storeMaxTypeahead = GLOBAL_storeKeywordMaxBrand > GLOBAL_storeKeywordMaxCategory ? GLOBAL_storeKeywordMaxBrand : GLOBAL_storeKeywordMaxCategory; 
+	
+	var GLOBAL_facetTemplate = ['Category', 'Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
+
+	if (GLOBAL_storeFacetTemplateType === 'IMS') {
+	
+		facetTemplate = ['Category', 'Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
+		if (GLOBAL_storeId == 'macmall'){
+			GLOBAL_facetTemplate = ['Category', 'Manufacturer', 'Platform','InStock_Memphis','InStock_Chicago_Retail','InStock_Huntington_Beach_Retail','InStock_Santa_Monica_Retail','InStock_Torrance_Retail',GLOBAL_storeFacetTemplateName];
+		}
+	} else if(GLOBAL_storeFacetTemplateType === 'CNET') {
+		// CNET        	
+		facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
+		if (GLOBAL_storeId == 'macmall'){
+			GLOBAL_facetTemplate = ['Manufacturer', 'Platform','InStock_Memphis','InStock_Chicago_Retail','InStock_Huntington_Beach_Retail','InStock_Santa_Monica_Retail','InStock_Torrance_Retail',GLOBAL_storeFacetTemplateName];
+		}
+	}
+	
+	var GLOBAL_typeaheadSolrParams = {
+		'facet': true,
+		'debugQuery': true,
+		'fl': '*,score',
+		'facet.field': GLOBAL_facetTemplate,
+		'facet.mincount': 1,
+		'start': 0,
+		'sort': GLOBAL_storeSort,
+		'relevancyId': '',
+		'spellcheck': true,
+		'spellcheck.count': 3,
+		'spellcheck.collate': true,
+		'gui': GLOBAL_isFromGUI,
+		'json.nl': 'map'
+	};
   </script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">

@@ -897,12 +897,16 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .pointer:hover, .sideMenuArea .ui-datepicker-trigger, .conditionItem img:hover, .relevancy .ui-datepicker-trigger:hover { cursor: pointer }
 
 
-/* linguistics typehead */ 
+/* linguistics typehead */
+.cssReset .itemNamePreviewCat {margin-left: 5px;padding: 5px;}
+.cssReset .itemNamePreviewBrand {margin-left: 5px;padding: 5px;}
 .cssReset .itemNameCat {margin-left: 5px;padding: 5px;}
 .cssReset .itemNameBrand {margin-left: 5px;padding: 5px;}
+.cssReset .itemNameSuggestPreview {display: block;float: left;margin-left: 80px;margin-top: -53px;}
 .cssReset .itemNameSuggest {display: block;float: left;margin-left: 80px;margin-top: -53px;}
 
-/* workflow typehead */ 
+/* workflow typehead */
+.qtip .tblItems td .itemNamePreviewCat , .itemNamePreviewBrand {margin-left: 5px;padding: 3px 5px 3px 5px;}
 .qtip .tblItems td .itemNameCat , .itemNameBrand {margin-left: 5px;padding: 3px 5px 3px 5px;}
 .qtip .tblItems td .itemNameCat:hover{ background-color: #f1f1f1;}
 .qtip .tblItems td .itemNameBrand:hover{ background-color: #f1f1f1;}
@@ -911,6 +915,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 .qtip .tblItems td .floatL:hover .itemImg { opacity:0.6;}
 .qtip .tblItems td .floatL:hover .itemNameSuggest { opacity:0.6;}
+.qtip .tblItems td .itemNameSuggestPreview {display: block;float: left;margin-left: 80px;margin-top: -53px;}
 .qtip .tblItems td .itemNameSuggest {display: block;float: left;margin-left: 80px;margin-top: -53px;}
 
 /* simulator typehead */ 

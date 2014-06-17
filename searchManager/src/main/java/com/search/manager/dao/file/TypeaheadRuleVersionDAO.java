@@ -59,6 +59,7 @@ public class TypeaheadRuleVersionDAO extends AbstractRuleVersionDAO<TypeaheadRul
 				xml.setStore(store);
 				xml.setRuleId(ruleId);
 				xml.setRuleEntity(RuleEntity.TYPEAHEAD);
+				xml.setCreatedBy(username);
 				ruleXmlList.add(xml);
 				ruleVersionListXml.setRuleId(ruleId);
 				ruleVersionListXml.setRuleName(typeaheadRule.getRuleName());
