@@ -1037,7 +1037,7 @@
 				template += '			<tbody>';
 				template += '		</table>';
 				template += '	</div>';
-				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;border-bottom: 1px solid #ccc;">';
 				template += '		<table id="item" class="tblItems w100p">';
 				template += '			<tbody>';
 				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
@@ -1072,7 +1072,7 @@
 				template += '			<tbody>';
 				template += '		</table>';
 				template += '	</div>';
-				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;border-bottom: 1px solid #ccc;">';
 				template += '		<table id="item" class="tblItems w100p">';
 				template += '			<tbody>';
 				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
@@ -1254,7 +1254,7 @@
 				template += '			<tbody>';
 				template += '		</table>';
 				template += '	</div>';
-				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;border-bottom: 1px solid #ccc;">';
 				template += '		<table id="item" class="tblItems w100p">';
 				template += '			<tbody>';
 				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
