@@ -720,7 +720,7 @@
 						}
 					},
 					postHook: function() {
-						$table.find("#preloader").hide();
+						$table.find("#preloader").parent().parent().hide();
 					}
 				});
 
