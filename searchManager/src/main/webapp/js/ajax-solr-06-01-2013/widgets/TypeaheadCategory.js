@@ -93,7 +93,7 @@
 
 					self.clearFilters(searchManager);
 
-					searchManager.store.addByValue("fq", GLOBAL_storeFacetTemplate + ':' + $(this).find('span#category').text()+'*');
+					searchManager.store.addByValue("fq", GLOBAL_storeFacetTemplate + ':' + self.escapeValue($(this).find('span#category').text())+'*');
 					searchManager.store.addByValue("q", keyword);
 
 					for(obj in self.defaultParams) {
@@ -126,6 +126,14 @@
 			}
 
 			return counter;
+		},
+		escapeValue: function(text){
+			if($.isNotBlank(text)) // Dependency: CurrentSearchWidget.js - display text
+				return ("" + text).replace(/\s/g,"?").
+						replace(/\(/g,"\\(").
+						replace(/\)/g,"\\)");
+			
+			return text;
 		}
 	});
 
