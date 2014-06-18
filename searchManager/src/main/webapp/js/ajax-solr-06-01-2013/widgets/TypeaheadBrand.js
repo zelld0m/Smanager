@@ -89,7 +89,7 @@
 
 					self.clearFilters(searchManager);
 
-					searchManager.store.addByValue("fq", 'Manufacturer:'+$(this).find('span').text());
+					searchManager.store.addByValue("fq", 'Manufacturer:"'+$(this).find('span').text()+'"');
 					searchManager.store.addByValue("q", keyword);
 					for(obj in self.defaultParams) {
 						searchManager.store.addByValue(obj, self.defaultParams[obj]);
