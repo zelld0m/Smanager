@@ -22,6 +22,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
+import com.search.manager.report.model.SubReportHeader;
 import com.search.manager.report.model.TypeaheadReportBean;
 import com.search.manager.report.model.TypeaheadReportModel;
 import com.search.manager.report.model.xml.RuleXml;
@@ -77,8 +78,8 @@ public class TypeaheadController {
             List<TypeaheadReportBean> reportBeans = new ArrayList<TypeaheadReportBean>();
             
             reportBeans.add(new TypeaheadReportBean(new TypeaheadRule(ruleXml)));
-            
-            subModels.add(new TypeaheadReportModel(reportHeader, reportBeans));
+            SubReportHeader subReportHeader = ruleXmlReportUtil.getVersionSubReportHeader(utilityService.getStoreId(), xml, RuleEntity.TYPEAHEAD);
+            subModels.add(new TypeaheadReportModel(reportHeader, subReportHeader, reportBeans));
         }
 
         if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
