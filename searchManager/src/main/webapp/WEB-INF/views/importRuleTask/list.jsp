@@ -71,13 +71,13 @@
 				        <td align="center">
 				        	${importRuleTask.taskExecutionResult.taskStatus.displayText}
 				        	<c:if test="${importRuleTask.taskExecutionResult.taskStatus.displayText == 'Failed'}">
-				        		<a href="javascript:void(0);" onmousemove="$('#reason').val('${importRuleTask.taskExecutionResult.taskErrorMessage} <br/><br/>Run attempt/s:${importRuleTask.taskExecutionResult.runAttempt}')" class="failedReason"><img src="/searchManager/images/icon_alert.png"/></a>
+				        		<a href="javascript:void(0);" onclick="$('#reason').val('${importRuleTask.taskExecutionResult.taskErrorMessage} <br/><br/>Run attempt/s:${importRuleTask.taskExecutionResult.runAttempt}')" class="failedReason"><img src="/searchManager/images/icon_alert.png"/></a>
 				        	</c:if>
 				        </td>
 				        <td align="center">
 				        	 <c:forEach items="${importRuleTask.taskMessages}" var="taskMessage" varStatus="status">
 				        		<a href="javascript:void(0);" 
-				        		onmousemove="$('#reason').val('${taskMessage.dateLabel1}<joda:format pattern="${dateFormat}" value="${taskMessage.displayDate1}"/><c:if test="${!empty taskMessage.displayDate2}"><br/>${taskMessage.dateLabel2}<joda:format pattern="${dateFormat}" value="${taskMessage.displayDate2}"/></c:if>')" class="failedReason">
+				        		onclick="$('#reason').val('${taskMessage.dateLabel1}<joda:format pattern="${dateFormat}" value="${taskMessage.displayDate1}"/><c:if test="${!empty taskMessage.displayDate2}"><br/>${taskMessage.dateLabel2}<joda:format pattern="${dateFormat}" value="${taskMessage.displayDate2}"/></c:if>')" class="failedReason">
 									${taskMessage.message}
 								</a><br/>
 							</c:forEach>

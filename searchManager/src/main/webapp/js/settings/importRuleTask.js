@@ -286,7 +286,7 @@
 			init : function(pageNumber){		
 				var self = this;
 				$(".failedReason").on({
-					mouseover: self.viewDetails
+					click: self.viewDetails
 				});
 				self.showPaging(pageNumber);
 				$("#titleText").html(self.moduleName);
