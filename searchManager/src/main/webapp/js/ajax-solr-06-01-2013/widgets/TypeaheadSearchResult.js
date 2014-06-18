@@ -27,7 +27,7 @@
 				if (doc.Expired != undefined)
 					$(this.target).find("li#resultItem_" + doc.EDP + " div#expiredHolder").attr("style","display:float");
 
-				$(self.target).find("img.itemImg").on({
+				$(self.target).find("img.itemImg, img.normalImg").on({
 					error:function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); 
 					}
 				});						
@@ -47,7 +47,7 @@
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="keywordListener">';
 			html += '<span id="dpno" style="display:none">'+doc.EDP+'</span>';
-			html += '		<img class="'+(self.mode == 'simulator' ? 'itemImg':'')+'" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
+			html += '		<img class="'+(self.mode == 'simulator' ? 'itemImg':'normalImg')+'" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
 			html += '		<div class="'+(self.mode == 'simulator'? 'itemNameSuggest':'itemNameSuggestPreview')+'">'+doc.Name+'</div>';
 			if(self.mode == 'simulator')
 				html += '</a>';
