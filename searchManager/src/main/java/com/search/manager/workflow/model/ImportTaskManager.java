@@ -48,6 +48,7 @@ public class ImportTaskManager {
 	@Autowired
 	private WorkflowService workflowService;
 	@Autowired
+	@Qualifier("typeaheadRuleServiceSp")
 	private TypeaheadRuleService typeaheadRuleService;
 
 
