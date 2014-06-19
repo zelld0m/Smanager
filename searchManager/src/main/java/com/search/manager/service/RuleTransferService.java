@@ -290,7 +290,7 @@ public class RuleTransferService {
 					
 					if(result.getTotalSize() > 0)
 						importAsId = result.getList().get(0).getRuleId();
-					else if(importAsId == null)
+					else
 						importAsId = DAOUtils.generateUniqueId();
 					
 				} catch (CoreServiceException e1) { 

@@ -16,9 +16,11 @@ import com.search.manager.core.model.ImportRuleTask;
 import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.model.TaskExecutionResult;
 import com.search.manager.core.model.TaskStatus;
+import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.ImportRuleTaskService;
 import com.search.manager.core.service.RuleStatusService;
+import com.search.manager.core.service.TypeaheadRuleService;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.service.DeploymentService;
@@ -45,6 +47,8 @@ public class ImportTaskManager {
 	private RuleTransferService ruleTransferService;
 	@Autowired
 	private WorkflowService workflowService;
+	@Autowired
+	private TypeaheadRuleService typeaheadRuleService;
 
 
 	public void importRules() throws CoreServiceException {
@@ -97,7 +101,24 @@ public class ImportTaskManager {
 			String[] importAsRefIdList = {importRuleQueueItem.getTargetRuleId()};
 			String[] ruleNameList = {ruleName};
 
-			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
+			
+			RuleStatus ruleStatus = null;
+					
+			if(RuleEntity.TYPEAHEAD.equals(ruleEntity)) {
+				TypeaheadRule typeaheadRule = new TypeaheadRule();
+				
+				typeaheadRule.setStoreId(targetStoreId);
+				typeaheadRule.setRuleName(ruleName);
+				
+				SearchResult<TypeaheadRule> result = typeaheadRuleService.search(typeaheadRule);
+				
+				if(result.getTotalSize() > 0) {
+					ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), result.getList().get(0).getRuleId());
+				}
+								
+			} else {
+				ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
+			}
 
 			TaskExecutionResult taskExecutionResult = importRuleQueueItem.getTaskExecutionResult();
 

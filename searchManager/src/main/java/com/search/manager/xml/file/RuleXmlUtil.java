@@ -1060,7 +1060,13 @@ public class RuleXmlUtil {
 
 			String ruleId = xml.getRuleId();
 
-			TypeaheadRule typeaheadRule = typeaheadRuleService.searchById(xml.getStore(), xml.getRuleId());
+			TypeaheadRule query = new TypeaheadRule();
+			query.setStoreId(xml.getStore());
+			query.setRuleName(xml.getRuleName());
+			
+			com.search.manager.core.search.SearchResult<TypeaheadRule> result = typeaheadRuleService.search(query);
+			
+			TypeaheadRule typeaheadRule = result.getTotalCount() > 0 ? result.getList().get(0) : null;
 			
 			if(typeaheadRule == null) {
 				typeaheadRule = new TypeaheadRule();
