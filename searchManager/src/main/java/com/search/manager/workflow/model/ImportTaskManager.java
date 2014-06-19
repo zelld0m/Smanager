@@ -101,22 +101,13 @@ public class ImportTaskManager {
 			String[] importTypeList = {importRuleQueueItem.getImportType().getDisplayText()};
 			String[] importAsRefIdList = {importRuleQueueItem.getTargetRuleId()};
 			String[] ruleNameList = {ruleName};
+			String importAsId = importRuleRefId;
 
-			
 			RuleStatus ruleStatus = null;
-					
+
 			if(RuleEntity.TYPEAHEAD.equals(ruleEntity)) {
-				TypeaheadRule typeaheadRule = new TypeaheadRule();
-				
-				typeaheadRule.setStoreId(targetStoreId);
-				typeaheadRule.setRuleName(ruleName);
-				
-				SearchResult<TypeaheadRule> result = typeaheadRuleService.search(typeaheadRule);
-				
-				if(result.getTotalSize() > 0) {
-					ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), result.getList().get(0).getRuleId());
-				}
-								
+				ruleStatus = getTypeaheadRuleStatus(targetStoreId, ruleName);
+
 			} else {
 				ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
 			}
@@ -138,11 +129,15 @@ public class ImportTaskManager {
 			if(StringUtils.isEmpty(importTypeSetting)) {
 				importTypeSetting = "For Approval";
 			}
+			
+			if(RuleEntity.TYPEAHEAD.equals(ruleEntity)) {
+				importAsId = getImportAsId(ruleEntity, getTypeaheadRuleStatus(targetStoreId, ruleName), importAsId);
+			}
 
 			switch(ImportType.getByDisplayText(importTypeSetting)) {
 			case FOR_APPROVAL: 
 				if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
-					workflowService.processRuleStatus(targetStoreId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefId, ruleName, false); 
+					workflowService.processRuleStatus(targetStoreId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importAsId, ruleName, false); 
 					taskExecutionResult.setStateCompleted(ImportType.FOR_APPROVAL);
 				}
 				break;
@@ -152,7 +147,7 @@ public class ImportTaskManager {
 				String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
 
 				if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
-					workflowService.processRuleStatus(targetStoreId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importRuleRefId, ruleName, false);
+					workflowService.processRuleStatus(targetStoreId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importAsId, ruleName, false);
 					taskExecutionResult.setStateCompleted(ImportType.FOR_APPROVAL);
 				}
 
@@ -173,6 +168,34 @@ public class ImportTaskManager {
 			logger.error("failed executing ImportTaskManager.importQueueItems.", e);
 			updateTaskExecution(importRuleQueueItem, TaskStatus.FAILED, null, new DateTime(), e.getMessage());
 		} 
+	}
+
+	private RuleStatus getTypeaheadRuleStatus(String storeId, String ruleName) throws CoreServiceException {
+		TypeaheadRule typeaheadRule = new TypeaheadRule();
+
+		typeaheadRule.setStoreId(storeId);
+		typeaheadRule.setRuleName(ruleName);
+
+		SearchResult<TypeaheadRule> result = typeaheadRuleService.search(typeaheadRule);
+
+		if(result.getTotalSize() > 0) {
+			return ruleStatusService.getRuleStatus(storeId, RuleEntity.TYPEAHEAD.getName(), result.getList().get(0).getRuleId());
+		}
+
+		return null;
+	}
+	
+	private String getImportAsId(RuleEntity ruleEntity, RuleStatus ruleStatus, String importAsId) {
+		
+		switch(ruleEntity) {
+		case TYPEAHEAD:
+			importAsId = ruleStatus.getRuleId();
+			break;
+		default:
+			break;
+		}
+		
+		return importAsId;
 	}
 
 	private void updateTaskExecution(ImportRuleTask importRuleTask, TaskStatus taskStatus, DateTime startDate, DateTime endDate, String errorMessage) throws CoreServiceException {
