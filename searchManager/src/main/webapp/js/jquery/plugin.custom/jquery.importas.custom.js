@@ -224,7 +224,7 @@
 				
 				break;
 			case "TYPEAHEAD":
-				$option.attr({value: rule["ruleName"], selected: true});
+				$option.attr({value: rule["ruleId"], selected: true});
 				$option.text(rule["ruleName"]);
 				$replacement.find("input#newName").val(rule["ruleName"]);
 				$importAsSelect.prop("disabled", true);
@@ -240,7 +240,7 @@
 					} 
 				},
 				rendered: function(item, u, rule, mybase){
-					if(ruleEntity==="FACET_SORT"){
+					if(ruleEntity==="FACET_SORT" || ruleEntity == "TYPEAHEAD"){
 						var rs = base.rsLookupByName[rule["ruleName"]];
 						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"], rule);
 					}else{
