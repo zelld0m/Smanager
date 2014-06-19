@@ -54,7 +54,7 @@
 	</div>
 	<div class="clearB"></div>
 
-	<div id="listContainer" class="floatL w730 marL10 marT27"></div>
+	<div id="listContainer" class="floatL w730 marT27"></div>
 	<div id="searchResult" class="floatR w245 marL10 marT27 fsize11">
 		<div id="docs">
 		
