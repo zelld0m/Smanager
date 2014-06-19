@@ -97,7 +97,7 @@ public class ImportTaskManager {
 			String[] importAsRefIdList = {importRuleQueueItem.getTargetRuleId()};
 			String[] ruleNameList = {ruleName};
 
-			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getTargetRuleId());
+			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(targetStoreId, importRuleQueueItem.getRuleEntity().getName(), importRuleQueueItem.getSourceRuleId());
 
 			TaskExecutionResult taskExecutionResult = importRuleQueueItem.getTaskExecutionResult();
 
