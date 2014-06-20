@@ -402,6 +402,9 @@
 							}
 						}
 					},
+					preHook : function () {
+						$table.find("#preloader").parent().parent().show();
+					},
 					postHook: function() {
 						$table.find("#preloader").parent().parent().hide();
 					}
@@ -718,6 +721,9 @@
 								$table.append($tr);
 							}
 						}
+					},
+					preHook : function () {
+						$table.find("#preloader").parent().parent().show();
 					},
 					postHook: function() {
 						$table.find("#preloader").parent().parent().hide();
@@ -1262,7 +1268,7 @@
 				template += '					<td width="33%" class="txtAL valignTop" id="brand"></td>';
 				template += '					<td width="34%" class="txtAL valignTop" id="suggestion"></td>';
 				template += '				</tr>';
-				template += '				<tr>';
+				template += '				<tr style="display:none;">';
 				template += '					<td colspan="6" class="txtAC">';
 				template += '						<img id="preloader" alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
 				template += '					</td>';
