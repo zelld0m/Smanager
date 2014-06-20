@@ -104,13 +104,15 @@
 			var indices = manager.store.find("fq", new RegExp('^' + GLOBAL_storeFacetTemplate + ':'));
 
 			if ($.isNotBlank(indices) && indices.length > 0){
-				manager.store.remove("fq", indices[0]);
+				for(var i=0; i< indices.length; i++)
+					manager.store.remove("fq", indices[i]);
 			}
 
 			indices = manager.store.find("fq", new RegExp('^Manufacturer:'));
 
 			if ($.isNotBlank(indices) && indices.length > 0){
-				manager.store.remove("fq", indices[0]);
+				for(var i=0; i< indices.length; i++)
+					manager.store.remove("fq", indices[i]);
 			}
 		}
 	});

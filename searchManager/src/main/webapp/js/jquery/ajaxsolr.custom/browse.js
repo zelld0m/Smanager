@@ -351,6 +351,21 @@
 
 			result.find('a.autocompleteLink').on({
 				click: function() {
+					
+					var indices = Manager.store.find("fq", new RegExp('^' + GLOBAL_storeFacetTemplate + ':'));
+
+					if ($.isNotBlank(indices) && indices.length > 0){
+						for(var i=0; i< indices.length; i++)
+							Manager.store.remove("fq", indices[i]);
+					}
+
+					indices = Manager.store.find("fq", new RegExp('^Manufacturer:'));
+
+					if ($.isNotBlank(indices) && indices.length > 0){
+						for(var i=0; i< indices.length; i++)
+							Manager.store.remove("fq", indices[i]);
+					}
+					
 					$('#keyword').val($(this).html());
 					$('#searchKeyword').find('a#searchBtn').click();
 					$("#keyword").autocomplete("close");
