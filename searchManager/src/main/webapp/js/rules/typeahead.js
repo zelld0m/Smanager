@@ -237,7 +237,7 @@
 
 				self.currentRuleMap = newMap;
 			},
-			loadRuleList: function(matchType, page) {
+			loadRuleList: function(matchType, page, functionHook) {
 				var self = this;
 				var searchText = $('input.searchTextInput').val();
 				$('input.searchTextInput, a.searchButton').show();
@@ -291,6 +291,8 @@
 						$('div#preloader').hide();
 						self.$elObject.show();
 						self.searchTriggered = false;
+						if(functionHook)
+							functionHook();
 					}
 				});
 			},
@@ -450,23 +452,29 @@
 
 				if('submitForApproval' == dwrFunction) {
 					var completedRequests = 0;
+					var msg = '';
 					for(var i=0; i < array.length; i++) {
 						DeploymentServiceJS.submitRuleForApproval(GLOBAL_storeId, "typeahead", array[i].ruleId, array[i].ruleName, false, {
 							callback: function(ruleStatus) {
 								completedRequests++;
 
 								if(completedRequests == array.length) {
-									jAlert("The rules were succesfully submitted.", self.moduleName);
+									msg = 'The rules were succesfully submitted.';
 								}
+							},
+							preHook: function() {
+								$("#listContainer").hide();
+								$("#preloader").show();
+								self.$dialogObject.dialog( "close" );
 							},
 							errorHandler: function(e) {
 								completedRequests++;
-								jAlert('An error occurred while processing the request. Please contact your system administrator.', self.moduleName);
+								msg = 'An error occurred while processing the request. Please contact your system administrator.';
 							},
 							postHook: function() {
 								if(completedRequests == array.length) {
 									self.$dialogObject.dialog('close');
-									self.loadRuleList(0, self.rulePage);
+									self.loadRuleList(0, self.rulePage, function(){jAlert(msg, self.moduleName);});
 								}
 							},
 						});
@@ -477,12 +485,12 @@
 						for(var i=0; i<array.length; i++) {
 							if(!validateIntegerValue(array[i].priority)) {
 								jAlert('Please enter a valid integer value.', self.moduleName);
-
+								
 								return;
 							}
 						}
 					}
-
+					var msg = '';
 					TypeaheadRuleServiceJS[dwrFunction](array, {
 						callback: function(result){
 							var data = result['data'];
@@ -496,17 +504,22 @@
 							}
 
 							if(errorMessage != '') {
-								jAlert(errorMessage, self.moduleName);
+								msg = errorMessage;
 							} else {
-								jAlert('The selected rules were successfuly '+action+'.', self.moduleName);
+								msg = "The selected rules were successfuly "+action+".";
 							}
+						},
+						preHook: function() {
+							$("#listContainer").hide();
+							$("#preloader").show();
+							self.$dialogObject.dialog( "close" );
 						},
 						postHook: function() {
 							self.$dialogObject.dialog('close');
-							self.loadRuleList(0, self.rulePage);
+							self.loadRuleList(0, self.rulePage, function(){jAlert(msg, self.moduleName);});
 						},
 						errorHandler: function(e) {
-							jAlert('An error occurred while processing the request. Please contact your system administrator.', self.moduleName);
+							msg = 'An error occurred while processing the request. Please contact your system administrator.';
 						}
 					});
 				}
