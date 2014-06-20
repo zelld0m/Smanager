@@ -51,8 +51,7 @@
 					filter = filter + $("#targetFilter").val();
 				}				
 				$("#filter").val(filter);
-				var currentPage = $('#currentPageNumber').val();
-				self.changePage(currentPage);
+				self.changePage(1);
 			},
 			showPaging : function showPaging(pageNumber){
 				var self = this;
