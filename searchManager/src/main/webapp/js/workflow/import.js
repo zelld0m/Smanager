@@ -702,7 +702,7 @@
 
             switch (entityName.toLowerCase()) {
                 case "facetsort":
-                    template = '<div class="rulePreview w590 marB20">';
+                    template = '<div class="rulePreview w600 marB20">';
                     template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
                     template += '	<label class="w110 floatL fbold">Rule Name:</label>';
                     template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
@@ -719,7 +719,7 @@
                     break;
                 case "typeahead":
                 case "type-ahead":	//template for elevate, exclude, demote, redirect and relevancy rule
-                    template = '<div class="rulePreview w590 marB20">';
+                    template = '<div class="rulePreview w600 marB20">';
                     template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
                     template += '	<label class="w110 floatL fbold">Rule Name:</label>';
                     template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
@@ -738,7 +738,7 @@
                     template += '</div>';
                     break;
                 default:	//template for elevate, exclude, demote, redirect and relevancy rule
-                    template = '<div class="rulePreview w590 marB20">';
+                    template = '<div class="rulePreview w600 marB20">';
                     template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
                     template += '	<label class="w110 floatL fbold">Rule Name:</label>';
                     template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
@@ -776,22 +776,47 @@
 
             return template;
         },
-        getRightPanelTemplate: function() {
+        getRightPanelTemplate: function(entityName) {
             var template = "";
 
-            template += '	<div class="rulePreview w590 marB20">';
-            template += '		<div class="alert marB10">';
-            template += '			Selected rule below will be overwritten when import button is clicked.';
-            template += '			It is advisable to review both rules as this action cannot be undone.';
-            template += '		</div>';
-            template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
-            template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
-            template += '		<div class="clearB"></div>';
-            template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-            template += '		<div id="importAs" class="wAuto floatL"></div>';
-            template += '		<div class="clearB"></div>';
-            template += '	</div>';
-
+            switch(entityName){
+            case "typeahead":
+            case "type-ahead":
+	            template += '	<div class="rulePreview w600 marB20">';
+	            template += '		<div class="alert marB10">';
+	            template += '			Selected rule below will be overwritten when import button is clicked.';
+	            template += '			It is advisable to review both rules as this action cannot be undone.';
+	            template += '		</div>';
+	            template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
+	            template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
+	            template += '		<div class="clearB"></div>';
+	            template += '		<label class="w110 floatL fbold">Priority:</label>';
+				template += '		<label class="wAuto floatL" id="rulePriority"></label>';
+				template += '		<div class="clearB"></div>';
+				template += '		<label class="w110 floatL fbold">Disabled:</label>';
+				template += '		<label class="wAuto floatL" id="ruleDisabled"></label>';
+				template += '		<div class="clearB"></div>';
+	            template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
+	            template += '		<div id="importAs" class="wAuto floatL"></div>';
+	            template += '		<div class="clearB"></div>';
+	            template += '	</div>';
+	            
+	            break;
+            default :
+            	template += '	<div class="rulePreview w600 marB20">';
+	            template += '		<div class="alert marB10">';
+	            template += '			Selected rule below will be overwritten when import button is clicked.';
+	            template += '			It is advisable to review both rules as this action cannot be undone.';
+	            template += '		</div>';
+	            template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
+	            template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
+	            template += '		<div class="clearB"></div>';
+	            template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
+	            template += '		<div id="importAs" class="wAuto floatL"></div>';
+	            template += '		<div class="clearB"></div>';
+	            template += '	</div>';
+            	break;
+            }
             return template;
         },
         getRuleTransferMap: function(curPage, keywordFilter, sortOrder, ruleFilter) {
@@ -948,7 +973,7 @@
                                             dbRuleId: dbRuleId,
                                             postTemplate: self.getPostTemplate(),
                                             preTemplate: self.getPreTemplate(self.entityName, rule["importType"]),
-                                            rightPanelTemplate: self.getRightPanelTemplate(),
+                                            rightPanelTemplate: self.getRightPanelTemplate(self.entityName),
                                             postButtonClick: function() {
                                                 self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
                                             },

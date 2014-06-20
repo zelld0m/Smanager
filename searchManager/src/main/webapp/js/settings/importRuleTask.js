@@ -238,7 +238,7 @@
 
 				switch (entityName.toLowerCase()) {
 				case "facetsort":
-					template = '<div class="rulePreview w590 marB20">';
+					template = '<div class="rulePreview w600 marB20">';
 					template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
 					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
@@ -250,7 +250,7 @@
 					template += '</div>';
 					break;
 				default:	//template for elevate, exclude, demote, redirect and relevancy rule
-					template = '<div class="rulePreview w590 marB20">';
+					template = '<div class="rulePreview w600 marB20">';
 				template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
 				template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
@@ -272,7 +272,7 @@
 			getRightPanelTemplate: function() {
 				var template = "";
 
-				template += '	<div class="rulePreview w590 marB20">';
+				template += '	<div class="rulePreview w600 marB20">';
 				template += '		<div class="alert marB10">';
 				template += '			Selected rule below will be overwritten when import task is executed.';
 				template += '		</div>';
