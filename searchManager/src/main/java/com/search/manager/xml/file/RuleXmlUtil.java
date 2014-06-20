@@ -29,6 +29,7 @@ import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.BannerRule;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.ImagePath;
+import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.model.Store;
 import com.search.manager.core.model.TypeaheadBrand;
 import com.search.manager.core.model.TypeaheadRule;
@@ -36,6 +37,7 @@ import com.search.manager.core.model.TypeaheadSuggestion;
 import com.search.manager.core.service.BannerRuleItemService;
 import com.search.manager.core.service.BannerRuleService;
 import com.search.manager.core.service.ImagePathService;
+import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.core.service.TypeaheadBrandService;
 import com.search.manager.core.service.TypeaheadRuleService;
 import com.search.manager.core.service.TypeaheadSuggestionService;
@@ -103,6 +105,9 @@ public class RuleXmlUtil {
 
 	@Autowired
 	private DaoService daoService;
+	@Autowired
+	@Qualifier("ruleStatusServiceSp")
+	private RuleStatusService ruleStatusService;
 	@Autowired
 	@Qualifier("bannerRuleServiceSp")
 	private BannerRuleService bannerRuleService;
@@ -1174,6 +1179,16 @@ public class RuleXmlUtil {
 
 		if (xml == null) {
 			return isRestored;
+		}
+		
+		try {
+			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(xml.getStore(), xml.getRuleEntity().getName(), xml.getRuleId());
+			
+			if(ruleStatus != null && ruleStatus.isLocked())
+				return isRestored;
+			
+		} catch (CoreServiceException e) {
+			e.printStackTrace();
 		}
 
 		if (xml instanceof ElevateRuleXml) {
