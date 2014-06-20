@@ -332,7 +332,7 @@
 
 				$rulePreview.find("#ruleInfo").text(ruleName);
 				$rulePreview.find("#requestType").text(base.options.requestType);
-								
+				
 				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
 					callback:function(response) {
 						var data = response['data'];
@@ -341,6 +341,12 @@
 						var $trClone = $table.find("tr#itemPattern")
 
 						for(var i = 0; i < list.length; i++) {
+							
+							if(list[i].ruleName == ruleName) {
+								$rulePreview.find("#rulePriority").text($.trim(list[i].priority));
+								$rulePreview.find("#ruleDisabled").text(list[i].disabled);
+							}
+							
 							var $tr = $trClone.clone();
 
 							if(i < GLOBAL_storeKeywordMaxBrand)
