@@ -328,7 +328,7 @@
 			case "type-ahead": 
 			case "typeahead": 
 				var $table = $content.find("table#item");
-				var $rulePreview = $content.find("div#leftPreview");
+				var $rulePreview = $content;
 
 				$rulePreview.find("#ruleInfo").text(ruleName);
 				$rulePreview.find("#requestType").text(base.options.requestType);
@@ -946,7 +946,7 @@
 					template += '<div class="clearB"></div>';
 					break;
 				case "querycleaning":
-					template  = '<div class="rulePreview w590 marB20">';
+					template  = '<div class="rulePreview w600 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
 					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
@@ -964,7 +964,7 @@
 					template += '</div>';
 					break;
 				case "rankingrule":
-					template  = '<div class="rulePreview w590 marB20">';
+					template  = '<div class="rulePreview w600 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
 					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
@@ -1439,10 +1439,10 @@
 									case "rankingrule":
 										base.getDatabaseData(base.contentHolder.find("#rightPreview"));
 										break;
-									case "typeahead":
-									case "type-ahead":
-										base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.rule.id, base.options.rule.ruleName);
-										break;
+//									case "typeahead":
+//									case "type-ahead":
+//										base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.rule.id, base.options.rule.ruleName);
+//										break;
 									default: break;
 									}
 								}
