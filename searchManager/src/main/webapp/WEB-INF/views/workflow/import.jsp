@@ -21,7 +21,7 @@
 <!-- End Left Side -->
 
 <!-- Start Right Side -->
-<div class="floatL w980 marL10 marT27 txtAL">
+<div class="floatL w980 marT27 txtAL">
     <div class="floatL w980 titlePlacer breakWord">
         <h1 id="titleText" class="padT7 padL15 fsize20 fnormal floatL"></h1>
         <div class="floatR padT7 autoImportDiv">
@@ -34,7 +34,7 @@
     <div class="clearB"></div>
 
     <!-- Start Main Content -->
-    <div style="width:100%" class="dashboard marT20 mar0">
+    <div style="width:97%" class="dashboard marT20 mar0">
         <!-- tabs -->
         <div id="import" class="tabs">
             <ul>

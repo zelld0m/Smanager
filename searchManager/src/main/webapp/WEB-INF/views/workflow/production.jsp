@@ -9,7 +9,7 @@
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 
 <!-- Start Right Side -->
-<div class="floatL w980 marL10 marT27 txtAL">
+<div class="floatL w980 marT27 txtAL">
 
 	<div class="floatL w980 titlePlacer breakWord">
 	   <div class="floatR padT7">
@@ -23,7 +23,7 @@
 	  </div>
 	</div>
 	<div class="clearB"></div>
-	<div style="width: 100%" class="dashboard marT20 mar0">
+	<div style="width: 97%" class="dashboard marT20 mar0">
 		<c:if test="${storeId eq 'pcmall' or storeId eq 'macmall'}">
 			<div id="autoExportStatus" class="info notification border fsize14 marB20" style="display:none">
 			Auto-export setting is currently set to <span id="autoExportValue" class="fbold"></span>

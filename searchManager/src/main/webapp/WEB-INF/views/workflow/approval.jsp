@@ -9,7 +9,7 @@
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 
 <!-- Start Right Side -->
-<div class="floatL w980 marL10 marT27 txtAL">
+<div class="floatL w980 marT27 txtAL">
 
 	<div class="floatL w980 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">Pending Approval</h1>
@@ -18,7 +18,7 @@
 	<div class="clearB"></div>
 	
 	<!-- Start Main Content -->
-	<div style="width:100%" class="dashboard marT20 mar0">
+	<div style="width:97%" class="dashboard marT20 mar0">
 		<!-- tabs -->
 		<div id="approval" class="tabs">
       		<ul>
