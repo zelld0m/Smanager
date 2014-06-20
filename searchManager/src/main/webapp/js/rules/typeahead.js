@@ -22,6 +22,7 @@
 			$dialogObject: null,
 			rulePage: 1,
 			rulePageSize: 15,
+			selectedRule: null,
 
 			removeFacetGroupItemConfirmText: "Delete facet value?",
 
@@ -43,6 +44,8 @@
 			typeaheadBrandManager: null,
 			typeaheadCategoryManager: null,
 
+			selectedRuleList: new Object(),
+			
 			prepareTypeahead : function(){
 				clearAllQtip();
 				$("#preloader").show();
@@ -381,7 +384,7 @@
 							self.setTypeahead(e.data.rule);
 						}
 					}, {rule: rule});
-					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="'+rule['priority']+'"/><input type="hidden" class="ruleId" value="'+rule["ruleId"]+'"/>'+rule['priority']);
+					$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="'+rule['priority']+'"/><input type="hidden" class="ruleId" value="'+rule["ruleId"]+'"/><input type="hidden" class="disabled" value="'+rule["disabled"]+'"/>'+rule['priority']);
 					//$divItem.find("a.toggle").html(self.saveIconPath);
 					$divItem.find("a.toggle").off().on({click : function() {
 						self.updateTypeaheadRule($(this).parent().parent());
@@ -410,9 +413,10 @@
 							if(ruleStatus.locked) {
 								$checkboxDiv.html(self.lockIcon);
 							} else {
-								$checkboxDiv.html('<input type="checkbox" class="ruleVisibility" value="false"/>');
+								$checkboxDiv.html('<input '+(self.selectedRuleList[$element.val()] != null ? 'CHECKED' : '')+' type="checkbox" id="'+$element.val()+'" class="ruleVisibility" value="'+$element.val()+'"/>');
+								self.bindCheckboxAction($checkboxDiv);
 							}
-							var status = ruleStatus['approvalStatus'];
+							
 							$statusDiv.html(getRuleNameSubTextStatus(ruleStatus));
 
 						},
@@ -425,24 +429,30 @@
 					});
 				});
 			},
-			getRulesToUpdate: function() {
-				var $container = $('#updateDialog');
-				var array = new Array();
-
-				$container.find('div:not(.border).items').each(function() {
-					var $row = $(this);
-					var rule = {
-							ruleId: $row.find('input.ruleId').val(),
-							storeId: GLOBAL_storeId,
-							priority: $row.find('input.sortOrder').val(),
-							disabled: $row.find('input.ruleVisibility').is(':checked'),
-							ruleName: $row.find('label.keyword').html()
-					};
-
-					array[array.length] = rule;
+			bindCheckboxAction: function($checkboxContainerElement) {
+				var self = this;
+				var $checkbox = $checkboxContainerElement.find(':checkbox');
+				$checkbox.on("click", function() {
+					var checkbox = $(this);
+					var $row = $checkboxContainerElement.parent();
+					
+					if(checkbox.is(':checked')) {
+						
+						var rule = {
+								ruleId: $row.find('input.ruleId').val(),
+								storeId: GLOBAL_storeId,
+								priority: $row.find('input.sortOrder').val(),
+								disabled: $row.find('input.disabled').val(),
+								ruleName: $row.find('label.keyword').find('.keywordLink').text()
+						};
+						
+						self.selectedRuleList[ $row.find('input.ruleId').val()] = rule;
+						
+					} else {
+						self.selectedRuleList[ $row.find('input.ruleId').val()] = null;
+					}
+					
 				});
-
-				return array;
 			},
 			updateTypeaheadList: function(array) {
 				var self = this;
@@ -474,6 +484,7 @@
 							postHook: function() {
 								if(completedRequests == array.length) {
 									self.$dialogObject.dialog('close');
+									self.selectedRuleList = new Object();
 									self.loadRuleList(0, self.rulePage, function(){jAlert(msg, self.moduleName);});
 								}
 							},
@@ -516,6 +527,7 @@
 						},
 						postHook: function() {
 							self.$dialogObject.dialog('close');
+							self.selectedRuleList = new Object();
 							self.loadRuleList(0, self.rulePage, function(){jAlert(msg, self.moduleName);});
 						},
 						errorHandler: function(e) {
@@ -547,16 +559,38 @@
 
 				self.$elObject.find('a.dialogBtn').off().on({
 					click: function() {
-						if($('input.ruleVisibility:checked').size() < 1) {
+						if(self.selectedRuleList.length < 1) {
 							jAlert('Please select a rule.', self.moduleName);
 							return;
 						}
 						$('div#updateDialog').html(self.initializeDialogContent());	
 						$('div#updateDialog').find("div.items").removeClass("alt");
 						$('div#updateDialog').find("div.items:even").addClass("alt");
+						$('div#updateDialog').find('input.ruleVisibility').each(function() {
+							var checkbox = this;
+							
+							$(checkbox).on('click', function() {
+								var checked = $(this).is(':checked');
+								
+								self.selectedRuleList[checkbox.id].disabled = checked;
+							});
+						});
+						
 						$('div#updateDialog').dialog('open');
 					}
 				});
+			},
+			getRulesToUpdate : function() {
+				var self = this;
+				var keys = Object.keys(self.selectedRuleList);
+				
+				var array = new Array();
+				
+				for(var i=0; i<keys.length; i++) {
+					array[array.length] = self.selectedRuleList[keys[i]];
+				}
+				
+				return array;
 			},
 			initializeDialogContent: function() {
 				var html = '';
@@ -581,31 +615,33 @@
 				var $divItemTable = self.$elObject.find("div#itemList").clone();
 
 				$divItemTable.html('');
-
-				self.$elObject.find('div#itemList').find('input.ruleVisibility:checked').each(function(i) {
-					var $divRow = $(this).parent().parent();
-					var ruleId = $divRow.find('input.ruleId').val();
-					var currentRuleMap = self.currentRuleMap;
-					var priority = currentRuleMap[ruleId].priority == null ? 0 : currentRuleMap[ruleId].priority;
-					var keyword = currentRuleMap[ruleId].ruleName;
+				
+				var ruleList = self.selectedRuleList;
+				var keys = Object.keys(ruleList);
+				
+				for(var i=0; i<keys.length; i++) {
+					if(ruleList[keys[i]] == null)
+						continue;
+					var ruleId = ruleList[keys[i]].ruleId;
+					var priority = ruleList[keys[i]].priority == null ? 0 : ruleList[keys[i]].priority;
+					var keyword = ruleList[keys[i]].ruleName;
 					var itemPattern = (isDelete || isForApproval) ? "#itemPattern3" : "#itemPattern2";
 					var $divItem = self.$elObject.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
 
 					$divItem.find("label.keyword").html(keyword);
 					if(isDelete || isForApproval) {
 						$divItem.find("label.count").html('&nbsp;&nbsp;&nbsp;'+priority+'<input type="hidden" class="ruleId" value="'+ruleId+'"/>');
-						$divItem.find("label.iter").html(currentRuleMap[ruleId].disabled == true ? 'Yes' : 'No');
+						$divItem.find("label.iter").html(ruleList[keys[i]].disabled == 'true' ? 'Yes' : 'No');
 					} else {
-						var checked = currentRuleMap[ruleId].disabled == true ? 'CHECKED' : '';
+						var checked = ruleList[keys[i]].disabled == 'true' ? 'CHECKED' : '';
 
 						$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
-						$divItem.find("label.iter").html('<input type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
+						$divItem.find("label.iter").html('<input id="'+ruleList[keys[i]].ruleId+'" type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
 					}
 
 					$divItem.show();
 					$divItemTable.append($divItem);
-
-				});
+				}
 
 				html += $('<div></div>').append($divItemTable).html();
 
