@@ -866,7 +866,7 @@
 				template += '	<div id="itemHeader1" class="items border clearfix" style="display:none">';
 				template += '		<label class="iter floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> &nbsp; </label>';
 				template += '		<label class="count floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Count</label>';
-				template += '		<label class="floatL w535 txtAC fbold padTB5" style="background:#eee">Keyword</label>';
+				template += '		<label class="floatL w520 txtAC fbold padTB5" style="background:#eee">Keyword</label>';
 				template += '	</div>';
 				template += '	<div id="itemHeader2" class="items border clearfix" style="display:none">';
 				template += '		<label class="iter floatL w45 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> &nbsp; </label>';
@@ -879,7 +879,7 @@
 				template += '	<div id="itemHeader3" class="items border clearfix" style="display:none">';
 				template += '		<label class="iter floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
 				template += '		<label class="count floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
-				template += '		<label class="floatL txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee; width:485px;">Keyword</label>';
+				template += '		<label class="floatL txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee; width:475px;">Keyword</label>';
 				template += '		<label class="toggle floatL w130 txtAC fbold padTB5" style="background:#eee"> Status </label>';
 				template += '	</div>';
 				template += '	<div id="itemHeader4" class="items border clearfix" style="display:none">';
@@ -904,7 +904,7 @@
 				template += '		<label class="iter floatL w60"></label>';
 				template += '		<label class="count floatL w60"></label>';
 				template += '		<label class="float" style="width:480px;">';
-				template += '			<label class="keyword floatL" style="width:480px;"></label>'; 
+				template += '			<label class="keyword floatL" style="width:470px;"></label>'; 
 				template += '			<div class="rules" style="display:none"></div>';
 				template += '		</label>';
 				template += '		<label class="floatR fsize11 w120 status txtAL">';
