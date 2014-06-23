@@ -438,7 +438,7 @@
 					
 					if(checkbox.is(':checked')) {
 						
-						if(Object.keys(self.selectedRuleList).length >= 15) {
+						if(Object.keys(self.selectedRuleList).length >= rulePageSize) {
 							checkbox.attr("checked", false);
 							jAlert('You can only select up to '+self.rulePageSize+' rules.', self.moduleName);
 							return;
