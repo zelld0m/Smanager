@@ -33,7 +33,7 @@
 	    	<select class="w205" id="ruleTypeFilter">
 	    		<option value="">-- Select Rule Type --</option>
 	    		<c:forEach items="${ruleTypes}" var="ruleType"> 
-	    			<option value="${ruleType.name}">${ruleType.name}</option>
+	    			<option value="${ruleType.name}">${ruleType.displayName}</option>
 	    		</c:forEach>	    		
 	    	</select>
     	</label>      	    

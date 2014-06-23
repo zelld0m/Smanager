@@ -173,7 +173,7 @@
                 afterRuleStatusRequest: function(ruleStatus) {
                     $("#submitForApproval").show();
                     $("#preloader").hide();
-                    $("#titleText").html(self.moduleName + " for ");
+                    $("#titleText").html("Redirect Rule for ");
                     $("#titleHeader").text(self.selectedRule["ruleName"]);
                     self.selectedRuleStatus = ruleStatus;
                     $("#redirect").show();
