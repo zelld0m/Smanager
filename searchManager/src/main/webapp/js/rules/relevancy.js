@@ -422,13 +422,13 @@
 										var count = $contentHolder.find('li.multiRuleItem').length;
 										var conditionCount = $contentHolder.find('input#ruleFieldCondition').length;
 										if (conditionCount > 5) {
-											jAlert("Maximum no of rules allowed is 5!","Ranking Rule");
+											jAlert("Maximum no of rules allowed is 5!","Relevancy Rule");
 											return;
 										}
 										for ( var i = 1; i < conditionCount; i++) {
 											var value = $contentHolder.find('li#multiRule' + i + ' input#ruleFieldCondition').val();
 											if (value == condition) {
-												jAlert("Rule already exists for " + condition + ".","Ranking Rule");
+												jAlert("Rule already exists for " + condition + ".","Relevancy Rule");
 												return;
 											}
 										}
@@ -771,7 +771,7 @@
 				var field = getRelevancyField(e);
 				if (!e.data.locked && allowModify )  {
 					if(field.value == selectedRule.parameters[field.id]) {
-						jAlert("Nothing to update.","Ranking Rule");
+						jAlert("Nothing to update.","Relevancy Rule");
 						return false;
 					} else {
 						addRuleFieldValue(field.id, field.value);
@@ -837,7 +837,7 @@
 
 		// add field restrictions
 		$('div[id="q.alt"] input[type="text"]').attr("readonly", "readonly").on({
-			focus: function(e){jAlert("Contact administrator to modify this field.","Ranking Rule");}
+			focus: function(e){jAlert("Contact administrator to modify this field.","Relevancy Rule");}
 		});
 
 		$('div[id="q.alt"]').hide();
@@ -847,7 +847,7 @@
 				$(e.target).val($(e.target).val().replace(/^\./,'0.')); // insert leading 0 before .
 				$(e.target).val($(e.target).val().replace(/\.$/,'')); // remove trailing .
 				if ($(e.target).val() > 1){
-					jAlert("Tie value should be between 0 - 1.","Ranking Rule");
+					jAlert("Tie value should be between 0 - 1.","Relevancy Rule");
 				}
 			},
 			keypress:function(e){
@@ -909,17 +909,17 @@
 		//Save validation TODO: field validation
 		
 		if (field=="tie" && !(value >= 0 && value <= 1)){
-			jAlert("Tie value should be between 0 - 1.","Ranking Rule");
+			jAlert("Tie value should be between 0 - 1.","Relevancy Rule");
 			return false;
 		}
 
 		// validation for qs and ps
 		if ((field === "qs" || field === "ps") && !$.isBlank(value) &&!isDigit(value)){
 			if (field==="qs") {
-				jAlert("Query slop should be a positive number.","Ranking Rule");
+				jAlert("Query slop should be a positive number.","Relevancy Rule");
 			}
 			else if (field==="ps") {
-				jAlert("Phrase slop should be a positive number.","Ranking Rule");
+				jAlert("Phrase slop should be a positive number.","Relevancy Rule");
 			}
 			return false;
 		}
@@ -1028,27 +1028,27 @@
 							var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 
 							if ($.isBlank(popName)){
-								jAlert("Rule name is required.","Ranking Rule");
+								jAlert("Rule name is required.","Relevancy Rule");
 							}
 							else if (!isAllowedName(popName)){
-								jAlert("Rule name contains invalid value.","Ranking Rule");
+								jAlert("Rule name contains invalid value.","Relevancy Rule");
 							}
 							else if (!isAscii(popDescription)) {
-								jAlert("Description contains non-ASCII characters.","Ranking Rule");										
+								jAlert("Description contains non-ASCII characters.","Relevancy Rule");										
 							}
 							else if (!isXSSSafe(popDescription)){
-								jAlert("Description contains XSS.","Ranking Rule");
+								jAlert("Description contains XSS.","Relevancy Rule");
 							}
 							else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
-								jAlert("Please provide a valid date range.","Ranking Rule");
+								jAlert("Please provide a valid date range.","Relevancy Rule");
 							} else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
-								jAlert("End date cannot be earlier than start date!","Ranking Rule");
+								jAlert("End date cannot be earlier than start date!","Relevancy Rule");
 							}
 							else {
 								RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
 									callback: function(data){
 										if (data==true){
-											jAlert("Another relevancy rule is already using the name provided.","Ranking Rule");
+											jAlert("Another relevancy rule is already using the name provided.","Relevancy Rule");
 										}else{
 											RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
 												callback:function(data){
@@ -1131,7 +1131,7 @@
 				RelevancyServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
 					callback: function(data){
 						if (data==true){
-							jAlert("Another relevancy rule is already using the name provided.","Ranking Rule");
+							jAlert("Another relevancy rule is already using the name provided.","Relevancy Rule");
 						}else{
 							RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
 								callback: function(data){
@@ -1172,7 +1172,7 @@
 				RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
 					callback: function(code){
 						if (code > 0) {
-							jAlert(selectedRule.ruleName + " was successfully deleted.","Ranking Rule");
+							jAlert(selectedRule.ruleName + " was successfully deleted.","Relevancy Rule");
 						}
 						if(code==1) {
 							setRelevancy(null);
@@ -1398,30 +1398,30 @@
 									var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 
 									if ($.isBlank(popName)){
-										jAlert("Ranking rule name is required.","Ranking Rule");
+										jAlert("Ranking rule name is required.","Relevancy Rule");
 									}
 									else if (!isAllowedName(popName)) {
-										jAlert(ruleNameErrorText,"Ranking Rule");
+										jAlert(ruleNameErrorText,"Relevancy Rule");
 									}
 									else if (!isAscii(popDescription)) {
-										jAlert("Description contains non-ASCII characters.","Ranking Rule");										
+										jAlert("Description contains non-ASCII characters.","Relevancy Rule");										
 									}
 									else if (!isXSSSafe(popDescription)){
-										jAlert("Description contains XSS.","Ranking Rule");
+										jAlert("Description contains XSS.","Relevancy Rule");
 									}
 									else if (popDescription.length>255){
-										jAlert("Description should not exceed 255 characters.","Ranking Rule");
+										jAlert("Description should not exceed 255 characters.","Relevancy Rule");
 									}
 									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
-										jAlert("Please provide a valid date range","Ranking Rule");
+										jAlert("Please provide a valid date range","Relevancy Rule");
 									}else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
-										jAlert("End date cannot be earlier than start date!","Ranking Rule");
+										jAlert("End date cannot be earlier than start date!","Relevancy Rule");
 									}
 									else {
 										RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
 											callback: function(data){
 												if (data==true){
-													jAlert("Another relevancy rule is already using the name provided.","Ranking Rule");
+													jAlert("Another relevancy rule is already using the name provided.","Relevancy Rule");
 												}else{
 													RelevancyServiceJS.cloneRule("",popName, popStartDate, popEndDate, popDescription, {
 														callback: function(data){
