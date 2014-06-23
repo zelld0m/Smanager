@@ -438,6 +438,12 @@
 					
 					if(checkbox.is(':checked')) {
 						
+						if(Object.keys(self.selectedRuleList).length >= 15) {
+							checkbox.attr("checked", false);
+							jAlert('You can only select up to '+self.rulePageSize+' rules.', self.moduleName);
+							return;
+						}
+						
 						var rule = {
 								ruleId: $row.find('input.ruleId').val(),
 								storeId: GLOBAL_storeId,
@@ -450,6 +456,7 @@
 						
 					} else {
 						self.selectedRuleList[ $row.find('input.ruleId').val()] = null;
+						delete self.selectedRuleList[ $row.find('input.ruleId').val()];
 					}
 					
 				});
