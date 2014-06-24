@@ -16,6 +16,7 @@
 
 		afterRequest: function () {
 			var self = this;
+			
 			$(self.target).empty(); 
 
 			for (var i = 0, l = self.manager.response.response.docs.length; i < l; i++) {

@@ -249,6 +249,7 @@
 								$tr.find("#category").text(list[i].ruleName);
 
 							if(i == 0) {
+								$tr.find("#category").append('<span id="count"></span>');
 								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
 								$tr.find("#brand").append('<div id="brandFirst"></div>')
 								$tr.find("#category").append('<div id="categoryFirst"></div>')
@@ -290,6 +291,7 @@
 								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
 								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
 								base.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								base.typeaheadCategoryManager.countDiv = $tr.find("#category").find('span#count');
 								for(name in GLOBAL_typeaheadSolrParams) {
 									base.typeaheadCategoryManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
 								}

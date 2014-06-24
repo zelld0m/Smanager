@@ -157,7 +157,13 @@
 
 						if(list.length > 0) {
 							for(var i=0; i < list.length; i++) {
-								var html = '<div class="fsize15"><strong>'+list[i].ruleName+'</strong></div>';
+								var countDiv = '';
+								if(i==0){
+									countDiv = '<span id="count"></span>';
+								}
+								
+								var html = '<div class="fsize15"><strong>'+list[i].ruleName+countDiv+'</strong></div>';
+								
 								if(i == 0) {
 									$('#category').prepend(html);
 								} else {
@@ -204,7 +210,8 @@
 							self.typeaheadCategoryManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplate); 
 							self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
 							self.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
-
+							self.typeaheadCategoryManager.countDiv = $('#category').find('span#count');
+							
 							for(name in params) {
 								self.typeaheadCategoryManager.store.addByValue(name, params[name]);
 							}

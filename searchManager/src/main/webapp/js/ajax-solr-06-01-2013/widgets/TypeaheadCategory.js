@@ -49,6 +49,15 @@
 
 		afterRequest: function () {
 			var self = this;
+
+			var totalResults = self.manager.response.response.numFound;
+			var divProperty = self.manager.response.responseHeader.params.divCount;
+			if(self.countId){
+				$(self.countId).html('&nbsp;('+totalResults+')');
+			} else if(divProperty) {
+				self.manager[divProperty].html('&nbsp;('+totalResults+')');
+			}
+
 			$(self.target).empty(); 
 
 			brandCountMap = new Object();
@@ -75,7 +84,7 @@
 			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameCat' : 'itemNamePreviewCat')+'">';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="keywordListener">';
-			html += '		<span id="category">'+category+'</span> ('+count+')';
+			html += '		<span id="category">'+category+'</span>';
 			if(self.mode == 'simulator')
 				html += '</a>';
 			html += '</div>';
@@ -86,7 +95,7 @@
 			var self = this;
 			$(self.target).find(selector).on({
 				click: function() {
-					var keyword = $(this).closest('#categoryFirst').prev().find('a.autocompleteLink').text();
+					var keyword = $(this).closest('#categoryFirst').prev().find('a.autocompleteLink').find('span#keyword').text();
 					$(self.searchBox).val(keyword);
 
 					var searchManager = self.manager.searchManager;
@@ -132,9 +141,9 @@
 		escapeValue: function(text){
 			if($.isNotBlank(text)) // Dependency: CurrentSearchWidget.js - display text
 				return ("" + text).replace(/\s/g,"?").
-						replace(/\(/g,"\\(").
-						replace(/\)/g,"\\)");
-			
+				replace(/\(/g,"\\(").
+				replace(/\)/g,"\\)");
+
 			return text;
 		}
 	});

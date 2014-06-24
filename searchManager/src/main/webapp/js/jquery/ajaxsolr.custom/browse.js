@@ -223,7 +223,7 @@
 			id: 'suggestion',
 			target: '#suggestionFirst',
 			mode: 'simulator',
-			searchBox: '#keyword'
+			searchBox: '#keyword',
 		}));
 
 		var typeaheadBrandManager = new AjaxSolr.Manager({
@@ -241,7 +241,7 @@
 
 		var typeaheadCategoryManager = new AjaxSolr.Manager({
 			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
-			store: (new AjaxSolr.ParameterStore())
+			store: (new AjaxSolr.ParameterStore()),
 		});
 		typeaheadCategoryManager.searchManager = widgetManager;
 		typeaheadCategoryManager.sortWidget = sortWidget;
@@ -251,7 +251,8 @@
 			target: '#categoryFirst',
 			mode: 'simulator',
 			searchBox: '#keyword',
-			rows: sortWidget.perPageInterval
+			rows: sortWidget.perPageInterval,
+			countId: 'span#count'
 		}));
 
 		$('#keyword').autocomplete({
@@ -338,7 +339,7 @@
 			} else {
 				if(item.rowClass == 'categoryFirst'){					
 					row.data("item.autocomplete", item).append('<div class="topHead">Matching Keywords</div>');					
-					row.data("item.autocomplete", item).append('<strong class="first-lvl-sub fsize14"><a href="javascript:void(0);" class="'+classString+'">' + item.value +'</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
+					row.data("item.autocomplete", item).append('<strong class="first-lvl-sub fsize14"><a href="javascript:void(0);" class="'+classString+'"><span id="keyword">' + item.value +'</span> <span id="count"></span></a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
 				}else if(item.rowClass == undefined){
 					row.data("item.autocomplete", item).append('<div class="topHead">Matching Brands for '+item.keyword+'</div>');										
 				}else if(item.rowClass == 'suggestionFirst'){
@@ -367,7 +368,7 @@
 							Manager.store.remove("fq", indices[i]);
 					}
 					
-					$('#keyword').val($(this).html());
+					$('#keyword').val($(this).find('span#keyword').text());
 					$('#searchKeyword').find('a#searchBtn').click();
 					$("#keyword").autocomplete("close");
 				}
