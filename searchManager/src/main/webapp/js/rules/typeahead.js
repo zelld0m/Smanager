@@ -159,10 +159,8 @@
 							for(var i=0; i < list.length; i++) {
 								var html = '<div class="fsize15"><strong>'+list[i].ruleName+'</strong></div>';
 								if(i == 0) {
-									$('#category, #brand').prepend(html);
+									$('#category').prepend(html);
 								} else {
-									if(i < GLOBAL_storeKeywordMaxBrand)
-										$('#brand').append(html);
 									if(i < GLOBAL_storeKeywordMaxCategory)
 										$('#category').append(html);
 								}

@@ -349,8 +349,6 @@
 							
 							var $tr = $trClone.clone();
 
-							if(i < GLOBAL_storeKeywordMaxBrand)
-								$tr.find("#brand").text(list[i].ruleName);
 							if(i < GLOBAL_storeKeywordMaxCategory)
 								$tr.find("#category").text(list[i].ruleName);
 
@@ -670,8 +668,6 @@
 						for(var i = 0; i < list.length; i++) {
 							var $tr = $trClone.clone();
 
-							if(i < GLOBAL_storeKeywordMaxBrand)
-								$tr.find("#brand").text(list[i].ruleName);
 							if(i < GLOBAL_storeKeywordMaxCategory)
 								$tr.find("#category").text(list[i].ruleName);
 

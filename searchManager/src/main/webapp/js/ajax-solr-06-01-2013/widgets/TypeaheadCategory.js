@@ -72,7 +72,7 @@
 			var self = this;
 			var html = '';
 
-			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameBrand' : 'itemNamePreviewBrand')+'">';
+			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameCat' : 'itemNamePreviewCat')+'">';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="keywordListener">';
 			html += '		<span id="category">'+category+'</span> ('+count+')';

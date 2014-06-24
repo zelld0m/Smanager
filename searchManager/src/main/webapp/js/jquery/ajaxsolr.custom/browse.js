@@ -288,10 +288,11 @@
 							brandRow.value = 'Matching Brands';
 							brandRow.label = 'Brands';
 							brandRow.clickable = false;
+							brandRow.keyword =  list[0].ruleName;
 
 							responseArray[responseArray.length] = brandRow;
 
-							for(var i=0; i < list.length; i++) {
+							for(var i=0; i < 1; i++) {
 								if(i == GLOBAL_storeKeywordMaxBrand)
 									continue;
 
@@ -339,11 +340,11 @@
 					row.data("item.autocomplete", item).append('<div class="topHead">Matching Keywords</div>');					
 					row.data("item.autocomplete", item).append('<strong class="first-lvl-sub fsize14"><a href="javascript:void(0);" class="'+classString+'">' + item.value +'</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
 				}else if(item.rowClass == undefined){
-					row.data("item.autocomplete", item).append('<div class="topHead">Matching Brands</div>');										
+					row.data("item.autocomplete", item).append('<div class="topHead">Matching Brands for '+item.keyword+'</div>');										
 				}else if(item.rowClass == 'suggestionFirst'){
-					row.data("item.autocomplete", item).append('<div class="topHead">Suggestion for '+$('.ui-autocomplete-input').val()+'</div>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');															
+					row.data("item.autocomplete", item).append('<div class="topHead">Suggestion for '+item.keyword+'</div>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');															
 				}else if(! (item.rowClass == undefined)){
-					row.data("item.autocomplete", item).append('<strong class="first-lvl-sub fsize14"><a href="javascript:void(0);" class="'+classString+'">' + item.value + '</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
+					row.data("item.autocomplete", item).append('<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
 				}
 			}
 
@@ -376,13 +377,12 @@
 
 				typeaheadManager.store.addByValue('q', $.trim(item.keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
 				typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
-				typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
 				typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
 
 				for(name in params) {
 					typeaheadManager.store.addByValue(name, params[name]);
 				}
-
+				typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP, Manufacturer'); 
 				typeaheadManager.doRequest(0);
 			} else if(item.rowClass == 'brandFirst') {
 
