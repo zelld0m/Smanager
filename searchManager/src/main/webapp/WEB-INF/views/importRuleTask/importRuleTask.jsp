@@ -25,7 +25,7 @@
 	<div id="submitForApproval"></div>
 	<div class="clearB"></div>	
 	<!--Top Paging-->
-	<div id="mainContainer">
+	<div id="mainContainer" style="width:98%">
 		<jsp:include page="list.jsp"/>
 	</div>
   	<div class="clearB"></div>

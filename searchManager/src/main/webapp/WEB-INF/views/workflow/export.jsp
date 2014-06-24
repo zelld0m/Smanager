@@ -9,9 +9,9 @@
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">
 
 <!-- Start Right Side -->
-<div class="floatL w980 marL10 marT27 txtAL">
+<div class="floatL w980 marT27 txtAL">
 
-	<div class="floatL w980 titlePlacer breakWord">
+	<div class="floatL titlePlacer breakWord">
 	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
@@ -33,7 +33,7 @@
 	</div>
 	<div class="clearB"></div>
 	
-	<div style="width:100%" class="dashboard marT20 mar0 fsize12">
+	<div style="width:97%" class="dashboard marT20 mar0 fsize12">
 	These are all the rules that are available for Export. You can manually export rules by selecting the checkboxes and clicking on the 'Export' button.
 	<ul class="marL15">
 		<li>If you have Auto-Export turned on, all rules that you publish to ${storeName} will be automatically exported. There is no need to manually export any rules.</li>
@@ -44,7 +44,7 @@
 	<div class="clearB"></div>
 	
 	<!-- Start Main Content -->
-	<div style="width:100%" class="dashboard marT20 mar0">
+	<div style="width:97%" class="dashboard marT20 mar0">
 		<!-- tabs -->
 		<div id="export" class="tabs">
       		<ul>
