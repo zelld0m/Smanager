@@ -335,7 +335,7 @@
 			var classString = item.clickable != false ? 'autocompleteLink' : '';
 
 			if(item.rowClass == '') {
-				row.data("item.autocomplete", item).append('<strong class="first-lvl-sub fsize13"><a href="javascript:void(0);" class="'+classString+'">' + item.value + '</a></strong>' + '<div></div>');
+				row.data("item.autocomplete", item).append('<strong class="first-lvl-sub fsize13"><a href="javascript:void(0);" class="'+classString+'"><span id="keyword">' + item.value + '</span></a></strong>' + '<div></div>');
 			} else {
 				if(item.rowClass == 'categoryFirst'){					
 					row.data("item.autocomplete", item).append('<div class="topHead">Matching Keywords</div>');					
