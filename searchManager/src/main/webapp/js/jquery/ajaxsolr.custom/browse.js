@@ -337,13 +337,13 @@
 			} else {
 				if(item.rowClass == 'categoryFirst'){					
 					row.data("item.autocomplete", item).append('<div class="topHead">Matching Keywords</div>');					
-					row.data("item.autocomplete", item).append('<strong class="first-lvl fsize14"><a href="javascript:void(0);" class="'+classString+'">' + item.value +'</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
+					row.data("item.autocomplete", item).append('<strong class="first-lvl-sub fsize14"><a href="javascript:void(0);" class="'+classString+'">' + item.value +'</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
 				}else if(item.rowClass == undefined){
 					row.data("item.autocomplete", item).append('<div class="topHead">Matching Brands</div>');										
 				}else if(item.rowClass == 'suggestionFirst'){
 					row.data("item.autocomplete", item).append('<div class="topHead">Suggestion for '+$('.ui-autocomplete-input').val()+'</div>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');															
 				}else if(! (item.rowClass == undefined)){
-					row.data("item.autocomplete", item).append('<strong class="first-lvl fsize14"><a href="javascript:void(0);" class="'+classString+'">' + item.value + '</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
+					row.data("item.autocomplete", item).append('<strong class="first-lvl-sub fsize14"><a href="javascript:void(0);" class="'+classString+'">' + item.value + '</a></strong>' + '<div style="padding-left:10px" id="'+item.rowClass+'"></div>');										
 				}
 			}
 
