@@ -506,6 +506,15 @@
 							}
 						}
 					}
+					
+					//update priority
+					for(var i=0; i<array.length; i++) {
+						var rule = array[i];
+						var $divRow = self.$dialogObject.find('input#'+rule.ruleId).parent().parent();
+						rule.priority = $divRow.find('input.sortOrder').val();
+						array[i] = rule;
+					}
+					
 					var msg = '';
 					TypeaheadRuleServiceJS[dwrFunction](array, {
 						callback: function(result){
