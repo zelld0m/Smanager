@@ -11,7 +11,7 @@
 <!-- Start Right Side -->
 <div class="floatL w980 marT27 txtAL">
 
-	<div class="floatL titlePlacer breakWord">
+	<div class="floatL titlePlacer w100p breakWord">
 	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>

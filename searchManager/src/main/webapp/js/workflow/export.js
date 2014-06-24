@@ -435,7 +435,11 @@
 						changeStatusCallback: function(base, dt){
 							RuleTransferServiceJS.setAutoExport(dt.status, {
 								callback: function(set){
-									
+									if(dt.status && GLOBAL_isTargetStore != 'true') {
+										$('.autoImportDiv').show();
+									} else {
+										$('.autoImportDiv').hide();
+									}
 								}
 							});
 						}
