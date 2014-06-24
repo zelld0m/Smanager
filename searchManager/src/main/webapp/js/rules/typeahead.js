@@ -210,6 +210,7 @@
 							self.typeaheadCategoryManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplate); 
 							self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
 							self.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
+							self.typeaheadCategoryManager.store.addByValue('divCount', 'countDiv');
 							self.typeaheadCategoryManager.countDiv = $('#category').find('span#count');
 							
 							for(name in params) {
