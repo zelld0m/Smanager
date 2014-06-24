@@ -656,7 +656,7 @@
 				template += '					<td width="94px" class="txtAC" id="itemMan" style="border-bottom:none;"></td>';
 				template += '					<td width="70px" class="txtAC" id="itemDPNo" style="border-bottom:none;"></td>';
 				template += '					<td width="160px" class="txtAC" id="itemName" style="border-bottom:none;"></td>';
-				template += '					<td width="auto" class="txtAC">';
+				template += '					<td width="auto" class="txtAC" style="border-bottom:none;">';
 				template += '						<div id="itemValidity" class="w74 wordwrap"></div>';
 				template += '						<div id="itemValidityDaysExpired"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div>';
 				template +='					</td>';
