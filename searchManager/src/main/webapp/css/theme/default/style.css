@@ -902,8 +902,8 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .cssReset .itemNamePreviewBrand {margin-left: 5px;padding: 5px;}
 .cssReset .itemNameCat {margin-left: 5px;padding: 5px;}
 .cssReset .itemNameBrand {margin-left: 5px;padding: 5px;}
-.cssReset .itemNameSuggestPreview {display: block;float: left;margin-left: 80px;margin-top: -53px;}
-.cssReset .itemNameSuggest {display: block;float: left;margin-left: 80px;margin-top: -53px;}
+.cssReset .itemNameSuggestPreview {display: block;float: left;margin-left: 20px;width: 157px; margin-top:20px;}
+.cssReset .itemNameSuggest {display: block;float: left;margin-left: 20px;width: 157px; margin-top:20px;}
 
 /* workflow typehead */
 .qtip .tblItems td .itemNamePreviewCat , .itemNamePreviewBrand {margin-left: 5px;padding: 3px 5px 3px 5px;}
@@ -915,8 +915,8 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 .qtip .tblItems td .floatL:hover .itemImg { opacity:0.6;}
 .qtip .tblItems td .floatL:hover .itemNameSuggest { opacity:0.6;}
-.qtip .tblItems td .itemNameSuggestPreview {display: block;float: left;margin-left: 80px;margin-top: -53px;}
-.qtip .tblItems td .itemNameSuggest {display: block;float: left;margin-left: 80px;margin-top: -53px;}
+.qtip .tblItems td .itemNameSuggestPreview {display: block;float: left;margin-left: 20px;width: 157px;margin-top:20px;}}
+.qtip .tblItems td .itemNameSuggest {display: block;float: left;margin-left: 20px; width: 157px;margin-top:20px;}}
 
 /* simulator typehead */ 
 .ui-autocomplete  .floatL:hover .itemImg { opacity:0.6;}
@@ -925,7 +925,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .ui-autocomplete .itemNameCat a { text-decoration: none;  color: #666;}
 .ui-autocomplete .itemNameBrand {padding-left: 15px;line-height: 24px; }
 .ui-autocomplete .itemNameBrand a { text-decoration: none; color: #666;}
-.ui-autocomplete .itemNameSuggest {display: block;float: left;margin-left: 80px;margin-top: -53px;}
+.ui-autocomplete .itemNameSuggest {display: block;float: left;margin-left: 20px;width: 157px;margin-top:20px;}}
 
 .ui-autocomplete .first-lvl a { text-decoration: none; font-size: 12px !important; line-height: 31px; padding-left: 15px;}
 .ui-autocomplete .first-lvl-sub a { text-decoration: none; font-size: 12px !important; line-height: 31px; padding-left: 15px;}

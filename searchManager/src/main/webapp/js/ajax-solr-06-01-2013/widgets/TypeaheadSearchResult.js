@@ -47,7 +47,7 @@
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="keywordListener">';
 			html += '<span id="dpno" style="display:none">'+doc.EDP+'</span>';
-			html += '		<img class="'+(self.mode == 'simulator' ? 'itemImg':'normalImg')+'" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
+			html += '		<img class="'+(self.mode == 'simulator' ? 'itemImg':'normalImg')+' floatL" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
 			html += '		<div class="'+(self.mode == 'simulator'? 'itemNameSuggest':'itemNameSuggestPreview')+'">'+doc.Name+'</div>';
 			if(self.mode == 'simulator')
 				html += '</a>';
