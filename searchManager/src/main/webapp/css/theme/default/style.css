@@ -925,7 +925,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .ui-autocomplete  .floatL:hover .itemNameSuggest { opacity:0.6;}
 .ui-autocomplete .itemNameCat {padding-left: 15px; line-height: 24px; }
 .ui-autocomplete .itemNameCat a { text-decoration: none;  color: #666;}
-.ui-autocomplete .itemNameBrand {line-height: 24px; }
+.ui-autocomplete .itemNameBrand {line-height: 24px; padding:5px}
 .ui-autocomplete .itemNameBrand a { text-decoration: none; color: #666;}
 .ui-autocomplete .itemNameSuggest {display: block;float: left;margin-left: 20px;width: 157px;margin-top:10px;}}
 
