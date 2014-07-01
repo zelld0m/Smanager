@@ -581,7 +581,7 @@
 
 				self.$elObject.find('a.dialogBtn').off().on({
 					click: function() {
-						if(self.selectedRuleList.length < 1) {
+						if(Object.keys(self.selectedRuleList).length < 1) {
 							jAlert('Please select a rule.', self.moduleName);
 							return;
 						}
