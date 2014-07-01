@@ -47,9 +47,9 @@
 				var customTextRegExpression = /^[a-zA-Z0-9\s\-\.,:;\?!\(\)'"\\\/]{0,160}$/;
 				
 				if(customText.length > 160){
-					jAlert('Must be at most 160 characters long.');
+					jAlert('Must be at most 160 characters long.', 'Redirect Rule');
 				}else if (!customTextRegExpression.test(customText)) {
-					jAlert('Custom text contains invalid character/s');
+					jAlert('Custom text contains invalid character/s', 'Redirect Rule');
 				}else{
 					if ($.isBlank(customText)) {
 						customText = base.options.customText;
@@ -90,8 +90,7 @@
 				readonly: base.$el.find('input:radio[id=' + "rkMessageTypeOpt3" +  $.formatAsId(base.options.id) + ']').is(':not(:checked)'),
 				disabled: base.$el.find('input:radio[id=' + "rkMessageTypeOpt3" +  $.formatAsId(base.options.id) + ']').is(':not(:checked)')
 			}).off('focusout blur mouseleave').on({
-				focusout: customTextListener,
-				mouseleave: customTextListener
+				blur: customTextListener
 			}, {rule: base.options.rule});
 			
 			// add listener to radio button

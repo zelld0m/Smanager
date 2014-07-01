@@ -472,7 +472,7 @@
 			RuleVersionServiceJS.isNameExist(base.options.ruleType, base.options.rule["ruleId"], name,{
 				callback: function(data){
 					if (data) {
-						jAlert("Name already exist.", "Create Version");
+						jAlert("Name already exists.", "Create Version");
 						requestOngoing = false;
 					} else {
 						RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.rule["ruleId"], name, notes, {

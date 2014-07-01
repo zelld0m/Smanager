@@ -174,7 +174,7 @@
 			</div>
 			<div id="actionBtn"
 				class="floatR marT10 fsize12 border pad10 w650 marB20"
-				style="background: #f3f3f3;">
+				style="background: #f3f3f3; width:97.5%;">
 				<h3 style="border: none">Publishing Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
 					<div id="pgApprovedForPublishing" class="publishingGuidelines" style="display:none">To push previously approved rules to production:<br>
