@@ -443,7 +443,7 @@
 											self.$maxSuggest.parent().show();
 											self.addFilterEventHandlers();
 										} else {
-											jAlert(response.errorMessage.message);
+											jAlert(response.errorMessage.message, "Did You Mean");
 											
 											if (response.errorMessage.data) {
 												for ( var i = 0; i < rules.length; i++) {
@@ -492,7 +492,7 @@
 												self.$pager.show();
 												self.addFilterEventHandlers();
 											} else {
-												jAlert(response.errorMessage.message);
+												jAlert(response.errorMessage.message, "Did You Mean");
 												
 												if (response.errorMessage.data) {
 													for ( var i = 0; i < rules.length; i++) {
@@ -523,7 +523,7 @@
 		validate: function(entities, maxSuggest) {
 			for (var i = 0; i < entities.length; i++) {
 				if (entities[i].searchTerms.length == 0 || entities[i].suggestions.length == 0) {
-					jAlert(DidYouMean.messages.requiredFields);
+					jAlert(DidYouMean.messages.requiredFields, "Did You Mean");
 					return false;
 				} else {
 					for (var j = 0; j < entities[i].searchTerms.length; j++) {
@@ -570,7 +570,7 @@
 					self.maxSuggest = response.data;
 					self.handlePageLink(1);
 				} else {
-					jAlert(response.errorMessage.message, "Error");
+					jAlert(response.errorMessage.message, "Did You Mean");
 				}
 			});
 		},
@@ -644,7 +644,7 @@
 				postRestoreCallback: function(base, rule){
 					self.loadInitialData();
 					base.api.elements.tooltip.unblock({onUnblock: function() {
-						jAlert("Did you mean rules restored.", "Version Restored");
+						jAlert("Did you mean rules restored.", "Did You Mean");
 					}});
 					base.api.destroy();
 				},
@@ -683,7 +683,7 @@
 					self.$pager.hide();
 				}
 			} else {
-				jAlert(response.errorMessage.data);
+				jAlert(response.errorMessage.data, "Did You Mean");
 			}
 		},
 
