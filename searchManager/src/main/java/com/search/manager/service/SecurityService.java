@@ -72,7 +72,7 @@ public class SecurityService {
         }
 
         SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user, null, null, Integer.parseInt(page), 10);
-        searchCriteria.setEndDate(jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, memberSince, JodaPatternType.DATE));
+        searchCriteria.setStartDate(jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, memberSince, JodaPatternType.DATE));
         RecordSet<User> users = getUsers(searchCriteria, MatchType.LIKE_NAME);
         for (User u : users.getList()) {
             // clear the password before returning
