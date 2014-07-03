@@ -643,14 +643,15 @@
 				render: function(e, api){
 					var $contentHolder = $("div", api.elements.content).html($("#setupFieldValueS1").html());
 
-					$contentHolder.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
-					$contentHolder.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
 					sfSearchKeyword = "";
 
 					var currVal = $('div[id="' + field.id + '"] input[type="text"]').val();
 
 					RelevancyServiceJS.getQueryFields(currVal, {
 						callback:function(data){
+							$contentHolder.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+							$contentHolder.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
+							
 							var qfList = data.list;
 
 							for (var i=0; i< data.totalSize; i++){
