@@ -1515,7 +1515,7 @@
 							jAlert("Max Value Exceeded. Position value should be from 1 - " + base.options.maxPosition + ".", base.getTypeLabel());
 						}
 
-						if (valid && !$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"])){
+						if (valid && !$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"], base.options.moduleName)){
 							valid = false;
 						}
 

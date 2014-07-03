@@ -227,13 +227,13 @@ validateAlphanumeric = function(fieldName, fieldValue) {
 	return true;
 };
 
-validateCatCode = function(fieldName, fieldValue) {
+validateCatCode = function(fieldName, fieldValue, moduleName) {
 	var digitRegex= /^[a-zA-Z0-9\*]*$/;
 	
 	var isValid = digitRegex.test(fieldValue) && $.isNotBlank(fieldValue);
 	
 	if(!isValid){
-		jAlert(fieldName+" is not valid.");
+		jAlert(fieldName+" is not valid.", moduleName);
 		return false;
 	}
 	return true;

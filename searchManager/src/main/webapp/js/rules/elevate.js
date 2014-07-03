@@ -146,6 +146,7 @@
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
+								moduleName: "Elevate",
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
 								newRecord: false,
@@ -575,6 +576,7 @@
 				$("a#addRuleItemIcon").off().on({
 					click:function(e){
 						$(this).addproduct({
+							moduleName: "Elevate",
 							type: $('select#selectRuleItemType').val(),
 							locked: self.selectedRuleStatus["locked"] || !allowModify,
 							showPosition: true,

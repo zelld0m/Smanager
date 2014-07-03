@@ -142,6 +142,7 @@
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
+								moduleName: "Exclude",
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
 								newRecord: false,
@@ -474,6 +475,7 @@
 								$("a#addRuleItemIcon").off().on({
 									click:function(e){
 										$(this).addproduct({
+											moduleName: "Exclude",
 											type: $('select#selectRuleItemType').val(),
 											locked: self.selectedRuleStatus["locked"] || !allowModify,
 											addProductItemCallback:function(position, expiryDate, comment, skus, api){
