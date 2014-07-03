@@ -456,6 +456,7 @@
 						showOn: "both",
 						changeMonth: true,
 					    changeYear: true,
+					    maxDate: new Date(),
 						buttonText: "Member Since",
 						buttonImage: "../images/icon_calendar.png",
 						buttonImageOnly: true,
