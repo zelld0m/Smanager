@@ -12,7 +12,7 @@
 		template += '</div>'; 
 		return $(template);
 	};
-	
+
 	AjaxSolr.theme.prototype.searchKeyword = function(){
 		var template = '';
 //		template += '<a id="statisticIcon" href="javascript:void(0);">';
@@ -30,7 +30,7 @@
 		template += '</div>';     	 
 		return template;
 	};
-	
+
 	AjaxSolr.theme.prototype.searchWithin = function(){
 		var template = '';
 		template += '<div class="h27">';
@@ -43,7 +43,7 @@
 		template += '</div>';
 		return template;
 	};
-	
+
 	AjaxSolr.theme.prototype.productForceAdd = function(){
 		var template = '';
 		template += '<div class="w250">';
@@ -63,7 +63,7 @@
 		template += '</div>';
 		return template;
 	};
-	
+
 	AjaxSolr.theme.prototype.cnetFacets = function () {
 		var output  = '<div class="clearB floatL w240 marB27">';
 		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-bottom:8px">Category</div>';
@@ -149,7 +149,7 @@
 		output  += '		<option value="Licence_Flag:0">Non-License Product Only</option>';
 		output  += '	</select>';
 		output  += '</div>';
-		
+
 		output  += '<div class="box marT8">';
 		output  += '	<h2>Product Image</h2>';
 		output  += '	<select class="dropdownFilter mar10 w215" id="imageExistsFilter">';
@@ -161,7 +161,7 @@
 
 		return $(output);
 	};
-	
+
 	AjaxSolr.theme.prototype.productAttributeFilter = function() {
 		var output  = '';
 
@@ -173,7 +173,7 @@
 		output  += '		<option value="Licence_Flag:0">Non-License Product Only</option>';
 		output  += '	</select>';
 		output  += '</div>';
-		
+
 		output  += '<div class="box marT8">';
 		output  += '	<h2>Product Image</h2>';
 		output  += '	<select class="dropdownFilter mar10 w215" id="imageExistsFilter">';
@@ -296,12 +296,12 @@
 		}
 
 		var priceDisplay = doc[GLOBAL_storeFacetName + priceSuffix];
-		
+
 		secObj.find("div#cartPriceHolder").append($.toCurrencyFormat('$', priceDisplay));
 
 		var name = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Name"])? doc[GLOBAL_storeFacetName + "_Name"] : doc.Name;
 		var manufacturer = '<span class="txtManufact fbold">' + doc.Manufacturer + '</span> ';
-		
+
 		secObj.find("div#docHolder").wrapInner(AjaxSolr.theme('createLink', name, docHandler)).prepend(manufacturer);
 
 		//Add Audit Button
@@ -314,7 +314,7 @@
 			secObj.find("div#debugHolder a").addClass("btnShade btnCream");
 			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
 		}
-		
+
 		if ($.isNotBlank(doc.Elevate)){		  
 			var displayText = (doc["ForceAdd"]!=undefined? "Force add": "Elevated") + " at position " + doc["Elevate"];
 			if(doc["ElevateType"] === "FACET"){
@@ -338,10 +338,10 @@
 				}, {doc: doc});
 			}
 		}
-		
+
 		if ($.isNotBlank(doc.Demote)){		  
 			var displayText = "Demoted at position " + doc["Demote"];
-			
+
 			if(doc["DemoteType"] === "FACET")
 				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule Item</span></a> demoted at position '+ doc["Demote"];
 
@@ -379,12 +379,12 @@
 				demoteIcon = 'images/icon_demote.png'; 
 				demoteHover = "Update Demote";
 			} 
-			
+
 			if (doc.ForceAdd != undefined){
 				forceAddIcon = 'images/icon_forceAdd.png'; 
 				forceAddHover = "Force Add";
 			}
-			
+
 			if (doc.Feature != undefined){
 				featureIcon = 'images/icon_star.png'; 
 				featureHover = "Remove Feature";
@@ -397,15 +397,15 @@
 			//Add Force Add Button
 			secObj.find("div#forceAddHolder").append(AjaxSolr.theme('createLink', '', forceAddHandler));
 			secObj.find("div#forceAddHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', forceAddIcon) + '" alt="' + forceAddHover + '" title="' + forceAddHover + '">');
-			
+
 			//Add Elevate Button
 			secObj.find("div#elevateHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
 			secObj.find("div#elevateHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', elevateIcon) + '" alt="' + elevateHover + '" title="' + elevateHover + '">');
-	
+
 			//Add Demote Button
 			secObj.find("div#demoteHolder").append(AjaxSolr.theme('createLink', '', demoteHandler));
 			secObj.find("div#demoteHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', demoteIcon) + '" alt="' + demoteHover + '" title="' + demoteHover + '">');
-			
+
 			//Add Exclude Button
 			secObj.find("div#excludeHolder").append(AjaxSolr.theme('createLink', '', excludeHandler));
 			secObj.find("div#excludeHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', excludeIcon) + '" alt="Exclude" title="Exclude">');		
@@ -568,7 +568,7 @@
 		output += '  <tbody>';  
 
 		for (var docField in doc){
-			
+
 			output += '  <tr>';  
 			output += '    <td class="w220"><div style="width:220px; word-wrap: break-word;">' + docField + '</div></td>';  
 			output += '    <td class="w205">';
@@ -579,7 +579,7 @@
 			}else{
 				output += '			<div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div>';
 			}
-			
+
 			output += '			<div>';
 			output += '			<input type="hidden" class="attribField" value="' + docField + '">';
 			output += '			<input type="hidden" class="attribValue" value="' + ('' + doc[docField]).replace(/"/g,'&quot;') + '">';
@@ -607,7 +607,9 @@
 			var classSelector = id + i;
 			selection.append($('<div class="' + classSelector + ' farial fsize12 fDGray w220 padTB5 borderB wordwrap"><span class="lnk">'));
 			selection.find('.' + classSelector + ' span.lnk').append(items[i]);
-			selection.find('.' + classSelector + ' span.lnk a:not(#removeAll):not(#removeMultiple)').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/btn_delete_big.jpg') + '" width="10" height="10" style="margin-right:5px">');
+			if(items[i].hasIcon != false){
+				selection.find('.' + classSelector + ' span.lnk a:not(#removeAll):not(#removeMultiple)').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/btn_delete_big.jpg') + '" width="10" height="10" style="margin-right:5px">');
+			}
 			selection.find('.' + classSelector + ' span.lnk a#removeMultiple').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/icon_deleteFilter.png') + '" width="10" height="10" style="margin-right:5px">').addClass("fbold");
 			selection.find('.' + classSelector + ' span.lnk a#removeMultiple').parents('div.' + classSelector).addClass("alt marT5 borderT");
 			selection.find('.' + classSelector + ' span.lnk a#single').parents('div.' + classSelector).addClass("alt marT5 borderT");
@@ -690,8 +692,8 @@
 		}
 		return h += html ? ">" + html + "</" + tag + ">" : "/>";
 	};
-	
-	
+
+
 
 	$.fn.outerHTML = function() {
 		var doc = this[0] ? this[0].ownerDocument : document;

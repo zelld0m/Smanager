@@ -29,7 +29,9 @@
 			var keyword = self.manager.store.values('q'); 
 			
 			if ($.isBlank(keyword)) return;
-			links.push(AjaxSolr.theme('createLink', "Search keyword: " + keyword, self.removeKeyword(keyword)));
+			var keywordLink = AjaxSolr.theme('createLink', "Search keyword: " + keyword, self.removeKeyword(keyword));
+			keywordLink.hasIcon = false;
+			links.push(keywordLink);
 			
 			var fq = self.manager.store.values('fq');
 			var searchWithin = GLOBAL_searchWithinEnabled || self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"];
