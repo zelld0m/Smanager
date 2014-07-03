@@ -47,14 +47,25 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 	public DateTime getCreatedDate(){
 		return model.getCreatedDate();
 	}
+	
+	@ReportField(label="Start Date", size=20, sortOrder=7)
+	public DateTime getStartDate(){
+		return model.getStartDate();
+	}
+	
+	@ReportField(label="End Date", size=20, sortOrder=8)
+	public DateTime getEndDate(){
+		return model.getEndDate();
+	}
 
-	@ReportField(label="Modified By", size=20, sortOrder=7)
+	@ReportField(label="Modified By", size=20, sortOrder=9)
 	public String getModifiedBy(){
 		return model.getLastModifiedBy();
 	}
 	
-	@ReportField(label="Modified Date", size=20, sortOrder=8)
+	@ReportField(label="Modified Date", size=20, sortOrder=10)
 	public DateTime getModifiedDate(){
 		return model.getLastModifiedDate();
 	}	
+		
 }
