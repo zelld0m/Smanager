@@ -21,7 +21,7 @@
 		<div class="sideSearch">
 		    <span style="padding-top:7px">
 			    <a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>
-			    <div class="searchBoxHolder w70p">
+			    <div class="w75p">
 			        <input id="searchTextbox" maxlength="50" class="farial fsize12 fgray w99p" type="text" value="Search Keyword">
 			    </div>
 			    <div class="clearB"></div>
