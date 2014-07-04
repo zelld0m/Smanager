@@ -320,7 +320,7 @@
                                                             <div class="floatL">
                                                                 <select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w210" title="Add Dynamic Attribute"></select>
                                                             </div>
-                                                            <a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3 leftn22 posRel" id="addButton"></a>
+                                                            <a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3 leftn22 posRel" style="margin-right:100px" id="addButton"></a>
                                                         </td>
                                                     </tr>
 
