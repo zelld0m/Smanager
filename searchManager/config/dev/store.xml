@@ -562,7 +562,7 @@
                     <label>Weekly Defauly Status</label>
                     <defaultValue>For Review</defaultValue>
                 </property>
-    			<property id="typeahead.suggestioMax" type="String" multiValued="false">
+    			<property id="typeahead.suggestionMax" type="String" multiValued="false">
                     <label>Suggestion Max Display</label>
                     <defaultValue>5</defaultValue>
                 </property>
