@@ -124,7 +124,7 @@
 	var GLOBAL_storeKeywordMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
 	var GLOBAL_storeKeywordMaxBrand = GLOBAL_storeProperties['typeahead.typeahead.keywordBrandMax'];
 	var GLOBAL_storeKeywordMaxCategory = GLOBAL_storeProperties['typeahead.typeahead.keywordCategoryMax'];
-	var GLOBAL_storeMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.keywordSuggestionMax'];
+	var GLOBAL_storeMaxSuggestion = GLOBAL_storeProperties['typeahead.typeahead.suggestionMax'];
 	var GLOBAL_storeMaxBrand = GLOBAL_storeProperties['typeahead.typeahead.brandMax'];
 	var GLOBAL_storeMaxCategory = GLOBAL_storeProperties['typeahead.typeahead.categoryMax'];
 	var GLOBAL_storeMaxTypeahead = GLOBAL_storeKeywordMaxBrand > GLOBAL_storeKeywordMaxCategory ? GLOBAL_storeKeywordMaxBrand : GLOBAL_storeKeywordMaxCategory; 
