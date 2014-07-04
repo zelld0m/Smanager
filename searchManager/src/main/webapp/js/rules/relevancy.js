@@ -26,6 +26,11 @@
 	var keywordFilterText = "";
 	var rulePage = 1;
 	var keywordPage = 1;
+	var errorMessageMap = {	   
+			'-1':'Error encountered while processing request.',
+	        '0':'Invalid Field Input.',
+	        '1':'Update Successful.'
+	};
 
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
@@ -928,7 +933,7 @@
 		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
 			callback: function(code){
 				if (field !== "q.alt") {
-					showActionResponse(code, "update", label);					
+					showActionResponse(code, "update", label, errorMessageMap, moduleName);					
 				}
 				selectedRule.parameters[field] = value;
 			},

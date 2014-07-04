@@ -55,11 +55,15 @@ getRuleNameSubTextStatus = function(ruleStatus){
 	}; 
 };
 
-showActionResponse = function(code, action, param){
-	switch(code){
-	case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered"); break;
-	case  0: jAlert("Failed " + action + " request for " + param, "Failed Request"); break;
-	default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
+showActionResponse = function(code, action, param, errorMessageMap, moduleName){
+	if(errorMessageMap) {
+		jAlert(errorMessageMap[code], moduleName);
+	}else {
+		switch(code){
+		case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered"); break;
+		case  0: jAlert("Failed " + action + " request for " + param, "Failed Request"); break;
+		default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
+		}
 	}
 };
 showActionCallBackJobResponse = function(code, action, param,callbackJob){
