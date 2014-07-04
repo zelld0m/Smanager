@@ -141,7 +141,7 @@
 			var toDate = $("#toDate").datepicker("getDate");
 
 			if (fromDate >= toDate) {
-				jAlert("Invalid date range.");
+				jAlert("Invalid date range.", "Keyword Trends");
 				return false;
 			} else {
 				this.fromDate = fromDate;
@@ -198,7 +198,7 @@
 			var toDate = $.getFirstDayOfWeek($("#toWeek").datepicker("getDate"));
 
 			if (fromDate >= toDate) {
-				jAlert("Invalid date range.");
+				jAlert("Invalid date range.", "Keyword Trends");
 				return false;
 			} else {
 				this.fromDate = fromDate;
@@ -270,7 +270,7 @@
 
 			if (fromYear > toYear || fromYear === toYear
 					&& fromMonth >= toMonth) {
-				jAlert("Invalid date range.");
+				jAlert("Invalid date range.", "Keyword Trends");
 				return false;
 			} else {
 				this.fromDate = new Date(fromYear + "/" + fromMonth + "/01");
