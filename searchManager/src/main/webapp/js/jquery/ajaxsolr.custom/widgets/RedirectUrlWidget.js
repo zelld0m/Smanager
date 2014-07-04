@@ -26,7 +26,7 @@
 
                 if ($.isNotBlank(urlVal) && self.checkRelativeRedirectUrl(urlVal)) {
                     urlVal = GLOBAL_storeDefaultBannerLinkPathProtocol + "://"
-                            + GLOBAL_storeParameters.storeDomains[0] + urlVal;
+                            + GLOBAL_storeRedirectSelfDomain + urlVal;
                 }
 
                 $("#redirectUrlLoading").show();
