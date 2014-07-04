@@ -718,13 +718,13 @@
 				template += '							</a>';
 				template += '						</th>';
 			} else {
-				template += '						<th width="48px">';
+				template += '						<th width="31px">';
 				template += '						</th>';
 			}
 
-			template += '						<th class="w155">Name</th>';
-			template += '						<th class="w140">Date</th>';
-			template += '						<th class="w55"></th>';
+			template += '						<th class="w120">Name</th>';
+			template += '						<th class="w120">Date</th>';
+			template += '						<th class="w60"></th>';
 			template += '					</tr>';
 			template += '				<tbody>';
 			template += '			</table>';
