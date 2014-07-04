@@ -19,7 +19,7 @@
 			
 			$(self.target).empty(); 
 
-			for (var i = 0, l = self.manager.response.response.docs.length; i < l; i++) {
+			for (var i = 0, l = self.manager.response.response.docs.length; i < l && i < GLOBAL_storeMaxSuggestion; i++) {
 				var doc = self.manager.response.response.docs[i];
 //				var debug = self.manager.response.debug.explain[doc.EDP]; 
 
