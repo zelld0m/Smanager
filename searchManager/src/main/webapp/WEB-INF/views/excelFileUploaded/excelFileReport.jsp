@@ -18,8 +18,8 @@
 		</tr>
 	</thead>
 </table>
-<div style="overflow:auto; height:300px; width:400px" class="tblItems w100p marT5">
-	<table  class="tblItems w100p marT5">
+<div style="overflow:auto; height:300px;" class="tblItems w99.5p">
+	<table  class="tblItems w100p">
 		<tbody>	
 	  	<c:forEach items="${keywords}" var="keyword" varStatus="status">
 	  	<tr>
