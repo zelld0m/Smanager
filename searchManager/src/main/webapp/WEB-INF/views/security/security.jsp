@@ -97,13 +97,13 @@
     				<div class="clearB"></div>
     				<span id="email"></span>   								
     			</td>
-    			<td  id="role">
+    			<td  id="role" align="center">
     				<span></span>  
     			</td>
     			<td id="memberSince" class="txtAC">
     				<span></span>
     			</td>
-    			<td id="status">
+    			<td id="status" align="center">
     				<span id="nonLocked"></span>
     				<div class="clearB"></div>
     				<span id="nonExpired"></span>
@@ -111,7 +111,7 @@
     			<td id="validity" class="txtAC">
     				<span></span>
     			</td>
-    			<td id="lastAccess">
+    			<td id="lastAccess" align="center">
     				<span id="dateAccess"></span>
     				<div class="clearB"></div>
     				<span id="ipAccess" class="forange"></span>
