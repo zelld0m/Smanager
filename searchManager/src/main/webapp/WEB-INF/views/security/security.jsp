@@ -173,7 +173,7 @@
 				            </label>
 				            <div class="clearB marT10"></div>
 				           	<div>
-					            <div class="floatL w75 padT3 marL10">Timezone:</div>
+					            <div class="floatL w80 padT3 padL5">Timezone:</div>
 					            <div class="floatL w200">
 						            <select id="shtimezone">
 						            	<c:forEach var="tzId" items="${timezoneIds}">
