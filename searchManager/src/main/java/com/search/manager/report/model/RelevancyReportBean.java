@@ -28,14 +28,14 @@ public class RelevancyReportBean extends ReportBean<Relevancy>{
 	
 	@ReportField(label="Schedule", size=20, sortOrder=4)
 	public String getValidity(){
-//		StringBuilder builder = new StringBuilder();
-//		if (model.getStartDateTime() != null) {
-//			builder.append("from " + model.getFormattedStartDate());
-//		}
-//		if (model.getEndDateTime() != null) {
-//			builder.append(" to " + model.getFormattedEndDate());
-//		}
-		return ""; //TODO: builder.toString();
+		StringBuilder builder = new StringBuilder();
+		if (model.getStartDate() != null) {
+			builder.append("from " + model.getFormattedStartDate());
+		}
+		if (model.getEndDate() != null) {
+			builder.append(" to " + model.getFormattedEndDate());
+		}
+		return builder.toString();
 	}
 
 	@ReportField(label="Created By", size=20, sortOrder=5)

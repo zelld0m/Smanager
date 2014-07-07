@@ -55,6 +55,7 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 
 @Component
 public class RuleXmlReportUtil {
@@ -64,6 +65,8 @@ public class RuleXmlReportUtil {
     
     @Autowired
     private JodaDateTimeUtil jodaDateTimeUtil;
+    @Autowired
+    private UtilityService utilityService;
 
     protected RuleXmlReportUtil() {
         //Exists only to defeat instantiation.
@@ -232,9 +235,20 @@ public class RuleXmlReportUtil {
         return subReports;
     }
 
-    public static RelevancyReportBean getRelevancyReportBean(RankingRuleXml xml) {
+    public RelevancyReportBean getRelevancyReportBean(RankingRuleXml xml) {
         Relevancy relevancy = new Relevancy(xml);
-        return (relevancy != null) ? new RelevancyReportBean(relevancy) : null;
+        
+        if(relevancy != null) {
+        	if(relevancy.getStartDate() != null) {
+        		relevancy.setFormattedStartDate(jodaDateTimeUtil.formatFromStorePattern(utilityService.getStoreId(),relevancy.getStartDate(), JodaPatternType.DATE));
+        	}
+        	if(relevancy.getEndDate() != null) {
+        		relevancy.setFormattedEndDate(jodaDateTimeUtil.formatFromStorePattern(utilityService.getStoreId(),relevancy.getEndDate(), JodaPatternType.DATE));
+        	}
+        }
+        
+        RelevancyReportBean reportBean = (relevancy != null) ? new RelevancyReportBean(relevancy) : null;
+        return reportBean;
     }
 
     public static List<KeywordReportBean> getKeywordReportBeanList(RuleKeywordXml ruleKeyword) {
