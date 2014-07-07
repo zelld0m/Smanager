@@ -121,6 +121,7 @@ showMessage = function(selector, msg){
 		style:{width:'auto'},
 		events: {
 			show: function(event, api){
+				$('img[aria-describedby=ui-tooltip-hover-custom]').qtip('hide');
 				var $content = $("div", api.elements.content);
 				$content.html(msg);
 			},
