@@ -656,7 +656,8 @@
 						$divItem.find("label.iter").html(ruleList[keys[i]].disabled == 'true' ? 'Yes' : 'No');
 					} else {
 						var checked = ruleList[keys[i]].disabled == 'true' ? 'CHECKED' : '';
-
+						
+						$divItem.find('label').removeClass('w120').addClass('w130');
 						$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
 						$divItem.find("label.iter").html('<input id="'+ruleList[keys[i]].ruleId+'" type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
 					}
