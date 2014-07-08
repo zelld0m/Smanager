@@ -134,7 +134,7 @@
            
 		   <!-- Rule Selector Widget && Redirect URL Toggle Widget  -->
 		   <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
-		   		<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR">
+		   		<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR" style="height:32px;">
 	        	 	<div id="searchKeyword"></div>		        	
 	        	</div>
 	        	<div class="floatL w350 dropdownArea" >
