@@ -307,6 +307,7 @@
                     BannerRuleService.getStatsByKeyword(GLOBAL_storeId, rule["ruleName"], startDate, endDate, aggregate, {
                         callback: function(sr) {
                             base.populateList.call(base, sr["data"], "keyword");
+                            base.reposition();
                         }
                     });
                 },
@@ -318,6 +319,7 @@
                             if (imagePath) {
                                 u.find(".itemName").text(imagePath["alias"]);
                             }
+                            base.reposition();
                         }
                     });
                 }
@@ -495,6 +497,7 @@
                     BannerRuleService.getStatsByMemberId(GLOBAL_storeId, item["memberId"], startDate, endDate, {
                         callback: function(sr) {
                             base.populateList.call(base, sr["data"], "memberId");
+                            base.reposition();
                         }
                     });
                 },
@@ -506,6 +509,7 @@
                             if (rItem) {
                                 u.find(".itemSchedule").text($.toStoreFormat(rItem["startDate"],GLOBAL_storeDateFormat) + '-' + $.toStoreFormat(rItem["endDate"],GLOBAL_storeDateFormat));
                             }
+                            base.reposition();
                         }
                     });
                 }
