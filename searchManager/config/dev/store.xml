@@ -1,822 +1,866 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Dev Config -->
 <store-properties>
-    <store id="ecost" extends="pcmall">
-    	<module name="settings" title="Settings">
-            <properties>
-                <property id="site_domain" type="String">
-                    <label>New Site Domain</label>
-                    <defaultValue>ecost.com</defaultValue>
-                </property>
-                <property id="autoprefix_banner_linkpath_protocol" type="Boolean">
-                    <label>Autoprefix Banner Link Path Protocol</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="allowed_banner_sizes" type="String" multiValued="true">
-                    <label>Allowed Banner Sizes</label>
-                    <validator>WxH</validator>
-                    <defaultValue>180x150,728x90,300x250,605x150</defaultValue>
-                </property>
-                <property id="auto_export" type="Boolean">
-                    <label>Auto Export</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="export_target" type="String" multiValued="true">
-                    <label>Export Target</label>
-                    <validator>STORE</validator>
-                    <defaultValue></defaultValue>
-                </property>
-                <property id="redirect_self_domain" type="String">
-                    <label>Redirect Self Domain</label>
-                    <defaultValue>ecost.com</defaultValue>
-                </property>
-                <property id="facet_template" type="String">
-                    <label>Facet Template</label>
-                    <defaultValue>IMS</defaultValue>
-                </property>
-            </properties>
-        </module>
-    </store>
-    
-    <store id="macmall" extends="pcmall">
-        <module name="settings" title="Settings">
-            <properties>
-                <property id="site_domain" type="String" required="true">
-                    <label>Site Domain</label>
-                    <description>Domain of managed site.</description>
-                    <defaultValue>macmall.com</defaultValue>
-                </property>
-                <property id="allowed_banner_sizes" type="String" multiValued="true">
-                    <label>Allowed Banner Sizes</label>
-                    <validator>WxH</validator>
-                    <defaultValue>180x150,728x90,300x250,605x150</defaultValue>
-                </property>
-                <property id="export_target" type="String" multiValued="true">
-                    <label>Export Target</label>
-                    <validator>STORE</validator>
-                    <defaultValue>macmallbd</defaultValue>
-                </property>
-                <property id="redirect_self_domain" type="String">
-                    <label>Redirect Self Domain</label>
-                    <defaultValue>macmall.com</defaultValue>
-                </property>
-                <property id="facet_template" type="String">
-                    <label>Facet Template</label>
-                    <defaultValue>IMS</defaultValue>
-                </property>
-            </properties>
-        </module>
-    </store>
-    
-    <store id="macmallbd" extends="pcmall">
-        <module name="settings" title="Settings">
-            <properties>
-                <property id="site_domain" type="String" required="true">
-                    <label>Site Domain</label>
-                    <description>Domain of managed site.</description>
-                    <defaultValue>macmallbd.com</defaultValue>
-                </property>
-                <property id="allowed_banner_sizes" type="String" multiValued="true">
-                    <label>Allowed Banner Sizes</label>
-                    <validator>WxH</validator>
-                    <defaultValue>180x150,728x90,300x250,605x150</defaultValue>
-                </property>
-                <property id="export_target" type="String" multiValued="true">
-                    <label>Export Target</label>
-                    <validator>STORE</validator>
-                    <defaultValue></defaultValue>
-                </property>
-                <property id="redirect_self_domain" type="String">
-                    <label>Redirect Self Domain</label>
-                    <defaultValue>macmallbd.com</defaultValue>
-                </property>
-                <property id="facet_template" type="String">
-                    <label>Facet Template</label>
-                    <defaultValue>IMS</defaultValue>
-                </property>
-            </properties>
-        </module>
-    </store>
-    
-    <store id="pcmallcap" extends="pcmall">
-    	<module name="workflow" title="Workflow">
-            <groups>
-            	<group name="General">
-            		<member property-id="maxRunAttempts"/>
-            	</group>
-				<group name="Auto Import Rules">
-                    <member property-id="enable.elevate"/>
-					<member property-id="enable.exclude"/>
-					<member property-id="enable.demote"/>
-					<member property-id="enable.facetSort"/>
-					<member property-id="enable.queryCleaning"/>
-					<member property-id="enable.didYouMean"/>
-					<member property-id="enable.banner"/>
-					<member property-id="enable.rankingRule"/>
-					<member property-id="enable.typeahead"/>
-                </group>
-                <group name="Default Import Status">
-                    <member property-id="status.elevate"/>
-					<member property-id="status.exclude"/>
-					<member property-id="status.demote"/>
-					<member property-id="status.facetSort"/>
-					<member property-id="status.queryCleaning"/>
-					<member property-id="status.didYouMean"/>
-					<member property-id="status.banner"/>
-					<member property-id="status.rankingRule"/>
-					<member property-id="status.typeahead"/>
-                </group>
-            </groups>
-            
-            <properties>
-            	<property id="auto_import" type="Boolean">
-                    <label>Authorize Auto Import</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="maxRunAttempts" type="String" required="true">
-                    <label>Max Run Attempts</label>
-                    <defaultValue>5</defaultValue>
-                </property>
-                <property id="targetStore" type="Boolean" required="true">
-                    <label>Target Store</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.elevate" type="Boolean" required="true">
-                    <label>Elevate Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="enable.exclude" type="Boolean" required="true">
-                    <label>Exclude Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.demote" type="Boolean" required="true">
-                    <label>Demote Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.facetSort" type="Boolean" required="true">
-                    <label>Facet Sort Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.queryCleaning" type="Boolean" required="true">
-                    <label>Redirect Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.didYouMean" type="Boolean" required="true">
-                    <label>Did You Mean</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.banner" type="Boolean" required="true">
-                    <label>Banner</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.rankingRule" type="Boolean" required="true">
-                    <label>Relevancy Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="enable.typeahead" type="Boolean" required="true">
-                    <label>Typeahead Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-			
-                <property id="status.elevate" type="DropDown" required="true">
-                    <label>Elevate</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-                <property id="status.exclude" type="DropDown" required="true">
-                    <label>Exclude</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.demote" type="DropDown" required="true">
-                    <label>Demote</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.facetSort" type="DropDown" required="true">
-                    <label>Facet Sort</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.queryCleaning" type="DropDown" required="true">
-                    <label>Redirect Rule</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.didYouMean" type="DropDown" required="true">
-                    <label>Did You Mean</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.banner" type="DropDown" required="true">
-                    <label>Banner Rule</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.rankingRule" type="DropDown" required="true">
-                    <label>Relevancy Rule</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-                <property id="status.typeahead" type="DropDown" required="true">
-                    <label>Typeahead Rule</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
+	<store id="ecost" extends="pcmall">
+		<module name="settings" title="Settings">
+			<properties>
+				<property id="site_domain" type="String">
+					<label>New Site Domain</label>
+					<defaultValue>ecost.com</defaultValue>
+				</property>
+				<property id="autoprefix_banner_linkpath_protocol" type="Boolean">
+					<label>Autoprefix Banner Link Path Protocol</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="allowed_banner_sizes" type="String"
+					multiValued="true">
+					<label>Allowed Banner Sizes</label>
+					<validator>WxH</validator>
+					<defaultValue>180x150,728x90,300x250,605x150</defaultValue>
+				</property>
+				<property id="auto_export" type="Boolean">
+					<label>Auto Export</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="export_target" type="String" multiValued="true">
+					<label>Export Target</label>
+					<validator>STORE</validator>
+					<defaultValue></defaultValue>
+				</property>
+				<property id="redirect_self_domain" type="String">
+					<label>Redirect Self Domain</label>
+					<defaultValue>ecost.com</defaultValue>
+				</property>
+				<property id="facet_template" type="String">
+					<label>Facet Template</label>
+					<defaultValue>IMS</defaultValue>
+				</property>
 			</properties>
-        </module>
-        <module name="settings" title="Settings">
-            <groups>
-                <group name="New Banner Ads Feature">
-                    <member property-id="site_domain"/>
-                </group>
-            </groups>
-            
-            <properties>
-                <property id="site_domain" type="String" required="true">
-                    <label>New Site Domain</label>
-                    <defaultValue>pcmbd.com</defaultValue>
-                </property>
-                <property id="redirect_self_domain" type="String">
-                    <label>Redirect Self Domain</label>
-                    <defaultValue>pcmbd.com</defaultValue>
-                </property>
-            </properties>
-        </module>
-    </store>
-    
-    <store id="pcmallgov" extends="pcmall">
-        <module name="workflow" title="Workflow">
-            <groups>
-            	<group name="General">
-            		<member property-id="maxRunAttempts"/>
-            	</group>
-				<group name="Auto Import Rules">
-                    <member property-id="enable.elevate"/>
-					<member property-id="enable.exclude"/>
-					<member property-id="enable.demote"/>
-					<member property-id="enable.facetSort"/>
-					<member property-id="enable.queryCleaning"/>
-					<member property-id="enable.didYouMean"/>
-					<member property-id="enable.banner"/>
-					<member property-id="enable.rankingRule"/>
-					<member property-id="enable.typeahead"/>
-                </group>
-                <group name="Default Import Status">
-                    <member property-id="status.elevate"/>
-					<member property-id="status.exclude"/>
-					<member property-id="status.demote"/>
-					<member property-id="status.facetSort"/>
-					<member property-id="status.queryCleaning"/>
-					<member property-id="status.didYouMean"/>
-					<member property-id="status.banner"/>
-					<member property-id="status.rankingRule"/>
-					<member property-id="status.typeahead"/>
-                </group>
-            </groups>
-            
-            <properties>
-            	<property id="auto_import" type="Boolean">
-                    <label>Authorized Auto Import</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="maxRunAttempts" type="String" required="true">
-                    <label>Max Run Attempts</label>
-                    <defaultValue>5</defaultValue>
-                </property>
-                <property id="targetStore" type="Boolean" required="true">
-                    <label>Target Store</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.elevate" type="Boolean" required="true">
-                    <label>Elevate Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="enable.exclude" type="Boolean" required="true">
-                    <label>Exclude Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.demote" type="Boolean" required="true">
-                    <label>Demote Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.facetSort" type="Boolean" required="true">
-                    <label>Facet Sort Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.queryCleaning" type="Boolean" required="true">
-                    <label>Redirect Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.didYouMean" type="Boolean" required="true">
-                    <label>Did You Mean</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.banner" type="Boolean" required="true">
-                    <label>Banner</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-				<property id="enable.rankingRule" type="Boolean" required="true">
-                    <label>Relevancy Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="enable.typeahead" type="Boolean" required="true">
-                    <label>Typeahead Rule</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-			
-                <property id="status.elevate" type="DropDown" required="true">
-                    <label>Elevate</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-                <property id="status.exclude" type="DropDown" required="true">
-                    <label>Exclude</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.demote" type="DropDown" required="true">
-                    <label>Demote</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.facetSort" type="DropDown" required="true">
-                    <label>Facet Sort</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.queryCleaning" type="DropDown" required="true">
-                    <label>Redirect Rule</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.didYouMean" type="DropDown" required="true">
-                    <label>Did You Mean</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.banner" type="DropDown" required="true">
-                    <label>Banner Rule</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-				<property id="status.rankingRule" type="DropDown" required="true">
-                    <label>Relevancy Rule</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-                <property id="status.typeahead" type="DropDown" required="true">
-                    <label>Typeahead Rule</label>
-                    <defaultValue>For Approval</defaultValue>
-                </property>
-			</properties>
-        </module>
-        <module name="settings" title="Settings">
-            <properties>
-                <property id="site_domain" type="String" required="true">
-                    <label>Site Domain</label>
-                    <description>Domain of the main site.</description>
-                    <defaultValue>pcmg.com</defaultValue>
-                </property>
-                <property id="export_target" type="String" multiValued="true">
-                    <label>Export Target</label>
-                    <validator>STORE</validator>
-                    <defaultValue>pcmgbd</defaultValue>
-                </property>
-                <property id="redirect_self_domain" type="String">
-                    <label>Redirect Self Domain</label>
-                    <defaultValue>pcmg.com</defaultValue>
-                </property>
-            </properties>
-        </module>
-    </store>
-    
-    <store id="pcmall">
-    	<module name="searchwithin" title="Search Within">
-            <groups>
-                <group name="Search Within">
-                    <member property-id="searchwithin.enable"/>
-                    <member property-id="searchwithin.paramname"/>
-                    <member property-id="searchwithin.type"/>
-                    <member property-id="searchwithin.solrfieldlist"/>
-                    <member property-id="searchwithin.typeOperator"/>
-                </group>
-                
-                <group name="Include All">
-                    <member property-id="searchwithin.includeAll.solrFieldOperator"/>
-                    <member property-id="searchwithin.includeAll.keywordOperator"/>
-                    <member property-id="searchwithin.includeAll.quoteKeyword"/>
-                    <member property-id="searchwithin.includeAll.prefixTypeOperator"/>
-                </group>
-                
-                <group name="Include Some">
-                    <member property-id="searchwithin.includeSome.solrFieldOperator"/>
-                    <member property-id="searchwithin.includeSome.keywordOperator"/>
-                    <member property-id="searchwithin.includeSome.quoteKeyword"/>
-                    <member property-id="searchwithin.includeSome.prefixTypeOperator"/>
-                </group>
-                
-                <group name="Include Exact">
-                    <member property-id="searchwithin.includeExact.solrFieldOperator"/>
-                    <member property-id="searchwithin.includeExact.keywordOperator"/>
-                    <member property-id="searchwithin.includeExact.quoteKeyword"/>
-                    <member property-id="searchwithin.includeExact.prefixTypeOperator"/>
-                </group>
-                
-                <group name="Exclude All">
-                    <member property-id="searchwithin.excludeAll.solrFieldOperator"/>
-                    <member property-id="searchwithin.excludeAll.keywordOperator"/>
-                    <member property-id="searchwithin.excludeAll.quoteKeyword"/>
-                    <member property-id="searchwithin.excludeAll.prefixTypeOperator"/>
-                </group>
-            </groups>
-            <properties>
-                <property id="searchwithin.enable" type="Boolean">
-                    <label>Enabled</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="searchwithin.paramname" type="String">
-                    <label>Param Name</label>
-                    <defaultValue>searchWithin</defaultValue>
-                </property>
-                <property id="searchwithin.type" type="String" multiValued="true">
-                    <label>Type</label>
-                    <defaultValue>includeAll,includeSome,includeExact,excludeAll</defaultValue>
-                </property>
-                <property id="searchwithin.solrfieldlist" type="String" multiValued="true">
-                    <label>Solr Field List</label>
-                    <defaultValue>PcMall_Name,Description</defaultValue>
-                </property>
-                <property id="searchwithin.typeOperator" type="String">
-                    <label>Type Operator</label>
-                    <defaultValue>AND</defaultValue>
-                </property>
-                
-                <property id="searchwithin.includeAll.solrFieldOperator" type="String">
-                    <label>Solr Field Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeAll.keywordOperator" type="String">
-                    <label>Keyword Operator</label>
-                    <defaultValue>AND</defaultValue>
-                </property>
-                <property id="searchwithin.includeAll.quoteKeyword" type="Boolean">
-                    <label>Quote Keyword</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="searchwithin.includeAll.prefixTypeOperator" type="String">
-                    <label>Prefix Type Operator</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="searchwithin.includeSome.solrFieldOperator" type="String">
-                    <label>Solr Field Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeSome.keywordOperator" type="String">
-                    <label>Keyword Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeSome.quoteKeyword" type="Boolean">
-                    <label>Quote Keyword</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="searchwithin.includeSome.prefixTypeOperator" type="String">
-                    <label>Prefix Type Operator</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="searchwithin.includeExact.solrFieldOperator" type="String">
-                    <label>Solr Field Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeExact.keywordOperator" type="String">
-                    <label>Keyword Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.includeExact.quoteKeyword" type="Boolean">
-                    <label>Quote Keyword</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="searchwithin.includeExact.prefixTypeOperator" type="String">
-                    <label>Prefix Type Operator</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="searchwithin.excludeAll.solrFieldOperator" type="String">
-                    <label>Solr Field Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.excludeAll.keywordOperator" type="String">
-                    <label>Keyword Operator</label>
-                    <defaultValue>OR</defaultValue>
-                </property>
-                <property id="searchwithin.excludeAll.quoteKeyword" type="Boolean">
-                    <label>Quote Keyword</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="searchwithin.excludeAll.prefixTypeOperator" type="String">
-                    <label>Prefix Type Operator</label>
-                    <defaultValue>-</defaultValue>
-                </property>
-            </properties>
-        </module>
-        <module name="facetsort" title="Facet Sort">
-            <groups>
-                <group>
-                    <member property-id="facetsort.enabled"/>
-                </group>
-            </groups>
-            <properties>
-                <property id="facetsort.enabled" type="Boolean">
-                    <label>Enabled</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-            </properties>
-        </module>
-        <module name="spell" title="Did You Mean">
-            <groups>
-                <group>
-                    <member property-id="maxSpellSuggestions"/>
-                </group>
-            </groups>
-            <properties>
-                <property id="maxSpellSuggestions" type="String">
-                    <label>Max Spell Suggestions</label>
-                    <defaultValue>3</defaultValue>
-                </property>
-            </properties>
-        </module>
-        <module name="typeahead" title="Type-ahead">
-        	<groups>
-        		<group name="Threshold">
-                    <member property-id="typeahead.dailySearchCountThreshold"/>
-                    <member property-id="typeahead.dailyDefaultStatus"/>
-                    <member property-id="typeahead.weeklySearchCountThreshold"/>
-                    <member property-id="typeahead.weeklyDefaultStatus"/>
-                </group>
-                <group name="Display">
-                    <member property-id="typeahead.suggestionMax"/>
-                    <member property-id="typeahead.brandMax"/>
-                    <member property-id="typeahead.keywordSuggestionMax"/>
-                    <member property-id="typeahead.keywordBrandMax"/>
-                </group>
-        	</groups>
-        	<properties>
-        		<property id="typeahead.dailySearchCountThreshold" type="String" multiValued="false">
-                    <label>Daily Search Count Threshold</label>
-                    <defaultValue>2000</defaultValue>
-                </property>
-                <property id="typeahead.dailyDefaultStatus" type="DropDown" required="true">
-                    <label>Daily Defauly Status</label>
-                    <defaultValue>For Review</defaultValue>
-                </property>
-                <property id="typeahead.weeklySearchCountThreshold" type="String" multiValued="false">
-                    <label>Weekly Search Count Threshold</label>
-                    <defaultValue>7000</defaultValue>
-                </property>
-                <property id="typeahead.weeklyDefaultStatus" type="DropDown" required="true">
-                    <label>Weekly Defauly Status</label>
-                    <defaultValue>For Review</defaultValue>
-                </property>
-    			<property id="typeahead.suggestionMax" type="String" multiValued="false">
-                    <label>Suggestion Max Display</label>
-                    <defaultValue>5</defaultValue>
-                </property>
-                <property id="typeahead.brandMax" type="String" multiValued="false">
-                    <label>Brand Max Display</label>
-                    <defaultValue>5</defaultValue>
-                </property>
-    			<property id="typeahead.keywordSuggestionMax" type="String" multiValued="false">
-                    <label>Keyword Suggestion Max Display</label>
-                    <defaultValue>5</defaultValue>
-                </property>
-                <property id="typeahead.keywordBrandMax" type="String" multiValued="false">
-                    <label>Brand Suggestion Max Display</label>
-                    <defaultValue>5</defaultValue>
-                </property>
-    		</properties>
-        </module>
-        <module name="workflow" title="Workflow">
-    		<groups>
-    			<group name="Export Feature">
-                    <member property-id="auto_export"/>
-                    <member property-id="export_target"/>
-                </group>
-    			<group>
-    				 <member property-id="auto_import"/>
-    			</group>
-    			 <group>
-                    <member property-id="targetStore"/>
-                </group>
-    		</groups>
-    		<properties>
-    			<property id="auto_export" type="Boolean">
-                    <label>Auto Export</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="export_target" type="String" multiValued="true">
-                    <label>Export Target</label>
-                    <validator>STORE</validator>
-                    <defaultValue>pcmallcap,pcmgbd</defaultValue>
-                </property>
-    			<property id="auto_import" type="Boolean">
-                    <label>Auto Import to Target</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="targetStore" type="Boolean" required="true">
-                    <label>Target Store</label>
-                    <defaultValue>true</defaultValue>
-                </property>
-    		</properties>
-    	</module>
-    	<module name="mail" title="Mail">
-            <groups>
-                <group>
-                    <member property-id="pendingNotification"/>
-                    <member property-id="approvalNotification"/>
-                    <member property-id="pushToProdNotification"/>
-                </group>
-                
-                <group name="Mail Workflow">
-                    <member property-id="mail.workflow.cc"/>
-                    <member property-id="mail.workflow.bcc"/>
-                </group>
-                
-                <group>
-                    <member property-id="mail.workflow.approver.group"/>
-                </group>
-                
-                <group name="Pending">
-                    <member property-id="mail.workflow.pendingCc"/>
-                    <member property-id="mail.workflow.pendingBcc"/>
-                </group>
+		</module>
+	</store>
 
-                <group name="Approved">
-                    <member property-id="mail.workflow.approvedCc"/>
-                    <member property-id="mail.workflow.approvedBcc"/>
-                </group>
-                
-                <group name="Rejected">
-                    <member property-id="mail.workflow.rejectedCc"/>
-                    <member property-id="mail.workflow.rejectedBcc"/>
-                </group>
-                
-                <group name="Published">
-                    <member property-id="mail.workflow.publishedCc"/>
-                    <member property-id="mail.workflow.publishedBcc"/>
-                </group>
-                
-                <group name="Unpublished">
-                    <member property-id="mail.workflow.unpublishedCc"/>
-                    <member property-id="mail.workflow.unpublishedBcc"/>
-                </group>
-                
-                <group name="Subject">
-                    <member property-id="mail.workflow.pendingSubject"/>
-                    <member property-id="mail.workflow.approvedSubject"/>
-                    <member property-id="mail.workflow.rejectedSubject"/>
-                    <member property-id="mail.workflow.publishedSubject"/>
-                    <member property-id="mail.workflow.unpublishedSubject"/>
-                </group>
-            </groups>
-            
-            <properties>
-                <property id="pendingNotification" type="Boolean">
-                    <label>Pending Notification</label>
-                    <description>Pending Notification</description>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="approvalNotification" type="Boolean">
-                    <label>Approval Notification</label>
-                    <description>Approval Notification</description>
-                    <defaultValue>true</defaultValue>
-                </property>
-                <property id="pushToProdNotification" type="Boolean">
-                    <label>Push To Prod Notification</label>
-                    <description>Push To Prod Notification</description>
-                    <defaultValue>true</defaultValue>
-                </property>
-                
-                <property id="mail.workflow.cc" type="String">
-                    <label>CC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                <property id="mail.workflow.bcc" type="String">
-                    <label>BCC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="mail.workflow.approver.group" type="DropDown">
-                    <label>Approver Group</label>
-                    <defaultValue>APPROVER</defaultValue>
-                </property>
-                
-                <property id="mail.workflow.pendingCc" type="String">
-                    <label>Pending CC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                <property id="mail.workflow.pendingBcc" type="String">
-                    <label>Pending BCC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="mail.workflow.approvedCc" type="String">
-                    <label>Approved CC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                <property id="mail.workflow.approvedBcc" type="String">
-                    <label>Approved BCC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="mail.workflow.rejectedCc" type="String">
-                    <label>Rejected CC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                <property id="mail.workflow.rejectedBcc" type="String">
-                    <label>Rejected BCC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="mail.workflow.publishedCc" type="String">
-                    <label>Published CC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                <property id="mail.workflow.publishedBcc" type="String">
-                    <label>Published BCC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="mail.workflow.unpublishedCc" type="String">
-                    <label>Unpublished CC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                <property id="mail.workflow.unpublishedBcc" type="String">
-                    <label>Unpublished BCC</label>
-                    <defaultValue></defaultValue>
-                </property>
-                
-                <property id="mail.workflow.pendingSubject" type="String">
-                    <label>Pending Rule Subject</label>
-                    <defaultValue>Search Manager: Rules Submitted For Approval</defaultValue>
-                </property>
-                <property id="mail.workflow.approvedSubject" type="String">
-                    <label>Approved Rule Subject</label>
-                    <defaultValue>Search Manager: Approved Rules</defaultValue>
-                </property>
-                <property id="mail.workflow.rejectedSubject" type="String">
-                    <label>Rejected Rule Subject</label>
-                    <defaultValue>Search Manager: Rejected Rules</defaultValue>
-                </property>
-                <property id="mail.workflow.publishedSubject" type="String">
-                    <label>Published Rule Subject</label>
-                    <defaultValue>Search Manager: Published Rules</defaultValue>
-                </property>
-                <property id="mail.workflow.unpublishedSubject" type="String">
-                    <label>UnPublished Rule Subject</label>
-                    <defaultValue>Search Manager: Un-published Rules</defaultValue>
-                </property>
-            </properties>
-        </module>
-        <module name="settings" title="Settings">
-            <groups>
-                <group name="Banner Ads Feature">
-                    <member property-id="site_domain"/>
-                    <member property-id="default_banner_linkpath_protocol"/>
-                    <member property-id="autoprefix_banner_linkpath_protocol"/>
-                    <member property-id="default_banner_size"/>
-                    <member property-id="allowed_banner_sizes"/>
-                </group>
-                <group name="Redirect URL">
-                    <member property-id="redirect_self_domain"/>
-                    <member property-id="redirect_relative_path"/>
-                </group>
-                <group>
-                    <member property-id="facet_template"/>
-                </group>
-            </groups>
-            
-            <properties>
-                <property id="site_domain" type="String" required="true">
-                    <label>Site Domain</label>
-                    <description>Domain of managed site.</description>
-                    <defaultValue>pcm.com</defaultValue>
-                </property>
-                <property id="default_banner_linkpath_protocol" type="String">
-                    <label>Default Banner Link Path Protocol</label>
-                    <defaultValue>http</defaultValue>
-                </property>
-                <property id="autoprefix_banner_linkpath_protocol" type="Boolean">
-                    <label>Autoprefix Banner Link Path Protocol</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-                <property id="default_banner_size" type="String" required="true">
-                    <label>Default Banner Size</label>
-                    <validator>WxH</validator>
-                    <defaultValue>728x90</defaultValue>
-                </property>
-                <property id="allowed_banner_sizes" type="String" multiValued="true">
-                    <label>Allowed Banner Sizes</label>
-                    <validator>WxH</validator>
-                    <defaultValue>180x150,728x90,300x250,728x150</defaultValue>
-                </property>
-                <property id="redirect_self_domain" type="String">
-                    <label>Redirect Self Domain</label>
-                    <defaultValue>pcm.com</defaultValue>
-                </property>
-                <property id="redirect_relative_path" type="String" multiValued="true">
-                    <label>Redirect Relative Path</label>
-                    <defaultValue>/s, /c, /n, /th, /o, /p, /m, /t, /home</defaultValue>
-                </property>
-                <property id="facet_template" type="String">
-                    <label>Facet Template</label>
-                    <defaultValue>CNET</defaultValue>
-                </property>
-            </properties>
-        </module>
-    </store>
+	<store id="macmall" extends="pcmall">
+		<module name="settings" title="Settings">
+			<properties>
+				<property id="site_domain" type="String" required="true">
+					<label>Site Domain</label>
+					<description>Domain of managed site.</description>
+					<defaultValue>macmall.com</defaultValue>
+				</property>
+				<property id="allowed_banner_sizes" type="String"
+					multiValued="true">
+					<label>Allowed Banner Sizes</label>
+					<validator>WxH</validator>
+					<defaultValue>180x150,728x90,300x250,605x150</defaultValue>
+				</property>
+				<property id="export_target" type="String" multiValued="true">
+					<label>Export Target</label>
+					<validator>STORE</validator>
+					<defaultValue>macmallbd</defaultValue>
+				</property>
+				<property id="redirect_self_domain" type="String">
+					<label>Redirect Self Domain</label>
+					<defaultValue>macmall.com</defaultValue>
+				</property>
+				<property id="facet_template" type="String">
+					<label>Facet Template</label>
+					<defaultValue>IMS</defaultValue>
+				</property>
+			</properties>
+		</module>
+	</store>
+
+	<store id="macmallbd" extends="pcmall">
+		<module name="settings" title="Settings">
+			<properties>
+				<property id="site_domain" type="String" required="true">
+					<label>Site Domain</label>
+					<description>Domain of managed site.</description>
+					<defaultValue>macmallbd.com</defaultValue>
+				</property>
+				<property id="allowed_banner_sizes" type="String"
+					multiValued="true">
+					<label>Allowed Banner Sizes</label>
+					<validator>WxH</validator>
+					<defaultValue>180x150,728x90,300x250,605x150</defaultValue>
+				</property>
+				<property id="export_target" type="String" multiValued="true">
+					<label>Export Target</label>
+					<validator>STORE</validator>
+					<defaultValue></defaultValue>
+				</property>
+				<property id="redirect_self_domain" type="String">
+					<label>Redirect Self Domain</label>
+					<defaultValue>macmallbd.com</defaultValue>
+				</property>
+				<property id="facet_template" type="String">
+					<label>Facet Template</label>
+					<defaultValue>IMS</defaultValue>
+				</property>
+			</properties>
+		</module>
+	</store>
+
+	<store id="pcmallcap" extends="pcmall">
+		<module name="workflow" title="Workflow">
+			<groups>
+				<group name="General">
+					<member property-id="maxRunAttempts" />
+				</group>
+				<group name="Auto Import Rules">
+					<member property-id="enable.elevate" />
+					<member property-id="enable.exclude" />
+					<member property-id="enable.demote" />
+					<member property-id="enable.facetSort" />
+					<member property-id="enable.queryCleaning" />
+					<member property-id="enable.didYouMean" />
+					<member property-id="enable.banner" />
+					<member property-id="enable.rankingRule" />
+					<member property-id="enable.typeahead" />
+				</group>
+				<group name="Default Import Status">
+					<member property-id="status.elevate" />
+					<member property-id="status.exclude" />
+					<member property-id="status.demote" />
+					<member property-id="status.facetSort" />
+					<member property-id="status.queryCleaning" />
+					<member property-id="status.didYouMean" />
+					<member property-id="status.banner" />
+					<member property-id="status.rankingRule" />
+					<member property-id="status.typeahead" />
+				</group>
+			</groups>
+
+			<properties>
+				<property id="auto_import" type="Boolean">
+					<label>Authorize Auto Import</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="maxRunAttempts" type="String" required="true">
+					<label>Max Run Attempts</label>
+					<defaultValue>5</defaultValue>
+				</property>
+				<property id="targetStore" type="Boolean" required="true">
+					<label>Target Store</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.elevate" type="Boolean" required="true">
+					<label>Elevate Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.exclude" type="Boolean" required="true">
+					<label>Exclude Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.demote" type="Boolean" required="true">
+					<label>Demote Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.facetSort" type="Boolean" required="true">
+					<label>Facet Sort Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.queryCleaning" type="Boolean"
+					required="true">
+					<label>Redirect Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.didYouMean" type="Boolean" required="true">
+					<label>Did You Mean</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.banner" type="Boolean" required="true">
+					<label>Banner</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.rankingRule" type="Boolean" required="true">
+					<label>Relevancy Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.typeahead" type="Boolean" required="true">
+					<label>Typeahead Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+
+				<property id="status.elevate" type="DropDown" required="true">
+					<label>Elevate</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.exclude" type="DropDown" required="true">
+					<label>Exclude</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.demote" type="DropDown" required="true">
+					<label>Demote</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.facetSort" type="DropDown" required="true">
+					<label>Facet Sort</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.queryCleaning" type="DropDown"
+					required="true">
+					<label>Redirect Rule</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.didYouMean" type="DropDown" required="true">
+					<label>Did You Mean</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.banner" type="DropDown" required="true">
+					<label>Banner Rule</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.rankingRule" type="DropDown" required="true">
+					<label>Relevancy Rule</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.typeahead" type="DropDown" required="true">
+					<label>Typeahead Rule</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+			</properties>
+		</module>
+		<module name="settings" title="Settings">
+			<groups>
+				<group name="New Banner Ads Feature">
+					<member property-id="site_domain" />
+				</group>
+			</groups>
+
+			<properties>
+				<property id="site_domain" type="String" required="true">
+					<label>New Site Domain</label>
+					<defaultValue>pcmbd.com</defaultValue>
+				</property>
+				<property id="redirect_self_domain" type="String">
+					<label>Redirect Self Domain</label>
+					<defaultValue>pcmbd.com</defaultValue>
+				</property>
+			</properties>
+		</module>
+	</store>
+
+	<store id="pcmallgov" extends="pcmall">
+		<module name="workflow" title="Workflow">
+			<groups>
+				<group name="General">
+					<member property-id="maxRunAttempts" />
+				</group>
+				<group name="Auto Import Rules">
+					<member property-id="enable.elevate" />
+					<member property-id="enable.exclude" />
+					<member property-id="enable.demote" />
+					<member property-id="enable.facetSort" />
+					<member property-id="enable.queryCleaning" />
+					<member property-id="enable.didYouMean" />
+					<member property-id="enable.banner" />
+					<member property-id="enable.rankingRule" />
+					<member property-id="enable.typeahead" />
+				</group>
+				<group name="Default Import Status">
+					<member property-id="status.elevate" />
+					<member property-id="status.exclude" />
+					<member property-id="status.demote" />
+					<member property-id="status.facetSort" />
+					<member property-id="status.queryCleaning" />
+					<member property-id="status.didYouMean" />
+					<member property-id="status.banner" />
+					<member property-id="status.rankingRule" />
+					<member property-id="status.typeahead" />
+				</group>
+			</groups>
+
+			<properties>
+				<property id="auto_import" type="Boolean">
+					<label>Authorized Auto Import</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="maxRunAttempts" type="String" required="true">
+					<label>Max Run Attempts</label>
+					<defaultValue>5</defaultValue>
+				</property>
+				<property id="targetStore" type="Boolean" required="true">
+					<label>Target Store</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.elevate" type="Boolean" required="true">
+					<label>Elevate Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.exclude" type="Boolean" required="true">
+					<label>Exclude Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.demote" type="Boolean" required="true">
+					<label>Demote Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.facetSort" type="Boolean" required="true">
+					<label>Facet Sort Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.queryCleaning" type="Boolean"
+					required="true">
+					<label>Redirect Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.didYouMean" type="Boolean" required="true">
+					<label>Did You Mean</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.banner" type="Boolean" required="true">
+					<label>Banner</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.rankingRule" type="Boolean" required="true">
+					<label>Relevancy Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="enable.typeahead" type="Boolean" required="true">
+					<label>Typeahead Rule</label>
+					<defaultValue>true</defaultValue>
+				</property>
+
+				<property id="status.elevate" type="DropDown" required="true">
+					<label>Elevate</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.exclude" type="DropDown" required="true">
+					<label>Exclude</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.demote" type="DropDown" required="true">
+					<label>Demote</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.facetSort" type="DropDown" required="true">
+					<label>Facet Sort</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.queryCleaning" type="DropDown"
+					required="true">
+					<label>Redirect Rule</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.didYouMean" type="DropDown" required="true">
+					<label>Did You Mean</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.banner" type="DropDown" required="true">
+					<label>Banner Rule</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.rankingRule" type="DropDown" required="true">
+					<label>Relevancy Rule</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+				<property id="status.typeahead" type="DropDown" required="true">
+					<label>Typeahead Rule</label>
+					<defaultValue>For Approval</defaultValue>
+				</property>
+			</properties>
+		</module>
+		<module name="settings" title="Settings">
+			<properties>
+				<property id="site_domain" type="String" required="true">
+					<label>Site Domain</label>
+					<description>Domain of the main site.</description>
+					<defaultValue>pcmg.com</defaultValue>
+				</property>
+				<property id="export_target" type="String" multiValued="true">
+					<label>Export Target</label>
+					<validator>STORE</validator>
+					<defaultValue>pcmgbd</defaultValue>
+				</property>
+				<property id="redirect_self_domain" type="String">
+					<label>Redirect Self Domain</label>
+					<defaultValue>pcmg.com</defaultValue>
+				</property>
+			</properties>
+		</module>
+	</store>
+
+	<store id="pcmall">
+		<module name="searchwithin" title="Search Within">
+			<groups>
+				<group name="Search Within">
+					<member property-id="searchwithin.enable" />
+					<member property-id="searchwithin.paramname" />
+					<member property-id="searchwithin.type" />
+					<member property-id="searchwithin.solrfieldlist" />
+					<member property-id="searchwithin.typeOperator" />
+				</group>
+
+				<group name="Include All">
+					<member property-id="searchwithin.includeAll.solrFieldOperator" />
+					<member property-id="searchwithin.includeAll.keywordOperator" />
+					<member property-id="searchwithin.includeAll.quoteKeyword" />
+					<member property-id="searchwithin.includeAll.prefixTypeOperator" />
+				</group>
+
+				<group name="Include Some">
+					<member property-id="searchwithin.includeSome.solrFieldOperator" />
+					<member property-id="searchwithin.includeSome.keywordOperator" />
+					<member property-id="searchwithin.includeSome.quoteKeyword" />
+					<member property-id="searchwithin.includeSome.prefixTypeOperator" />
+				</group>
+
+				<group name="Include Exact">
+					<member property-id="searchwithin.includeExact.solrFieldOperator" />
+					<member property-id="searchwithin.includeExact.keywordOperator" />
+					<member property-id="searchwithin.includeExact.quoteKeyword" />
+					<member property-id="searchwithin.includeExact.prefixTypeOperator" />
+				</group>
+
+				<group name="Exclude All">
+					<member property-id="searchwithin.excludeAll.solrFieldOperator" />
+					<member property-id="searchwithin.excludeAll.keywordOperator" />
+					<member property-id="searchwithin.excludeAll.quoteKeyword" />
+					<member property-id="searchwithin.excludeAll.prefixTypeOperator" />
+				</group>
+			</groups>
+			<properties>
+				<property id="searchwithin.enable" type="Boolean">
+					<label>Enabled</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="searchwithin.paramname" type="String">
+					<label>Param Name</label>
+					<defaultValue>searchWithin</defaultValue>
+				</property>
+				<property id="searchwithin.type" type="String" multiValued="true">
+					<label>Type</label>
+					<defaultValue>includeAll,includeSome,includeExact,excludeAll
+					</defaultValue>
+				</property>
+				<property id="searchwithin.solrfieldlist" type="String"
+					multiValued="true">
+					<label>Solr Field List</label>
+					<defaultValue>PcMall_Name,Description</defaultValue>
+				</property>
+				<property id="searchwithin.typeOperator" type="String">
+					<label>Type Operator</label>
+					<defaultValue>AND</defaultValue>
+				</property>
+
+				<property id="searchwithin.includeAll.solrFieldOperator"
+					type="String">
+					<label>Solr Field Operator</label>
+					<defaultValue>OR</defaultValue>
+				</property>
+				<property id="searchwithin.includeAll.keywordOperator"
+					type="String">
+					<label>Keyword Operator</label>
+					<defaultValue>AND</defaultValue>
+				</property>
+				<property id="searchwithin.includeAll.quoteKeyword" type="Boolean">
+					<label>Quote Keyword</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="searchwithin.includeAll.prefixTypeOperator"
+					type="String">
+					<label>Prefix Type Operator</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="searchwithin.includeSome.solrFieldOperator"
+					type="String">
+					<label>Solr Field Operator</label>
+					<defaultValue>OR</defaultValue>
+				</property>
+				<property id="searchwithin.includeSome.keywordOperator"
+					type="String">
+					<label>Keyword Operator</label>
+					<defaultValue>OR</defaultValue>
+				</property>
+				<property id="searchwithin.includeSome.quoteKeyword" type="Boolean">
+					<label>Quote Keyword</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="searchwithin.includeSome.prefixTypeOperator"
+					type="String">
+					<label>Prefix Type Operator</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="searchwithin.includeExact.solrFieldOperator"
+					type="String">
+					<label>Solr Field Operator</label>
+					<defaultValue>OR</defaultValue>
+				</property>
+				<property id="searchwithin.includeExact.keywordOperator"
+					type="String">
+					<label>Keyword Operator</label>
+					<defaultValue>OR</defaultValue>
+				</property>
+				<property id="searchwithin.includeExact.quoteKeyword" type="Boolean">
+					<label>Quote Keyword</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="searchwithin.includeExact.prefixTypeOperator"
+					type="String">
+					<label>Prefix Type Operator</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="searchwithin.excludeAll.solrFieldOperator"
+					type="String">
+					<label>Solr Field Operator</label>
+					<defaultValue>OR</defaultValue>
+				</property>
+				<property id="searchwithin.excludeAll.keywordOperator"
+					type="String">
+					<label>Keyword Operator</label>
+					<defaultValue>OR</defaultValue>
+				</property>
+				<property id="searchwithin.excludeAll.quoteKeyword" type="Boolean">
+					<label>Quote Keyword</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="searchwithin.excludeAll.prefixTypeOperator"
+					type="String">
+					<label>Prefix Type Operator</label>
+					<defaultValue>-</defaultValue>
+				</property>
+			</properties>
+		</module>
+		<module name="facetsort" title="Facet Sort">
+			<groups>
+				<group>
+					<member property-id="facetsort.enabled" />
+				</group>
+			</groups>
+			<properties>
+				<property id="facetsort.enabled" type="Boolean">
+					<label>Enabled</label>
+					<defaultValue>false</defaultValue>
+				</property>
+			</properties>
+		</module>
+		<module name="spell" title="Did You Mean">
+			<groups>
+				<group>
+					<member property-id="maxSpellSuggestions" />
+				</group>
+			</groups>
+			<properties>
+				<property id="maxSpellSuggestions" type="String">
+					<label>Max Spell Suggestions</label>
+					<defaultValue>3</defaultValue>
+				</property>
+			</properties>
+		</module>
+		<module name="typeahead" title="Type-ahead">
+			<groups>
+				<group name="Threshold">
+					<member property-id="typeahead.dailySearchCountThreshold" />
+					<member property-id="typeahead.dailyDefaultStatus" />
+					<member property-id="typeahead.weeklySearchCountThreshold" />
+					<member property-id="typeahead.weeklyDefaultStatus" />
+				</group>
+				<group name="Display">
+					<member property-id="typeahead.suggestionMax" />
+					<member property-id="typeahead.brandMax" />
+					<member property-id="typeahead.keywordSuggestionMax" />
+					<member property-id="typeahead.keywordBrandMax" />
+					<member property-id="typeahead.keywordCategoryMax" />
+					<member property-id="typeahead.categoryMax" />
+				</group>
+			</groups>
+			<properties>
+				<property id="typeahead.dailySearchCountThreshold" type="String"
+					multiValued="false">
+					<label>Daily Search Count Threshold</label>
+					<defaultValue>2000</defaultValue>
+				</property>
+				<property id="typeahead.dailyDefaultStatus" type="DropDown"
+					required="true">
+					<label>Daily Defauly Status</label>
+					<defaultValue>For Review</defaultValue>
+				</property>
+				<property id="typeahead.weeklySearchCountThreshold" type="String"
+					multiValued="false">
+					<label>Weekly Search Count Threshold</label>
+					<defaultValue>7000</defaultValue>
+				</property>
+				<property id="typeahead.weeklyDefaultStatus" type="DropDown"
+					required="true">
+					<label>Weekly Defauly Status</label>
+					<defaultValue>For Review</defaultValue>
+				</property>
+				<property id="typeahead.suggestionMax" type="String"
+					multiValued="false">
+					<label>Suggestion Max Display</label>
+					<defaultValue>5</defaultValue>
+				</property>
+				<property id="typeahead.brandMax" type="String"
+					multiValued="false">
+					<label>Brand Max Display</label>
+					<defaultValue>5</defaultValue>
+				</property>
+				<property id="typeahead.keywordSuggestionMax" type="String"
+					multiValued="false">
+					<label>Keyword Suggestion Max Display</label>
+					<defaultValue>5</defaultValue>
+				</property>
+				<property id="typeahead.keywordBrandMax" type="String"
+					multiValued="false">
+					<label>Brand Suggestion Max Display</label>
+					<defaultValue>5</defaultValue>
+				</property>
+				<property id="typeahead.keywordCategoryMax" type="String"
+					multiValued="false">
+					<label>Keyword Category Max Display</label>
+					<defaultValue>5</defaultValue>
+				</property>
+				<property id="typeahead.categoryMax" type="String"
+					multiValued="false">
+					<label>Category Max Display</label>
+					<defaultValue>5</defaultValue>
+				</property>
+			</properties>
+		</module>
+		<module name="workflow" title="Workflow">
+			<groups>
+				<group name="Export Feature">
+					<member property-id="auto_export" />
+					<member property-id="export_target" />
+				</group>
+				<group>
+					<member property-id="auto_import" />
+				</group>
+				<group>
+					<member property-id="targetStore" />
+				</group>
+			</groups>
+			<properties>
+				<property id="auto_export" type="Boolean">
+					<label>Auto Export</label>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="export_target" type="String" multiValued="true">
+					<label>Export Target</label>
+					<validator>STORE</validator>
+					<defaultValue>pcmallcap,pcmgbd</defaultValue>
+				</property>
+				<property id="auto_import" type="Boolean">
+					<label>Auto Import to Target</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="targetStore" type="Boolean" required="true">
+					<label>Target Store</label>
+					<defaultValue>true</defaultValue>
+				</property>
+			</properties>
+		</module>
+		<module name="mail" title="Mail">
+			<groups>
+				<group>
+					<member property-id="pendingNotification" />
+					<member property-id="approvalNotification" />
+					<member property-id="pushToProdNotification" />
+				</group>
+
+				<group name="Mail Workflow">
+					<member property-id="mail.workflow.cc" />
+					<member property-id="mail.workflow.bcc" />
+				</group>
+
+				<group>
+					<member property-id="mail.workflow.approver.group" />
+				</group>
+
+				<group name="Pending">
+					<member property-id="mail.workflow.pendingCc" />
+					<member property-id="mail.workflow.pendingBcc" />
+				</group>
+
+				<group name="Approved">
+					<member property-id="mail.workflow.approvedCc" />
+					<member property-id="mail.workflow.approvedBcc" />
+				</group>
+
+				<group name="Rejected">
+					<member property-id="mail.workflow.rejectedCc" />
+					<member property-id="mail.workflow.rejectedBcc" />
+				</group>
+
+				<group name="Published">
+					<member property-id="mail.workflow.publishedCc" />
+					<member property-id="mail.workflow.publishedBcc" />
+				</group>
+
+				<group name="Unpublished">
+					<member property-id="mail.workflow.unpublishedCc" />
+					<member property-id="mail.workflow.unpublishedBcc" />
+				</group>
+
+				<group name="Subject">
+					<member property-id="mail.workflow.pendingSubject" />
+					<member property-id="mail.workflow.approvedSubject" />
+					<member property-id="mail.workflow.rejectedSubject" />
+					<member property-id="mail.workflow.publishedSubject" />
+					<member property-id="mail.workflow.unpublishedSubject" />
+				</group>
+			</groups>
+
+			<properties>
+				<property id="pendingNotification" type="Boolean">
+					<label>Pending Notification</label>
+					<description>Pending Notification</description>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="approvalNotification" type="Boolean">
+					<label>Approval Notification</label>
+					<description>Approval Notification</description>
+					<defaultValue>true</defaultValue>
+				</property>
+				<property id="pushToProdNotification" type="Boolean">
+					<label>Push To Prod Notification</label>
+					<description>Push To Prod Notification</description>
+					<defaultValue>true</defaultValue>
+				</property>
+
+				<property id="mail.workflow.cc" type="String">
+					<label>CC</label>
+					<defaultValue></defaultValue>
+				</property>
+				<property id="mail.workflow.bcc" type="String">
+					<label>BCC</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="mail.workflow.approver.group" type="DropDown">
+					<label>Approver Group</label>
+					<defaultValue>APPROVER</defaultValue>
+				</property>
+
+				<property id="mail.workflow.pendingCc" type="String">
+					<label>Pending CC</label>
+					<defaultValue></defaultValue>
+				</property>
+				<property id="mail.workflow.pendingBcc" type="String">
+					<label>Pending BCC</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="mail.workflow.approvedCc" type="String">
+					<label>Approved CC</label>
+					<defaultValue></defaultValue>
+				</property>
+				<property id="mail.workflow.approvedBcc" type="String">
+					<label>Approved BCC</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="mail.workflow.rejectedCc" type="String">
+					<label>Rejected CC</label>
+					<defaultValue></defaultValue>
+				</property>
+				<property id="mail.workflow.rejectedBcc" type="String">
+					<label>Rejected BCC</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="mail.workflow.publishedCc" type="String">
+					<label>Published CC</label>
+					<defaultValue></defaultValue>
+				</property>
+				<property id="mail.workflow.publishedBcc" type="String">
+					<label>Published BCC</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="mail.workflow.unpublishedCc" type="String">
+					<label>Unpublished CC</label>
+					<defaultValue></defaultValue>
+				</property>
+				<property id="mail.workflow.unpublishedBcc" type="String">
+					<label>Unpublished BCC</label>
+					<defaultValue></defaultValue>
+				</property>
+
+				<property id="mail.workflow.pendingSubject" type="String">
+					<label>Pending Rule Subject</label>
+					<defaultValue>Search Manager: Rules Submitted For Approval
+					</defaultValue>
+				</property>
+				<property id="mail.workflow.approvedSubject" type="String">
+					<label>Approved Rule Subject</label>
+					<defaultValue>Search Manager: Approved Rules</defaultValue>
+				</property>
+				<property id="mail.workflow.rejectedSubject" type="String">
+					<label>Rejected Rule Subject</label>
+					<defaultValue>Search Manager: Rejected Rules</defaultValue>
+				</property>
+				<property id="mail.workflow.publishedSubject" type="String">
+					<label>Published Rule Subject</label>
+					<defaultValue>Search Manager: Published Rules</defaultValue>
+				</property>
+				<property id="mail.workflow.unpublishedSubject" type="String">
+					<label>UnPublished Rule Subject</label>
+					<defaultValue>Search Manager: Un-published Rules</defaultValue>
+				</property>
+			</properties>
+		</module>
+		<module name="settings" title="Settings">
+			<groups>
+				<group name="Banner Ads Feature">
+					<member property-id="site_domain" />
+					<member property-id="default_banner_linkpath_protocol" />
+					<member property-id="autoprefix_banner_linkpath_protocol" />
+					<member property-id="default_banner_size" />
+					<member property-id="allowed_banner_sizes" />
+				</group>
+				<group name="Redirect URL">
+					<member property-id="redirect_self_domain" />
+					<member property-id="redirect_relative_path" />
+				</group>
+				<group>
+					<member property-id="facet_template" />
+				</group>
+			</groups>
+
+			<properties>
+				<property id="site_domain" type="String" required="true">
+					<label>Site Domain</label>
+					<description>Domain of managed site.</description>
+					<defaultValue>pcm.com</defaultValue>
+				</property>
+				<property id="default_banner_linkpath_protocol" type="String">
+					<label>Default Banner Link Path Protocol</label>
+					<defaultValue>http</defaultValue>
+				</property>
+				<property id="autoprefix_banner_linkpath_protocol" type="Boolean">
+					<label>Autoprefix Banner Link Path Protocol</label>
+					<defaultValue>false</defaultValue>
+				</property>
+				<property id="default_banner_size" type="String" required="true">
+					<label>Default Banner Size</label>
+					<validator>WxH</validator>
+					<defaultValue>728x90</defaultValue>
+				</property>
+				<property id="allowed_banner_sizes" type="String"
+					multiValued="true">
+					<label>Allowed Banner Sizes</label>
+					<validator>WxH</validator>
+					<defaultValue>180x150,728x90,300x250,728x150</defaultValue>
+				</property>
+				<property id="redirect_self_domain" type="String">
+					<label>Redirect Self Domain</label>
+					<defaultValue>pcm.com</defaultValue>
+				</property>
+				<property id="redirect_relative_path" type="String"
+					multiValued="true">
+					<label>Redirect Relative Path</label>
+					<defaultValue>/s, /c, /n, /th, /o, /p, /m, /t, /home</defaultValue>
+				</property>
+				<property id="facet_template" type="String">
+					<label>Facet Template</label>
+					<defaultValue>CNET</defaultValue>
+				</property>
+			</properties>
+		</module>
+	</store>
 </store-properties>
