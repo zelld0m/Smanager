@@ -11,6 +11,8 @@ public interface ImagePathDwrService {
 
     ServiceResponse<ImagePath> getImagePath(String storeId, String imageUrl);
 
+	ServiceResponse<ImagePath> getImagePathByAlias(String storeId, String alias);
+
     // Add ImagePathDwrService specific method here...
 
 }

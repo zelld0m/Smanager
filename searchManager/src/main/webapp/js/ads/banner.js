@@ -886,21 +886,34 @@
                         "openNewWindow": params["openNewWindow"],
                         "imageSize": params["imageSize"]
                     };
-
-                    BannerRuleItemService.addRuleItem(GLOBAL_storeId, mapParams, {
-                        callback: function(sr) {
-                            switch (sr["status"]) {
-                                case 0:
-                                    jAlert($.formatText(self.lookupMessages.successAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule", function() {
-                                        $("#itemFilter").val("all");
-                                        self.getRuleItemList(1);
-                                    });
-                                    break;
-                                default:
-                                    jAlert($.formatText(sr["errorMessage"]["message"], params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule");
-                            }
-                        }
-                    });
+                    ImagePathService.getImagePathByAlias(GLOBAL_storeId, params['imageAlias'], {
+                    	callback: function(response) {
+                    		var data = response.data;
+                    		if(data) {
+                    			if(data.imagePath != params['imagePath']) {
+                    				jAlert('This alias already exists in another image.', 'Banner Rule');
+                    				return;
+                    			}
+                    		}
+                    		
+                    		BannerRuleItemService.addRuleItem(GLOBAL_storeId, mapParams, {
+                                callback: function(sr) {
+                                    switch (sr["status"]) {
+                                        case 0:
+                                            jAlert($.formatText(self.lookupMessages.successAddBannerToKeyword, params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule", function() {
+                                                $("#itemFilter").val("all");
+                                                self.getRuleItemList(1);
+                                            });
+                                            break;
+                                        default:
+                                            jAlert($.formatText(sr["errorMessage"]["message"], params["imageAlias"], params["ruleName"], params["priority"]), "Banner Rule");
+                                    }
+                                }
+                            });
+                    	}
+                    }); 
+                    
+                    
                 }
             }).show();
         },
