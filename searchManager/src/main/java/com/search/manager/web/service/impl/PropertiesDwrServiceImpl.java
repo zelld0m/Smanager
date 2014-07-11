@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.sf.json.JSONObject;
 
+import org.apache.http.NameValuePair;
 import org.directwebremoting.annotations.*;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.search.manager.core.service.PropertiesService;
 import com.search.manager.properties.model.DBProperty;
 import com.search.manager.service.UtilityService;
 import com.search.manager.web.service.PropertiesDwrService;
+import com.search.ws.ConfigManager;
 
 @Service(value = "propertiesDwrService")
 @RemoteProxy(
@@ -26,6 +28,8 @@ public class PropertiesDwrServiceImpl implements PropertiesDwrService{
 	private UtilityService utilityService;
 	@Autowired
 	private PropertiesService propertiesServce;
+	@Autowired
+	private ConfigManager configManager;
 	
 	@RemoteMethod
 	public String getStoreProperties() {
@@ -39,6 +43,20 @@ public class PropertiesDwrServiceImpl implements PropertiesDwrService{
 			
 		}
 		
+		return json.toString();
+	}
+	
+	@RemoteMethod
+	public String getDefaultSolrParameters() {
+		String store = utilityService.getStoreId();
+		
+
+		JSONObject json = new JSONObject();
+		
+		for(NameValuePair pair : configManager.getDefaultSolrParameters(store)) {
+			json.put(pair.getName(), pair.getValue());
+		}
+						
 		return json.toString();
 	}
 }

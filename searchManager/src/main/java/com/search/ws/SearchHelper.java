@@ -567,6 +567,9 @@ public class SearchHelper {
 			        .concat("select?");
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			for(NameValuePair pair : configManager.getDefaultSolrParameters(storeId)) {
+				nameValuePairs.add(new BasicNameValuePair(pair.getName(), pair.getValue()));
+			}
 			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
 			nameValuePairs.add(new BasicNameValuePair("qt", "standard"));
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));

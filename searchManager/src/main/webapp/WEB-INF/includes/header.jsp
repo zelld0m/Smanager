@@ -32,6 +32,7 @@
 
 
   <spring:eval expression="@propertiesDwrService.getStoreProperties()" var="storeProperties" />
+  <spring:eval expression="@propertiesDwrService.getDefaultSolrParameters()" var="storeSolrParameters" />
   <spring:eval expression="@utilityService.getSolrConfig()" var="solrConfig" />
   <spring:eval expression="@utilityService.getStoreParameters()" var="storeParameters" />
   <spring:eval expression="@utilityService.getIndexedSchemaFields()" var="schemaFields" />
@@ -54,7 +55,7 @@
 	var GLOBAL_currentDate = new timezoneJS.Date('${year}', '${month-1}', '${day}', '${hour}', '${min}', GLOBAL_timeZoneId);
 	
 	var GLOBAL_storeProperties = $.parseJSON('${storeProperties}');
-	
+	var GLOBAL_storeSolrParameters = $.parseJSON('${storeSolrParameters}');
 	//store schema indexed fields
 	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
 	var GLOBAL_indexedFields = GLOBAL_schemaFields["indexedFields"];
@@ -160,6 +161,11 @@
 		'gui': GLOBAL_isFromGUI,
 		'json.nl': 'map'
 	};
+	
+	for(obj in GLOBAL_storeSolrParameters) {
+		GLOBAL_typeaheadSolrParams[obj] = GLOBAL_storeSolrParameters[obj];
+	}
+	
   </script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
