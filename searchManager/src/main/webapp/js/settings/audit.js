@@ -52,7 +52,8 @@
 				else {
 					$('#resultsBody').append('<tr><td colspan=7 class="txtAC fsize12" >No matching records found.</td></tr>');
 				}
-				addFieldValuesPaging(curPage, totalSize);					
+				addFieldValuesPaging(curPage, totalSize);	
+				$("#resultsBody").find('td').css('padding', '5px 2px 5px');
 			}
 		});		
 
