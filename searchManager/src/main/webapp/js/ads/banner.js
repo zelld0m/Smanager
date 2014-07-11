@@ -890,7 +890,7 @@
                     	callback: function(response) {
                     		var data = response.data;
                     		if(data) {
-                    			if(data.imagePath != params['imagePath']) {
+                    			if(data.path != params['imagePath']) {
                     				jAlert('This alias already exists in another image.', 'Banner Rule');
                     				return;
                     			}
@@ -1079,20 +1079,31 @@
                                 params["ruleName"] = self.selectedRule["ruleName"];
                                 params["memberId"] = e.data.item["memberId"];
                                 params["imageSize"] = $("#filterBySize > option:selected").val();
-
-                                BannerRuleItemService.updateRuleItem(GLOBAL_storeId, params, {
-                                    callback: function(sr) {
-                                        switch (sr["status"]) {
-                                            case 0:
-                                                jAlert($.formatText(self.lookupMessages.successUpdateBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule", function() {
-                                                    self.getRuleItemList(self.selectedRuleItemPage);
-                                                });
-                                                break;
-                                            default:
-                                                jAlert($.formatText(sr["errorMessage"]["message"], e.data.item["imagePath"]["alias"]), "Banner Rule");
-                                        }
-                                    }
-                                });
+                                
+                                ImagePathService.getImagePathByAlias(GLOBAL_storeId, imageAlias, {
+                                	callback: function(response) {
+                                		var data = response.data;
+                                		if(data) {
+                                			if(data.path != imagePath) {
+                                				jAlert('This alias already exists in another image.', 'Banner Rule');
+                                				return;
+                                			}
+                                		}
+                                
+		                                BannerRuleItemService.updateRuleItem(GLOBAL_storeId, params, {
+		                                    callback: function(sr) {
+		                                        switch (sr["status"]) {
+		                                            case 0:
+		                                                jAlert($.formatText(self.lookupMessages.successUpdateBannerItem, e.data.item["imagePath"]["alias"]), "Banner Rule", function() {
+		                                                    self.getRuleItemList(self.selectedRuleItemPage);
+		                                                });
+		                                                break;
+		                                            default:
+		                                                jAlert($.formatText(sr["errorMessage"]["message"], e.data.item["imagePath"]["alias"]), "Banner Rule");
+		                                        }
+		                                    }
+		                                });
+                                }});
                             }
                         });
                     }

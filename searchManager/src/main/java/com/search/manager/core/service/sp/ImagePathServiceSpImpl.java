@@ -236,6 +236,13 @@ public class ImagePathServiceSpImpl implements ImagePathService {
 
         ImagePath imagePath = new ImagePath(storeId, imagePathId, null, null, null, alias, null, username);
 
+        ImagePath existing = searchById(storeId, imagePathId);
+        
+        if(existing != null) {
+        	existing.setAlias(alias);
+        	imagePath = existing;
+        }
+        
         return update(imagePath);
     }
 
