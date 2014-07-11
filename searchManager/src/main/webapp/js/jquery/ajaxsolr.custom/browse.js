@@ -353,20 +353,17 @@
 
 			result.find('a.autocompleteLink').on({
 				click: function() {
-					
-					var indices = Manager.store.find("fq", new RegExp('^' + GLOBAL_storeFacetTemplate + ':'));
-
-					if ($.isNotBlank(indices) && indices.length > 0){
-						for(var i=0; i< indices.length; i++)
-							Manager.store.remove("fq", indices[i]);
-					}
-
-					indices = Manager.store.find("fq", new RegExp('^Manufacturer:'));
-
-					if ($.isNotBlank(indices) && indices.length > 0){
-						for(var i=0; i< indices.length; i++)
-							Manager.store.remove("fq", indices[i]);
-					}
+			
+					Manager.store.remove('fq');
+					Manager.store.remove('disableElevate');
+					Manager.store.remove('disableExclude');
+					Manager.store.remove('disableDemote');
+					Manager.store.remove('disableFacetSort');
+					Manager.store.remove('disableRedirect');
+					Manager.store.remove('disableRelevancy');
+					Manager.store.remove('disableDidYouMean');
+					Manager.store.remove('disableBanner');
+					Manager.widgets[WIDGET_ID_searchWithin].clear();
 					
 					$('#keyword').val($(this).find('span#keyword').text());
 					$('#searchKeyword').find('a#searchBtn').click();

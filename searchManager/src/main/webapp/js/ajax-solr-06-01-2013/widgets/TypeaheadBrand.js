@@ -101,19 +101,16 @@
 			});
 		},
 		clearFilters : function(manager) {			
-			var indices = manager.store.find("fq", new RegExp('^' + GLOBAL_storeFacetTemplate + ':'));
-
-			if ($.isNotBlank(indices) && indices.length > 0){
-				for(var i=0; i< indices.length; i++)
-					manager.store.remove("fq", indices[i]);
-			}
-
-			indices = manager.store.find("fq", new RegExp('^Manufacturer:'));
-
-			if ($.isNotBlank(indices) && indices.length > 0){
-				for(var i=0; i< indices.length; i++)
-					manager.store.remove("fq", indices[i]);
-			}
+			manager.store.remove('fq');
+			manager.store.remove('disableElevate');
+			manager.store.remove('disableExclude');
+			manager.store.remove('disableDemote');
+			manager.store.remove('disableFacetSort');
+			manager.store.remove('disableRedirect');
+			manager.store.remove('disableRelevancy');
+			manager.store.remove('disableDidYouMean');
+			manager.store.remove('disableBanner');
+			manager.widgets[WIDGET_ID_searchWithin].clear();
 		}
 	});
 
