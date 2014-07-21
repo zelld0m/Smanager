@@ -2,6 +2,7 @@
 
     var RedirectRule = {
         moduleName: "Query Cleaning",
+        alertHeader: "Redirect Rule",
         selectedRule: null,
         selectedRuleStatus: null,
         ruleFilterText: "",
@@ -601,10 +602,10 @@
             RedirectServiceJS.updateRedirectUrl(self.selectedRule["ruleId"], inputVal, {
                 callback: function(data) {
                     if (data > 0) {
-                    	 jAlert("Redirect URL successfully saved.", self.moduleName);
+                    	 jAlert("Redirect URL successfully saved.", self.alertHeader);
                         self.selectedRule["redirectUrl"] = inputVal;
                     } else {
-                    	jAlert("Redirect URL save unsuccessful.", self.moduleName);
+                    	jAlert("Redirect URL save unsuccessful.", self.alertHeader);
                         $input.val(self.selectedRule["redirectUrl"]);
                     }
                 },
@@ -1276,7 +1277,7 @@
                         $table.find("tr#dynamicAttributeName").hide();
 
                         if ($.isNotBlank(selectedTemplateName)) {
-                            jAlert("Selected template name does not have any dynamic attributes.", self.moduleName);
+                            jAlert("Selected template name does not have any dynamic attributes.", self.alertHeader);
                         }
                     }
                 },
@@ -1317,7 +1318,7 @@
                         $table.find("tr#dynamicAttributeName").hide();
 
                         if ($.isNotBlank(selectedTemplateName)) {
-                            jAlert("Selected template name does not have any dynamic attributes.", self.moduleName);
+                            jAlert("Selected template name does not have any dynamic attributes.", self.alertHeader);
                         }
                     }
                 },

@@ -1398,7 +1398,7 @@
 			}else{
 				base.contentHolder.find("#conditionText").text(base.options.item.condition["readableString"]);
 
-				var formattedExpiryDate = $.toStoreFormat(base.options.item["expiryDate"]);
+				var formattedExpiryDate = $.toStoreFormat(base.options.item["expiryDate"], "MM/dd/yyyy");
 				if($.isNotBlank(formattedExpiryDate)){
 					base.contentHolder.find("#addItemDate").val(formattedExpiryDate);
 				};

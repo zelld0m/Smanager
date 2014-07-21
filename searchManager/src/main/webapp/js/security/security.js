@@ -180,6 +180,7 @@
 										sec.expadd = contentHolder.find("#adexp_1").val();
 									}
 								});	
+								api.reposition();
 							},
 							hide:function(evt, api){
 								api.destroy();
@@ -448,7 +449,7 @@
 						}
 					});		
 
-					$("#addUserBtn").on({
+					$("#addUserBtn").find('div').on({
 						click: sec.showAdd
 					});
 

@@ -576,7 +576,7 @@
 				</property>
 				<property id="typeahead.dailyDefaultStatus" type="DropDown"
 					required="true">
-					<label>Daily Defauly Status</label>
+					<label>Daily Default Status</label>
 					<defaultValue>For Review</defaultValue>
 				</property>
 				<property id="typeahead.weeklySearchCountThreshold" type="String"
@@ -586,7 +586,7 @@
 				</property>
 				<property id="typeahead.weeklyDefaultStatus" type="DropDown"
 					required="true">
-					<label>Weekly Defauly Status</label>
+					<label>Weekly Default Status</label>
 					<defaultValue>For Review</defaultValue>
 				</property>
 				<property id="typeahead.suggestionMax" type="String"

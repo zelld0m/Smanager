@@ -214,6 +214,7 @@
 			},
 
 			checkDuplicateFacet : function (e, u, facetGroupId){
+				var self = this;
 				if($("div#_" + facetGroupId).hasClass("isShown")){
 					var value = u.value;
 					$("select#_items_"+facetGroupId).not($(e.currentTarget)).each(function() {

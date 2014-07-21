@@ -247,8 +247,16 @@ public class RelevancyService extends RuleService {
             rule.setDescription(description);
 //            rule.setStartDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, startDate, JodaPatternType.DATE));
 //            rule.setEndDate(JodaDateTimeUtil.toDateTimeFromStorePattern(storeId, endDate, JodaPatternType.DATE));
-            rule.setStartDate(jodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
-            rule.setEndDate(jodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
+            if(StringUtils.isNotEmpty(startDate)) {
+            	rule.setStartDate(jodaDateTimeUtil.toUserDateTimeZone(storeId, startDate));
+            } else {
+            	rule.setStartDate(null);
+            }
+            if(StringUtils.isNotEmpty(endDate)) {
+            	rule.setEndDate(jodaDateTimeUtil.toUserDateTimeZone(storeId, endDate));
+            } else {
+            	rule.setEndDate(null);
+            }
             rule.setLastModifiedBy(utilityService.getUsername());
             return daoService.updateRelevancy(rule);
         } catch (DaoException e) {
