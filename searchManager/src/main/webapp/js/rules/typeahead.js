@@ -507,7 +507,9 @@
 
 					if('updateRules' == dwrFunction) {
 						for(var i=0; i<array.length; i++) {
-							if(!validateIntegerValue(array[i].priority)) {
+							var rule = array[i];
+							var $divRow = self.$dialogObject.find('input#'+rule.ruleId).parent().parent();
+							if(!validateIntegerValue($divRow.find('input.sortOrder').val())) {
 								jAlert('Please enter a valid integer value.', self.moduleName);
 								
 								return;
