@@ -192,8 +192,6 @@
 				render: function(e, api){
 					var $content = $("div", api.elements.content).html($("#setupFieldValueS3").html());
 
-					$content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
-					$content.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
 					bqSearchKeyword = ""; 
 					bqExcFields = new Array();
 
@@ -203,7 +201,8 @@
 					RelevancyServiceJS.getValuesByString(currVal,{
 						callback: function(data){
 							var list = data.boostQuery;
-
+							$content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+							$content.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
 							// set to selected
 							if (data!=null && list!=null){
 								if (data.isCategoryOnly){
@@ -301,7 +300,7 @@
 									populateFieldValues($content, 1);
 								}
 							});
-
+							api.reposition();
 						}
 					});
 				},
@@ -670,6 +669,7 @@
 							}	
 
 							populateSchemaFields($contentHolder,1);
+							api.reposition();
 						},
 						preHook: function(){
 							$contentHolder.find("tbody#fieldSelectedPattern > tr").not("#fieldSelectedPattern").remove();
