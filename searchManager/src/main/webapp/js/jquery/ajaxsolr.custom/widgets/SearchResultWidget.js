@@ -24,11 +24,18 @@
 				if (this.manager.response.response.docs.length == 0){
 					$(this.target).append(AjaxSolr.theme('noSearchResult', keyword));
 				}else{
-
+					
+					var redirectKeyword = self.manager.response.responseHeader["redirect_keyword"];
+					var keywordUsed = keyword;
+	                if (!$.isEmptyObject(redirectKeyword) &&
+	                        $.isNotBlank(redirectKeyword["replacement_keyword"])) {
+	                    keywordUsed = redirectKeyword["replacement_keyword"];
+	                }
+					
 					for (var i = 0, l = self.manager.response.response.docs.length; i < l; i++) {
 						var doc = self.manager.response.response.docs[i];
 						var debug = self.manager.response.debug.explain[doc.EDP]; 
-						$(self.target).append(AjaxSolr.theme('result', i, hasKeyword,doc, AjaxSolr.theme('snippet', doc), self.auditHandler(doc), self.docHandler(doc), self.debugHandler(doc), self.featureHandler(keyword,doc), self.elevateHandler(keyword,doc), self.excludeHandler(keyword,doc), self.demoteHandler(keyword,doc),self.forceAddHandler(doc)));
+						$(self.target).append(AjaxSolr.theme('result', i, hasKeyword,doc, AjaxSolr.theme('snippet', doc), self.auditHandler(doc), self.docHandler(doc), self.debugHandler(doc), self.featureHandler(keywordUsed,doc), self.elevateHandler(keywordUsed,doc), self.excludeHandler(keywordUsed,doc), self.demoteHandler(keywordUsed,doc),self.forceAddHandler(doc)));
 
 						if (doc.Expired != undefined)
 							$(this.target).find("li#resultItem_" + doc.EDP + " div#expiredHolder").attr("style","display:float");
