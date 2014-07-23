@@ -205,6 +205,7 @@
 					},
 					postHook:function(){
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 				break;
@@ -215,6 +216,7 @@
 					},
 					postHook:function(){
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 				break;
@@ -225,6 +227,7 @@
 					},
 					postHook:function(){
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 				break;
@@ -307,6 +310,7 @@
 					postHook: function() {
 						$table.find("tr#preloader").hide();
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 
@@ -354,6 +358,7 @@
 					postHook:function(){
 						$table.find("tr#preloader").hide();
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 				break;
@@ -434,6 +439,7 @@
 					},
 					postHook: function(){
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 
@@ -465,6 +471,7 @@
 					},
 					postHook: function(){
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 
@@ -497,6 +504,7 @@
 					postHook:function() {
 						$table.find("tr#preloader").hide();
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 				break;
@@ -513,6 +521,7 @@
 					postHook:function(){
 						$table.find("tr#preloader").hide();
 						base.options.templateEvent(base);
+						base.$el.qtip('reposition');
 					}
 				});
 				break;
