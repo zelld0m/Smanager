@@ -363,7 +363,9 @@
 						var rows = self.$table.find("tr:not(#header)");
 
 						for ( var i = 0; i < rows.length; i++) {
-							$(rows[i]).data('spellRule').setEditable(true);
+							if($(rows[i]).data('spellRule')) {
+								$(rows[i]).data('spellRule').setEditable(true);
+							}
 						}
 					}
 				});
@@ -394,8 +396,10 @@
 							var rows = self.$table.find("tr:not(#header)");
 
 							for ( var i = 0; i < rows.length; i++) {
-								$(rows[i]).data('spellRule').revert();
-								$(rows[i]).data('spellRule').setEditable(false);
+								if($(rows[i]).data('spellRule')) {
+									$(rows[i]).data('spellRule').revert();
+									$(rows[i]).data('spellRule').setEditable(false);
+								}
 							}
 							
 							self.$maxSuggest.attr("disabled", "true");
@@ -411,104 +415,13 @@
 
 				self.$saveButton.on({
 					click : function(e) {
-						if (self.busy) {
-							return;
-						}
-						
-						self.busy = true;
-						
-						if (self.mode == 'add') {
-							var rules = self.$table.find("tr.spell-rule");
-							var entities = [];
-
-							for ( var i = 0; i < rules.length; i++) {
-								entities.push($(rules[i]).data('spellRule').data());
-							}
-
-							var hasChanges = entities.length > 0;
-
-							if (self.validate(entities) && hasChanges) {
-								SpellRuleServiceJS.addSpellRuleBatch(entities,
-									function(response) {
-										self.busy = false;
-										// success
-										if (response.status == 0) {
-											self.$footer.detach();
-											self.$table.find("tr:not(#header)").remove();
-											self.mode = 'display';
-											self.handlePageLink(1);
-											$(".button-group-1").hide();
-											$(".button-group-0").show();
-											self.$pager.show();
-											self.$maxSuggest.parent().show();
-											self.addFilterEventHandlers();
-										} else {
-											jAlert(response.errorMessage.message, "Did You Mean");
-											
-											if (response.errorMessage.data) {
-												for ( var i = 0; i < rules.length; i++) {
-													$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
-												}
-											}
-										}
-									});
-							} else if (!hasChanges) {
-								self.busy = false;
-								self.$cancelButton.click();
-							} else {
-								self.busy = false;
-							}
-						} else if (self.mode == 'edit') {
-							var rules = self.$table.find("tr.spell-rule");
-							var entities = [];
-							var deleted = [];
-
-							for ( var i = 0; i < rules.length; i++) {
-								var spellRuleData = $(rules[i]).data('spellRule');
-								if (spellRuleData.isModified()) {
-									entities.push(spellRuleData.data());
+						jConfirm('Are you sure you want to save?', "Did You Mean", 
+								function(result) {
+									if(result) {
+											self.save();
+									}
 								}
-							}
-
-							for ( var i = 0; i < self.deleted.length; i++) {
-								deleted.push($(self.deleted[i].el).data('spellRule').data());
-							}
-
-							if (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0) {
-								if (validateInteger("Maximum suggestions", self.$maxSuggest.val(), 1, 10) && self.validate(entities)) {
-									SpellRuleServiceJS.updateSpellRuleBatch(GLOBAL_storeId, parseInt(self.$maxSuggest.val()), entities, deleted,
-										function(response) {
-											self.busy = false;
-											// success
-											if (response.status == 0) {
-												self.$table.find("tr:not(#header)").remove();
-												self.mode = 'display';
-												self.handlePageLink();
-												self.maxSuggest = self.$maxSuggest.val();
-												$(".button-group-1").hide();
-												$(".button-group-0").show();
-												self.$maxSuggest.val(parseInt(self.$maxSuggest.val()));
-												self.$maxSuggest.attr("disabled", true);
-												self.$pager.show();
-												self.addFilterEventHandlers();
-											} else {
-												jAlert(response.errorMessage.message, "Did You Mean");
-												
-												if (response.errorMessage.data) {
-													for ( var i = 0; i < rules.length; i++) {
-														$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
-													}
-												}
-											}
-										});
-								} else {
-									self.busy = false;
-								}
-							} else {
-								self.busy = false;
-								self.$cancelButton.click();
-							}
-						}
+						);
 					}
 				});
 
@@ -519,7 +432,108 @@
 				$("#spell-rules #action-buttons").hide();
 			}
 		},
-		
+		save: function() {
+			var self = this;
+			if (self.busy) {
+				return;
+			}
+			
+			self.busy = true;
+			
+			if (self.mode == 'add') {
+				var rules = self.$table.find("tr.spell-rule");
+				var entities = [];
+
+				for ( var i = 0; i < rules.length; i++) {
+					entities.push($(rules[i]).data('spellRule').data());
+				}
+
+				var hasChanges = entities.length > 0;
+
+				if (self.validate(entities) && hasChanges) {
+					SpellRuleServiceJS.addSpellRuleBatch(entities,
+						function(response) {
+							self.busy = false;
+							// success
+							if (response.status == 0) {
+								self.$footer.detach();
+								self.$table.find("tr:not(#header)").remove();
+								self.mode = 'display';
+								self.handlePageLink(1);
+								$(".button-group-1").hide();
+								$(".button-group-0").show();
+								self.$pager.show();
+								self.$maxSuggest.parent().show();
+								self.addFilterEventHandlers();
+							} else {
+								jAlert(response.errorMessage.message, "Did You Mean");
+								
+								if (response.errorMessage.data) {
+									for ( var i = 0; i < rules.length; i++) {
+										$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
+									}
+								}
+							}
+						});
+				} else if (!hasChanges) {
+					self.busy = false;
+					self.$cancelButton.click();
+				} else {
+					self.busy = false;
+				}
+			} else if (self.mode == 'edit') {
+				var rules = self.$table.find("tr.spell-rule");
+				var entities = [];
+				var deleted = [];
+
+				for ( var i = 0; i < rules.length; i++) {
+					var spellRuleData = $(rules[i]).data('spellRule');
+					if (spellRuleData.isModified()) {
+						entities.push(spellRuleData.data());
+					}
+				}
+
+				for ( var i = 0; i < self.deleted.length; i++) {
+					deleted.push($(self.deleted[i].el).data('spellRule').data());
+				}
+
+				if (self.$maxSuggest.val() != self.maxSuggest || entities.length > 0 || deleted.length > 0) {
+					if (validateInteger("Maximum suggestions", self.$maxSuggest.val(), 1, 10) && self.validate(entities)) {
+						SpellRuleServiceJS.updateSpellRuleBatch(GLOBAL_storeId, parseInt(self.$maxSuggest.val()), entities, deleted,
+							function(response) {
+								self.busy = false;
+								// success
+								if (response.status == 0) {
+									self.$table.find("tr:not(#header)").remove();
+									self.mode = 'display';
+									self.handlePageLink(self.currentPage);
+									self.maxSuggest = self.$maxSuggest.val();
+									$(".button-group-1").hide();
+									$(".button-group-0").show();
+									self.$maxSuggest.val(parseInt(self.$maxSuggest.val()));
+									self.$maxSuggest.attr("disabled", true);
+									self.$pager.show();
+									self.addFilterEventHandlers();
+									self.deleted = [];
+								} else {
+									jAlert(response.errorMessage.message, "Did You Mean");
+									
+									if (response.errorMessage.data) {
+										for ( var i = 0; i < rules.length; i++) {
+											$(rules[i]).data('spellRule').highlight(response.errorMessage.data);
+										}
+									}
+								}
+							});
+					} else {
+						self.busy = false;
+					}
+				} else {
+					self.busy = false;
+					self.$cancelButton.click();
+				}
+			}
+		},
 		validate: function(entities, maxSuggest) {
 			for (var i = 0; i < entities.length; i++) {
 				if (entities[i].searchTerms.length == 0 || entities[i].suggestions.length == 0) {
@@ -680,6 +694,7 @@
 					self.$pager.paginate(self.getPageOptions(page, response.data.totalSize));
 				} else {
 					this.$table.append(this.$noResultsRow.clone().show());
+					self.$pager.paginate(self.getPageOptions(page, response.data.totalSize));
 					self.$pager.hide();
 				}
 			} else {
