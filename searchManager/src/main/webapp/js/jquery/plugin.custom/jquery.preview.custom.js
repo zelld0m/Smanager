@@ -72,6 +72,7 @@
 			}
 
 			base.contentHolder.find('div#forceAdd').hide();
+			base.$el.qtip('reposition');
 		};
 
 		base.setImage = function(tr, item){
