@@ -132,9 +132,7 @@
                         <h2 class="borderB padB3">Create Filter Group : 
                             <select id="filterGroup" name="select" class="selectCombo w178" >
                                 <option value="ims">IMS Categories</option>
-                                <c:if test="${storeId eq 'pcmall' or storeId eq 'pcmallcap' or storeId eq 'pcmallgov'}">
-                                    <option value="cnet">Product Site Taxonomy</option>
-                                </c:if>
+                                <option value="cnet">Product Site Taxonomy</option>
                                 <option value="facet">Facets</option>
                             </select>
                             <a id="addFilterGroupBtn" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
