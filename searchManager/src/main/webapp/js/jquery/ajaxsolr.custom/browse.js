@@ -408,11 +408,11 @@
 				typeaheadCategoryManager.store.addByValue('rows', 1);
 				typeaheadCategoryManager.store.addByValue('json.nl', "map");
 				typeaheadCategoryManager.store.addByValue('group', 'true'); 
-				typeaheadCategoryManager.store.addByValue('group.field', GLOBAL_storeFacetTemplate);
+				typeaheadCategoryManager.store.addByValue('group.field', GLOBAL_storeFacetTemplateName);
 				typeaheadCategoryManager.store.addByValue('group.limit', 1);
 				typeaheadCategoryManager.store.addByValue('group.main', 'true');
 				typeaheadCategoryManager.store.addByValue('facet', 'true');
-				typeaheadCategoryManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplate); 
+				typeaheadCategoryManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplateName); 
 				typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
 				typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
 

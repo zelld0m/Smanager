@@ -62,7 +62,7 @@
 
 			brandCountMap = new Object();
 
-			var categories = self.manager.response.FacetTemplate.Level1;
+			var categories = (self.manager.response.FacetTemplate) ? self.manager.response.FacetTemplate.Level1 : self.manager.response.facet_counts.facet_fields.Category;
 
 			if(self.countAttributes(categories) > 1) {
 				var counter = 0;
