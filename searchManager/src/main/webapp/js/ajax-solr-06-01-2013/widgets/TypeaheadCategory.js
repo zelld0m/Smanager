@@ -65,12 +65,11 @@
 			var categories = (self.manager.response.FacetTemplate) ? self.manager.response.FacetTemplate.Level1 : self.manager.response.facet_counts.facet_fields.Category;
 
 			if(self.countAttributes(categories) > 1) {
-				var counter = 0;
-				for(obj in categories) {
-					if(counter == GLOBAL_storeMaxCategory)
+				var sortedCategories = this.sortCategoriesByValue(categories);
+				for(var i=0; i<sortedCategories.length; i++) {
+					if(i == GLOBAL_storeMaxCategory)
 						break;
-					$(self.target).append(self.getContent(obj, categories[obj]));
-					counter ++;
+					$(self.target).append(self.getContent(sortedCategories[i][0], categories[sortedCategories[i][0]]));
 				}
 			}
 
@@ -113,6 +112,17 @@
 					$(self.searchBox).autocomplete("close");
 				}
 			});
+		},
+		sortCategoriesByValue: function(categories) {
+			var sortable = [];
+			
+			for(category in categories) {
+				sortable.push([category, categories[category]]);
+			}
+			
+			sortable.sort(function(a, b) {return b[1] - a[1];});
+			
+			return sortable;
 		},
 		clearFilters : function(manager) {			
 			manager.store.remove('fq');
