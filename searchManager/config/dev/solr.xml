@@ -56,8 +56,8 @@
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
     <default-timezone>America/Los_Angeles</default-timezone>
     <default-server>search</default-server>
-    <facet-template>xxx</facet-template>
-    <facet-template-name>TemplateName</facet-template-name>
+    <facet-template>MacMall_FacetTemplate</facet-template>
+    <facet-template-name>MacMall_FacetTemplateName</facet-template-name>
     <group-membership>
     	<group>Store</group>
     	<group>MacMall</group>
