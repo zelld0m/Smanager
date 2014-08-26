@@ -110,7 +110,7 @@
 			var selectedList = base.options.selectedList;
 			var facetValues = [];
 
-			if (base.options.facetField === "Category" && GLOBAL_PCMGroup){
+			if (base.options.facetField === "Category" && GLOBAL_storeFacetTemplateType === 'CNET'){
 				if(data.FacetTemplate)
 					facetValues = data.FacetTemplate.Level1;
 			}

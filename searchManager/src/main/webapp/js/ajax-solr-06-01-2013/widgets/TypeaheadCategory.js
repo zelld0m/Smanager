@@ -64,7 +64,7 @@
 
 			var categories = (self.manager.response.FacetTemplate) ? self.manager.response.FacetTemplate.Level1 : self.manager.response.facet_counts.facet_fields.Category;
 
-			if(self.countAttributes(categories) > 1) {
+			if(Object.keys(categories).length > 1) {
 				var sortedCategories = this.sortCategoriesByValue(categories);
 				for(var i=0; i<sortedCategories.length; i++) {
 					if(i == GLOBAL_storeMaxCategory)
@@ -135,15 +135,6 @@
 			manager.store.remove('disableDidYouMean');
 			manager.store.remove('disableBanner');
 			manager.widgets[WIDGET_ID_searchWithin].clear();
-		},
-		countAttributes : function(object) {
-			var counter = 0;
-
-			for(obj in object) {
-				counter++;
-			}
-
-			return counter;
 		},
 		escapeValue: function(text){
 			if($.isNotBlank(text)) // Dependency: CurrentSearchWidget.js - display text

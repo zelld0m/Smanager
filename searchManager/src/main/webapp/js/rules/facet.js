@@ -180,7 +180,7 @@
 					afterSolrRequestCallback: function(json){
 						self.facetValueList = json.facet_counts.facet_fields;
 
-						if(GLOBAL_PCMGroup){
+						if(GLOBAL_storeFacetTemplateType === 'CNET'){
 							self.facetValueList["Category"] = [];
 
 							if(json.FacetTemplate){

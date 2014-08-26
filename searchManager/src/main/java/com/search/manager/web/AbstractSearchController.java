@@ -1160,7 +1160,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			solrHelper.setDemotedItems(demoteList);
 			solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
 			solrHelper.setFacetTemplate(facetTemplate);
-			solrHelper.setCNETImplementation(configManager.isMemberOf("PCM", storeId));
+			solrHelper.setCNETImplementation("CNET".equalsIgnoreCase(configManager.getProperty("settings", storeId, "facet_template"))); 
 			solrHelper.setOriginalKeyword(originalKeyword);
 			solrHelper.setIncludeEDP(includeEDP);
 			solrHelper.setIncludeFacetTemplateFacet(includeFacetTemplateFacet);
