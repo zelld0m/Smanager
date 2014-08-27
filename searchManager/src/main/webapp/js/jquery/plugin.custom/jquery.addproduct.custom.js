@@ -1132,6 +1132,7 @@
 
 					if (!isEmpty){
 						$select.prepend($("<option>", {value: ""}).text("-Select Attribute-"));
+						$select.val("");
 						$tab.find("table#addDynamicAttributeName").show();
 					}else{
 						$tab.find("table#addDynamicAttributeName").hide();
