@@ -117,7 +117,7 @@
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
 	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
 	
-	var GLOBAL_storeFacetTemplateNameField = GLOBAL_storeFacetTemplateName;
+	var GLOBAL_storeFacetTemplateNameField = GLOBAL_storeFacetTemplateType === 'CNET' ? "FacetTemplateName" : "TemplateName";
 	var GLOBAL_storeFacetTemplateType = GLOBAL_storeParameters["storeFacetTemplateType"];
 	
 

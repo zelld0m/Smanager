@@ -1313,6 +1313,7 @@
 
                     if (!isEmpty) {
                         $select.prepend($("<option>", {value: ""}).text("-Select Attribute-"));
+                        $select.val("");
                         $table.find("tr#dynamicAttributeName").show();
                     } else {
                         $table.find("tr#dynamicAttributeName").hide();
