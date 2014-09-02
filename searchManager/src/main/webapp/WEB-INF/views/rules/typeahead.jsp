@@ -33,7 +33,7 @@
 <!-- Start Right Side -->
 <div class="floatL w720 marL10 marT27">
 	<div class="floatL w720 titlePlacer">
-		<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<div class="w530 padT10 padL10 floatL fsize20 fnormal breakWord">
 			<span id="ruleTypeIcon" class="ruleTypeIcon marR5 posRel top3"></span>
 			<span id="titleText"></span> <span id="titleHeader"
 				class="fLblue fnormal"></span>
