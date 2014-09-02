@@ -1441,7 +1441,7 @@
 				base.contentHolder.find('a[href="#cnet"]').parent('li').remove();
 				base.contentHolder.find("div#cnet").remove();
 
-				if(GLOBAL_PCMGroup){
+				if(GLOBAL_storeFacetTemplateType === 'CNET'){
 					base.contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
 					base.contentHolder.find("div#dynamicAttribute").remove();
 				}
