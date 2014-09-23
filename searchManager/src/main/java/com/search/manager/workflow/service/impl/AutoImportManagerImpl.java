@@ -84,7 +84,7 @@ public class AutoImportManagerImpl implements AutoImportManager{
 		case TYPEAHEAD:
 			TypeaheadRule typeaheadRule = new TypeaheadRule();
 
-			typeaheadRule.setStoreId(storeId);
+			typeaheadRule.setStoreId(targetStoreId);
 			typeaheadRule.setRuleName(ruleName);
 
 			SearchResult<TypeaheadRule> result = typeaheadRuleService.search(typeaheadRule);
