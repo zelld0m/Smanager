@@ -185,7 +185,6 @@ public class ImportTaskManager {
 			default: 
 			}
 
-			importRuleQueueItem.setTaskExecutionResult(taskExecutionResult);
 			updateTaskExecution(importRuleQueueItem, TaskStatus.COMPLETED, startDate, new DateTime(), "");
 
 
