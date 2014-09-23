@@ -59,9 +59,7 @@ public class AutoImportManagerImpl implements AutoImportManager{
 
 		switch(ruleEntity) {
 		case TYPEAHEAD:
-			if(ruleStatus != null) {
-				importAsId = ruleStatus.getRuleId();
-			}
+			importAsId = ruleStatus.getRuleId();
 			break;
 		case FACET_SORT:
 		case QUERY_CLEANING:
