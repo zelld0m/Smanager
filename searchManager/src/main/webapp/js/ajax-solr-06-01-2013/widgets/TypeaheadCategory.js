@@ -64,12 +64,13 @@
 
 			var categories = (self.manager.response.FacetTemplate) ? self.manager.response.FacetTemplate.Level1 : self.manager.response.facet_counts.facet_fields.Category;
 
-			if(Object.keys(categories).length > 1) {
-				var sortedCategories = this.sortCategoriesByValue(categories);
-				for(var i=0; i<sortedCategories.length; i++) {
+			if(Object.keys(categories).length > 0) {
+				var i=0;
+				for(category in categories) {
 					if(i == GLOBAL_storeMaxCategory)
 						break;
-					$(self.target).append(self.getContent(sortedCategories[i][0], categories[sortedCategories[i][0]]));
+					$(self.target).append(self.getContent(category, categories[category]));
+					i++;
 				}
 			}
 

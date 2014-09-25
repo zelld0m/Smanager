@@ -1406,6 +1406,10 @@
                 ui.find("div.cnet, div.dynamicAttribute").show();
                 self.addCNETFieldListener(ui, condition);
 
+                if (GLOBAL_storeFacetTemplateType === 'IMS') {
+                    ui.find("div.dynamicAttribute").hide();
+                }
+                
                 var $table = $cnet.find("table.cnetFields");
                 $table.find("tr.catName").show();
                 self.populateLevel1Categories(ui, condition);

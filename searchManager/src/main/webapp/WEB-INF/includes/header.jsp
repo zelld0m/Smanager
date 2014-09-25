@@ -150,7 +150,6 @@
 		'facet': true,
 		'debugQuery': true,
 		'fl': '*,score',
-		'facet.field': GLOBAL_facetTemplate,
 		'facet.mincount': 1,
 		'start': 0,
 		'sort': GLOBAL_storeSort,
@@ -161,6 +160,10 @@
 		'gui': GLOBAL_isFromGUI,
 		'json.nl': 'map'
 	};
+	
+	if(GLOBAL_storeFacetTemplateType === 'CNET') {
+		GLOBAL_typeaheadSolrParams['facet.field'] = GLOBAL_facetTemplate;
+	}
 	
 	for(obj in GLOBAL_storeSolrParameters) {
 		GLOBAL_typeaheadSolrParams[obj] = GLOBAL_storeSolrParameters[obj];

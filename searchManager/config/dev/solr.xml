@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<!-- Dev Config -->
 <solr-config>
-  <!-- Core sharing, pcmbd using pcmall core -->
-  <shared-core>true</shared-core>
+   <!-- Core sharing, pcmbd using pcmall core -->
+  <shared-core>true</shared-core>	
   <solr-selector-param>storeAlias</solr-selector-param>
   
   <!-- Synched to DB Timezone, in production: America/New_York -->
-  <system-timezone>America/Los_Angeles</system-timezone>
-  
+  <system-timezone>America/New_York</system-timezone> 	
+
   <big-bets>
     <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>
     <query>json.nl=map%amp;wt=json%amp;fl=%amp;start=0</query>
   </big-bets>
-  
+
   <!-- PCM -->
   <store id="pcmall" name="PCM">
     <core>pcmall</core>
@@ -26,7 +25,7 @@
     </solr-param-name>
     <solr-param-value name="fq">
     	<param-value>PcMall_StoreFlag:true</param-value>
-    </solr-param-value>
+    </solr-param-value>    
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
     <default-server>search</default-server>
@@ -54,30 +53,24 @@
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
-    <default-timezone>America/Los_Angeles</default-timezone>
+    <default-timezone>America/Los_Angeles</default-timezone>    
     <default-server>search</default-server>
-    <facet-template>MacMall_FacetTemplate</facet-template>
-    <facet-template-name>MacMall_FacetTemplateName</facet-template-name>
+    <facet-template>MacMall_Template</facet-template>
+    <facet-template-name>MacMall_TemplateName</facet-template-name>
     <group-membership>
     	<group>Store</group>
     	<group>MacMall</group>
-    </group-membership>
+    </group-membership>	
   </store>
-  
+
   <!-- PCM BD -->
-  <store id="pcmallcap" name="PCM BD">
+  <store id="pcmallcap" name="PCMall BD">
     <core>pcmall</core>
     <store-id-aliases>pcmbd</store-id-aliases>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
     <facet-name>PcMall</facet-name>
-    <solr-param-name>
-    	<param-name>fq</param-name>
-    </solr-param-name>
-    <solr-param-value name="fq">
-    	<param-value>PCMBD_StoreFlag:true</param-value>
-    </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
     <default-timezone>America/Los_Angeles</default-timezone>
@@ -93,18 +86,12 @@
   </store>
   
   <!-- PCMG Release v1.1.0-->
-  <store id="pcmallgov" name="PCMG">
+  <store id="pcmallgov" name="PCMG BD">
     <core>pcmallgov</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
-    <facet-name>PCMG</facet-name>
-    <solr-param-name>
-    	<param-name>fq</param-name>
-    </solr-param-name>
-    <solr-param-value name="fq">
-    	<param-value>PCMG_GovStoreFlag:true PCMG_OpenStoreFlag:true PCMG_ACAStoreFlag:true</param-value>
-    </solr-param-value>
+    <facet-name>PCMG</facet-name> 
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
 	<default-timezone>America/Los_Angeles</default-timezone>
@@ -119,7 +106,7 @@
     </group-membership>
   </store>
   
-  <!-- MacMall BD Release v1.2.0-->
+  <!-- MacMall BD Release v1.2.0 -->
   <store id="macmallbd" name="MacMall BD">
     <core>macmall</core>
 	<store-id-aliases>macmallbd</store-id-aliases>
@@ -127,15 +114,9 @@
     <qt>dismaxmacmallrelevancy</qt>
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
     <facet-name>MacMall</facet-name>
-    <solr-param-name>
-    	<param-name>fq</param-name>
-    </solr-param-name>
-    <solr-param-value name="fq">
-    	<param-value>MacMallBD_StoreFlag:true</param-value>
-    </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
-    <default-timezone>America/Los_Angeles</default-timezone>
+    <default-timezone>America/Los_Angeles</default-timezone>    
     <default-server>search</default-server>
     <facet-template>xxx</facet-template>
     <facet-template-name>TemplateName</facet-template-name>
@@ -146,14 +127,14 @@
     	<group>MacMallBD</group>
     </group-membership>
   </store>
-  
-  <!-- ECOST BD Release v1.3.0 -->
+ 
+  <!-- ECOST Release v1.3.0 -->
   <store id="ecost" name="eCOST">
     <core>ecost</core>
 	<store-id-aliases>ecost</store-id-aliases>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxecostrelevancy</qt>
-	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
+	<defType>edismax</defType>
     <facet-name>eCOST</facet-name>
     <solr-param-name>
     	<param-name>fq</param-name>
@@ -169,10 +150,10 @@
     <facet-template-name>TemplateName</facet-template-name>
     <group-membership>
     	<group>Store</group>
-    	<group>MacMall</group>
+    	<group>eCOST</group>
     </group-membership>
   </store>
-  
+
   <!-- Atlanta Solr Server Production-->
   <server name='search'><!-- Solr Server F5 -->
     <url>http://10.17.35.36:8080/solr4/(core)/</url><!-- Solr 1.4: solr14 , Solr 4.3: solr4 -->
@@ -186,12 +167,8 @@
     <url>http://afs-pl-schpd08.afservice.org:8080/solr4/(core)/</url><!-- Solr 1.4: solr14 , Solr 4.3: solr4 -->
     <store>pcmall,pcmallcap,pcmallgov,macmall,macmallbd,ecost</store>
   </server>
-  <server name='afs-pl-schmstr'>
-    <url>http://afs-pl-schmstr.afservice.org:8080/solr4/(core)/</url><!-- Solr 1.4: solr14 , Solr 4.3: solr4 -->
-    <store>pcmall,pcmallcap,pcmallgov,macmall,macmallbd,ecost</store>
-  </server>
   
-  <!-- El Segundo Solr Server Production-->
+  <!-- El Segundo Solr Server Production-->  
   <server name='search.pcmall.com'><!-- Solr Server F5 -->
     <url>http://search.pcmall.com:8080/solr4/(core)/</url><!-- Solr 1.4: solr14 , Solr 4.3: solr4 -->
     <store>pcmall,pcmallcap,pcmallgov,macmall,macmallbd,ecost</store>

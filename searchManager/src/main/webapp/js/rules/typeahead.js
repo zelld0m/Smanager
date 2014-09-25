@@ -207,7 +207,9 @@
 							self.typeaheadCategoryManager.store.addByValue('json.nl', "map");
 							self.typeaheadCategoryManager.store.addByValue('facet', 'true');
 							self.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
-							self.typeaheadCategoryManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplate); 
+							if(GLOBAL_storeFacetTemplateType === 'CNET') {
+								self.typeaheadCategoryManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplate);
+							}
 							self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
 							self.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
 							self.typeaheadCategoryManager.store.addByValue('divCount', 'countDiv');

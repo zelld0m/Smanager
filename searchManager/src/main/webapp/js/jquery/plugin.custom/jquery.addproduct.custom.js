@@ -1435,6 +1435,10 @@
 			case "cnet": 
 				base.contentHolder.find('a[href="#ims"]').parent('li').remove();
 				base.contentHolder.find("div#ims").remove(); 
+				if(GLOBAL_storeFacetTemplateType === 'IMS'){
+					base.contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
+					base.contentHolder.find("div#dynamicAttribute").remove();
+				}
 				base.addCNETListener();
 				break;
 			case "ims": 
