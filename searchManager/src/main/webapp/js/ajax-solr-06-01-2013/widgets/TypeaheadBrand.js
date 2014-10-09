@@ -69,7 +69,7 @@
 
 			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameBrand' : 'itemNamePreviewBrand')+'">';
 			if(self.mode == 'simulator')
-				html += '<a href="javascript:void(0);" class="keywordListener">';
+				html += '<a href="javascript:void(0);" class="brandKeywordListener">';
 			html += '		<span id="brand">'+name+'</span>';
 			if(self.mode == 'simulator')
 				html += '</a">';

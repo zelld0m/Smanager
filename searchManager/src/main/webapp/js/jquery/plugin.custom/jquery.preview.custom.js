@@ -26,28 +26,13 @@
 
 			base.typeaheadManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
 				id: 'suggestion',
-				target: '#suggestionFirst'
+				target: '#suggestionFirst',
+				brandId: 'brand',
+				brandTarget: '#brandFirst',
+				categoryId: 'category',
+				categoryTarget: '#categoryFirst'
 			}));
 
-			base.typeaheadBrandManager = new AjaxSolr.Manager({
-				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
-				store: (new AjaxSolr.ParameterStore())
-			});
-
-			base.typeaheadBrandManager.addWidget(new AjaxSolr.TypeaheadBrandWidget({
-				id: 'brand',
-				target: '#brandFirst'
-			}));
-
-			base.typeaheadCategoryManager = new AjaxSolr.Manager({
-				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
-				store: (new AjaxSolr.ParameterStore())
-			});
-
-			base.typeaheadCategoryManager.addWidget(new AjaxSolr.TypeaheadCategoryWidget({
-				id: 'category',
-				target: '#categoryFirst'
-			}));
 		};
 
 		base.prepareForceAddStatus = function(){
@@ -265,41 +250,19 @@
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
 								base.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								base.typeaheadManager.store.addByValue('facet', 'true');
+								base.typeaheadManager.store.addByValue('facet.field', 'Manufacturer');
+								base.typeaheadManager.store.addByValue('facet.mincount', 1);
+								base.typeaheadManager.store.addByValue('facet.field', 'Category');
+								base.typeaheadManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
+								base.typeaheadManager.store.addByValue('facet.mincount', 1);
+								base.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								base.typeaheadManager.countDiv = $tr.find("#category").find('span#count');
 								for(name in GLOBAL_typeaheadSolrParams) {
 									base.typeaheadManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
 								}
 								base.typeaheadManager.doRequest(0);
 
-								base.typeaheadBrandManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadBrandManager.store.addByValue('rows', GLOBAL_storeMaxBrand);
-								base.typeaheadBrandManager.store.addByValue('json.nl', "map");
-								base.typeaheadBrandManager.store.addByValue('group', 'true'); 
-								base.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
-								base.typeaheadBrandManager.store.addByValue('group.limit', 1);
-								base.typeaheadBrandManager.store.addByValue('group.main', 'true');
-								base.typeaheadBrandManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
-								base.typeaheadBrandManager.store.addByValue('facet', 'true');
-								base.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
-								base.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadBrandManager.store.addByValue('storeAlias', GLOBAL_storeId);
-								for(name in GLOBAL_typeaheadSolrParams) {
-									base.typeaheadBrandManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
-								}
-								base.typeaheadBrandManager.doRequest(0);
-
-								base.typeaheadCategoryManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadCategoryManager.store.addByValue('rows', 1);
-								base.typeaheadCategoryManager.store.addByValue('json.nl', "map");
-								base.typeaheadCategoryManager.store.addByValue('facet', 'true');
-								base.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
-								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
-								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
-								base.typeaheadCategoryManager.countDiv = $tr.find("#category").find('span#count');
-								for(name in GLOBAL_typeaheadSolrParams) {
-									base.typeaheadCategoryManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
-								}
-								base.typeaheadCategoryManager.doRequest(0);
 							} else {
 
 								$tr.show();

@@ -83,7 +83,7 @@
 
 			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameCat' : 'itemNamePreviewCat')+'">';
 			if(self.mode == 'simulator')
-				html += '<a href="javascript:void(0);" class="keywordListener">';
+				html += '<a href="javascript:void(0);" class="categoryKeywordListener">';
 			html += '		<span id="category">'+category+'</span>';
 			if(self.mode == 'simulator')
 				html += '</a>';

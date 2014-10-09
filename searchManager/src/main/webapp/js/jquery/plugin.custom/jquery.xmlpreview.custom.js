@@ -31,27 +31,25 @@
 
 			base.typeaheadManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
 				id: 'suggestion',
-				target: '.suggestionFirst'
+				target: '.suggestionFirst',
+				brandId: 'brand',
+				brandTarget: '.brandFirst',
+				categoryId: 'category',
+				categoryTarget: '.categoryFirst'
 			}));
-
-			base.typeaheadBrandManager = new AjaxSolr.Manager({
+			
+			base.typeaheadSourceManager = new AjaxSolr.Manager({
 				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
 				store: (new AjaxSolr.ParameterStore())
 			});
-
-			base.typeaheadBrandManager.addWidget(new AjaxSolr.TypeaheadBrandWidget({
-				id: 'brand',
-				target: '.brandFirst'
-			}));
-
-			base.typeaheadCategoryManager = new AjaxSolr.Manager({
-				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
-				store: (new AjaxSolr.ParameterStore())
-			});
-
-			base.typeaheadCategoryManager.addWidget(new AjaxSolr.TypeaheadCategoryWidget({
-				id: 'category',
-				target: '.categoryFirst'
+			
+			base.typeaheadSourceManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
+				id: 'suggestionSource',
+				target: '.suggestionSourceFirst',
+				brandId: 'brandSource',
+				brandTarget: '.brandSourceFirst',
+				categoryId: 'categorySource',
+				categoryTarget: '.categorySourceFirst'
 			}));
 
 		};
@@ -367,43 +365,20 @@
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
 								base.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								base.typeaheadManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
+								base.typeaheadManager.store.addByValue('facet', 'true');
+								base.typeaheadManager.store.addByValue('facet.field', 'Manufacturer');
+								base.typeaheadManager.store.addByValue('facet.mincount', 1);
+								base.typeaheadManager.store.addByValue('facet.field', 'Category');
+								base.typeaheadManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplateName); 
+								base.typeaheadManager.store.addByValue('divCount', 'countDiv2');
+								base.typeaheadManager['countDiv2'] = $tr.find("#category").find('span#count2');
+								
 								for(name in GLOBAL_typeaheadSolrParams) {
 									base.typeaheadManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
 								}
 								base.typeaheadManager.doRequest(0);
-
-								base.typeaheadBrandManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadBrandManager.store.addByValue('rows', GLOBAL_storeMaxBrand);
-								base.typeaheadBrandManager.store.addByValue('json.nl', "map");
-								base.typeaheadBrandManager.store.addByValue('group', 'true'); 
-								base.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
-								base.typeaheadBrandManager.store.addByValue('group.limit', 1);
-								base.typeaheadBrandManager.store.addByValue('group.main', 'true');
-								base.typeaheadBrandManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
-								base.typeaheadBrandManager.store.addByValue('facet', 'true');
-								base.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
-								base.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadBrandManager.store.addByValue('storeAlias', GLOBAL_storeId);
-								for(name in GLOBAL_typeaheadSolrParams) {
-									base.typeaheadBrandManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
-								}
-								base.typeaheadBrandManager.doRequest(0);
-
-								base.typeaheadCategoryManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadCategoryManager.store.addByValue('rows', 1);
-								base.typeaheadCategoryManager.store.addByValue('json.nl', "map");
-								base.typeaheadCategoryManager.store.addByValue('facet', 'true');
-								base.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
-								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
-								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
-								base.typeaheadCategoryManager.store.addByValue('divCount', 'countDiv2');
-								base.typeaheadCategoryManager['countDiv2'] = $tr.find("#category").find('span#count2');
 								
-								for(name in GLOBAL_typeaheadSolrParams) {
-									base.typeaheadCategoryManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
-								}
-								base.typeaheadCategoryManager.doRequest(0);
 							} else {
 
 								$tr.show();
@@ -668,64 +643,46 @@
 						var data = response['data'];
 						var list = data.list;
 
-						var $trClone = $table.find("tr#itemPattern")
+						var $trClone = $table.find("tr#itemPattern");
 
 						for(var i = 0; i < list.length; i++) {
 							var $tr = $trClone.clone();
 
-							if(i < GLOBAL_storeKeywordMaxCategory)
-								$tr.find("#category").text(list[i].ruleName);
+							$tr.find("#suggestion").attr("id", "suggestionSource");
+							$tr.find("#brand").attr("id", "brandSource");
+							$tr.find("#category").attr("id", "categorySource");
+							
+							if(i < GLOBAL_storeKeywordMaxCategory) {
+								$tr.find("#categorySource").text(list[i].ruleName);
+							}
 
 							if(i == 0) {
-								$tr.find("#category").append('<span id="count"></span>');
+								$tr.find("#categorySource").append('<span id="count"></span>');
 								
-								$tr.find("#suggestion").append('<div class="suggestionFirst"></div>');
-								$tr.find("#brand").append('<div class="brandFirst"></div>')
-								$tr.find("#category").append('<div class="categoryFirst"></div>')
+								$tr.find("#suggestionSource").append('<div class="suggestionSourceFirst"></div>');
+								$tr.find("#brandSource").append('<div class="brandSourceFirst"></div>');
+								$tr.find("#categorySource").append('<div class="categorySourceFirst"></div>');
 
 								$tr.show();
 								$table.append($tr);
 
-								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
-								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
-								base.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
+								base.typeaheadSourceManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
+								base.typeaheadSourceManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
+								base.typeaheadSourceManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
+								base.typeaheadSourceManager.store.addByValue('storeAlias', xml.store);
+								base.typeaheadSourceManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
+								base.typeaheadSourceManager.store.addByValue('facet', 'true');
+								base.typeaheadSourceManager.store.addByValue('facet.field', 'Manufacturer');
+								base.typeaheadSourceManager.store.addByValue('facet.mincount', 1);
+								base.typeaheadSourceManager.store.addByValue('facet.field', 'Category');
+								base.typeaheadSourceManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplateName);
+								base.typeaheadSourceManager.countDiv = $tr.find("#categorySource").find('span#count');
+								base.typeaheadSourceManager.store.addByValue('divCount', 'countDiv');
+								
 								for(name in GLOBAL_typeaheadSolrParams) {
-									base.typeaheadManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
+									base.typeaheadSourceManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
 								}
-								base.typeaheadManager.doRequest(0);
-
-								base.typeaheadBrandManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadBrandManager.store.addByValue('rows', GLOBAL_storeMaxBrand);
-								base.typeaheadBrandManager.store.addByValue('json.nl', "map");
-								base.typeaheadBrandManager.store.addByValue('group', 'true'); 
-								base.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
-								base.typeaheadBrandManager.store.addByValue('group.limit', 1);
-								base.typeaheadBrandManager.store.addByValue('group.main', 'true');
-								base.typeaheadBrandManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
-								base.typeaheadBrandManager.store.addByValue('facet', 'true');
-								base.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
-								base.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadBrandManager.store.addByValue('storeAlias', GLOBAL_storeId);
-								for(name in GLOBAL_typeaheadSolrParams) {
-									base.typeaheadBrandManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
-								}
-								base.typeaheadBrandManager.doRequest(0);
-
-								base.typeaheadCategoryManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadCategoryManager.store.addByValue('rows', 1);
-								base.typeaheadCategoryManager.store.addByValue('json.nl', "map");
-								base.typeaheadCategoryManager.store.addByValue('facet', 'true');
-								base.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
-								base.typeaheadCategoryManager.store.addByValue('facet.field', 'PCMall_FacetTemplateName'); 
-								base.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
-								base.typeaheadCategoryManager.countDiv = $tr.find("#category").find('span#count');
-								base.typeaheadCategoryManager.store.addByValue('divCount', 'countDiv');
-								for(name in GLOBAL_typeaheadSolrParams) {
-									base.typeaheadCategoryManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
-								}
-								base.typeaheadCategoryManager.doRequest(0);
+								base.typeaheadSourceManager.doRequest(0);
 							} else {
 
 								$tr.show();

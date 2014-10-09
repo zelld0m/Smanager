@@ -2,9 +2,6 @@
 
 	var Typeahead = {
 			moduleName: "Typeahead",
-			selectedRule:  null,
-			selectedRuleStatus: null,
-			currentRuleMap: null,
 			maxHighlightedFacet: 5,
 
 			initialNoOfItems: 100,
@@ -17,20 +14,14 @@
 			tabSelectedName: "",
 			keyword: "",
 			fq: "",
-			elContainer: "listContainer",
-			$elObject: null,
-			$dialogObject: null,
+			typeaheadListContainerSelector: "#listContainer",
+			preloaderSelector: "div#preloader",
+			typeaheadPanelSelector: "#typeaheadPanel",
+			editPanelSelector: "#editPanel",
 			rulePage: 1,
 			rulePageSize: 15,
-			selectedRule: null,
 
 			removeFacetGroupItemConfirmText: "Delete facet value?",
-
-			facetFields : ["Category", "Manufacturer"],	//TODO This might be retrieved from a lookup table
-			facetValueList: null,
-			sortOrderList: null,
-			facetGroupIdList: null,
-
 			keywordIconPath: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_keyword.png'/>",
 			templateIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_template.png'/>",
 			saveIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_disk.png'/>",
@@ -39,20 +30,16 @@
 			magniIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_magniGlass13.png'/>",
 			lockIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_lock.png'/>",
 			searchReloadRate: 1000,
-			typingTimer: null,
-			typeaheadManager: null,
-			typeaheadBrandManager: null,
-			typeaheadCategoryManager: null,
-
 			selectedRuleList: new Object(),
 			
 			prepareTypeahead : function(){
+				var self = this;
 				clearAllQtip();
-				$("#preloader").show();
-				$("#submitForApproval, #noSelected").hide();
-				$("#facetsorting").hide();
-				$("#titleHeader").empty();
-				$("#ruleTypeIcon").html("");
+				
+				self.$preloader.show();
+				self.$typeaheadPanel.find("#submitForApproval, #noSelected").hide();
+				self.$typeaheadPanel.find("#titleHeader").empty();
+				self.$typeaheadPanel.find("#ruleTypeIcon").html("");
 			},
 
 			showTypeahead : function(){
@@ -60,13 +47,13 @@
 				self.prepareTypeahead();
 
 				if(self.selectedRule==null){
-					$("#preloader").hide();
-					$("#noSelected").show();
-					$("#titleText").html(self.moduleName);
+					self.$preloader.hide();
+					self.$typeaheadPanel.find("#noSelected").show();
+					self.$typeaheadPanel.find("#titleText").html(self.moduleName);
 					return;
 				}
 
-				$("#submitForApproval").rulestatusbar({
+				self.$typeaheadPanel.find("#submitForApproval").rulestatusbar({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
 					ruleType: "Typeahead",
@@ -92,30 +79,12 @@
 
 					},
 					afterRuleStatusRequest: function(ruleStatus){
-						$("#preloader").hide();
-						$("#submitForApproval").show();
-						$("#titleText").html(self.moduleName + " for ");
-						$("#titleHeader").text(self.selectedRule["ruleName"]);
-						$("#readableString").html(self.selectedRule["readableString"]);
-
-						$('#auditIcon').off().on({
-							click: function(e){
-								$(e.currentTarget).viewaudit({
-									itemDataCallback: function(base, page){
-										AuditServiceJS.getFacetSortTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
-											callback: function(data){
-												var total = data.totalSize;
-												base.populateList(data);
-												base.addPaging(base.options.page, total);
-											},
-											preHook: function(){
-												base.prepareList();
-											}
-										});
-									}
-								});
-							}
-						});
+						self.$typeaheadPanel.find("#titleText").html(self.moduleName + " for ");
+						self.$typeaheadPanel.find("#titleHeader").text(self.selectedRule["ruleName"]);
+						self.$typeaheadPanel.find("#readableString").html(self.selectedRule["readableString"]);
+						self.$preloader.hide();
+						self.$typeaheadPanel.find("#submitForApproval").show();
+						self.$editPanel.show();
 					}
 				});
 			},
@@ -137,20 +106,23 @@
 			setTypeahead : function(rule){
 				var self = this;
 				self.selectedRule = rule;
-				$('input.searchTextInput').val(rule.ruleName);
-				$('a.searchButtonList').show();
-				$('div#searchResult, div#category, div#brand').show();
+				self.$typeaheadPanel.find('input.searchTextInput').val(rule.ruleName);
+				self.$typeaheadPanel.find('#priorityEdit').val(rule.priority);
+				self.$typeaheadPanel.find('#disabledEdit').prop('checked', rule.disabled);
+				self.$typeaheadPanel.find('a.searchButtonList').show();
+				self.$editPanel.hide();
 				self.startIndex = 0;
 //				self.loadRuleList(0, self.rulePage);
 //				self.keyword = "";
 //				self.fq = "";
-				$('input.searchTextInput, a.searchButton').hide();
-				$('div#listContainer').hide();
+				self.$typeaheadPanel.find('input.searchTextInput, a.searchButton').hide();
+				self.$typeaheadList.hide();
 //				$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
 
-				$('#searchResult, #category, #brand').find(':not(#docs, #categoryDocs, #brandDocs)').remove();
+				self.$typeaheadPanel.find('#searchResult, #category, #brand').find(':not(#docs, #categoryDocs, #brandDocs)').remove();
+				self.$editPanel.find('#typeaheadTable').find('tr:gt(1)').remove();
 				
-				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, rule.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, rule.ruleName, 0, 0, 1, 1, {
 					callback: function(response) {
 						var data = response["data"];
 						var list = data.list;
@@ -165,78 +137,60 @@
 								var html = '<div class="fsize15"><strong>'+list[i].ruleName+countDiv+'</strong></div>';
 								
 								if(i == 0) {
-									$('#category').prepend(html);
+									self.$typeaheadPanel.find('#category').prepend(html);
 								} else {
-									if(i < GLOBAL_storeKeywordMaxCategory)
-										$('#category').append(html);
+									if(i < GLOBAL_storeKeywordMaxCategory) {
+										var keywordsRow = '<tr><td><div class="marL10 fsize11">'+html+'</div></td><td></td><td></td></tr>';
+										self.$editPanel.find('#typeaheadTable tr:last').after(keywordsRow);
+									}
 								}
 							}
-							
-							var params = GLOBAL_typeaheadSolrParams;
-							
-							self.typeaheadManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-							self.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
-							self.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
-							self.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
-
-							for(name in params) {
-								self.typeaheadManager.store.addByValue(name, params[name]);
-							}
-							self.typeaheadManager.doRequest(0);
-
-							self.typeaheadBrandManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-							self.typeaheadBrandManager.store.addByValue('rows', GLOBAL_storeMaxBrand);
-							self.typeaheadBrandManager.store.addByValue('json.nl', "map");
-							self.typeaheadBrandManager.store.addByValue('group', 'true'); 
-							self.typeaheadBrandManager.store.addByValue('group.field', 'Manufacturer');
-							self.typeaheadBrandManager.store.addByValue('group.limit', 1);
-							self.typeaheadBrandManager.store.addByValue('group.main', 'true');
-							self.typeaheadBrandManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
-							self.typeaheadBrandManager.store.addByValue('facet', 'true');
-							self.typeaheadBrandManager.store.addByValue('facet.field', 'Manufacturer');
-							self.typeaheadBrandManager.store.addByValue('facet.mincount', 1);
-							self.typeaheadBrandManager.store.addByValue('storeAlias', GLOBAL_storeId);
-
-							for(name in params) {
-								self.typeaheadBrandManager.store.addByValue(name, params[name]);
-							}
-							self.typeaheadBrandManager.doRequest(0);
-
-							self.typeaheadCategoryManager.store.addByValue('q', $.trim(list[0].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-							self.typeaheadCategoryManager.store.addByValue('rows', 1);
-							self.typeaheadCategoryManager.store.addByValue('json.nl', "map");
-							self.typeaheadCategoryManager.store.addByValue('facet', 'true');
-							self.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
-							if(GLOBAL_storeFacetTemplateType === 'CNET') {
-								self.typeaheadCategoryManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplate);
-							}
-							self.typeaheadCategoryManager.store.addByValue('facet.mincount', 1);
-							self.typeaheadCategoryManager.store.addByValue('storeAlias', GLOBAL_storeId);
-							self.typeaheadCategoryManager.store.addByValue('divCount', 'countDiv');
-							self.typeaheadCategoryManager.countDiv = $('#category').find('span#count');
-							
-							for(name in params) {
-								self.typeaheadCategoryManager.store.addByValue(name, params[name]);
-							}
-							self.typeaheadCategoryManager.doRequest(0);
+							self.loadTypeaheadSolrDetails(list[0].ruleName);
 						}
 					}
 				});
 
 				self.showTypeahead();
 			},
+			loadTypeaheadSolrDetails: function(keyword) {
+				var params = GLOBAL_typeaheadSolrParams;
+				var self = this;
+				
+				self.typeaheadManager.store.addByValue('q', $.trim(keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
+				self.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
+				self.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP'); 
+				self.typeaheadManager.store.addByValue('facet', 'true');
+				self.typeaheadManager.store.addByValue('facet.field', 'Manufacturer');
+				self.typeaheadManager.store.addByValue('facet.mincount', 1);
+				
+				if(GLOBAL_storeFacetTemplateType === 'CNET') {
+					self.typeaheadManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplate);
+				} else {
+					self.typeaheadCategoryManager.store.addByValue('facet.field', 'Category');
+				}
+				
+				self.typeaheadManager.store.addByValue('facet.mincount', 1);
+				self.typeaheadManager.store.addByValue('divCount', 'countDiv');
+				self.typeaheadManager.countDiv = $('#category').find('span#count');
+				self.typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
+
+				for(name in params) {
+					self.typeaheadManager.store.addByValue(name, params[name]);
+				}
+				self.typeaheadManager.doRequest(0);
+			},
 			resetTypeahead : function() {
 				var self = this;
 				self.selectedRule = null;
-				$('input.searchTextInput').val('');
-				$('span#titleHeader').html('');
-				$('span#titleText').html(self.moduleName);
+				self.$typeaheadPanel.find('input.searchTextInput').val('');
+				self.$typeaheadPanel.find('span#titleHeader').html('');
+				self.$typeaheadPanel.find('span#titleText').html(self.moduleName);
 			},
 			resetRuleListTable: function() {
 				var self = this;
 				$('#updateDialog').dialog('destroy').remove();
-				self.$elObject.empty();
-				$("div#fieldsBottomPaging, , div#fieldsTopPaging").empty();
+				self.$typeaheadList.empty();
+				self.$typeaheadPanel.find("div#fieldsBottomPaging, , div#fieldsTopPaging").empty();
 			},
 			setCurrentRuleList: function(list) {
 				var self = this;
@@ -250,13 +204,13 @@
 			},
 			loadRuleList: function(matchType, page, functionHook) {
 				var self = this;
-				var searchText = $('input.searchTextInput').val();
-				$('input.searchTextInput, a.searchButton').show();
+				var searchText = self.$typeaheadPanel.find('input.searchTextInput').val();
+				self.$typeaheadPanel.find('input.searchTextInput, a.searchButton').show();
 
-				$('a.searchButtonList').hide();
-				$("#submitForApproval").html('');
-				$('div#searchResult, div#category, div#brand').hide();
-
+				self.$typeaheadPanel.find('a.searchButtonList').hide();
+				self.$typeaheadPanel.find("#submitForApproval").html('');
+				self.$editPanel.hide();
+				
 				self.resetRuleListTable();
 				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, searchText, matchType, 1, page, self.rulePageSize, {
 					callback: function(response){
@@ -264,8 +218,8 @@
 						var list = data.list;
 
 						self.setCurrentRuleList(list);
-						self.$elObject.html(self.getListTemplate());
-						var $divList = self.$elObject.find("div#itemList");
+						self.$typeaheadList.html(self.getListTemplate());
+						var $divList = self.$typeaheadList.find("div#itemList");
 						$divList.find("div.items:not(#itemPattern1, #itemPattern2, #itemPattern3)").remove();
 						if (list.length > 0){
 							self.resetHeader();
@@ -278,7 +232,7 @@
 						}
 
 
-						self.$elObject.find("div#fieldsBottomPaging, div#fieldsTopPaging").paginate({
+						self.$typeaheadList.find("div#fieldsBottomPaging, div#fieldsTopPaging").paginate({
 							currentPage: page, 
 							pageSize: self.rulePageSize,
 							totalItem: data.totalSize,
@@ -296,11 +250,11 @@
 					},
 					preHook:function(){
 						self.searchTriggered = true;
-						$('div#preloader').show();
+						self.$preloader.show();
 					},
 					postHook:function(){
-						$('div#preloader').hide();
-						self.$elObject.show();
+						self.$preloader.hide();
+						self.$typeaheadList.show();
 						self.searchTriggered = false;
 						if(functionHook)
 							functionHook();
@@ -309,14 +263,14 @@
 			},
 			loadSplunkData: function() {
 				var self = this;
-				self.$elObject.html(self.getListTemplate());
+				self.$typeaheadList.html(self.getListTemplate());
 				TopKeywordServiceJS.getFileList({
 					callback: function(files){
 						self.latestFile = files[0];
 						TopKeywordServiceJS.getFileContents(self.latestFile, {
 							callback: function(data){
 								var list = data.list;
-								var $divList = self.$elObject.find("div#itemList");
+								var $divList = self.$typeaheadList.find("div#itemList");
 								$divList.find("div.items:not(#itemPattern1, #itemPattern2, #itemPattern3)").remove();
 								if (list.length > 0){
 									self.resetHeader();
@@ -342,10 +296,10 @@
 								}
 							},
 							preHook:function(){
-								$('div#preloader').show();
+								self.$preloader.show();
 							},
 							postHook:function(){
-								$('div#preloader').hide();
+								self.$preloader.hide();
 							}
 						});
 					}}
@@ -472,7 +426,7 @@
 			updateTypeaheadList: function(array) {
 				var self = this;
 
-				var dwrFunction = self.$elObject.find('select.actionType').val();
+				var dwrFunction = self.$typeaheadList.find('select.actionType').val();
 				var action = dwrFunction == 'updateRules' ? 'updated' : 'deleted';
 
 				if('submitForApproval' == dwrFunction) {
@@ -488,8 +442,8 @@
 								}
 							},
 							preHook: function() {
-								$("#listContainer").hide();
-								$("#preloader").show();
+								self.$typeaheadList.hide();
+								self.$preloader.show();
 								self.$dialogObject.dialog( "close" );
 							},
 							errorHandler: function(e) {
@@ -547,8 +501,8 @@
 							}
 						},
 						preHook: function() {
-							$("#listContainer").hide();
-							$("#preloader").show();
+							self.$typeaheadList.hide();
+							self.$preloader.show();
 							self.$dialogObject.dialog( "close" );
 						},
 						postHook: function() {
@@ -564,7 +518,8 @@
 			},
 			initializeTypeaheadAction: function() {
 				var self = this;
-				self.$elObject.find('div#updateDialog').dialog({
+				
+				self.$typeaheadList.find('div#updateDialog').dialog({
 					title: self.moduleName,
 					autoOpen: false,
 					modal: true,
@@ -583,16 +538,19 @@
 
 				self.$dialogObject = $('div#updateDialog');
 
-				self.$elObject.find('a.dialogBtn').off().on({
-					click: function() {
+				self.$typeaheadList.find('a.dialogBtn').off().on({
+					click: function(e) {
 						if(Object.keys(self.selectedRuleList).length < 1) {
 							jAlert('Please select a rule.', self.moduleName);
 							return;
 						}
-						$('div#updateDialog').html(self.initializeDialogContent());	
-						$('div#updateDialog').find("div.items").removeClass("alt");
-						$('div#updateDialog').find("div.items:even").addClass("alt");
-						$('div#updateDialog').find('input.ruleVisibility').each(function() {
+						
+						var $dialogObject = e.data.$dialogObject;
+						
+						$dialogObject.html(self.initializeDialogContent());	
+						$dialogObject.find("div.items").removeClass("alt");
+						$dialogObject.find("div.items:even").addClass("alt");
+						$dialogObject.find('input.ruleVisibility').each(function() {
 							var checkbox = this;
 							
 							$(checkbox).on('click', function() {
@@ -602,9 +560,9 @@
 							});
 						});
 						
-						$('div#updateDialog').dialog('open');
+						$dialogObject.dialog('open');
 					}
-				});
+				}, {$dialogObject : self.$dialogObject});
 			},
 			getRulesToUpdate : function() {
 				var self = this;
@@ -621,7 +579,7 @@
 			initializeDialogContent: function() {
 				var html = '';
 				var self = this;
-				var actionType = self.$elObject.find('select.actionType').val();
+				var actionType = self.$typeaheadList.find('select.actionType').val();
 				var isDelete = actionType == 'deleteRules';
 				var isForApproval = actionType == 'submitForApproval';
 
@@ -631,14 +589,14 @@
 					html += '<label>Are you sure you want to submit these items for approval?</label>';
 				}
 
-				$header = self.$elObject.find('div#itemHeaderMain').clone();
+				$header = self.$typeaheadList.find('div#itemHeaderMain').clone();
 				$header.find('div#itemHeader4').show();
 				$header.find('div#itemHeader3').hide();
 				$header.find('label.iter').html('Disabled');
 				$header.find('label.toggle').html('&nbsp;');
 				html += $('<div></div>').append($header).html();
 
-				var $divItemTable = self.$elObject.find("div#itemList").clone();
+				var $divItemTable = self.$typeaheadList.find("div#itemList").clone();
 
 				$divItemTable.html('');
 				
@@ -652,7 +610,7 @@
 					var priority = ruleList[keys[i]].priority == null ? 0 : ruleList[keys[i]].priority;
 					var keyword = ruleList[keys[i]].ruleName;
 					var itemPattern = (isDelete || isForApproval) ? "#itemPattern3" : "#itemPattern2";
-					var $divItem = self.$elObject.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
+					var $divItem = self.$typeaheadList.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
 
 					$divItem.find("label.keyword").html(keyword);
 					if(isDelete || isForApproval) {
@@ -736,9 +694,9 @@
 
 			resetHeader: function() {
 				var self = this;
-				var $divHeader1 = self.$elObject.find('div#itemHeaderMain').find("div#itemHeader1");
-				var $divHeader2 = self.$elObject.find('div#itemHeaderMain').find("div#itemHeader2");
-				var $divHeader3 = self.$elObject.find('div#itemHeaderMain').find("div#itemHeader3");
+				var $divHeader1 = self.$typeaheadList.find('div#itemHeaderMain').find("div#itemHeader1");
+				var $divHeader2 = self.$typeaheadList.find('div#itemHeaderMain').find("div#itemHeader2");
+				var $divHeader3 = self.$typeaheadList.find('div#itemHeaderMain').find("div#itemHeader3");
 				var self = this;
 				if(!self.latestFile) {
 					$divHeader3.show();
@@ -828,53 +786,6 @@
 					}
 				});
 			},
-			addDownloadListener: function(){
-				var self = this;
-				$("a#downloadIcon").download({
-					headerText:"Download Facet Sort",
-					requestCallback:function(e){
-						var params = new Array();
-						var url = document.location.pathname + "/xls";
-						var urlParams = "";
-						var count = 0;
-						params["id"] = self.selectedRule["ruleId"];
-						params["filename"] = e.data.filename;
-						params["type"] = e.data.type;
-						params["clientTimezone"] = +new Date();
-
-						for(var key in params){
-							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + encodeURIComponent(params[key]));
-							count++;
-						};
-
-						document.location.href = url + '?' + urlParams;
-					}
-				});
-			},
-
-			addDeleteRuleListener: function(){
-				var self = this;
-				$("#deleteBtn").off().on({
-					click: function(e){
-						if (e.data.locked) return;
-
-						jConfirm("Delete " + self.selectedRule["ruleName"] + "'s rule?", self.moduleName, function(result){
-							if(result){
-								FacetSortServiceJS.deleteRule(self.selectedRule["ruleId"],{
-									callback: function(code){
-										showActionResponse(code, "delete", self.selectedRule["ruleName"]);
-										if(code==1) {
-											self.setTypeahead(null);
-										}
-									}
-								});
-							}
-						});
-					},
-					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
-			},
 			getListTemplate: function() {
 				var template = '';
 				template += '<div class="padT20 fsize14">';
@@ -960,13 +871,16 @@
 			},
 			init : function() {
 				var self = this;
-				self.$elObject = $('#'+self.elContainer);
+				self.$typeaheadPanel = $(self.typeaheadPanelSelector);
+				self.$preloader = self.$typeaheadPanel.find(self.preloaderSelector);
+				self.$typeaheadList = $(self.typeaheadListContainerSelector);
+				self.$editPanel = $(self.editPanelSelector);
 				self.getTypeaheadRuleList(1);
 				self.showTypeahead();
 				//self.loadSplunkData();
 				self.loadRuleList(0, self.rulePage);
 
-				var $searchDiv = $('div.listSearchDiv');
+				var $searchDiv = self.$typeaheadPanel.find('div.listSearchDiv');
 				$searchDiv.find('a.searchButton').off().on({
 					click : function() {
 						self.startIndex = 0;
@@ -1002,27 +916,11 @@
 
 				self.typeaheadManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
 					id: WIDGET_ID_searchResult,
-					target: WIDGET_TARGET_searchResult
-				}));
-
-				self.typeaheadBrandManager = new AjaxSolr.Manager({
-					solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
-					store: (new AjaxSolr.ParameterStore())
-				});
-
-				self.typeaheadBrandManager.addWidget(new AjaxSolr.TypeaheadBrandWidget({
-					id: WIDGET_ID_brand,
-					target: WIDGET_TARGET_brand
-				}));
-
-				self.typeaheadCategoryManager = new AjaxSolr.Manager({
-					solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
-					store: (new AjaxSolr.ParameterStore())
-				});
-
-				self.typeaheadCategoryManager.addWidget(new AjaxSolr.TypeaheadCategoryWidget({
-					id: WIDGET_ID_category,
-					target: WIDGET_TARGET_category
+					target: WIDGET_TARGET_searchResult,
+					brandId: WIDGET_ID_brand,
+					brandTarget: WIDGET_TARGET_brand,
+					categoryId: WIDGET_ID_category,
+					categoryTarget: WIDGET_TARGET_category
 				}));
 			}
 	};
