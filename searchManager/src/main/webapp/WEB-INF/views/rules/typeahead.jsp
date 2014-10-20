@@ -62,13 +62,14 @@
 		            <label class="floatL w70 marT5">Priority</label>
 		            <label class="floatL"><input id="priorityEdit" type="text" class="w240 marT5"/></label>
 	            </div>
-	            <div class="floatL w225">
+	            <div class="floatL w205">
 		            <label class="floatL w70 marT5">Disabled</label>
 		            <label class="floatL marT5"><input id="disabledEdit" type="checkbox"/></label>
 	            </div>
-	            <div class="txtAR padT5 floatR">
+	            <div class="txtAR padT5 floatR w125">
 		            <a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
 		            <a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+		            &nbsp;
 		        </div>
 	            <div class="clearB"></div>
 	        </div>
@@ -82,27 +83,29 @@
 			</tr>
 			<tr class="itemRow">
 				<td valign="top">
-					<div id="category" class="floatL w205 marL10 fsize11">
+					<div id="category" class="floatL w205 marL10 fsize11" style="height:280px; overflow-y:auto">
 						<div id="categoryDocs">
 						
 						</div>
 					</div>
 				</td>
 				<td valign="top">
-					<div id="brand" class="floatR w170 marL10 marT27 fsize11">
+					<div id="brand" class="floatR w170 marL10 fsize11" style="height:280px; overflow-y:auto">
 						<div id="brandDocs">
 						
 						</div>
 					</div>
 				</td>
 				<td valign="top">
-					<div id="searchResult" class="floatR w245 marL10 marT27 fsize11">
+					<div id="searchResult" class="floatR w245 marL10 fsize11" style="height:280px; overflow-y:auto">
 						<div id="docs">
 						
 						</div>
 					</div>
 				</td>
 			</tr>
+			
+			
 		</table>
 	</div>
 	<!--  <div id="noSelected"><img id="no-items-img" src="../images/facetSortRuleGuidelines.jpg"></div>-->

@@ -99,8 +99,9 @@
 			if(Object.keys(categories).length > 0) {
 				var i=0;
 				for(name in categories) {
-					if(i == GLOBAL_storeMaxCategory)
+					if(i == GLOBAL_storeMaxCategory && self.mode != 'edit') {
 						break;
+					}
 					$(self.categoryTarget).append(self.getCategoryContent(name, categories[name]));
 					i++;
 				}
@@ -118,8 +119,10 @@
 			var counter = 0;
 
 			for(name in manufacturers) {
-				if(counter == GLOBAL_storeMaxBrand)
+				if(counter == GLOBAL_storeMaxBrand && self.mode != 'edit') {
 					break;
+				}
+				
 				$(self.brandTarget).append(self.getBrandContent(name, manufacturers[name]));
 				counter++;
 			}
