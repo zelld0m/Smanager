@@ -139,6 +139,11 @@
 				return;
 			}
 			
+			self.$typeaheadPanel.find("#priorityEdit").prop('readonly', false);
+			self.$typeaheadPanel.find("#disabledEdit").off('click');
+			self.$typeaheadPanel.find("#saveBtn").show();
+			self.$typeaheadPanel.find("#deleteBtn").show();
+			
 			self.$typeaheadPanel.find("#saveBtn").off().on({
 				click:function(){
 					var typeaheadRule = self.selectedRule;
@@ -146,6 +151,18 @@
 					typeaheadRule.disabled = self.$typeaheadPanel.find("#disabledEdit").is(":checked");
 					
 					self.updateTypeaheadRule(typeaheadRule, function(){self.$preloader.show(); self.$editPanel.hide();}, function(){self.setTypeahead(typeaheadRule);});
+				}
+			});
+			
+			self.$typeaheadPanel.find("#deleteBtn").off().on({
+				click:function(){
+					var typeaheadRule = self.selectedRule;
+					jConfirm("Are you sure you want to delete this rule?", base.options.moduleName, function(result){
+						if(result) {
+							self.deleteTypeaheadRule(typeaheadRule, function(){self.$preloader.show(); self.$editPanel.hide();}, function(){self.resetTypeahead(); self.loadRuleList(0, base.options.rulePage);});
+						}
+					});
+					
 				}
 			});
 		};
@@ -165,9 +182,12 @@
 			self.$typeaheadPanel.find('input.searchTextInput, a.searchButton').hide();
 			self.$typeaheadList.hide();
 //			$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
-
-			self.$typeaheadPanel.find('#searchResult, #category, #brand').find(':not(#docs, #categoryDocs, #brandDocs)').remove();
-							
+			
+			self.$typeaheadPanel.find('div.sortDiv').children('ul').sortable('destroy');
+			self.$typeaheadPanel.find('#searchResult, #category, #brand').find(':not(.clearB, hr, #docs, #sortedCategoryDocs, #categoryDocs, #sortedBrandDocs, #brandDocs)').remove();
+			self.$typeaheadPanel.find('div.sortDiv').append('<ul></ul>');
+			self.$typeaheadPanel.find('div.sortDiv').children('ul').sortable({handle:'.dragHandler'});
+			
 			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, rule.ruleName, 0, 0, 1, 1, {
 				callback: function(response) {
 					var data = response["data"];
@@ -187,11 +207,20 @@
 							}
 						}
 						self.loadTypeaheadSolrDetails(list[0].ruleName);
+						self.loadRelatedKeywords(rule.ruleName);
 					}
 				}
 			});
 			
 			self.showTypeahead();
+		};
+		
+		base.loadRelatedKeywords = function(keyword) {
+			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, keyword, 0, 1, 1, GLOBAL_storeKeywordMaxCategory, {
+				callback: function(response) {
+					
+				}
+			});
 		};
 		
 		base.loadTypeaheadSolrDetails = function(keyword) {
@@ -219,7 +248,47 @@
 			for(name in params) {
 				self.typeaheadManager.store.addByValue(name, params[name]);
 			}
+			self.typeaheadManager.postHook = function() {self.setupItemEvents();};
 			self.typeaheadManager.doRequest(0);
+		};
+		
+		base.setupItemEvents = function() {
+			var self = this;
+			
+			var $brandList = self.$editPanel.find('div.itemNamePreviewBrand');
+			var $categoryList = self.$editPanel.find('div.itemNamePreviewCat');
+			
+			var initializeItemIcons = function() {
+				var $item = $(this);
+				var $itemSpan = $item.find('span');
+				$itemSpan.addClass('floatL').addClass('w80p');
+				$item.addClass('div_'+$itemSpan.text().split(' ').join('_').replace(/[^\w\s]/gi, ''));
+				$item.append('<div class="floatR"><a href="javascript:void(0);" class="elevateButton">'+base.options.elevateIcon+'</a></div>');
+				
+				$item.find('a.elevateButton').on("click", function() {
+					$item.hide();
+					
+					var $sortableList = $item.parent().siblings('div.sortDiv').find('ul');
+					
+					$sortableList.append('<li class="padB5 w100p"><span class="floatL w80p">'+$item.find('span').html()+'</span><div class="floatR padR5"><a href="javascript:void(0)" class="deleteHandler">'+base.options.deleteIcon+'</a>&nbsp;<a href="javascript:void(0);" class="dragHandler">'+base.options.dragIcon+'</a></div></li>');
+					
+					$deleteIconList = $sortableList.find('a.deleteHandler');
+					$deleteIconList.each(function() {
+						var $deleteLink = $(this);
+						
+						$deleteLink.off().on("click", function() {
+							var text = $deleteLink.parent().siblings('span').text();
+							$deleteLink.parent().parent().remove();
+							$item.parent().find('.div_'+text.split(' ').join('_').replace(/[^\w\s]/gi, '')).show();
+						});
+					});
+					
+					$sortableList.sortable('refresh');
+				});
+			};
+			
+			$brandList.each(initializeItemIcons);
+			$categoryList.each(initializeItemIcons);
 		};
 		
 		base.resetTypeahead = function() {
@@ -355,8 +424,6 @@
 		};
 		
 		base.updateTypeaheadRule = function(typeaheadRule, customPreHook, customPostHook) {
-			var self = this;
-			
 			var preHook = customPreHook != null ? customPreHook : function(){};
 			var postHook = customPostHook != null ? customPostHook : function(){};
 			
@@ -371,6 +438,26 @@
 				postHook:postHook,
 				errorHandler:function(){
 					jAlert('Rule was not successfuly saved.', base.options.moduleName);
+				}
+			});
+		};
+		
+		base.deleteTypeaheadRule = function(typeaheadRule, customPreHook, customPostHook) {
+			var preHook = customPreHook != null ? customPreHook : function(){};
+			var postHook = customPostHook != null ? customPostHook : function(){};
+			
+			TypeaheadRuleServiceJS.deleteRule(typeaheadRule, {
+				callback: function(response){
+					if(response && response.data != null && response.data == true) {
+						jAlert('Rule successfuly deleted.', base.options.moduleName);
+					} else {
+						jAlert('Rule was not successfuly deleted.', base.options.moduleName);
+					}
+				},
+				preHook:preHook,
+				postHook:postHook,
+				errorHandler:function(){
+					jAlert('Rule was not successfuly deleted.', base.options.moduleName);
 				}
 			});
 		};
@@ -964,6 +1051,9 @@
 			roundLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-circ.gif'/>",
 			magniIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_magniGlass13.png'/>",
 			lockIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_lock.png'/>",
+			elevateIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_white_get.png'/>",
+			deleteIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/btn_delete_big.png'/>",
+			dragIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_drag.png'/>",
 			searchReloadRate: 1000,
 			selectedRuleList: new Object(),
 	};

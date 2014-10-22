@@ -137,11 +137,11 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
 			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(existingRule.getStoreId(), RuleEntity.TYPEAHEAD.getName(), existingRule.getRuleId());
 			
-			ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, utilityService.getUsername());
+			boolean ruleStatusUpdated = ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, utilityService.getUsername());
 //			if(ruleStatus.getp)
 			//			ruleName = existingRule.getRuleName();
 			
-			Boolean success = typeaheadRuleService.delete(existingRule);
+			Boolean success = ruleStatusUpdated ? typeaheadRuleService.delete(existingRule) : false;
 			
 			if(success) {
 				response.success(success);

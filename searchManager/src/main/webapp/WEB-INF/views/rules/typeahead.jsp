@@ -17,6 +17,8 @@
 <!-- page specific dependencies -->
 <link type="text/css" rel="stylesheet"
 	href="<spring:url value="/css/bigbets/facet.css" />">
+<link type="text/css" rel="stylesheet"
+	href="<spring:url value="/css/typeahead.css" />">
 <script type="text/javascript"
 	src="<spring:url value="/js/rules/typeahead.js" />"></script>
 
@@ -42,7 +44,7 @@
 			<input type="text" class="searchTextInput" /><a
 				href="javascript:void(0);" class="searchButton"><img
 				src="<spring:url value="/images/icon_magniGlass13.png" />"></a> 
-				<a href="javascript:void(0);" class="searchButtonList" style="display:none;"><img
+				<a href="javascript:void(0);" class="searchButtonList padR10" style="display:none;"><img
 				src="<spring:url value="/images/icon_list.png" />">Back to list</a>
 
 		</div>
@@ -62,15 +64,11 @@
 		            <label class="floatL w70 marT5">Priority</label>
 		            <label class="floatL"><input id="priorityEdit" type="text" class="w240 marT5"/></label>
 	            </div>
-	            <div class="floatL w205">
+	            <div class="floatL w330">
 		            <label class="floatL w70 marT5">Disabled</label>
 		            <label class="floatL marT5"><input id="disabledEdit" type="checkbox"/></label>
 	            </div>
-	            <div class="txtAR padT5 floatR w125">
-		            <a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-		            <a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
-		            &nbsp;
-		        </div>
+	            
 	            <div class="clearB"></div>
 	        </div>
 	    </div>
@@ -84,6 +82,13 @@
 			<tr class="itemRow">
 				<td valign="top">
 					<div id="category" class="floatL w205 marL10 fsize11" style="height:280px; overflow-y:auto">
+						<div id="sortedCategoryDocs" class="sortDiv">
+							<ul>
+							</ul>
+						</div>
+						<div class="clearB"></div>
+						<hr/>
+						<div class="clearB"></div>
 						<div id="categoryDocs">
 						
 						</div>
@@ -91,6 +96,13 @@
 				</td>
 				<td valign="top">
 					<div id="brand" class="floatR w170 marL10 fsize11" style="height:280px; overflow-y:auto">
+						<div id="sortedBrandDocs" class="sortDiv">
+							<ul>
+							</ul>
+						</div>
+						<div class="clearB"></div>
+						<hr/>
+						<div class="clearB"></div>
 						<div id="brandDocs">
 						
 						</div>
@@ -107,6 +119,11 @@
 			
 			
 		</table>
+		<div class="txtAR padT5 floatR w125">
+		    <a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+		    <a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+		    &nbsp;
+		</div>
 	</div>
 	<!--  <div id="noSelected"><img id="no-items-img" src="../images/facetSortRuleGuidelines.jpg"></div>-->
 

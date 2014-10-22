@@ -53,6 +53,10 @@
 			self.categoryAfterRequest();
 			self.brandAfterRequest();
 			self.suggestionAfterRequest();
+			
+			if(self.manager.postHook) {
+				self.manager.postHook();
+			}
 
 		},
 		suggestionAfterRequest: function() {
@@ -161,7 +165,7 @@
 			if(self.mode == 'simulator')
 				html += '</a>';
 			html += '</div>';
-
+			html += '<div class="clearB"></div>';
 			return html;
 		},
 		getBrandContent: function(name, count) {

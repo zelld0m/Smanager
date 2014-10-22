@@ -1,0 +1,7 @@
+.ui-sortable {  
+  list-style-type: none;
+}
+
+.ui-sortable li{  
+  height:15px;
+}
