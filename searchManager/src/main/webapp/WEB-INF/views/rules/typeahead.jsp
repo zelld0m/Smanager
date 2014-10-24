@@ -119,11 +119,35 @@
 			
 			
 		</table>
+		<div class="clearB"></div>
+		<div id="sectionTableContainer">
+			<table id="section" class="tblItems marL10 marT15 marB10">
+				<tr>
+					<td>
+						<div style="width:685px;">
+							<div class="marL5 marT10 floatL">
+								<strong>Add Section:</strong> 
+								<input type="text" class="w160"/>
+								<a href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix" id="btnAddSection"><div class="btnGraph marB8"></div></a>
+							</div>
+						</div>
+						<div class="clearB"></div>
+						<hr/>
+						<div class="clearB"></div>
+						<div id="sectionBox">
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div class="clearB"></div>
 		<div class="txtAR padT5 floatR w125">
 		    <a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
 		    <a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
 		    &nbsp;
 		</div>
+		
 	</div>
 	<!--  <div id="noSelected"><img id="no-items-img" src="../images/facetSortRuleGuidelines.jpg"></div>-->
 

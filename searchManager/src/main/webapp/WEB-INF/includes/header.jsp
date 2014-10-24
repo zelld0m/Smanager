@@ -248,6 +248,9 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.rk-message-type-1.0.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.editable.custom.js" />" ></script>
   
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/typeahead/jquery.typeahead.sortable.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/typeahead/jquery.typeahead.addsection.js" />" ></script>
+  
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/1.0/jquery.rulestatusbar.custom.css" />">
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/rulestatusbar/1.0/jquery.rulestatusbar.custom.js" />" ></script>
 
