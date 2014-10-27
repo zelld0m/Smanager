@@ -1,8 +1,10 @@
 package com.search.manager.web.service.impl;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.*;
 import org.directwebremoting.spring.SpringCreator;
 import org.joda.time.DateTime;
@@ -20,10 +22,13 @@ import com.search.manager.core.search.*;
 import com.search.manager.core.search.Filter;
 import com.search.manager.core.service.*;
 import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.Product;
 import com.search.manager.response.ServiceResponse;
 import com.search.manager.service.UtilityService;
 import com.search.manager.web.service.TypeaheadRuleDwrService;
+import com.search.ws.SearchHelper;
 
 @Service(value = "typeaheadRuleDwrService")
 @RemoteProxy(name = "TypeaheadRuleServiceJS", creator = SpringCreator.class, creatorParams =
@@ -34,6 +39,8 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			LoggerFactory.getLogger(TypeaheadRuleDwrServiceImpl.class);
 	@Autowired
 	private RuleStatusService ruleStatusService;
+	@Autowired
+	private SearchHelper searchHelper;
 	@Autowired
 	private TypeaheadBrandService typeaheadBrandService;
 	@Autowired
@@ -263,5 +270,23 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			serviceResponse.error("Unable to retrieve typeahead rule(s).");
 		}
 		return serviceResponse;
+	}
+	
+	@RemoteMethod
+	public Map<String, ? extends Product> getProducts(String storeId, String[] dpNumberList) {
+		
+		Map<String, Product> dpNumEdpMap = new LinkedHashMap<String, Product>();
+		
+		for(String partNumber : dpNumberList) {
+			String edp = searchHelper.getEdpByPartNumber(utilityService.getServerName(), utilityService.getStoreId(), StringUtils.trim(partNumber));
+			Product product = new Product();
+			product.setEdp(edp);
+			product.setMemberTypeEntity(MemberTypeEntity.PART_NUMBER);
+			dpNumEdpMap.put(edp, product);
+		}
+		
+		searchHelper.getProducts(dpNumEdpMap, storeId, utilityService.getServerName(), null);
+		
+		return dpNumEdpMap;
 	}
 }

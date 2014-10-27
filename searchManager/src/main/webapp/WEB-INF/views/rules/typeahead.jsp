@@ -3,7 +3,12 @@
 <c:set var="topmenu" value="lexicon" />
 <c:set var="submenu" value="typeahead" />
 <%@ include file="/WEB-INF/includes/menu.jsp"%>
-
+<style>
+.ui-sortable-placeholder {
+  display: inline-block;
+height: 1px;
+}
+</style>
 <script type="text/javascript">
 	var WIDGET_ID_searchResult = 'searchResult';
 	var WIDGET_TARGET_searchResult = '#docs';

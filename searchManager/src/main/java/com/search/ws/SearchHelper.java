@@ -160,7 +160,7 @@ public class SearchHelper {
 			edps.append(")");
 			if (isWithEDP) {
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				nameValuePairs.add(new BasicNameValuePair("q", keyword));
+				nameValuePairs.add(new BasicNameValuePair("q", keyword != null ? keyword : "*:*"));
 				nameValuePairs.add(new BasicNameValuePair("fl", fields));
 				nameValuePairs.add(new BasicNameValuePair("qt", qt));
 				nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
