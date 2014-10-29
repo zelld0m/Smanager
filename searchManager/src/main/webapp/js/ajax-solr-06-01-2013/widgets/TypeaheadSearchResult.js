@@ -54,6 +54,9 @@
 			self.brandAfterRequest();
 			self.suggestionAfterRequest();
 			
+			self.manager.elevatedBrandList = undefined;
+			self.manager.elevatedCategoryList = undefined;
+			
 			if(self.manager.postHook) {
 				self.manager.postHook();
 			}
@@ -100,14 +103,35 @@
 
 			var categories = (self.manager.response.FacetTemplate) ? self.manager.response.FacetTemplate.Level1 : self.manager.response.facet_counts.facet_fields.Category;
 
+			var total = 0;
+			
+			
+			var elevatedCategoryList = self.manager.elevatedCategoryList != undefined ? self.manager.elevatedCategoryList : [];
+			
+			for(var i=0; i < elevatedCategoryList.length; i++) {
+				var elevatedCategory = elevatedCategoryList[i];
+				
+				if(elevatedCategory == undefined || elevatedCategory == null || categories[elevatedCategory] == undefined) {
+					
+					continue;
+				}
+				
+				if(total == GLOBAL_storeMaxCategory && self.mode != 'edit') {
+					break;
+				}
+				
+				$(self.categoryTarget).append(self.getCategoryContent(elevatedCategoryList, elevatedCategory, categories[elevatedCategory], true));
+				total ++;
+			}
+			
+			
 			if(Object.keys(categories).length > 0) {
-				var i=0;
 				for(name in categories) {
-					if(i == GLOBAL_storeMaxCategory && self.mode != 'edit') {
+					if(total == GLOBAL_storeMaxCategory && self.mode != 'edit') {
 						break;
 					}
-					$(self.categoryTarget).append(self.getCategoryContent(name, categories[name]));
-					i++;
+					$(self.categoryTarget).append(self.getCategoryContent(elevatedCategoryList, name, categories[name], false));
+					total++;
 				}
 			}
 
@@ -120,15 +144,33 @@
 			
 			var manufacturers = self.manager.response.facet_counts.facet_fields.Manufacturer;
 
-			var counter = 0;
+			var total = 0;
+			
+			var elevatedBrandList = self.manager.elevatedBrandList != undefined ? self.manager.elevatedBrandList : [];
 
-			for(name in manufacturers) {
-				if(counter == GLOBAL_storeMaxBrand && self.mode != 'edit') {
+			for(var i=0; i < elevatedBrandList.length; i++) {
+				var elevatedBrand = elevatedBrandList[i];
+				
+				if(elevatedBrand == undefined || elevatedBrand == null || manufacturers[elevatedBrand] == undefined) {
+					
+					continue;
+				}
+				
+				if(total == GLOBAL_storeMaxBrand && self.mode != 'edit') {
 					break;
 				}
 				
-				$(self.brandTarget).append(self.getBrandContent(name, manufacturers[name]));
-				counter++;
+				$(self.brandTarget).append(self.getBrandContent(elevatedBrandList, elevatedBrand, manufacturers[elevatedBrand], true));
+				total ++;
+			}
+			
+			for(name in manufacturers) {
+				if(total == GLOBAL_storeMaxBrand && self.mode != 'edit') {
+					break;
+				}
+				
+				$(self.brandTarget).append(self.getBrandContent(elevatedBrandList, name, manufacturers[name], false));
+				total++;
 			}
 
 			if(self.mode == 'simulator')
@@ -154,11 +196,13 @@
 
 			return html;
 		},
-		getCategoryContent: function(category, count, keyword) {
+		getCategoryContent: function(elevatedCategoryList, category, count, isElevated) {
 			var self = this;
 			var html = '';
-
-			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameCat' : 'itemNamePreviewCat')+'">';
+			
+			var visibilityStyle = (isElevated == false && $.inArray(category, elevatedCategoryList) > -1) ? 'style="display:none;"' : '';
+			
+			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameCat' : 'itemNamePreviewCat')+' '+(isElevated == true ? 'elevatedCategory' : '')+'" '+visibilityStyle+'>';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="categoryKeywordListener">';
 			html += '		<span id="category">'+category+'</span>';
@@ -168,11 +212,12 @@
 			html += '<div class="clearB"></div>';
 			return html;
 		},
-		getBrandContent: function(name, count) {
+		getBrandContent: function(elevatedBrandList, name, count, isElevated) {
 			var self = this;
 			var html = '';
-
-			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameBrand' : 'itemNamePreviewBrand')+'">';
+			var visibilityStyle = (isElevated == false && $.inArray(name, elevatedBrandList) > -1) ? 'style="display:none;"' : '';
+			
+			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameBrand' : 'itemNamePreviewBrand')+' '+(isElevated == true ? 'elevatedBrand' : '')+'" '+visibilityStyle+'>';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="brandKeywordListener">';
 			html += '		<span id="brand">'+name+'</span>';

@@ -78,15 +78,30 @@ height: 1px;
 	        </div>
 	    </div>
 	    <div class="clearB"></div>
+	    <div style="display:none;">
+	    	<div id="searchResult" class="floatR w245 marL10 fsize11" style="height:280px; overflow-y:auto">
+				<div id="docs">
+					
+				</div>
+			</div>
+	    </div>
 		<table id="typeaheadTable" class="tblItems marL10">
 			<tr class="itemRow">
+				<th>Related Keywords</th>
 				<th>Category</th>
 				<th> Brand</th>
-				<th>Suggestion</th>
+				
 			</tr>
 			<tr class="itemRow">
 				<td valign="top">
-					<div id="category" class="floatL w205 marL10 fsize11" style="height:280px; overflow-y:auto">
+					<div id="relatedKeywords" class="floatR w185 marL10 fsize11" style="height:280px; overflow-y:auto">
+						<div id="docs">
+							
+						</div>
+					</div>
+				</td>
+				<td valign="top">
+					<div id="category" class="floatL w230 marL10 fsize11" style="height:280px; overflow-y:auto">
 						<div id="sortedCategoryDocs" class="sortDiv">
 							<ul>
 							</ul>
@@ -100,7 +115,7 @@ height: 1px;
 					</div>
 				</td>
 				<td valign="top">
-					<div id="brand" class="floatR w170 marL10 fsize11" style="height:280px; overflow-y:auto">
+					<div id="brand" class="floatR w205 marL10 fsize11" style="height:280px; overflow-y:auto">
 						<div id="sortedBrandDocs" class="sortDiv">
 							<ul>
 							</ul>
@@ -109,13 +124,6 @@ height: 1px;
 						<hr/>
 						<div class="clearB"></div>
 						<div id="brandDocs">
-						
-						</div>
-					</div>
-				</td>
-				<td valign="top">
-					<div id="searchResult" class="floatR w245 marL10 fsize11" style="height:280px; overflow-y:auto">
-						<div id="docs">
 						
 						</div>
 					</div>

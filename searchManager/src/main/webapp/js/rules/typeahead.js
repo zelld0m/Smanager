@@ -184,9 +184,9 @@
 //			$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
 			
 			self.$typeaheadPanel.find('div.sortDiv').children('ul').sortable('destroy');
+			self.$typeaheadPanel.find('div#sectionBox').empty();
 			self.$typeaheadPanel.find('#searchResult, #category, #brand').find(':not(.clearB, hr, #docs, #sortedCategoryDocs, #categoryDocs, #sortedBrandDocs, #brandDocs)').remove();
 			self.$typeaheadPanel.find('div.sortDiv').append('<ul></ul>');
-			self.$typeaheadPanel.find('div.sortDiv').children('ul').sortable({handle:'.dragHandler'});
 			
 			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, rule.ruleName, 0, 0, 1, 1, {
 				callback: function(response) {
@@ -208,6 +208,7 @@
 						}
 						self.loadTypeaheadSolrDetails(list[0].ruleName);
 						self.loadRelatedKeywords(rule.ruleName);
+						self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName});
 					}
 				}
 			});
@@ -216,9 +217,26 @@
 		};
 		
 		base.loadRelatedKeywords = function(keyword) {
+			var self = this;
 			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, keyword, 0, 1, 1, GLOBAL_storeKeywordMaxCategory, {
 				callback: function(response) {
+					var data = response["data"];
+					var list = data.list;
 					
+					var html = '';
+					
+					for(var i=0; i<list.length; i++) {
+						var typeahead = list[i];
+						html += '<div class="padB10">';
+						html += typeahead['ruleName'];
+						html += '</div>';
+						html += '<div class="clearB"></div>';
+					}
+					
+					self.$typeaheadPanel.find("div#relatedKeywords").html(html);
+				},
+				preHook: function() {
+					self.$typeaheadPanel.find("div#relatedKeywords").html(base.options.rectLoader);
 				}
 			});
 		};
@@ -226,6 +244,10 @@
 		base.loadTypeaheadSolrDetails = function(keyword) {
 			var params = GLOBAL_typeaheadSolrParams;
 			var self = this;
+			
+			//remove this
+			self.typeaheadManager.elevatedCategoryList = ['Scanners', 'Electronics', 'Computers'];
+			self.typeaheadManager.elevatedBrandList = ['Accell', 'Apple', 'Epson'];
 			
 			self.typeaheadManager.store.addByValue('q', $.trim(keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
 			self.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
@@ -255,9 +277,8 @@
 		base.setupItemEvents = function() {
 			var self = this;
 			
-			self.$editPanel.find('div#category').typeaheadsortable({itemSelector:'div.itemNamePreviewCat'});
-			self.$editPanel.find('div#brand').typeaheadsortable({itemSelector:'div.itemNamePreviewBrand'});
-			self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName});
+			self.$editPanel.find('div#category').typeaheadsortable({itemSelector:'div.itemNamePreviewCat', sortedItemSelector:'div.elevatedCategory'});
+			self.$editPanel.find('div#brand').typeaheadsortable({itemSelector:'div.itemNamePreviewBrand', sortedItemSelector: 'div.elevatedBrand'});
 			
 		};
 		
