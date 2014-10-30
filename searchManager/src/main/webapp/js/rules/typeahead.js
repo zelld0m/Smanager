@@ -120,10 +120,13 @@
 					self.$typeaheadPanel.find("#titleText").html(base.options.moduleName + " for ");
 					self.$typeaheadPanel.find("#titleHeader").text(self.selectedRule["ruleName"]);
 					self.$typeaheadPanel.find("#readableString").html(self.selectedRule["readableString"]);
+					self.loadTypeaheadSolrDetails(base.selectedRule.ruleName, !ruleStatus.locked);
 					self.$preloader.hide();
 					self.initializeEditEvents(!ruleStatus.locked);
+					self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName, editable:!ruleStatus.locked});
 					self.$typeaheadPanel.find("#submitForApproval").show();
 					self.$editPanel.show();
+					
 				}
 			});
 		};
@@ -148,7 +151,7 @@
 				click:function(){
 					var typeaheadRule = self.selectedRule;
 					typeaheadRule.priority = self.$typeaheadPanel.find("#priorityEdit").val();
-					typeaheadRule.disabled = self.$typeaheadPanel.find("#disabledEdit").is(":checked");
+					typeaheadRule.disabled = !self.$typeaheadPanel.find("#disabledEdit").is(":checked");
 					
 					self.updateTypeaheadRule(typeaheadRule, function(){self.$preloader.show(); self.$editPanel.hide();}, function(){self.setTypeahead(typeaheadRule);});
 				}
@@ -172,7 +175,7 @@
 			self.selectedRule = rule;
 			self.$typeaheadPanel.find('input.searchTextInput').val(rule.ruleName);
 			self.$typeaheadPanel.find('#priorityEdit').val(rule.priority);
-			self.$typeaheadPanel.find('#disabledEdit').prop('checked', rule.disabled);
+			self.$typeaheadPanel.find('#disabledEdit').prop('checked', !rule.disabled);
 			self.$typeaheadPanel.find('a.searchButtonList').show();
 			self.$editPanel.hide();
 			self.startIndex = 0;
@@ -206,9 +209,8 @@
 								}
 							}
 						}
-						self.loadTypeaheadSolrDetails(list[0].ruleName);
 						self.loadRelatedKeywords(rule.ruleName);
-						self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName});
+						
 					}
 				}
 			});
@@ -241,7 +243,7 @@
 			});
 		};
 		
-		base.loadTypeaheadSolrDetails = function(keyword) {
+		base.loadTypeaheadSolrDetails = function(keyword, editable) {
 			var params = GLOBAL_typeaheadSolrParams;
 			var self = this;
 			
@@ -270,15 +272,15 @@
 			for(name in params) {
 				self.typeaheadManager.store.addByValue(name, params[name]);
 			}
-			self.typeaheadManager.postHook = function() {self.setupItemEvents();};
+			self.typeaheadManager.postHook = function() {self.setupItemEvents(editable);};
 			self.typeaheadManager.doRequest(0);
 		};
 		
-		base.setupItemEvents = function() {
+		base.setupItemEvents = function(editable) {
 			var self = this;
 			
-			self.$editPanel.find('div#category').typeaheadsortable({itemSelector:'div.itemNamePreviewCat', sortedItemSelector:'div.elevatedCategory'});
-			self.$editPanel.find('div#brand').typeaheadsortable({itemSelector:'div.itemNamePreviewBrand', sortedItemSelector: 'div.elevatedBrand'});
+			self.$editPanel.find('div#category').typeaheadsortable({itemSelector:'div.itemNamePreviewCat', sortedItemSelector:'div.elevatedCategory', editable: editable});
+			self.$editPanel.find('div#brand').typeaheadsortable({itemSelector:'div.itemNamePreviewBrand', sortedItemSelector: 'div.elevatedBrand', editable: editable});
 			
 		};
 		

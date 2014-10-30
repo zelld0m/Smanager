@@ -10,10 +10,17 @@
 		
 		base.options = $.extend({},$.typeaheadsortable.defaultOptions, options);
 		
+		var editable = (base.options.editable == true);
+		
 		base.init = function() {
 			var self = this;
 			self.initializeAddEvent();
 			self.initializeExistingData();
+			if(editable) {
+				self.$el.find('div#addSectionForm').show();
+			} else {
+				self.$el.find('div#addSectionForm').hide();
+			}
 		};
 		
 		base.initializeExistingData = function() {
@@ -21,6 +28,7 @@
 			
 			var dummySection = new Array();
 			dummySection[0] = {"name":"Hot Deals", "sectionItems":[454909, 13222995, 9111111, 7268082, 8037454, 9232266, 944015]};
+			dummySection[1] = {"name":"Hot Deals 2", "sectionItems":[454909, 13222995, 9111111, 7268082, 8037454, 9232266, 944015]};
 			
 			var sectionList = dummySection;
 			
@@ -38,6 +46,10 @@
 		base.initializeAddEvent = function() {
 			var self = this;
 			var $sectionTable = self.$el.find('table#section');
+			
+			if(!editable) {
+				return;
+			}
 			
 			$sectionTable.find('a#btnAddSection').off().on('click', function() {
 				var $sectionInput = $sectionTable.find('input');
@@ -65,6 +77,10 @@
 			
 			$newSection.find('div.sectionName').html(inputValue);
 			$sectionBox.append($newSection);
+			
+			if(!editable) {
+				return $newSection;
+			}
 			
 			$newSection.find('div.productList').sortable({tolerance: "intersect",
 		        axis: "x",
@@ -172,9 +188,10 @@
 		base.getSectionItemProduct = function(product) {
 			var $newItem = $('<div class="w85 pad5 marR10" id="'+product.dpNo+'" style="display:inline-block; border:1px solid #cfcfcf;;"></div>');
 			var $iconContainer = $('<div class="floatR"></div>');
-			
-			$iconContainer.append('<a href="javascript:void(0);" class="drag padR5">'+base.options.dragIcon+'</a>');
-			$iconContainer.append('<a href="javascript:void(0);" class="delete padR5">'+base.options.deleteIcon+'</a>');
+			if(editable) {
+				$iconContainer.append('<a href="javascript:void(0);" class="drag padR5">'+base.options.dragIcon+'</a>');
+				$iconContainer.append('<a href="javascript:void(0);" class="delete padR5">'+base.options.deleteIcon+'</a>');
+			}
 			$newItem.append($iconContainer);
 			$newItem.append('<div class="clearB"></div>');
 			$newItem.append('<img width="64" style="margin-left:10px" src="'+product.imagePath+'"/>');
@@ -211,11 +228,13 @@
 			html +=	'							<td class="pad1" valign="bottom">';
 			html +=	'								<div class="floatL marT5 sectionName">Dynamic Section</div>';
 			html +=	'								<div class="floatL marT3"><input type="checkbox"/></div>';
-			html +=	'								<div class="floatR">';
-			html +=	'									<input type="text" class="w150 marB6"/>';
-			html +=	'									<a href="javascript:void(0);" class="addProduct"><img class="padT5" src="'+GLOBAL_contextPath+'/images/add.png"/></a>';
-			html +=	'									<a href="javascript:void(0);" class="deleteSection"><img class="padL2 marT6" src="'+GLOBAL_contextPath+'/images/icon_delete2.png"/></a>';
-			html +=	'								</div>';
+			if(editable) {
+				html +=	'								<div class="floatR">';
+				html +=	'									<input type="text" class="w150 marB6"/>';
+				html +=	'									<a href="javascript:void(0);" class="addProduct"><img class="padT5" src="'+GLOBAL_contextPath+'/images/add.png"/></a>';
+				html +=	'									<a href="javascript:void(0);" class="deleteSection"><img class="padL2 marT6" src="'+GLOBAL_contextPath+'/images/icon_delete2.png"/></a>';
+				html +=	'								</div>';
+			}
 			html +=	'							</td>';
 			html +=	'						</tr>';
 			html +=	'						<tr>';

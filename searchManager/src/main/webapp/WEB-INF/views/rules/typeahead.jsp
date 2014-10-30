@@ -70,7 +70,7 @@ height: 1px;
 		            <label class="floatL"><input id="priorityEdit" type="text" class="w240 marT5"/></label>
 	            </div>
 	            <div class="floatL w330">
-		            <label class="floatL w70 marT5">Disabled</label>
+		            <label class="floatL w70 marT5">Enabled</label>
 		            <label class="floatL marT5"><input id="disabledEdit" type="checkbox"/></label>
 	            </div>
 	            
@@ -137,16 +137,17 @@ height: 1px;
 			<table id="section" class="tblItems marL10 marT15 marB10">
 				<tr>
 					<td>
-						<div style="width:685px;">
+						<div style="width:685px;" id="addSectionForm">
 							<div class="marL5 marT10 floatL">
 								<strong>Add Section:</strong> 
 								<input type="text" class="w160"/>
 								<a href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix" id="btnAddSection"><div class="btnGraph marB8"></div></a>
 							</div>
+							<div class="clearB"></div>
+							<hr/>
+							<div class="clearB"></div>
 						</div>
-						<div class="clearB"></div>
-						<hr/>
-						<div class="clearB"></div>
+						
 						<div id="sectionBox">
 						</div>
 					</td>
