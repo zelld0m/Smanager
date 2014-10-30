@@ -87,9 +87,9 @@ height: 1px;
 	    </div>
 		<table id="typeaheadTable" class="tblItems marL10">
 			<tr class="itemRow">
-				<th>Related Keywords</th>
-				<th>Category</th>
-				<th> Brand</th>
+				<th><input type="checkbox"/>Related Keywords</th>
+				<th><input type="checkbox"/>Category</th>
+				<th> <input type="checkbox"/>Brand</th>
 				
 			</tr>
 			<tr class="itemRow">

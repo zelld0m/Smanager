@@ -137,6 +137,8 @@
 
 			if(self.mode == 'simulator')
 				self.addCategoryListener('.categoryKeywordListener');	
+			
+			self.manager.elevatedCategoryList = undefined;
 		},
 		brandAfterRequest: function() {
 			var self = this;
@@ -175,6 +177,8 @@
 
 			if(self.mode == 'simulator')
 				self.addBrandListener('.brandKeywordListener');
+			
+			self.manager.elevatedBrandList = undefined;
 		},
 		getContent: function(doc) {
 			var self = this;

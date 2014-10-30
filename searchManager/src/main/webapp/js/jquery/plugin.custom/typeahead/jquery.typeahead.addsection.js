@@ -8,7 +8,7 @@
 		// Add a reverse reference to the DOM object
 		base.$el.data("typeaheadaddsection", base);
 		
-		base.options = $.extend({},$.typeaheadsortable.defaultOptions, options);
+		base.options = $.extend({},$.typeaheadaddsection.defaultOptions, options);
 		
 		var editable = (base.options.editable == true);
 		
@@ -28,8 +28,7 @@
 			
 			var dummySection = new Array();
 			dummySection[0] = {"name":"Hot Deals", "sectionItems":[454909, 13222995, 9111111, 7268082, 8037454, 9232266, 944015]};
-			dummySection[1] = {"name":"Hot Deals 2", "sectionItems":[454909, 13222995, 9111111, 7268082, 8037454, 9232266, 944015]};
-			
+						
 			var sectionList = dummySection;
 			
 			for(var i=0; i < sectionList.length; i++) {
@@ -178,9 +177,13 @@
 				},
 				preHook: function() {
 					$section.runningDWR = true;
+					$section.find('div.preloader').show();
+					$section.find('div.sectionIcons').hide();
 				},
 				postHook: function() {
 					$section.runningDWR = false;
+					$section.find('div.preloader').hide();
+					$section.find('div.sectionIcons').show();
 				}
 			});
 		};
@@ -203,7 +206,8 @@
 		
 		base.initializeItemProductEvents = function($sectionItem) {
 			
-			$sectionItem.find('a.delete').off().on({click: function() {
+			$sectionItem.find('a.delete').off().on({
+				click: function() {
 					jConfirm('Are you sure you want to delete this product?', base.options.moduleName, function(result){
 						if(result) {
 							var $listContainer = $sectionItem.parent().parent().parent();
@@ -228,8 +232,9 @@
 			html +=	'							<td class="pad1" valign="bottom">';
 			html +=	'								<div class="floatL marT5 sectionName">Dynamic Section</div>';
 			html +=	'								<div class="floatL marT3"><input type="checkbox"/></div>';
+			html +=	'								<div class="floatR preloader padT5" style="display:none;">'+base.options.rectLoader+'</div>';
 			if(editable) {
-				html +=	'								<div class="floatR">';
+				html +=	'								<div class="floatR sectionIcons">';
 				html +=	'									<input type="text" class="w150 marB6"/>';
 				html +=	'									<a href="javascript:void(0);" class="addProduct"><img class="padT5" src="'+GLOBAL_contextPath+'/images/add.png"/></a>';
 				html +=	'									<a href="javascript:void(0);" class="deleteSection"><img class="padL2 marT6" src="'+GLOBAL_contextPath+'/images/icon_delete2.png"/></a>';
@@ -253,7 +258,8 @@
 	$.typeaheadaddsection.defaultOptions = {
 			elevateIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_white_get.png'/>",
 			deleteIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/btn_delete_big.png'/>",
-			dragIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_drag.png'/>"
+			dragIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_drag.png'/>",
+			rectLoader: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>"
 	};
 	
 	$.fn.typeaheadaddsection = function(options){
