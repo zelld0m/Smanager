@@ -232,7 +232,7 @@
 			html +=	'							<td class="pad1" valign="bottom">';
 			html +=	'								<div class="floatL marT5 sectionName">Dynamic Section</div>';
 			html +=	'								<div class="floatL marT3"><input type="checkbox"/></div>';
-			html +=	'								<div class="floatR preloader padT5" style="display:none;">'+base.options.rectLoader+'</div>';
+			html +=	'								<div class="floatR preloader padT9 padB10" style="display:none;">'+base.options.rectLoader+'</div>';
 			if(editable) {
 				html +=	'								<div class="floatR sectionIcons">';
 				html +=	'									<input type="text" class="w150 marB6"/>';
