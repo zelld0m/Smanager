@@ -94,14 +94,14 @@ height: 1px;
 			</tr>
 			<tr class="itemRow">
 				<td valign="top">
-					<div id="relatedKeywords" class="floatR w185 marL10 fsize11" style="height:280px; overflow-y:auto">
+					<div id="relatedKeywords" class="floatR w165 marL10 fsize11" style="height:280px; overflow-y:auto">
 						<div id="docs">
 							
 						</div>
 					</div>
 				</td>
 				<td valign="top">
-					<div id="category" class="floatL w230 marL10 fsize11" style="height:280px; overflow-y:auto">
+					<div id="category" class="floatL w240 marL10 fsize11" style="height:280px; overflow-y:auto">
 						<div id="sortedCategoryDocs" class="sortDiv">
 							<ul>
 							</ul>
@@ -115,7 +115,7 @@ height: 1px;
 					</div>
 				</td>
 				<td valign="top">
-					<div id="brand" class="floatR w205 marL10 fsize11" style="height:280px; overflow-y:auto">
+					<div id="brand" class="floatR w215 marL10 fsize11" style="height:280px; overflow-y:auto">
 						<div id="sortedBrandDocs" class="sortDiv">
 							<ul>
 							</ul>

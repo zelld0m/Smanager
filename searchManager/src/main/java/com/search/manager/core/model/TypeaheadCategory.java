@@ -4,9 +4,17 @@ public class TypeaheadCategory extends ModelBean{
 
 	private static final long serialVersionUID = 8923795027648854570L;
 
+	private String typeaheadCategoryId;
 	private String ruleId;
 	private String category;
 	
+	
+	public String getTypeaheadCategoryId() {
+		return typeaheadCategoryId;
+	}
+	public void setTypeaheadCategoryId(String typeaheadCategoryId) {
+		this.typeaheadCategoryId = typeaheadCategoryId;
+	}
 	public String getRuleId() {
 		return ruleId;
 	}

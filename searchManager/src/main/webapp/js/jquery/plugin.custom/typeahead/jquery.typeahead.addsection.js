@@ -27,7 +27,7 @@
 			var self = this;
 			
 			var dummySection = new Array();
-			dummySection[0] = {"name":"Hot Deals", "sectionItems":[454909, 13222995, 9111111, 7268082, 8037454, 9232266, 944015]};
+			dummySection[0] = {"name":"Hot Deals", "sectionItems":[454909, 9111111, 8037454, 9232266, 944015]};
 						
 			var sectionList = dummySection;
 			
@@ -159,12 +159,13 @@
 				callback: function(productsMap){
 					if(productsMap && Object.keys(productsMap).length > 0) {
 						var $productList = $section.find('div.productList');
+						var position = 0;
 						for(edp in productsMap) {
 							
 							var product = productsMap[edp];
 							
 							if(!$.isNotBlank(product.edp)) {
-								jAlert('Not a valid product number.', base.options.moduleName);
+								jAlert('"'+dpNumList[position]+'" Not a valid product number.', base.options.moduleName);
 								continue;
 							}
 							
@@ -172,6 +173,7 @@
 							$productList.append($product);
 							$productList.sortable('refresh');
 							self.initializeItemProductEvents($product);
+							position ++;
 						}
 					}
 				},

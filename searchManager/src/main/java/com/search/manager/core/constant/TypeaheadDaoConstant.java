@@ -22,6 +22,10 @@ public class TypeaheadDaoConstant {
     public static final String SP_UPDATE_TYPEAHEAD_RULE = "dbo.usp_Update_Typeahead_Rule";
     public static final String SP_GET_TYPEAHEAD_RULE = "dbo.usp_Get_Typeahead_Rule";
 
+    public static final String SP_ADD_TYPEAHEAD_CATEGORY = "dbo.usp_Add_Typeahead_Category";
+    public static final String SP_UPDATE_TYPEAHEAD_CATEGORY = "dbo.usp_Update_Typeahead_Category";
+    public static final String SP_GET_TYPEAHEAD_CATEGORY = "dbo.usp_Get_Typeahead_Category";
+    
     public static final String SP_ADD_TYPEAHEAD_BRAND = "dbo.usp_Add_Typeahead_Brand";
     public static final String SP_UPDATE_TYPEAHEAD_BRAND = "dbo.usp_Update_Typeahead_Brand";
     public static final String SP_GET_TYPEAHEAD_BRAND = "dbo.usp_Get_Typeahead_Brand";

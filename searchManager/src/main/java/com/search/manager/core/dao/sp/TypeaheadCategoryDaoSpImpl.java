@@ -3,6 +3,7 @@ package com.search.manager.core.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class TypeaheadCategoryDaoSpImpl extends GenericDaoSpImpl<TypeaheadCatego
 	private class AddStoredProcedure extends GetStoredProcedure {
 
 		public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, TypeaheadDaoConstant.SP_ADD_TYPEAHEAD_RULE);
+			super(jdbcTemplate, TypeaheadDaoConstant.SP_ADD_TYPEAHEAD_CATEGORY);
 		}
 
 		@Override
@@ -74,9 +75,8 @@ public class TypeaheadCategoryDaoSpImpl extends GenericDaoSpImpl<TypeaheadCatego
 
 	private class UpdateStoredProcedure extends CUDStoredProcedure {
 
-		// TODO create update sp
 		public UpdateStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, TypeaheadDaoConstant.SP_UPDATE_TYPEAHEAD_RULE);
+			super(jdbcTemplate, TypeaheadDaoConstant.SP_UPDATE_TYPEAHEAD_CATEGORY);
 		}
 
 		@Override
@@ -91,7 +91,7 @@ public class TypeaheadCategoryDaoSpImpl extends GenericDaoSpImpl<TypeaheadCatego
 	private class SearchStoredProcedure extends GetStoredProcedure {
 
 		public SearchStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, TypeaheadDaoConstant.SP_GET_TYPEAHEAD_RULE);
+			super(jdbcTemplate, TypeaheadDaoConstant.SP_GET_TYPEAHEAD_CATEGORY);
 		}
 
 		@Override
@@ -157,7 +157,12 @@ public class TypeaheadCategoryDaoSpImpl extends GenericDaoSpImpl<TypeaheadCatego
 	@Override
 	protected Map<String, Object> generateAddInput(TypeaheadCategory model)
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
+		Map<String, Object> inputs = null;
+		
+		if(model != null) {
+			inputs = new HashMap<String, Object>();
+		}
+		
 		return null;
 	}
 
