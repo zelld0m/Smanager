@@ -39,9 +39,12 @@
 		},
 
 		beforeRequest: function () {
-			$(this.target).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
-			$(this.brandTarget).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
-			$(this.categoryTarget).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
+			var self = this;
+			if(self.mode != 'simulator') {
+				$(this.target).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
+				$(this.brandTarget).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
+				$(this.categoryTarget).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
+			}
 		},
 
 		errorRequest: function () {
@@ -184,19 +187,24 @@
 			var self = this;
 
 			var html = '';
-
-			html += '<div class="itemImgWp floatL">';
+			var tag = (self.mode == 'simulator') ? 'li' : 'div';
+			
+			
+			html += '<'+tag+' class="itemImgWp floatL">';
 			if(self.mode == 'simulator')
-				html += '<a href="javascript:void(0);" class="keywordListener">';
+				html += '<a href="javascript:void(0);" class="keywordListener suggest">';
 			html += '<span id="dpno" style="display:none">'+doc.EDP+'</span>';
 			html += '		<img class="'+(self.mode == 'simulator' ? 'itemImg':'normalImg')+' floatL" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
 			html += '		<div class="'+(self.mode == 'simulator'? 'itemNameSuggest':'itemNameSuggestPreview')+'"><strong>'+doc.Manufacturer+'</strong></div>';
 			html += '		<div class="'+(self.mode == 'simulator'? 'itemNameSuggest':'itemNameSuggestPreview')+'">'+doc.Name+'</div>';
 			if(self.mode == 'simulator')
 				html += '</a>';
-			html += '</div>';
-			html += '<div class="clearB"></div>';
-			html += '<div class="sep"></div>';
+			html += '</'+tag+'>';
+			
+			if(self.mode != 'simulator') {
+				html += '<div class="clearB"></div>';
+				html += '<div class="sep"></div>';
+			}
 
 			return html;
 		},
@@ -204,31 +212,42 @@
 			var self = this;
 			var html = '';
 			
+			var tag = (self.mode == 'simulator') ? 'li' : 'div';
+			
 			var visibilityStyle = (isElevated == false && $.inArray(category, elevatedCategoryList) > -1) ? 'style="display:none;"' : '';
 			
-			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameCat' : 'itemNamePreviewCat')+' '+(isElevated == true ? 'elevatedCategory' : '')+'" '+visibilityStyle+'>';
+			html += '<'+tag+' class="'+(self.mode == 'simulator' ? '' : 'itemNamePreviewCat')+' '+(isElevated == true ? 'elevatedCategory' : '')+'" '+visibilityStyle+'>';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="categoryKeywordListener">';
 			html += '		<span id="category">'+category+'</span>';
 			if(self.mode == 'simulator')
 				html += '</a>';
-			html += '</div>';
-			html += '<div class="clearB"></div>';
+			html += '</'+tag+'';
+			
+			if(self.mode != 'simulator') {
+				html += '<div class="clearB"></div>';
+			}
 			return html;
 		},
 		getBrandContent: function(elevatedBrandList, name, count, isElevated) {
 			var self = this;
 			var html = '';
+			
+			var tag = (self.mode == 'simulator') ? 'li' : 'div';
+			
 			var visibilityStyle = (isElevated == false && $.inArray(name, elevatedBrandList) > -1) ? 'style="display:none;"' : '';
 			
-			html += '<div class="'+(self.mode == 'simulator' ? 'itemNameBrand' : 'itemNamePreviewBrand')+' '+(isElevated == true ? 'elevatedBrand' : '')+'" '+visibilityStyle+'>';
+			html += '<'+tag+' class="'+(self.mode == 'simulator' ? '' : 'itemNamePreviewBrand')+' '+(isElevated == true ? 'elevatedBrand' : '')+'" '+visibilityStyle+'>';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="brandKeywordListener">';
 			html += '		<span id="brand">'+name+'</span>';
 			if(self.mode == 'simulator')
 				html += '</a">';
-			html += '</div>';
-			html += '<div class="clearB"></div>';
+			html += '</'+tag+'>';
+			
+			if(self.mode != 'simulator') {
+				html += '<div class="clearB"></div>';
+			}
 
 			return html;
 		},
@@ -244,7 +263,7 @@
 						
 						searchManager.store.addByValue('q', $(this).find('span#dpno').text());
 						searchManager.doRequest(0);
-						$(self.searchBox).autocomplete("close");
+						$("#typeahead").hide();
 					}
 				});
 			});
@@ -254,7 +273,7 @@
 			var self = this;
 			$(self.categoryTarget).find(selector).on({
 				click: function() {
-					var keyword = $(this).closest('#categoryFirst').prev().find('a.autocompleteLink').find('span#keyword').text();
+					var keyword = self.manager.store.get('q').value;
 					$(self.searchBox).val(keyword);
 
 					var searchManager = self.manager.searchManager;
@@ -269,7 +288,7 @@
 					}
 
 					searchManager.doRequest(0);
-					$(self.searchBox).autocomplete("close");
+					$("#typeahead").hide();
 				}
 			});
 		},
@@ -277,7 +296,7 @@
 			var self = this;
 			$(self.brandTarget).find(selector).on({
 				click: function() {
-					var keyword = $(this).closest('#brandFirst').prev().find('a.autocompleteLink').text();
+					var keyword = self.manager.store.get('q').value;
 					$(self.searchBox).val(keyword);
 
 					var searchManager = self.manager.searchManager;
@@ -291,7 +310,7 @@
 					}
 					searchManager.doRequest(0);
 
-					$(self.searchBox).autocomplete("close");
+					$("#typeahead").hide();
 				}
 			});
 		},

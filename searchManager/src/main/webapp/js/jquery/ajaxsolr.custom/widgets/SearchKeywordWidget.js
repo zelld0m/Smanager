@@ -16,11 +16,11 @@
                         $(e.currentTarget).val(self.defaultText);
                 },
                 keydown: function(e) {
-                    var code = (e.keyCode ? e.keyCode : e.which);
-                    var keyword = $.trim($(self.target).find('input#keyword').val());
-
-                    if (code == 13 && keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
-                        self.makeRequest(keyword);
+//                    var code = (e.keyCode ? e.keyCode : e.which);
+//                    var keyword = $.trim($(self.target).find('input#keyword').val());
+//
+//                    if (code == 13 && keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
+//                        self.makeRequest(keyword);
                 }
             }).val(self.defaultText);
 

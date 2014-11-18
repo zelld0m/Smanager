@@ -306,6 +306,11 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/microgallery/jquery.microgallery-modified.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.blockUI.js" />" ></script>
+  
+  <!-- Typeahead -->
+  <script type="text/javascript" src="<spring:url value="/js/typeahead/typeahead_widget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/typeahead/jquery.velocity.min.js" />" ></script>
+  
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
 

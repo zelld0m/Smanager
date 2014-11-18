@@ -179,55 +179,6 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<TypeaheadBrand> addBrand(String ruleId, String brandName, String vendorId, Integer productCount, Integer sortOrder) {
-		ServiceResponse<TypeaheadBrand> response = new ServiceResponse<TypeaheadBrand>();
-		try {
-			TypeaheadBrand brand = new TypeaheadBrand();
-
-			brand.setRuleId(ruleId);
-			brand.setBrandName(brandName);
-			brand.setVendorId(vendorId);
-			brand.setProductCount(productCount);
-			brand.setSortOrder(sortOrder);
-			brand.setCreatedBy(utilityService.getUsername());
-
-			response.success(typeaheadBrandService.add(brand));
-
-		} catch (CoreServiceException e) {
-			logger.error("Error in TypeaheadRuleDwrService.addBrand", e);
-			response.error("An error occured while adding the brand '"+brandName+"'. Please contact your system administrator.");
-		}
-
-
-		return response;
-	}
-
-	@RemoteMethod
-	public ServiceResponse<TypeaheadSuggestion> addSuggestion(String ruleId, String memberType, String memberValue, Integer sortOrder) {
-
-		ServiceResponse<TypeaheadSuggestion> response = new ServiceResponse<TypeaheadSuggestion>();
-		try {
-
-			TypeaheadSuggestion suggestion = new TypeaheadSuggestion();
-
-			suggestion.setRuleId(ruleId);
-			suggestion.setMemberType(MemberType.valueOf(memberType));
-			suggestion.setMemberValue(memberValue);
-			suggestion.setSortOrder(sortOrder);
-			suggestion.setCreatedBy(utilityService.getUsername());
-
-			response.success(typeaheadSuggestionService.add(suggestion));
-		} catch (CoreServiceException e) {
-			logger.error("Error in TypeaheadRuleDwrService.addSuggestion", e);
-			response.error("An error occured while adding the suggestion '"+memberValue+"'. Please contact your system administrator.");
-		} catch (Throwable e) {
-			logger.error("Error in TypeaheadRuleDwrService.addSuggestion", e);
-		}
-
-		return response;
-	}
-
-	@RemoteMethod
 	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String storeId, String name, int matchType, int orderBy, int page, int itemsPerPage) {
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
 		ServiceResponse<SearchResult<TypeaheadRule>> serviceResponse = new ServiceResponse<SearchResult<TypeaheadRule>>();
