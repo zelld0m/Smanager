@@ -137,7 +137,7 @@
 					total++;
 				}
 			}
-
+			console.log($(self.categoryTarget).html());
 			if(self.mode == 'simulator')
 				self.addCategoryListener('.categoryKeywordListener');	
 			
@@ -194,11 +194,15 @@
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="keywordListener suggest">';
 			html += '<span id="dpno" style="display:none">'+doc.EDP+'</span>';
+			
 			html += '		<img class="'+(self.mode == 'simulator' ? 'itemImg':'normalImg')+' floatL" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
-			html += '		<div class="'+(self.mode == 'simulator'? 'itemNameSuggest':'itemNameSuggestPreview')+'"><strong>'+doc.Manufacturer+'</strong></div>';
-			html += '		<div class="'+(self.mode == 'simulator'? 'itemNameSuggest':'itemNameSuggestPreview')+'">'+doc.Name+'</div>';
-			if(self.mode == 'simulator')
+			html += '		<span class="'+(self.mode == 'simulator'? 'itemNameSuggest offer':'itemNameSuggestPreview')+'">'+doc.Manufacturer+'</span>';
+			html += '		<span class="'+(self.mode == 'simulator'? 'itemNameSuggest prod-title':'itemNameSuggestPreview')+'">'+doc.Name+'</span>';
+			if(self.mode == 'simulator') {
 				html += '</a>';
+				html += '<div class="clearB padB10"></div>';
+				html += '<div class="clearB padB10"></div>';
+			}
 			html += '</'+tag+'>';
 			
 			if(self.mode != 'simulator') {
@@ -217,12 +221,14 @@
 			var visibilityStyle = (isElevated == false && $.inArray(category, elevatedCategoryList) > -1) ? 'style="display:none;"' : '';
 			
 			html += '<'+tag+' class="'+(self.mode == 'simulator' ? '' : 'itemNamePreviewCat')+' '+(isElevated == true ? 'elevatedCategory' : '')+'" '+visibilityStyle+'>';
-			if(self.mode == 'simulator')
+			if(self.mode == 'simulator') {
 				html += '<a href="javascript:void(0);" class="categoryKeywordListener">';
+			}
 			html += '		<span id="category">'+category+'</span>';
-			if(self.mode == 'simulator')
+			if(self.mode == 'simulator') {
 				html += '</a>';
-			html += '</'+tag+'';
+			}
+			html += '</'+tag+'>';
 			
 			if(self.mode != 'simulator') {
 				html += '<div class="clearB"></div>';

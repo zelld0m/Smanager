@@ -8,6 +8,10 @@
  */
 var PCM = PCM || {};
 
+var dummySectionList = [
+	{"name": "Hot Deals", "id" : 1234,  "dpNoList":[454909, 9111111, 8037454]}, {"name": "Bargain Price", "id" : 1235,  "dpNoList":[9232266, 944015]}
+];
+
 PCM.typeAhead = (function(j){	
 	jQuery.fn.exists = function(){return this.length>0;}
 	var init = function(searchInput, typeaheadDiv, delay, typeaheadManager){
@@ -26,7 +30,6 @@ PCM.typeAhead = (function(j){
 		var ARROW_SPEED = 150;
 		var SCROLL_SPEED = 1000;
 		var SCROLL_EASING = 'easeInOutQuart';
-		var searchAutoCompletePath = "$webapp/ajaxCall/typeahead";
 		var lastAjaxCall = null;
 		var typeaheadDelayTimeout = null;
 		var highlightedElement = null;
@@ -124,6 +127,12 @@ PCM.typeAhead = (function(j){
 							typeAhead.append(getSection('Brand', 'Matching Brands', 'brandFirst'));
 							typeAhead.append(getSection('Suggestion', ('Suggestions for '+list[0].ruleName), 'suggestionFirst'));
 
+							for(var i=0; i<dummySectionList.length ; i++) {
+								var section = dummySectionList[i];
+								
+								typeAhead.append(getSection('product', section.name, section.name, section.id, section.dpNoList));
+							}
+							
 							results = typeAhead.find('li > a');
 							results.mouseenter(function(){
 								hoverResults(j(this));
@@ -206,56 +215,87 @@ PCM.typeAhead = (function(j){
 			return html;
 		};
 
-		var getSection = function(type, headerText, containerId) {
+		var getSection = function(type, headerText, containerId, sectionId, items) {
 			var html = '';
 
 			if(headerText && headerText != null) {
+				html += '<div class="clearB"></div>';
 				html += '<h3>'+headerText+'</h3>';
+				
 			}
 
 			var elementId = containerId ? 'id="'+containerId+'"' : '';
 
 			html += '<ul class="second-lvl" '+elementId+'>';
-			html += '<li><img class="floatL padL30" marB5 alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif"/><div class="clearB"></div></li>';
+			if(items && type == 'product') {
+				for(var i=0; i<items.length; i++) {
+					
+					html += '<li id="'+sectionId+'_'+items[i]+'">';
+					html += '</li>';
+				}
+				
+			} else {
+				html += '<li><img class="floatL padL30" marB5 alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif"/><div class="clearB"></div></li>';
+			}
 			html +='</ul>';
 
+			TypeaheadRuleServiceJS.getProducts(GLOBAL_storeId, items, {
+				callback: function(productsMap){
+					if(productsMap && Object.keys(productsMap).length > 0) {
+						
+						for(edp in productsMap) {
+							
+							var product = productsMap[edp];
+							
+							if(!product || !$.isNotBlank(product.edp)) {
+								continue;
+							}
+							
+							$('li#'+sectionId+'_'+product.dpNo).after(getProductHtml(product));
+							$('li#'+sectionId+'_'+product.dpNo).remove();
+							
+						}
+					}
+				},
+				postHook: function() {
+					results = typeAhead.find('li > a');
+					results.mouseenter(function(){
+						hoverResults(j(this));
+					});
+					results.click(function() {
+						hoverResults(j(this), true);
+						searchKeyword();
+					});
+				}
+			});
+			
 			return html;
 		};
+		
+		var getProductHtml = function(product) {
 
-
-		var getSuggestionContent = function(suggestions) {
 			var html = '';
-			var suggestion = suggestions[0];
-			var elements = suggestion['products'];
-
-			html += '<h3>Suggestions for '+suggestion.keyword+'</h3>';
-
-			html += '<ul class="suggest">';
-
-			for(var k=0; k < elements.length; k++) {
-				var element = elements[k];
-
-				html += '<li>';
-				html += '	<a href="javascript:void(0);" title="'+element.name+'">';
-				html += '		<span class="tbl">';
-				html += '			<span class="tr">';
-				html += '				<span class="td col-img"><img src="'+(element.imagePath == null ? noImageUrl : element.imagePath)+'" width="67"></span>';
-				html += '				<span class="td col-desc">';
-				html += '					<span class="offer">'+element.manufacturer+'</span>';
-				html += '					<span class="prod-title">'+element.name+'</span><span class="products" style="display:none;">'+element.edp+'</span>';
-				html += '				</span>';
-				html += '			</span>';
-				html +- '		</span>';
-				html += '	</a>';
-				html += '</li>';
-			}
+			
+			html += '<li class="itemImgWp floatL">';
+			html += '<a href="javascript:void(0);" class="keywordListener suggest">';
+			html += '<span id="dpno" style="display:none" class="txt">'+product.edp+'</span>';
+			
+			html += '		<img class="itemImg floatL" width="60" src="'+product.imagePath+'"/>&nbsp;';
+			html += '		<span class="itemNameSuggest offer">'+product.manufacturer+'</span>';
+			html += '		<span class="itemNameSuggest prod-title">'+product.name+'</span>';
+			
+			html += '</a>';
+			html += '<div class="clearB padB10"></div>';
+			html += '<div class="clearB padB10"></div>';
+			
+			html += '</li>';
+			
 			return html;
-
 		};
 
 		var setupStyle = function(){
 			typeAhead.css({
-				'width':(searchInput.outerWidth()*2)+'px',
+				'width':(searchInput.outerWidth()*2.5)+'px',
 				'top':(searchInput.offset().top + 23)+'px'
 			});
 			/*
@@ -290,8 +330,7 @@ PCM.typeAhead = (function(j){
 			if(typeof base.parent().parent().attr('class') !== 'undefined' && 
 					base.hasClass('suggest') == true){
 				highlight.hide();
-				typeAhead.find('.itemNameSuggest').css({'color':'#000'});
-				base.find('.itemNameSuggest').css({'color':'#08c'});
+				base.find('.prod-title').css({'color':'#08c'});
 			}else{
 				highlight.velocity({
 					'height':base.outerHeight()+'px',

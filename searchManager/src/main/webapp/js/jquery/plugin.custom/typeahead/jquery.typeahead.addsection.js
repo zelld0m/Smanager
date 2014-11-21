@@ -27,7 +27,8 @@
 			var self = this;
 			
 			var dummySection = new Array();
-			dummySection[0] = {"name":"Hot Deals", "sectionItems":[454909, 9111111, 8037454, 9232266, 944015]};
+			dummySection[0] = {"name":"Hot Deals", "sectionItems":[454909, 9111111, 8037454, 9232266, 944015, 8870936, 8901649]};
+			dummySection[1] = {"name":"Daily Discount", "sectionItems":[454909, 9111111, 8037454, 9232266, 944015]};
 						
 			var sectionList = dummySection;
 			

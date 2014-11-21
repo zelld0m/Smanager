@@ -229,11 +229,10 @@
 						var data = response['data'];
 						var list = data.list;
 
-						var $trClone = $table.find("tr#itemPattern")
-
+						var $trClone = $table.find("tr#itemPattern");
+						
 						for(var i = 0; i < list.length; i++) {
 							var $tr = $trClone.clone();
-
 							if(i < GLOBAL_storeKeywordMaxCategory)
 								$tr.find("#category").text(list[i].ruleName);
 
@@ -242,10 +241,53 @@
 								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
 								$tr.find("#brand").append('<div id="brandFirst"></div>')
 								$tr.find("#category").append('<div id="categoryFirst"></div>')
-
+																
 								$tr.show();
+																
 								$table.append($tr);
-
+											
+								var sectionTemplate = function() {
+									var html = '';
+									
+									html +=	'					<table id="sectionTemplate" class="sectionTable pad5">';
+									html +=	'						<tr>';
+									html +=	'							<td class="pad1 accordionHeader" valign="bottom">';
+									html +=	'								<div class="floatL marT5 sectionName">Dynamic Section</div>';
+									html +=	'								<div class="floatR preloader padT9 padB10" style="display:none;">'+base.options.rectLoader+'</div>';
+									html +=	'							</td>';
+									html +=	'						</tr>';
+									html +=	'						<tr>';
+									html +=	'							<td nowrap>';
+									html +=	'								<div class="productList w580" style="overflow-x:auto; overflow-y:hidden; white-space:nowrap; vertical-align:top"></div>';
+									html +=	'							</td>';
+									html +=	'						</tr>';
+									html +=	'					</table>';
+									
+									return html;
+								};
+								
+								var $sectionContainer = $content.find('div#sectionTableContainer');
+								
+								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : sectionTemplate()});
+								
+								$sectionContainer.find('div.sectionName').each(function() {
+									var $sectionNameDiv = $(this);
+									var $tableContainer = $sectionNameDiv.closest("table#sectionTemplate");
+									
+									$tableContainer.before("<a href='javascript:void(0)'><div class=\"pad5\" style=\"width:590px; border:1px solid #cfcfcf;\">"+$sectionNameDiv.html()+"</div></a>");
+									$tableContainer.wrap('<div class="content" style="width:600px; border:1px solid #cfcfcf;"></div>');
+									$sectionNameDiv.parent().parent().remove();
+								});
+								
+								$sectionContainer.find('div#sectionBox').find('a').click(function(e) {
+								    //Close all <div> but the <div> right after the clicked <a>
+								    $(e.target).parent().next('div.content').siblings('div.content').slideUp();
+								    //Toggle open/close on the <div> after the <a>, opening it if not open.
+								    $(e.target).parent().next('div.content').slideDown();
+								});
+								
+								$sectionContainer.find('div#sectionBox').find('div.content:gt(0)').hide();
+								
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
@@ -941,6 +983,9 @@
 				template += '					<td width="33%" class="txtAL valignTop" id="brand" style="border-bottom:none;"></td>';
 				template += '					<td width="34%" class="txtAL valignTop" id="suggestion" style="border-bottom:none;"></td>';
 				template += '				</tr>';
+				template += '				<tr style="display:none;" id="sections">';
+				template += '					<td colspan="3"></td>';
+				template += '				</tr>';
 				template += '				<tr id="preloader">';
 				template += '					<td colspan="6" class="txtAC" style="border-bottom:none;">';
 				template += '						<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
@@ -949,6 +994,16 @@
 				template += '			</tbody>';
 				template += '		</table>';
 				template += '	</div>';
+				template += '		<div id="sectionTableContainer">';
+				template += '			<table id="section" class="marT15 marB10">';
+				template += '				<tr>';
+				template += '					<td>';
+				template += '						<div id="sectionBox">';
+				template += '						</div>';
+				template += '					</td>';
+				template += '				</tr>';
+				template += '			</table>';
+				template += '		</div>';
 				break;
 			}
 
@@ -1049,7 +1104,8 @@
 			postTemplate: function(base){},
 			templateEvent: function(base){},
 			itemForceAddStatusCallback: function(base, memberIds){},
-			setSelectedOverwriteRulePreview: function(base, rulename){}
+			setSelectedOverwriteRulePreview: function(base, rulename){},
+			rectLoader: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>"
 	};
 
 	$.fn.preview = function(options){

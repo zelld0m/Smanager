@@ -903,7 +903,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .cssReset .itemNameCat {margin-left: 5px;padding: 5px;}
 .cssReset .itemNameBrand {margin-left: 5px;padding: 5px;}
 .cssReset .itemNameSuggestPreview {display: block;float: left;margin-left: 20px;width: 157px; margin-top:10px;}
-.cssReset .itemNameSuggest {display: block;float: left;margin-left: 20px;width: 157px; margin-top:10px;}
+.cssReset .itemNameSuggest {display: block;float: left;margin-left: 20px;width: 210px; margin-top:10px;}
 
 /* workflow typehead */
 .qtip .tblItems td .itemNamePreviewCat {margin-left: 5px;padding: 3px 5px 3px 5px;}
