@@ -268,25 +268,7 @@
 								
 								var $sectionContainer = $content.find('div#sectionTableContainer');
 								
-								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : sectionTemplate()});
-								
-								$sectionContainer.find('div.sectionName').each(function() {
-									var $sectionNameDiv = $(this);
-									var $tableContainer = $sectionNameDiv.closest("table#sectionTemplate");
-									
-									$tableContainer.before("<a href='javascript:void(0)'><div class=\"pad5\" style=\"width:590px; border:1px solid #cfcfcf;\">"+$sectionNameDiv.html()+"</div></a>");
-									$tableContainer.wrap('<div class="content" style="width:600px; border:1px solid #cfcfcf;"></div>');
-									$sectionNameDiv.parent().parent().remove();
-								});
-								
-								$sectionContainer.find('div#sectionBox').find('a').click(function(e) {
-								    //Close all <div> but the <div> right after the clicked <a>
-								    $(e.target).parent().next('div.content').siblings('div.content').slideUp();
-								    //Toggle open/close on the <div> after the <a>, opening it if not open.
-								    $(e.target).parent().next('div.content').slideDown();
-								});
-								
-								$sectionContainer.find('div#sectionBox').find('div.content:gt(0)').hide();
+								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : sectionTemplate(), accordion: true});
 								
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);

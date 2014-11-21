@@ -11,6 +11,7 @@
 		base.options = $.extend({},$.typeaheadaddsection.defaultOptions, options);
 		
 		var editable = (base.options.editable == true);
+		var isAccordion = (base.options.accordion == true);
 		
 		base.init = function() {
 			var self = this;
@@ -20,6 +21,10 @@
 				self.$el.find('div#addSectionForm').show();
 			} else {
 				self.$el.find('div#addSectionForm').hide();
+			}
+			
+			if(isAccordion) {
+				self.initializeAccordion();
 			}
 		};
 		
@@ -42,6 +47,29 @@
 				
 			}
 		};
+		
+		base.initializeAccordion = function() {
+			var self = this;
+			var $el = self.$el;
+			
+			$el.find('div.sectionName').each(function() {
+				var $sectionNameDiv = $(this);
+				var $tableContainer = $sectionNameDiv.closest("table#sectionTemplate");
+				
+				$tableContainer.before("<a href='javascript:void(0)' style='text-decoration:none;'><div class=\"pad5\" style=\"width:590px; border:1px solid #cfcfcf; color:#333333; background: none repeat scroll 0 0 #dfdfdf;\">"+$sectionNameDiv.html()+"</div></a>");
+				$tableContainer.wrap('<div class="content" style="width:600px; border:1px solid #cfcfcf;"></div>');
+				$sectionNameDiv.parent().parent().remove();
+			});
+			
+			$el.find('div#sectionBox').find('a').click(function(e) {
+			    //Close all <div> but the <div> right after the clicked <a>
+			    $(e.target).parent().next('div.content').siblings('div.content').slideUp({duration:200});
+			    //Toggle open/close on the <div> after the <a>, opening it if not open.
+			    $(e.target).parent().next('div.content').slideDown({duration:200});
+			});
+			
+			$el.find('div#sectionBox').find('div.content:gt(0)').hide();
+		}
 				
 		base.initializeAddEvent = function() {
 			var self = this;
