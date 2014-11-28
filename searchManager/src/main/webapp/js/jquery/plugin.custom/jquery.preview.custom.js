@@ -224,7 +224,7 @@
 				$rulePreview.find("#ruleInfo").text($.trim(base.options.ruleInfo));
 				$rulePreview.find("#requestType").text(base.options.requestType);
 
-				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, base.options.ruleInfo, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, base.options.ruleInfo, 0, 1, 1, GLOBAL_storeMaxTypeahead, true, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -268,7 +268,42 @@
 								
 								var $sectionContainer = $content.find('div#sectionTableContainer');
 								
-								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : sectionTemplate(), accordion: true});
+								var getSectionList = function(rule) {
+									
+									var sectionList = rule.sectionList;
+									var sectionArray = new Array();
+									
+									for(var i=0; i< sectionList.length; i++) {
+										var section = sectionList[i];
+										
+										if(section.keywordAttributeType != 'SECTION') {
+											continue;
+										}
+										
+										var arrayObject = new Object();
+										
+										arrayObject.name = section.inputValue;
+										arrayObject.sectionItems = section.keywordItemValues;
+										
+										sectionArray[sectionArray.length] = arrayObject;
+									}
+									
+									return sectionArray;
+									
+								};
+								
+								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : sectionTemplate(), accordion: true, sectionList: getSectionList(list[0])});
+								
+								var sectionList = list[0].sectionList;
+								for(var k=0; sectionList && k<sectionList.length; k++) {
+									var section = sectionList[k];
+									
+									if('CATEGORY' == section.keywordAttributeType) {
+										base.typeaheadManager.elevatedCategoryList = section.keywordItemValues;
+									} else if('BRAND' == section.keywordAttributeType) {
+										base.typeaheadManager.elevatedBrandList = section.keywordItemValues;
+									}
+								}
 								
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);

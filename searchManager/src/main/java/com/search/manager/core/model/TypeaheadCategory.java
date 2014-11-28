@@ -7,7 +7,7 @@ public class TypeaheadCategory extends ModelBean{
 	private String typeaheadCategoryId;
 	private String ruleId;
 	private String category;
-	
+	private Integer sortOrder;
 	
 	public String getTypeaheadCategoryId() {
 		return typeaheadCategoryId;
@@ -26,6 +26,12 @@ public class TypeaheadCategory extends ModelBean{
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public Integer getSortOrder() {
+		return sortOrder;
+	}
+	public void setSortOrder(Integer sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 	
 	

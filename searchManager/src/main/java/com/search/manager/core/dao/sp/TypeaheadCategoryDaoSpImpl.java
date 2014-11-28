@@ -163,34 +163,45 @@ public class TypeaheadCategoryDaoSpImpl extends GenericDaoSpImpl<TypeaheadCatego
 			inputs = new HashMap<String, Object>();
 		}
 		
-		return null;
+		return inputs;
 	}
 
 	@Override
 	protected Map<String, Object> generateUpdateInput(TypeaheadCategory model)
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> inputs = null;
+		
+		if(model != null) {
+			inputs = new HashMap<String, Object>();
+		}
+		
+		return inputs;
 	}
 
 	@Override
 	protected Map<String, Object> generateDeleteInput(TypeaheadCategory model)
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> inputs = null;
+		
+		if(model != null) {
+			inputs = new HashMap<String, Object>();
+		}
+		
+		return inputs;
 	}
 
 	@Override
 	protected Search generateSearchInput(TypeaheadCategory model)
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		Search search = new Search(TypeaheadCategory.class);
+		
+		return search;
 	}
 
 	@Override
 	protected Map<String, Object> getDefaultInParam() throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> inputs = new HashMap<String, Object>();
+		return inputs;
 	}
 
 	@Override

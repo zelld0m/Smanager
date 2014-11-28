@@ -351,7 +351,7 @@
 				$rulePreview.find("#ruleInfo").text(ruleName);
 				$rulePreview.find("#requestType").text(base.options.requestType);
 				
-				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, true, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -382,8 +382,19 @@
 
 								var $sectionContainer = $content.find('div#sectionTableContainer');
 								
-								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : base.sectionTemplate(), accordion: true});
+								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : base.sectionTemplate(), accordion: true, sectionList: base.getSectionList(list[0])});
 
+								var sectionList = list[0].sectionList;
+								for(var k=0; sectionList && k<sectionList.length; k++) {
+									var section = sectionList[k];
+									
+									if('CATEGORY' == section.keywordAttributeType) {
+										base.typeaheadManager.elevatedCategoryList = section.keywordItemValues;
+									} else if('BRAND' == section.keywordAttributeType) {
+										base.typeaheadManager.elevatedBrandList = section.keywordItemValues;
+									}
+								}
+								
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 								base.typeaheadManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
@@ -630,6 +641,30 @@
 			}
 		};
 
+		base.getSectionList = function(rule) {
+			
+			var sectionList = rule.sectionList;
+			var sectionArray = new Array();
+			
+			for(var i=0; i< sectionList.length; i++) {
+				var section = sectionList[i];
+				
+				if(section.keywordAttributeType != 'SECTION') {
+					continue;
+				}
+				
+				var arrayObject = new Object();
+				
+				arrayObject.name = section.inputValue;
+				arrayObject.sectionItems = section.keywordItemValues;
+				
+				sectionArray[sectionArray.length] = arrayObject;
+			}
+			
+			return sectionArray;
+			
+		};
+		
 		base.getRuleData = function($content){
 			var sourceData = base.XML_SOURCE;
 			var products = (base.options.ruleXml) ? base.options.ruleXml["products"] : new Array();
@@ -661,7 +696,7 @@
 				$content.find("#rulePriority").text($.trim(xml.priority));
 				$content.find("#ruleDisabled").text(xml.disabled);
 
-				TypeaheadRuleServiceJS.getAllRules(xml.store, xml.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, {
+				TypeaheadRuleServiceJS.getAllRules(xml.store, xml.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, true, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -691,8 +726,19 @@
 								
 								var $sectionContainer = $content.find('div#sectionTableContainer');
 								
-								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : base.sectionTemplate(), accordion: true});
+								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : base.sectionTemplate(), accordion: true, sectionList: base.getSectionList(list[0])});
 
+								var sectionList = list[0].sectionList;
+								for(var k=0; sectionList && k<sectionList.length; k++) {
+									var section = sectionList[k];
+									
+									if('CATEGORY' == section.keywordAttributeType) {
+										base.typeaheadSourceManager.elevatedCategoryList = section.keywordItemValues;
+									} else if('BRAND' == section.keywordAttributeType) {
+										base.typeaheadSourceManager.elevatedBrandList = section.keywordItemValues;
+									}
+								}
+								
 								base.typeaheadSourceManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadSourceManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 								base.typeaheadSourceManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
