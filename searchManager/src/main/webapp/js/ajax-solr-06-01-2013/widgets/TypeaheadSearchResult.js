@@ -40,6 +40,11 @@
 
 		beforeRequest: function () {
 			var self = this;
+			
+			if(self.manager.preHook) {
+				self.manager.preHook();
+			}
+			
 			if(self.mode != 'simulator') {
 				$(this.target).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
 				$(this.brandTarget).html('<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">');
@@ -137,7 +142,7 @@
 					total++;
 				}
 			}
-			console.log($(self.categoryTarget).html());
+			
 			if(self.mode == 'simulator')
 				self.addCategoryListener('.categoryKeywordListener');	
 			

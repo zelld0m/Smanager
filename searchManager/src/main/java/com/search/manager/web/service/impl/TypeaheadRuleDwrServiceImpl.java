@@ -1,7 +1,9 @@
 package com.search.manager.web.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.constant.TypeaheadDaoConstant;
-import com.search.manager.core.enums.MemberType;
+import com.search.manager.core.enums.KeywordAttributeType;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.*;
 import com.search.manager.core.search.*;
@@ -179,7 +181,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String storeId, String name, int matchType, int orderBy, int page, int itemsPerPage) {
+	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String storeId, String name, int matchType, int orderBy, int page, int itemsPerPage, Boolean includeSections) {
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
 		ServiceResponse<SearchResult<TypeaheadRule>> serviceResponse = new ServiceResponse<SearchResult<TypeaheadRule>>();
 		try {
@@ -192,13 +194,96 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	        search.setPageNumber(page);
 	        search.setMaxRowCount(itemsPerPage);
 			
-			serviceResponse.success(typeaheadRuleService.search(search));
+	        SearchResult<TypeaheadRule> result = typeaheadRuleService.search(search);
+	        
+	        if(Boolean.TRUE.equals(includeSections)) {
+	        	for(TypeaheadRule rule : result.getList()) {
+	        		initializeTypeaheadSections(rule);
+	        	}
+	        }
+	        
+			serviceResponse.success(result);
 
 		} catch (CoreServiceException e) {
 			logger.error("getAllRule() failed.", e);
 			serviceResponse.error("Unable to add typeahead rule.");
 		}
 		return serviceResponse;
+	}
+	
+	private void initializeTypeaheadSections(TypeaheadRule rule) {
+		//TODO: Replace this with database call
+		List<KeywordAttribute> list = new ArrayList<KeywordAttribute>();
+		
+		KeywordAttribute suggestions = new KeywordAttribute();
+		KeywordAttribute categories = new KeywordAttribute();
+		KeywordAttribute brands = new KeywordAttribute();
+		KeywordAttribute section = new KeywordAttribute();
+		KeywordAttribute section2 = new KeywordAttribute();
+		
+		suggestions.setDisabled(false);
+		suggestions.setPriority(2);
+		suggestions.setKeywordAttributeType(KeywordAttributeType.SUGGESTION);
+		suggestions.setInputValue("Suggestions");
+		
+		categories.setDisabled(false);
+		categories.setPriority(1);
+		categories.setKeywordAttributeType(KeywordAttributeType.CATEGORY);
+		categories.setInputValue("Category");
+		
+		KeywordAttribute category = new KeywordAttribute();
+		category.setDisabled(false);
+		category.setPriority(1);
+		category.setKeywordAttributeType(KeywordAttributeType.SECTION_ITEM);
+		category.setInputValue("Computers");
+		categories.addKeywordAttribute(category);
+		
+		brands.setDisabled(false);
+		brands.setPriority(0);
+		brands.setKeywordAttributeType(KeywordAttributeType.BRAND);
+		brands.setInputValue("Brand");
+		
+		KeywordAttribute brand = new KeywordAttribute();
+		brand.setDisabled(false);
+		brand.setPriority(0);
+		brand.setKeywordAttributeType(KeywordAttributeType.SECTION_ITEM);
+		brand.setInputValue("Belkin");
+		brands.addKeywordAttribute(brand);
+		
+		section.setDisabled(false);
+		section.setPriority(3);
+		section.setKeywordAttributeType(KeywordAttributeType.SECTION);
+		section.setInputValue("Hot Deals");
+		section.setKeywordAttributeId("109876");
+		
+		section2.setDisabled(false);
+		section2.setPriority(3);
+		section2.setKeywordAttributeType(KeywordAttributeType.SECTION);
+		section2.setInputValue("Top Reviewed");
+		section2.setKeywordAttributeId("109576");
+		
+		KeywordAttribute product = new KeywordAttribute();
+		product.setKeywordAttributeType(KeywordAttributeType.SECTION_ITEM);
+		product.setDisabled(false);
+		product.setPriority(0);
+		product.setInputValue("454909");
+		
+		KeywordAttribute product2 = new KeywordAttribute();
+		product2.setKeywordAttributeType(KeywordAttributeType.SECTION_ITEM);
+		product2.setDisabled(false);
+		product2.setPriority(1);
+		product2.setInputValue("9111111");
+		
+		section.addKeywordAttribute(product);
+		section2.addKeywordAttribute(product2);
+		
+		list.add(categories);
+		list.add(brands);
+		list.add(suggestions);
+		list.add(section);
+		list.add(section2);
+		
+		rule.setSectionList(list);
 	}
 	
 	@RemoteMethod

@@ -123,12 +123,36 @@
 					self.loadTypeaheadSolrDetails(base.selectedRule.ruleName, !ruleStatus.locked);
 					self.$preloader.hide();
 					self.initializeEditEvents(!ruleStatus.locked);
-					self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName, editable:!ruleStatus.locked});
+					self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName, sectionList : self.getSectionList(self.selectedRule), editable:!ruleStatus.locked});
 					self.$typeaheadPanel.find("#submitForApproval").show();
 					self.$editPanel.show();
 					
 				}
 			});
+		};
+		
+		base.getSectionList = function(rule) {
+			
+			var sectionList = rule.sectionList;
+			var sectionArray = new Array();
+			
+			for(var i=0; i< sectionList.length; i++) {
+				var section = sectionList[i];
+				
+				if(section.keywordAttributeType != 'SECTION') {
+					continue;
+				}
+				
+				var arrayObject = new Object();
+				
+				arrayObject.name = section.inputValue;
+				arrayObject.sectionItems = section.keywordItemValues;
+				
+				sectionArray[sectionArray.length] = arrayObject;
+			}
+			
+			return sectionArray;
+			
 		};
 		
 		base.initializeEditEvents = function(editable) {
@@ -191,7 +215,7 @@
 			self.$typeaheadPanel.find('#searchResult, #category, #brand').find(':not(.clearB, hr, #docs, #sortedCategoryDocs, #categoryDocs, #sortedBrandDocs, #brandDocs)').remove();
 			self.$typeaheadPanel.find('div.sortDiv').append('<ul></ul>');
 			
-			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, rule.ruleName, 0, 0, 1, 1, {
+			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, rule.ruleName, 0, 0, 1, 1, true, {
 				callback: function(response) {
 					var data = response["data"];
 					var list = data.list;
@@ -201,6 +225,7 @@
 							var html = ''; //'<div class="fsize15"><strong>'+list[i].ruleName+countDiv+'</strong></div>';
 							
 							if(i == 0) {
+								self.selectedRule = list[0];
 								self.$typeaheadPanel.find('#category').prepend(html);
 							} else {
 								if(i < GLOBAL_storeKeywordMaxCategory) {
@@ -246,10 +271,7 @@
 		base.loadTypeaheadSolrDetails = function(keyword, editable) {
 			var params = GLOBAL_typeaheadSolrParams;
 			var self = this;
-			
-			//remove this
-			self.typeaheadManager.elevatedCategoryList = ['Scanners', 'Electronics', 'Computers'];
-			self.typeaheadManager.elevatedBrandList = ['Accell', 'Apple', 'Epson'];
+			var sectionList = self.selectedRule.sectionList;
 			
 			self.typeaheadManager.store.addByValue('q', $.trim(keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
 			self.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
@@ -272,7 +294,34 @@
 			for(name in params) {
 				self.typeaheadManager.store.addByValue(name, params[name]);
 			}
-			self.typeaheadManager.postHook = function() {self.setupItemEvents(editable);};
+			
+			for(var i=0; i<sectionList.length; i++) {
+				var section = sectionList[i];
+				
+				if('CATEGORY' == section.keywordAttributeType) {
+					self.typeaheadManager.elevatedCategoryList = section.keywordItemValues;
+				} else if('BRAND' == section.keywordAttributeType) {
+					self.typeaheadManager.elevatedBrandList = section.keywordItemValues;
+				}
+			}
+			
+			self.typeaheadManager.preHook = function() {
+				self.$editPanel.find('#suggestQtip').html(base.options.rectLoader);
+				self.$editPanel.find('#suggestQtip').qtip("destroy");
+			};
+			
+			self.typeaheadManager.postHook = function() {
+				self.setupItemEvents(editable);
+				self.$editPanel.find('a#suggestQtip').html("Product Suggestions");
+				self.$editPanel.find('a#suggestQtip').qtip({
+					content:function() {
+						var html = '<div class="bgboxGray"><h3 align="center">Suggestions</h3></div>';
+						html += self.$editPanel.find("div#searchResult").html();
+						return html;
+					},
+					hide: {event: 'click unfocus', fixed: true, effect:false, delay:0}
+				});
+			};
 			self.typeaheadManager.doRequest(0);
 		};
 		
@@ -1047,6 +1096,7 @@
 			elevateIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_white_get.png'/>",
 			deleteIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/btn_delete_big.png'/>",
 			dragIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_drag.png'/>",
+			suggestionIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_find.png'/>",
 			searchReloadRate: 1000,
 			selectedRuleList: new Object(),
 	};

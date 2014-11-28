@@ -120,19 +120,27 @@ PCM.typeAhead = (function(j){
 						if(list.length > 0) {
 							typeAhead.empty();
 							typeAhead.append('<div class="highlight"></div>');
-							typeAhead.append('<h3 class="first">Matching Keywords</h3>');
-
-							typeAhead.append(getKeywordContent(list));
-
-							typeAhead.append(getSection('Brand', 'Matching Brands', 'brandFirst'));
-							typeAhead.append(getSection('Suggestion', ('Suggestions for '+list[0].ruleName), 'suggestionFirst'));
-
-							for(var i=0; i<dummySectionList.length ; i++) {
-								var section = dummySectionList[i];
-								
-								typeAhead.append(getSection('product', section.name, section.name, section.id, section.dpNoList));
-							}
+							var sectionList = list[0].sectionList;
 							
+							for(var i=0; i<sectionList.length; i++) {
+								var section = sectionList[i];
+								
+								switch(section.keywordAttributeType) {
+								case 'CATEGORY': 
+									typeAhead.append(getKeywordContent(list, section));
+									break;
+								case 'BRAND': 
+									typeAhead.append(getSection(section.keywordAttributeType, 'Matching Brands', 'brandFirst'));
+									break;
+								case 'SUGGESTION': 
+									typeAhead.append(getSection(section.keywordAttributeType, ('Suggestions for '+list[0].ruleName), 'suggestionFirst'));
+									break;
+								case 'SECTION': 
+									typeAhead.append(getSection(section.keywordAttributeType, section.inputValue, section.inputValue, section.keywordAttributeId, section.keywordItemValues));
+									break;
+								}
+							}
+			
 							results = typeAhead.find('li > a');
 							results.mouseenter(function(){
 								hoverResults(j(this));
@@ -144,7 +152,7 @@ PCM.typeAhead = (function(j){
 
 							bindEvents();
 
-							querySolr(list[0].ruleName);
+							querySolr(list[0].ruleName, sectionList);
 
 							showTypeAhead();
 
@@ -158,7 +166,7 @@ PCM.typeAhead = (function(j){
 					arg: timestamp
 			};
 
-			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, searchInput.val(), 0, 1, 1, GLOBAL_storeMaxTypeahead, callMetaData);
+			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, searchInput.val(), 0, 1, 1, GLOBAL_storeMaxTypeahead, true, callMetaData);
 
 
 		};
@@ -175,7 +183,7 @@ PCM.typeAhead = (function(j){
 			highlight = typeAhead.find('.highlight');
 		};
 
-		var querySolr = function(keyword) {
+		var querySolr = function(keyword, sectionList) {
 			typeaheadManager.store.addByValue('q', $.trim(keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
 			typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
 			typeaheadManager.store.addByValue('storeAlias', GLOBAL_storeId);
@@ -186,6 +194,16 @@ PCM.typeAhead = (function(j){
 			typeaheadManager.store.addByValue('facet', 'true');
 			typeaheadManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplateName); 
 
+			for(var i=0; i<sectionList.length; i++) {
+				var section = sectionList[i];
+				
+				if('CATEGORY' == section.keywordAttributeType) {
+					typeaheadManager.elevatedCategoryList = section.keywordItemValues;
+				} else if('BRAND' == section.keywordAttributeType) {
+					typeaheadManager.elevatedBrandList = section.keywordItemValues;
+				}
+			}
+			
 			for(name in params) {
 				typeaheadManager.store.addByValue(name, params[name]);
 			}
@@ -195,9 +213,9 @@ PCM.typeAhead = (function(j){
 			
 		};
 
-		var getKeywordContent = function(list) {
+		var getKeywordContent = function(list, section) {
 			var html = '';
-
+			html += '<h3 class="first">Matching Keywords</h3>';
 			html += '<ul class="first-lvl">';
 			for(var i=0; i < list.length; i++) {
 				var ruleName = list[i].ruleName;
@@ -205,7 +223,7 @@ PCM.typeAhead = (function(j){
 				html += '<a href="javascript:void(0);"> <span class="txt">'+ruleName+'</span></a>';
 
 				if(i == 0) {
-					html += getSection('Category', null, 'categoryFirst');
+					html += getSection(section.keywordAttributeType, null, 'categoryFirst');
 				}
 
 				html += '</li>';
@@ -227,7 +245,7 @@ PCM.typeAhead = (function(j){
 			var elementId = containerId ? 'id="'+containerId+'"' : '';
 
 			html += '<ul class="second-lvl" '+elementId+'>';
-			if(items && type == 'product') {
+			if(items && (type == 'SECTION')) {
 				for(var i=0; i<items.length; i++) {
 					
 					html += '<li id="'+sectionId+'_'+items[i]+'">';

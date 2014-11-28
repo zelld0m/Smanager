@@ -72,6 +72,7 @@ height: 1px;
 	            <div class="floatL w330">
 		            <label class="floatL w70 marT5">Enabled</label>
 		            <label class="floatL marT5"><input id="disabledEdit" type="checkbox"/></label>
+		            <label class="floatR marT5"><a href="javascript:void(0);" id="suggestQtip"></a></label>
 	            </div>
 	            
 	            <div class="clearB"></div>
@@ -79,15 +80,16 @@ height: 1px;
 	    </div>
 	    <div class="clearB"></div>
 	    <div style="display:none;">
-	    	<div id="searchResult" class="floatR w245 marL10 fsize11" style="height:280px; overflow-y:auto">
-				<div id="docs">
+	    	<div id="searchResult" class="floatR w245 marL10 fsize11">
+	    		<div><h3>Suggestions</h3></div>
+				<div id="docs" class="w350">
 					
 				</div>
 			</div>
 	    </div>
 		<table id="typeaheadTable" class="tblItems marL10">
 			<tr class="itemRow">
-				<th><input type="checkbox"/>Related Keywords</th>
+				<th>Related Keywords</th>
 				<th><input type="checkbox"/>Category</th>
 				<th> <input type="checkbox"/>Brand</th>
 				
@@ -160,6 +162,11 @@ height: 1px;
 		    <a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
 		    <a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
 		    &nbsp;
+		</div>
+		
+		<div id="sectionSort" style="display:none;">
+			<ul id="sortableSectionList">
+			</ul>
 		</div>
 		
 	</div>

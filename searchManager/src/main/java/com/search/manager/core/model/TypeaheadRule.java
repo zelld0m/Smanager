@@ -1,5 +1,7 @@
 package com.search.manager.core.model;
 
+import java.util.List;
+
 import org.apache.solr.client.solrj.beans.Field;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -18,6 +20,7 @@ public class TypeaheadRule extends ModelBean {
     private String ruleName;
     private Integer priority;
     private Boolean disabled;
+    private List<KeywordAttribute> sectionList;
 
     public TypeaheadRule() {
         super();
@@ -87,4 +90,13 @@ public class TypeaheadRule extends ModelBean {
     public void setId(String id) {
         // for solr field processing
     }
+
+	public List<KeywordAttribute> getSectionList() {
+		return sectionList;
+	}
+	public void setSectionList(List<KeywordAttribute> sectionList) {
+		this.sectionList = sectionList;
+	}
+    
+    
 }

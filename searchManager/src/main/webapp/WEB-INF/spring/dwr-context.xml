@@ -39,6 +39,7 @@
 		<dwr:convert type="bean" class="com.search.manager.enums.ImportType" >
 			<dwr:exclude method="declaringClass"/>
 		</dwr:convert>
+		<dwr:convert type="enum" class="com.search.manager.core.enums.KeywordAttributeType" />
 	</dwr:configuration>
 	<!-- <dwr:configuration/> -->
 

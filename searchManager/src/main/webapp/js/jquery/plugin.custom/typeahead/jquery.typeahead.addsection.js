@@ -31,11 +31,7 @@
 		base.initializeExistingData = function() {
 			var self = this;
 			
-			var dummySection = new Array();
-			dummySection[0] = {"name":"Hot Deals", "sectionItems":[454909, 9111111, 8037454, 9232266, 944015, 8870936, 8901649]};
-			dummySection[1] = {"name":"Daily Discount", "sectionItems":[454909, 9111111, 8037454, 9232266, 944015]};
-						
-			var sectionList = dummySection;
+			var sectionList = base.options.sectionList;
 			
 			for(var i=0; i < sectionList.length; i++) {
 				var section = sectionList[i];
@@ -69,7 +65,7 @@
 			});
 			
 			$el.find('div#sectionBox').find('div.content:gt(0)').hide();
-		}
+		};
 				
 		base.initializeAddEvent = function() {
 			var self = this;
@@ -290,7 +286,9 @@
 			elevateIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_white_get.png'/>",
 			deleteIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/btn_delete_big.png'/>",
 			dragIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_drag.png'/>",
-			rectLoader: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>"
+			rectLoader: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
+			sectionList : []
+			
 	};
 	
 	$.fn.typeaheadaddsection = function(options){

@@ -18,6 +18,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script> 
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-ui-1.8.16.custom.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.core.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.accordion.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.autocomplete.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.button.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.combobox.js" />" ></script>

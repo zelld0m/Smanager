@@ -292,6 +292,26 @@
 			$content.find("tr#itemPattern").hide();
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
+		
+		base.sectionTemplate = function() {
+			var html = '';
+			
+			html +=	'					<table id="sectionTemplate" class="sectionTable pad5">';
+			html +=	'						<tr>';
+			html +=	'							<td class="pad1 accordionHeader" valign="bottom">';
+			html +=	'								<div class="floatL marT5 sectionName">Dynamic Section</div>';
+			html +=	'								<div class="floatR preloader padT9 padB10" style="display:none;">'+base.options.rectLoader+'</div>';
+			html +=	'							</td>';
+			html +=	'						</tr>';
+			html +=	'						<tr>';
+			html +=	'							<td nowrap>';
+			html +=	'								<div class="productList w580" style="overflow-x:auto; overflow-y:hidden; white-space:nowrap; vertical-align:top"></div>';
+			html +=	'							</td>';
+			html +=	'						</tr>';
+			html +=	'					</table>';
+			
+			return html;
+		};
 
 		base.getDatabaseData = function($content, ruleId, ruleName){
 			var sourceData = base.DATABASE_SOURCE;
@@ -360,6 +380,9 @@
 								$tr.show();
 								$table.append($tr);
 
+								var $sectionContainer = $content.find('div#sectionTableContainer');
+								
+								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : base.sectionTemplate(), accordion: true});
 
 								base.typeaheadManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
@@ -665,6 +688,10 @@
 
 								$tr.show();
 								$table.append($tr);
+								
+								var $sectionContainer = $content.find('div#sectionTableContainer');
+								
+								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : base.sectionTemplate(), accordion: true});
 
 								base.typeaheadSourceManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
 								base.typeaheadSourceManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
@@ -1244,6 +1271,16 @@
 				template += '			</tbody>';
 				template += '		</table>';
 				template += '</div>';
+				template += '		<div id="sectionTableContainer">';
+				template += '			<table id="section" class="marT15 marB10">';
+				template += '				<tr>';
+				template += '					<td>';
+				template += '						<div id="sectionBox">';
+				template += '						</div>';
+				template += '					</td>';
+				template += '				</tr>';
+				template += '			</table>';
+				template += '		</div>';
 				break;
 			}
 

@@ -1,5 +1,9 @@
 package com.search.manager.core.model;
 
+import java.beans.Transient;
+
+import com.search.manager.core.enums.SectionType;
+
 public class TypeaheadSection extends ModelBean{
 
 	private static final long serialVersionUID = -7044509686061209215L;
@@ -8,6 +12,7 @@ public class TypeaheadSection extends ModelBean{
 	private String ruleId;
 	private String name;
 	private int type;
+	private transient SectionType sectionType;
 	private boolean disabled;
 	
 	public boolean isDisabled() {
@@ -41,5 +46,10 @@ public class TypeaheadSection extends ModelBean{
 		this.type = type;
 	}
 	
-	
+	@Transient
+	public SectionType getSectionType() {
+		sectionType = SectionType.values()[type];
+		return sectionType;
+	}
+		
 }
