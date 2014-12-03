@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.joda.time.DateTimeZone;
 
+import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.SortType;
 //import com.search.manager.model.BannerRuleItem;
@@ -373,6 +374,47 @@ public class SolrDocUtil {
 
         // Value of 'id' is <storeId>_<ruleId>
         String id = storeId + "_" + spellRuleXml.getRuleId();
+
+        solrInputDocument.addField("id", id);
+
+        return solrInputDocument;
+    }
+    
+    /* For Typeahead Rule */
+    public static SolrInputDocument composeSolrDoc(TypeaheadRule typeaheadRule)
+            throws Exception {
+        if (typeaheadRule == null) {
+            logger.error("'Typeahead' is null or empty.");
+            throw new Exception("'Typeahead' is null or empty.");
+        }
+
+        SolrInputDocument solrInputDocument = new SolrInputDocument();
+
+        solrInputDocument.addField("ruleId", typeaheadRule.getRuleId());
+        solrInputDocument.addField("store", typeaheadRule.getStoreId());
+        solrInputDocument.addField("keyword", typeaheadRule.getRuleName());
+        solrInputDocument.addField("priority", typeaheadRule.getPriority());
+        solrInputDocument.addField("disabled", typeaheadRule.getDisabled());
+//        solrInputDocument.addField("store", facetSort.getStoreId());
+//
+//        Map<String, SortType> groupSortType = facetSort.getGroupSortType();
+//        for (Object key : groupSortType.keySet()) {
+//            solrInputDocument.addField(key.toString() + "_groupSortType",
+//                    groupSortType.get(key));
+//        }
+//
+//        Map<String, List<String>> items = facetSort.getItems();
+//        for (Object key : items.keySet()) {
+//            solrInputDocument.addField(key.toString() + "_items",
+//                    items.get(key));
+//        }
+//
+//        solrInputDocument.addField("ruleType", facetSort.getRuleType());
+//        solrInputDocument.addField("sortType", facetSort.getSortType());
+//
+//        // Value of 'id' is <storeId>_<typeaheadRuleName>
+        String id = typeaheadRule.getStoreId() + "_"
+                + typeaheadRule.getRuleName();
 
         solrInputDocument.addField("id", id);
 

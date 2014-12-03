@@ -9,13 +9,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
-import com.search.manager.core.model.TypeaheadBrand;
+import com.search.manager.core.model.KeywordAttribute;
 import com.search.manager.core.model.TypeaheadRule;
-import com.search.manager.core.model.TypeaheadSuggestion;
 import com.search.manager.enums.RuleEntity;
 
 @XmlRootElement(name = "typeahead")
-//@XmlType(propOrder={"brands, suggestions"})
 @DataTransferObject(converter = BeanConverter.class)
 public class TypeaheadRuleXml extends RuleXml{
 
@@ -24,6 +22,7 @@ public class TypeaheadRuleXml extends RuleXml{
 	
 	private List<TypeaheadSuggestionXml> suggestions;
 	private List<TypeaheadBrandXml> brands;
+	private List<KeywordAttributeXML> keywordAttributes;
 	private Integer priority;
 	private Boolean disabled;
 	
@@ -32,7 +31,7 @@ public class TypeaheadRuleXml extends RuleXml{
 		this.setRuleEntity(RULE_ENTITY);
 	}
 	
-	public TypeaheadRuleXml(TypeaheadRule rule, List<TypeaheadBrand> brandList, List<TypeaheadSuggestion> suggestionList) {
+	public TypeaheadRuleXml(TypeaheadRule rule) {
 		super();
 		this.setSerial(serialVersionUID);
 		this.setRuleEntity(RULE_ENTITY);
@@ -45,26 +44,30 @@ public class TypeaheadRuleXml extends RuleXml{
         this.setStore(rule.getStoreId());
         this.setDisabled(rule.getDisabled());
         this.setPriority(rule.getPriority());
-                
-        if(brandList != null && !brandList.isEmpty()) {
-        	List<TypeaheadBrandXml> brands = new ArrayList<TypeaheadBrandXml>();
+        
+        if(rule.getSectionList() != null) {
+        	List<KeywordAttributeXML> attributes = new ArrayList<KeywordAttributeXML>();
         	
-        	for(TypeaheadBrand brand : brandList) {
-        		brands.add(new TypeaheadBrandXml(brand));
+        	for(KeywordAttribute section : rule.getSectionList()) {
+        		KeywordAttributeXML attribute = new KeywordAttributeXML(section);
+        		
+        		
+        		if(section.getKeywordAttributeItems() != null) {
+        			List<KeywordAttributeXML> attributeItems = new ArrayList<KeywordAttributeXML>();
+        			
+        			for(KeywordAttribute sectionItem : section.getKeywordAttributeItems()) {
+        				attributeItems.add(new KeywordAttributeXML(sectionItem));
+        			}
+        			
+        			attribute.setKeywordAttributeItems(attributeItems);
+        		}
+        		
+        		attributes.add(attribute);
         	}
         	
-        	this.brands = brands;
+        	this.setKeywordAttributes(attributes);
         }
         
-        if(suggestionList != null && !suggestionList.isEmpty()) {
-        	List<TypeaheadSuggestionXml> suggestions = new ArrayList<TypeaheadSuggestionXml>();
-        	
-        	for(TypeaheadSuggestion suggestion : suggestionList) {
-        		suggestions.add(new TypeaheadSuggestionXml(suggestion));
-        	}
-        	
-        	this.suggestions = suggestions;
-        }
 	}
 
 	@XmlElementRef(type=TypeaheadSuggestionXml.class)
@@ -83,6 +86,15 @@ public class TypeaheadRuleXml extends RuleXml{
 
 	public void setBrands(List<TypeaheadBrandXml> brands) {
 		this.brands = brands;
+	}
+
+	@XmlElementRef(type=KeywordAttributeXML.class)
+	public List<KeywordAttributeXML> getKeywordAttributes() {
+		return keywordAttributes;
+	}
+
+	public void setKeywordAttributes(List<KeywordAttributeXML> keywordAttributes) {
+		this.keywordAttributes = keywordAttributes;
 	}
 
 	public Integer getPriority() {

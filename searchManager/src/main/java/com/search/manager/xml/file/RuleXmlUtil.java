@@ -298,7 +298,7 @@ public class RuleXmlUtil {
 			try {
 				TypeaheadRule typeahead = typeaheadRuleService.searchById(store, ruleId);
 
-				TypeaheadRuleXml typeaheadXml = new TypeaheadRuleXml(typeahead, typeaheadBrandService.searchByRuleId(ruleId).getList(), typeaheadSuggestionService.searchByRuleId(ruleId).getList());
+				TypeaheadRuleXml typeaheadXml = new TypeaheadRuleXml(typeahead);
 
 				ruleXml = typeaheadXml;
 
@@ -1083,12 +1083,10 @@ public class RuleXmlUtil {
 				typeaheadRuleService.add(typeaheadRule);
 			}
 			
-			List<TypeaheadSuggestion> typeaheadSuggestionList = typeaheadSuggestionService.searchByRuleId(ruleId).getList();
-			List<TypeaheadBrand> typeaheadBrandList = typeaheadBrandService.searchByRuleId(ruleId).getList();
-
-			typeaheadSuggestionService.delete(typeaheadSuggestionList);
-			typeaheadBrandService.delete(typeaheadBrandList);
-
+			//Delete Keyword Attributes
+			
+			//Insert Keyword Attributes
+			
 			//Update SP will not work if the ruleName is the same.
 			typeaheadRule.setRuleName(null);
 			typeaheadRule.setPriority(typeaheadRuleXml.getPriority());
@@ -1096,32 +1094,6 @@ public class RuleXmlUtil {
 			typeaheadRule.setLastModifiedDate(new DateTime());
 			typeaheadRule.setDisabled(typeaheadRuleXml.getDisabled());
 			typeaheadRule = typeaheadRuleService.update(typeaheadRule);
-//			
-//			for(TypeaheadSuggestionXml suggestionXml : typeaheadRuleXml.getSuggestions()) {
-//				TypeaheadSuggestion suggestion = new TypeaheadSuggestion();
-//				
-//				suggestion.setRuleId(ruleId);
-//				suggestion.setMemberValue(suggestionXml.getMemberValue());
-//				suggestion.setMemberType(suggestionXml.getTypeaheadMemberType());
-//				suggestion.setSortOrder(suggestionXml.getSortOrder());
-//				suggestion.setCreatedBy(username);
-//				
-//				typeaheadSuggestionService.add(suggestion);
-//			}
-//			
-//			for(TypeaheadBrandXml brandXml : typeaheadRuleXml.getBrands()) {
-//				TypeaheadBrand brand = new TypeaheadBrand();
-//				
-//				brand.setRuleId(ruleId);
-//				brand.setProductCount(brandXml.getProductCount());
-//				brand.setVendorId(brandXml.getVendorId());
-//				brand.setSortOrder(brandXml.getSortOrder());
-//				brand.setBrandName(brandXml.getBrandName());
-//				brand.setCreatedBy(brandXml.getCreatedBy());
-//				
-//				typeaheadBrandService.add(brand);
-//				
-//			}
 			
 			return true;
 		} catch (CoreServiceException e) {

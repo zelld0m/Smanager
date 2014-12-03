@@ -257,8 +257,8 @@
 			html +=	'					<table id="sectionTemplate" class="tblItems marL8 marT15 marB10 sectionTable">';
 			html +=	'						<tr>';
 			html +=	'							<td class="pad1" valign="bottom">';
+			html +=	'								<div class="floatL marT3 marR5"><input type="checkbox"/></div>';
 			html +=	'								<div class="floatL marT5 sectionName">Dynamic Section</div>';
-			html +=	'								<div class="floatL marT3"><input type="checkbox"/></div>';
 			html +=	'								<div class="floatR preloader padT9 padB10" style="display:none;">'+base.options.rectLoader+'</div>';
 			if(editable) {
 				html +=	'								<div class="floatR sectionIcons">';

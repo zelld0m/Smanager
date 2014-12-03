@@ -8,10 +8,6 @@
  */
 var PCM = PCM || {};
 
-var dummySectionList = [
-	{"name": "Hot Deals", "id" : 1234,  "dpNoList":[454909, 9111111, 8037454]}, {"name": "Bargain Price", "id" : 1235,  "dpNoList":[9232266, 944015]}
-];
-
 PCM.typeAhead = (function(j){	
 	jQuery.fn.exists = function(){return this.length>0;}
 	var init = function(searchInput, typeaheadDiv, delay, typeaheadManager){
@@ -27,7 +23,7 @@ PCM.typeAhead = (function(j){
 		var KEY_ENTER = 13;
 		var KEY_ESCAPE = 27;
 		var ARROW_EASING = 'easeInOutQuart';
-		var ARROW_SPEED = 150;
+		var ARROW_SPEED = 1;
 		var SCROLL_SPEED = 1000;
 		var SCROLL_EASING = 'easeInOutQuart';
 		var lastAjaxCall = null;
@@ -121,6 +117,10 @@ PCM.typeAhead = (function(j){
 							typeAhead.empty();
 							typeAhead.append('<div class="highlight"></div>');
 							var sectionList = list[0].sectionList;
+							
+							sectionList.sort(function(a, b) {
+								return a.priority - b.priority;
+							});
 							
 							for(var i=0; i<sectionList.length; i++) {
 								var section = sectionList[i];
@@ -385,7 +385,6 @@ PCM.typeAhead = (function(j){
 				currentIndex = results.length - 1;
 			}
 			animateHighlight(results.eq(currentIndex));
-			adjustScreenView(results.eq(currentIndex));
 		};
 
 		var keyArrowDown = function(){
@@ -398,7 +397,6 @@ PCM.typeAhead = (function(j){
 				currentIndex = 0;
 			}
 			animateHighlight(results.eq(currentIndex));
-			adjustScreenView(results.eq(currentIndex));
 		};
 
 		var keyEnterResults = function(){
