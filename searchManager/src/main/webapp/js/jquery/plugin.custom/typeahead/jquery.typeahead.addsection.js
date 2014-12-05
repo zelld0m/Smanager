@@ -76,7 +76,7 @@
 			}
 			
 			$sectionTable.find('a#btnAddSection').off().on('click', function() {
-				var $sectionInput = $sectionTable.find('input');
+				var $sectionInput = $sectionTable.find('input[type=text]');
 				var inputValue = $sectionInput.val().trim();
 				var $sectionBox = $sectionTable.find('div#sectionBox');
 				if(!$.isNotBlank(inputValue)) {
@@ -92,8 +92,7 @@
 				var $newSection = $(self.getSectionTableTemplate());
 				self.addSection($sectionBox, $newSection, inputValue);
 				$sectionInput.val('');
-			});
-						
+			});			
 		};
 		
 		base.addSection = function($sectionBox, $newSection, inputValue) {
@@ -101,6 +100,14 @@
 			
 			$newSection.find('div.sectionName').html(inputValue);
 			$sectionBox.append($newSection);
+			
+			$newSection.find('.disabled-flag').slidecheckbox({
+				initOn: true,
+				disabled: !editable, //TODO:
+				changeStatusCallback: function(base, dt){
+					
+				}
+			});
 			
 			if(!editable) {
 				return $newSection;
@@ -132,6 +139,7 @@
 		        }});
 			
 			self.initializeSectionItemEvents($newSection);
+			
 			return $newSection;
 		};		
 		
@@ -147,6 +155,12 @@
 				});
 				
 			}}, {$section: $section});
+			
+			$section.find('input[type=text]').off().on({keyup : function(e) {
+				if(e.which === 13){
+					$(this).siblings('a.addProduct').click();
+				}
+			}});
 			
 			$section.find('a.addProduct').off().on({click : function() {
 				if($section.runningDWR == true) {
@@ -200,6 +214,8 @@
 							self.initializeItemProductEvents($product);
 							position ++;
 						}
+						
+						$section.find('input[type=text]').val('');
 					}
 				},
 				preHook: function() {
@@ -226,7 +242,7 @@
 			$newItem.append('<div class="clearB"></div>');
 			$newItem.append('<img width="64" style="margin-left:10px" src="'+product.imagePath+'"/>');
 			$newItem.append('<div class="clearB"></div>');
-			$newItem.append('<p align="center">'+product.dpNo+'<p>');
+			$newItem.append('<p align="center" class="sectionItemValue">'+product.dpNo+'<p>');
 			
 			return $newItem;
 		};
@@ -257,16 +273,16 @@
 			html +=	'					<table id="sectionTemplate" class="tblItems marL8 marT15 marB10 sectionTable">';
 			html +=	'						<tr>';
 			html +=	'							<td class="pad1" valign="bottom">';
-			html +=	'								<div class="floatL marT3 marR5"><input type="checkbox"/></div>';
 			html +=	'								<div class="floatL marT5 sectionName">Dynamic Section</div>';
 			html +=	'								<div class="floatR preloader padT9 padB10" style="display:none;">'+base.options.rectLoader+'</div>';
+			html +=	'								<div class="floatR sectionIcons">';
+			html +=	'								<div class="floatL marT3 marR5"><input type="checkbox" class="firerift-style-checkbox on-off disabled-flag"/></div>';
 			if(editable) {
-				html +=	'								<div class="floatR sectionIcons">';
 				html +=	'									<input type="text" class="w150 marB6"/>';
 				html +=	'									<a href="javascript:void(0);" class="addProduct"><img class="padT5" src="'+GLOBAL_contextPath+'/images/add.png"/></a>';
 				html +=	'									<a href="javascript:void(0);" class="deleteSection"><img class="padL2 marT6" src="'+GLOBAL_contextPath+'/images/icon_delete2.png"/></a>';
-				html +=	'								</div>';
 			}
+			html +=	'								</div>';
 			html +=	'							</td>';
 			html +=	'						</tr>';
 			html +=	'						<tr>';

@@ -43,6 +43,9 @@
 					.css("background-position", base.options.initOn? "0% 100%": "100% 0%")
 					.off().on({
 						click:function(e){
+							if(base.options.disabled) {
+								return;
+							}
 							var $slideCheckbox = $(e.currentTarget);
 					
 							if(!base.$el.is(":checked")) {

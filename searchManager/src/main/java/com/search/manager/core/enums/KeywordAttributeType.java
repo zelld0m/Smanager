@@ -4,9 +4,9 @@ public enum KeywordAttributeType {
 
 	CATEGORY("Category", "KEY_CAT"),
 	BRAND("Brand", "KEY_BRAND"),
-	SUGGESTION("Suggestion", "KEY_SUGG"),
-	SECTION("Section", "KEY_SECT"),
-	SECTION_ITEM("Section Item", "KEY_SECT_ITEM");
+	SUGGESTION("Suggestion", "KEY_SUGGESTION"),
+	SECTION("Section", "KEY_SECTION"),
+	SECTION_ITEM("Section Item", "KEY_SEC_ITEM");
 
 	private String name;
 	private String code;
@@ -32,7 +32,7 @@ public enum KeywordAttributeType {
 		return null;
 	}
 
-	public static KeywordAttributeType find(String code) {
+	public static KeywordAttributeType findbyCode(String code) {
 		if(code == null)
 			return null;
 

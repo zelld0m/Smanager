@@ -90,8 +90,14 @@ height: 1px;
 		<table id="typeaheadTable" class="tblItems marL10">
 			<tr class="itemRow">
 				<th>Related Keywords</th>
-				<th><input type="checkbox" class="floatL"/>Category</th>
-				<th> <input type="checkbox" class="floatL"/>Brand</th>
+				<th>
+					<div class="floatR"><input type="checkbox" id="categoryDisabled" class="firerift-style-checkbox on-off disabled-flag"/></div>
+					<div class="marL30 padL25">Category </div>
+				</th>
+				<th>
+					<div class="floatR"><input type="checkbox" id="brandDisabled" class="firerift-style-checkbox on-off disabled-flag"/></div>
+					<div class="marL30 padL30">Brand</div>	
+				</th>
 				
 			</tr>
 			<tr class="itemRow">

@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.joda.time.DateTimeZone;
 
+import com.search.manager.core.model.KeywordAttribute;
 import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.SortType;
@@ -395,30 +398,38 @@ public class SolrDocUtil {
         solrInputDocument.addField("keyword", typeaheadRule.getRuleName());
         solrInputDocument.addField("priority", typeaheadRule.getPriority());
         solrInputDocument.addField("disabled", typeaheadRule.getDisabled());
-//        solrInputDocument.addField("store", facetSort.getStoreId());
-//
-//        Map<String, SortType> groupSortType = facetSort.getGroupSortType();
-//        for (Object key : groupSortType.keySet()) {
-//            solrInputDocument.addField(key.toString() + "_groupSortType",
-//                    groupSortType.get(key));
-//        }
-//
-//        Map<String, List<String>> items = facetSort.getItems();
-//        for (Object key : items.keySet()) {
-//            solrInputDocument.addField(key.toString() + "_items",
-//                    items.get(key));
-//        }
-//
-//        solrInputDocument.addField("ruleType", facetSort.getRuleType());
-//        solrInputDocument.addField("sortType", facetSort.getSortType());
-//
-//        // Value of 'id' is <storeId>_<typeaheadRuleName>
+
+        List<KeywordAttribute> sections = typeaheadRule.getSectionList();
+        
+        if(sections != null ) {
+        	List<String> jsonSectionString = new ArrayList<String>();
+        	for(KeywordAttribute section : sections) {
+        		jsonSectionString.add(getTypeaheadSectionJson(section));
+        	}
+        	
+        	solrInputDocument.addField("sectionList", jsonSectionString);
+        }
+        
         String id = typeaheadRule.getStoreId() + "_"
                 + typeaheadRule.getRuleName();
 
         solrInputDocument.addField("id", id);
 
         return solrInputDocument;
+    }
+    
+    private static String getTypeaheadSectionJson(KeywordAttribute attribute) {
+    	
+    	JSONObject sectionJson = new JSONObject();
+    	
+    	sectionJson.put("name", attribute.getInputValue());
+    	sectionJson.put("disabled", attribute.getDisabled());
+    	sectionJson.put("priority", attribute.getPriority());
+    	sectionJson.put("type", attribute.getKeywordAttributeType());
+    	sectionJson.put("items", attribute.getKeywordItemValues());
+    	
+    	
+    	return sectionJson.toString();
     }
 
     /* For Banner Rule */

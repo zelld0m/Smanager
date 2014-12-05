@@ -10,5 +10,13 @@ public class KeywordAttributeDaoConstant {
 	public static final String COLUMN_PRIORITY = "PRIORITY";
 	public static final String COLUMN_DISABLED = "DISABLED";
 	public static final String COLUMN_INPUT_VALUE = "INPUT_VALUE";
+	
+	public static final String SP_PARAM_START_ROW = "START_ROW";
+	public static final String SP_PARAM_END_ROW = "END_ROW";
+	
+	public static final String SP_ADD_KEYWORD_ATTRIBUTE = "usp_ADD_KEYWORD_ATTRIBUTE";
+	public static final String SP_UPDATE_KEYWORD_ATTRIBUTE = "usp_UPDATE_KEYWORD_ATTRIBUTE";
+	public static final String SP_DELETE_KEYWORD_ATTRIBUTE = "usp_DELETE_KEYWORD_ATTRIBUTE";
+	public static final String SP_GET_KEYWORD_ATTRIBUTE = "usp_GET_KEYWORD_ATTRIBUTE";
 
 }

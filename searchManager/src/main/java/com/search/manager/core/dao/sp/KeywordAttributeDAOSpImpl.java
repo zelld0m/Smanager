@@ -17,8 +17,11 @@ import org.springframework.stereotype.Component;
 
 import com.search.manager.core.constant.KeywordAttributeDaoConstant;
 import com.search.manager.core.constant.TypeaheadDaoConstant;
+import com.search.manager.core.dao.KeywordAttributeDao;
+import com.search.manager.core.enums.KeywordAttributeType;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.KeywordAttribute;
+import com.search.manager.core.search.Filter;
 import com.search.manager.core.search.Search;
 import com.search.manager.dao.sp.CUDStoredProcedure;
 import com.search.manager.dao.sp.DAOConstants;
@@ -27,7 +30,7 @@ import com.search.manager.dao.sp.GetStoredProcedure;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 
 @Component("keywordAttributeDaoSp")
-public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute>{
+public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute> implements KeywordAttributeDao{
 
 	@Autowired
 	private JodaDateTimeUtil jodaDateTimeUtil;
@@ -51,19 +54,19 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 	private class AddStoredProcedure extends GetStoredProcedure {
 
 		public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, TypeaheadDaoConstant.SP_ADD_TYPEAHEAD_RULE);
+			super(jdbcTemplate, KeywordAttributeDaoConstant.SP_ADD_KEYWORD_ATTRIBUTE);
 		}
 
 
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PRIORITY, Types.VARCHAR));
-			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_DISABLED, Types.BIT));
+			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_DISABLED, Types.BIT));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
 		}
@@ -81,16 +84,16 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 	private class UpdateStoredProcedure extends GetStoredProcedure {
 
 		public UpdateStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, TypeaheadDaoConstant.SP_UPDATE_TYPEAHEAD_RULE);
+			super(jdbcTemplate, KeywordAttributeDaoConstant.SP_UPDATE_KEYWORD_ATTRIBUTE);
 		}
 
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PRIORITY, Types.VARCHAR));
-			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_DISABLED, Types.BIT));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.COLUMN_LAST_UPDATED_STAMP, Types.TIMESTAMP));
@@ -109,7 +112,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 	private class DeleteStoredProcedure extends CUDStoredProcedure {
 
         public DeleteStoredProcedure(JdbcTemplate jdbcTemplate) {
-            super(jdbcTemplate, KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID);
+            super(jdbcTemplate, KeywordAttributeDaoConstant.SP_DELETE_KEYWORD_ATTRIBUTE);
         }
 
         @Override
@@ -121,7 +124,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 	private class SearchStoredProcedure extends GetStoredProcedure {
 
 		public SearchStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, TypeaheadDaoConstant.SP_GET_TYPEAHEAD_RULE);
+			super(jdbcTemplate, KeywordAttributeDaoConstant.SP_GET_KEYWORD_ATTRIBUTE);
 		}
 
 		@Override
@@ -131,8 +134,9 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_DISABLED, Types.BIT));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
 
 		@Override
@@ -154,14 +158,16 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 
 
 		attribute.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
-		attribute.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_UPDATED_BY));
+		attribute.setLastModifiedBy(rs.getString("updated_by"));
 		attribute.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
 		attribute.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 		attribute.setPriority(rs.getInt(KeywordAttributeDaoConstant.COLUMN_PRIORITY));
 		attribute.setDisabled(rs.getBoolean(KeywordAttributeDaoConstant.COLUMN_DISABLED));
-		attribute.setKeywordAttributeId(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID);
+		attribute.setKeywordAttributeId(rs.getString(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID));
 		attribute.setInputParamEnumId(rs.getString(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID));
-		attribute.setInputValue(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE);
+		attribute.setKeywordAttributeType(KeywordAttributeType.findbyCode(attribute.getInputParamEnumId()));
+		
+		attribute.setInputValue(rs.getString(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE));
 
 		return attribute;
 	}
@@ -199,15 +205,15 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			String attributeId = model.getKeywordAttributeId();
 
 			if (StringUtils.isBlank(attributeId)) {
-				model.setKeywordAttributeId(attributeId);
+				model.setKeywordAttributeId(DAOUtils.generateUniqueId());
 			}
 
 			inputs = new HashMap<String, Object>();
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID, model.getKeywordAttributeId());
+			inputs.put(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, model.getParentAttributeId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, model.getKeywordId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, model.getInputParamEnumId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_PRIORITY, model.getPriority() != null ? model.getPriority() : 1);
-			inputs.put(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, model.getParentAttributeId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE, model.getInputValue());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_DISABLED, model.getDisabled() != null ? model.getDisabled() : false);
 			inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
@@ -227,10 +233,10 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			
 			inputs = new HashMap<String, Object>();
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID, model.getKeywordAttributeId());
+			inputs.put(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, model.getParentAttributeId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, model.getKeywordId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, model.getInputParamEnumId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_PRIORITY, model.getPriority() != null ? model.getPriority() : 1);
-			inputs.put(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, model.getParentAttributeId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_DISABLED, model.getDisabled() != null ? model.getDisabled() : false);
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, model.getLastModifiedBy());
 			inputs.put(DAOConstants.COLUMN_LAST_UPDATED_STAMP, jodaDateTimeUtil.toSqlDate(model.getLastModifiedDate()));
@@ -255,14 +261,34 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 	@Override
 	protected Search generateSearchInput(KeywordAttribute model)
 			throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+
+		Search search = new Search(KeywordAttribute.class);
+		
+		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID, model.getKeywordAttributeId()));
+		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, model.getKeywordId()));
+		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, model.getInputParamEnumId()));
+		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, model.getParentAttributeId()));
+		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_DISABLED, model.getDisabled()));
+		search.addFilter(new Filter(DAOConstants.PARAM_CREATED_STAMP,
+				jodaDateTimeUtil.toSqlDate(model.getCreatedDate())));
+		
+		return search;
 	}
 
 	@Override
 	protected Map<String, Object> getDefaultInParam() throws CoreDaoException {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> inParam = new HashMap<String, Object>();
+		
+		inParam.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID, null);
+		inParam.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, null);
+		inParam.put(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, null);
+		inParam.put(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, null);
+		inParam.put(KeywordAttributeDaoConstant.COLUMN_DISABLED, null);
+		inParam.put(DAOConstants.PARAM_CREATED_STAMP, null);
+		inParam.put(DAOConstants.PARAM_START_ROW, 0);
+		inParam.put(DAOConstants.PARAM_END_ROW, 0);
+		
+		return inParam;
 	}
 
 	@Override

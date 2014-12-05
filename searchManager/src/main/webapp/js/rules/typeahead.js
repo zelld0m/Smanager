@@ -126,6 +126,14 @@
 					self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName, sectionList : self.getSectionList(self.selectedRule), editable:!ruleStatus.locked});
 					self.$typeaheadPanel.find("#submitForApproval").show();
 					self.$editPanel.show();
+
+					self.$typeaheadPanel.find('table#typeaheadTable').find('.disabled-flag').slidecheckbox({
+						initOn: true,
+						disabled: ruleStatus.locked, //TODO:
+						changeStatusCallback: function(base, dt){
+							
+						}
+					});
 					
 				}
 			});
@@ -177,6 +185,8 @@
 					typeaheadRule.priority = self.$typeaheadPanel.find("#priorityEdit").val();
 					typeaheadRule.disabled = !self.$typeaheadPanel.find("#disabledEdit").is(":checked");
 					
+					self.buildKeywordAttributeList(typeaheadRule);
+					
 					self.updateTypeaheadRule(typeaheadRule, function(){self.$preloader.show(); self.$editPanel.hide();}, function(){self.setTypeahead(typeaheadRule);});
 				}
 			});
@@ -192,6 +202,80 @@
 					
 				}
 			});
+		};
+		
+		base.buildKeywordAttributeList = function(typeaheadRule) {
+			var self = this;
+			var sectionList = new Array();
+			var $typeaheadTable = self.$editPanel.find('table#typeaheadTable');
+			//Types: Category 0, Brand 1, Suggestion 2, Section 3, Section Item 4
+			
+			//build category section
+			var categorySection = self.buildKeywordAttribute("Category", 0, !$typeaheadTable.find('input#categoryDisabled').is(':checked'), 'KEY_CAT');
+			var categoryItemArray = self.buildSectionItemList(self.$editPanel.find("div#sortedCategoryDocs").find('ul.ui-sortable').find('li'));
+			categorySection.keywordAttributeItems = categoryItemArray;
+			sectionList[sectionList.length] = categorySection;
+			
+			//build brand section
+			var brandSection = self.buildKeywordAttribute("Brand", 1, !$typeaheadTable.find('input#brandDisabled').is(':checked'), 'KEY_BRAND');
+			var brandItemArray = self.buildSectionItemList(self.$editPanel.find("div#sortedBrandDocs").find('ul.ui-sortable').find('li'));
+			brandSection.keywordAttributeItems = brandItemArray;
+			sectionList[sectionList.length] = brandSection;
+						
+			//build suggestion section
+			var suggestionSection = self.buildKeywordAttribute("Suggestion", 2, false, 'KEY_SUGGESTION');
+			sectionList[sectionList.length] = suggestionSection;
+			
+			self.$editPanel.find('table.sectionTable').each(function() {
+				var $sectionTable = $(this);
+				var sectionName = $sectionTable.find('div.sectionName').text();
+				var dynamicSection = self.buildKeywordAttribute(sectionName, 3, !$sectionTable.find('input[type=checkbox]').is(':checked'), 'KEY_SECTION');
+				
+				var $sectionItemValues = $sectionTable.find('.sectionItemValue');
+				
+				var itemCount = 0;
+				var dynamicItems = new Array();
+				$sectionItemValues.each(function() {
+					var value = $(this).text();
+					
+					var dynamicSectionItem = self.buildKeywordAttribute(value, itemCount, false, 'KEY_SEC_ITEM');
+					dynamicItems[dynamicItems.length] = dynamicSectionItem;
+					itemCount ++;
+				});
+				
+				if(dynamicItems.length > 0){
+					dynamicSection.keywordAttributeItems = dynamicItems;
+				}
+				
+				sectionList[sectionList.length] = dynamicSection;
+			}); 
+			
+			typeaheadRule.sectionList = sectionList;						
+		};
+		
+		base.buildSectionItemList = function($itemContainer) {
+			var self = this;
+			var count = 0;
+			var sectionArray = new Array();
+			$itemContainer.each(function() {
+				var itemValue = $(this).find('span').text();
+				var itemSection = self.buildKeywordAttribute(itemValue, count, false, 'KEY_SEC_ITEM');
+				sectionArray[sectionArray.length] = itemSection;
+				count++;
+			});
+			
+			return sectionArray;
+		};
+		
+		base.buildKeywordAttribute = function(value, priority, disabled, type) {
+			var section = new Object();
+			
+			section.inputValue = value;
+			section.priority = priority;
+			section.disabled = disabled;
+			section.inputParamEnumId = type;
+			
+			return section;
 		};
 		
 		base.setTypeahead = function(rule) {
@@ -237,10 +321,12 @@
 						self.loadRelatedKeywords(rule.ruleName);
 						
 					}
+					
+					self.showTypeahead();
 				}
 			});
 			
-			self.showTypeahead();
+			
 		};
 		
 		base.loadRelatedKeywords = function(keyword) {
@@ -552,6 +638,7 @@
 						} else {
 							$checkboxDiv.html('<input '+(self.selectedRuleList[$element.val()] != null ? 'CHECKED' : '')+' type="checkbox" id="'+$element.val()+'" class="ruleVisibility" value="'+$element.val()+'"/>');
 							self.bindCheckboxAction($checkboxDiv);
+							
 						}
 						
 						$statusDiv.html(getRuleNameSubTextStatus(ruleStatus));
