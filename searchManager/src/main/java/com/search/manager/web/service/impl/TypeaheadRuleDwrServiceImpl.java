@@ -129,8 +129,8 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			if(existingRule != null) {
 				response.success(existingRule);
 				existingRule.setSectionList(typeaheadRule.getSectionList());
-				if(updateSections && deleteSections(existingRule)) {
-					addSections(existingRule);
+				if(updateSections && typeaheadRuleService.deleteSections(existingRule)) {
+					typeaheadRuleService.addSections(existingRule);
 				}
 			} else
 				response.error("Unable to update the rule '"+typeaheadRule.getRuleName()+"'.");
@@ -145,82 +145,6 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 	}
 	
-	// The typeaheadRule should contain the sections and sectionItems that needs to be inserted.
-	private Boolean addSections(TypeaheadRule typeaheadRule) {
-		
-		List<KeywordAttribute> sectionList = typeaheadRule.getSectionList();
-		
-		if(sectionList != null) {
-			for(KeywordAttribute parentSection : sectionList) {
-				parentSection.setKeywordId(typeaheadRule.getRuleId());
-				parentSection.setCreatedBy(utilityService.getUsername());
-				
-				try {
-					KeywordAttribute result = keywordAttributeService.add(parentSection);
-					
-					if(result == null) {
-						throw new CoreServiceException("Unable to add section: '" + parentSection.getInputValue() + "' of " +parentSection.getKeywordAttributeType()+ "type.");
-					}
-					
-					List<KeywordAttribute> sectionItemList = parentSection.getKeywordAttributeItems();
-					
-					if(sectionItemList != null) {
-						for(KeywordAttribute sectionItem : sectionItemList) {
-							sectionItem.setKeywordId(typeaheadRule.getRuleId());
-							sectionItem.setParentAttributeId(result.getKeywordAttributeId());
-							sectionItem.setCreatedBy(parentSection.getCreatedBy());
-							KeywordAttribute resultItem = keywordAttributeService.add(sectionItem);
-							
-							if(resultItem == null) {
-								throw new CoreServiceException("Unable to add section item: '" + sectionItem.getInputValue() + "' of " +sectionItem.getKeywordAttributeType()+ " type.");
-							}
-						}
-					}
-					
-				} catch (CoreServiceException e) {
-					
-				}
-			}
-		}
-		
-		return true;
-	}
-	
-	private Boolean deleteSections(TypeaheadRule typeaheadRule) {
-		
-		try {
-			
-			List<KeywordAttribute> sectionList = getParentSectionList(typeaheadRule);
-			
-			if(sectionList != null) {
-				
-				for(KeywordAttribute parentSection : sectionList) {
-					KeywordAttribute keywordAttributeItem = new KeywordAttribute();
-					keywordAttributeItem.setParentAttributeId(parentSection.getKeywordAttributeId());
-					SearchResult<KeywordAttribute> searchResultItems = keywordAttributeService.search(keywordAttributeItem); 
-					List<KeywordAttribute> sectionItems = searchResultItems.getTotalCount() > 0 ? searchResultItems.getList() : null;
-					
-					if(sectionItems != null) {
-						for(KeywordAttribute sectionItem : sectionItems) {
-							if(!keywordAttributeService.delete(sectionItem)) {
-								throw new CoreServiceException("Unable to delete item: '" + sectionItem.getInputValue() + "' of " +sectionItem.getKeywordAttributeType()+ " type.");
-							}
-						}
-					}
-					
-					if(!keywordAttributeService.delete(parentSection)) {
-						throw new CoreServiceException("Unable to delete section: '" + parentSection.getInputValue() + "' of " +parentSection.getKeywordAttributeType()+ " type.");
-					}
-				}
-				
-			}
-		} catch (CoreServiceException e) {
-			logger.error("Failed to delete existing keyword attributes", e);
-			return false;
-		}
-		return true;
-	}
-	
 	@RemoteMethod
 	public ServiceResponse<Boolean> deleteRule(TypeaheadRule typeaheadRule) {
 		ServiceResponse<Boolean> response = new ServiceResponse<Boolean>();
@@ -233,7 +157,8 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 //			if(ruleStatus.getp)
 			//			ruleName = existingRule.getRuleName();
 			
-			Boolean success = ruleStatusUpdated ? typeaheadRuleService.delete(existingRule) : false;
+			
+			Boolean success = ruleStatusUpdated ? typeaheadRuleService.deleteSections(typeaheadRule) && typeaheadRuleService.delete(existingRule) : false;
 			
 			if(success) {
 				response.success(success);
@@ -280,8 +205,8 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	        SearchResult<TypeaheadRule> result = typeaheadRuleService.search(search);
 	        
 	        if(Boolean.TRUE.equals(includeSections)) {
-	        	for(TypeaheadRule rule : result.getList()) {
-	        		initializeTypeaheadSections(rule);
+	        	if(result.getTotalSize() > 0) {
+	        		typeaheadRuleService.initializeTypeaheadSections(result.getList().get(0));
 	        	}
 	        }
 	        
@@ -292,66 +217,6 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			serviceResponse.error("Unable to add typeahead rule.");
 		}
 		return serviceResponse;
-	}
-	
-	private List<KeywordAttribute> getParentSectionList(TypeaheadRule rule) throws CoreServiceException {
-		
-		List<KeywordAttribute> sectionList = new ArrayList<KeywordAttribute>();
-		SearchResult<KeywordAttribute> searchResult;
-		
-		KeywordAttribute parentQuery = new KeywordAttribute();
-		parentQuery.setKeywordId(rule.getRuleId());
-		parentQuery.setInputParamEnumId(KeywordAttributeType.CATEGORY.getCode());
-		searchResult = keywordAttributeService.search(parentQuery);
-		
-		if(searchResult.getTotalCount() > 0) {
-			sectionList.addAll(searchResult.getList());
-		}
-		
-		parentQuery.setInputParamEnumId(KeywordAttributeType.BRAND.getCode());
-		searchResult = keywordAttributeService.search(parentQuery);
-		if(searchResult.getTotalCount() > 0) {
-			sectionList.addAll(searchResult.getList());		
-		}
-		
-		parentQuery.setInputParamEnumId(KeywordAttributeType.SUGGESTION.getCode());
-		searchResult = keywordAttributeService.search(parentQuery);
-		if(searchResult.getTotalCount() > 0) {
-			sectionList.addAll(searchResult.getList());
-		}
-		
-		parentQuery.setInputParamEnumId(KeywordAttributeType.SECTION.getCode());
-		searchResult = keywordAttributeService.search(parentQuery);
-		if(searchResult.getTotalCount() > 0) {
-			sectionList.addAll(searchResult.getList());
-		}
-		
-		return sectionList;
-	}
-	
-	private void initializeTypeaheadSections(TypeaheadRule rule) {
-				
-		try {
-			
-			List<KeywordAttribute> sectionList = getParentSectionList(rule);
-			
-			
-			if(sectionList != null) {
-				for(KeywordAttribute parentSection : sectionList) {
-					KeywordAttribute query = new KeywordAttribute();
-					query.setParentAttributeId(parentSection.getKeywordAttributeId());
-					
-					SearchResult<KeywordAttribute> queryResult = keywordAttributeService.search(query);
-					
-					parentSection.setKeywordAttributeItems(queryResult.getTotalSize() > 0 ? queryResult.getList() : null);
-				}
-			}
-			
-			rule.setSectionList(sectionList);
-		} catch (CoreServiceException e) {
-			logger.error("An error occured while retirieving the sections of '"+rule.getRuleName()+"'.", e);
-		} 
-		
 	}
 	
 	@RemoteMethod

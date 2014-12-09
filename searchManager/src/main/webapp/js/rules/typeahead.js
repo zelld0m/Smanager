@@ -21,7 +21,6 @@
 			self.$editPanel = $(base.options.editPanelSelector);
 			self.selectedRuleList = new Object();
 			self.getTypeaheadRuleList(1);
-			self.showTypeahead();
 			//self.loadSplunkData();
 			self.loadRuleList(0, base.options.rulePage);
 
@@ -127,12 +126,17 @@
 					self.$typeaheadPanel.find("#submitForApproval").show();
 					self.$editPanel.show();
 
-					self.$typeaheadPanel.find('table#typeaheadTable').find('.disabled-flag').slidecheckbox({
-						initOn: true,
-						disabled: ruleStatus.locked, //TODO:
-						changeStatusCallback: function(base, dt){
-							
-						}
+					self.initializeDisabledCheckbox(self.selectedRule.sectionList);
+					
+					self.$typeaheadPanel.find('table#typeaheadTable').find('.disabled-flag').each(function(){
+						var $checkbox = $(this);
+						$checkbox.slidecheckbox({
+							initOn: !$checkbox.is(':checked'),
+							disabled: ruleStatus.locked, //TODO:
+							changeStatusCallback: function(base, dt){
+								
+							}
+						});
 					});
 					
 				}
@@ -144,7 +148,7 @@
 			var sectionList = rule.sectionList;
 			var sectionArray = new Array();
 			
-			for(var i=0; i< sectionList.length; i++) {
+			for(var i=0; sectionList && i< sectionList.length ; i++) {
 				var section = sectionList[i];
 				
 				if(section.keywordAttributeType != 'SECTION') {
@@ -154,6 +158,7 @@
 				var arrayObject = new Object();
 				
 				arrayObject.name = section.inputValue;
+				arrayObject.disabled = section.disabled;
 				arrayObject.sectionItems = section.keywordItemValues;
 				
 				sectionArray[sectionArray.length] = arrayObject;
@@ -226,10 +231,11 @@
 			var suggestionSection = self.buildKeywordAttribute("Suggestion", 2, false, 'KEY_SUGGESTION');
 			sectionList[sectionList.length] = suggestionSection;
 			
+			var dynamicSectionCount = 3;
 			self.$editPanel.find('table.sectionTable').each(function() {
 				var $sectionTable = $(this);
 				var sectionName = $sectionTable.find('div.sectionName').text();
-				var dynamicSection = self.buildKeywordAttribute(sectionName, 3, !$sectionTable.find('input[type=checkbox]').is(':checked'), 'KEY_SECTION');
+				var dynamicSection = self.buildKeywordAttribute(sectionName, dynamicSectionCount, !$sectionTable.find('input[type=checkbox]').is(':checked'), 'KEY_SECTION');
 				
 				var $sectionItemValues = $sectionTable.find('.sectionItemValue');
 				
@@ -248,6 +254,8 @@
 				}
 				
 				sectionList[sectionList.length] = dynamicSection;
+				
+				dynamicSectionCount ++;
 			}); 
 			
 			typeaheadRule.sectionList = sectionList;						
@@ -287,12 +295,8 @@
 			self.$typeaheadPanel.find('a.searchButtonList').show();
 			self.$editPanel.hide();
 			self.startIndex = 0;
-//			self.loadRuleList(0, self.rulePage);
-//			self.keyword = "";
-//			self.fq = "";
 			self.$typeaheadPanel.find('input.searchTextInput, a.searchButton').hide();
 			self.$typeaheadList.hide();
-//			$('div#itemList, div#itemHeaderMain, div.listSearchDiv').hide();
 			
 			self.$typeaheadPanel.find('div.sortDiv').children('ul').sortable('destroy');
 			self.$typeaheadPanel.find('div#sectionBox').empty();
@@ -319,15 +323,37 @@
 							}
 						}
 						self.loadRelatedKeywords(rule.ruleName);
-						
 					}
 					
 					self.showTypeahead();
+				},
+				preHook : function() {
+					self.$preloader.show();
 				}
 			});
 			
 			
 		};
+		
+		base.initializeDisabledCheckbox = function(sectionList) {
+			var self = this;
+			for(var i=0; sectionList && i<sectionList.length; i++) {
+				var section = sectionList[i];
+				
+				switch(section.keywordAttributeType) {
+				case "CATEGORY":
+					self.$editPanel.find('input#categoryDisabled').attr('checked', section.disabled);
+					break;
+				case "BRAND": 
+					self.$editPanel.find('input#brandDisabled').attr('checked', section.disabled);
+					break;
+				case "SUGGESTION": 
+					self.$editPanel.find('input#suggestionDisabled').attr('checked', !section.disabled);
+					break;
+				}
+			}
+		};
+		
 		
 		base.loadRelatedKeywords = function(keyword) {
 			var self = this;
@@ -381,7 +407,7 @@
 				self.typeaheadManager.store.addByValue(name, params[name]);
 			}
 			
-			for(var i=0; i<sectionList.length; i++) {
+			for(var i=0; sectionList && i<sectionList.length; i++) {
 				var section = sectionList[i];
 				
 				if('CATEGORY' == section.keywordAttributeType) {

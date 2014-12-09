@@ -8,6 +8,12 @@
  */
 var PCM = PCM || {};
 
+var defaultSectionList = [
+                    	{"disabled" : false, "keywordAttributeType":"CATEGORY", "keywordAttributeItems":null, "priority" : 0},
+                    	{"disabled" : false, "keywordAttributeType":"BRAND", "keywordAttributeItems":null, "priority" : 1},
+                    	{"disabled" : false, "keywordAttributeType":"SUGGESTION", "keywordAttributeItems":null, "priority" : 2}
+                    ];
+
 PCM.typeAhead = (function(j){	
 	jQuery.fn.exists = function(){return this.length>0;}
 	var init = function(searchInput, typeaheadDiv, delay, typeaheadManager){
@@ -117,6 +123,10 @@ PCM.typeAhead = (function(j){
 							typeAhead.empty();
 							typeAhead.append('<div class="highlight"></div>');
 							var sectionList = list[0].sectionList;
+							
+							if(sectionList == null || sectionList == undefined || sectionList.length == 0) {
+								sectionList = defaultSectionList;
+							}
 							
 							sectionList.sort(function(a, b) {
 								return a.priority - b.priority;

@@ -52,7 +52,8 @@ public class TypeaheadRuleVersionDAO extends AbstractRuleVersionDAO<TypeaheadRul
 				long version = ruleVersionListXml.getNextVersion();
 
 				TypeaheadRule typeaheadRule = typeaheadRuleService.searchById(store, ruleId);
-				
+				typeaheadRuleService.initializeTypeaheadSections(typeaheadRule);
+								
 				TypeaheadRuleXml xml = new TypeaheadRuleXml(typeaheadRule);
 				xml.setVersion(version);
 				xml.setName(name);
@@ -61,6 +62,9 @@ public class TypeaheadRuleVersionDAO extends AbstractRuleVersionDAO<TypeaheadRul
 				xml.setRuleId(ruleId);
 				xml.setRuleEntity(RuleEntity.TYPEAHEAD);
 				xml.setCreatedBy(username);
+				
+				
+				
 				ruleXmlList.add(xml);
 				ruleVersionListXml.setRuleId(ruleId);
 				ruleVersionListXml.setRuleName(typeaheadRule.getRuleName());

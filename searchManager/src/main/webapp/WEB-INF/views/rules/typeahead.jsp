@@ -45,7 +45,7 @@ height: 1px;
 			<span id="titleText"></span> <span id="titleHeader"
 				class="fLblue fnormal"></span>
 		</div>
-		<div class="listSearchDiv padT10 floatR">
+		<div class="listSearchDiv padT10 padR5 floatR">
 			<input type="text" class="searchTextInput" /><a
 				href="javascript:void(0);" class="searchButton"><img
 				src="<spring:url value="/images/icon_magniGlass13.png" />"></a> 
@@ -72,7 +72,7 @@ height: 1px;
 	            <div class="floatL w330">
 		            <label class="floatL w70 marT5">Enabled</label>
 		            <label class="floatL marT5"><input id="disabledEdit" type="checkbox"/></label>
-		            <label class="floatR marT5"><a href="javascript:void(0);" id="suggestQtip"></a></label>
+		            <label class="floatR marT5"><a href="javascript:void(0);" id="suggestQtip"></a> <input type="checkbox" id="suggestionDisabled" class="disabled-flag"/></label>
 	            </div>
 	            
 	            <div class="clearB"></div>

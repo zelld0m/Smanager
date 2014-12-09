@@ -1,5 +1,6 @@
 package com.search.manager.core.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
@@ -7,6 +8,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.core.annotation.SolrCore;
+import com.search.manager.report.model.xml.KeywordAttributeXML;
 import com.search.manager.report.model.xml.TypeaheadRuleXml;
 
 @SolrCore(name = "typeaheadpub")
@@ -35,6 +37,8 @@ public class TypeaheadRule extends ModelBean {
         this.createdBy = xml.getCreatedBy();
         this.priority = xml.getPriority();
         this.disabled = xml.getDisabled();
+        
+        initSections(xml);
     }
 
     public String getRuleId() {
@@ -98,5 +102,31 @@ public class TypeaheadRule extends ModelBean {
 		this.sectionList = sectionList;
 	}
     
-    
+    public void initSections(TypeaheadRuleXml xml) {
+    	// Restore section items
+        if(xml.getKeywordAttributes() != null && xml.getKeywordAttributes().size() > 0) {
+        	
+        	List<KeywordAttribute> sectionList = new ArrayList<KeywordAttribute>();
+        	
+        	for(KeywordAttributeXML sectionXML : xml.getKeywordAttributes()) {
+        		KeywordAttribute section = new KeywordAttribute(sectionXML);
+        		section.setTypeaheadRuleId(xml.getRuleId());
+        		
+        		if(sectionXML.getKeywordAttributeItems() != null && sectionXML.getKeywordAttributeItems().size() > 0) {
+        			List<KeywordAttribute> sectionItemList = new ArrayList<KeywordAttribute>();
+        			
+        			for(KeywordAttributeXML sectionItemXML : sectionXML.getKeywordAttributeItems()) {
+        				KeywordAttribute sectionItem = new KeywordAttribute(sectionItemXML);
+        				sectionItem.setTypeaheadRuleId(xml.getRuleId());
+        				sectionItemList.add(sectionItem);
+        			}
+        			
+        			section.setKeywordAttributeItems(sectionItemList);
+        		}
+        		
+        		sectionList.add(section);
+        	}
+        	this.sectionList = sectionList;
+        }
+    }
 }

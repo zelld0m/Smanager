@@ -7,6 +7,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.core.enums.KeywordAttributeType;
+import com.search.manager.report.model.xml.KeywordAttributeXML;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class KeywordAttribute extends ModelBean{
@@ -23,6 +24,20 @@ public class KeywordAttribute extends ModelBean{
 	private Boolean disabled;
 	private KeywordAttributeType keywordAttributeType;
 	private List<KeywordAttribute> keywordAttributeItems;
+	
+	public KeywordAttribute() {
+		super();
+	}
+	
+	public KeywordAttribute(KeywordAttributeXML xml) {
+		super();
+		
+		this.inputValue = xml.getInputValue();
+		this.priority = xml.getPriority();
+		this.disabled = xml.getDisabled();
+		this.inputParamEnumId = xml.getInputParamEnumId();
+		this.keywordAttributeType = xml.getKeywordAttributeType();
+	}
 	
 	public String getKeywordAttributeId() {
 		return keywordAttributeId;

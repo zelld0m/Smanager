@@ -8,5 +8,11 @@ public interface TypeaheadRuleService extends GenericService<TypeaheadRule>{
 	public TypeaheadRule transfer(TypeaheadRule typeaheadRule)
 			throws CoreServiceException;
 
+	Boolean addSections(TypeaheadRule typeaheadRule);
+
+	Boolean deleteSections(TypeaheadRule typeaheadRule);
+
+	void initializeTypeaheadSections(TypeaheadRule rule);
+
 	
 }

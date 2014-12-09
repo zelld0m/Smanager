@@ -1084,9 +1084,10 @@ public class RuleXmlUtil {
 			}
 			
 			//Delete Keyword Attributes
-			
+			typeaheadRuleService.deleteSections(typeaheadRule);
 			//Insert Keyword Attributes
-			
+			typeaheadRule.initSections(typeaheadRuleXml);
+			typeaheadRuleService.addSections(typeaheadRule);
 			//Update SP will not work if the ruleName is the same.
 			typeaheadRule.setRuleName(null);
 			typeaheadRule.setPriority(typeaheadRuleXml.getPriority());

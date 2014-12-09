@@ -33,11 +33,11 @@
 			
 			var sectionList = base.options.sectionList;
 			
-			for(var i=0; i < sectionList.length; i++) {
+			for(var i=0; sectionList && i < sectionList.length; i++) {
 				var section = sectionList[i];
 				var $newSection = $(self.getSectionTableTemplate());
 				
-				$newSection = self.addSection(self.$el.find('table#section').find('div#sectionBox'), $newSection, section.name);
+				$newSection = self.addSection(self.$el.find('table#section').find('div#sectionBox'), $newSection, section.name, section.disabled);
 				
 				self.addProductToSection($newSection, section.sectionItems);
 				
@@ -95,14 +95,14 @@
 			});			
 		};
 		
-		base.addSection = function($sectionBox, $newSection, inputValue) {
+		base.addSection = function($sectionBox, $newSection, inputValue, slideOn) {
 			var self = this;
 			
 			$newSection.find('div.sectionName').html(inputValue);
 			$sectionBox.append($newSection);
 			
 			$newSection.find('.disabled-flag').slidecheckbox({
-				initOn: true,
+				initOn: slideOn != true,
 				disabled: !editable, //TODO:
 				changeStatusCallback: function(base, dt){
 					

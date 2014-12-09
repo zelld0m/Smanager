@@ -10,7 +10,8 @@ public enum KeywordAttributeType {
 
 	private String name;
 	private String code;
-
+	public static KeywordAttributeType[] PARENT_TYPES = {CATEGORY, BRAND, SUGGESTION, SECTION};
+	
 	private KeywordAttributeType(String name, String code) {
 		this.name = name;
 		this.code = code;
