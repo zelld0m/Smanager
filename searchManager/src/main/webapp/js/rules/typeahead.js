@@ -228,7 +228,7 @@
 			sectionList[sectionList.length] = brandSection;
 						
 			//build suggestion section
-			var suggestionSection = self.buildKeywordAttribute("Suggestion", 2, false, 'KEY_SUGGESTION');
+			var suggestionSection = self.buildKeywordAttribute("Suggestion", 2, !self.$editPanel.find('input#suggestionDisabled').is(':checked'), 'KEY_SUGGESTION');
 			sectionList[sectionList.length] = suggestionSection;
 			
 			var dynamicSectionCount = 3;
@@ -337,6 +337,13 @@
 		
 		base.initializeDisabledCheckbox = function(sectionList) {
 			var self = this;
+			if(sectionList == null || sectionList == undefined || sectionList.length  == 0) {
+				self.$editPanel.find('input#categoryDisabled').attr('checked', false);
+				self.$editPanel.find('input#brandDisabled').attr('checked', false);
+				self.$editPanel.find('input#suggestionDisabled').attr('checked', true);
+				return;
+			}
+			
 			for(var i=0; sectionList && i<sectionList.length; i++) {
 				var section = sectionList[i];
 				
