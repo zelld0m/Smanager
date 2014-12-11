@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.search.manager.core.dao.TypeaheadRuleDao;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.exception.CoreServiceException;
-import com.search.manager.core.model.KeywordAttribute;
 import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.search.Search;
 import com.search.manager.core.search.SearchResult;

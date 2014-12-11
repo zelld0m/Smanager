@@ -135,6 +135,10 @@ PCM.typeAhead = (function(j){
 							for(var i=0; i<sectionList.length; i++) {
 								var section = sectionList[i];
 								
+								if(section.disabled) {
+									continue;
+								}
+								
 								switch(section.keywordAttributeType) {
 								case 'CATEGORY': 
 									typeAhead.append(getKeywordContent(list, section));

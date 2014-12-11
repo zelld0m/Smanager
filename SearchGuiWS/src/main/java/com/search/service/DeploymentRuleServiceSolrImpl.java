@@ -671,6 +671,8 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					continue;
 				}
 				
+				typeaheadRuleServiceStg.initializeTypeaheadSections(typeaheadRule);
+				
 				TypeaheadRule currentTypeahead = new TypeaheadRule();
 
 				currentTypeahead.setRuleName(typeaheadRule.getRuleName());
@@ -680,12 +682,15 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 				
 				if(result.getTotalSize() > 0) {
 					currentTypeahead = result.getList().get(0);
+					typeaheadRuleServiceProd.deleteSections(currentTypeahead);
 					typeaheadRuleServiceProd.delete(currentTypeahead);
 				}
 				currentTypeahead.setPriority(typeaheadRule.getPriority());
 				currentTypeahead.setDisabled(typeaheadRule.getDisabled());
 				currentTypeahead.setCreatedBy(typeaheadRule.getCreatedBy());
 				currentTypeahead.setRuleId(typeaheadRule.getRuleId());
+				
+				currentTypeahead.setSectionList(typeaheadRule.getSectionList());
 				
 				currentTypeahead = typeaheadRuleServiceProd.transfer(currentTypeahead);
 

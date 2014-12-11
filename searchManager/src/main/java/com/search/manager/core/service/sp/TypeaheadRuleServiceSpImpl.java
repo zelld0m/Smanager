@@ -39,8 +39,6 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 	private static final Logger logger =
 			LoggerFactory.getLogger(TypeaheadRuleServiceSpImpl.class);
 
-	@Autowired
-	@Qualifier("keywordAttributeServiceSp")
 	private KeywordAttributeService keywordAttributeService;
 	@Autowired
 	@Qualifier("ruleStatusServiceSp")
@@ -54,8 +52,10 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 	}
 
 	@Autowired
-	public TypeaheadRuleServiceSpImpl(@Qualifier("typeaheadRuleDaoSp") TypeaheadRuleDao dao) {
+	public TypeaheadRuleServiceSpImpl(@Qualifier("typeaheadRuleDaoSp") TypeaheadRuleDao dao,
+			@Qualifier("keywordAttributeServiceSp") KeywordAttributeService keywordAttributeService) {
 		super(dao);
+		this.keywordAttributeService = keywordAttributeService;
 	}
 
 	public void setRuleStatusService(RuleStatusService ruleStatusService) {
@@ -131,7 +131,17 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 		if (StringUtils.isNotBlank(typeaheadRule.getStoreId()) && StringUtils.isNotBlank(typeaheadRule.getRuleName())
 				&& StringUtils.isNotBlank(typeaheadRule.getCreatedBy())) {
 			try {
-				return dao.add(typeaheadRule);
+				List<KeywordAttribute> sectionList = typeaheadRule.getSectionList();
+				
+				TypeaheadRule result = dao.add(typeaheadRule);
+				
+				if(sectionList != null) {
+					deleteSections(result);
+					result.setSectionList(sectionList);
+					addSections(result);
+				}
+				
+				return result;
 			} catch (CoreDaoException e) {
 				throw new CoreServiceException(e);
 			}

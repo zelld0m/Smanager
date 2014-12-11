@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.joda.time.DateTimeZone;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.search.manager.core.model.KeywordAttribute;
 import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.enums.MemberTypeEntity;
@@ -420,14 +420,16 @@ public class SolrDocUtil {
     
     private static String getTypeaheadSectionJson(KeywordAttribute attribute) {
     	
-    	JSONObject sectionJson = new JSONObject();
+    	JsonObject sectionJson = new JsonObject();
     	
-    	sectionJson.put("name", attribute.getInputValue());
-    	sectionJson.put("disabled", attribute.getDisabled());
-    	sectionJson.put("priority", attribute.getPriority());
-    	sectionJson.put("type", attribute.getKeywordAttributeType());
-    	sectionJson.put("items", attribute.getKeywordItemValues());
-    	
+    	sectionJson.addProperty("name", attribute.getInputValue());
+    	sectionJson.addProperty("disabled", attribute.getDisabled());
+    	sectionJson.addProperty("priority", attribute.getPriority());
+    	sectionJson.addProperty("type", attribute.getKeywordAttributeType().toString());
+    	if(attribute.getKeywordItemValues() != null && attribute.getKeywordItemValues().length > 0) {
+    		Gson gson = new Gson();
+    		sectionJson.addProperty("items", gson.toJson(attribute.getKeywordItemValues()));
+    	}
     	
     	return sectionJson.toString();
     }

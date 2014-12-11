@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -33,6 +34,7 @@ import com.search.manager.jodatime.JodaDateTimeUtil;
 public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute> implements KeywordAttributeDao{
 
 	@Autowired
+	@Qualifier("jodaDateTimeUtil")
 	private JodaDateTimeUtil jodaDateTimeUtil;
 	
 	private AddStoredProcedure addStoredProcedure;

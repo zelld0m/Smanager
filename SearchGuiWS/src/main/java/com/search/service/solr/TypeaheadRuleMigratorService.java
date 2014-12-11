@@ -101,8 +101,17 @@ public class TypeaheadRuleMigratorService implements SolrRuleService<TypeaheadRu
         while (true) {
             SearchResult<TypeaheadRule> searchResult = typeaheadRuleServiceSp.search(typeaheadRule, page, MAX_ROWS);
 
+            List<TypeaheadRule> results = searchResult.getResult();
+            
+            // Get Sections
+            if(results != null) {
+            	for(TypeaheadRule result : results) {
+            		typeaheadRuleServiceSp.initializeTypeaheadSections(result);
+            	}
+            }
+            
             if (searchResult.getResult().size() > 0) {
-                typeaheadRuleServiceSolr.add(searchResult.getResult());
+                typeaheadRuleServiceSolr.add(results);
                 
                 page++;
             } else {

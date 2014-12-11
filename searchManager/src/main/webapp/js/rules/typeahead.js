@@ -109,7 +109,7 @@
 					});
 				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
-					self.showTypeahead();
+					self.setTypeahead(self.selectedRule);
 				},
 				beforeRuleStatusRequest: function(){
 					self.prepareTypeahead();
@@ -174,6 +174,7 @@
 			if(editable == false) {
 				self.$typeaheadPanel.find("#priorityEdit").prop('readonly', true);
 				self.$typeaheadPanel.find("#disabledEdit").click(function(){return false;});
+				self.$typeaheadPanel.find("#suggestionDisabled").click(function(){return false;});
 				self.$typeaheadPanel.find("#saveBtn").hide();
 				self.$typeaheadPanel.find("#deleteBtn").hide();
 				return;

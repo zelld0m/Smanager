@@ -15,6 +15,7 @@
 		
 		base.init = function() {
 			var self = this;
+			self.$el.find('table#section');
 			self.initializeAddEvent();
 			self.initializeExistingData();
 			if(editable) {
