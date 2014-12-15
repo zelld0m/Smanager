@@ -435,7 +435,7 @@
 				modal: true,
 				open : function( event, ui) {
 					self.initializeCurrentSectionSorting();
-					self.initializeSortingDialogContent($sortDialog);
+					self.initializeSortingDialogContent($sortDialog, editable);
 					if(editable != false) {
 						$sortDialog.find('ul').sortable({handle:'.dragHandler',});
 					}

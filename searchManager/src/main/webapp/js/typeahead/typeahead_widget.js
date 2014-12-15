@@ -155,7 +155,7 @@ PCM.typeAhead = (function(j){
 								}
 							}
 			
-							results = typeAhead.find('li > a');
+							results = typeAhead.find('li:visible > a');
 							results.mouseenter(function(){
 								hoverResults(j(this));
 							});
@@ -186,7 +186,7 @@ PCM.typeAhead = (function(j){
 		};
 
 		var bindEvents = function() {
-			results = typeAhead.find('li > a');
+			results = typeAhead.find('li:visible > a');
 			results.mouseenter(function(){
 				hoverResults(j(this));
 			});
@@ -228,7 +228,7 @@ PCM.typeAhead = (function(j){
 		};
 
 		var getKeywordContent = function(list, section) {
-			var html = '';
+			var html = '<div class="clearB"></div>';
 			html += '<h3 class="first">Matching Keywords</h3>';
 			html += '<ul class="first-lvl">';
 			for(var i=0; i < list.length; i++) {
@@ -290,7 +290,7 @@ PCM.typeAhead = (function(j){
 					}
 				},
 				postHook: function() {
-					results = typeAhead.find('li > a');
+					results = typeAhead.find('li:visible > a');
 					results.mouseenter(function(){
 						hoverResults(j(this));
 					});

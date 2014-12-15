@@ -182,7 +182,7 @@ height: 1px;
 
 
 	<div class="clearB"></div>
-	<div id="sortDialog" title="Sort Sections"><ul class="w90p padL5"></ul></div>
+	<div id="sortDialog" title="Sort Sections"><ul class="w95p padL5" style="list-style-type: none;"></ul></div>
 </div>
 
 <!-- End Right Side -->
