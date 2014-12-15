@@ -65,13 +65,15 @@ height: 1px;
 	<div id="editPanel">
 		<div class="landingCont bgboxGray w450p83 floatL marL10 fsize12 marB0">	
 	        <div class="fsize14 txtAL padB1 marB1 fbold">
-	        	<div class="floatL w350">
+	        	<div class="floatL w210">
 		            <label class="floatL w70 marT5">Priority</label>
-		            <label class="floatL"><input id="priorityEdit" type="text" class="w240 marT5"/></label>
+		            <label class="floatL"><input id="priorityEdit" type="text" class="w100 marT5"/></label>
+		            <label class="floatL marT6 marL10"><a href="javascript:void(0);" id="dialogSortIcon"><img src="<spring:url value="/images/table_sort.png" />"/></a></label>
 	            </div>
-	            <div class="floatL w330">
+	            <div class="floatL w470">
 		            <label class="floatL w70 marT5">Enabled</label>
 		            <label class="floatL marT5"><input id="disabledEdit" type="checkbox"/></label>
+		            <label class="floatL w150">&nbsp;</label>
 		            <label class="floatR marT5"><a href="javascript:void(0);" id="suggestQtip"></a> <input type="checkbox" id="suggestionDisabled" class="disabled-flag"/></label>
 	            </div>
 	            
@@ -180,6 +182,7 @@ height: 1px;
 
 
 	<div class="clearB"></div>
+	<div id="sortDialog" title="Sort Sections"><ul class="w90p padL5"></ul></div>
 </div>
 
 <!-- End Right Side -->

@@ -20,6 +20,7 @@
 			self.$typeaheadList = $(base.options.typeaheadListContainerSelector);
 			self.$editPanel = $(base.options.editPanelSelector);
 			self.selectedRuleList = new Object();
+			self.sectionSortMap = {"Category":0, "Brand":1, "Suggestion":2};
 			self.getTypeaheadRuleList(1);
 			//self.loadSplunkData();
 			self.loadRuleList(0, base.options.rulePage);
@@ -77,6 +78,19 @@
 			self.$typeaheadPanel.find("#submitForApproval, #noSelected").hide();
 			self.$typeaheadPanel.find("#titleHeader").empty();
 			self.$typeaheadPanel.find("#ruleTypeIcon").html("");
+			
+			var sectionList = self.selectedRule.sectionList;
+			self.sectionSortNap = new Object();
+			
+			// Load default section sorting
+			if(sectionList == null || sectionList.length == 0) {
+				self.sectionSortNap = {'Category':0, 'Brand':1, 'Suggestion':2};
+			} else {
+				for(var i=0; i<sectionList.length; i++) {
+					var section = sectionList[i];
+					self.sectionSortNap[section.inputValue] = i;
+				}
+			}
 		};
 		
 		base.showTypeahead = function() {
@@ -137,6 +151,16 @@
 								
 							}
 						});
+					});
+					
+					self.sectionSortMap = {"Category":0, "Brand":1, "Suggestion":2};
+					self.initializeCurrentSectionSorting(self.selectedRule.sectionList);
+					self.initializeSortingDialog(!ruleStatus.locked);
+					
+					self.$editPanel.find('a#dialogSortIcon').off().on({
+						click: function() {
+							$('#sortDialog').dialog('open');
+						}
 					});
 					
 				}
@@ -216,27 +240,29 @@
 			var $typeaheadTable = self.$editPanel.find('table#typeaheadTable');
 			//Types: Category 0, Brand 1, Suggestion 2, Section 3, Section Item 4
 			
+			// Update to latest sorting
+			self.initializeCurrentSectionSorting();
+			var sortMap = self.sectionSortMap;
 			//build category section
-			var categorySection = self.buildKeywordAttribute("Category", 0, !$typeaheadTable.find('input#categoryDisabled').is(':checked'), 'KEY_CAT');
+			var categorySection = self.buildKeywordAttribute("Category", sortMap['Category'], !$typeaheadTable.find('input#categoryDisabled').is(':checked'), 'KEY_CAT');
 			var categoryItemArray = self.buildSectionItemList(self.$editPanel.find("div#sortedCategoryDocs").find('ul.ui-sortable').find('li'));
 			categorySection.keywordAttributeItems = categoryItemArray;
 			sectionList[sectionList.length] = categorySection;
 			
 			//build brand section
-			var brandSection = self.buildKeywordAttribute("Brand", 1, !$typeaheadTable.find('input#brandDisabled').is(':checked'), 'KEY_BRAND');
+			var brandSection = self.buildKeywordAttribute("Brand", sortMap['Brand'], !$typeaheadTable.find('input#brandDisabled').is(':checked'), 'KEY_BRAND');
 			var brandItemArray = self.buildSectionItemList(self.$editPanel.find("div#sortedBrandDocs").find('ul.ui-sortable').find('li'));
 			brandSection.keywordAttributeItems = brandItemArray;
 			sectionList[sectionList.length] = brandSection;
 						
 			//build suggestion section
-			var suggestionSection = self.buildKeywordAttribute("Suggestion", 2, !self.$editPanel.find('input#suggestionDisabled').is(':checked'), 'KEY_SUGGESTION');
+			var suggestionSection = self.buildKeywordAttribute("Suggestion", sortMap['Suggestion'], !self.$editPanel.find('input#suggestionDisabled').is(':checked'), 'KEY_SUGGESTION');
 			sectionList[sectionList.length] = suggestionSection;
 			
-			var dynamicSectionCount = 3;
 			self.$editPanel.find('table.sectionTable').each(function() {
 				var $sectionTable = $(this);
 				var sectionName = $sectionTable.find('div.sectionName').text();
-				var dynamicSection = self.buildKeywordAttribute(sectionName, dynamicSectionCount, !$sectionTable.find('input[type=checkbox]').is(':checked'), 'KEY_SECTION');
+				var dynamicSection = self.buildKeywordAttribute(sectionName, sortMap[sectionName], !$sectionTable.find('input[type=checkbox]').is(':checked'), 'KEY_SECTION');
 				
 				var $sectionItemValues = $sectionTable.find('.sectionItemValue');
 				
@@ -256,7 +282,6 @@
 				
 				sectionList[sectionList.length] = dynamicSection;
 				
-				dynamicSectionCount ++;
 			}); 
 			
 			typeaheadRule.sectionList = sectionList;						
@@ -336,6 +361,104 @@
 			
 		};
 		
+		base.initializeCurrentSectionSorting = function(sectionList) {
+			var self = this;
+			var sectionSortMap = self.sectionSortMap;
+			
+			if(sectionList != null && sectionList != undefined) {
+				self.sectionSortMap = {"Category":0, "Brand":1, "Suggestion":2};
+				
+				for(var i=0; i<sectionList.length; i++) {
+					var section = sectionList[i];
+					
+					self.sectionSortMap[section.inputValue] = i;
+				}
+				
+				return;
+			}
+						
+			var newSectionSortMap = new Object();
+			newSectionSortMap['Category'] = self.sectionSortMap['Category'];
+			newSectionSortMap['Brand'] = self.sectionSortMap['Brand'];
+			newSectionSortMap['Suggestion'] = self.sectionSortMap['Suggestion'];
+			
+			var newEntries = new Array();
+			
+			self.$typeaheadPanel.find('div#sectionBox').find('div.sectionName').each(function() {
+				var sectionName = $(this).text();
+				
+				if(sectionSortMap[sectionName] != undefined) {
+					newSectionSortMap[sectionName] = sectionSortMap[sectionName]; 
+				} else {
+					newEntries[newEntries.length] = sectionName;
+				}
+			});
+			
+			for(var i=0; i<newEntries.length; i++) {
+				newSectionSortMap[newEntries[i]] = Object.keys(newSectionSortMap).length;
+			}
+			
+			self.sectionSortMap = newSectionSortMap;						
+		};
+		
+		base.initializeSortingDialogContent = function($dialogElement, editable) {
+			var self = this;
+			
+			var sortMap = self.sectionSortMap;
+			
+			var sortedSection = [];
+			
+			for(var key in sortMap) {
+				sortedSection[sortMap[key]] = key;
+			}
+			
+			var $ul = $dialogElement.find('ul');
+			
+			$ul.empty();
+			
+			var dragHandler = editable == false ? '' : '<a href="javascript:void(0);" class="dragHandler floatR">'+base.options.dragIcon+'</a>';
+			
+			for(var i=0; i<sortedSection.length; i++) {
+				var section = sortedSection[i];
+				if(section != undefined) {
+					$ul.append('<li class="inputValue"><span>'+section+ '</span>' + dragHandler +'</li>');
+				}
+			}
+		};
+		
+		base.initializeSortingDialog = function(editable) {
+			var self = this;
+			var $sortDialog = $('div#sortDialog').dialog('destroy');
+						
+			$sortDialog.dialog({
+				autoOpen: false,
+				modal: true,
+				open : function( event, ui) {
+					self.initializeCurrentSectionSorting();
+					self.initializeSortingDialogContent($sortDialog);
+					if(editable != false) {
+						$sortDialog.find('ul').sortable({handle:'.dragHandler',});
+					}
+				},
+				close: function( event, ui) {
+					$sortDialog.find('ul').sortable('destroy');
+					self.sectionSortMap = new Object();
+					
+					$sortDialog.find('li').each(function(index, li) {
+						var $li = $(li);
+						self.sectionSortMap[$li.find('span.inputValue').text()] = (index);
+					});
+				},
+				buttons: [{
+					text: "OK",
+					click: function() {
+						$(this).dialog('close');
+					}
+				}]
+			});
+			
+		};
+		
 		base.initializeDisabledCheckbox = function(sectionList) {
 			var self = this;
 			if(sectionList == null || sectionList == undefined || sectionList.length  == 0) {
@@ -361,7 +484,6 @@
 				}
 			}
 		};
-		
 		
 		base.loadRelatedKeywords = function(keyword) {
 			var self = this;
@@ -1174,10 +1296,6 @@
 			return template;
 		};
 		
-		
-		
-		
-		
 		// Run initializer
 		base.init();
 	};
@@ -1218,6 +1336,7 @@
 			deleteIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/btn_delete_big.png'/>",
 			dragIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_drag.png'/>",
 			suggestionIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_find.png'/>",
+			sortIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/table_sort.png'/>",
 			searchReloadRate: 1000,
 			selectedRuleList: new Object(),
 	};
