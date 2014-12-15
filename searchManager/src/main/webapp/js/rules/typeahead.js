@@ -421,7 +421,7 @@
 			for(var i=0; i<sortedSection.length; i++) {
 				var section = sortedSection[i];
 				if(section != undefined) {
-					$ul.append('<li class="inputValue"><span>'+section+ '</span>' + dragHandler +'</li>');
+					$ul.append('<li><span class="inputValue">'+section+ '</span>' + dragHandler +'</li>');
 				}
 			}
 		};
