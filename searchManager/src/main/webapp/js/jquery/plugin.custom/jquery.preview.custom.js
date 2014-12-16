@@ -223,12 +223,12 @@
 
 				$rulePreview.find("#ruleInfo").text($.trim(base.options.ruleInfo));
 				$rulePreview.find("#requestType").text(base.options.requestType);
-
+				
 				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, base.options.ruleInfo, 0, 1, 1, GLOBAL_storeMaxTypeahead, true, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
-
+						
 						var $trClone = $table.find("tr#itemPattern");
 						
 						for(var i = 0; i < list.length; i++) {
@@ -237,6 +237,27 @@
 								$tr.find("#category").text(list[i].ruleName);
 
 							if(i == 0) {
+								
+								var getSectionSorting = function(rule) {
+									var sectionList = rule.sectionList;
+									
+									if(sectionList == null || sectionList.length == 0) {
+										return "Category, Brand, Suggestion";
+									}
+									
+									var returnString = '';
+									for(var k=0; k<sectionList.length; k++) {
+										var section = sectionList[k];
+										if(k != 0) {
+											returnString += ', ';
+										}
+										returnString += section.inputValue;
+									}
+									
+									return returnString;
+								};
+								
+								$rulePreview.find("#sectionSort").text(getSectionSorting(list[0]));
 								$tr.find("#category").append('<span id="count"></span>');
 								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
 								$tr.find("#brand").append('<div id="brandFirst"></div>')

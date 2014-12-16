@@ -249,6 +249,11 @@
 				template += '	<label class="w110 floatL marL20 fbold">Request Type:</label>';
 				template += '	<label class="wAuto floatL" id="requestType"></label>';					
 				template += '	<div class="clearB"></div>';
+				if(ruleType.toLowerCase() == 'typeahead') {
+					template += '	<label class="w110 floatL marL20 fbold">Section Sorting:</label>';
+					template += '	<label class="wAuto floatL" id="sectionSort"></label>';					
+					template += '	<div class="clearB"></div>';
+				}
 				template += '</div>';
 				template += '<div class="clearB"></div>';
 				break;

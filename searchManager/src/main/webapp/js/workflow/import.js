@@ -730,6 +730,9 @@
 					template += '	<label class="w110 floatL fbold">Disabled:</label>';
 					template += '	<label class="wAuto floatL" id="ruleDisabled"></label>';
 					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL fbold">Section Sorting:</label>';
+					template += '	<label class="wAuto floatL" id="sectionSort"></label>';
+					template += '	<div class="clearB"></div>';
                     template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
                     template += '	<label class="wAuto floatL" id="importType">';
                     template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
@@ -795,6 +798,9 @@
 				template += '		<div class="clearB"></div>';
 				template += '		<label class="w110 floatL fbold">Disabled:</label>';
 				template += '		<label class="wAuto floatL" id="ruleDisabled"></label>';
+				template += '		<div class="clearB"></div>';
+				template += '		<label class="w110 floatL fbold">Section Sorting:</label>';
+				template += '		<label class="wAuto floatL" id="sectionSort"></label>';
 				template += '		<div class="clearB"></div>';
 	            template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
 	            template += '		<div id="importAs" class="wAuto floatL"></div>';

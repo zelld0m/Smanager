@@ -195,6 +195,8 @@
 		base.initializeEditEvents = function(editable) {
 			var self = this;
 			
+			self.$typeaheadPanel.find("#suggestionDisabled").off();
+			
 			if(editable == false) {
 				self.$typeaheadPanel.find("#priorityEdit").prop('readonly', true);
 				self.$typeaheadPanel.find("#disabledEdit").click(function(){return false;});
@@ -206,8 +208,8 @@
 			
 			self.$typeaheadPanel.find("#priorityEdit").prop('readonly', false);
 			self.$typeaheadPanel.find("#disabledEdit").off('click');
-			self.$typeaheadPanel.find("#saveBtn").show();
-			self.$typeaheadPanel.find("#deleteBtn").show();
+//			self.$typeaheadPanel.find("#saveBtn").show();
+//			self.$typeaheadPanel.find("#deleteBtn").show();
 			
 			self.$typeaheadPanel.find("#saveBtn").off().on({
 				click:function(){
@@ -550,6 +552,8 @@
 			self.typeaheadManager.preHook = function() {
 				self.$editPanel.find('#suggestQtip').html(base.options.rectLoader);
 				self.$editPanel.find('#suggestQtip').qtip("destroy");
+				self.$typeaheadPanel.find('a#saveBtn').hide();
+				self.$typeaheadPanel.find('a#deleteBtn').hide();
 			};
 			
 			self.typeaheadManager.postHook = function() {
@@ -563,6 +567,10 @@
 					},
 					hide: {event: 'click unfocus', fixed: true, effect:false, delay:0}
 				});
+				if(editable) {
+					self.$typeaheadPanel.find('a#saveBtn').show();
+					self.$typeaheadPanel.find('a#deleteBtn').show();
+				}
 			};
 			self.typeaheadManager.doRequest(0);
 		};
@@ -665,6 +673,7 @@
 		base.loadSplunkData = function() {
 			var self = this;
 			self.$typeaheadList.html(self.getListTemplate());
+			self.$editPanel.hide();
 			TopKeywordServiceJS.getFileList({
 				callback: function(files){
 					self.latestFile = files[0];
@@ -700,6 +709,7 @@
 							self.$preloader.show();
 						},
 						postHook:function(){
+							self.$typeaheadList.show();
 							self.$preloader.hide();
 						}
 					});

@@ -363,6 +363,7 @@
 							if(list[i].ruleName == ruleName) {
 								$rulePreview.find("#rulePriority").text($.trim(list[i].priority));
 								$rulePreview.find("#ruleDisabled").text(list[i].disabled);
+								$rulePreview.find("#sectionSort").text(base.getSectionSorting(list[i]));
 							}
 							
 							var $tr = $trClone.clone();
@@ -641,6 +642,29 @@
 			}
 		};
 
+		base.getSectionSorting = function(rule) {
+			var sectionList = rule.sectionList;
+			
+			if(sectionList == undefined) {
+				sectionList = rule.keywordAttributes;
+			}
+			
+			if(sectionList == null || sectionList.length == 0) {
+				return "Category, Brand, Suggestion";
+			}
+			
+			var returnString = '';
+			for(var k=0; k<sectionList.length; k++) {
+				var section = sectionList[k];
+				if(k != 0) {
+					returnString += ', ';
+				}
+				returnString += section.inputValue;
+			}
+			
+			return returnString;
+		};
+		
 		base.getSectionList = function(rule) {
 			
 			var sectionList = rule.sectionList;
@@ -695,6 +719,7 @@
 				
 				$content.find("#rulePriority").text($.trim(xml.priority));
 				$content.find("#ruleDisabled").text(xml.disabled);
+				$content.find("#sectionSort").text(base.getSectionSorting(xml));
 
 				TypeaheadRuleServiceJS.getAllRules(xml.store, xml.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, true, {
 					callback:function(response) {
@@ -1046,6 +1071,10 @@
 					
 					template += '	<label class="w110 floatL fbold">Disabled:</label>';
 					template += '	<label class="wAuto floatL" id="ruleDisabled"></label>';
+					template += '	<div class="clearB"></div>';
+					
+					template += '	<label class="w110 floatL fbold">Section Sorting:</label>';
+					template += '	<label class="wAuto floatL" id="sectionSort"></label>';
 					template += '	<div class="clearB"></div>';
 					
 					template += '</div>';
