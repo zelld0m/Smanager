@@ -254,6 +254,17 @@
 				template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 				template += '	<div class="clearB"></div>';
+				if(entityName.toLowerCase() == 'typeahead' || entityName.toLowerCase() == 'type-ahead') {
+					template += '		<label class="w110 floatL fbold">Priority:</label>';
+					template += '		<label class="wAuto floatL" id="rulePriority"></label>';
+					template += '		<div class="clearB"></div>';
+					template += '		<label class="w110 floatL fbold">Disabled:</label>';
+					template += '		<label class="wAuto floatL" id="ruleDisabled"></label>';
+					template += '		<div class="clearB"></div>';
+					template += '		<label class="w110 floatL fbold">Section Sorting:</label>';
+					template += '		<label class="wAuto floatL" id="sectionSort"></label>';
+					template += '		<div class="clearB"></div>';
+				}
 				template += '	<div class="clearB"></div>';
 				template += '</div>';
 				}
@@ -268,7 +279,7 @@
 
 				return template;
 			},
-			getRightPanelTemplate: function() {
+			getRightPanelTemplate: function(entityName) {
 				var template = "";
 
 				template += '	<div class="rulePreview w600 marB20">';
@@ -278,6 +289,17 @@
 				template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
 				template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
 				template += '		<div class="clearB"></div>';
+				if(entityName.toLowerCase() == 'typeahead' || entityName.toLowerCase() == 'type-ahead') {
+					template += '		<label class="w110 floatL fbold">Priority:</label>';
+					template += '		<label class="wAuto floatL" id="rulePriority"></label>';
+					template += '		<div class="clearB"></div>';
+					template += '		<label class="w110 floatL fbold">Disabled:</label>';
+					template += '		<label class="wAuto floatL" id="ruleDisabled"></label>';
+					template += '		<div class="clearB"></div>';
+					template += '		<label class="w110 floatL fbold">Section Sorting:</label>';
+					template += '		<label class="wAuto floatL" id="sectionSort"></label>';
+					template += '		<div class="clearB"></div>';
+				}
 				template += '	</div>';
 
 				return template;
@@ -320,7 +342,7 @@
 					var importType = importRuleTaskList[this.id].importType;
 					var postTemplateString = self.getPostTemplate();
 					var preTemplateString = self.getPreTemplate(entityName, importType);
-					var rightPanelStringTemplate = self.getRightPanelTemplate();
+					var rightPanelStringTemplate = self.getRightPanelTemplate(entityName);
 					self.preview(this, postTemplateString, preTemplateString, rightPanelStringTemplate);
 				});
 				$('input.btnPreviewOff, input.btnRequeueOff, input.btnCancelOff').each(function() {
