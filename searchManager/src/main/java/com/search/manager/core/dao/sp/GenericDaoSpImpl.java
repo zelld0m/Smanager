@@ -143,7 +143,7 @@ public abstract class GenericDaoSpImpl<T> implements GenericDao<T> {
         try {
             SearchProcessor searchProcessor = new SpSearchProcessor(getSearchStoredProcedure(), getDefaultInParam());
             return (SearchResult<T>) searchProcessor.processSearch(search);
-        } catch (CoreSearchException e) {
+        } catch (Throwable e) {
             throw new CoreDaoException(e);
         }
     }

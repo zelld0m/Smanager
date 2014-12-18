@@ -1183,7 +1183,8 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
                         TypeaheadRule rule = new TypeaheadRule();
                         rule.setStoreId(store);
                         rule.setRuleId(id);
-
+                        // Delete existing sections
+                        typeaheadRuleServiceProd.deleteSections(rule);
                         // Delete existing data from production.
                         typeaheadRuleServiceProd.delete(rule);
 

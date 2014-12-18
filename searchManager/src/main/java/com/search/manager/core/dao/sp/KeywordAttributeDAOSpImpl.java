@@ -20,6 +20,7 @@ import com.search.manager.core.constant.KeywordAttributeDaoConstant;
 import com.search.manager.core.constant.TypeaheadDaoConstant;
 import com.search.manager.core.dao.KeywordAttributeDao;
 import com.search.manager.core.enums.KeywordAttributeType;
+import com.search.manager.core.enums.Status;
 import com.search.manager.core.exception.CoreDaoException;
 import com.search.manager.core.model.KeywordAttribute;
 import com.search.manager.core.search.Filter;
@@ -68,7 +69,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PRIORITY, Types.VARCHAR));
-			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_DISABLED, Types.BIT));
+			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
 		}
@@ -96,7 +97,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PRIORITY, Types.VARCHAR));
-			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_DISABLED, Types.BIT));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.COLUMN_LAST_UPDATED_STAMP, Types.TIMESTAMP));
 		}
@@ -135,7 +136,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_DISABLED, Types.BIT));
+			declareParameter(new SqlParameter(TypeaheadDaoConstant.COLUMN_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_STAMP, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
@@ -164,7 +165,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 		attribute.setCreatedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)));
 		attribute.setLastModifiedDate(jodaDateTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)));
 		attribute.setPriority(rs.getInt(KeywordAttributeDaoConstant.COLUMN_PRIORITY));
-		attribute.setDisabled(rs.getBoolean(KeywordAttributeDaoConstant.COLUMN_DISABLED));
+		attribute.setDisabled(Status.DISABLED.getName().equals(rs.getString(KeywordAttributeDaoConstant.COLUMN_STATUS)));
 		attribute.setKeywordAttributeId(rs.getString(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ATTRIBUTE_ID));
 		attribute.setInputParamEnumId(rs.getString(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID));
 		attribute.setParentAttributeId(rs.getString(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID));
@@ -218,7 +219,8 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, model.getInputParamEnumId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_PRIORITY, model.getPriority() != null ? model.getPriority() : 1);
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE, model.getInputValue());
-			inputs.put(KeywordAttributeDaoConstant.COLUMN_DISABLED, model.getDisabled() != null ? model.getDisabled() : false);
+			String status = getStatus(model);
+			inputs.put(KeywordAttributeDaoConstant.COLUMN_STATUS, status != null ? status : Status.ENABLED.getName());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, model.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_STAMP, jodaDateTimeUtil.toSqlDate(model.getCreatedDate()));
 		}
@@ -240,7 +242,8 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, model.getKeywordId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, model.getInputParamEnumId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_PRIORITY, model.getPriority() != null ? model.getPriority() : 1);
-			inputs.put(KeywordAttributeDaoConstant.COLUMN_DISABLED, model.getDisabled() != null ? model.getDisabled() : false);
+			String status = getStatus(model);
+			inputs.put(KeywordAttributeDaoConstant.COLUMN_STATUS, status != null ? status : Status.ENABLED.getName());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, model.getLastModifiedBy());
 			inputs.put(DAOConstants.COLUMN_LAST_UPDATED_STAMP, jodaDateTimeUtil.toSqlDate(model.getLastModifiedDate()));
 		}
@@ -271,7 +274,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, model.getKeywordId()));
 		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, model.getInputParamEnumId()));
 		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, model.getParentAttributeId()));
-		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_DISABLED, model.getDisabled()));
+		search.addFilter(new Filter(KeywordAttributeDaoConstant.COLUMN_STATUS, model.getDisabled() != null ? getStatus(model) : null));
 		search.addFilter(new Filter(DAOConstants.PARAM_CREATED_STAMP,
 				jodaDateTimeUtil.toSqlDate(model.getCreatedDate())));
 		
@@ -286,7 +289,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 		inParam.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, null);
 		inParam.put(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, null);
 		inParam.put(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID, null);
-		inParam.put(KeywordAttributeDaoConstant.COLUMN_DISABLED, null);
+		inParam.put(KeywordAttributeDaoConstant.COLUMN_STATUS, null);
 		inParam.put(DAOConstants.PARAM_CREATED_STAMP, null);
 		inParam.put(DAOConstants.PARAM_START_ROW, 0);
 		inParam.put(DAOConstants.PARAM_END_ROW, 0);
@@ -299,6 +302,15 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			throws CoreDaoException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private String getStatus(KeywordAttribute attribute) {
+		
+		if(attribute.getDisabled() != null && attribute.getDisabled()) {
+			return Status.DISABLED.getName();
+		} else {
+			return Status.ENABLED.getName();
+		}
 	}
 
 }
