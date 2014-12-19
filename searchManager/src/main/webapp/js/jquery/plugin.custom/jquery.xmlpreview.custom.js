@@ -37,20 +37,6 @@
 				categoryId: 'category',
 				categoryTarget: '.categoryFirst'
 			}));
-			
-			base.typeaheadSourceManager = new AjaxSolr.Manager({
-				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
-				store: (new AjaxSolr.ParameterStore())
-			});
-			
-			base.typeaheadSourceManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
-				id: 'suggestionSource',
-				target: '.suggestionSourceFirst',
-				brandId: 'brandSource',
-				brandTarget: '.brandSourceFirst',
-				categoryId: 'categorySource',
-				categoryTarget: '.categorySourceFirst'
-			}));
 
 		};
 
@@ -351,7 +337,7 @@
 				$rulePreview.find("#ruleInfo").text(ruleName);
 				$rulePreview.find("#requestType").text(base.options.requestType);
 				
-				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, true, {
+				TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, ruleName, 1, 1, 1, GLOBAL_storeMaxTypeahead, true, {
 					callback:function(response) {
 						var data = response['data'];
 						var list = data.list;
@@ -668,6 +654,11 @@
 		base.getSectionList = function(rule) {
 			
 			var sectionList = rule.sectionList;
+			
+			if(sectionList == null || sectionList == undefined) {
+				sectionList = rule.keywordAttributes;
+			}
+			
 			var sectionArray = new Array();
 			
 			for(var i=0; i< sectionList.length; i++) {
@@ -682,11 +673,127 @@
 				arrayObject.name = section.inputValue;
 				arrayObject.sectionItems = section.keywordItemValues;
 				
+				if(arrayObject.sectionItems == undefined && section.keywordAttributeItems != null) {
+					arrayObject.sectionItems = new Array();
+					for(var k=0; k < section.keywordAttributeItems.length; k++) {
+						var item = section.keywordAttributeItems[k];
+						arrayObject.sectionItems[arrayObject.sectionItems.length] = item.inputValue;						
+					}
+				}
+				
 				sectionArray[sectionArray.length] = arrayObject;
 			}
 			
 			return sectionArray;
 			
+		};
+		
+		// For source store
+		base.initializeSourceStoreProperties = function(store) {
+			base.GLOBAL_sourceStoreProperties = GLOBAL_allStoreProperties[store]['storeProperties'];
+			base.GLOBAL_sourceStoreSolrParameters = GLOBAL_allStoreProperties[store]['storeSolrParameters'];
+			base.GLOBAL_sourceStoreParameters = GLOBAL_allStoreProperties[store]['storeParameters'];
+			base.GLOBAL_sourceStoreSolrConfig = GLOBAL_allStoreProperties[store]['solrConfig'];
+			
+			// Store parameters
+			base.GLOBAL_sourceUsername = base.GLOBAL_sourceStoreParameters["username"];
+			base.GLOBAL_sourceSolrSelectorParam = base.GLOBAL_sourceStoreParameters["solrSelectorParam"];
+			base.GLOBAL_sourceStoreId = base.GLOBAL_sourceStoreParameters["storeId"];
+			base.GLOBAL_sourceStoreCore = base.GLOBAL_sourceStoreParameters["storeCore"];
+			base.GLOBAL_sourceStoreName = base.GLOBAL_sourceStoreParameters["storeName"];
+			base.GLOBAL_sourceStoreDomains = $.makeArray(base.GLOBAL_sourceStoreParameters["storeDomains"]);
+			base.GLOBAL_sourceStoreSort = base.GLOBAL_sourceStoreParameters["storeSort"];
+			base.GLOBAL_sourceDateFormat = base.GLOBAL_sourceStoreParameters["storeDateFormat"];	
+			base.GLOBAL_sourceDateTimeFormat = base.GLOBAL_sourceStoreParameters["storeDateTimeFormat"];		
+			base.GLOBAL_sourceStoreFacetName = base.GLOBAL_sourceStoreParameters["storeFacetName"];
+			base.GLOBAL_sourceStoreFacetTemplate = base.GLOBAL_sourceStoreParameters["storeFacetTemplate"];
+			base.GLOBAL_sourceStoreFacetTemplateName = base.GLOBAL_sourceStoreParameters["storeFacetTemplateName"];
+			base.GLOBAL_sourceStoreGroupMembership = base.GLOBAL_sourceStoreParameters["storeGroupMembership"];
+			base.GLOBAL_sourceStoreDateFormat = base.GLOBAL_sourceStoreParameters["storeDateFormat"];
+			base.GLOBAL_sourceStoreDateTimeFormat = base.GLOBAL_sourceStoreParameters["storeDateTimeFormat"];
+			base.GLOBAL_sourceStoreDefaultBannerSize = base.GLOBAL_sourceStoreParameters["storeDefaultBannerSize"];
+			base.GLOBAL_sourceStoreAllowedBannerSizes = base.GLOBAL_sourceStoreParameters["storeAllowedBannerSizes"];
+			base.GLOBAL_sourceStoreDefaultBannerLinkPathProtocol = base.GLOBAL_sourceStoreParameters["storeDefaultBannerLinkPathProtocol"];
+			base.GLOBAL_sourceSearchWithinEnabled = base.GLOBAL_sourceStoreParameters["searchWithinEnabled"];
+			base.GLOBAL_sourceSearchWithinTypes = base.GLOBAL_sourceStoreParameters["searchWithinTypes"];
+			base.GLOBAL_sourceSearchWithinParamName = base.GLOBAL_sourceStoreParameters["searchWithinParamName"];
+			base.GLOBAL_sourceIsTargetStore = base.GLOBAL_sourceStoreParameters["isTargetStore"];
+			base.GLOBAL_sourceAllStoresDisplayName = base.GLOBAL_sourceStoreParameters["allStoresDisplayName"];
+				
+		        // FOR REDIRECT PAGE
+		    base.GLOBAL_sourceStoreRedirectSelfDomain = base.GLOBAL_sourceStoreParameters["storeRedirectSelfDomain"];
+		    base.GLOBAL_sourceStoreRedirectRelativePath = base.GLOBAL_sourceStoreParameters["storeRedirectRelativePath"];
+		        
+			base.GLOBAL_sourceStoreGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
+			base.GLOBAL_sourceStoreGroupTotal = base.GLOBAL_sourceStoreGroupMembership.length;
+			
+			if(base.GLOBAL_sourceStoreGroupTotal>0){
+				for(var i=0; i<base.GLOBAL_sourceStoreGroupTotal; i++){
+					base.GLOBAL_sourceStoreGroupLookup[base.GLOBAL_sourceStoreGroupMembership[i]]= true;
+				}
+			};
+			
+			base.GLOBAL_sourceBDGroup = base.GLOBAL_sourceStoreGroupLookup['BD'];
+			base.GLOBAL_sourceStoreGroup = base.GLOBAL_sourceStoreGroupLookup['Store'];
+			base.GLOBAL_sourcePCMGroup = base.GLOBAL_sourceStoreGroupLookup['PCM'];
+			base.GLOBAL_sourceMacMallGroup = base.GLOBAL_sourceStoreGroupLookup['MacMall'];
+			base.GLOBAL_sourcePCMBDGroup = base.GLOBAL_sourceStoreGroupLookup['PCMBD'];
+			base.GLOBAL_sourceMacMallBDGroup = base.GLOBAL_sourceStoreGroupLookup['MacMallBD'];
+			
+			base.GLOBAL_sourceSolrUrl = base.GLOBAL_sourceStoreSolrConfig["solrUrl"];
+			base.GLOBAL_sourceIsFromGUI = base.GLOBAL_sourceStoreSolrConfig["isFmGui"];
+			
+			base.GLOBAL_sourceStoreFacetTemplateType = base.GLOBAL_sourceStoreParameters["storeFacetTemplateType"];
+			base.GLOBAL_sourceStoreFacetTemplateNameField = base.GLOBAL_sourceStoreFacetTemplateType === 'CNET' ? "FacetTemplateName" : "TemplateName";
+			
+
+			// FOR TYPEAHEAD
+			base.GLOBAL_sourceStoreKeywordMaxSuggestion = base.GLOBAL_sourceStoreProperties['typeahead.typeahead.keywordSuggestionMax'];
+			base.GLOBAL_sourceStoreKeywordMaxBrand = base.GLOBAL_sourceStoreProperties['typeahead.typeahead.keywordBrandMax'];
+			base.GLOBAL_sourceStoreKeywordMaxCategory = base.GLOBAL_sourceStoreProperties['typeahead.typeahead.keywordCategoryMax'];
+			base.GLOBAL_sourceStoreMaxSuggestion = base.GLOBAL_sourceStoreProperties['typeahead.typeahead.suggestionMax'];
+			base.GLOBAL_sourceStoreMaxBrand = base.GLOBAL_sourceStoreProperties['typeahead.typeahead.brandMax'];
+			base.GLOBAL_sourceStoreMaxCategory = base.GLOBAL_sourceStoreProperties['typeahead.typeahead.categoryMax'];
+			base.GLOBAL_sourceStoreMaxTypeahead = base.GLOBAL_sourceStoreKeywordMaxBrand > base.GLOBAL_sourceStoreKeywordMaxCategory ? base.GLOBAL_sourceStoreKeywordMaxBrand : base.GLOBAL_sourceStoreKeywordMaxCategory; 
+			
+			base.GLOBAL_sourceFacetTemplate = ['Category', 'Manufacturer', 'Platform', base.GLOBAL_sourceStoreFacetTemplateName];
+
+			if (base.GLOBAL_sourceStoreFacetTemplateType === 'IMS') {
+			
+				facetTemplate = ['Category', 'Manufacturer', 'Platform', base.GLOBAL_sourceStoreFacetTemplateName];
+				if (base.GLOBAL_sourceStoreId == 'macmall'){
+					base.GLOBAL_sourceFacetTemplate = ['Category', 'Manufacturer', 'Platform','InStock_Memphis','InStock_Chicago_Retail','InStock_Huntington_Beach_Retail','InStock_Santa_Monica_Retail','InStock_Torrance_Retail',base.GLOBAL_sourceStoreFacetTemplateName];
+				}
+			} else if(base.GLOBAL_sourceStoreFacetTemplateType === 'CNET') {
+				// CNET        	
+				facetTemplate = ['Manufacturer', 'Platform', base.GLOBAL_sourceStoreFacetTemplateName];
+				if (base.GLOBAL_sourceStoreId == 'macmall'){
+					base.GLOBAL_sourceFacetTemplate = ['Manufacturer', 'Platform','InStock_Memphis','InStock_Chicago_Retail','InStock_Huntington_Beach_Retail','InStock_Santa_Monica_Retail','InStock_Torrance_Retail',base.GLOBAL_sourceStoreFacetTemplateName];
+				}
+			}
+			
+			base.GLOBAL_sourceTypeaheadSolrParams = {
+				'facet': true,
+				'debugQuery': true,
+				'fl': '*,score',
+				'facet.mincount': 1,
+				'start': 0,
+				'sort': base.GLOBAL_sourceStoreSort,
+				'relevancyId': '',
+				'spellcheck': true,
+				'spellcheck.count': 3,
+				'spellcheck.collate': true,
+				'gui': base.GLOBAL_sourceIsFromGUI,
+				'json.nl': 'map'
+			};
+			
+			if(base.GLOBAL_sourceStoreFacetTemplateType === 'CNET') {
+				base.GLOBAL_sourceTypeaheadSolrParams['facet.field'] = base.GLOBAL_sourceFacetTemplate;
+			}
+			
+			for(obj in base.GLOBAL_sourceStoreSolrParameters) {
+				base.GLOBAL_sourceTypeaheadSolrParams[obj] = base.GLOBAL_sourceStoreSolrParameters[obj];
+			}
 		};
 		
 		base.getRuleData = function($content){
@@ -716,85 +823,85 @@
 				$ruleInfo.text($.trim(xml.ruleName));
 				$ruleType.text($.trim(xml.ruleEntity));
 				$content.find("#requestType").text(base.options.requestType);
-				
+
 				$content.find("#rulePriority").text($.trim(xml.priority));
 				$content.find("#ruleDisabled").text(xml.disabled);
 				$content.find("#sectionSort").text(base.getSectionSorting(xml));
 
-				TypeaheadRuleServiceJS.getAllRules(xml.store, xml.ruleName, 0, 1, 1, GLOBAL_storeMaxTypeahead, true, {
-					callback:function(response) {
-						var data = response['data'];
-						var list = data.list;
+				$table.find("#preloader").parent().parent().show();
 
-						var $trClone = $table.find("tr#itemPattern");
+				base.initializeSourceStoreProperties(xml.store);
 
-						for(var i = 0; i < list.length; i++) {
-							var $tr = $trClone.clone();
-
-							$tr.find("#suggestion").attr("id", "suggestionSource");
-							$tr.find("#brand").attr("id", "brandSource");
-							$tr.find("#category").attr("id", "categorySource");
-							
-							if(i < GLOBAL_storeKeywordMaxCategory) {
-								$tr.find("#categorySource").text(list[i].ruleName);
-							}
-
-							if(i == 0) {
-								$tr.find("#categorySource").append('<span id="count"></span>');
-								
-								$tr.find("#suggestionSource").append('<div class="suggestionSourceFirst"></div>');
-								$tr.find("#brandSource").append('<div class="brandSourceFirst"></div>');
-								$tr.find("#categorySource").append('<div class="categorySourceFirst"></div>');
-
-								$tr.show();
-								$table.append($tr);
-								
-								var $sectionContainer = $content.find('div#sectionTableContainer');
-								
-								$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : base.sectionTemplate(), accordion: true, sectionList: base.getSectionList(list[0])});
-
-								var sectionList = list[0].sectionList;
-								for(var k=0; sectionList && k<sectionList.length; k++) {
-									var section = sectionList[k];
-									
-									if('CATEGORY' == section.keywordAttributeType) {
-										base.typeaheadSourceManager.elevatedCategoryList = section.keywordItemValues;
-									} else if('BRAND' == section.keywordAttributeType) {
-										base.typeaheadSourceManager.elevatedBrandList = section.keywordItemValues;
-									}
-								}
-								
-								base.typeaheadSourceManager.store.addByValue('q', $.trim(list[i].ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
-								base.typeaheadSourceManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
-								base.typeaheadSourceManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
-								base.typeaheadSourceManager.store.addByValue('storeAlias', xml.store);
-								base.typeaheadSourceManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
-								base.typeaheadSourceManager.store.addByValue('facet', 'true');
-								base.typeaheadSourceManager.store.addByValue('facet.field', 'Manufacturer');
-								base.typeaheadSourceManager.store.addByValue('facet.mincount', 1);
-								base.typeaheadSourceManager.store.addByValue('facet.field', 'Category');
-								base.typeaheadSourceManager.store.addByValue('facet.field', GLOBAL_storeFacetTemplateName);
-								base.typeaheadSourceManager.countDiv = $tr.find("#categorySource").find('span#count');
-								base.typeaheadSourceManager.store.addByValue('divCount', 'countDiv');
-								
-								for(name in GLOBAL_typeaheadSolrParams) {
-									base.typeaheadSourceManager.store.addByValue(name, GLOBAL_typeaheadSolrParams[name]);
-								}
-								base.typeaheadSourceManager.doRequest(0);
-							} else {
-
-								$tr.show();
-								$table.append($tr);
-							}
-						}
-					},
-					preHook : function () {
-						$table.find("#preloader").parent().parent().show();
-					},
-					postHook: function() {
-						$table.find("#preloader").parent().parent().hide();
-					}
+				base.typeaheadSourceManager = new AjaxSolr.Manager({
+					solrUrl: base.GLOBAL_sourceSolrUrl + base.GLOBAL_sourceStoreCore + '/',
+					store: (new AjaxSolr.ParameterStore())
 				});
+
+				base.typeaheadSourceManager.addWidget(new AjaxSolr.TypeaheadSearchResultWidget({
+					id: 'suggestionSource',
+					target: '.suggestionSourceFirst',
+					brandId: 'brandSource',
+					brandTarget: '.brandSourceFirst',
+					categoryId: 'categorySource',
+					categoryTarget: '.categorySourceFirst'
+				}));
+
+				var $trClone = $table.find("tr#itemPattern");
+
+				var $tr = $trClone.clone();
+
+				$tr.find("#suggestion").attr("id", "suggestionSource");
+				$tr.find("#brand").attr("id", "brandSource");
+				$tr.find("#category").attr("id", "categorySource");
+
+				$tr.find("#categorySource").text(xml.ruleName);
+
+
+				$tr.find("#categorySource").append('<span id="count"></span>');
+
+				$tr.find("#suggestionSource").append('<div class="suggestionSourceFirst"></div>');
+				$tr.find("#brandSource").append('<div class="brandSourceFirst"></div>');
+				$tr.find("#categorySource").append('<div class="categorySourceFirst"></div>');
+
+				$tr.show();
+				$table.append($tr);
+
+				var $sectionContainer = $content.find('div#sectionTableContainer');
+
+				$sectionContainer.typeaheadaddsection({moduleName:"Typeahead", editable:false, sectionTableTemplate : base.sectionTemplate(), accordion: true, sectionList: base.getSectionList(xml)});
+
+				var sectionList = xml.keywordAttributes;
+				for(var k=0; sectionList && k<sectionList.length; k++) {
+					var section = sectionList[k];
+
+					if('CATEGORY' == section.keywordAttributeType) {
+						base.typeaheadSourceManager.elevatedCategoryList = section.keywordItemValues;
+					} else if('BRAND' == section.keywordAttributeType) {
+						base.typeaheadSourceManager.elevatedBrandList = section.keywordItemValues;
+					}
+				}
+
+				base.typeaheadSourceManager.store.addByValue('q', $.trim(xml.ruleName)); //AjaxSolr.Parameter.escapeValue(value.trim())
+				base.typeaheadSourceManager.store.addByValue('rows', GLOBAL_storeMaxSuggestion);
+				base.typeaheadSourceManager.store.addByValue('fl', 'Name,ImagePath_2,EDP');
+				base.typeaheadSourceManager.store.addByValue('storeAlias', xml.store);
+				base.typeaheadSourceManager.store.addByValue('fl', 'Manufacturer,Name,ImagePath_2');
+				base.typeaheadSourceManager.store.addByValue('facet', 'true');
+				base.typeaheadSourceManager.store.addByValue('facet.field', 'Manufacturer');
+				base.typeaheadSourceManager.store.addByValue('facet.mincount', 1);
+				base.typeaheadSourceManager.store.addByValue('facet.field', 'Category');
+				base.typeaheadSourceManager.store.addByValue('facet.field', base.GLOBAL_sourceStoreFacetTemplateName);
+				base.typeaheadSourceManager.countDiv = $tr.find("#categorySource").find('span#count');
+				base.typeaheadSourceManager.store.addByValue('divCount', 'countDiv');
+
+				for(name in base.GLOBAL_sourceTypeaheadSolrParams) {
+					base.typeaheadSourceManager.store.addByValue(name, base.GLOBAL_sourceTypeaheadSolrParams[name]);
+				}
+				base.typeaheadSourceManager.doRequest(0);
+
+
+
+				$table.find("#preloader").parent().parent().hide();
 
 				break;
 			case "facetsort": 

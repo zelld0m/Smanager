@@ -1,9 +1,7 @@
 package com.search.manager.web.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.constant.TypeaheadDaoConstant;
-import com.search.manager.core.enums.KeywordAttributeType;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.*;
 import com.search.manager.core.search.*;

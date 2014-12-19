@@ -3,7 +3,11 @@
 <c:set var="topmenu" value="workflow"/>
 <c:set var="submenu" value="importRuleTask"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
-
+<spring:eval expression="@propertiesDwrService.getAllStoreProperties()" var="allStoreProperties" />
+<script>
+    var hasPublishRule = <%= request.isUserInRole("PUBLISH_RULE")%>;
+    var GLOBAL_allStoreProperties = $.parseJSON('${allStoreProperties}');
+</script>
 <!-- Page specific file dependencies --> 
 <link type="text/css" href="<spring:url value="/css/bigbets/bigbets.css" />" rel="stylesheet"> 
 <script type="text/javascript" src="<spring:url value="/js/settings/importRuleTask.js" />"></script>  

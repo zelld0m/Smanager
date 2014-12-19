@@ -5,9 +5,10 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <script type="text/javascript" src="<spring:url value="/js/workflow/import.js" />"></script>
-
+<spring:eval expression="@propertiesDwrService.getAllStoreProperties()" var="allStoreProperties" />
 <script>
     var hasPublishRule = <%= request.isUserInRole("PUBLISH_RULE")%>;
+    var GLOBAL_allStoreProperties = $.parseJSON('${allStoreProperties}');
 </script>
 
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/workflow/workflow.css" />">

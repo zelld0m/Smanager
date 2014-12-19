@@ -207,6 +207,19 @@ public class UtilityService {
 		json.put("isFmGui", PropertiesUtils.getValue("isFmSolrGui").equals("1") ? true : false);
 		return json.toString();
 	}
+	
+	public JSONObject getSourceSolrConfig(String storeId) {
+		JSONObject json = new JSONObject();
+		String url = configManager.getServerParameter(configManager.getServerName(storeId), "url");
+		Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
+		Matcher m = pattern.matcher(url);
+		if (m.matches()) {
+			json.put("solrUrl", PropertiesUtils.getValue("browsejssolrurl") + m.group(1));
+		}
+
+		json.put("isFmGui", PropertiesUtils.getValue("isFmSolrGui").equals("1") ? true : false);
+		return json;
+	}
 
 	@SuppressWarnings("unchecked")
 	@RemoteMethod
@@ -253,6 +266,36 @@ public class UtilityService {
 		json.put("allStoresDisplayName", configManager.getAllStoresDisplayName());
 
 		return json.toString();
+	}
+	
+	public JSONObject getSourceStoreParameters(String storeId) {
+		JSONObject json = new JSONObject();
+		json.put("username", getUsername());
+		json.put("solrSelectorParam", getSolrSelectorParam());
+		json.put("storeId", storeId);
+		json.put("storeCore", getStoreCore(storeId));
+		json.put("storeName", getStoreName());
+		json.put("storeDomains", getStoreDomains(storeId));
+		json.put("storeFacetName", configManager.getStoreFacetName(storeId));
+		json.put("storeSort", configManager.getStoreParameter(storeId, "sort"));
+		json.put("storeFacetTemplate", configManager.getStoreFacetTemplate(storeId));
+		json.put("storeFacetTemplateName", configManager.getStoreFacetTemplateName(storeId));
+		json.put("storeGroupMembership", configManager.getStoreGroupMembership(storeId));
+		json.put("storeDateFormat", getStoreDateFormat());
+		json.put("storeDateTimeFormat", getStoreDateTimeFormat());
+		json.put("storeDefaultBannerSize", getStoreDefaultBannerSize(storeId));
+		json.put("storeAllowedBannerSizes", getStoreAllowedBannerSizes(storeId));
+		json.put("storeDefaultBannerLinkPathProtocol", getStoreDefaultBannerLinkPathProtocol(storeId));
+		json.put("storeRedirectSelfDomain", configManager.getPropertyList("settings", storeId, "redirect_self_domain"));
+		json.put("storeRedirectRelativePath", configManager.getPropertyList("settings", storeId, "redirect_relative_path"));
+		json.put("storeFacetTemplateType", getStoreFacetTemplateType(storeId));
+		json.put("searchWithinEnabled", configManager.getProperty("searchwithin", storeId, "searchwithin.enable"));
+		json.put("searchWithinTypes", configManager.getPropertyList("searchwithin", storeId, "searchwithin.type"));
+		json.put("searchWithinParamName", configManager.getProperty("searchwithin", storeId, "searchwithin.paramname"));
+		json.put("isTargetStore", configManager.getProperty("workflow", storeId, "targetStore"));
+		json.put("allStoresDisplayName", configManager.getAllStoresDisplayName());
+
+		return json;
 	}
 
 	@RemoteMethod
