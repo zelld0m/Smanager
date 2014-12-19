@@ -294,7 +294,7 @@
 									var sectionList = rule.sectionList;
 									var sectionArray = new Array();
 									
-									for(var i=0; i< sectionList.length; i++) {
+									for(var i=0; sectionList && i< sectionList.length; i++) {
 										var section = sectionList[i];
 										
 										if(section.keywordAttributeType != 'SECTION') {
