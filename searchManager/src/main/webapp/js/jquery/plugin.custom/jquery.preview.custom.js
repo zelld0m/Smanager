@@ -260,8 +260,8 @@
 								$rulePreview.find("#sectionSort").text(getSectionSorting(list[0]));
 								$tr.find("#category").append('<span id="count"></span>');
 								$tr.find("#suggestion").append('<div id="suggestionFirst"></div>');
-								$tr.find("#brand").append('<div id="brandFirst"></div>')
-								$tr.find("#category").append('<div id="categoryFirst"></div>')
+								$tr.find("#brand").append('<div id="brandFirst"></div>');
+								$tr.find("#category").append('<div id="categoryFirst"></div>');
 																
 								$tr.show();
 																
