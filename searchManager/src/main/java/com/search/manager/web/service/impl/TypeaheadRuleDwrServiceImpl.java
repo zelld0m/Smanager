@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.core.constant.TypeaheadDaoConstant;
+import com.search.manager.core.enums.Status;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.*;
 import com.search.manager.core.search.*;
@@ -186,7 +187,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	}
 
 	@RemoteMethod
-	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String storeId, String name, int matchType, int orderBy, int page, int itemsPerPage, Boolean includeSections) {
+	public ServiceResponse<SearchResult<TypeaheadRule>> getAllRules(String storeId, String name, int matchType, int orderBy, int page, int itemsPerPage, Boolean includeSections, Boolean disabled) {
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
 		ServiceResponse<SearchResult<TypeaheadRule>> serviceResponse = new ServiceResponse<SearchResult<TypeaheadRule>>();
 		try {
@@ -196,6 +197,9 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	        search.addFilter(new Filter(DAOConstants.PARAM_RULE_NAME, name));
 	        search.addFilter(new Filter(DAOConstants.PARAM_MATCH_TYPE, matchType));
 	        search.addFilter(new Filter(TypeaheadDaoConstant.PARAM_ORDER_BY, orderBy));
+	        if(disabled != null) {
+	        	search.addFilter(new Filter(TypeaheadDaoConstant.COLUMN_STATUS, disabled ? Status.DISABLED : Status.ENABLED));
+	        }
 	        search.setPageNumber(page);
 	        search.setMaxRowCount(itemsPerPage);
 			

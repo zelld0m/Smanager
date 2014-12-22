@@ -180,7 +180,7 @@ PCM.typeAhead = (function(j){
 					arg: timestamp
 			};
 
-			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, searchInput.val(), 0, 1, 1, GLOBAL_storeMaxTypeahead, true, callMetaData);
+			TypeaheadRuleServiceJS.getAllRules(GLOBAL_storeId, searchInput.val(), 0, 1, 1, GLOBAL_storeMaxTypeahead, true, false, callMetaData);
 
 
 		};

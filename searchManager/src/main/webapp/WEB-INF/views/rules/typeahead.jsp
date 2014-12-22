@@ -68,7 +68,7 @@ height: 1px;
 	        	<div class="floatL w210">
 		            <label class="floatL w70 marT5">Priority</label>
 		            <label class="floatL"><input id="priorityEdit" type="text" class="w100 marT5"/></label>
-		            <label class="floatL marT6 marL10"><a href="javascript:void(0);" id="dialogSortIcon"><img src="<spring:url value="/images/table_sort.png" />"/></a></label>
+		            <label class="floatL marT6 marL10"><a href="javascript:void(0);" id="dialogSortIcon"><img src="<spring:url value="/images/table_sort.png" />" alt="Sort Sections" title="Sort Sections"/></a></label>
 	            </div>
 	            <div class="floatL w470">
 		            <label class="floatL w70 marT5">Enabled</label>
