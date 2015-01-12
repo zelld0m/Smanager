@@ -138,7 +138,7 @@
 					self.initializeEditEvents(!ruleStatus.locked && allowModify);
 					var sectionList = self.getSectionList(self.selectedRule);
 					
-					if((sectionList == null || sectionList.length == 0) && ruleStatus.locked) {
+					if((sectionList == null || sectionList.length == 0) && (ruleStatus.locked || !allowModify)) {
 						self.$editPanel.find('div#sectionTableContainer').hide();
 					} else {
 						self.$editPanel.find('div#sectionTableContainer').show();
