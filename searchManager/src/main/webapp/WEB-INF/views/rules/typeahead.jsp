@@ -67,11 +67,11 @@ height: 1px;
 	        <div class="fsize14 txtAL padB1 marB1 fbold">
 	        	<div class="floatL w210">
 		            <label class="floatL w70 marT5">Priority</label>
-		            <label class="floatL"><input id="priorityEdit" type="text" class="w100 marT5"/></label>
+		            <label class="floatL"><input id="priorityEdit" type="text" class="w100 marT5" maxlength="5"/></label>
 		            <label class="floatL marT6 marL10"><a href="javascript:void(0);" id="dialogSortIcon"><img src="<spring:url value="/images/table_sort.png" />" alt="Sort Sections" title="Sort Sections"/></a></label>
 	            </div>
 	            <div class="floatL w470">
-		            <label class="floatL w70 marT5">Enabled</label>
+		            <label class="floatL w60 marT5">Enabled</label>
 		            <label class="floatL marT5"><input id="disabledEdit" type="checkbox"/></label>
 		            <label class="floatL w150">&nbsp;</label>
 		            <label class="floatR marT5"><a href="javascript:void(0);" id="suggestQtip"></a> <input type="checkbox" id="suggestionDisabled" class="disabled-flag"/></label>
@@ -150,7 +150,7 @@ height: 1px;
 						<div style="width:685px;" id="addSectionForm">
 							<div class="marL5 marT10 floatL">
 								<strong>Add Section:</strong> 
-								<input type="text" class="w160"/>
+								<input type="text" class="w160" maxlength="50"/>
 								<a href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix" id="btnAddSection"><div class="btnGraph marB8"></div></a>
 							</div>
 							<div class="clearB"></div>

@@ -150,7 +150,8 @@ PCM.typeAhead = (function(j){
 									typeAhead.append(getSection(section.keywordAttributeType, ('Suggestions for '+list[0].ruleName), 'suggestionFirst'));
 									break;
 								case 'SECTION': 
-									typeAhead.append(getSection(section.keywordAttributeType, section.inputValue, section.inputValue, section.keywordAttributeId, section.keywordItemValues));
+									if(section.keywordItemValues != null && section.keywordItemValues.length > 0)
+										typeAhead.append(getSection(section.keywordAttributeType, section.inputValue, section.inputValue, section.keywordAttributeId, section.keywordItemValues));
 									break;
 								}
 							}

@@ -80,12 +80,23 @@
 				var $sectionInput = $sectionTable.find('input[type=text]');
 				var inputValue = $sectionInput.val().trim();
 				var $sectionBox = $sectionTable.find('div#sectionBox');
+					            
 				if(!$.isNotBlank(inputValue)) {
 					jAlert("Section Name cannot be empty.", base.options.moduleName);
 					return;
 				}
 				
-				if($sectionBox.find('div:contains('+inputValue+')').size() > 0) {
+				if(inputValue.match(/^[a-z\d\-_\s]+$/i) == null) {
+					jAlert("Only alphanumeric characters, space, dash and underscore are allowed.", base.options.moduleName);
+					return;
+				}
+				
+				if(inputValue.length > 50) {
+					jAlert("Section Name should only contain 50 characters or less.", base.options.moduleName);
+					return;
+				}
+				
+				if($sectionBox.find('div:contains('+inputValue+')').size() > 0 || base.options.defaultSections.indexOf(inputValue) > -1) {
 					jAlert("Section Name already taken.", base.options.moduleName);
 					return;
 				}
@@ -179,8 +190,7 @@
 					jAlert('Product already in the list.', base.options.moduleName);
 					return;
 				}
-							
-				self.addProductToSection($section, [dpNum]);
+				self.addProductToSection($section, dpNum.split(" "));
 				
 			}}, {$section: $section});
 		};
@@ -304,6 +314,7 @@
 			deleteIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/btn_delete_big.png'/>",
 			dragIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_drag.png'/>",
 			rectLoader: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
+			defaultSections: ["Category", "Brand", "Suggestion"],
 			sectionList : []
 			
 	};

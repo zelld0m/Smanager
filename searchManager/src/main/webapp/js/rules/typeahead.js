@@ -133,10 +133,18 @@
 					self.$typeaheadPanel.find("#titleText").html(base.options.moduleName + " for ");
 					self.$typeaheadPanel.find("#titleHeader").text(self.selectedRule["ruleName"]);
 					self.$typeaheadPanel.find("#readableString").html(self.selectedRule["readableString"]);
-					self.loadTypeaheadSolrDetails(base.selectedRule.ruleName, !ruleStatus.locked);
+					self.loadTypeaheadSolrDetails(base.selectedRule.ruleName, !ruleStatus.locked && allowModify);
 					self.$preloader.hide();
-					self.initializeEditEvents(!ruleStatus.locked);
-					self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName, sectionList : self.getSectionList(self.selectedRule), editable:!ruleStatus.locked});
+					self.initializeEditEvents(!ruleStatus.locked && allowModify);
+					var sectionList = self.getSectionList(self.selectedRule);
+					
+					if((sectionList == null || sectionList.length == 0) && ruleStatus.locked) {
+						self.$editPanel.find('div#sectionTableContainer').hide();
+					} else {
+						self.$editPanel.find('div#sectionTableContainer').show();
+					}
+					
+					self.$editPanel.find('div#sectionTableContainer').typeaheadaddsection({moduleName:base.options.moduleName, sectionList : self.getSectionList(self.selectedRule), editable:!ruleStatus.locked && allowModify});
 					self.$typeaheadPanel.find("#submitForApproval").show();
 					self.$editPanel.show();
 
@@ -146,7 +154,7 @@
 						var $checkbox = $(this);
 						$checkbox.slidecheckbox({
 							initOn: !$checkbox.is(':checked'),
-							disabled: ruleStatus.locked, //TODO:
+							disabled: ruleStatus.locked || !allowModify, //TODO:
 							changeStatusCallback: function(base, dt){
 								
 							}
@@ -155,7 +163,7 @@
 					
 					self.sectionSortMap = {"Category":0, "Brand":1, "Suggestion":2};
 					self.initializeCurrentSectionSorting(self.selectedRule.sectionList);
-					self.initializeSortingDialog(!ruleStatus.locked);
+					self.initializeSortingDialog(!ruleStatus.locked && allowModify);
 					
 					self.$editPanel.find('a#dialogSortIcon').off().on({
 						click: function() {
@@ -435,6 +443,8 @@
 			$sortDialog.dialog({
 				autoOpen: false,
 				modal: true,
+				draggable:false,
+				resizable:false,
 				open : function( event, ui) {
 					self.initializeCurrentSectionSorting();
 					self.initializeSortingDialogContent($sortDialog, editable);
@@ -721,6 +731,14 @@
 			var preHook = customPreHook != null ? customPreHook : function(){};
 			var postHook = customPostHook != null ? customPostHook : function(){};
 			
+			if(typeaheadRule.priority == null || typeaheadRule.priority.trim() == '' || isNaN(typeaheadRule.priority)) {
+				jAlert('Priority should contain a number.', base.options.moduleName);
+				return;
+			} else if(typeaheadRule.priority % 1 != 0) {
+				jAlert('Priority should contain an integer.', base.options.moduleName);
+				return;
+			}
+			
 			TypeaheadRuleServiceJS.updateRule(typeaheadRule, {
 				callback: function(response){
 					if(response && response.data != null)
@@ -776,7 +794,7 @@
 						self.setTypeahead(e.data.rule);
 					}
 				}, {rule: rule});
-				$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" value="'+rule['priority']+'"/><input type="hidden" class="ruleId" value="'+rule["ruleId"]+'"/><input type="hidden" class="disabled" value="'+rule["disabled"]+'"/>'+rule['priority']);
+				$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" maxlength="5" value="'+rule['priority']+'"/><input type="hidden" class="ruleId" value="'+rule["ruleId"]+'"/><input type="hidden" class="disabled" value="'+rule["disabled"]+'"/>'+rule['priority']);
 				
 				$divItem.show();
 				$divList.append($divItem);
@@ -791,32 +809,40 @@
 		base.checkRuleStatus = function($divList) {
 			var self = this;
 
+			if(!allowModify) {
+				self.$typeaheadPanel.find('#actionBar').hide();
+			}
+						
 			$divList.find('input.ruleId').each(function() {
 				var $element = $(this);
 				var $row = $element.parent().parent();
 				var $checkboxDiv = $row.find('label.iter');
 				var $statusDiv = $row.find('label.status');
 
-				DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, base.options.moduleName, $element.val(), {
-					callback: function(ruleStatus) {
-						if(ruleStatus.locked) {
-							$checkboxDiv.html(base.options.lockIcon);
-						} else {
-							$checkboxDiv.html('<input '+(self.selectedRuleList[$element.val()] != null ? 'CHECKED' : '')+' type="checkbox" id="'+$element.val()+'" class="ruleVisibility" value="'+$element.val()+'"/>');
-							self.bindCheckboxAction($checkboxDiv);
+				if(!allowModify) {
+					$checkboxDiv.html(base.options.lockIcon);
+				} else {
+					DeploymentServiceJS.getRuleStatus(GLOBAL_storeId, base.options.moduleName, $element.val(), {
+						callback: function(ruleStatus) {
+							if(ruleStatus.locked) {
+								$checkboxDiv.html(base.options.lockIcon);
+							} else {
+								$checkboxDiv.html('<input '+(self.selectedRuleList[$element.val()] != null ? 'CHECKED' : '')+' type="checkbox" id="'+$element.val()+'" class="ruleVisibility" value="'+$element.val()+'"/>');
+								self.bindCheckboxAction($checkboxDiv);
+								
+							}
 							
+							$statusDiv.html(getRuleNameSubTextStatus(ruleStatus));
+	
+						},
+						preHook: function() {
+							$checkboxDiv.html(base.options.rectLoader);
+						},
+						postHook: function() {
+	
 						}
-						
-						$statusDiv.html(getRuleNameSubTextStatus(ruleStatus));
-
-					},
-					preHook: function() {
-						$checkboxDiv.html(base.options.rectLoader);
-					},
-					postHook: function() {
-
-					}
-				});
+					});
+				}
 			});
 		};
 		
@@ -1053,7 +1079,7 @@
 					var checked = ruleList[keys[i]].disabled == 'true' ? 'CHECKED' : '';
 					
 					$divItem.find('label').removeClass('w120').addClass('w130');
-					$divItem.find("label.count").html('<input type="text" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
+					$divItem.find("label.count").html('<input type="text" maxlength="5" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
 					$divItem.find("label.iter").html('<input id="'+ruleList[keys[i]].ruleId+'" type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
 				}
 
@@ -1224,7 +1250,7 @@
 		
 		base.getListTemplate = function() {
 			var template = '';
-			template += '<div class="padT20 fsize14">';
+			template += '<div class="padT20 fsize14" id="actionBar">';
 			template += '	<label class="txtAC fbold">Action: </label>';
 			template += '	<select class="actionType">';
 			template += '		<option value="updateRules">Update</option>';
