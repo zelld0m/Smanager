@@ -186,13 +186,44 @@
 					return;
 				}
 				
-				if($section.find('div#'+dpNum).length > 0) {
-					jAlert('Product already in the list.', base.options.moduleName);
+				var dpNumList = dpNum.split(" ");
+				
+				if(self.hasDuplicate(dpNumList)) {
+					jAlert('Input has duplicate DP numbers.', base.options.moduleName);
+					return;
+				}
+				
+				var existingItemList = new Array();
+				for(var i=0; i<dpNumList.length; i++) {
+					var dpItem = dpNumList[i].trim();
+					
+					if($section.find('div#'+dpItem).length > 0) {
+						existingItemList[existingItemList.length] = dpItem;
+					}
+				}
+				
+				if(existingItemList.length > 0) {
+					jAlert(existingItemList + ' already in the list.', base.options.moduleName);
 					return;
 				}
 				self.addProductToSection($section, dpNum.split(" "));
 				
 			}}, {$section: $section});
+		};
+		
+		base.hasDuplicate = function(array) {
+			var obj = new Object();
+			
+			for(var i=0; i<array.length; i++) {
+				var dpItem = array[i].trim();
+				
+				if(obj[dpItem]) {
+					return true;
+				}
+				
+				obj[dpItem] = true;
+			}
+			return false;
 		};
 		
 		base.deleteSection = function($section) {
