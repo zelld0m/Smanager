@@ -96,7 +96,23 @@
 					return;
 				}
 				
-				if($sectionBox.find('div:contains('+inputValue+')').size() > 0 || base.options.defaultSections.indexOf(inputValue) > -1) {
+				var hasError = false;
+				
+				$sectionBox.find('div.sectionName').each(function() {
+					var text = $(this).text();
+					if(inputValue.toUpperCase() === text.toUpperCase()) {
+						hasError = true;
+					}
+				});
+				
+				for(var i=0; i < base.options.defaultSections.length; i++) {
+					var text =  base.options.defaultSections[i];
+					if(inputValue.toUpperCase() === text.toUpperCase()) {
+						hasError = true;
+					}
+				}
+				
+				if(hasError) {
 					jAlert("Section Name already taken.", base.options.moduleName);
 					return;
 				}
