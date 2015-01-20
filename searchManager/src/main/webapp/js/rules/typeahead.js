@@ -68,6 +68,8 @@
 				categoryTarget: WIDGET_TARGET_category,
 				mode: 'edit'
 			}));
+			
+			self.$typeaheadPanel.find('span#titleText').html(base.options.moduleName);
 		};
 		
 		base.prepareTypeahead = function() {
