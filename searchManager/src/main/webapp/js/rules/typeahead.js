@@ -124,6 +124,10 @@
 						}
 					});
 				},
+				beforeSubmitForApprovalRequest:function(ruleStatus){
+					self.prepareTypeahead();
+					self.$editPanel.hide();
+				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
 					self.setTypeahead(self.selectedRule);
 				},

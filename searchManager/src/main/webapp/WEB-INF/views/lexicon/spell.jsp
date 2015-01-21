@@ -49,9 +49,9 @@
     <h1 class="padT7 padL15 fsize20 fnormal">Did You Mean</h1>
   </div>
   <div class="clearB"></div>
-  <div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
   <div id="ruleStatus"></div>
   <div class="clearB"></div>
+  <div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
   <div id="spell-rules" class="padT20" style="min-height: 600px; max-width: 100%; display:none;">
     <div class="floatL">
       <label for="max-suggest" style="font-size:12px">Max suggestion count</label>

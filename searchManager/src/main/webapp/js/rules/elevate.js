@@ -498,6 +498,9 @@
 						base.api.destroy();
 						self.showRuleContent();
 					},
+					beforeSubmitForApprovalRequest: function(ruleStatus){
+						self.preShowRuleContent();
+					},
 					afterSubmitForApprovalRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
 						self.showRuleContent();

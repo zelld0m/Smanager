@@ -1223,6 +1223,9 @@
 				selectedRuleStatus = ruleStatus;
 				showRelevancy();
 			},
+			beforeSubmitForApprovalRequest:function(ruleStatus){
+				prepareRelevancy()
+			},
 			beforeRuleStatusRequest: function(){
 				prepareRelevancy();
 			},

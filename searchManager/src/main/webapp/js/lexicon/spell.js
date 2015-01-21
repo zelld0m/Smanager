@@ -662,7 +662,13 @@
 					}});
 					base.api.destroy();
 				},
+				beforeSubmitForApprovalRequest:function(ruleStatus){
+					$("#spell-rules").hide();
+					$("#ruleStatus").hide();
+					$("#preloader").show();
+				},
 				afterSubmitForApprovalRequest:function(ruleStatus){
+					$("#ruleStatus").show();
 					self.selectedRuleStatus = ruleStatus;
 					self.init();
 				},

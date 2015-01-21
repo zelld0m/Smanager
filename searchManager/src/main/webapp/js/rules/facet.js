@@ -67,6 +67,9 @@
 					afterSubmitForApprovalRequest:function(ruleStatus){
 						self.showFacetSort();
 					},
+					beforeSubmitForApprovalRequest:function(ruleStatus){
+						self.prepareFacetSort();
+					},
 					beforeRuleStatusRequest: function(){
 						self.prepareFacetSort();	
 					},

@@ -168,6 +168,9 @@
                     self.selectedRuleStatus = ruleStatus;
                     self.showRedirect();
                 },
+                beforeSubmitForApprovalRequest: function(ruleStatus) {
+                	self.prepareRedirect();
+                },
                 beforeRuleStatusRequest: function() {
                     self.prepareRedirect();
                 },
