@@ -1,5 +1,6 @@
 package com.search.manager.workflow.service.impl;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import com.search.manager.service.ExcludeService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.workflow.dao.ExcelFileUploadedDAO;
 import com.search.manager.workflow.service.ExcelFileUploadedService;
+import com.search.reports.manager.ExcelFileManager;
 import com.search.reports.manager.model.ExcelFileReport;
 import com.search.reports.manager.model.ExcelFileUploaded;
 
@@ -45,6 +47,8 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
     private DemoteService demoteService;
 	@Autowired
     private ExcludeService excludeService;	
+	@Autowired
+	private ExcelFileManager excelFileManager;
 	
 	@RemoteMethod
 	public Integer addExcelFileUploadeds(String ruleType) throws DaoException {
@@ -106,7 +110,34 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 		excelFileUploaded.setExcelFileUploadedId(excelFileUploadedId);
 		excelFileUploaded.setFileName(fileName);
 		excelFileUploaded.setStoreId(storeId);
-		return dao.deleteExcelFileUploaded(excelFileUploaded);
+		
+		ExcelFileUploaded result = dao.getExcelFileUploaded(excelFileUploaded);
+		
+		int total = 0;
+		if(excelFileManager.deleteUploadedExcel(result)) {
+			total = dao.deleteExcelFileUploaded(excelFileUploaded);
+		}
+		
+		return total;
+	}
+	
+	@RemoteMethod
+	public int deleteExcelFile(String excelFileUploadedId,
+			String storeId, String ruleType, String fileName) throws DaoException {
+		ExcelFileUploaded excelFileUploaded = new ExcelFileUploaded();
+		excelFileUploaded.setExcelFileUploadedId(excelFileUploadedId);
+		excelFileUploaded.setFileName(fileName);
+		excelFileUploaded.setRuleTypeId(RuleEntity.find(ruleType).getCode());
+		excelFileUploaded.setStoreId(storeId);
+		
+		ExcelFileUploaded result = dao.getExcelFileUploaded(excelFileUploaded);
+		
+		int total = 0;
+		if(excelFileManager.deleteUploadedExcel(result)) {
+			total = dao.deleteExcelFileUploaded(excelFileUploaded);
+		}
+		
+		return total;
 	}
 
 	@RemoteMethod
@@ -213,6 +244,21 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 		}
 		
 		return message.toString();
+	}
+	
+	@RemoteMethod
+	public Boolean processExcelFiles(String excelFileUploadedId,
+			String storeId, String ruleType, String fileName) throws DaoException, IOException {
+		
+		ExcelFileUploaded excelFileUploaded = new ExcelFileUploaded();
+		excelFileUploaded.setExcelFileUploadedId(excelFileUploadedId);
+		excelFileUploaded.setFileName(fileName);
+		excelFileUploaded.setRuleTypeId(RuleEntity.find(ruleType).getCode());
+		excelFileUploaded.setStoreId(storeId);
+		
+		ExcelFileUploaded result = dao.getExcelFileUploaded(excelFileUploaded);
+		
+		return excelFileManager.processUploadedExcel(result);
 	}
 
 	public Map<String,List<ExcelFileUploaded>> getMapexcelfileuploadeds() {

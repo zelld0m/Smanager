@@ -51,7 +51,7 @@ public class ExcelFileUploadedController {
 
 	@RequestMapping(value = "/{storeId}/{ruleType}/*", method = { RequestMethod.GET,
 			RequestMethod.POST })
-	public String execute(HttpServletRequest request,
+	public ModelAndView execute(HttpServletRequest request,
 			HttpServletResponse response, Model model,
 			@PathVariable String ruleType,@PathVariable String storeId) throws IOException, DaoException {
 		int ruleTypeId = RuleEntity.getId(ruleType);
@@ -63,12 +63,15 @@ public class ExcelFileUploadedController {
 		model.addAttribute("currentPage", 1);
 		model.addAttribute("storeId",storeId);
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
-		return "excelFileUploaded/excelFileUploaded";
+		if(ruleTypeId == 13) {
+			return new ModelAndView("excelFileUploaded/typeahead/typeaheadUpload");
+		}
+		return new ModelAndView("excelFileUploaded/excelFileUploaded");
 	}
 	
 	@RequestMapping(value = "/paging/{storeId}/{ruleType}/{pageNumber}/*", method = { RequestMethod.GET,
 			RequestMethod.POST })
-	public String paging(HttpServletRequest request,
+	public ModelAndView paging(HttpServletRequest request,
 			HttpServletResponse response, Model model,
 			@PathVariable String ruleType,@PathVariable int pageNumber,@PathVariable String storeId) throws IOException, DaoException {
 		int ruleTypeId = RuleEntity.getId(ruleType);
@@ -80,7 +83,12 @@ public class ExcelFileUploadedController {
 		model.addAttribute("currentPage", pageNumber);
 		model.addAttribute("storeId",storeId);
 		model.addAttribute("dateFormat", utilityService.getStoreDateTimeFormat());
-		return "excelFileUploaded/excelFileUploaded";
+		
+		if(ruleTypeId == 13) {
+			return new ModelAndView("excelFileUploaded/typeahead/typeaheadUpload");
+		}
+		
+		return new ModelAndView("excelFileUploaded/excelFileUploaded");
 	}	
 	@RequestMapping(value = "/details/{ruleType}/{excelFileUploadedId}/*", method = { RequestMethod.GET,
 			RequestMethod.POST })
@@ -131,6 +139,7 @@ public class ExcelFileUploadedController {
 			excelFileUploadeds = excelFileManagerService
 					.uploadExcelFile(mp);
 		}catch(Exception e){
+			e.printStackTrace();
 			model.addAttribute("errorMessage", "Error uploading file/s. Please check if the excel file is correct or format of the columns is valid.");
 		}
 

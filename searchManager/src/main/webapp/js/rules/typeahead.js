@@ -70,6 +70,16 @@
 			}));
 			
 			self.$typeaheadPanel.find('span#titleText').html(base.options.moduleName);
+			
+			self.$typeaheadPanel.find("div#noSelected").excelupload({
+				moduleName : "Typeahead",
+				ruleType: "typeahead",
+				mustachePreviewTemplate: $($("input#excelTemplate").attr('data-template')).html(),
+				homeUrl: "/searchManager/excelFileUploaded/" + GLOBAL_storeId + "/typeahead/",
+				baseViewExcelUrl: "/searchManager/typeahead/exceldetail/" + GLOBAL_storeId + '/',
+				beforeLoad: function() {self.$typeaheadPanel.find('div#listContainer, div#editPanel').hide();},
+				
+			});
 		};
 		
 		base.prepareTypeahead = function() {
@@ -629,6 +639,7 @@
 		base.loadRuleList = function(matchType, page, functionHook) {
 			var self = this;
 			var searchText = self.$typeaheadPanel.find('input.searchTextInput').val();
+			self.$typeaheadPanel.find("div#noSelected").hide();
 			self.$typeaheadPanel.find('input.searchTextInput, a.searchButton').show();
 
 			self.$typeaheadPanel.find('a.searchButtonList').hide();
