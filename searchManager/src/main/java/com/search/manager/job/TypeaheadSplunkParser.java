@@ -149,26 +149,8 @@ public class TypeaheadSplunkParser {
 		String[] ruleRefIdList = {typeaheadRule.getRuleId()};
 		String[] ruleStatusIdList = {ruleStatus.getRuleStatusId()};
 
-		if(ruleStatus.isLocked()) {
-			return;
-		}
+		workflowService.processRule(storeId, ruleType, typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), importType, ruleRefIdList, ruleStatusIdList);
 		
-		switch(importType) {
-		case FOR_APPROVAL: 
-			workflowService.processRuleStatus(storeId, "system", RuleSource.AUTO_IMPORT, ruleType, typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), Boolean.FALSE);
-			break;
-		case AUTO_PUBLISH: 
-			workflowService.processRuleStatus(storeId, "system", RuleSource.AUTO_IMPORT, ruleType, typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), Boolean.FALSE);
-			deploymentService.approveRule(storeId, RuleEntity.TYPEAHEAD.getName(), ruleRefIdList, "", ruleStatusIdList);
-			try {
-				workflowService.publishRule(storeId, configManager.getStoreName(storeId), "system", RuleSource.AUTO_IMPORT, ruleType, ruleRefIdList, "", ruleStatusIdList);
-			} catch (PublishLockException e) {
-				logger.error("Error publishing TypeaheadSplunkParser.processTypeaheadRule", e);
-			}
-			break; 
-		default: 
-			break;
-		}
 	}
 
 	private boolean thresholdSatisfied(String storeId, String[] csvRow, String folderType, int countColumn) {

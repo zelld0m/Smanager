@@ -48,6 +48,7 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.DeploymentService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.service.rules.FacetSortService;
 import com.search.manager.workflow.service.ExportRuleMapService;
@@ -68,6 +69,8 @@ public class WorkflowServiceImpl implements WorkflowService{
 	private ConfigManager configManager;
 	@Autowired
 	private DaoService daoService;
+	@Autowired 
+	private DeploymentService deploymentService;
 	@Autowired
 	private ExportRuleMapService exportRuleMapService;
 	@Autowired
@@ -258,6 +261,31 @@ public class WorkflowServiceImpl implements WorkflowService{
 			logger.error("Failed during processRuleStatus()", e);
 		}
 		return null;
+	}
+	
+	@Override
+	public void processRule(String storeId, String ruleType, String ruleId, String ruleName, ImportType importType, String[] ruleRefIdList, String[] ruleStatusIdList) throws CoreServiceException {
+		RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, ruleType, ruleId);
+		if(ruleStatus.isLocked()) {
+			return;
+		}
+		
+		switch(importType) {
+		case FOR_APPROVAL: 
+			processRuleStatus(storeId, "system", RuleSource.AUTO_IMPORT, ruleType, ruleId, ruleName, Boolean.FALSE);
+			break;
+		case AUTO_PUBLISH: 
+			processRuleStatus(storeId, "system", RuleSource.AUTO_IMPORT, ruleType, ruleId, ruleName, Boolean.FALSE);
+			deploymentService.approveRule(storeId, RuleEntity.TYPEAHEAD.getName(), ruleRefIdList, "", ruleStatusIdList);
+			try {
+				publishRule(storeId, configManager.getStoreName(storeId), "system", RuleSource.AUTO_IMPORT, ruleType, ruleRefIdList, "", ruleStatusIdList);
+			} catch (PublishLockException e) {
+				logger.error("Error publishing TypeaheadSplunkParser.processTypeaheadRule", e);
+			}
+			break; 
+		default: 
+			break;
+		}
 	}
 
 	public RecordSet<DeploymentModel> publishRule(String storeId, String storeName, String userName, RuleSource ruleSource, String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {

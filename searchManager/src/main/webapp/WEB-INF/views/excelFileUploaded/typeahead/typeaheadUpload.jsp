@@ -32,7 +32,7 @@
 		<table id="uploadedRules" class="tblItems w97p marT5">
 		<thead>
             <tr class="alt">
-             	<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+             	<th></th>
                 <th>FileName</th>
                 <th>Uploaded By</th>
                 <th>Uploaded Date</th>
@@ -49,7 +49,7 @@
 		        	<c:set var="alt" value="alt"/>
 		        </c:if>        
 				    <tr class="conTableItem ${alt}">
-				   		<td align="right">
+				   		<td align="right" nowrap>
 				   				<c:if test="${excelFileUploaded.addedOnRuleBy == null}">
 							   		<a href="javascript:void(0);" class="delete">
 							   			<img src="../images/icon_del.png" alt="Delete uploaded File">
@@ -57,7 +57,7 @@
 							   		&nbsp;
 							   		&nbsp;				   				
 					   			</c:if>        	
-								<a href="javascript:void(0);" class="addToRule">
+								<a href="javascript:void(0);" class="queue">
 									<img src="../images/ico-doc-plus.jpg" alt="Add to Rules">
 								</a>
 				        </td>

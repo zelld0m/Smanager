@@ -91,6 +91,7 @@
 				self.initializeAjaxForm();
 				self.initializeViewDetails(self.$el.find('a.detail'));
 				self.initializeDeleteEvent(self.$el.find('a.delete'));
+				self.initializeQueueEvent(self.$el.find('a.queue'));
 			});
 			
 			self.$el.find('#excelFileUpload').submit(function() {
@@ -154,6 +155,31 @@
 				});
 			});
 		};
+		
+		base.initializeQueueEvent = function($queueLinks) {
+			var self = this;
+			$queueLinks.each(function() {
+				var $queueLink = $(this);
+				$queueLink.off().on({
+					click : function() {
+						var $tr = $queueLink.closest('tr');
+						var fileName = $tr.find('a.detail').text();
+						jConfirm("Are you sure you want to process the Excel file [" + fileName + "] ?", base.options.moduleName, function(status){
+							if(status) {
+								var id = $tr.find('a.detail').prev().val();
+
+								self.processExcelFile({id : id, fileName : fileName},
+										function() {
+									$( "#dialog-modal" ).dialog( "close" );
+									jAlert('This excel file has now been queued', base.options.moduleName);
+								});
+							}
+						});
+					}
+				});
+			});
+		};
+		
 
 		base.changePage = function (pageNumber){
 			var self = this;
@@ -211,7 +237,7 @@
 			var fileName = $deleteLink.closest('tr').find('a.detail').text();
 			var id = $deleteLink.closest('tr').find('a.detail').prev().val();
 			var ruleType = base.options.ruleType;
-			jConfirm("Are you sure delete Excel file [" + fileName + "] ?", base.options.moduleName, function(status){					
+			jConfirm("Are you sure you want to delete the Excel file [" + fileName + "] ?", base.options.moduleName, function(status){					
 				if(status){
 					$("#dialog-modal-details").dialog("close");
 												

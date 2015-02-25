@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,7 @@ import com.google.common.collect.Lists;
 import com.search.reports.implementations.TypeaheadExcelParser;
 import com.search.reports.interfaces.ExcelParser;
 import com.search.reports.manager.model.ExcelFileUploaded;
+import com.search.reports.manager.model.TypeaheadUpdateReport;
 import com.search.reports.manager.model.TypeaheadUpdateReportList;
 
 /**
@@ -37,10 +41,10 @@ public class ExcelFileManager {
 	private ExcelParser excelParser;
 	private TypeaheadExcelParser typeaheadExcelParser;
     private static final Logger logger = LoggerFactory.getLogger(ExcelFileManager.class);
-    private static final String BASE_PATH = File.separator + "home" + File.separator + "solr" +   File.separator  + "uploads"  + File.separator;
-    private static final String QUEUE_FOLDER = "queue"; 
-    private static final String PROCESSED_FOLDER = "processed"; 
-    private static final String FAILED_FOLDER = "failed"; 
+    public static final String BASE_PATH = File.separator + "home" + File.separator + "solr" +   File.separator  + "uploads"  + File.separator;
+    public static final String QUEUE_FOLDER = "queue"; 
+    public static final String PROCESSED_FOLDER = "processed"; 
+    public static final String FAILED_FOLDER = "failed"; 
     
     public ExcelFileManager(){    	
     }
@@ -82,7 +86,8 @@ public class ExcelFileManager {
  			workbook = new XSSFWorkbook(inputStream);
  			updateList.add(typeaheadExcelParser.createTypeaheadUpdateExcel(workbook, storeId, (String) fileName));
  			
- 			saveUploadedFile(workbook, fileName, BASE_PATH + File.separator + storeId + File.separator + "typeahead"); 
+ 			File file = saveUploadedFile(workbook, fileName, BASE_PATH + File.separator + storeId + File.separator + "typeahead");
+ 			updateExcelStatus(file, "PENDING");
  		} catch (IOException e) {
  			throw e;
  		}
@@ -110,6 +115,26 @@ public class ExcelFileManager {
     public XSSFWorkbook getUploadedWorkbook(String storeId, String ruleType, String fileName) throws FileNotFoundException, IOException {
     	
     	return  new XSSFWorkbook(new FileInputStream(BASE_PATH + File.separator + storeId + File.separator + ruleType + File.separator + fileName));
+    }
+    
+    public XSSFWorkbook getTypeaheadWorkbook(List<TypeaheadUpdateReport> rowList) {
+    	XSSFWorkbook newWorkbook = new XSSFWorkbook();
+    	XSSFSheet sheet = newWorkbook.createSheet();
+    	
+    	XSSFRow header = sheet.createRow(0);
+    	header.createCell(0).setCellValue("KEYWORD");
+    	header.createCell(1).setCellValue("PRIORITY");
+    	header.createCell(2).setCellValue("ENABLED");
+    	
+    	for(int i=0 ; i < rowList.size(); i++) {
+    		TypeaheadUpdateReport report = rowList.get(i);
+    		XSSFRow row = sheet.createRow(i + 1);
+    		row.createCell(0).setCellValue(report.getKeyword());
+    		row.createCell(1).setCellValue(report.getPriority());
+    		row.createCell(2).setCellValue(report.getEnabled());
+    	}
+    	
+    	return newWorkbook;
     }
     
     public Boolean deleteUploadedExcel(ExcelFileUploaded excelFile) {
@@ -141,7 +166,7 @@ public class ExcelFileManager {
     			queueFolder.mkdirs();
     			File destFile = new File(queueFolder, fileName);
     			FileUtils.copyFile(file, destFile);
-
+    			updateExcelStatus(file, "QUEUED");
     			return true;
 
     		}
@@ -153,7 +178,7 @@ public class ExcelFileManager {
     	return true;
     }
     
-    private void saveUploadedFile(XSSFWorkbook workbook, String fileName, String subDirectory) throws IOException {
+    private File saveUploadedFile(XSSFWorkbook workbook, String fileName, String subDirectory) throws IOException {
     	File subdirectory = new File(subDirectory);
     	if(!subdirectory.exists()) {
     		subdirectory.mkdirs();
@@ -176,6 +201,14 @@ public class ExcelFileManager {
 			}
 		}
     	
+    	return newFile;
     }
+    
+    public void updateExcelStatus(File baseFile, String status) throws IOException {
+		File statusFile = new File(baseFile.getAbsolutePath() + ".txt");
+		FileWriter writer = new FileWriter(statusFile, false);
+		writer.write(status);
+		writer.close();
+	}
 
 }

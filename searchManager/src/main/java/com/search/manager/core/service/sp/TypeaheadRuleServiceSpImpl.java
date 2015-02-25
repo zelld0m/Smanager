@@ -80,6 +80,14 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 			if (model.getCreatedDate() == null) {
 				model.setCreatedDate(createdDate);
 			}
+			
+			if(model.getPriority() == null) {
+				model.setPriority(1);
+			}
+			
+			if(model.getDisabled() == null) {
+				model.setDisabled(false);
+			}
 
 			rule = dao.add(model);
 
