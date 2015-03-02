@@ -25,6 +25,9 @@ public class TypeaheadRuleXml extends RuleXml{
 	private List<KeywordAttributeXML> keywordAttributes;
 	private Integer priority;
 	private Boolean disabled;
+	private Integer splunkPriority;
+	private Integer overridePriority;
+	private Boolean overrideEnabled;
 	
 	public TypeaheadRuleXml() {
 		super();
@@ -43,7 +46,10 @@ public class TypeaheadRuleXml extends RuleXml{
         this.setRuleId(rule.getRuleId());
         this.setStore(rule.getStoreId());
         this.setDisabled(rule.getDisabled());
-        this.setPriority(rule.getPriority());
+        this.setPriority(rule.getSplunkPriority() != null ? rule.getSplunkPriority() : rule.getPriority());
+        this.overrideEnabled = rule.getOverrideEnabled();
+        this.overridePriority = rule.getOverridePriority();
+        this.splunkPriority = rule.getSplunkPriority();
         
         if(rule.getSectionList() != null) {
         	List<KeywordAttributeXML> attributes = new ArrayList<KeywordAttributeXML>();
@@ -112,4 +118,29 @@ public class TypeaheadRuleXml extends RuleXml{
 	public void setDisabled(Boolean disabled) {
 		this.disabled = disabled;
 	}
+
+	public Integer getSplunkPriority() {
+		return splunkPriority;
+	}
+
+	public void setSplunkPriority(Integer splunkPriority) {
+		this.splunkPriority = splunkPriority;
+	}
+
+	public Integer getOverridePriority() {
+		return overridePriority;
+	}
+
+	public void setOverridePriority(Integer overridePriority) {
+		this.overridePriority = overridePriority;
+	}
+
+	public Boolean getOverrideEnabled() {
+		return overrideEnabled;
+	}
+
+	public void setOverrideEnabled(Boolean overrideEnabled) {
+		this.overrideEnabled = overrideEnabled;
+	}
+		
 }

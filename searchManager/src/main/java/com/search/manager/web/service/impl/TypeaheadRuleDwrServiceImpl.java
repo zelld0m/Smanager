@@ -113,7 +113,9 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 
 			TypeaheadRule existingRule = typeaheadRuleService.searchById(typeaheadRule.getStoreId(), typeaheadRule.getRuleId());
 			ruleName = existingRule.getRuleName();
-			existingRule.setPriority(typeaheadRule.getPriority());
+			
+						
+			existingRule.setPriority(existingRule.getSplunkPriority());
 			existingRule.setDisabled(typeaheadRule.getDisabled());
 			//Update will not work if rule name is the same.
 			if(existingRule.getRuleName().equals(typeaheadRule.getRuleName())) {
@@ -123,7 +125,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			existingRule.setLastModifiedBy(utilityService.getUsername());
 
 			existingRule = typeaheadRuleService.update(existingRule);
-
+			
 			if(existingRule != null) {
 				response.success(existingRule);
 				existingRule.setSectionList(typeaheadRule.getSectionList());
@@ -133,6 +135,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			} else
 				response.error("Unable to update the rule '"+typeaheadRule.getRuleName()+"'.");
 
+			typeaheadRuleService.updatePrioritySection(typeaheadRule, utilityService.getUsername(), new DateTime(), typeaheadRule.getPriority() == null);
 
 		} catch (Exception e) {
 			logger.error("failed at TypeaheadRuleServiceDwr.updateRule", e);
@@ -142,7 +145,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 		return response;
 
 	}
-	
+		
 	@RemoteMethod
 	public ServiceResponse<Boolean> deleteRule(TypeaheadRule typeaheadRule) {
 		ServiceResponse<Boolean> response = new ServiceResponse<Boolean>();

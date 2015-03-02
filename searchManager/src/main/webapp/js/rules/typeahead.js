@@ -77,7 +77,11 @@
 				mustachePreviewTemplate: $($("input#excelTemplate").attr('data-template')).html(),
 				homeUrl: "/searchManager/excelFileUploaded/" + GLOBAL_storeId + "/typeahead/",
 				baseViewExcelUrl: "/searchManager/typeahead/exceldetail/" + GLOBAL_storeId + '/',
-				beforeLoad: function() {self.$typeaheadPanel.find('div#listContainer, div#editPanel').hide();},
+				beforeLoad: function() {
+					self.$typeaheadPanel.find('div#listContainer, div#editPanel').hide(); 
+					self.$typeaheadPanel.find('input.searchTextInput, a.searchButton, a#uploadFromExcel').hide();
+					self.$typeaheadPanel.find('a.searchButtonList').show();
+				},
 				
 			});
 		};
@@ -342,12 +346,11 @@
 			var self = this;
 			self.selectedRule = rule;
 			self.$typeaheadPanel.find('input.searchTextInput').val(rule.ruleName);
-			self.$typeaheadPanel.find('#priorityEdit').val(rule.priority);
 			self.$typeaheadPanel.find('#disabledEdit').prop('checked', !rule.disabled);
 			self.$typeaheadPanel.find('a.searchButtonList').show();
 			self.$editPanel.hide();
 			self.startIndex = 0;
-			self.$typeaheadPanel.find('input.searchTextInput, a.searchButton').hide();
+			self.$typeaheadPanel.find('input.searchTextInput, a.searchButton, a#uploadFromExcel').hide();
 			self.$typeaheadList.hide();
 			
 			self.$typeaheadPanel.find('div.sortDiv').children('ul').sortable('destroy');
@@ -367,6 +370,8 @@
 							if(i == 0) {
 								self.selectedRule = list[0];
 								self.$typeaheadPanel.find('#category').prepend(html);
+								self.$typeaheadPanel.find('#priorityDisplay').html(self.selectedRule.splunkPriority);
+								self.$typeaheadPanel.find('#priorityEdit').val(self.selectedRule.overrideEnabled ? self.selectedRule.overridePriority : '');
 							} else {
 								if(i < GLOBAL_storeKeywordMaxCategory) {
 									var keywordsRow = '<tr><td><div class="marL10 fsize11">'+html+'</div></td><td></td><td></td></tr>';
@@ -640,8 +645,7 @@
 			var self = this;
 			var searchText = self.$typeaheadPanel.find('input.searchTextInput').val();
 			self.$typeaheadPanel.find("div#noSelected").hide();
-			self.$typeaheadPanel.find('input.searchTextInput, a.searchButton').show();
-
+			self.$typeaheadPanel.find('input.searchTextInput, a.searchButton, a#uploadFromExcel').show();
 			self.$typeaheadPanel.find('a.searchButtonList').hide();
 			self.$typeaheadPanel.find("#submitForApproval").html('');
 			self.$editPanel.hide();
@@ -748,12 +752,14 @@
 			var preHook = customPreHook != null ? customPreHook : function(){};
 			var postHook = customPostHook != null ? customPostHook : function(){};
 			
-			if(typeaheadRule.priority == null || typeaheadRule.priority.trim() == '' || isNaN(typeaheadRule.priority)) {
-				jAlert('Priority should contain a number.', base.options.moduleName);
-				return;
-			} else if(typeaheadRule.priority % 1 != 0) {
-				jAlert('Priority should contain an integer.', base.options.moduleName);
-				return;
+			if(typeaheadRule.priority != null && typeaheadRule.priority.trim() != '') {
+				if(typeaheadRule.priority == null || typeaheadRule.priority.trim() == '' || isNaN(typeaheadRule.priority)) {
+					jAlert('Priority should contain a number.', base.options.moduleName);
+					return;
+				} else if(typeaheadRule.priority % 1 != 0) {
+					jAlert('Priority should contain an integer.', base.options.moduleName);
+					return;
+				}
 			}
 			
 			TypeaheadRuleServiceJS.updateRule(typeaheadRule, {
@@ -813,6 +819,8 @@
 				}, {rule: rule});
 				$divItem.find("label.count").html('<input type="hidden" class="sortOrder" size="3" maxlength="5" value="'+rule['priority']+'"/><input type="hidden" class="ruleId" value="'+rule["ruleId"]+'"/><input type="hidden" class="disabled" value="'+rule["disabled"]+'"/>'+rule['priority']);
 				
+				if(rule['overrideEnabled']) {$divItem.find("label.count").prepend(base.options.priorityOverrideIcon + "&nbsp;");}
+								
 				$divItem.show();
 				$divList.append($divItem);
 			}
@@ -1085,7 +1093,7 @@
 				var ruleId = ruleList[keys[i]].ruleId;
 				var priority = ruleList[keys[i]].priority == null ? 0 : ruleList[keys[i]].priority;
 				var keyword = ruleList[keys[i]].ruleName;
-				var itemPattern = (isDelete || isForApproval) ? "#itemPattern3" : "#itemPattern2";
+				var itemPattern = "#itemPattern3";
 				var $divItem = self.$typeaheadList.find("div#itemList").find(itemPattern).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
 
 				$divItem.find("label.keyword").html(keyword);
@@ -1095,7 +1103,6 @@
 				} else {
 					var checked = ruleList[keys[i]].disabled == 'true' ? 'CHECKED' : '';
 					
-					$divItem.find('label').removeClass('w120').addClass('w130');
 					$divItem.find("label.count").html('<input type="text" maxlength="5" class="sortOrder" size="3" value="'+priority+'"/><input type="hidden" class="ruleId" value="'+ruleId+'"/>');
 					$divItem.find("label.iter").html('<input id="'+ruleList[keys[i]].ruleId+'" type="checkbox" '+checked+' class="ruleVisibility" value="false"/>');
 				}
@@ -1295,14 +1302,14 @@
 			template += '	</div>';
 			template += '	<div id="itemHeader3" class="items border clearfix" style="display:none">';
 			template += '		<label class="iter floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
-			template += '		<label class="count floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
-			template += '		<label class="floatL txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee; width:475px;">Keyword</label>';
+			template += '		<label class="count floatL w75 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
+			template += '		<label class="floatL txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee; width:455px;">Keyword</label>';
 			template += '		<label class="toggle floatL w130 txtAC fbold padTB5" style="background:#eee"> Status </label>';
 			template += '	</div>';
 			template += '	<div id="itemHeader4" class="items border clearfix" style="display:none">';
 			template += '		<label class="iter floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> Select </label>';
-			template += '		<label class="count floatL w55 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
-			template += '		<label class="floatL txtAC fbold padTB5" style="width:615px;border-right:1px solid #cccccc; background:#eee">Keyword</label>';
+			template += '		<label class="count floatL w75 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Priority</label>';
+			template += '		<label class="floatL txtAC fbold padTB5" style="width:570px;border-right:1px solid #cccccc; background:#eee">Keyword</label>';
 			template += '	</div>';
 			template += '</div>';	
 			template += '<div id="itemList" class="w100p marRLauto padT0 marT0 fsize12" style="max-height:565px; overflow-y:auto;">';
@@ -1318,21 +1325,21 @@
 			template += '		</label>';
 			template += '	</div>';
 			template += '	<div id="itemPattern2" class="items pad5 borderB mar0 clearfix" style="display:none">';
-			template += '		<label class="iter floatL w60"></label>';
-			template += '		<label class="count floatL w60"></label>';
-			template += '		<label class="float" style="width:480px;">';
-			template += '			<label class="keyword floatL" style="width:470px;"></label>'; 
+			template += '		<label class="iter floatL txtAC" style="width:50px;"></label>';
+			template += '		<label class="count floatL marR10 txtAR" style="width:65px;"></label>';
+			template += '		<label class="float txtAL">';
+			template += '			<label class="keyword floatL padL25" style="width:440px;"></label>'; 
 			template += '			<div class="rules" style="display:none"></div>';
 			template += '		</label>';
-			template += '		<label class="floatR fsize11 w120 status txtAL">';
+			template += '		<label class="floatR fsize11 w120 status txtAC">';
 			template += '			&nbsp;<a class="toggle" href="javascript:void(0);"></a>';
 			template += '		</label>';
 			template += '	</div>';
 			template += '	<div id="itemPattern3" class="items pad5 borderB mar0 clearfix" style="display:none">';
-			template += '		<label class="iter floatL w45"></label>';
-			template += '		<label class="count floatL w70"></label>';
-			template += '		<label class="floatL" style="width:365px">';
-			template += '			<label class="keyword floatL" style="width:365px"></label>'; 
+			template += '		<label class="iter floatL w55 txtAC"></label>';
+			template += '		<label class="count floatL w70 txtAC"></label>';
+			template += '		<label class="floatL" style="width:330px">';
+			template += '			<label class="keyword floatL marL10" style="width:330px"></label>'; 
 			template += '			<div class="rules" style="display:none"></div>';
 			template += '		</label>';
 			template += '		<label class="results floatL w70">&nbsp;</label>';
@@ -1388,6 +1395,7 @@
 			elevateIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_white_get.png'/>",
 			deleteIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/btn_delete_big.png'/>",
 			dragIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_drag.png'/>",
+			priorityOverrideIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_white_edit.png'/>",
 			suggestionIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/page_find.png'/>",
 			sortIcon: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/table_sort.png'/>",
 			searchReloadRate: 1000,

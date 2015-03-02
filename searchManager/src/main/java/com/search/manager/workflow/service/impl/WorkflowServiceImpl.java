@@ -264,7 +264,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 	}
 	
 	@Override
-	public void processRule(String storeId, String ruleType, String ruleId, String ruleName, ImportType importType, String[] ruleRefIdList, String[] ruleStatusIdList) throws CoreServiceException {
+	public void processRule(String storeId, String ruleType, String ruleId, String ruleName, ImportType importType, String[] ruleRefIdList, String[] ruleStatusIdList) throws CoreServiceException, PublishLockException {
 		RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, ruleType, ruleId);
 		if(ruleStatus.isLocked()) {
 			return;
@@ -281,6 +281,7 @@ public class WorkflowServiceImpl implements WorkflowService{
 				publishRule(storeId, configManager.getStoreName(storeId), "system", RuleSource.AUTO_IMPORT, ruleType, ruleRefIdList, "", ruleStatusIdList);
 			} catch (PublishLockException e) {
 				logger.error("Error publishing TypeaheadSplunkParser.processTypeaheadRule", e);
+				throw e;
 			}
 			break; 
 		default: 

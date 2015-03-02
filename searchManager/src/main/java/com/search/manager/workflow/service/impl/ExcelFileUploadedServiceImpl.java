@@ -258,7 +258,10 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 		
 		ExcelFileUploaded result = dao.getExcelFileUploaded(excelFileUploaded);
 		
-		return excelFileManager.processUploadedExcel(result);
+		result.setAddedOnRuleBy(utilityService.getUsername());
+		result.setAddedOnRuleDate(new DateTime());
+				
+		return excelFileManager.processUploadedExcel(result) && dao.updateExcelFileUploaded(result) != null;
 	}
 
 	public Map<String,List<ExcelFileUploaded>> getMapexcelfileuploadeds() {

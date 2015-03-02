@@ -58,11 +58,10 @@
 				list</a>
 
 		</div>
-		<ul class="fsize12 padT10 padR10 floatR"
+		<ul class="fsize12 padT15 padR10 floatR"
 			style="list-style-type: none;">
 			<li><a id="uploadFromExcel"
-				style="color: #333; font-weight: bold;" href="javascript:void(0);">Upload
-					SKUs from Excel Files</a></li>
+				style="color: #333; font-weight: bold;" href="javascript:void(0);"><img src="<spring:url value="/images/page_white_excel.png" />" alt="Add / Update via excel upload" title="Add / Update via excel upload"/></a></li>
 		</ul>
 	</div>
 	<div class="clearB"></div>
@@ -77,19 +76,24 @@
 	<div id="editPanel">
 		<div class="landingCont bgboxGray w450p83 floatL marL10 fsize12 marB0">
 			<div class="fsize14 txtAL padB1 marB1 fbold">
-				<div class="floatL w210">
-					<label class="floatL w70 marT5">Priority</label> <label
-						class="floatL"><input id="priorityEdit" type="text"
-						class="w100 marT5" maxlength="5" /></label> <label
+				<div class="floatL w400">
+					<label class="floatL w60 marT5">Priority:</label> <label
+						class="floatL marT5"><span id="priorityDisplay" 
+						class="w60 marT5" maxlength="5" readonly="true"/></label> 
+						<label class="floatL w120 marT5 marL20">Priority Override</label>
+						<label class="floatL">
+							<input id="priorityEdit" type="text" class="w60 marT5" maxlength="5" />
+						</label>
+						<label
 						class="floatL marT6 marL10"><a href="javascript:void(0);"
 						id="dialogSortIcon"><img
 							src="<spring:url value="/images/table_sort.png" />"
 							alt="Sort Sections" title="Sort Sections" /></a></label>
 				</div>
-				<div class="floatL w470">
+				<div class="floatL w280">
 					<label class="floatL w60 marT5">Enabled</label> <label
 						class="floatL marT5"><input id="disabledEdit"
-						type="checkbox" /></label> <label class="floatL w150">&nbsp;</label> <label
+						type="checkbox" /></label> <label
 						class="floatR marT5"><a href="javascript:void(0);"
 						id="suggestQtip"></a> <input type="checkbox"
 						id="suggestionDisabled" class="disabled-flag" /></label>
@@ -222,14 +226,16 @@
 					<th>Keyword</th>
 					<th>Priority</th>
 					<th>Enabled</th>
+					<th nowrap>Error Message</th>
 				</tr>
 			</thead>
 			<tbody>
 			{{#list}}
-				<tr>
-					<td>{{keyword}}</td>
+				<tr {{#errorMessage}}bgcolor="#ffb2b2"{{/errorMessage}}>
+					<td nowrap>{{keyword}}</td>
 					<td>{{priority}}</td>
 					<td>{{enabled}}</td>
+					<td nowrap>{{errorMessage}}</td>
 				</tr>
 			{{/list}}
 			</tbody>

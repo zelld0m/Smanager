@@ -147,7 +147,7 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		protected void declareSqlReturnResultSetParameters() {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<TypeaheadRule>() {
 				public TypeaheadRule mapRow(ResultSet rs, int rowNum) throws SQLException {
-					return buildModel(rs, rowNum);
+					return buildGetModel(rs, rowNum);
 				}
 			}));
 		}
@@ -170,6 +170,19 @@ public class TypeaheadRuleDaoSpImpl extends GenericDaoSpImpl<TypeaheadRule> impl
 		rule.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
 		rule.setRuleId(rs.getString(DAOConstants.COLUMN_RULE_ID));
 		rule.setRuleName(rs.getString(DAOConstants.COLUMN_RULE_NAME));
+
+		return rule;
+	}
+	
+	private TypeaheadRule buildGetModel(ResultSet rs, int rowNum) throws SQLException {
+		
+		TypeaheadRule rule = buildModel(rs, rowNum);
+		
+		if(rule != null) {
+			rule.setSplunkPriority(rs.getInt(TypeaheadDaoConstant.COLUMN_SPLUNK_PRIORITY));
+			rule.setOverridePriority(rs.getInt(TypeaheadDaoConstant.COLUMN_OVERRIDE_PRIORITY));
+			rule.setOverrideEnabled("ENABLED".equals(rs.getString(TypeaheadDaoConstant.COLUMN_OVERRIDE_STATUS)));
+		}
 
 		return rule;
 	}

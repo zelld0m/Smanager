@@ -55,13 +55,15 @@
 							buttons: {
 								"Process File": function() {
 									var excel = $( this ).data('excel');
+									var $dialog = $(this);
 									self.processExcelFile({id : excel.excelId, fileName : excel.fileName},
 											function() {
-										$( "#dialog-modal" ).dialog( "close" );
+										$dialog.dialog( "close" );
 										jAlert('This excel file has now been queued', base.options.moduleName);
+										self.showMainPage();
 									});
 								},
-								"Process Later": function() {$( this ).dialog( "close" ); }
+								"Process Later": function() {$( this ).dialog( "close" ); self.showMainPage();}
 							}
 						});
 						$( "#dialog-modal" ).data('excel', data.data[0]);
@@ -79,33 +81,6 @@
 			});		
 		};
 
-		base.showMainPage = function() {
-			var self = this;
-			base.options.beforeLoad();
-			self.$preloader.show();
-			self.$el.hide();
-			self.$el.load(base.options.homeUrl + (new Date()).getTime(),function(){
-				self.$preloader.hide();
-				self.$el.show();
-				self.showPaging();
-				self.initializeAjaxForm();
-				self.initializeViewDetails(self.$el.find('a.detail'));
-				self.initializeDeleteEvent(self.$el.find('a.delete'));
-				self.initializeQueueEvent(self.$el.find('a.queue'));
-			});
-			
-			self.$el.find('#excelFileUpload').submit(function() {
-				$(this).ajaxSubmit();
-				return false;
-			});
-			
-			$(".plugin-rulestatusbar").hide();
-			$("#ruleSelected").hide();
-			$("#ruleItemPagingTop").hide();
-			$("#ruleItemPagingBottom").hide();
-			$("#ruleItemDisplayOptions").hide();
-		};
-
 		base.addToRule = function() {
 			if(base.options.addToRule) { base.options.addToRule(); return; }
 
@@ -115,11 +90,12 @@
 		base.initializeViewDetails = function($links){
 			$links.each(function() {
 				var $link = $(this);
-				var fileId = $link.prev().val();
-
+				var fileId = $link.siblings("input.excelId").val();
+				var text = $link.html();
 				$link.off().on({
 					click: function() {
-						var url = base.options.baseViewExcelUrl + fileId;
+						var url = base.options.baseViewExcelUrl + fileId + '?' + new Date().getTime();
+						$link.html(base.options.rectLoader);
 						$.ajax(url, {
 							dataType : 'json',
 							type : 'POST',
@@ -130,13 +106,15 @@
 								$( "#dialog-modal-details" ).dialog({
 									autoOpen: false,
 									position: 'center' ,
-									title: 'Details',	        		
+									title: 'Details',	 
+									width: '600',
 									create: function() {
 										$(this).css("maxHeight", 550);        
 										$(this).css("maxWidth", 850);
 									},
 									modal: true});								
 								$("#dialog-modal-details").dialog("open");
+								$link.html(text);
 							}
 						});
 					}
@@ -166,12 +144,13 @@
 						var fileName = $tr.find('a.detail').text();
 						jConfirm("Are you sure you want to process the Excel file [" + fileName + "] ?", base.options.moduleName, function(status){
 							if(status) {
-								var id = $tr.find('a.detail').prev().val();
+								var id = $tr.find('a.detail').siblings("input.excelId").val();
 
 								self.processExcelFile({id : id, fileName : fileName},
 										function() {
 									$( "#dialog-modal" ).dialog( "close" );
 									jAlert('This excel file has now been queued', base.options.moduleName);
+									self.showMainPage();
 								});
 							}
 						});
@@ -180,6 +159,17 @@
 			});
 		};
 		
+		base.initializeActions = function() {
+			var self = this;
+			self.$preloader.hide();
+			self.$el.show();
+			self.showPaging();
+			self.initializeAjaxForm();
+			self.initializeViewDetails(self.$el.find('a.detail'));
+			self.initializeDeleteEvent(self.$el.find('a.delete'));
+			self.initializeQueueEvent(self.$el.find('a.queue'));
+			self.getExcelStatus();
+		};
 
 		base.changePage = function (pageNumber){
 			var self = this;
@@ -188,12 +178,30 @@
 			self.$el.hide();
 			self.$preloader.show();
 			self.$el.empty().load("/searchManager/excelFileUploaded/paging/" + storeId + "/" + ruleType + "/" + pageNumber + "/" + (Math.random()*99999),function(){
-				self.$preloader.hide();
-				self.$el.show();;
-				self.showPaging();
+				self.initializeActions();
 			});	
 		};
-		
+
+		base.showMainPage = function() {
+			var self = this;
+			base.options.beforeLoad();
+			self.$preloader.show();
+			self.$el.hide();
+			self.$el.load(base.options.homeUrl + (new Date()).getTime(),function(){
+				self.initializeActions();
+			});
+			
+			self.$el.find('#excelFileUpload').submit(function() {
+				$(this).ajaxSubmit();
+				return false;
+			});
+			
+			$(".plugin-rulestatusbar").hide();
+			$("#ruleSelected").hide();
+			$("#ruleItemPagingTop").hide();
+			$("#ruleItemPagingBottom").hide();
+			$("#ruleItemDisplayOptions").hide();
+		};
 		base.showPaging = function (){
 			var self = this;
 			var currentPage = $('#currentPageNumber').val();
@@ -235,7 +243,7 @@
 		base.deleteExcelFile = function($deleteLink){
 			var self = this;
 			var fileName = $deleteLink.closest('tr').find('a.detail').text();
-			var id = $deleteLink.closest('tr').find('a.detail').prev().val();
+			var id = $deleteLink.closest('tr').find('a.detail').siblings("input.excelId").val();
 			var ruleType = base.options.ruleType;
 			jConfirm("Are you sure you want to delete the Excel file [" + fileName + "] ?", base.options.moduleName, function(status){					
 				if(status){
@@ -249,6 +257,41 @@
 				}
 			});
 
+		};
+		
+		base.getExcelStatus = function() {
+			var self = this;
+			
+			self.$el.find('input.excelId').each(function() {
+				var $input = $(this);
+				var $row = $input.closest('tr');
+				var $deleteLink = $row.find('a.delete'); 
+				var $queueLink = $row.find('a.queue');
+				
+				$deleteLink.hide();
+				$queueLink.hide();
+				$deleteLink.before(base.options.rectLoader);
+				var url = base.options.baseViewExcelUrl + $input.val();
+				$.ajax(url, {
+					dataType : 'json',
+					type : 'POST',
+					cache : false,
+					beforeSend : function() {},
+					success: function(data) {
+						var status = data.data[0].status; 
+						$row.find('td.statusColumn').html(status);
+						$deleteLink.prev().remove();
+						if(status === 'QUEUED' || status === 'IN_PROCESS') {
+							$deleteLink.before(base.options.lockIcon);
+							return;
+						}
+												
+						$deleteLink.show();
+						$queueLink.show();
+					}
+				});
+				
+			});
 		};
 		
 		base.processExcelFile = function(excelFile, afterCallback) {
@@ -277,6 +320,7 @@
 			rectLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-rect.gif'/>",
 			roundLoader:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/ajax-loader-circ.gif'/>",
 			homeUrl: "/searchManager/excelFileUploaded/" + GLOBAL_storeId + "/typeahead/",
+			lockIcon:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_lock.png'/>",
 			baseViewExcelUrl: "",
 			mustachePreviewTemplate: "",
 			beforeLoad: function(){},

@@ -1,7 +1,9 @@
 package com.search.manager.web.controller.rules;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +48,7 @@ import com.search.manager.workflow.dao.ExcelFileUploadedDAO;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 import com.search.reports.manager.ExcelFileManager;
 import com.search.reports.manager.model.ExcelFileUploaded;
+import com.search.reports.manager.model.TypeaheadUpdateReport;
 import com.search.reports.manager.model.TypeaheadUpdateReportList;
 
 @Controller
@@ -175,7 +178,19 @@ public class TypeaheadController {
 			report.setExcelFileUploadedId(fileId);
 			report.setStoreId(storeId);
 			report.setRuleTypeId(RuleEntity.TYPEAHEAD.getCode());
-			List<TypeaheadUpdateReportList> updateList = excelFileManager.getTypeaheadReportList(storeId, excelDao.getExcelFileUploaded(report).getFileName());
+			
+			report = excelDao.getExcelFileUploaded(report);
+			List<TypeaheadUpdateReportList> errorList = null;
+			
+			try{
+				errorList = excelFileManager.getTypeaheadReportList(storeId, report.getFileName(), ExcelFileManager.FAILED_FOLDER);
+			} catch(Exception e) {
+				logger.error("Error list does not exist.", e);
+			}
+			List<TypeaheadUpdateReportList> updateList = excelFileManager.getTypeaheadReportList(storeId, report.getFileName(), null);
+			
+			addErrorMessages(updateList, errorList);
+			
 			if(updateList != null && updateList.size() > 0) {
 				response.success(updateList);
 			} 
@@ -184,6 +199,21 @@ public class TypeaheadController {
 			response.error(e.getMessage());
 		}
 		return response;
+	}
+	
+	private void addErrorMessages(List<TypeaheadUpdateReportList> updateList, List<TypeaheadUpdateReportList> errorList) {
+		Map<String, String> errorMessageMap = new HashMap<String, String>();
+		if(errorList != null && errorList.get(0).getList() != null) {
+			for(TypeaheadUpdateReport error : errorList.get(0).getList()) {
+				errorMessageMap.put(error.getKeyword(), error.getErrorMessage());
+			}
+		}
+		
+		if(updateList != null && updateList.get(0).getList() != null) {
+			for(TypeaheadUpdateReport reportRow : updateList.get(0).getList()) {
+				reportRow.setErrorMessage(errorMessageMap.get(reportRow.getKeyword()));
+			}
+		}
 	}
 			
 }

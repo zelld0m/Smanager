@@ -3,6 +3,7 @@ package com.search.manager.core.service.solr;
 import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -155,5 +156,12 @@ public class TypeaheadRuleServiceSolrImpl implements TypeaheadRuleService {
 	public void initializeTypeaheadSections(TypeaheadRule rule) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Boolean updatePrioritySection(TypeaheadRule rule,
+			String lastModifiedBy, DateTime lastModifiedDate, Boolean disabled) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -25,5 +25,5 @@ public interface WorkflowService {
 
 	public void processRule(String storeId, String ruleType, String ruleId,
 			String ruleName, ImportType importType, String[] ruleRefIdList,
-			String[] ruleStatusIdList) throws CoreServiceException;
+			String[] ruleStatusIdList) throws CoreServiceException, PublishLockException;
 }

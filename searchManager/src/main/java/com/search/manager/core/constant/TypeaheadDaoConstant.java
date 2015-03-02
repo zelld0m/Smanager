@@ -11,6 +11,9 @@ public class TypeaheadDaoConstant {
     public static final String COLUMN_VENDOR_ID = "VENDOR_ID";
     public static final String COLUMN_PRODUCT_COUNT = "PRODUCT_COUNT";
     public static final String COLUMN_PRIORITY = "PRIORITY";
+    public static final String COLUMN_SPLUNK_PRIORITY = "KEYWORD_PRIORITY";
+    public static final String COLUMN_OVERRIDE_PRIORITY = "OVERRIDE_PRIORITY";
+    public static final String COLUMN_OVERRIDE_STATUS = "OVERRIDE_STATUS";
     public static final String COLUMN_DISABLED = "DISABLED";
     public static final String COLUMN_STATUS = "STATUS_ID";
     public static final String COLUMN_DESCRIPTION = "DESCRIPTION";
@@ -22,7 +25,7 @@ public class TypeaheadDaoConstant {
     public static final String SP_ADD_TYPEAHEAD_RULE = "dbo.usp_ADD_TYPEAHEAD_KEYWORD";
     public static final String SP_DELETE_TYPEAHEAD_RULE = "dbo.usp_DELETE_TYPEAHEAD_KEYWORD";
     public static final String SP_UPDATE_TYPEAHEAD_RULE = "dbo.usp_UPDATE_TYPEAHEAD_KEYWORD";
-    public static final String SP_GET_TYPEAHEAD_RULE = "dbo.usp_GET_TYPEAHEAD_KEYWORD";
+    public static final String SP_GET_TYPEAHEAD_RULE = "dbo.usp_GET_TYPEAHEAD_KEYWORD_v2";
 
     public static final String SP_ADD_TYPEAHEAD_CATEGORY = "dbo.usp_Add_Typeahead_Category";
     public static final String SP_UPDATE_TYPEAHEAD_CATEGORY = "dbo.usp_Update_Typeahead_Category";

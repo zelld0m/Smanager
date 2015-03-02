@@ -1,9 +1,11 @@
 package com.search.reports.manager;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.axis.utils.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -23,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.search.reports.enums.ExcelUploadStatus;
 import com.search.reports.implementations.TypeaheadExcelParser;
 import com.search.reports.interfaces.ExcelParser;
 import com.search.reports.manager.model.ExcelFileUploaded;
@@ -43,7 +47,6 @@ public class ExcelFileManager {
     private static final Logger logger = LoggerFactory.getLogger(ExcelFileManager.class);
     public static final String BASE_PATH = File.separator + "home" + File.separator + "solr" +   File.separator  + "uploads"  + File.separator;
     public static final String QUEUE_FOLDER = "queue"; 
-    public static final String PROCESSED_FOLDER = "processed"; 
     public static final String FAILED_FOLDER = "failed"; 
     
     public ExcelFileManager(){    	
@@ -87,7 +90,7 @@ public class ExcelFileManager {
  			updateList.add(typeaheadExcelParser.createTypeaheadUpdateExcel(workbook, storeId, (String) fileName));
  			
  			File file = saveUploadedFile(workbook, fileName, BASE_PATH + File.separator + storeId + File.separator + "typeahead");
- 			updateExcelStatus(file, "PENDING");
+ 			updateExcelStatus(file, ExcelUploadStatus.PENDING);
  		} catch (IOException e) {
  			throw e;
  		}
@@ -95,16 +98,16 @@ public class ExcelFileManager {
     	return updateList;
     }
     
-    public List<TypeaheadUpdateReportList> getTypeaheadReportList(String storeId, String fileName) throws Exception {
+    public List<TypeaheadUpdateReportList> getTypeaheadReportList(String storeId, String fileName, String folder) throws Exception {
     	List<TypeaheadUpdateReportList> updateList = Lists.newArrayList();
     	
     	typeaheadExcelParser = new TypeaheadExcelParser();
         XSSFWorkbook workbook = null;
             
  		try {
- 			workbook = getUploadedWorkbook(storeId, "typeahead", fileName);
+ 			workbook = getUploadedWorkbook(storeId, "typeahead", fileName, folder);
  			updateList.add(typeaheadExcelParser.createTypeaheadUpdateExcel(workbook, storeId, (String) fileName));
- 			 
+ 			updateList.get(0).setStatus(getStatus(storeId, "typeahead", fileName)); 
  		} catch (IOException e) {
  			throw e;
  		}
@@ -112,9 +115,41 @@ public class ExcelFileManager {
     	return updateList;
     }
     
-    public XSSFWorkbook getUploadedWorkbook(String storeId, String ruleType, String fileName) throws FileNotFoundException, IOException {
+    public ExcelUploadStatus getStatus(String storeId, String ruleType, String fileName) {
+    	File file = new File(BASE_PATH + File.separator + storeId + File.separator + ruleType + File.separator + fileName + ".txt");
     	
-    	return  new XSSFWorkbook(new FileInputStream(BASE_PATH + File.separator + storeId + File.separator + ruleType + File.separator + fileName));
+    	if(file.exists()) {
+    		BufferedReader br = null;
+    		try {
+				br = new BufferedReader(new FileReader(file));
+				
+				String statusString = br.readLine();
+				
+				return ExcelUploadStatus.getByName(statusString);
+			} catch (FileNotFoundException e) {
+				logger.error("Error while getting status of file "+file.getAbsolutePath(), e);
+			} catch (IOException e) {
+				logger.error("Error while getting status of file "+file.getAbsolutePath(), e);
+			} finally {
+				if(br != null) {
+					try {
+						br.close();
+					} catch (IOException e) {
+						logger.error("Error while getting status of file "+file.getAbsolutePath(), e);
+					}
+				}
+			}
+    	}
+    	
+    	return ExcelUploadStatus.PENDING;
+    }
+    
+    public XSSFWorkbook getUploadedWorkbook(String storeId, String ruleType, String fileName, String folder) throws FileNotFoundException, IOException {
+    	
+    	if(StringUtils.isEmpty(folder))
+    		return  new XSSFWorkbook(new FileInputStream(BASE_PATH + File.separator + storeId + File.separator + ruleType + File.separator + fileName));
+    	else
+    		return  new XSSFWorkbook(new FileInputStream(BASE_PATH + File.separator + storeId + File.separator + ruleType + File.separator + folder + File.separator + fileName));
     }
     
     public XSSFWorkbook getTypeaheadWorkbook(List<TypeaheadUpdateReport> rowList) {
@@ -132,6 +167,9 @@ public class ExcelFileManager {
     		row.createCell(0).setCellValue(report.getKeyword());
     		row.createCell(1).setCellValue(report.getPriority());
     		row.createCell(2).setCellValue(report.getEnabled());
+    		if(report.getErrorMessage() != null) {
+    			row.createCell(3).setCellValue(report.getErrorMessage());
+    		}
     	}
     	
     	return newWorkbook;
@@ -143,9 +181,11 @@ public class ExcelFileManager {
     	int ruleType = excelFile.getRuleTypeId();
     	
     	switch(ruleType) {
-    	case 13: 
-    		File file = new File(BASE_PATH + File.separator + storeId + File.separator + "typeahead" + File.separator + fileName);
-    		return file.delete();
+    	case 13:
+    		String filePath = BASE_PATH + File.separator + storeId + File.separator + "typeahead" + File.separator + fileName;
+    		File file = new File(filePath);
+    		File statusFile = new File(filePath + ".txt");
+    		return file.delete() && (statusFile.exists() ? statusFile.delete() : true);
     	default: break;
     	}
     	
@@ -166,7 +206,7 @@ public class ExcelFileManager {
     			queueFolder.mkdirs();
     			File destFile = new File(queueFolder, fileName);
     			FileUtils.copyFile(file, destFile);
-    			updateExcelStatus(file, "QUEUED");
+    			updateExcelStatus(file, ExcelUploadStatus.QUEUED);
     			return true;
 
     		}
@@ -204,10 +244,10 @@ public class ExcelFileManager {
     	return newFile;
     }
     
-    public void updateExcelStatus(File baseFile, String status) throws IOException {
+    public void updateExcelStatus(File baseFile, ExcelUploadStatus status) throws IOException {
 		File statusFile = new File(baseFile.getAbsolutePath() + ".txt");
 		FileWriter writer = new FileWriter(statusFile, false);
-		writer.write(status);
+		writer.write(status.getDisplayName());
 		writer.close();
 	}
 

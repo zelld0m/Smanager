@@ -1,6 +1,7 @@
 package com.search.manager.core.service.sp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,7 +246,11 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 		KeywordAttribute parentQuery = new KeywordAttribute();
 		parentQuery.setKeywordId(rule.getRuleId());
 
-		for(KeywordAttributeType type : KeywordAttributeType.PARENT_TYPES) {
+		List<KeywordAttributeType> parentList = new ArrayList<KeywordAttributeType>();
+		parentList.addAll(Arrays.asList(KeywordAttributeType.PARENT_TYPES));
+		parentList.add(KeywordAttributeType.OVERRIDE_PRIORITY);
+		
+		for(KeywordAttributeType type : parentList) {
 			parentQuery.setInputParamEnumId(type.getCode());
 			searchResult = keywordAttributeService.search(parentQuery);
 			if(searchResult.getTotalCount() > 0) {
@@ -304,6 +309,44 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 			logger.error("An error occured while retirieving the sections of '"+rule.getRuleName()+"'.", e);
 		} 
 
+	}
+	
+	@Override
+	public Boolean updatePrioritySection(TypeaheadRule rule, String lastModifiedBy, DateTime lastModifiedDate, Boolean disabled) {
+		KeywordAttribute attribute = new KeywordAttribute();
+		attribute.setKeywordId(rule.getRuleId());
+		attribute.setInputParamEnumId(KeywordAttributeType.OVERRIDE_PRIORITY.getCode());		
+		SearchResult<KeywordAttribute> searchResult;
+		try {
+			searchResult = keywordAttributeService.search(attribute);
+			Integer priority = rule.getPriority();
+			if(searchResult.getTotalCount() > 0) {
+				attribute = searchResult.getList().get(0);
+				attribute.setInputParamEnumId(KeywordAttributeType.OVERRIDE_PRIORITY.getCode());
+				if(priority != null) {
+					attribute.setInputValue(priority.toString());
+				}
+				attribute.setLastModifiedBy(lastModifiedBy);
+				attribute.setLastModifiedDate(lastModifiedDate);
+				attribute.setDisabled(disabled);
+				
+				attribute = keywordAttributeService.update(attribute);
+			} else {
+				attribute.setPriority(0);
+				attribute.setInputValue(priority != null ? priority.toString() : "0");
+				attribute.setCreatedBy(lastModifiedBy);
+				attribute.setCreatedDate(lastModifiedDate);
+				attribute.setDisabled(disabled);
+				
+				attribute = keywordAttributeService.add(attribute);
+			}
+			
+			return attribute != null;
+		} catch (CoreServiceException e) {
+			logger.error("An error occured while overriding the priority of the rule '"+rule.getRuleName()+"'.", e);
+		}
+		
+		return false;
 	}
 
 }

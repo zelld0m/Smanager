@@ -242,6 +242,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID, model.getKeywordId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID, model.getInputParamEnumId());
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_PRIORITY, model.getPriority() != null ? model.getPriority() : 1);
+			inputs.put(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE, model.getInputValue());
 			String status = getStatus(model);
 			inputs.put(KeywordAttributeDaoConstant.COLUMN_STATUS, status != null ? status : Status.ENABLED.getName());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, model.getLastModifiedBy());

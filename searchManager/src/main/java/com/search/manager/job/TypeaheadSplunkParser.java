@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.search.manager.core.enums.RuleSource;
 import com.search.manager.core.exception.CoreServiceException;
 import com.search.manager.core.model.RuleStatus;
 import com.search.manager.core.model.TypeaheadRule;
+import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.core.service.TypeaheadRuleService;
 import com.search.manager.enums.ImportType;
@@ -54,13 +54,16 @@ public class TypeaheadSplunkParser {
 
 	private static final String[] FOLDER_TYPES = {FOLDER_DAILY, FOLDER_WEEKLY};
 
-	private static String FOLDER_HOME = "/home/solr/utilities/typeahead";
+	private static final String FOLDER_HOME = "/home/solr/utilities/typeahead";
 
-	private int WEEKLY_KEYWORD_COLUMN = 1;
-	private int WEEKLY_COUNT_COLUMN = 0;
+	private final int WEEKLY_KEYWORD_COLUMN = 1;
+	private final int WEEKLY_COUNT_COLUMN = 0;
 
-	private int DAILY_KEYWORD_COLUMN = 0;
-	private int DAILY_COUNT_COLUMN = 1;
+	private final int DAILY_KEYWORD_COLUMN = 0;
+	private final int DAILY_COUNT_COLUMN = 1;
+	
+	private static final String DAILY = "daily";
+	private static final String WEEKLY = "weekly";
 
 	public void scanSplunkFolder(String store) {
 		logger.info("Scanning keywords for store {}.", store);
@@ -91,10 +94,10 @@ public class TypeaheadSplunkParser {
 					if(FOLDER_DAILY.equals(folderType) && csvRow == csvData.get(0))
 						continue;
 					
-					if(FOLDER_DAILY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, DAILY_COUNT_COLUMN) && typeaheadValidationService.validateKeyword(storeId, csvRow[DAILY_COUNT_COLUMN])) {
-						typeaheadRule = saveTypeaheadRule(storeId, csvRow, folderType, DAILY_KEYWORD_COLUMN, DAILY_COUNT_COLUMN);
-					} else if(FOLDER_WEEKLY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, WEEKLY_COUNT_COLUMN)  && typeaheadValidationService.validateKeyword(storeId, csvRow[WEEKLY_COUNT_COLUMN])) {
-						typeaheadRule = saveTypeaheadRule(storeId, csvRow, folderType, WEEKLY_KEYWORD_COLUMN, WEEKLY_COUNT_COLUMN);
+					if(FOLDER_DAILY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, DAILY_COUNT_COLUMN) && typeaheadValidationService.validateKeyword(storeId, csvRow[DAILY_KEYWORD_COLUMN])) {
+						typeaheadRule = saveTypeaheadRule(DAILY, storeId, csvRow, folderType, DAILY_KEYWORD_COLUMN, DAILY_COUNT_COLUMN);
+					} else if(FOLDER_WEEKLY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, WEEKLY_COUNT_COLUMN)  && typeaheadValidationService.validateKeyword(storeId, csvRow[WEEKLY_KEYWORD_COLUMN])) {
+						typeaheadRule = saveTypeaheadRule(WEEKLY, storeId, csvRow, folderType, WEEKLY_KEYWORD_COLUMN, WEEKLY_COUNT_COLUMN);
 					}
 
 					if(typeaheadRule != null) {
@@ -121,19 +124,29 @@ public class TypeaheadSplunkParser {
 		}
 	}
 
-	private TypeaheadRule saveTypeaheadRule(String storeId, String[] csvRow, String folderType, int keywordColumn, int countColumn) throws CoreServiceException {
+	private TypeaheadRule saveTypeaheadRule(String saveType, String storeId, String[] csvRow, String folderType, int keywordColumn, int countColumn) throws CoreServiceException {
 		TypeaheadRule typeaheadRule = new TypeaheadRule();
 
 		typeaheadRule.setRuleName(csvRow[keywordColumn]);
 		typeaheadRule.setStoreId(storeId);
 		typeaheadRule.setPriority(Integer.parseInt(csvRow[countColumn]));
-		if(typeaheadRuleService.search(typeaheadRule).getTotalCount() > 0)
+		
+		SearchResult<TypeaheadRule> result = typeaheadRuleService.search(typeaheadRule);
+		if(result.getTotalCount() < 1) {
+			typeaheadRule.setCreatedDate(new DateTime());
+			typeaheadRule.setCreatedBy("system");
+
+			return typeaheadRuleService.add(typeaheadRule);
+		} else if(WEEKLY.equals(saveType)){
+			TypeaheadRule existing = result.getList().get(0);
+			// Will not update if ruleName is the same.
+			existing.setRuleName(null);
+			existing.setPriority(Integer.parseInt(csvRow[countColumn]));
+			existing.setLastModifiedBy("system");
+			existing.setLastModifiedDate(new DateTime());
+			return typeaheadRuleService.update(existing);
+		}
 			return null;
-
-		typeaheadRule.setCreatedDate(new DateTime());
-		typeaheadRule.setCreatedBy("system");
-
-		return typeaheadRuleService.add(typeaheadRule);
 	}
 
 	private void processTypeaheadRule(String storeId, String folderType, TypeaheadRule typeaheadRule) throws CoreServiceException {
@@ -149,7 +162,11 @@ public class TypeaheadSplunkParser {
 		String[] ruleRefIdList = {typeaheadRule.getRuleId()};
 		String[] ruleStatusIdList = {ruleStatus.getRuleStatusId()};
 
-		workflowService.processRule(storeId, ruleType, typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), importType, ruleRefIdList, ruleStatusIdList);
+		try {
+			workflowService.processRule(storeId, ruleType, typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), importType, ruleRefIdList, ruleStatusIdList);
+		} catch (PublishLockException e) {
+			logger.error("Publishing for typeahead is locked.", e);
+		}
 		
 	}
 

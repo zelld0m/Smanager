@@ -6,7 +6,8 @@ public enum KeywordAttributeType {
 	BRAND("Brand", "KEY_BRAND"),
 	SUGGESTION("Suggestion", "KEY_SUGGESTION"),
 	SECTION("Section", "KEY_SECTION"),
-	SECTION_ITEM("Section Item", "KEY_SEC_ITEM");
+	SECTION_ITEM("Section Item", "KEY_SEC_ITEM"),
+	OVERRIDE_PRIORITY("Override Priority", "OVERRIDE_PRIORITY");
 
 	private String name;
 	private String code;

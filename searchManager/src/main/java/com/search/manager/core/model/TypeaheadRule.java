@@ -3,6 +3,8 @@ package com.search.manager.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.solr.client.solrj.beans.Field;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -21,6 +23,9 @@ public class TypeaheadRule extends ModelBean {
     private String storeId;
     private String ruleName;
     private Integer priority;
+    private transient Integer splunkPriority;
+    private transient Integer overridePriority;
+    private transient Boolean overrideEnabled;
     private Boolean disabled;
     private List<KeywordAttribute> sectionList;
 
@@ -101,8 +106,35 @@ public class TypeaheadRule extends ModelBean {
 	public void setSectionList(List<KeywordAttribute> sectionList) {
 		this.sectionList = sectionList;
 	}
-    
-    public void initSections(TypeaheadRuleXml xml) {
+	
+	@XmlTransient
+	public Integer getSplunkPriority() {
+		return splunkPriority;
+	}
+
+	public void setSplunkPriority(Integer splunkPriority) {
+		this.splunkPriority = splunkPriority;
+	}
+
+	@XmlTransient
+	public Integer getOverridePriority() {
+		return overridePriority;
+	}
+
+	public void setOverridePriority(Integer overridePriority) {
+		this.overridePriority = overridePriority;
+	}
+	
+	@XmlTransient
+	public Boolean getOverrideEnabled() {
+		return overrideEnabled;
+	}
+
+	public void setOverrideEnabled(Boolean overrideEnabled) {
+		this.overrideEnabled = overrideEnabled;
+	}
+
+	public void initSections(TypeaheadRuleXml xml) {
     	// Restore section items
         if(xml.getKeywordAttributes() != null && xml.getKeywordAttributes().size() > 0) {
         	

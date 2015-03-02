@@ -35,9 +35,9 @@
              	<th></th>
                 <th>FileName</th>
                 <th>Uploaded By</th>
-                <th>Uploaded Date</th>
+                <th>Upload Date</th>
                 <th>Added By</th>
-                <th>Added Date</th>               
+                <th>Status</th>               
             </tr>
         </thead>
 		<tbody>
@@ -50,19 +50,16 @@
 		        </c:if>        
 				    <tr class="conTableItem ${alt}">
 				   		<td align="right" nowrap>
-				   				<c:if test="${excelFileUploaded.addedOnRuleBy == null}">
-							   		<a href="javascript:void(0);" class="delete">
-							   			<img src="../images/icon_del.png" alt="Delete uploaded File">
-							   		</a>
-							   		&nbsp;
-							   		&nbsp;				   				
-					   			</c:if>        	
+							   	<a href="javascript:void(0);" class="delete">
+							   		<img src="../images/icon_del.png" alt="Delete uploaded File">
+							   	</a>
+							   	&nbsp;		   		
 								<a href="javascript:void(0);" class="queue">
 									<img src="../images/ico-doc-plus.jpg" alt="Add to Rules">
 								</a>
 				        </td>
 				    	<td>
-				    		<input type="hidden" value="${excelFileUploaded.excelFileUploadedId }"/>
+				    		<input type="hidden" class="excelId" value="${excelFileUploaded.excelFileUploadedId }"/>
 				    		<a href="javascript:void(0);" class="detail">${excelFileUploaded.fileName}</a> 			    				    		
 				    	</td>
 				        <td align="center">
@@ -74,8 +71,7 @@
 				        <td align="center">
 				        	${excelFileUploaded.addedOnRuleBy}
 				        </td>
-				        <td align="center">
-				        	<joda:format pattern="${dateFormat}" value="${excelFileUploaded.addedOnRuleDate}"/>
+				        <td align="center" class="statusColumn">
 				        </td>			        			        			        			        			        
 				    </tr>        
 				</c:forEach>	

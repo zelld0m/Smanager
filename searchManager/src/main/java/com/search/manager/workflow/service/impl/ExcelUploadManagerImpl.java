@@ -2,7 +2,6 @@ package com.search.manager.workflow.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -22,10 +22,12 @@ import com.search.manager.core.model.TypeaheadRule;
 import com.search.manager.core.search.SearchResult;
 import com.search.manager.core.service.RuleStatusService;
 import com.search.manager.core.service.TypeaheadRuleService;
-import com.search.manager.enums.ExcelUploadStatus;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.exception.PublishLockException;
+import com.search.manager.service.TypeaheadValidationService;
 import com.search.manager.workflow.service.WorkflowService;
+import com.search.reports.enums.ExcelUploadStatus;
 import com.search.reports.manager.ExcelFileManager;
 import com.search.reports.manager.model.TypeaheadUpdateReport;
 import com.search.reports.manager.model.TypeaheadUpdateReportList;
@@ -43,6 +45,8 @@ public class ExcelUploadManagerImpl {
 	@Autowired
 	@Qualifier("typeaheadRuleServiceSp")
 	private TypeaheadRuleService typeaheadRuleService;
+	@Autowired
+	private TypeaheadValidationService typeaheadValidationService;
 	@Autowired
 	private WorkflowService workflowService;
 
@@ -90,11 +94,9 @@ public class ExcelUploadManagerImpl {
 			for(RuleEntity ruleEntity : enabledRules) {
 				String basePath = ExcelFileManager.BASE_PATH + store + File.separator + ruleEntity.getXmlName();	
 				File queueDirectory = new File(basePath + File.separator + ExcelFileManager.QUEUE_FOLDER);
-				File processedDirectory = new File(basePath + File.separator + ExcelFileManager.PROCESSED_FOLDER);
 				File failedDirectory = new File(basePath + File.separator + ExcelFileManager.FAILED_FOLDER);
 				
 				queueDirectory.mkdirs();
-				processedDirectory.mkdirs();
 				failedDirectory.mkdirs();
 			}
 		}
@@ -113,9 +115,9 @@ public class ExcelUploadManagerImpl {
 
 		File baseFile = new File(basePath + File.separator + file.getName());
 		
-		excelFileManager.updateExcelStatus(baseFile, ExcelUploadStatus.IN_PROCESS.getDisplayName());
+		excelFileManager.updateExcelStatus(baseFile, ExcelUploadStatus.IN_PROCESS);
 		
-		List<TypeaheadUpdateReportList> reportList = excelFileManager.getTypeaheadReportList(storeId, file.getName());
+		List<TypeaheadUpdateReportList> reportList = excelFileManager.getTypeaheadReportList(storeId, file.getName(), null);
 		List<TypeaheadUpdateReport> failedList = new ArrayList<TypeaheadUpdateReport>();
 		List<TypeaheadUpdateReport> successList = new ArrayList<TypeaheadUpdateReport>();
 		
@@ -124,10 +126,17 @@ public class ExcelUploadManagerImpl {
 			for(TypeaheadUpdateReport row : report.getList()) {
 
 				try{
+					
+					if(!typeaheadValidationService.validateKeyword(storeId, row.getKeyword())) {
+						row.setErrorMessage("Invalid keyword.");
+						failedList.add(row);
+						continue;
+					}
+					
 					TypeaheadRule typeaheadRule = new TypeaheadRule();
 					typeaheadRule.setRuleName(row.getKeyword());
 					typeaheadRule.setStoreId(storeId);
-
+					
 					SearchResult<TypeaheadRule> result = typeaheadRuleService.search(typeaheadRule);
 
 					if(result.getTotalCount() > 0) {
@@ -139,15 +148,25 @@ public class ExcelUploadManagerImpl {
 					RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, RuleEntity.getValue(RuleEntity.TYPEAHEAD.getCode()), typeaheadRule.getRuleId());
 					
 					if(ruleStatus.isLocked()) {
+						row.setErrorMessage("The rule is locked.");
 						failedList.add(row);
 						continue;
 					}
 					
+					typeaheadRule.setPriority(row.getPriority());
+					typeaheadRuleService.updatePrioritySection(typeaheadRule, typeaheadRule.getCreatedBy(), new DateTime(), false);
+					
+					typeaheadRule = new TypeaheadRule();
+					typeaheadRule.setRuleName(row.getKeyword());
+					typeaheadRule.setStoreId(storeId);
+					result = typeaheadRuleService.search(typeaheadRule);
+					typeaheadRule = result.getList().get(0);
+					
 					// Will Not update if the name is the same. Null will retain the previous value.
 					typeaheadRule.setRuleName(null);
-					typeaheadRule.setPriority(row.getPriority());
-					typeaheadRule.setDisabled(!row.getEnabled());
 					
+					typeaheadRule.setDisabled(!row.getEnabled());
+					typeaheadRule.setPriority(typeaheadRule.getSplunkPriority());
 					typeaheadRule = typeaheadRuleService.update(typeaheadRule);
 
 					
@@ -157,6 +176,11 @@ public class ExcelUploadManagerImpl {
 					workflowService.processRule(storeId, RuleEntity.getValue(RuleEntity.TYPEAHEAD.getCode()), typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), ImportType.AUTO_PUBLISH, ruleRefIdList, ruleStatusIdList);
 					
 					successList.add(row);
+				} catch( PublishLockException e) {
+					e.printStackTrace();
+					row.setErrorMessage("Publishing for the rule type 'typeahead' is currently locked.");
+					failedList.add(row);
+					
 				} catch( Exception e) {
 					e.printStackTrace();
 					failedList.add(row);
@@ -164,26 +188,6 @@ public class ExcelUploadManagerImpl {
 
 			}
 		}
-
-		// Create a new excel file containing the successful entries.
-		File destination = new File(basePath + File.separator + ExcelFileManager.PROCESSED_FOLDER + File.separator + file.getName());
-		if(destination.exists()) {
-			destination.delete();
-		}
-		
-		XSSFWorkbook successWorkbook = excelFileManager.getTypeaheadWorkbook(successList);
-		OutputStream successOtputStream = null;
-		try {
-			successOtputStream = new FileOutputStream(destination);
-			successWorkbook.write(successOtputStream);
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			if(successOtputStream != null) {
-				successOtputStream.close();
-			}
-		}
-		
 		
 		// Create a new excel file containing the failed entries.
 		if(failedList.size() > 0) {
@@ -210,6 +214,6 @@ public class ExcelUploadManagerImpl {
 		
 		// Remove from queue folder.
 		file.delete();
-		excelFileManager.updateExcelStatus(baseFile, ExcelUploadStatus.PROCESSED.getDisplayName());
+		excelFileManager.updateExcelStatus(baseFile, ExcelUploadStatus.PROCESSED);
 	}
 }
