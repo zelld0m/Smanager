@@ -48,6 +48,7 @@
 							position: 'center' ,
 							title: 'Preview',
 							modal: true,
+							width: "600px",
 							create: function() {
 						        $(this).css("maxHeight", 550);        
 						        $(this).css("maxWidth", 850);
@@ -102,8 +103,10 @@
 							cache : false,
 							beforeSend : function() {},
 							success: function(data) {
-								$( "#dialog-modal-details" ).empty().html(Mustache.to_html(base.options.mustachePreviewTemplate, data.data[0]));
-								$( "#dialog-modal-details" ).dialog({
+								//$( "#dialog-modal-details" ).dialog('destroy');
+								var $dialog = $('<div></div>');
+								$dialog.html(Mustache.to_html(base.options.mustachePreviewTemplate, data.data[0]));
+								$dialog.dialog({
 									autoOpen: false,
 									position: 'center' ,
 									title: 'Details',	 
@@ -113,7 +116,8 @@
 										$(this).css("maxWidth", 850);
 									},
 									modal: true});								
-								$("#dialog-modal-details").dialog("open");
+								$dialog.dialog("open");
+								$dialog.bind('dialogclose', function(event) {$dialog.dialog('destroy');});
 								$link.html(text);
 							}
 						});

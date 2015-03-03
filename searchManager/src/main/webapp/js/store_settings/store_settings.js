@@ -22,7 +22,7 @@ $(function() {
     
     dropDownListMap['mail.workflow.approver.group'] = accountRoleArray;
     
-    dropDownListMap['typeahead.weeklyDefaultStatus'] = dropDownListMap['typeahead.dailyDefaultStatus'] = dropDownListMap['status.elevate'] = dropDownListMap['status.exclude'] = dropDownListMap['status.demote'] = dropDownListMap['status.facetSort'] 
+    dropDownListMap['typeahead.excelUploadDefaultStatus'] = dropDownListMap['typeahead.weeklyDefaultStatus'] = dropDownListMap['typeahead.dailyDefaultStatus'] = dropDownListMap['status.elevate'] = dropDownListMap['status.exclude'] = dropDownListMap['status.demote'] = dropDownListMap['status.facetSort'] 
     = dropDownListMap['status.queryCleaning'] = dropDownListMap['status.didYouMean'] = dropDownListMap['status.banner'] = dropDownListMap['status.rankingRule'] = dropDownListMap['status.typeahead'] = ruleEntityArray;
     
     var Field = function(id, propertyId, type) {

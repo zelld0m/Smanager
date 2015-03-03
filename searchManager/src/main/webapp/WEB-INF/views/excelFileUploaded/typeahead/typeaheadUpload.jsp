@@ -21,7 +21,8 @@
            	  </td>           	  
            	 </tr>
            	<tr id="uploadButtonContainer">
-           	  <td align="right">
+           	  <td align="right" valign="bottom">
+           	  		<a href="<spring:url value="/files/template.xlsx" />" border="0"><img src="<spring:url value="/images/page_white_put.png" />" alt="Download template" title="Download template"/></a>&nbsp;	
 					<input type="submit" value="Upload"/>    	  	
            	  </td>
            	 </tr>	

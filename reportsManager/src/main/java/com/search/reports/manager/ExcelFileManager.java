@@ -90,6 +90,9 @@ public class ExcelFileManager {
  			updateList.add(typeaheadExcelParser.createTypeaheadUpdateExcel(workbook, storeId, (String) fileName));
  			
  			File file = saveUploadedFile(workbook, fileName, BASE_PATH + File.separator + storeId + File.separator + "typeahead");
+ 			
+ 			deleteFailedFile(storeId, "typeahead", fileName);
+ 			 			
  			updateExcelStatus(file, ExcelUploadStatus.PENDING);
  		} catch (IOException e) {
  			throw e;
@@ -207,15 +210,27 @@ public class ExcelFileManager {
     			File destFile = new File(queueFolder, fileName);
     			FileUtils.copyFile(file, destFile);
     			updateExcelStatus(file, ExcelUploadStatus.QUEUED);
+    			
+    			deleteFailedFile(storeId, "typeahead", fileName);
+    			    			
     			return true;
 
     		}
+    		
+    		
 
     		return false;
 
     	default: break;
     	}
     	return true;
+    }
+    
+    private void deleteFailedFile(String storeId, String ruleType, String fileName) {
+    	File errorFile = new File(BASE_PATH + File.separator + storeId + File.separator + "typeahead" + File.separator + FAILED_FOLDER + File.separator + fileName);
+			if(errorFile.exists()) {
+				errorFile.delete();
+			}
     }
     
     private File saveUploadedFile(XSSFWorkbook workbook, String fileName, String subDirectory) throws IOException {

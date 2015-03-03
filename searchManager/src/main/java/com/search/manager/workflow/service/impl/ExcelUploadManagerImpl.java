@@ -173,7 +173,13 @@ public class ExcelUploadManagerImpl {
 					String[] ruleRefIdList = {typeaheadRule.getRuleId()};
 					String[] ruleStatusIdList = {ruleStatus.getRuleStatusId()};
 
-					workflowService.processRule(storeId, RuleEntity.getValue(RuleEntity.TYPEAHEAD.getCode()), typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), ImportType.AUTO_PUBLISH, ruleRefIdList, ruleStatusIdList);
+
+					String defaultStatus = configManager.getProperty("typeahead", storeId, "typeahead.excelUploadDefaultStatus" );
+					if(defaultStatus == null)
+						defaultStatus = "For Review";
+					ImportType importType = ImportType.getByDisplayText(defaultStatus);
+					
+					workflowService.processRule(storeId, RuleEntity.getValue(RuleEntity.TYPEAHEAD.getCode()), typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), importType, ruleRefIdList, ruleStatusIdList);
 					
 					successList.add(row);
 				} catch( PublishLockException e) {

@@ -185,7 +185,7 @@ public class TypeaheadController {
 			try{
 				errorList = excelFileManager.getTypeaheadReportList(storeId, report.getFileName(), ExcelFileManager.FAILED_FOLDER);
 			} catch(Exception e) {
-				logger.error("Error list does not exist.", e);
+				logger.info("Error list '"+ report.getFileName( )+"' for "+storeId+" typeahead does not exist.");
 			}
 			List<TypeaheadUpdateReportList> updateList = excelFileManager.getTypeaheadReportList(storeId, report.getFileName(), null);
 			
