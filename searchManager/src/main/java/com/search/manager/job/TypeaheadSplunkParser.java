@@ -2,8 +2,12 @@ package com.search.manager.job;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
@@ -64,6 +68,8 @@ public class TypeaheadSplunkParser {
 	
 	private static final String DAILY = "daily";
 	private static final String WEEKLY = "weekly";
+	
+	private static String NEWLINE = System.getProperty("line.separator");
 
 	public void scanSplunkFolder(String store) {
 		logger.info("Scanning keywords for store {}.", store);
@@ -87,22 +93,45 @@ public class TypeaheadSplunkParser {
 		Boolean hasError = false;
 		try {
 			csvData = getCsvData(file.getAbsolutePath());
+			
 			if(csvData != null) {
+				List<Entry<String, String>> failedEntries = new ArrayList<Entry<String, String>>();
 				for(String[] csvRow : csvData) {
 					TypeaheadRule typeaheadRule = null;
 					
 					if(FOLDER_DAILY.equals(folderType) && csvRow == csvData.get(0))
 						continue;
 					
-					if(FOLDER_DAILY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, DAILY_COUNT_COLUMN) && typeaheadValidationService.validateKeyword(storeId, csvRow[DAILY_KEYWORD_COLUMN])) {
+					Boolean isValid = typeaheadValidationService.validateKeyword(storeId, csvRow[DAILY_KEYWORD_COLUMN]);
+					
+					if(FOLDER_DAILY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, DAILY_COUNT_COLUMN) && isValid) {
 						typeaheadRule = saveTypeaheadRule(DAILY, storeId, csvRow, folderType, DAILY_KEYWORD_COLUMN, DAILY_COUNT_COLUMN);
-					} else if(FOLDER_WEEKLY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, WEEKLY_COUNT_COLUMN)  && typeaheadValidationService.validateKeyword(storeId, csvRow[WEEKLY_KEYWORD_COLUMN])) {
+					} else if( FOLDER_DAILY.equals(folderType) && !isValid) {
+						failedEntries.add(new AbstractMap.SimpleEntry<String, String>(csvRow[DAILY_KEYWORD_COLUMN], "Invalid Keyword"));
+						continue;
+					}
+					
+					isValid = typeaheadValidationService.validateKeyword(storeId, csvRow[WEEKLY_KEYWORD_COLUMN]);
+					
+					if(FOLDER_WEEKLY.equals(folderType) && thresholdSatisfied(storeId, csvRow, folderType, WEEKLY_COUNT_COLUMN)  && typeaheadValidationService.validateKeyword(storeId, csvRow[WEEKLY_KEYWORD_COLUMN])) {
 						typeaheadRule = saveTypeaheadRule(WEEKLY, storeId, csvRow, folderType, WEEKLY_KEYWORD_COLUMN, WEEKLY_COUNT_COLUMN);
+					} else if( FOLDER_WEEKLY.equals(folderType) && !isValid) {
+						failedEntries.add(new AbstractMap.SimpleEntry<String, String>(csvRow[WEEKLY_KEYWORD_COLUMN], "Invalid Keyword"));
+						continue;
 					}
 
 					if(typeaheadRule != null) {
-						processTypeaheadRule(storeId, folderType, typeaheadRule);
+						try {
+							processTypeaheadRule(storeId, folderType, typeaheadRule);
+						} catch (PublishLockException e) {
+							logger.error("Failed to publish the rule '"+typeaheadRule.getRuleName()+"'", e);
+							failedEntries.add(new AbstractMap.SimpleEntry<String, String>(typeaheadRule.getRuleName(), e.getMessage()));
+						}
 					}
+				}
+				
+				if(failedEntries.size() > 1) {
+					saveFailedEntries(failedEntries, file.getName(), storeId);
 				}
 			}
 
@@ -123,6 +152,40 @@ public class TypeaheadSplunkParser {
 			FileUtils.deleteQuietly(file);
 		}
 	}
+	
+	private void saveFailedEntries(List<Entry<String, String>> failedEntries, String fileName, String storeId) {
+		File directory = new File(FOLDER_HOME + File.separator + storeId + File.separator + "Failed");
+		if(!directory.exists()) {
+			directory.mkdirs();
+		}
+		
+		File newFile = new File(directory, fileName);
+		
+		FileWriter fileWriter = null;
+		
+		try {
+			fileWriter = new FileWriter(newFile.getAbsolutePath());
+			
+			for(Entry<String, String> entry : failedEntries) {
+				fileWriter.append(entry.getKey())
+				.append(",")
+				.append(entry.getValue())
+				.append(NEWLINE);
+			}
+		} catch (IOException e) {
+			logger.error("Failed to write error list.", e);
+		} finally {
+			try {
+				fileWriter.flush();
+				fileWriter.close();
+			} catch (IOException e) {
+				logger.info("Error while flushing/closing fileWriter !!!");
+				e.printStackTrace();
+			}
+
+		}
+
+	}
 
 	private TypeaheadRule saveTypeaheadRule(String saveType, String storeId, String[] csvRow, String folderType, int keywordColumn, int countColumn) throws CoreServiceException {
 		TypeaheadRule typeaheadRule = new TypeaheadRule();
@@ -139,6 +202,13 @@ public class TypeaheadSplunkParser {
 			return typeaheadRuleService.add(typeaheadRule);
 		} else if(WEEKLY.equals(saveType)){
 			TypeaheadRule existing = result.getList().get(0);
+			
+			RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, RuleEntity.TYPEAHEAD.getName(), existing.getRuleId());
+			
+			if(ruleStatus.isLocked()) {
+				return null;
+			}
+			
 			// Will not update if ruleName is the same.
 			existing.setRuleName(null);
 			existing.setPriority(Integer.parseInt(csvRow[countColumn]));
@@ -149,7 +219,7 @@ public class TypeaheadSplunkParser {
 			return null;
 	}
 
-	private void processTypeaheadRule(String storeId, String folderType, TypeaheadRule typeaheadRule) throws CoreServiceException {
+	private void processTypeaheadRule(String storeId, String folderType, TypeaheadRule typeaheadRule) throws CoreServiceException, PublishLockException {
 		String defaultStatus = configManager.getProperty("typeahead", storeId, FOLDER_DAILY.equals(folderType) ? "typeahead.dailyDefaultStatus" : "typeahead.weeklyDefaultStatus" );
 
 		if(defaultStatus == null)
@@ -157,16 +227,18 @@ public class TypeaheadSplunkParser {
 
 		String ruleType = RuleEntity.TYPEAHEAD.getName();
 		RuleStatus ruleStatus = ruleStatusService.getRuleStatus(storeId, ruleType, typeaheadRule.getRuleId());
+		
+		if(ruleStatus.isLocked()) {
+			throw new PublishLockException("The rule is locked.", typeaheadRule.getCreatedBy(), storeId);
+		}
+		
 		ImportType importType = ImportType.getByDisplayText(defaultStatus);
 
 		String[] ruleRefIdList = {typeaheadRule.getRuleId()};
 		String[] ruleStatusIdList = {ruleStatus.getRuleStatusId()};
 
-		try {
-			workflowService.processRule(storeId, ruleType, typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), importType, ruleRefIdList, ruleStatusIdList);
-		} catch (PublishLockException e) {
-			logger.error("Publishing for typeahead is locked.", e);
-		}
+		workflowService.processRule(storeId, ruleType, typeaheadRule.getRuleId(), typeaheadRule.getRuleName(), importType, ruleRefIdList, ruleStatusIdList);
+		
 		
 	}
 

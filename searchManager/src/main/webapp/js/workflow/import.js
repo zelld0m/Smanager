@@ -727,6 +727,12 @@
                     template += '	<label class="w110 floatL fbold">Priority:</label>';
 					template += '	<label class="wAuto floatL" id="rulePriority"></label>';
 					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL fbold">Splunk Priority:</label>';
+					template += '	<label class="wAuto floatL" id="splunkPriority"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL fbold">Override Priority:</label>';
+					template += '	<label class="wAuto floatL" id="overridePriority"></label>';
+					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL fbold">Disabled:</label>';
 					template += '	<label class="wAuto floatL" id="ruleDisabled"></label>';
 					template += '	<div class="clearB"></div>';
@@ -796,6 +802,12 @@
 	            template += '		<label class="w110 floatL fbold">Priority:</label>';
 				template += '		<label class="wAuto floatL" id="rulePriority"></label>';
 				template += '		<div class="clearB"></div>';
+				template += '	<label class="w110 floatL fbold">Splunk Priority:</label>';
+				template += '	<label class="wAuto floatL" id="splunkPriority"></label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label class="w110 floatL fbold">Override Priority:</label>';
+				template += '	<label class="wAuto floatL" id="overridePriority"></label>';
+				template += '	<div class="clearB"></div>';
 				template += '		<label class="w110 floatL fbold">Disabled:</label>';
 				template += '		<label class="wAuto floatL" id="ruleDisabled"></label>';
 				template += '		<div class="clearB"></div>';

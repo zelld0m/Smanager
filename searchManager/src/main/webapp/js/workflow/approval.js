@@ -250,9 +250,19 @@
 				template += '	<label class="wAuto floatL" id="requestType"></label>';					
 				template += '	<div class="clearB"></div>';
 				if(ruleType.toLowerCase() == 'typeahead') {
+					template += '	<label class="w110 floatL fbold">Priority:</label>';
+					template += '	<label class="wAuto floatL" id="rulePriority"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL fbold">Splunk Priority:</label>';
+					template += '	<label class="wAuto floatL" id="splunkPriority"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL fbold">Override Priority:</label>';
+					template += '	<label class="wAuto floatL" id="overridePriority"></label>';
+					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Section Sorting:</label>';
 					template += '	<label class="wAuto floatL" id="sectionSort"></label>';					
 					template += '	<div class="clearB"></div>';
+					
 				}
 				template += '</div>';
 				template += '<div class="clearB"></div>';

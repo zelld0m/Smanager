@@ -348,6 +348,8 @@
 							
 							if(list[i].ruleName == ruleName) {
 								$rulePreview.find("#rulePriority").text($.trim(list[i].priority));
+								$rulePreview.find("#splunkPriority").text($.trim(list[i].splunkPriority));
+								$rulePreview.find("#overridePriority").text($.trim(list[i].overridePriority != 0 ? list[i].overridePriority : ''));
 								$rulePreview.find("#ruleDisabled").text(list[i].disabled);
 								$rulePreview.find("#sectionSort").text(base.getSectionSorting(list[i]));
 							}
@@ -642,9 +644,12 @@
 			var returnString = '';
 			for(var k=0; k<sectionList.length; k++) {
 				var section = sectionList[k];
-				if(k != 0) {
+				if(section.keywordAttributeType == 'OVERRIDE_PRIORITY')
+					continue;
+				if(returnString.length > 0) {
 					returnString += ', ';
 				}
+								
 				returnString += section.inputValue;
 			}
 			
@@ -661,7 +666,7 @@
 			
 			var sectionArray = new Array();
 			
-			for(var i=0; i< sectionList.length; i++) {
+			for(var i=0; sectionList != null && i< sectionList.length; i++) {
 				var section = sectionList[i];
 				
 				if(section.keywordAttributeType != 'SECTION') {
@@ -825,6 +830,8 @@
 				$content.find("#requestType").text(base.options.requestType);
 
 				$content.find("#rulePriority").text($.trim(xml.priority));
+				$content.find("#splunkPriority").text($.trim(xml.splunkPriority));
+				$content.find("#overridePriority").text($.trim(xml.overridePriority != 0 ? xml.overridePriority != 0 : ''));
 				$content.find("#ruleDisabled").text(xml.disabled);
 				$content.find("#sectionSort").text(base.getSectionSorting(xml));
 
@@ -1174,6 +1181,14 @@
 
 					template += '	<label class="w110 floatL fbold">Priority:</label>';
 					template += '	<label class="wAuto floatL" id="rulePriority"></label>';
+					template += '	<div class="clearB"></div>';
+					
+					template += '	<label class="w110 floatL fbold">Splunk Priority:</label>';
+					template += '	<label class="wAuto floatL" id="splunkPriority"></label>';
+					template += '	<div class="clearB"></div>';
+					
+					template += '	<label class="w110 floatL fbold">Override Priority:</label>';
+					template += '	<label class="wAuto floatL" id="overridePriority"></label>';
 					template += '	<div class="clearB"></div>';
 					
 					template += '	<label class="w110 floatL fbold">Disabled:</label>';

@@ -237,7 +237,9 @@
 								$tr.find("#category").text(list[i].ruleName);
 
 							if(i == 0) {
-								
+								$rulePreview.find('#rulePriority').html(list[i].priority);
+								$rulePreview.find('#splunkPriority').html(list[i].splunkPriority);
+								$rulePreview.find('#overridePriority').html(list[i].overridePriority != 0 ? list[i].overridePriority : '');
 								var getSectionSorting = function(rule) {
 									var sectionList = rule.sectionList;
 									
@@ -248,7 +250,9 @@
 									var returnString = '';
 									for(var k=0; k<sectionList.length; k++) {
 										var section = sectionList[k];
-										if(k != 0) {
+										if(section.keywordAttributeType == 'OVERRIDE_PRIORITY')
+											continue;
+										if(returnString.length > 0) {
 											returnString += ', ';
 										}
 										returnString += section.inputValue;
