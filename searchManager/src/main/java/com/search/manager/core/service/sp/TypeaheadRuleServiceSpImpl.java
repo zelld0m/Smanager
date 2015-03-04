@@ -321,26 +321,23 @@ public class TypeaheadRuleServiceSpImpl extends GenericServiceSpImpl<TypeaheadRu
 			searchResult = keywordAttributeService.search(attribute);
 			Integer priority = rule.getPriority();
 			if(searchResult.getTotalCount() > 0) {
-				attribute = searchResult.getList().get(0);
-				attribute.setInputParamEnumId(KeywordAttributeType.OVERRIDE_PRIORITY.getCode());
-				if(priority != null) {
-					attribute.setInputValue(priority.toString());
-				}
-				attribute.setLastModifiedBy(lastModifiedBy);
-				attribute.setLastModifiedDate(lastModifiedDate);
-				attribute.setDisabled(disabled);
+				KeywordAttribute existing = searchResult.getList().get(0);
 				
-				attribute = keywordAttributeService.update(attribute);
-			} else {
-				attribute.setPriority(0);
-				attribute.setInputValue(priority != null ? priority.toString() : "0");
-				attribute.setCreatedBy(lastModifiedBy);
-				attribute.setCreatedDate(lastModifiedDate);
-				attribute.setDisabled(disabled);
+				attribute.setInputValue(existing.getInputValue());
 				
-				attribute = keywordAttributeService.add(attribute);
-			}
+				keywordAttributeService.delete(existing);
+			} 
 			
+			String priorityUpdate = disabled ? (attribute.getInputValue() != null ? attribute.getInputValue() : "0") :  priority != null ? priority.toString() : "0";
+
+			attribute.setPriority(0);
+			attribute.setInputValue(priorityUpdate);
+			attribute.setCreatedBy(lastModifiedBy);
+			attribute.setCreatedDate(lastModifiedDate);
+			attribute.setDisabled(disabled);
+
+			attribute = keywordAttributeService.add(attribute);
+
 			return attribute != null;
 		} catch (CoreServiceException e) {
 			logger.error("An error occured while overriding the priority of the rule '"+rule.getRuleName()+"'.", e);

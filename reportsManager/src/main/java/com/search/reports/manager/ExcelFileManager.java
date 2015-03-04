@@ -168,7 +168,8 @@ public class ExcelFileManager {
     		TypeaheadUpdateReport report = rowList.get(i);
     		XSSFRow row = sheet.createRow(i + 1);
     		row.createCell(0).setCellValue(report.getKeyword());
-    		row.createCell(1).setCellValue(report.getPriority());
+    		if(report.getPriority() != null)
+    			row.createCell(1).setCellValue(report.getPriority());
     		row.createCell(2).setCellValue(report.getEnabled());
     		if(report.getErrorMessage() != null) {
     			row.createCell(3).setCellValue(report.getErrorMessage());

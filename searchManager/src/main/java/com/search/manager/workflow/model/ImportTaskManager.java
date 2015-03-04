@@ -157,7 +157,10 @@ public class ImportTaskManager {
 			if(specialRuleList.contains(ruleEntity)) {
 				importAsId = autoImportManager.getImportAsId(ruleEntity, autoImportManager.getTargetRuleStatus(ruleEntity, sourceStoreId, importRuleRefId, ruleName, targetStoreId), sourceStoreId, importRuleRefId, targetStoreId, importAsRefIdList[0]);
 			}
-
+			
+			RuleStatus ruleStatusInfo = ruleStatusService.getRuleStatus(targetStoreId, ruleEntity.toString(), importAsId);
+			String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
+			
 			switch(ImportType.getByDisplayText(importTypeSetting)) {
 			case FOR_APPROVAL: 
 				if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
@@ -166,9 +169,6 @@ public class ImportTaskManager {
 				}
 				break;
 			case AUTO_PUBLISH: 
-
-				RuleStatus ruleStatusInfo = ruleStatusService.getRuleStatus(targetStoreId, ruleEntity.toString(), importAsId);
-				String[] ruleStatusIdList = {ruleStatusInfo.getRuleStatusId()};
 
 				if(ImportType.FOR_REVIEW.equals(taskExecutionResult.getStateCompleted())) {
 					workflowService.processRuleStatus(targetStoreId, userName, RuleSource.AUTO_IMPORT, ruleEntity.getName(), importAsId, ruleName, false);

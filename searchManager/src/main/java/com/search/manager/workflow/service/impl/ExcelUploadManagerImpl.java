@@ -137,6 +137,7 @@ public class ExcelUploadManagerImpl {
 					typeaheadRule.setRuleName(row.getKeyword());
 					typeaheadRule.setStoreId(storeId);
 					
+					
 					SearchResult<TypeaheadRule> result = typeaheadRuleService.search(typeaheadRule);
 
 					if(result.getTotalCount() > 0) {
@@ -154,7 +155,7 @@ public class ExcelUploadManagerImpl {
 					}
 					
 					typeaheadRule.setPriority(row.getPriority());
-					typeaheadRuleService.updatePrioritySection(typeaheadRule, typeaheadRule.getCreatedBy(), new DateTime(), false);
+					typeaheadRuleService.updatePrioritySection(typeaheadRule, typeaheadRule.getCreatedBy(), new DateTime(), row.getPriority() == null);
 					
 					typeaheadRule = new TypeaheadRule();
 					typeaheadRule.setRuleName(row.getKeyword());

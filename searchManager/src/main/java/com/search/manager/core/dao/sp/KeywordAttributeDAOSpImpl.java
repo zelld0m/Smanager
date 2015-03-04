@@ -170,6 +170,7 @@ public class KeywordAttributeDAOSpImpl extends GenericDaoSpImpl<KeywordAttribute
 		attribute.setInputParamEnumId(rs.getString(KeywordAttributeDaoConstant.COLUMN_INPUT_PARAM_ENUM_ID));
 		attribute.setParentAttributeId(rs.getString(KeywordAttributeDaoConstant.COLUMN_PARENT_ATTRIBUTE_ID));
 		attribute.setKeywordAttributeType(KeywordAttributeType.findbyCode(attribute.getInputParamEnumId()));
+		attribute.setKeywordId(rs.getString(KeywordAttributeDaoConstant.COLUMN_KEYWORD_ID));
 		
 		attribute.setInputValue(rs.getString(KeywordAttributeDaoConstant.COLUMN_INPUT_VALUE));
 
