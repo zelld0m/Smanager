@@ -26,6 +26,7 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Product;
 import com.search.manager.response.ServiceResponse;
+import com.search.manager.service.TypeaheadValidationService;
 import com.search.manager.service.UtilityService;
 import com.search.manager.web.service.TypeaheadRuleDwrService;
 import com.search.ws.SearchHelper;
@@ -48,6 +49,8 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 	@Qualifier("typeaheadRuleServiceSp")
 	private TypeaheadRuleService typeaheadRuleService;
 	@Autowired
+	private TypeaheadValidationService typeaheadValidationService;
+	@Autowired
 	private UtilityService utilityService;
 
 	@RemoteMethod
@@ -60,6 +63,11 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 		ServiceResponse<TypeaheadRule> response = new ServiceResponse<TypeaheadRule>();
 
 		try {
+			
+			if(!typeaheadValidationService.validateKeyword(storeId, keyword)) {
+				response.error("Invalid keyword.");
+				return response;
+			}
 
 			if(typeaheadRuleService.search(typeaheadRule).getTotalCount() > 0) {
 				response.error("The keyword '" + keyword +"' already exists.");
