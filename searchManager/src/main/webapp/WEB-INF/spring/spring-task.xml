@@ -29,6 +29,11 @@
 	  <property name="targetMethod" value="runJob" />
 	  <property name="concurrent" value="false" />
 	</bean>
+	<bean id="jobDetail3" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	  <property name="targetObject" ref="excelUploadManager" />
+	  <property name="targetMethod" value="scanFiles" />
+	  <property name="concurrent" value="false" />
+	</bean>
 
 	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 	    <!-- see the example of method invoking job above -->
@@ -46,12 +51,21 @@
 	    <!-- repeat every 50 seconds -->
 	    <property name="repeatInterval" value="60000" />
 	</bean>
+	<bean id="simpleTrigger3" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+	    <!-- see the example of method invoking job above -->
+	    <property name="jobDetail" ref="jobDetail3" />
+	    <!-- 10 seconds -->
+	    <property name="startDelay" value="10000" />
+	    <!-- repeat every 50 seconds -->
+	    <property name="repeatInterval" value="60000" />
+	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	    <property name="triggers">
 	        <list>
-	            <ref bean="simpleTrigger" />
+	            <ref bean="simpleTrigger3" />
 	            <ref bean="simpleTrigger2" />
+	            <ref bean="simpleTrigger1" />
 	        </list>
 	    </property>
 	</bean>
