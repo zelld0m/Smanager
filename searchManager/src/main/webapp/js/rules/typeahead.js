@@ -494,7 +494,8 @@
 		
 		base.initializeDisabledCheckbox = function(sectionList) {
 			var self = this;
-			if(sectionList == null || sectionList == undefined || sectionList.length  == 0) {
+			
+			if(sectionList == null || sectionList == undefined || sectionList.length  == 0 || (sectionList.length == 1 && sectionList[0].keywordAttributeType == 'OVERRIDE_PRIORITY')) {
 				self.$editPanel.find('input#categoryDisabled').attr('checked', false);
 				self.$editPanel.find('input#brandDisabled').attr('checked', false);
 				self.$editPanel.find('input#suggestionDisabled').attr('checked', true);
