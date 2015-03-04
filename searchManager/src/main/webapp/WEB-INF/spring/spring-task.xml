@@ -65,7 +65,7 @@
 	        <list>
 	            <ref bean="simpleTrigger3" />
 	            <ref bean="simpleTrigger2" />
-	            <ref bean="simpleTrigger1" />
+	            <ref bean="simpleTrigger" />
 	        </list>
 	    </property>
 	</bean>
