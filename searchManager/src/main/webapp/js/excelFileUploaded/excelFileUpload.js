@@ -32,18 +32,26 @@
 				beforeSubmit: function() {
 					self.$el.find("#uploadButtonContainer").hide();
 					
+					if(!$.isNotBlank(self.$el.find("#files").val())) {
+						jAlert("Please select a file.", base.options.moduleName != null ? base.options.moduleName : "");
+						self.$el.find("#uploadButtonContainer").show();
+						return false;
+					}
+					
 					if(!self.validateFileName(self.$el.find("#files").val())) {
 						jAlert("Invalid file type.", base.options.moduleName != null ? base.options.moduleName : "");
 						self.$el.find("#uploadButtonContainer").show();
 						return false;
 					}
+					
 				},
 				success: function(data) {
 					if(data.status < 0){
 						jAlert(data.errorMessage.message, base.options.moduleName != null ? base.options.moduleName : "");
 						self.$el.find("#uploadButtonContainer").show();
 					}else{
-						$( "#dialog-modal" ).dialog({
+						var $dialogPopUp = $('<div></div>');
+						$dialogPopUp.dialog({
 							autoOpen: false,
 							position: 'center' ,
 							title: 'Preview',
@@ -67,12 +75,10 @@
 								"Process Later": function() {$( this ).dialog( "close" ); self.showMainPage();}
 							}
 						});
-						$( "#dialog-modal" ).data('excel', data.data[0]);
-						$("#dialog-modal").empty().append(Mustache.to_html(base.options.mustachePreviewTemplate, data.data[0]));
-						$("#dialog-modal").dialog("open");
-						$(function() {
-							$( "#tabs" ).tabs().scrollabletab();
-						});	     
+						$dialogPopUp.data('excel', data.data[0]);
+						$dialogPopUp.empty().append(Mustache.to_html(base.options.mustachePreviewTemplate, data.data[0]));
+												
+						$dialogPopUp.dialog("open");
 						self.$el.find("#uploadButtonContainer").show();
 						self.showMainPage();
 					}

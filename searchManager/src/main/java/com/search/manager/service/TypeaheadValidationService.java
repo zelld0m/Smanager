@@ -66,8 +66,9 @@ public class TypeaheadValidationService {
 
 		for(String regex : expressionList) {
 			Pattern pattern = Pattern.compile(regex);
-
-			Matcher matcher = pattern.matcher(keyword);
+			System.out.println(regex);
+			Matcher matcher = pattern.matcher(keyword.replace("\n", "").replace("\r", ""));
+			
 			if(matcher.matches()) {
 				return false;
 			}
@@ -124,12 +125,11 @@ public class TypeaheadValidationService {
 		}
 
 	}
-
+	
 	public static void main(String[] args) {
 		TypeaheadValidationService service = new TypeaheadValidationService();
-
-		for(int i=0; i< 5; i++)
-			System.out.println(service.validateKeyword("pcmall", "1111111"));
+		
+		System.out.println(service.validateKeyword("pcmall", "<iframe src=\"http://ha.ckers.org/scriptlet.html</a\"><html><head></head><body></body></html></iframe>"));
 	}
 
 }

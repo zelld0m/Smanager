@@ -812,7 +812,7 @@
 
 				$divItem.find("label.keyword").html(rule["ruleName"]);
 				$divItem.find("label.keyword").html('<a href="javascript:void(0);" class="keywordLink">'+rule["ruleName"]+'</a>');
-
+				$divItem.find("label.keyword").find('a.keywordLink').text(rule["ruleName"]);
 				$divItem.find('a.keywordLink').off().on({
 					click : function(e) {
 						self.setTypeahead(e.data.rule);

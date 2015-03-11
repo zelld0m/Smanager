@@ -133,6 +133,12 @@ public class ExcelUploadManagerImpl {
 						continue;
 					}
 					
+					if(row.getPriority() > 99999 || row.getPriority() < 0) {
+						row.setErrorMessage("Invalid Priority value.");
+						failedList.add(row);
+						continue;
+					}
+					
 					TypeaheadRule typeaheadRule = new TypeaheadRule();
 					typeaheadRule.setRuleName(row.getKeyword());
 					typeaheadRule.setStoreId(storeId);
