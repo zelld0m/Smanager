@@ -134,7 +134,7 @@ public class ExcelUploadManagerImpl {
 					}
 					
 					if(row.getPriority() > 99999 || row.getPriority() < 0) {
-						row.setErrorMessage("Invalid Priority value.");
+						row.setErrorMessage("Invalid priority value.");
 						failedList.add(row);
 						continue;
 					}
