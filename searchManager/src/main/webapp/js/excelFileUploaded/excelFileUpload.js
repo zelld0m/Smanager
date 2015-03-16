@@ -49,6 +49,7 @@
 					if(data.status < 0){
 						jAlert(data.errorMessage.message, base.options.moduleName != null ? base.options.moduleName : "");
 						self.$el.find("#uploadButtonContainer").show();
+						self.$el.find("#files").val('');
 					}else{
 						var $dialogPopUp = $('<div></div>');
 						$dialogPopUp.dialog({
