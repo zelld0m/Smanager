@@ -47,7 +47,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
          LoggerFactory.getLogger(SolrJsonResponseParser.class);
 	 
     private JSONObject initialJson = null;
-    private JsonSlurper slurper = null;
     private JSONArray resultArray = null; // DOCS entry
     private JSONObject explainObject = null; // DOCS entry
     private JSONObject facetTemplateJSON = null; // Facet Template
@@ -61,63 +60,11 @@ public class SolrJsonResponseParser extends SolrResponseParser {
     private String wrf = "";
     
     public SolrJsonResponseParser() {
-        JsonConfig jsonConfig = new JsonConfig();
-        jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
-        slurper = new JsonSlurper(jsonConfig);
+    	super();
     }
 
     public void setSolrQueryParameters(HashMap<String, List<NameValuePair>> paramMap) throws SearchException {
         wrf = ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION);
-    }
-
-    private static JSONObject parseJsonResponse(JsonSlurper slurper, HttpResponse response) {
-        BufferedReader reader = null;
-        InputStream in = null;
-        try {
-            String encoding = (response.getEntity().getContentEncoding() != null) ? response.getEntity().getContentEncoding().getValue() : null;
-            if (encoding == null) {
-                encoding = "UTF-8";
-            }
-            in = response.getEntity().getContent();
-            reader = new BufferedReader(new InputStreamReader(in, encoding));
-            String line = null;
-            StringBuilder jsonText = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                jsonText.append(line.trim());
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("Json response" + jsonText.toString());
-            }
-            return (JSONObject) slurper.parseText(jsonText.toString());
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (Exception e) {
-            }
-        }
-        return null;
-    }
-
-    private static JSONObject locateJSONObject(JSONObject initialJson, String[] traverseList) {
-        JSONObject json = initialJson;
-        for (String element : traverseList) {
-            json = json.getJSONObject(element);
-            if (json.isNullObject()) {
-                json = null;
-                break;
-            }
-        }
-        return json;
     }
 
     @Override

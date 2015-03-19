@@ -31,7 +31,6 @@ import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.Store;
 import com.search.manager.core.processor.*;
 import com.search.manager.dao.*;
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
@@ -766,6 +765,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			
 			boolean disableRelevancy = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
 			boolean disableFacetSort = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
+			final String facetDefaultSorting = configManager.getProperty("facetsort", storeId, "facetsort.defaultSorting");
+			final String facetDefaultSortingOrder = configManager.getProperty("facetsort", storeId, "facetsort.defaultSortingOrder");
 			final boolean disableDidYouMean = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_DID_YOU_MEAN) != null;
 			
 			final List<Map<String, String>> activeRules = new ArrayList<Map<String, String>>();
@@ -1233,7 +1234,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			Future<Integer> getTemplateCount = null;
 			Future<Integer> getElevatedCount = null;
 			Future<Integer> getDemotedCount = null;
-
+			Future<Integer> getDefaultSortedFacet = null;
+			
 			// TASK 1A - get total number of items
 			final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 			getTemplateCount = completionService.submit(new Callable<Integer>() {
@@ -1330,6 +1332,31 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					tasks++;
 				}
 			}
+			
+			if(StringUtils.isNotBlank(facetDefaultSorting)) {
+				// TASK 1E - get default facet sorting
+				final ArrayList<NameValuePair> getPopularFacet = new ArrayList<NameValuePair>(nameValuePairs);
+				final String sortableCategory = solrHelper.isCNETImplementation() ? facetTemplate : "Category";
+				
+				final String[] fields;
+				{
+					if(solrHelper.isCNETImplementation()) {
+						fields = new String[2];
+						fields[0] = sortableCategory;
+						fields[1] = "Manufacturer";
+					} else {
+						fields = new String[1];
+						fields[0] = "Manufacturer";
+					}
+				}
+				getDefaultSortedFacet = completionService.submit(new Callable<Integer>() {
+					@Override
+					public Integer call() throws Exception {
+						return solrHelper.getPopularFacet(getPopularFacet, fields, facetDefaultSorting, facetDefaultSortingOrder);
+					}
+				});
+				tasks++;
+			}
 
 			while (tasks > 0) {
 				Future<Integer> completed = completionService.take();
@@ -1342,6 +1369,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				} else if (getDemotedCount != null && completed.equals(getDemotedCount)) {
 					numDemoteFound = completed.get();
 					logger.debug("Demote result size: {}", numDemoteFound);
+				}  else if (getDefaultSortedFacet != null && completed.equals(getDefaultSortedFacet)) {
+					logger.debug("Finished retrieving sorted popular facet. SIZE: {}", completed.get());
 				}
 				tasks--;
 			}

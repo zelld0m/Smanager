@@ -1,25 +1,40 @@
 package com.search.ws;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+import net.sf.json.groovy.JsonSlurper;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.enums.SortType;
 import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
@@ -57,6 +72,7 @@ public abstract class SolrResponseParser {
 			HttpServletResponse response, long totalTime)
 			throws SearchException;
 
+	protected JSONObject groupedFacetJson;
 	protected String requestPath;
 	protected int startRow;
 	protected int requestedRows;
@@ -82,7 +98,18 @@ public abstract class SolrResponseParser {
 	/* Enterprise Search start */
 	protected Map<String, String> elevateFieldOverrides;
 	protected Map<String, String> demoteFieldOverrides;
-
+	
+	protected JsonConfig jsonConfig;
+	protected JsonSlurper slurper;
+	protected Map<String, List<String>> popularFacetMap;
+	
+	
+	public SolrResponseParser() {
+		jsonConfig = new JsonConfig();
+		jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+		slurper = new JsonSlurper(jsonConfig);
+	}
+	
 	public void setElevateFieldOverrides(
 			Map<String, String> elevateFieldOverrides) {
 		this.elevateFieldOverrides = elevateFieldOverrides;
@@ -503,6 +530,56 @@ public abstract class SolrResponseParser {
 
 		logger.error(builder.toString(), e);
 	}
+	
+	protected static JSONObject locateJSONObject(JSONObject initialJson, String[] traverseList) {
+        JSONObject json = initialJson;
+        for (String element : traverseList) {
+            json = json.getJSONObject(element);
+            if (json.isNullObject()) {
+                json = null;
+                break;
+            }
+        }
+        return json;
+    }
+	
+	protected static JSONObject parseJsonResponse(JsonSlurper slurper, HttpResponse response) {
+        BufferedReader reader = null;
+        InputStream in = null;
+        try {
+            String encoding = (response.getEntity().getContentEncoding() != null) ? response.getEntity().getContentEncoding().getValue() : null;
+            if (encoding == null) {
+                encoding = "UTF-8";
+            }
+            in = response.getEntity().getContent();
+            reader = new BufferedReader(new InputStreamReader(in, encoding));
+            String line = null;
+            StringBuilder jsonText = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                jsonText.append(line.trim());
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Json response" + jsonText.toString());
+            }
+            return (JSONObject) slurper.parseText(jsonText.toString());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+            }
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
 
 	protected String getSpellCheckRequestPath() {
 		return StringUtils.replaceOnce(requestPath, "select",
@@ -519,6 +596,108 @@ public abstract class SolrResponseParser {
 
 	public void setCNETImplementation(boolean isCNETImplementation) {
 		this.isCNETImplementation = isCNETImplementation;
+	}
+
+	public int getPopularFacet(List<NameValuePair> requestParams, String[] facetFields, String sortBy, String sortOrder) throws SearchException {
+		if(facetSortRule != null && !SortType.DESC_POPULARITY.equals(facetSortRule.getSortType()))
+			return 0;
+		if(popularFacetMap == null) {
+			popularFacetMap = new HashMap<String, List<String>>();
+		}
+		HttpClient client = null;
+		HttpPost post = null;
+		InputStream in = null;
+		HttpResponse solrResponse = null;
+		List<NameValuePair> originalRequestParams = new ArrayList<NameValuePair>(requestParams);
+		// Remove unused parameters for this request.
+		for (NameValuePair param : originalRequestParams) {
+			if (StringUtils.equals(SolrConstants.SOLR_PARAM_SPELLCHECK, param.getName())
+                    || StringUtils.equals(SolrConstants.TAG_FACET, param.getName())
+                    || StringUtils.equals(SolrConstants.TAG_FACET_MINCOUNT, param.getName())
+                    || StringUtils.equals(SolrConstants.TAG_FACET_LIMIT, param.getName())
+                    || StringUtils.equals(SolrConstants.TAG_FACET_FIELD, param.getName())
+                    || StringUtils.equals(SolrConstants.SOLR_PARAM_ROWS, param.getName())
+                    || StringUtils.equals(SolrConstants.SOLR_PARAM_SORT, param.getName())) {
+				requestParams.remove(param);
+            }
+		}
+		
+		requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "*:* AND NOT "+ sortBy +":0"));
+		requestParams.add(new BasicNameValuePair("group", "true"));
+		requestParams.add(new BasicNameValuePair("group.truncate", "true"));
+		requestParams.add(new BasicNameValuePair("group.sort", sortBy + " " + (sortOrder != null ? sortOrder : "desc")));
+		requestParams.add(new BasicNameValuePair("group.limit", "0"));
+		requestParams.add(new BasicNameValuePair("wt", "json"));
+		requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "-1"));
+		for(String field : facetFields) {
+			requestParams.add(new BasicNameValuePair("group.field", field));
+		}
+		
+		try {
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+				logger.info("Facet sorting query: {}", post.toString());
+			}
+			Long start = new Date().getTime();
+			solrResponse = client.execute(post);
+			Long end = new Date().getTime() - start;
+			
+			System.out.println("QTime: "+end);
+			
+			groupedFacetJson = parseJsonResponse(slurper, solrResponse);
+						
+			JSONObject groups = groupedFacetJson.getJSONObject("grouped");
+			
+			for(String field : facetFields) {
+				if(!groups.isNullObject() && !groups.getJSONObject(field).isNullObject()) {
+					JSONArray fieldGroups = groups.getJSONObject(field).getJSONArray("groups");
+
+					if(fieldGroups != null && fieldGroups.size() > 0) {
+						List<String> values = new ArrayList<String>();
+
+						for(int i=0; i < fieldGroups.size(); i++) {
+							String value = fieldGroups.getJSONObject(i).getString("groupValue");
+
+							if(isCNETImplementation())
+								value = value.split("\\|")[0].trim();
+
+							if(!values.contains(value))
+								values.add(value);
+						}
+
+						popularFacetMap.put(field, values);
+					}
+				}
+			}
+			
+			
+		} catch (Exception e) {
+			String error = "Error occured while trying to get facet sorting by popularity";
+			logSolrError(post, error, e);
+			throw new SearchException(error, e);
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
+			if (post != null) {
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
+				post.releaseConnection();
+			}
+			if (client != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}
+		return 0;
 	}
 
 }

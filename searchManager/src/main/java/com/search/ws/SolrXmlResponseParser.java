@@ -3,6 +3,7 @@ package com.search.ws;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -568,6 +570,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			addElevatedEntries();
 			addDemotedEntries();
 			addSpellcheckEntries();
+			applyDefaultFacetSorting();
 			applyFacetSort();
 			resultNode.removeChild(placeHolderNode);
 			qtimeNode.setTextContent(String.valueOf(totalTime));
@@ -741,6 +744,67 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		for (Node node : spellCheckParams) {
 			responseHeaderParamsNode.appendChild(mainDoc.importNode(node, true));
 		}
+	}
+	
+	private void applyDefaultFacetSorting() {
+		if (facetFieldsNode == null || popularFacetMap == null || popularFacetMap.size() == 0) {
+			return;
+		}
+		
+		boolean isFacetTemplate = false;
+		
+		if (isCNETImplementation) {
+			isFacetTemplate = true;
+		}
+		
+		NodeList children = facetFieldsNode.getChildNodes();
+		for (int i = 0, size = children.getLength(); i < size; i++) {
+			Node currentNode = children.item(i);
+			
+			for(String key : popularFacetMap.keySet()) {
+				if (currentNode.getNodeType() == Node.ELEMENT_NODE && StringUtils.equals(key,
+						currentNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue())) {
+					List<FacetEntry> entries = new ArrayList<FacetEntry>();
+					NodeList facetFieldValues = currentNode.getChildNodes();
+
+					Map<String, Node> nodeMap = new HashMap<String, Node>();
+					for (int j = 0; j < facetFieldValues.getLength(); j++) {
+						Node facetFieldValue = facetFieldValues.item(j);
+						if (facetFieldValue!=null){
+							NamedNodeMap attribs = facetFieldValue.getAttributes();
+							if(attribs!=null){
+								String name = attribs.getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
+								String count = facetFieldValue.getTextContent();
+								entries.add(new FacetEntry(name, Long.parseLong(count)));
+								nodeMap.put(name, facetFieldValue);
+							}
+						}
+					}
+
+					// clear everything
+					Node tmpNode = currentNode.getFirstChild();
+					while (tmpNode != null) {
+						currentNode.removeChild(tmpNode);
+						tmpNode = currentNode.getFirstChild();
+					}
+
+					// sort
+					if (isFacetTemplate) {
+						FacetEntry.sortFacetTemplateEntries(entries, SortType.DESC_POPULARITY, popularFacetMap.get(key));
+					} else {
+						FacetEntry.sortEntries(entries, SortType.DESC_POPULARITY, popularFacetMap.get(key));
+					}
+
+					// insert everything in sorted order
+					for (FacetEntry entry : entries) {
+						currentNode.appendChild(mainDoc.importNode(nodeMap.get(entry.getLabel()), true));
+					}
+					break;
+				}
+			}
+			
+		}
+		
 	}
 
 	private void applyFacetSort() {
@@ -923,7 +987,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 		}
 	}
-
+	
 	private Element createLstElement(Document doc, String nameValue) {
 		Element el = doc.createElement(SolrConstants.TAG_LIST);
 		el.setAttribute(SolrConstants.ATTR_NAME, nameValue);
