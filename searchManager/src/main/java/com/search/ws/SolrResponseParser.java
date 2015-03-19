@@ -599,7 +599,7 @@ public abstract class SolrResponseParser {
 	}
 
 	public int getPopularFacet(List<NameValuePair> requestParams, String[] facetFields, String sortBy, String sortOrder) throws SearchException {
-		if(facetSortRule != null && !SortType.DESC_POPULARITY.equals(facetSortRule.getSortType()))
+		if(facetSortRule != null && !SortType.DEFAULT.equals(facetSortRule.getSortType()))
 			return 0;
 		if(popularFacetMap == null) {
 			popularFacetMap = new HashMap<String, List<String>>();

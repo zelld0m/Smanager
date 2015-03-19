@@ -17,7 +17,7 @@ public enum SortType {
 	DESC_ALPHABETICALLY("Z-A", "Descending Alphabetically"),
 	ASC_COUNT("Count Asc", "Ascending by Count"),
 	DESC_COUNT("Count Desc", "Descending by Count"),
-	DESC_POPULARITY("Popularity Desc", "Descending by Popularity");
+	DEFAULT("DEFAULT", "DEFAULT");
 	
 	private final String displayText;
 	private final String description;

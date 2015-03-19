@@ -790,9 +790,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 
 					// sort
 					if (isFacetTemplate) {
-						FacetEntry.sortFacetTemplateEntries(entries, SortType.DESC_POPULARITY, popularFacetMap.get(key));
+						FacetEntry.sortFacetTemplateEntries(entries, SortType.DEFAULT, popularFacetMap.get(key));
 					} else {
-						FacetEntry.sortEntries(entries, SortType.DESC_POPULARITY, popularFacetMap.get(key));
+						FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(key));
 					}
 
 					// insert everything in sorted order

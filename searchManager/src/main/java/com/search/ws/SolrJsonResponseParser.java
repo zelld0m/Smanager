@@ -1,9 +1,5 @@
 package com.search.ws;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.groovy.JsonSlurper;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -446,9 +440,15 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             int count = facetTemplateJSON.getInt(key);
 
             String[] category = key.split("\\ \\|\\ ");
+            
+            
             // TODO: optimize
             if (category.length > 0) {
 
+            	for(int i=0; i<category.length; i++) {
+                	category[i] = category[i].trim();
+                }
+                
                 CNetFacetTemplate tmpFacet = root;
                 CNetFacetTemplate currentFacet = root;
 
@@ -507,9 +507,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 
 //            if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !configManager.isMemberOf("PCM", facetSortRule.getStoreId())) {
         	if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !isCNETImplementation) {    
+        		List<FacetEntry> entries = new ArrayList<FacetEntry>();
         		for (String lvl1Key : root.getFacets()) {
-                    CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
-                    lvl1Map.put(lvl1Key, lvl1.getCount());
+        			entries.add(new FacetEntry(lvl1Key, root.getFacet(lvl1Key).getCount()));
+                }
+        		
+        		// Sort by popularity
+        		if(popularFacetMap != null && popularFacetMap.size() > 0) {
+        			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(facetTemplate));
+        		}
+        		
+        		for (FacetEntry entry : entries) {
+                    lvl1Map.put(entry.getLabel(), entry.getCount());
                 }
             } else {
                 facetSortRule.getItems().containsKey("Category");
@@ -580,6 +589,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             addDemotedEntries();
             addSpellcheckEntries();
             getFacetTemplates();
+            applyDefaultFacetSorting();
             applyFacetSort();
             responseHeader.put(SolrConstants.ATTR_NAME_VALUE_QTIME, totalTime);
             boolean wrfPresent = !StringUtils.isEmpty(wrf);
@@ -716,6 +726,35 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 }
             }
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+	private void applyDefaultFacetSorting() {
+    	if (facetFields == null || popularFacetMap == null || popularFacetMap.size() == 0) {
+			return;
+		}
+
+    	for(String key : popularFacetMap.keySet()) {
+    		JSONObject facetField = facetFields.getJSONObject(key);
+    		
+    		if(!facetField.isNullObject()) {
+    			
+    			List<FacetEntry> entries = new ArrayList<FacetEntry>();
+    			
+    			for (String facetValue : (Set<String>) facetField.keySet()) {
+                    entries.add(new FacetEntry(facetValue, facetField.getLong(facetValue)));
+                }
+    			
+    			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(key));
+
+                JSONObject facets = new JSONObject();
+                for (FacetEntry entry : entries) {
+                    facets.element(entry.getLabel(), entry.getCount());
+                }
+                facetFields.put(key, facets);
+    		}
+    		
+    	}
     }
 
     @SuppressWarnings("unchecked")
