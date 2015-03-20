@@ -514,7 +514,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
         		
         		// Sort by popularity
         		if(popularFacetMap != null && popularFacetMap.size() > 0) {
-        			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(facetTemplate));
+        			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
         		}
         		
         		for (FacetEntry entry : entries) {
@@ -526,11 +526,17 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 for (String lvl1Key : root.getFacets()) {
                     entries.add(new FacetEntry(lvl1Key, root.getFacet(lvl1Key).getCount()));
                 }
+                
+             // Sort by popularity
+        		if(popularFacetMap != null && popularFacetMap.size() > 0 && SortType.DEFAULT.equals(facetSortRule.getSortType())) {
+        			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
+        		}
+                
                 SortType sortType = facetSortRule.getGroupSortType().get("Category");
                 if (sortType == null) {
                     sortType = facetSortRule.getSortType();
                 }
-                FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get("Category"));
+                FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get("Category"), false);
 
                 for (FacetEntry entry : entries) {
                     lvl1Map.put(entry.getLabel(), entry.getCount());
@@ -745,7 +751,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     entries.add(new FacetEntry(facetValue, facetField.getLong(facetValue)));
                 }
     			
-    			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(key));
+    			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
 
                 JSONObject facets = new JSONObject();
                 for (FacetEntry entry : entries) {
@@ -778,7 +784,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 if (sortType == null) {
                     sortType = facetSortRule.getSortType();
                 }
-                FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get(key));
+                FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get(key), false);
 
                 JSONObject facets = new JSONObject();
                 for (FacetEntry entry : entries) {

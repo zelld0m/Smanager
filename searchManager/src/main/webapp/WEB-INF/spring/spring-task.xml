@@ -60,15 +60,4 @@
 	    <property name="repeatInterval" value="60000" />
 	</bean>
 
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-	    <property name="triggers">
-	        <list>
-	            <ref bean="simpleTrigger3" />
-	            <ref bean="simpleTrigger2" />
-	            <ref bean="simpleTrigger" />
-	        </list>
-	    </property>
-	</bean>
-
-
 </beans>

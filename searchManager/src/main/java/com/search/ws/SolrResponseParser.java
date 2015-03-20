@@ -73,6 +73,7 @@ public abstract class SolrResponseParser {
 			throws SearchException;
 
 	protected JSONObject groupedFacetJson;
+	protected String defaultSortOrder;
 	protected String requestPath;
 	protected int startRow;
 	protected int requestedRows;
@@ -598,6 +599,10 @@ public abstract class SolrResponseParser {
 		this.isCNETImplementation = isCNETImplementation;
 	}
 
+	public void setDefaultSortOrder(String defaultSortOrder) {
+		this.defaultSortOrder = defaultSortOrder;
+	}
+
 	public int getPopularFacet(List<NameValuePair> requestParams, String[] facetFields, String sortBy, String sortOrder) throws SearchException {
 		if(facetSortRule != null && !SortType.DEFAULT.equals(facetSortRule.getSortType()))
 			return 0;
@@ -617,17 +622,18 @@ public abstract class SolrResponseParser {
                     || StringUtils.equals(SolrConstants.TAG_FACET_LIMIT, param.getName())
                     || StringUtils.equals(SolrConstants.TAG_FACET_FIELD, param.getName())
                     || StringUtils.equals(SolrConstants.SOLR_PARAM_ROWS, param.getName())
-                    || StringUtils.equals(SolrConstants.SOLR_PARAM_SORT, param.getName())) {
+                    || StringUtils.equals(SolrConstants.SOLR_PARAM_SORT, param.getName())
+                    || StringUtils.equals(SolrConstants.SOLR_PARAM_START, param.getName())) {
 				requestParams.remove(param);
             }
 		}
 		
 		requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "*:* AND NOT "+ sortBy +":0"));
 		requestParams.add(new BasicNameValuePair("group", "true"));
-		requestParams.add(new BasicNameValuePair("group.truncate", "true"));
 		requestParams.add(new BasicNameValuePair("group.sort", sortBy + " " + (sortOrder != null ? sortOrder : "desc")));
 		requestParams.add(new BasicNameValuePair("group.limit", "0"));
 		requestParams.add(new BasicNameValuePair("wt", "json"));
+		requestParams.add(new BasicNameValuePair("sort", sortBy + " " + (sortOrder != null ? sortOrder : "desc")));
 		requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "-1"));
 		for(String field : facetFields) {
 			requestParams.add(new BasicNameValuePair("group.field", field));
@@ -643,11 +649,7 @@ public abstract class SolrResponseParser {
 				logger.debug("Parameter: " + requestParams);
 				logger.info("Facet sorting query: {}", post.toString());
 			}
-			Long start = new Date().getTime();
 			solrResponse = client.execute(post);
-			Long end = new Date().getTime() - start;
-			
-			System.out.println("QTime: "+end);
 			
 			groupedFacetJson = parseJsonResponse(slurper, solrResponse);
 						

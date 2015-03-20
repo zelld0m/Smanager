@@ -790,9 +790,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 
 					// sort
 					if (isFacetTemplate) {
-						FacetEntry.sortFacetTemplateEntries(entries, SortType.DEFAULT, popularFacetMap.get(key));
+						FacetEntry.sortFacetTemplateEntries(entries, SortType.DEFAULT, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
 					} else {
-						FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(key));
+						FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
 					}
 
 					// insert everything in sorted order
@@ -860,9 +860,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 
 					// sort
 					if (isFacetTemplate) {
-						FacetEntry.sortFacetTemplateEntries(entries, sortType, elevatedValues);
+						FacetEntry.sortFacetTemplateEntries(entries, sortType, elevatedValues, false);
 					} else {
-						FacetEntry.sortEntries(entries, sortType, elevatedValues);
+						FacetEntry.sortEntries(entries, sortType, elevatedValues, false);
 					}
 
 					// insert everything in sorted order

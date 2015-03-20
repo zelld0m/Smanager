@@ -47,7 +47,7 @@ public class FacetEntry {
         return count;
     }
 
-    public static void sortEntries(List<FacetEntry> entries, final SortType sortType, List<String> elevatedValues) {
+    public static void sortEntries(List<FacetEntry> entries, final SortType sortType, List<String> elevatedValues, boolean appendElevatedItemsToBottom) {
 
         Map<String, FacetEntry> map = new HashMap<String, FacetEntry>();
         for (FacetEntry entry : entries) {
@@ -99,7 +99,7 @@ public class FacetEntry {
         });
 
         if (CollectionUtils.isNotEmpty(elevatedValues)) {
-            int i = 0;
+            int i = !appendElevatedItemsToBottom ? 0 : entries.size();
             for (String elevatedValue : elevatedValues) {
                 FacetEntry entry = map.get(elevatedValue);
                 if (entry != null) {
@@ -125,7 +125,7 @@ public class FacetEntry {
     /**
      * For Facet Template Name facets. Special processing.
      */
-    public static void sortFacetTemplateEntries(List<FacetEntry> entries, final SortType sortType, List<String> elevatedValues) {
+    public static void sortFacetTemplateEntries(List<FacetEntry> entries, final SortType sortType, List<String> elevatedValues, boolean appendElevatedItemsToBottom) {
         // collate values
         Map<String, FacetEntry> catMap = new HashMap<String, FacetEntry>();
         for (FacetEntry entry : entries) {
@@ -141,7 +141,7 @@ public class FacetEntry {
         // sort 1st level by count
         final List<FacetEntry> mapEntries = new ArrayList<FacetEntry>();
         mapEntries.addAll(catMap.values());
-        sortEntries(mapEntries, sortType, elevatedValues);
+        sortEntries(mapEntries, sortType, elevatedValues, appendElevatedItemsToBottom);
 
         final List<String> sortedMapEntries = new ArrayList<String>();
         for (FacetEntry entry : mapEntries) {
@@ -220,25 +220,25 @@ public class FacetEntry {
 //		}
 //		System.out.println();
 
-        sortFacetTemplateEntries(entries, SortType.ASC_ALPHABETICALLY, elevatedValues);
+        sortFacetTemplateEntries(entries, SortType.ASC_ALPHABETICALLY, elevatedValues, false);
         for (FacetEntry entry : entries) {
             logger.info(String.format("%s: %i", entry.getLabel(), entry.getCount()));
         }
         logger.info(String.format("%n"));
 
-        sortFacetTemplateEntries(entries, SortType.DESC_ALPHABETICALLY, elevatedValues);
+        sortFacetTemplateEntries(entries, SortType.DESC_ALPHABETICALLY, elevatedValues, false);
         for (FacetEntry entry : entries) {
             logger.info(String.format("%s: %i", entry.getLabel(), entry.getCount()));
         }
         logger.info(String.format("%n"));
 
-        sortFacetTemplateEntries(entries, SortType.ASC_COUNT, elevatedValues);
+        sortFacetTemplateEntries(entries, SortType.ASC_COUNT, elevatedValues, false);
         for (FacetEntry entry : entries) {
             logger.info(String.format("%s: %i", entry.getLabel(), entry.getCount()));
         }
         logger.info(String.format("%n"));
 
-        sortFacetTemplateEntries(entries, SortType.DESC_COUNT, elevatedValues);
+        sortFacetTemplateEntries(entries, SortType.DESC_COUNT, elevatedValues, false);
         for (FacetEntry entry : entries) {
             logger.info(String.format("%s: %i", entry.getLabel(), entry.getCount()));
         }

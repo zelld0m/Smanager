@@ -766,7 +766,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			boolean disableRelevancy = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
 			boolean disableFacetSort = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
 			final String facetDefaultSorting = configManager.getProperty("facetsort", storeId, "facetsort.defaultSorting");
-			final String facetDefaultSortingOrder = configManager.getProperty("facetsort", storeId, "facetsort.defaultSortingOrder");
+			String facetDefaultSortingOrder = configManager.getProperty("facetsort", storeId, "facetsort.defaultSortingOrder");
 			final boolean disableDidYouMean = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_DID_YOU_MEAN) != null;
 			
 			final List<Map<String, String>> activeRules = new ArrayList<Map<String, String>>();
@@ -1337,7 +1337,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				// TASK 1E - get default facet sorting
 				final ArrayList<NameValuePair> getPopularFacet = new ArrayList<NameValuePair>(nameValuePairs);
 				final String sortableCategory = solrHelper.isCNETImplementation() ? facetTemplate : "Category";
-				
+				facetDefaultSortingOrder = facetDefaultSortingOrder == null ? "desc" : facetDefaultSortingOrder;
+				final String defaultSortOrder = facetDefaultSortingOrder;
+				solrHelper.setDefaultSortOrder(defaultSortOrder);
 				final String[] fields;
 				{
 					if(solrHelper.isCNETImplementation()) {
@@ -1352,7 +1354,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				getDefaultSortedFacet = completionService.submit(new Callable<Integer>() {
 					@Override
 					public Integer call() throws Exception {
-						return solrHelper.getPopularFacet(getPopularFacet, fields, facetDefaultSorting, facetDefaultSortingOrder);
+						return solrHelper.getPopularFacet(getPopularFacet, fields, facetDefaultSorting, defaultSortOrder);
 					}
 				});
 				tasks++;
