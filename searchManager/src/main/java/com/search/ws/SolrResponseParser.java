@@ -604,11 +604,12 @@ public abstract class SolrResponseParser {
 	}
 
 	public int getPopularFacet(List<NameValuePair> requestParams, String[] facetFields, String sortBy, String sortOrder) throws SearchException {
-		if(facetSortRule != null && !SortType.DEFAULT.equals(facetSortRule.getSortType()))
+		if(facetSortRule != null && !SortType.DEFAULT_ORDER.equals(facetSortRule.getSortType()))
 			return 0;
 		if(popularFacetMap == null) {
 			popularFacetMap = new HashMap<String, List<String>>();
 		}
+		int facetCount = 0;
 		HttpClient client = null;
 		HttpPost post = null;
 		InputStream in = null;
@@ -671,7 +672,7 @@ public abstract class SolrResponseParser {
 							if(!values.contains(value))
 								values.add(value);
 						}
-
+						facetCount += values.size();
 						popularFacetMap.put(field, values);
 					}
 				}
@@ -699,7 +700,7 @@ public abstract class SolrResponseParser {
 				client.getConnectionManager().shutdown();
 			}
 		}
-		return 0;
+		return facetCount;
 	}
 
 }

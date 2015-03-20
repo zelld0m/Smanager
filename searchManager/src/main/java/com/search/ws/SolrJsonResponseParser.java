@@ -514,7 +514,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
         		
         		// Sort by popularity
         		if(popularFacetMap != null && popularFacetMap.size() > 0) {
-        			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
+        			FacetEntry.sortEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
         		}
         		
         		for (FacetEntry entry : entries) {
@@ -528,8 +528,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 }
                 
              // Sort by popularity
-        		if(popularFacetMap != null && popularFacetMap.size() > 0 && SortType.DEFAULT.equals(facetSortRule.getSortType())) {
-        			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
+        		if(popularFacetMap != null && popularFacetMap.size() > 0 && SortType.DEFAULT_ORDER.equals(facetSortRule.getSortType())) {
+        			FacetEntry.sortEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
         		}
                 
                 SortType sortType = facetSortRule.getGroupSortType().get("Category");
@@ -751,7 +751,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     entries.add(new FacetEntry(facetValue, facetField.getLong(facetValue)));
                 }
     			
-    			FacetEntry.sortEntries(entries, SortType.DEFAULT, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
+    			FacetEntry.sortEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
 
                 JSONObject facets = new JSONObject();
                 for (FacetEntry entry : entries) {
