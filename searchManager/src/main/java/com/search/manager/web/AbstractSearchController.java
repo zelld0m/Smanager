@@ -1333,7 +1333,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				}
 			}
 			
-			if(StringUtils.isNotBlank(facetDefaultSorting)) {
+			if(StringUtils.isNotBlank(facetDefaultSorting) && StringUtils.isNotBlank(facetDefaultSortingOrder)) {
 				// TASK 1E - get default facet sorting
 				final ArrayList<NameValuePair> getPopularFacet = new ArrayList<NameValuePair>(nameValuePairs);
 				final String sortableCategory = solrHelper.isCNETImplementation() ? facetTemplate : "Category";
