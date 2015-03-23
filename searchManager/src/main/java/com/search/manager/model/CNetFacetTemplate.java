@@ -2,7 +2,7 @@ package com.search.manager.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +17,7 @@ public class CNetFacetTemplate implements Serializable {
 	private String label;
 	private long   count;
 	
-	private Map<String, CNetFacetTemplate> facetMap = new HashMap<String, CNetFacetTemplate>();
+	private Map<String, CNetFacetTemplate> facetMap = new LinkedHashMap<String, CNetFacetTemplate>();
 
 	public CNetFacetTemplate(String label, long count) {
 		this.label = label;
