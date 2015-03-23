@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,40 +64,42 @@ public class FacetEntry {
             }
         }
 
-        Collections.sort(entries, new Comparator<FacetEntry>() {
-            @Override
-            public int compare(FacetEntry entry1, FacetEntry entry2) {
-                long val = 0;
-                if (sortType == SortType.ASC_ALPHABETICALLY) {
-                    val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
-                    if (val == 0) {
-                        val = entry1.getLabel().compareTo(entry2.getLabel());
-                    }
-                } else if (sortType == SortType.DESC_ALPHABETICALLY) {
-                    val = entry2.getLabel().compareToIgnoreCase(entry1.getLabel());
-                    if (val == 0) {
-                        val = entry2.getLabel().compareTo(entry1.getLabel());
-                    }
-                } else if (sortType == SortType.ASC_COUNT) {
-                    val = entry1.getCount() - entry2.getCount();
-                    if (val == 0) {
-                        val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
-                        if (val == 0) {
-                            val = entry1.getLabel().compareTo(entry2.getLabel());
-                        }
-                    }
-                } else if (sortType == SortType.DESC_COUNT) {
-                    val = entry2.getCount() - entry1.getCount();
-                    if (val == 0) {
-                        val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
-                        if (val == 0) {
-                            val = entry1.getLabel().compareTo(entry2.getLabel());
-                        }
-                    }
-                }
-                return ((val < 0) ? -1 : ((val > 0) ? 1 : 0));
-            }
-        });
+        if(!SortType.DEFAULT_ORDER.equals(sortType)){
+        	Collections.sort(entries, new Comparator<FacetEntry>() {
+        		@Override
+        		public int compare(FacetEntry entry1, FacetEntry entry2) {
+        			long val = 0;
+        			if (sortType == SortType.ASC_ALPHABETICALLY) {
+        				val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
+        				if (val == 0) {
+        					val = entry1.getLabel().compareTo(entry2.getLabel());
+        				}
+        			} else if (sortType == SortType.DESC_ALPHABETICALLY) {
+        				val = entry2.getLabel().compareToIgnoreCase(entry1.getLabel());
+        				if (val == 0) {
+        					val = entry2.getLabel().compareTo(entry1.getLabel());
+        				}
+        			} else if (sortType == SortType.ASC_COUNT) {
+        				val = entry1.getCount() - entry2.getCount();
+        				if (val == 0) {
+        					val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
+        					if (val == 0) {
+        						val = entry1.getLabel().compareTo(entry2.getLabel());
+        					}
+        				}
+        			} else if (sortType == SortType.DESC_COUNT) {
+        				val = entry2.getCount() - entry1.getCount();
+        				if (val == 0) {
+        					val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
+        					if (val == 0) {
+        						val = entry1.getLabel().compareTo(entry2.getLabel());
+        					}
+        				}
+        			}
+        			return ((val < 0) ? -1 : ((val > 0) ? 1 : 0));
+        		}
+        	});
+        }
 
         if (CollectionUtils.isNotEmpty(elevatedValues)) {
             int i = !appendElevatedItemsToBottom ? 0 : entries.size();
@@ -127,7 +130,7 @@ public class FacetEntry {
      */
     public static void sortFacetTemplateEntries(List<FacetEntry> entries, final SortType sortType, List<String> elevatedValues, boolean appendElevatedItemsToBottom) {
         // collate values
-        Map<String, FacetEntry> catMap = new HashMap<String, FacetEntry>();
+        Map<String, FacetEntry> catMap = new LinkedHashMap<String, FacetEntry>();
         for (FacetEntry entry : entries) {
             String key = getFirstLevelCategory(entry.getLabel());
             FacetEntry catMapEntry = catMap.get(key);
@@ -150,21 +153,21 @@ public class FacetEntry {
 
         // sort entries
         Collections.sort(entries, new Comparator<FacetEntry>() {
-            @Override
-            public int compare(FacetEntry entry1, FacetEntry entry2) {
-                int val = 0;
-                int val1 = sortedMapEntries.indexOf(getFirstLevelCategory(entry1.getLabel()));
-                int val2 = sortedMapEntries.indexOf(getFirstLevelCategory(entry2.getLabel()));
-                if (val1 == val2) {
-                    val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
-                    if (val == 0) {
-                        val = entry1.getLabel().compareTo(entry2.getLabel());
-                    }
-                } else {
-                    val = val1 - val2;
-                }
-                return val;
-            }
+        	@Override
+        	public int compare(FacetEntry entry1, FacetEntry entry2) {
+        		int val = 0;
+        		int val1 = sortedMapEntries.indexOf(getFirstLevelCategory(entry1.getLabel()));
+        		int val2 = sortedMapEntries.indexOf(getFirstLevelCategory(entry2.getLabel()));
+        		if (val1 == val2) {
+        			val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
+        			if (val == 0) {
+        				val = entry1.getLabel().compareTo(entry2.getLabel());
+        			}
+        		} else {
+        			val = val1 - val2;
+        		}
+        		return val;
+        	}
         });
 
     }

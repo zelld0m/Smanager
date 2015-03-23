@@ -753,15 +753,16 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		
 		boolean isFacetTemplate = false;
 		
-		if (isCNETImplementation) {
-			isFacetTemplate = true;
-		}
-		
 		NodeList children = facetFieldsNode.getChildNodes();
 		for (int i = 0, size = children.getLength(); i < size; i++) {
 			Node currentNode = children.item(i);
 			
 			for(String key : popularFacetMap.keySet()) {
+				
+				if (isCNETImplementation && key.endsWith("FacetTemplate")) {
+					isFacetTemplate = true;
+				}
+				
 				if (currentNode.getNodeType() == Node.ELEMENT_NODE && StringUtils.equals(key,
 						currentNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue())) {
 					List<FacetEntry> entries = new ArrayList<FacetEntry>();
