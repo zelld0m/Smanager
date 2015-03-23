@@ -624,7 +624,8 @@ public abstract class SolrResponseParser {
                     || StringUtils.equals(SolrConstants.TAG_FACET_FIELD, param.getName())
                     || StringUtils.equals(SolrConstants.SOLR_PARAM_ROWS, param.getName())
                     || StringUtils.equals(SolrConstants.SOLR_PARAM_SORT, param.getName())
-                    || StringUtils.equals(SolrConstants.SOLR_PARAM_START, param.getName())) {
+                    || StringUtils.equals(SolrConstants.SOLR_PARAM_START, param.getName())
+                    || StringUtils.equals(SolrConstants.SOLR_PARAM_WRITER_TYPE, param.getName())) {
 				requestParams.remove(param);
             }
 		}
