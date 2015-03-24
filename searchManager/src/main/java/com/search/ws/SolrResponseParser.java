@@ -603,7 +603,7 @@ public abstract class SolrResponseParser {
 		this.defaultSortOrder = defaultSortOrder;
 	}
 
-	public int getPopularFacet(List<NameValuePair> requestParams, String[] facetFields, String sortBy, String sortOrder) throws SearchException {
+	public int getPopularFacet(List<NameValuePair> requestParams, String[] facetFields, String sortBy, String sortOrder, String maxRow) throws SearchException {
 		if(facetSortRule != null && !SortType.DEFAULT_ORDER.equals(facetSortRule.getSortType()))
 			return 0;
 		if(popularFacetMap == null) {
@@ -636,7 +636,7 @@ public abstract class SolrResponseParser {
 		requestParams.add(new BasicNameValuePair("group.limit", "0"));
 		requestParams.add(new BasicNameValuePair("wt", "json"));
 		requestParams.add(new BasicNameValuePair("sort", sortBy + " " + (sortOrder != null ? sortOrder : "desc")));
-		requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "-1"));
+		requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, maxRow));
 		for(String field : facetFields) {
 			requestParams.add(new BasicNameValuePair("group.field", field));
 		}

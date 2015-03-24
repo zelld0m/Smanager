@@ -772,6 +772,12 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			final List<Map<String, String>> activeRules = new ArrayList<Map<String, String>>();
 			boolean disableBanner = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_BANNER) != null;
 
+			final String maxTopFacetRows; 
+			{
+				String temp = configManager.getProperty("facetsort", storeId, "facetsort.maxRows");
+				maxTopFacetRows = StringUtils.isNotBlank(temp) ? temp : "200";
+			}
+			
 			List<ElevateResult> elevatedList = null;
 			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
@@ -1354,7 +1360,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				getDefaultSortedFacet = completionService.submit(new Callable<Integer>() {
 					@Override
 					public Integer call() throws Exception {
-						return solrHelper.getPopularFacet(getPopularFacet, fields, facetDefaultSorting, defaultSortOrder);
+						return solrHelper.getPopularFacet(getPopularFacet, fields, facetDefaultSorting, defaultSortOrder, maxTopFacetRows);
 					}
 				});
 				tasks++;
