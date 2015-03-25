@@ -791,9 +791,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 
 					// sort
 					if (isFacetTemplate) {
-						FacetEntry.sortFacetTemplateEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
+						FacetEntry.sortFacetTemplateEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
 					} else {
-						FacetEntry.sortEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
+						FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
 					}
 
 					// insert everything in sorted order

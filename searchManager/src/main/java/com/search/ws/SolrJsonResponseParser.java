@@ -79,6 +79,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             }
             solrResponse = client.execute(post);
             initialJson = parseJsonResponse(slurper, solrResponse);
+            System.out.println(initialJson.toString());
             // locate the result node and reference it <result name="response" maxScore="23.015398" start="0" numFound="360207">
             // results will be added here
             resultArray = initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
@@ -514,7 +515,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
         		
         		// Sort by popularity
         		if(popularFacetMap != null && popularFacetMap.size() > 0) {
-        			FacetEntry.sortEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
+        			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
         		}
         		
         		for (FacetEntry entry : entries) {
@@ -529,7 +530,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 
                 // Sort by popularity
         		if(popularFacetMap != null && popularFacetMap.size() > 0 && popularFacetMap.get(facetTemplate) != null) {
-        			FacetEntry.sortEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
+        			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
         		}
                 
                 SortType sortType = facetSortRule.getGroupSortType().get("Category");
@@ -751,7 +752,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     entries.add(new FacetEntry(facetValue, facetField.getLong(facetValue)));
                 }
     			
-    			FacetEntry.sortEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
+    			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
 
                 JSONObject facets = new JSONObject();
                 for (FacetEntry entry : entries) {
