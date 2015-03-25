@@ -527,8 +527,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     entries.add(new FacetEntry(lvl1Key, root.getFacet(lvl1Key).getCount()));
                 }
                 
-             // Sort by popularity
-        		if(popularFacetMap != null && popularFacetMap.size() > 0 && SortType.DEFAULT_ORDER.equals(facetSortRule.getSortType())) {
+                // Sort by popularity
+        		if(popularFacetMap != null && popularFacetMap.size() > 0 && popularFacetMap.get(facetTemplate) != null) {
         			FacetEntry.sortEntries(entries, SortType.DEFAULT_ORDER, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
         		}
                 

@@ -470,6 +470,7 @@
 									case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
 									case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
 									case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+									case "DEFAULT_ORDER": sortTypeDisplay = "Default Order"; break;
 									}
 
 									$tr.find("#itemSortType").text(sortTypeDisplay);
@@ -959,6 +960,7 @@
 							case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
 							case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
 							case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+							case "DEFAULT_ORDER": sortTypeDisplay = "Default Order"; break;
 							}
 
 							$tr.find("#itemSortType").text(sortTypeDisplay);

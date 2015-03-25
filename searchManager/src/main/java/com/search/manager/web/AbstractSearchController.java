@@ -1347,11 +1347,16 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				final String defaultSortOrder = facetDefaultSortingOrder;
 				solrHelper.setDefaultSortOrder(defaultSortOrder);
 				final String[] fields;
+				final Map<String, String> facetFieldMap = new HashMap<String, String>();
 				{
+					facetFieldMap.put("Manufacturer", "Manufacturer");
 					if(solrHelper.isCNETImplementation()) {
 						fields = new String[2];
 						fields[0] = sortableCategory;
 						fields[1] = "Manufacturer";
+						
+						facetFieldMap.put("Category", sortableCategory);
+						
 					} else {
 						fields = new String[1];
 						fields[0] = "Manufacturer";
@@ -1360,7 +1365,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				getDefaultSortedFacet = completionService.submit(new Callable<Integer>() {
 					@Override
 					public Integer call() throws Exception {
-						return solrHelper.getPopularFacet(getPopularFacet, fields, facetDefaultSorting, defaultSortOrder, maxTopFacetRows);
+						return solrHelper.getPopularFacet(getPopularFacet, fields, facetFieldMap, facetDefaultSorting, defaultSortOrder, maxTopFacetRows);
 					}
 				});
 				tasks++;

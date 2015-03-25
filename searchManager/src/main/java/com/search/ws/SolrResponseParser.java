@@ -21,6 +21,7 @@ import net.sf.json.JsonConfig;
 import net.sf.json.groovy.JsonSlurper;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -603,8 +604,25 @@ public abstract class SolrResponseParser {
 		this.defaultSortOrder = defaultSortOrder;
 	}
 
-	public int getPopularFacet(List<NameValuePair> requestParams, String[] facetFields, String sortBy, String sortOrder, String maxRow) throws SearchException {
-		if(facetSortRule != null && !SortType.DEFAULT_ORDER.equals(facetSortRule.getSortType()))
+	public int getPopularFacet(List<NameValuePair> requestParams, String[] facetFields, Map<String, String> facetFieldMap, String sortBy, String sortOrder, String maxRow) throws SearchException {
+		
+		boolean hasDefaultOrder = false;
+		SortType generalFacetSortType = facetSortRule != null ? facetSortRule.getSortType() : null;
+		if(facetSortRule != null) {
+			Map<String, SortType> sortTypes = facetSortRule.getGroupSortType();
+			for(String key : sortTypes.keySet()) {
+				if(SortType.DEFAULT_ORDER.equals(sortTypes.get(key))) {
+					hasDefaultOrder = true;
+				} else if(!SortType.DEFAULT_ORDER.equals(generalFacetSortType)){
+					facetFields = (String[]) ArrayUtils.removeElement(facetFields, facetFieldMap.get(key));
+				}
+			}
+			
+			if(facetFields.length < 1)
+				return 0;
+		}
+		
+		if(facetSortRule != null && !SortType.DEFAULT_ORDER.equals(generalFacetSortType) && !hasDefaultOrder)
 			return 0;
 		if(popularFacetMap == null) {
 			popularFacetMap = new HashMap<String, List<String>>();
@@ -654,7 +672,6 @@ public abstract class SolrResponseParser {
 			solrResponse = client.execute(post);
 			
 			groupedFacetJson = parseJsonResponse(slurper, solrResponse);
-						
 			JSONObject groups = groupedFacetJson.getJSONObject("grouped");
 			
 			for(String field : facetFields) {
@@ -701,6 +718,7 @@ public abstract class SolrResponseParser {
 				client.getConnectionManager().shutdown();
 			}
 		}
+				
 		return facetCount;
 	}
 
