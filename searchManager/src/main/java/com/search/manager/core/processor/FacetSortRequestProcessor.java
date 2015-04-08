@@ -54,6 +54,8 @@ public class FacetSortRequestProcessor implements RequestProcessor {
             final String storeId = requestPropertyBean.getStoreId();
             final String keyword = requestPropertyBean.getKeyword();
             final Map<String, String> facetMap = requestProcessorUtil.getFacetMap(storeId);
+            final String facetDefaultSorting = configManager.getProperty("facetsort", storeId, "facetsort.defaultSorting");
+			String facetDefaultSortingOrder = configManager.getProperty("facetsort", storeId, "facetsort.defaultSortingOrder");
             String facetTemplate = StringUtils.EMPTY;
             String facetTemplateName = StringUtils.EMPTY;
 
@@ -121,6 +123,9 @@ public class FacetSortRequestProcessor implements RequestProcessor {
                     if (isEnabled(requestPropertyBean) && applyRule) {
                         solrHelper.setFacetSortRule(facetSort);
                     }
+                } else if(StringUtils.isNotBlank(facetDefaultSorting) && StringUtils.isNotBlank(facetDefaultSortingOrder)){
+                	activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_FACET_SORT,
+                            "DEFAULT", "DEFAULT", !requestPropertyBean.isDisableRule()));
                 }
             } catch (DaoException e) {
                 facetSort = null;

@@ -47,6 +47,8 @@
 
                 for (var i = 0; i < rules.length; i++) {
                     var rule = rules[i]['rule'];
+                    if(rule["type"].toLowerCase() == "facet sort" && rule["id"] == "DEFAULT")
+                		continue;
                     if (rule['active'] === 'true') {
                         activeCount++;
                     }
@@ -55,7 +57,11 @@
                 $(self.target).find('#switcherText').text(activeCount + ' Active ' + (activeCount > 1 ? 'Rules' : 'Rule'));
 
                 for (var i = 0; i < rules.length; i++) {
-                    var rule = rules[i]["rule"];
+                	var rule = rules[i]["rule"];
+                	
+                	if(rule["type"].toLowerCase() == "facet sort" && rule["id"] == "DEFAULT")
+                		continue;
+                	
                     $li = $ul.find("li#itemPattern").clone().prop("id", $.formatAsId(rule["id"]));
 
                     $li.removeClass("fgray");
