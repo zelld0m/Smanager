@@ -9,6 +9,7 @@ import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Component;
 
 import com.search.manager.core.model.Store;
+import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleType;
@@ -263,7 +264,15 @@ public class SolrResultUtil {
 							entry.getKey().replace("_groupSortType", ""),
 							SortType.get(entry.getValue()));
 				}
+			} 
+			
+			if(temp.size() < 2) {
+				for(FacetGroupType groupType : FacetGroupType.values()) {
+					if(temp.get(groupType.getDisplayText()) == null)
+						temp.put(groupType.getDisplayText(), new ArrayList<String>());
+				}
 			}
+			
 			facetSort.setGroupSortType(groupSortType);
 
 			facetSorts.add(facetSort);
