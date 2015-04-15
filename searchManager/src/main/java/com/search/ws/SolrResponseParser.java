@@ -677,7 +677,7 @@ public abstract class SolrResponseParser {
 				if(!groups.isNullObject() && !groups.getJSONObject(field).isNullObject()) {
 					JSONArray fieldGroups = groups.getJSONObject(field).getJSONArray("groups");
 
-					if(fieldGroups != null && fieldGroups.size() > 0) {
+					if(fieldGroups != null) {
 						List<String> values = new ArrayList<String>();
 
 						for(int i=0; i < fieldGroups.size(); i++) {

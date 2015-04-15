@@ -132,7 +132,7 @@ public class FacetEntry {
         // collate values
         Map<String, FacetEntry> catMap = new LinkedHashMap<String, FacetEntry>();
         for (FacetEntry entry : entries) {
-            String key = getFirstLevelCategory(entry.getLabel());
+            String key = getFirstLevelCategory(entry.getLabel()).trim();
             FacetEntry catMapEntry = catMap.get(key);
             if (catMapEntry == null) {
                 catMapEntry = new FacetEntry(key, 0);
@@ -225,25 +225,31 @@ public class FacetEntry {
 
         sortFacetTemplateEntries(entries, SortType.ASC_ALPHABETICALLY, elevatedValues, false);
         for (FacetEntry entry : entries) {
-            logger.info(String.format("%s: %i", entry.getLabel(), entry.getCount()));
+            logger.info(String.format("%s: %s", entry.getLabel(), entry.getCount()));
         }
         logger.info(String.format("%n"));
 
         sortFacetTemplateEntries(entries, SortType.DESC_ALPHABETICALLY, elevatedValues, false);
         for (FacetEntry entry : entries) {
-            logger.info(String.format("%s: %i", entry.getLabel(), entry.getCount()));
+            logger.info(String.format("%s: %s", entry.getLabel(), entry.getCount()));
         }
         logger.info(String.format("%n"));
 
         sortFacetTemplateEntries(entries, SortType.ASC_COUNT, elevatedValues, false);
         for (FacetEntry entry : entries) {
-            logger.info(String.format("%s: %i", entry.getLabel(), entry.getCount()));
+            logger.info(String.format("%s: %s", entry.getLabel(), entry.getCount()));
         }
         logger.info(String.format("%n"));
 
         sortFacetTemplateEntries(entries, SortType.DESC_COUNT, elevatedValues, false);
         for (FacetEntry entry : entries) {
-            logger.info(String.format("%s: %i", entry.getLabel(), entry.getCount()));
+            logger.info(String.format("%s: %s", entry.getLabel(), entry.getCount()));
+        }
+        logger.info(String.format("%n"));
+        
+        sortFacetTemplateEntries(entries, SortType.DEFAULT_ORDER, elevatedValues, false);
+        for (FacetEntry entry : entries) {
+            logger.info(String.format("%s: %s", entry.getLabel(), entry.getCount()));
         }
         logger.info(String.format("%n"));
     }
