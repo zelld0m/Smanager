@@ -1203,7 +1203,7 @@
             var $select = ui.find("select#templateNameList");
             var $table = ui.find("table.dynamicAttributeFields");
 
-            CategoryServiceJS.getIMSTemplateNames({
+            CategoryServiceJS.getIMSTemplateNamesByStore(GLOBAL_storeId, {
                 callback: function(data) {
                     var list = data;
                     $select.append($("<option>", {value: ""}).text("-Select Template-"));
@@ -1233,7 +1233,7 @@
             var $select = ui.find("select#templateNameList");
             var $table = ui.find("table.dynamicAttributeFields");
 
-            CategoryServiceJS.getCNETTemplateNames({
+            CategoryServiceJS.getCNETTemplateNamesByStore(GLOBAL_storeId, {
                 callback: function(data) {
                     var list = data;
                     $select.append($("<option>", {value: ""}).text("-Select Template-"));

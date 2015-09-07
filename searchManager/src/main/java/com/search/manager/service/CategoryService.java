@@ -20,6 +20,7 @@ import com.search.manager.utility.CatCodeUtil;
 import com.search.manager.utility.CatCodeUtil.Attribute;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,9 +131,9 @@ public class CategoryService {
     	
     	try {
     		if(utilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("IMS")) {
-    			return getIMSTemplateNames();
+    			return getIMSTemplateNamesByStore(storeId);
     		} else if(utilityService.getStoreFacetTemplateType(storeId).equalsIgnoreCase("CNET")) {
-    			return getCNETTemplateNames();
+    			return getCNETTemplateNamesByStore(storeId);
     		}
     	} catch(Exception e) {
     		logger.error("Error in getTemplateNamesByStore(): " + e + ". store = " + storeId);
@@ -142,24 +143,25 @@ public class CategoryService {
     }
     
     @RemoteMethod
-    public static List<String> getIMSTemplateNames() throws DataException {
-        return CatCodeUtil.getAllIMSTemplates();
+    public static List<String> getIMSTemplateNamesByStore(String storeId) throws DataException {
+        return CatCodeUtil.getAllIMSTemplatesByStore(storeId);
     }
 
     @RemoteMethod
-    public static List<String> getCNETTemplateNames() throws DataException {
-        return CatCodeUtil.getAllCNETTemplates();
+    public static List<String> getCNETTemplateNamesByStore(String storeId) throws DataException {
+        return CatCodeUtil.getAllCNETTemplatesByStore(storeId);
     }
 
     @RemoteMethod
     public Map<String, Attribute> getIMSTemplateAttributes(String templateName) throws DataException {
         Map<String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
+        String storeId = utilityService.getStoreId();
 
         ArrayList<String> filters = new ArrayList<String>();
         filters.add("TemplateName:\"" + templateName + "\"");
         ArrayList<String> fields = new ArrayList<String>();
 
-        for (Attribute a : CatCodeUtil.getIMSTemplateAttribute(templateName)) {
+        for (Attribute a : CatCodeUtil.getIMSTemplateAttributeByStore(storeId, templateName)) {
             attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
             fields.add(a.getAttributeName());
         }
@@ -188,7 +190,7 @@ public class CategoryService {
         ArrayList<String> filters = new ArrayList<String>();
         ArrayList<String> fields = new ArrayList<String>();
 
-        for (Attribute a : CatCodeUtil.getCNETTemplateAttribute(templateName)) {
+        for (Attribute a : CatCodeUtil.getCNETTemplateAttributeByStore(storeId, templateName)) {
             attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
             fields.add(a.getAttributeName());
         }
@@ -213,26 +215,26 @@ public class CategoryService {
         return attrMap;
     }
 
-    public static Map<String, Attribute> getIMSTemplateAttributesMap(String templateName) throws DataException {
+    public static Map<String, Attribute> getIMSTemplateAttributesMap(String storeId, String templateName) throws DataException {
         Map<String, Attribute> attrMap = new HashMap<String, Attribute>();
 
         ArrayList<String> filters = new ArrayList<String>();
         filters.add("TemplateName:\"" + templateName + "\"");
 
-        for (Attribute a : CatCodeUtil.getIMSTemplateAttribute(templateName)) {
+        for (Attribute a : CatCodeUtil.getIMSTemplateAttributeByStore(storeId, templateName)) {
             attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
         }
 
         return attrMap;
     }
 
-    public static Map<String, Attribute> getCNETTemplateAttributesMap(String templateName) throws DataException {
+    public static Map<String, Attribute> getCNETTemplateAttributesMap(String storeId, String templateName) throws DataException {
         Map<String, Attribute> attrMap = new HashMap<String, Attribute>();
 
         ArrayList<String> filters = new ArrayList<String>();
         filters.add("TemplateName:\"" + templateName + "\"");
 
-        for (Attribute a : CatCodeUtil.getCNETTemplateAttribute(templateName)) {
+        for (Attribute a : CatCodeUtil.getCNETTemplateAttributeByStore(storeId, templateName)) {
             attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
         }
 

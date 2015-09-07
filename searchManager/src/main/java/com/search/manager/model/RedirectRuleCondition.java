@@ -364,8 +364,8 @@ public class RedirectRuleCondition extends ModelBean {
                     builder.append("Template Name is \"").append(templateName).append("\" AND ");
 
                     Map<String, Attribute> attributeMap = isCNET
-                            ? CategoryService.getCNETTemplateAttributesMap(templateName)
-                            : CategoryService.getIMSTemplateAttributesMap(templateName);
+                            ? CategoryService.getCNETTemplateAttributesMap(storeId, templateName)
+                            : CategoryService.getIMSTemplateAttributesMap(storeId, templateName);
                     for (String key : map.keySet()) {
                         if (!(StringUtils.equals(key, "TemplateName") || StringUtils.equals(key, "FacetTemplateName"))) {
                             Attribute a = attributeMap.get(key);

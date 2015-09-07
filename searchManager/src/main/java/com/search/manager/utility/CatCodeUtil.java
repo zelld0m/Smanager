@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -31,6 +32,8 @@ import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.enums.CatCodes;
 import com.search.manager.exception.DataException;
+import com.search.manager.utility.CatCodeUtil.Template;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,12 +98,14 @@ public class CatCodeUtil {
     @DataTransferObject(converter = BeanConverter.class)
     public static class Template {
 
-        Template(String templateNumber, String templateName) {
+        Template(String templateNumber, String templateName, String store) {
             this.templateName = templateName;
             this.templateNumber = templateNumber;
+            this.store = store;
         }
         String templateName;
         String templateNumber;
+        String store;
 
         public String getTemplateName() {
             return templateName;
@@ -118,16 +123,25 @@ public class CatCodeUtil {
             this.templateNumber = templateNumber;
         }
 
-        public List<Attribute> getAttributeList() {
+        public String getStore() {
+			return store;
+		}
+
+		public void setStore(String store) {
+			this.store = store;
+		}
+
+		public List<Attribute> getAttributeList() {
             return attributeList;
         }
         List<Attribute> attributeList = new ArrayList<Attribute>();
     }
     // key = TemplateNumber
     private static Map<String, Template> templateMap = new LinkedHashMap<String, Template>();
-    private static Map<String, Template> imsTemplateMap = new LinkedHashMap<String, Template>();
-    private static Map<String, Template> cnetTemplateMap = new LinkedHashMap<String, Template>();
     private static Map<String, Attribute> attributeMap = new HashMap<String, Attribute>();
+
+    private static Map<String, Map<String, Template>> storeIMSTemplateMapMap= new LinkedHashMap<String, Map<String, Template>>();
+    private static Map<String, Map<String, Template>> storeCNETTemplateMapMap= new LinkedHashMap<String, Map<String, Template>>();
 
     /**
      * Store workbook to cache
@@ -183,27 +197,27 @@ public class CatCodeUtil {
         removeCache(CacheConstants.getCacheKey(CacheConstants.CATEGORY_CODES, cacheKey));
     }
 
-//	/** Retrieve attribute template number by template name */
-//	private static String getAttributeTemplateNo(String name) throws DataException{
-//		Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
-//		if(CollectionUtils.isNotEmpty(row) && StringUtils.isNotEmpty(name)){
-//			for(String[] col : row){
-//				if(name.equalsIgnoreCase(col[1]) && STATUS_ACTIVE.equals(getWholeNumber(col[2])))
-//					return getWholeNumber(col[0]);
-//			}
-//		}
-//		return "";
-//	}
+	/** Retrieve attribute template number by template name */
+	private static String getAttributeTemplateNo(String name) throws DataException{
+		Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
+		if(CollectionUtils.isNotEmpty(row) && StringUtils.isNotEmpty(name)){
+			for(String[] col : row){
+				if(name.equalsIgnoreCase(col[1]) && STATUS_ACTIVE.equals(getWholeNumber(col[2])))
+					return getWholeNumber(col[0]);
+			}
+		}
+		return "";
+	}
     /**
      * Retrieve attribute template attributes by template name
      */
     public static List<String[]> getAttributeTemplateAttribute(String template) throws DataException {
         Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_ATTRIBUTE.getCodeStr());
         List<String[]> attr = new ArrayList<String[]>();
-
-        if (CollectionUtils.isNotEmpty(row) && StringUtils.isNotEmpty(template)) {
+        String templateNo = getAttributeTemplateNo(template);
+        if (CollectionUtils.isNotEmpty(row) && StringUtils.isNotEmpty(templateNo)) {
             for (String[] col : row) {
-                if (template.equalsIgnoreCase(getWholeNumber(col[1])) && STATUS_ACTIVE.equals(getWholeNumber(col[4]))) {
+                if (templateNo.equalsIgnoreCase(getWholeNumber(col[1])) && STATUS_ACTIVE.equals(getWholeNumber(col[3]))) {
                     attr.add(col);
                 }
             }
@@ -421,12 +435,12 @@ public class CatCodeUtil {
         return list;
     }
 
-    public static List<String> getAllIMSTemplates() throws DataException {
-        return new ArrayList<String>(imsTemplateMap.keySet());
+    public static List<String> getAllIMSTemplatesByStore(String store) throws DataException {
+        return new ArrayList<String>(storeIMSTemplateMapMap.get(store.toLowerCase()).keySet()); 
     }
 
-    public static List<String> getAllCNETTemplates() throws DataException {
-        return new ArrayList<String>(cnetTemplateMap.keySet());
+    public static List<String> getAllCNETTemplatesByStore(String store) throws DataException {
+        return new ArrayList<String>(storeCNETTemplateMapMap.get(store.toLowerCase()).keySet()); 
     }
 
     private static List<Attribute> getTemplateAttribute(String templateName, Map<String, Template> templateMap) throws DataException {
@@ -438,12 +452,12 @@ public class CatCodeUtil {
         return list;
     }
 
-    public static List<Attribute> getIMSTemplateAttribute(String templateName) throws DataException {
-        return getTemplateAttribute(templateName, imsTemplateMap);
+    public static List<Attribute> getIMSTemplateAttributeByStore(String store, String templateName) throws DataException {
+        return getTemplateAttribute(templateName, storeIMSTemplateMapMap.get(store.toLowerCase()));
     }
 
-    public static List<Attribute> getCNETTemplateAttribute(String templateName) throws DataException {
-        return getTemplateAttribute(templateName, cnetTemplateMap);
+    public static List<Attribute> getCNETTemplateAttributeByStore(String store, String templateName) throws DataException {
+        return getTemplateAttribute(templateName, storeCNETTemplateMapMap.get(store.toLowerCase()));
     }
 
     /**
@@ -630,7 +644,7 @@ public class CatCodeUtil {
                         boolean isAdd = BooleanUtils.toBoolean(values[2] /* Active */, "1", "0");
                         if (isAdd) {
                             String templateNo = values[0];
-                            Template template = new Template(templateNo, values[1]);
+                            Template template = new Template(templateNo, values[1], values[3]);
                             try {
                                 templateMap.put(templateNo, template);
                             } catch (Exception e) {
@@ -643,7 +657,7 @@ public class CatCodeUtil {
 //System.out.println(new Date() + "***ATRIBUTE***");			
                     row = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_MASTER.getCodeStr());
                     for (String[] values : row) {
-                        boolean isAdd = BooleanUtils.toBoolean(values[6] /* Status */, "1", "0");
+                        boolean isAdd = BooleanUtils.toBoolean(values[7] /* Status */, "1", "0");
                         if (isAdd) {
                             attributeMap.put(values[0], new Attribute(values[0], String.format("%1$s_Value_Attrib", values[1]), values[2]));
                         }
@@ -655,7 +669,7 @@ public class CatCodeUtil {
                     for (String[] values : row) {
                         Attribute attribute = attributeMap.get(values[0]);
                         if (attribute != null) {
-                            attribute.attributeValues.add(String.format("%1$s|%2$s", values[4], values[3]));
+                            attribute.attributeValues.add(String.format("%1$s|%2$s", values[3], values[2]));
                         }
                     }
 
@@ -665,7 +679,7 @@ public class CatCodeUtil {
 //System.out.println(new Date() + "***ATRIBUTE_TEMPLATE_MAP***");					
                     row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_ATTRIBUTE.getCodeStr());
                     for (String[] values : row) {
-                        boolean isAdd = BooleanUtils.toBoolean(values[4] /* Active */, "1", "0");
+                        boolean isAdd = BooleanUtils.toBoolean(values[3] /* Active */, "1", "0");
                         if (isAdd) {
                             Template template = templateMap.get(values[1]);
                             Attribute attribute = attributeMap.get(values[2]);
@@ -675,46 +689,60 @@ public class CatCodeUtil {
                         }
                     }
 
-                    // sort template alphabetically
                     for (Template template : templateMap.values()) {
-                        if (Integer.valueOf(template.templateNumber) < 1000) {
-                            imsTemplateMap.put(template.templateName, template);
-                        } else {
-                            cnetTemplateMap.put(template.templateName, template);
+                    	if (Integer.valueOf(template.templateNumber) < 1000) { // IMS
+                    		if (!storeIMSTemplateMapMap.containsKey(template.getStore())) {
+                    			storeIMSTemplateMapMap.put(template.getStore(), new LinkedHashMap<String, Template>());
+                    		}
+                    		storeIMSTemplateMapMap.get(template.getStore()).put(template.templateName, template);
+                        } else { // CNET
+                        	if (!storeCNETTemplateMapMap.containsKey(template.getStore())) {
+                        		storeCNETTemplateMapMap.put(template.getStore(), new LinkedHashMap<String, Template>());
+                    		}
+                        	storeCNETTemplateMapMap.get(template.getStore()).put(template.templateName, template);
                         }
                     }
 
+                    Iterator<Entry<String, Map<String, Template>>> it = storeIMSTemplateMapMap.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<String, Map<String, Template>> pair = (Map.Entry<String, Map<String, Template>>) it.next();
 
-//System.out.println(new Date() + "***SORT***");					
-                    // TODO: put into function
-                    List<String> templateKeys = new ArrayList<String>(imsTemplateMap.keySet());
-                    Collections.sort(templateKeys, new Comparator<String>() {
-                        @Override
-                        public int compare(String arg0, String arg1) {
-                            int val = arg0.compareTo(arg1);
-                            if (val == 0) {
-                                val = arg0.compareTo(arg1);
+                        // sort template alphabetically
+						List<String> templateKeys = new ArrayList<String>(pair.getValue().keySet());
+                        Collections.sort(templateKeys, new Comparator<String>() {
+                            @Override
+                            public int compare(String arg0, String arg1) {
+                                int val = arg0.compareTo(arg1);
+                                if (val == 0) {
+                                    val = arg0.compareTo(arg1);
+                                }
+                                return val;
                             }
-                            return val;
+                        });
+                        for (String key : templateKeys) {
+                        	pair.getValue().put(key, ((LinkedHashMap<String, Template>) pair.getValue()).remove(key));
                         }
-                    });
-                    for (String key : templateKeys) {
-                        imsTemplateMap.put(key, imsTemplateMap.remove(key));
                     }
 
-                    templateKeys = new ArrayList<String>(cnetTemplateMap.keySet());
-                    Collections.sort(templateKeys, new Comparator<String>() {
-                        @Override
-                        public int compare(String arg0, String arg1) {
-                            int val = arg0.compareTo(arg1);
-                            if (val == 0) {
-                                val = arg0.compareTo(arg1);
+                    it = storeCNETTemplateMapMap.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<String, Map<String, Template>> pair = (Map.Entry<String, Map<String, Template>>) it.next();
+
+                        // sort template alphabetically
+						List<String> templateKeys = new ArrayList<String>(pair.getValue().keySet());
+                        Collections.sort(templateKeys, new Comparator<String>() {
+                            @Override
+                            public int compare(String arg0, String arg1) {
+                                int val = arg0.compareTo(arg1);
+                                if (val == 0) {
+                                    val = arg0.compareTo(arg1);
+                                }
+                                return val;
                             }
-                            return val;
+                        });
+                        for (String key : templateKeys) {
+                        	pair.getValue().put(key, ((LinkedHashMap<String, Template>) pair.getValue()).remove(key));
                         }
-                    });
-                    for (String key : templateKeys) {
-                        cnetTemplateMap.put(key, cnetTemplateMap.remove(key));
                     }
 
                     break;
@@ -739,75 +767,5 @@ public class CatCodeUtil {
 
     public static void main(String args[]) throws Exception {
         init2();
-//		String strCategory = "";
-//		String strSubCategory = "";
-//		String strClass = "";
-//		String template = "";
-//		String attribute = "";
-//		boolean repeat = true;
-//		List<String> list = new ArrayList<String>();
-//		List<String> listCNET = new ArrayList<String>();
-
-        for (Template t : imsTemplateMap.values()) {
-            logger.info(String.format("%s:%s"), t.templateNumber, t.templateName);
-            
-            for (Attribute a : t.attributeList) {
-                logger.info(String.format("\t%s -> %s", a.attributeDisplayName, a.attributeName));
-                for (String values : a.attributeValues) {
-                    logger.info(String.format("\t\t%s", values));
-                }
-            }
-        }
-
-        logger.info("****************CNET");
-         for (Template t : cnetTemplateMap.values()) {
-            logger.info(String.format("%s:%s"), t.templateNumber, t.templateName);
-            for (Attribute a : t.attributeList) {
-                logger.info(String.format("\t%s -> %s", a.attributeDisplayName, a.attributeName));
-                for (String values : a.attributeValues) {
-                    logger.info(String.format("\t\t%s", values));
-                }
-            }
-        }
-
-//		while(repeat){
-//			list = new ArrayList<String>();
-//			Scanner in = new Scanner(System.in);
-////			System.out.println("Please enter category : ");
-////			strCategory = in.nextLine();  
-////			System.out.println("Please enter sub category : ");
-////			strSubCategory = in.nextLine(); 
-////			System.out.println("Please enter class : ");
-////			strClass = in.nextLine();			
-//			
-////			list = getIMSCategoryNextLevel(strCategory,strSubCategory,strClass);
-////			listCNET = getCNETNextLevel(strCategory,strSubCategory);
-//			
-//			System.out.println("Please enter template : ");
-//			template = in.nextLine();  
-//			System.out.println("Please enter attribute : ");
-//			attribute = in.nextLine(); 
-//			list = getTemplateAttribute(template);
-//			
-//			for(String field : list){
-//				System.out.println(field);
-//			}
-//			for(String field : listCNET){
-//				System.out.println(field);
-//			}
-//			
-//			System.out.println("Again?(y/n) : ");
-//			if(in.nextLine().equalsIgnoreCase("y")){
-//				repeat = true;
-//			}else{
-//				repeat = false;
-//			}
-//		}
-
-//		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
-//		
-//		for(String[] col : categoryRow){
-//			System.out.println(col[0]+" : "+col[5]+" : "+col[6]+" : "+col[7]+" : "+col[8]);
-//		}
     }
 }

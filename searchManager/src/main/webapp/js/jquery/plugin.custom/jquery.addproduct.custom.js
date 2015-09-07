@@ -1164,7 +1164,7 @@
 			var $table = $tab.find("table.dynamicAttribFields");
 			var $item = base.options.item;
 
-			CategoryServiceJS.getCNETTemplateNames({
+			CategoryServiceJS.getCNETTemplateNamesByStore(GLOBAL_storeId, {
 				callback: function(data){
 					var list = data;
 					$select.append($("<option>", {value: ""}).text("-Select Template-"));
@@ -1330,7 +1330,7 @@
 			var $table = $tab.find("table.dynamicAttribFields");
 			var $item = base.options.item;
 
-			CategoryServiceJS.getIMSTemplateNames({
+			CategoryServiceJS.getIMSTemplateNamesByStore(GLOBAL_storeId, {
 				callback: function(data){
 					var list = data;
 					$select.append($("<option>", {value: ""}).text("-Select Template-"));
