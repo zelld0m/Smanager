@@ -268,7 +268,9 @@ public class RedirectRule extends ModelBean {
 		ArrayList<String> conditions = new ArrayList<String>();
 		if(StringUtils.isNotEmpty(condition)){
 			for(String cond : condition.split(ESCAPED_DBL_PIPE_DELIM)){
-				conditions.add((new RedirectRuleCondition(ruleId, cond)).getReadableString());
+				RedirectRuleCondition condition = new RedirectRuleCondition(ruleId, cond);
+				condition.setStoreId(this.storeId);
+				conditions.add(condition.getReadableString());
 			}
 		}
 				

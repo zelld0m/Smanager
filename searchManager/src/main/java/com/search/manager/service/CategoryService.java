@@ -11,6 +11,8 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +22,6 @@ import com.search.manager.utility.CatCodeUtil;
 import com.search.manager.utility.CatCodeUtil.Attribute;
 import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service(value = "categoryService")
 @RemoteProxy(
@@ -217,7 +216,6 @@ public class CategoryService {
 
     public static Map<String, Attribute> getIMSTemplateAttributesMap(String storeId, String templateName) throws DataException {
         Map<String, Attribute> attrMap = new HashMap<String, Attribute>();
-
         ArrayList<String> filters = new ArrayList<String>();
         filters.add("TemplateName:\"" + templateName + "\"");
 
@@ -230,7 +228,6 @@ public class CategoryService {
 
     public static Map<String, Attribute> getCNETTemplateAttributesMap(String storeId, String templateName) throws DataException {
         Map<String, Attribute> attrMap = new HashMap<String, Attribute>();
-
         ArrayList<String> filters = new ArrayList<String>();
         filters.add("TemplateName:\"" + templateName + "\"");
 

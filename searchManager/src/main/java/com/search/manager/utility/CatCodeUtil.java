@@ -27,15 +27,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.enums.CatCodes;
 import com.search.manager.exception.DataException;
-import com.search.manager.utility.CatCodeUtil.Template;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CatCodeUtil {
 
