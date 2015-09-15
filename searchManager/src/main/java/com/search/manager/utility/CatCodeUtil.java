@@ -41,6 +41,7 @@ public class CatCodeUtil {
             LoggerFactory.getLogger(CatCodeUtil.class);
     
     private static ConcurrentHashMap<String, CacheModel<?>> cache = new ConcurrentHashMap<String, CacheModel<?>>();
+    private static final String TEMPEST_STORE_MAP = "tempestStoreMapping";
     private static final String SOLR_OBJECTS_DEFINITION_XLSX = "catcodeexcel";
     private static final String ALTERNATIVE_CNET_CATEGORIZATION_XLSX = "catcodeexcel_cnetalternate";
     private static final String SUB_CAT_NAME = "SubCategory Name";
@@ -433,12 +434,21 @@ public class CatCodeUtil {
         return list;
     }
 
+    private static String checkStoreMapping(String store) {
+    	for (String keyVal : StringUtils.trim(PropertiesUtils.getValue(TEMPEST_STORE_MAP)).split(";")) {
+    		if (keyVal.split(":").length > 1 && store.equalsIgnoreCase(keyVal.split(":")[0])) {
+    			return keyVal.split(":")[1].toLowerCase();
+    		}
+    	}
+    	return store.toLowerCase();
+    }
+
     public static List<String> getAllIMSTemplatesByStore(String store) throws DataException {
-        return new ArrayList<String>(storeIMSTemplateMapMap.get(store.toLowerCase()).keySet()); 
+        return new ArrayList<String>(storeIMSTemplateMapMap.get(checkStoreMapping(store)).keySet()); 
     }
 
     public static List<String> getAllCNETTemplatesByStore(String store) throws DataException {
-        return new ArrayList<String>(storeCNETTemplateMapMap.get(store.toLowerCase()).keySet()); 
+        return new ArrayList<String>(storeCNETTemplateMapMap.get(checkStoreMapping(store)).keySet()); 
     }
 
     private static List<Attribute> getTemplateAttribute(String templateName, Map<String, Template> templateMap) throws DataException {
@@ -451,11 +461,11 @@ public class CatCodeUtil {
     }
 
     public static List<Attribute> getIMSTemplateAttributeByStore(String store, String templateName) throws DataException {
-        return getTemplateAttribute(templateName, storeIMSTemplateMapMap.get(store.toLowerCase()));
+        return getTemplateAttribute(templateName, storeIMSTemplateMapMap.get(checkStoreMapping(store)));
     }
 
     public static List<Attribute> getCNETTemplateAttributeByStore(String store, String templateName) throws DataException {
-        return getTemplateAttribute(templateName, storeCNETTemplateMapMap.get(store.toLowerCase()));
+        return getTemplateAttribute(templateName, storeCNETTemplateMapMap.get(checkStoreMapping(store)));
     }
 
     /**
