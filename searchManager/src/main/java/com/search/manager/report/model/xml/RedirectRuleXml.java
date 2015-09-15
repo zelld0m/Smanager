@@ -113,6 +113,7 @@ public class RedirectRuleXml extends RuleXml{
 	}
 
 	public void setRuleCondition(RuleConditionXml ruleCondition) {
+		ruleCondition.setStoreId(this.getStore());
 		this.ruleCondition = ruleCondition;
 	}
 	

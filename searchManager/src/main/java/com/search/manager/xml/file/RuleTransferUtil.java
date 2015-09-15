@@ -59,10 +59,14 @@ public class RuleTransferUtil {
         
             List<RuleItemXml> ruleItemXmlList = (List<RuleItemXml>) productDetailsAware.getItem();
 
-			if(ruleItemXmlList!=null){
+			if(ruleItemXmlList!=null) {
 				for(RuleItemXml ruleItemXml: ruleItemXmlList){
 					RedirectRuleCondition rrc = ruleItemXml.getRuleCondition();
-					if(rrc!=null) rrc.setFacetValues(configManager.getStoreFacetPrefix(storeId), configManager.getStoreFacetTemplate(storeId), configManager.getStoreFacetTemplateName(storeId));
+					if(rrc!=null) {
+						rrc.setStoreId(storeId);
+						rrc.setFacetValues(configManager.getStoreFacetPrefix(storeId), configManager.getStoreFacetTemplate(storeId),
+								configManager.getStoreFacetTemplateName(storeId));
+					}
 				}
 			} 
         }

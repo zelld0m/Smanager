@@ -26,6 +26,7 @@ public class RuleConditionXml extends BaseEntityXml{
 	private boolean includeKeyword;
 	private List<String> condition;
 	private List<RedirectRuleCondition> ruleConditionList;
+	private String storeId;
 
 	public RuleConditionXml() {
 		super();
@@ -58,6 +59,15 @@ public class RuleConditionXml extends BaseEntityXml{
 	}      
 
 	@XmlTransient
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
+	}
+
+	@XmlTransient
 	public List<RedirectRuleCondition> getRuleCondition() {
 		
 		if(CollectionUtils.isNotEmpty(ruleConditionList)){
@@ -68,7 +78,9 @@ public class RuleConditionXml extends BaseEntityXml{
 		
 		if(CollectionUtils.isNotEmpty(condition)){
 			for(String condSolr: condition){
-				ruleCondition.add(new RedirectRuleCondition(condSolr));
+				RedirectRuleCondition rrc = new RedirectRuleCondition(condSolr);
+				rrc.setStoreId(this.storeId);
+				ruleCondition.add(rrc);
 			}
 		}
 		
