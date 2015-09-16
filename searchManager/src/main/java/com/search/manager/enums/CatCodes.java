@@ -8,7 +8,7 @@ public enum CatCodes {
 	SOLR_ATTRIBUTE_MASTER(6, "Solr_Attribute_Master"),
 	SOLR_TEMPLATE_ATTRIBUTE(7, "Solr_Template_Attribute_XRef"),
 	SOLR_ATTRIBUTE_RANGE(8, "Solr_Attribute_Range_Values"),
-	SOLR_SEARCH_NAV(9, "SOLR_Search_Nav"),
+	NAV_LEVELS(9, "Nav_Levels"),
 	ALTERNATE_CNET(0, "Alternate CNET"),
 	WORKBOOK_OBJECTS(999, "Workbook objects"),
 	WORKBOOK_OBJECTS_CNET_ALTERNATE(998, "Workbook objects cnet altername"),

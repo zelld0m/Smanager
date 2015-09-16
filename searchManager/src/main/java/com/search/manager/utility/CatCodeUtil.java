@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -337,56 +335,28 @@ public class CatCodeUtil {
         return list;
     }
 
-    public static List<String> getCNETNextLevel(String level1, String level2) throws DataException {
+    public static List<String> getCNETNextLevel(String level1, String level2, String store) throws DataException {
         List<String> list = new ArrayList<String>();
-        Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.SOLR_SEARCH_NAV.getCodeStr());
+        Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.NAV_LEVELS.getCodeStr());
 
-        String navID = "";
-        Pattern pat = Pattern.compile("[1-9]");
         if (StringUtils.isBlank(level1)) {
             for (String[] col : categoryRow) {
-                if (col[3].equalsIgnoreCase("0")) {
-                    if (!list.contains(col[2])) {
-                        list.add(col[2]);
-                    }
+                if (StringUtils.isNotBlank(col[0]) && !list.contains(col[0]) && col[3].equalsIgnoreCase(checkStoreMapping(store))) {
+                    list.add(col[0]);
                 }
             }
         } else if (StringUtils.isBlank(level2)) {
             for (String[] col : categoryRow) {
-                navID = col[0].substring(col[0].length() - 9 > 0 ? col[0].length() - 9 : 0, col[0].length() - 6);
-                Matcher m = pat.matcher(navID);
-                if (col[1].equalsIgnoreCase(level1) && m.find()) {
-                    for (String[] coll : categoryRow) {
-                        navID = coll[0].substring(coll[0].length() - 6, coll[0].length() - 3);
-                        Matcher m2 = pat.matcher(navID);
-                        if (col[0].equalsIgnoreCase(coll[3]) && m2.find()) {
-                            if (!list.contains(coll[2])) {
-                                list.add(coll[2]);
-                            }
-                        }
-                    }
+                if (col[0].equalsIgnoreCase(level1) && StringUtils.isNotBlank(col[1]) && !list.contains(col[1])
+                		&& col[3].equalsIgnoreCase(checkStoreMapping(store))) {
+                    list.add(col[1]);
                 }
             }
         } else {
             for (String[] col : categoryRow) {
-                navID = col[0].substring(col[0].length() - 9 > 0 ? col[0].length() - 9 : 0, col[0].length() - 6);
-                Matcher m = pat.matcher(navID);
-                if (col[1].equalsIgnoreCase(level1) && m.find()) {
-                    for (String[] coll : categoryRow) {
-                        navID = coll[0].substring(coll[0].length() - 6, coll[0].length() - 3);
-                        Matcher m2 = pat.matcher(navID);
-                        if (coll[1].equalsIgnoreCase(level2) && m2.find()) {
-                            for (String[] colll : categoryRow) {
-                                navID = colll[0].substring(colll[0].length() - 3, colll[0].length());
-                                Matcher m3 = pat.matcher(navID);
-                                if (coll[0].equalsIgnoreCase(colll[3]) && m3.find()) {
-                                    if (!list.contains(colll[2])) {
-                                        list.add(colll[2]);
-                                    }
-                                }
-                            }
-                        }
-                    }
+            	if (col[0].equalsIgnoreCase(level1) && col[1].equalsIgnoreCase(level2) && StringUtils.isNotBlank(col[2])
+            			&& !list.contains(col[2]) && col[3].equalsIgnoreCase(checkStoreMapping(store))) {
+                    list.add(col[2]);
                 }
             }
         }
@@ -543,11 +513,11 @@ public class CatCodeUtil {
                 @Override
                 public void run() {
                     try {
-                        CatCodeUtil.loadCatCodesToCache(CatCodes.WORKBOOK_OBJECTS.getCodeStr(), CatCodes.SOLR_SEARCH_NAV.getCode(), CatCodes.SOLR_SEARCH_NAV.getCodeStr());
+                        CatCodeUtil.loadCatCodesToCache(CatCodes.WORKBOOK_OBJECTS.getCodeStr(), CatCodes.NAV_LEVELS.getCode(), CatCodes.NAV_LEVELS.getCodeStr());
                     } catch (DataException e) {
-                        logger.error(ERROR_MSG + CatCodes.SOLR_SEARCH_NAV.getValue(), e);
+                        logger.error(ERROR_MSG + CatCodes.NAV_LEVELS.getValue(), e);
                     } catch (IOException e) {
-                        logger.error(ERROR_MSG + CatCodes.SOLR_SEARCH_NAV.getValue(), e);
+                        logger.error(ERROR_MSG + CatCodes.NAV_LEVELS.getValue(), e);
                     }
                 }
             };

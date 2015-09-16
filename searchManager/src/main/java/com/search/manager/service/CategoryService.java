@@ -83,18 +83,18 @@ public class CategoryService {
     }
 
     @RemoteMethod
-    public static List<String> getCNETLevel1Categories() throws DataException {
-        return CatCodeUtil.getCNETNextLevel("", "");
+    public static List<String> getCNETLevel1Categories(String store) throws DataException {
+        return CatCodeUtil.getCNETNextLevel("", "", store);
     }
 
     @RemoteMethod
-    public static List<String> getCNETLevel2Categories(String level1Category) throws DataException {
-        return CatCodeUtil.getCNETNextLevel(level1Category, "");
+    public static List<String> getCNETLevel2Categories(String level1Category, String store) throws DataException {
+        return CatCodeUtil.getCNETNextLevel(level1Category, "", store);
     }
 
     @RemoteMethod
-    public static List<String> getCNETLevel3Categories(String level1Category, String level2Category) throws DataException {
-        return CatCodeUtil.getCNETNextLevel(level1Category, level2Category);
+    public static List<String> getCNETLevel3Categories(String level1Category, String level2Category, String store) throws DataException {
+        return CatCodeUtil.getCNETNextLevel(level1Category, level2Category, store);
     }
 
     @RemoteMethod

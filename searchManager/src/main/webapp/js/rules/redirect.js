@@ -696,7 +696,7 @@
             var $select = ui.find("select#level1CategoryList");
             var $table = ui.find("table.cnetFields");
 
-            CategoryServiceJS.getCNETLevel1Categories({
+            CategoryServiceJS.getCNETLevel1Categories(GLOBAL_storeId, {
                 callback: function(data) {
                     var list = data;
 
@@ -729,7 +729,7 @@
             var $select = ui.find("select#level2CategoryList");
             var $table = ui.find("table.cnetFields");
 
-            CategoryServiceJS.getCNETLevel2Categories(selectedLevel1Category, {
+            CategoryServiceJS.getCNETLevel2Categories(selectedLevel1Category, GLOBAL_storeId, {
                 callback: function(data) {
                     var list = data;
 
@@ -768,7 +768,7 @@
             var $select = ui.find("select#level3CategoryList");
             var $table = ui.find("table.cnetFields");
 
-            CategoryServiceJS.getCNETLevel3Categories(selectedLevel1Category, selectedLevel2Category, {
+            CategoryServiceJS.getCNETLevel3Categories(selectedLevel1Category, selectedLevel2Category, GLOBAL_storeId, {
                 callback: function(data) {
                     var list = data;
 
