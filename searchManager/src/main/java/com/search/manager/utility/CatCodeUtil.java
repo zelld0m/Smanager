@@ -338,24 +338,25 @@ public class CatCodeUtil {
     public static List<String> getCNETNextLevel(String level1, String level2, String store) throws DataException {
         List<String> list = new ArrayList<String>();
         Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.NAV_LEVELS.getCodeStr());
+        String checkedStore = checkStoreMapping(store);
 
         if (StringUtils.isBlank(level1)) {
             for (String[] col : categoryRow) {
-                if (StringUtils.isNotBlank(col[0]) && !list.contains(col[0]) && col[3].equalsIgnoreCase(checkStoreMapping(store))) {
+                if (StringUtils.isNotBlank(col[0]) && !list.contains(col[0]) && col[3].equalsIgnoreCase(checkedStore)) {
                     list.add(col[0]);
                 }
             }
         } else if (StringUtils.isBlank(level2)) {
             for (String[] col : categoryRow) {
                 if (col[0].equalsIgnoreCase(level1) && StringUtils.isNotBlank(col[1]) && !list.contains(col[1])
-                		&& col[3].equalsIgnoreCase(checkStoreMapping(store))) {
+                		&& col[3].equalsIgnoreCase(checkedStore)) {
                     list.add(col[1]);
                 }
             }
         } else {
             for (String[] col : categoryRow) {
             	if (col[0].equalsIgnoreCase(level1) && col[1].equalsIgnoreCase(level2) && StringUtils.isNotBlank(col[2])
-            			&& !list.contains(col[2]) && col[3].equalsIgnoreCase(checkStoreMapping(store))) {
+            			&& !list.contains(col[2]) && col[3].equalsIgnoreCase(checkedStore)) {
                     list.add(col[2]);
                 }
             }
@@ -404,13 +405,21 @@ public class CatCodeUtil {
         return list;
     }
 
+    // pcmallbd <--> pcmall / macmallbd <--> macmall mapping
+    private static final Map<String, String> storesMapping;
+    static {
+        Map<String, String> _storesMapping = new HashMap<String, String>();
+        for (String keyVal : StringUtils.trim(PropertiesUtils.getValue(TEMPEST_STORE_MAP)).split(";")) {
+            String[] storeMaps = keyVal.split(":");
+            if(storeMaps.length > 1) {
+                _storesMapping.put(storeMaps[0].toLowerCase(), storeMaps[1].toLowerCase());
+            }
+        }
+        storesMapping = Collections.unmodifiableMap(_storesMapping);
+    }
     private static String checkStoreMapping(String store) {
-    	for (String keyVal : StringUtils.trim(PropertiesUtils.getValue(TEMPEST_STORE_MAP)).split(";")) {
-    		if (keyVal.split(":").length > 1 && store.equalsIgnoreCase(keyVal.split(":")[0])) {
-    			return keyVal.split(":")[1].toLowerCase();
-    		}
-    	}
-    	return store.toLowerCase();
+    	String _store = store.toLowerCase();
+    	return storesMapping.get(_store) == null ? _store : storesMapping.get(_store);
     }
 
     public static List<String> getAllIMSTemplatesByStore(String store) throws DataException {
