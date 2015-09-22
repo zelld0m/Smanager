@@ -161,7 +161,7 @@ public class CategoryService {
         ArrayList<String> fields = new ArrayList<String>();
 
         for (Attribute a : CatCodeUtil.getIMSTemplateAttributeByStore(storeId, templateName)) {
-            attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+            attrMap.put(a.getAttributeName(), a);
             fields.add(a.getAttributeName());
         }
 
@@ -170,7 +170,7 @@ public class CategoryService {
 
         for (Attribute a : attrMap.values()) {
             List<String> values = map.get(a.getAttributeName());
-            if (values != null) {
+            if (values != null && !a.isRange()) {
                 for (String value : values) {
                     a.addAttributeValue(value);
                 }
@@ -190,7 +190,7 @@ public class CategoryService {
         ArrayList<String> fields = new ArrayList<String>();
 
         for (Attribute a : CatCodeUtil.getCNETTemplateAttributeByStore(storeId, templateName)) {
-            attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+            attrMap.put(a.getAttributeName(), a);
             fields.add(a.getAttributeName());
         }
 
@@ -203,7 +203,7 @@ public class CategoryService {
 
             for (Attribute a : attrMap.values()) {
                 List<String> values = map.get(a.getAttributeName());
-                if (values != null) {
+                if (values != null && !a.isRange()) {
                     for (String value : values) {
                         a.addAttributeValue(value);
                     }

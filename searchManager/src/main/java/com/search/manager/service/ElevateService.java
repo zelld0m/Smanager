@@ -340,7 +340,9 @@ public class ElevateService extends RuleService {
             }
             if (elevate != null) {
                 if (!StringUtils.isBlank(condition)) {
-                    elevate.setCondition(new RedirectRuleCondition(condition));
+                	RedirectRuleCondition rrc = new RedirectRuleCondition(condition);
+                	rrc.setStoreId(utilityService.getStoreId());
+                    elevate.setCondition(rrc);
                 }
                 elevate.setLocation(sequence);
                 elevate.setLastModifiedBy(utilityService.getUsername());

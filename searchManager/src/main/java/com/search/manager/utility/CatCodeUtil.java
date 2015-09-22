@@ -63,6 +63,13 @@ public class CatCodeUtil {
             this.attributeDisplayName = attributeDisplayName;
         }
 
+        public Attribute(String attributeNumber, String attributeName, String attributeDisplayName, boolean range) {
+            this.attributeName = attributeName;
+            this.attributeNumber = attributeNumber;
+            this.attributeDisplayName = attributeDisplayName;
+            this.range = range;
+        }
+
         public String getAttributeName() {
             return attributeName;
         }
@@ -79,7 +86,15 @@ public class CatCodeUtil {
             this.attributeDisplayName = attributeDisplayName;
         }
 
-        public void addAttributeValue(String value) {
+        public boolean isRange() {
+			return range;
+		}
+
+		public void setRange(boolean range) {
+			this.range = range;
+		}
+
+		public void addAttributeValue(String value) {
             attributeValues.add(value);
         }
 
@@ -89,6 +104,7 @@ public class CatCodeUtil {
         String attributeName;
         String attributeNumber;
         String attributeDisplayName;
+        boolean range;
         List<String> attributeValues = new ArrayList<String>();
     }
 
@@ -646,7 +662,8 @@ public class CatCodeUtil {
                     for (String[] values : row) {
                         boolean isAdd = BooleanUtils.toBoolean(values[7] /* Status */, "1", "0");
                         if (isAdd) {
-                            attributeMap.put(values[0], new Attribute(values[0], String.format("%1$s_Value_Attrib", values[1]), values[2]));
+                        	boolean isRange = BooleanUtils.toBoolean(values[5] /* Status */, "1", "0");
+                            attributeMap.put(values[0], new Attribute(values[0], String.format("%1$s_Value_Attrib", values[1]), values[2], isRange));
                         }
                     }
 
@@ -655,7 +672,7 @@ public class CatCodeUtil {
                     row = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_RANGE.getCodeStr());
                     for (String[] values : row) {
                         Attribute attribute = attributeMap.get(values[0]);
-                        if (attribute != null) {
+                        if (attribute != null && attribute.isRange()) {
                             attribute.attributeValues.add(String.format("%1$s|%2$s", values[3], values[2]));
                         }
                     }
