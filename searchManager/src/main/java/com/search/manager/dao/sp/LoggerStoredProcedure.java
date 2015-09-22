@@ -50,6 +50,6 @@ public class LoggerStoredProcedure extends StoredProcedure {
 	private void logSPCall(long startTime) {
 		long endTime = System.currentTimeMillis();
 		long duration = endTime - startTime;
-		logger.info(duration + "ms ----- " + this.getSql());
+		logger.info("{}ms ----- {}", duration, this.getSql());
 	}
 }
