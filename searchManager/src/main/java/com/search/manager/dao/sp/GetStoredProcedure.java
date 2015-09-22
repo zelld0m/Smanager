@@ -6,9 +6,8 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 
-public abstract class GetStoredProcedure extends StoredProcedure {
+public abstract class GetStoredProcedure extends LoggerStoredProcedure {
 	public GetStoredProcedure(JdbcTemplate jdbcTemplate, String storeProcedureName) {
         super(jdbcTemplate, storeProcedureName);
         declareParameters();

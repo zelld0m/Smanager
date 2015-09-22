@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
@@ -156,7 +155,7 @@ public class DemoteDAO {
 	}
 	
 	@SuppressWarnings("unused")
-	private class GetItemStoredProcedure extends StoredProcedure {
+	private class GetItemStoredProcedure extends LoggerStoredProcedure {
 		public GetItemStoredProcedure(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, DAOConstants.SP_GET_DEMOTE);
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<DemoteResult>() {

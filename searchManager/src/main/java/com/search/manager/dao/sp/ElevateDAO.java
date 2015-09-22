@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
@@ -162,7 +161,7 @@ public class ElevateDAO {
 		}
 	}
 
-	private class GetElevateItemStoredProcedure extends StoredProcedure {
+	private class GetElevateItemStoredProcedure extends LoggerStoredProcedure {
 		public GetElevateItemStoredProcedure(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, DAOConstants.SP_GET_ELEVATE_ITEM);
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ElevateResult>() {

@@ -123,6 +123,21 @@
         </encoder>
     </appender>
 
+	<appender name="storedProc-logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/tomcat/logs/storedProcCalls.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${user.home}/tomcat/logs/storedProcCalls.log.%i.gz</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>5</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>25MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %.-1level | %c{0}:%L | %m%n</pattern>
+        </encoder>
+    </appender>
+    
     <!--
       ============================================================
       ======================== LOGGERS ===========================
@@ -171,6 +186,10 @@
 
 	<logger name="com.search.manager.workflow.model.ImportTaskManager" additivity="false">
         <appender-ref ref="searchManager-file" />
+    </logger>
+
+	<logger name="com.search.manager.dao.sp.LoggerStoredProcedure" additivity="false">
+        <appender-ref ref="storedProc-logfile" />
     </logger>
 
     <root level="INFO">

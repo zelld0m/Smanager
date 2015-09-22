@@ -6,12 +6,11 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 
 /**
  * Base class for Create, Update, Delete StoredProcedure classes
  */
-public abstract class CUDStoredProcedure extends StoredProcedure {
+public abstract class CUDStoredProcedure extends LoggerStoredProcedure {
 	public CUDStoredProcedure(JdbcTemplate jdbcTemplate, String storeProcedureName) {
         super(jdbcTemplate, storeProcedureName);
         declareParameters();

@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
@@ -30,8 +31,6 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Repository(value = "redirectRuleDAO")
 public class RedirectRuleDAO {
@@ -230,7 +229,7 @@ public class RedirectRuleDAO {
         }
     }
 
-    private class AddRedirectRuleConditionStoredProcedure extends StoredProcedure {
+    private class AddRedirectRuleConditionStoredProcedure extends LoggerStoredProcedure {
 
         public AddRedirectRuleConditionStoredProcedure(JdbcTemplate jdbcTemplate) {
             super(jdbcTemplate, DAOConstants.SP_ADD_REDIRECT_CONDITION);
