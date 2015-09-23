@@ -390,7 +390,9 @@ public class ExcludeService extends RuleService {
             }
             if (exclude != null) {
                 if (!StringUtils.isBlank(condition)) {
-                    exclude.setCondition(new RedirectRuleCondition(condition));
+                	RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+                	rr.setStoreId(utilityService.getStoreId());
+                    exclude.setCondition(rr);
                 }
 
                 exclude.setLastModifiedBy(utilityService.getUsername());

@@ -324,7 +324,9 @@ public class DemoteService extends RuleService {
             }
             if (demote != null) {
                 if (!StringUtils.isBlank(condition)) {
-                    demote.setCondition(new RedirectRuleCondition(condition));
+                	RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+                	rr.setStoreId(utilityService.getStoreId());
+                    demote.setCondition(rr);
                 }
                 demote.setLocation(sequence);
                 demote.setLastModifiedBy(utilityService.getUsername());

@@ -665,9 +665,10 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 				typeaheadRule.setStoreId(store);
 				typeaheadRule.setRuleId(id);
 				
-				typeaheadRule = typeaheadRuleServiceStg.search(typeaheadRule).getList().get(0);
-				
-				if(typeaheadRule == null) {
+				List<TypeaheadRule> searchResult = typeaheadRuleServiceStg.search(typeaheadRule).getList();
+				if (searchResult != null && searchResult.size() > 0) {
+					typeaheadRule = searchResult.get(0);
+				} else {
 					continue;
 				}
 				
