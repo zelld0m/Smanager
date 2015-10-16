@@ -698,8 +698,20 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     continue;
                 }
 
-                JSONObject obj = suggestionsJson.getJSONObject(searchTerm);
-                JSONArray sugs = obj.getJSONArray(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                Object jsonO = suggestionsJson.get(searchTerm);
+                JSONArray sugs = new JSONArray(); 
+                if (jsonO instanceof JSONObject) {
+	                JSONObject obj = suggestionsJson.getJSONObject(searchTerm);
+	                sugs = obj.getJSONArray(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                } else if (jsonO instanceof JSONArray) {
+                	JSONArray arr = suggestionsJson.getJSONArray(searchTerm);
+                	for (int k=0; k<arr.size(); k++) {
+                		JSONArray temp = arr.getJSONObject(k).getJSONArray(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                		for (int l=0; l<temp.size(); l++) {
+                			sugs.add(temp.get(l));
+                		}
+                	}
+                }
 
                 for (int j = 0; j < sugs.size(); j++) {
                     String kw = StringUtils.trim(sugs.getString(j));
