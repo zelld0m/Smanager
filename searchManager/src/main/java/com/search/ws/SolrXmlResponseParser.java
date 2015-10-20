@@ -3,7 +3,6 @@ package com.search.ws;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -751,13 +749,13 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			return;
 		}
 		
-		boolean isFacetTemplate = false;
 		
 		NodeList children = facetFieldsNode.getChildNodes();
 		for (int i = 0, size = children.getLength(); i < size; i++) {
 			Node currentNode = children.item(i);
 			
 			for(String key : popularFacetMap.keySet()) {
+				boolean isFacetTemplate = false;
 				
 				if (isCNETImplementation && key.endsWith("FacetTemplate")) {
 					isFacetTemplate = true;

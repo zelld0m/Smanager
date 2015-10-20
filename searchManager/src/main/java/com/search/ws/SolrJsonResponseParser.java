@@ -79,7 +79,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             }
             solrResponse = client.execute(post);
             initialJson = parseJsonResponse(slurper, solrResponse);
-            System.out.println(initialJson.toString());
             // locate the result node and reference it <result name="response" maxScore="23.015398" start="0" numFound="360207">
             // results will be added here
             resultArray = initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
@@ -752,9 +751,14 @@ public class SolrJsonResponseParser extends SolrResponseParser {
     	if (facetFields == null || popularFacetMap == null || popularFacetMap.size() == 0) {
 			return;
 		}
-
     	for(String key : popularFacetMap.keySet()) {
+    		boolean isFacetTemplate = false;
+    		
     		JSONObject facetField = facetFields.getJSONObject(key);
+    		
+    		if (isCNETImplementation && key.endsWith("FacetTemplate")) {
+				isFacetTemplate = true;
+			}
     		
     		if(!facetField.isNullObject()) {
     			
@@ -764,7 +768,12 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     entries.add(new FacetEntry(facetValue, facetField.getLong(facetValue)));
                 }
     			
-    			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
+    			// sort
+				if (isFacetTemplate) {
+					FacetEntry.sortFacetTemplateEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
+				} else {
+					FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(key), !"desc".equals(defaultSortOrder));
+				}
 
                 JSONObject facets = new JSONObject();
                 for (FacetEntry entry : entries) {
