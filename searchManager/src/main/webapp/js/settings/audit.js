@@ -182,7 +182,10 @@
 		AuditServiceJS.getDropdownValues(3,filter.split(","),{
 			callback: function(data){ 
 				for (var i = 0; i < data.length; i++) {
-						$("#typeList").append($("<option>", { value : data[i] }).text(data[i])); 
+						if (data[i] !== 'banner' && data[i] !== 'facetSort'
+							&& data[i] !== 'relevancy' && data[i] !== 'spell') {
+							$("#typeList").append($("<option>", { value : data[i] }).text(data[i]));
+						}
 				};
 			},
 			errorHandler: function(message){ jAlert(message,"Audit"); }

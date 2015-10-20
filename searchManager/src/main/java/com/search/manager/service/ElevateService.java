@@ -221,19 +221,16 @@ public class ElevateService extends RuleService {
 
     @RemoteMethod
     public Map<String, List<String>> addItemToRuleUsingPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
-
         logger.info(String.format("%s %s %d", keyword, partNumbers, sequence));
         HashMap<String, List<String>> resultMap = new HashMap<String, List<String>>();
-
+        final String storeName = utilityService.getStoreId();
+        final String serverName = utilityService.getServerName();
         ArrayList<String> passedList = new ArrayList<String>();
         ArrayList<String> failedList = new ArrayList<String>();
-
         resultMap.put("PASSED", passedList);
         resultMap.put("FAILED", failedList);
 
-        String server = utilityService.getServerName();
         String store = utilityService.getStoreId();
-
         int count = 0;
         comment = comment.replaceAll("%%timestamp%%", dateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
         comment = comment.replaceAll("%%commentor%%", utilityService.getUsername());
@@ -241,20 +238,15 @@ public class ElevateService extends RuleService {
         sequence = (sequence == 0) ? 1 : sequence;
         for (String partNumber : partNumbers) {
             count = 0;
-            try {
-                String edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
-                if (StringUtils.isNotBlank(edp)) {
-                    count = addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER, false);
-                }
-            } catch (DaoException de) {
-                logger.error("Failed during addItemToRuleUsingPartNumber()", de);
+            if (searchHelper.verifyProductId(serverName, storeName, partNumber)) {
+	        	// OPSTRACK - no more DPNo > EDP conversion - the partNumbers list contains Opstrack_ProductID
+	        	count = addItem(keyword, partNumber, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER, false);
             }
             if (count > 0) {
                 passedList.add(StringUtils.trim(partNumber));
             } else {
                 failedList.add(StringUtils.trim(partNumber));
             }
-
         }
         return resultMap;
     }
@@ -620,7 +612,7 @@ public class ElevateService extends RuleService {
                         utilityService.setFacetTemplateValues(rr);
                         condition = rr.getConditionForSolr();
                     } else {
-                        condition = String.format("EDP:%s", elevate.getEdp());
+                        condition = String.format("SystemProductID:%s", elevate.getEdp());
                     }
                     final String filter = condition;
                     completionService.submit(new Callable<Boolean>() {

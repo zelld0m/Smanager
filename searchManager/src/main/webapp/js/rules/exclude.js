@@ -123,10 +123,10 @@
 				$li.find(".sortOrderTextBox").val($item["location"]);
 
 				if(PART_NUMBER){
-					$li.find(".manufacturer").html($item["manufacturer"]);
+					//$li.find(".manufacturer").html($item["manufacturer"]);
 					$li.find(".name").html($item["name"]);
 					$li.find("#sku,#mfrpn").show();
-					$li.find(".sku").html($item["dpNo"]);
+					$li.find(".sku").html($item["distSku"]);
 					$li.find(".mfrpn").html($item["mfrPN"]);
 				}
 
@@ -155,7 +155,7 @@
 												api.destroy();
 												showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "" +
 														"Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + e.data.item.condition["readableString"] : 
-														$.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+														"Product ID#: " + e.data.item["edp"]));
 												self.populateRuleItem(self.selectedRuleItemPage);
 											},
 										});
@@ -257,7 +257,7 @@
 							itemAddComment: function(base, comment){
 								ExcludeServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : "Product ID#: " + e.data.item["edp"]));
 										base.getList(base.options.page);
 									},
 									preHook: function(){
@@ -302,7 +302,7 @@
 								ExcludeServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
 									callback: function(code){
 										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : 
-											$.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
+											"Product ID#: " + e.data.item["edp"]);
 										self.showRuleContent();
 									},
 									preHook: function(){
@@ -322,7 +322,7 @@
 
 				setTimeout(function(){	
 					if (PART_NUMBER){
-						if ($.isBlank($item["dpNo"])){
+						if ($.isBlank($item["edp"])){
 							$li.find(".itemImg").prop("src",GLOBAL_contextPath + '/images/padlock_img.jpg'); 
 							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
 							$li.find(".manufacturer").html(self.lockedItemDisplayText);
@@ -358,7 +358,7 @@
 				var $item = item;
 				ExcludeServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionCallBackJobResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel($item) + " Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]),
+						showActionCallBackJobResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel($item) + " Item: " + $item.condition["readableString"] : "Product ID#: " + $item["edp"]),
 								function(){if(code==1) self.populateRuleItem(self.selectedRuleItemPage);});
 						
 					}
@@ -488,7 +488,7 @@
 														callback : function(code){
 															api.destroy();
 															showActionResponseFromMap(code, "add", "Multiple Rule Item Add", 
-																"Please check for the following:<ol type='a' class='mar0 padL30'><li>SKU(s) are already present in the list</li><li>SKU(s) are actually searchable using the specified keyword.</li></ol>");
+																"Please check for the following:<ol type='a' class='mar0 padL30'><li>Product(s) are already present in the list</li><li>Product(s) are actually searchable using the specified keyword.</li></ol>");
 															self.populateRuleItem(self.selectedRuleItemPage);
 														}
 													});
@@ -496,7 +496,7 @@
 												
 												var conditionForSolr = new Array();
 												for (var i = 0; i < skus.length; i++) {
-													conditionForSolr[i] = "DPNo:" + skus[i];
+													conditionForSolr[i] = "SystemProductID:" + skus[i];
 												}
 												
 												ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], skus, conditionForSolr, {
@@ -511,7 +511,7 @@
 															}
 														}
 														if (forceAddEdps.length > 0) {
-															var confirmMessage = "The following SKUs are not part of the natural search results: " + forceAddEdps.join() + ". Continue?";
+															var confirmMessage = "The following Products are not part of the natural search results: " + forceAddEdps.join() + ". Continue?";
 															jConfirm(confirmMessage, "Multiple Rule Item Add", function(result){
 																if (result) {
 																	addEdps();

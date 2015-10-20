@@ -95,7 +95,6 @@ public class SolrConstants {
 	public final static String ATTR_MAX_SCORE = "maxScore";
 	
 	public final static String ATTR_NAME = "name";
-	public final static String ATTR_NAME_VALUE_EDP = "EDP";
 	public final static String ATTR_NAME_VALUE_QTIME = "QTime";
 	public final static String ATTR_NAME_VALUE_RESPONSE_HEADER = "responseHeader";
 	public final static String ATTR_NAME_VALUE_FACET_COUNTS = "facet_counts";
@@ -153,4 +152,48 @@ public class SolrConstants {
 	public final static String REQUEST_ATTRIB_DEMOTE_OVERRIDE_MAP 		= "demoteOverrideMap";
 	public final static String REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP 	= "redirectOverrideMap";	
 	public final static String REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP 	= "relevancyOverrideMap";
+
+	public static final String REFURBISHED= "Refurbished";
+	public static final String IS_REFURB = "IsRefurb";
+	public static final String OPEN_BOX= "Open Box";
+	public static final String IS_OPEN_BOX = "IsOpenBox";
+	public static final String CLEARANCE = "Clearance";
+	public static final String IS_CLEARANCE = "IsClearance";
+	public static final String NON_LICENSE_ONLY = "Non-License Products Only";
+	public static final String LICENSE_ONLY = "License Products Only";
+	public static final String IS_LICENSE = "IsLicense";
+	public static final String AND = " AND ";
+	public static final String OR = " OR ";
+	public static final String IMAGE_EXISTS = "ImageExists";
+	public static final String NO_IMAGE_ONLY = "Products Without Image Only";
+	public static final String IMAGE_ONLY = "Products With Image Only";
+	public static final String CONDITION = "Condition";
+	public static final String MFR_PN = "MfrPN";
+	public static final String DESCRIPTION = "Description";
+	public static final String PLATFORM = "Platform";
+	public static final String QTY_AVAILABLE = "QtyAvailable";
+	public static final String CALL = "Call";
+	public static final String IN_STOCK = "In Stock";
+	public static final String AVAILABILITY = "Availability";
+	public static final String LICENSE = "License";
+	public static final String NAME = "Name";
+	public static final String CAT_CODE = "CatCode";
+	public static final String CATEGORY = "Category";
+	public static final String SUB_CATEGORY = "SubCategory";
+	public static final String CLASS = "Class";
+	public static final String SUB_CLASS = "SubClass";
+	public static final String MANUFACTURER = "Manufacturer";
+	public static final String TEMPLATE_NAME = "TemplateName";
+	public static final String LEVEL_1_CATEGORY = "Level1Category";
+	public static final String LEVEL_2_CATEGORY = "Level2Category";
+	public static final String LEVEL_3_CATEGORY = "Level3Category";
+	public static final String FACET_TEMPLATE_NAME = "FacetTemplateName";
+	public static final String FACET_TEMPLATE_SUFFIX = "_FacetTemplate";
+	public static final String FACET_TEMPLATE = "FacetTemplate";
+	public static final String NAME_INDEX_SUFFIX = "_NameIndex";
+	public static final String DESCRIPTION_SUFFIX = "_Description";
+	public static final String YES = "Y";
+	public static final String NO = "N";
+	public static final String PRODUCT_ID="ProductID";
+	
 }

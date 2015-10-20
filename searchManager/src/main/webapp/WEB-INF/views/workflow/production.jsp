@@ -37,23 +37,23 @@
 				<li><a href="#elevateTab"><span>Elevate</span></a></li>
 				<li><a href="#excludeTab"><span>Exclude</span></a></li>
 				<li><a href="#demoteTab"><span>Demote</span></a></li>
-				<li><a href="#facetSortTab"><span>Facet Sort</span></a></li>
+				<!-- <li><a href="#facetSortTab"><span>Facet Sort</span></a></li> -->
 				<li><a href="#queryCleaningTab"><span>Redirect Rule</span></a></li>
-				<li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
+				<!-- <li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
 		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
 		        <li><a href="#bannerTab"><span>Banner</span></a></li>
-		        <li><a href="#typeaheadTab"><span>Typeahead</span></a></li>
+		        <li><a href="#typeaheadTab"><span>Typeahead</span></a></li> -->
 			</ul>
 
 			<div class="minHeight400 marL3" id="elevateTab"></div>
 			<div class="minHeight400 marL3" id="excludeTab"></div>
 			<div class="minHeight400 marL3" id="demoteTab"></div>
-			<div class="minHeight400 marL3" id="facetSortTab"></div>
+			<!-- <div class="minHeight400 marL3" id="facetSortTab"></div> -->
 			<div class="minHeight400 marL3" id="queryCleaningTab"></div>
-			<div class="minHeight400 marL3" id="rankingRuleTab"></div>
+			<!-- <div class="minHeight400 marL3" id="rankingRuleTab"></div>
 			<div class="minHeight400 marL3" id="didYouMeanTab"></div>
 			<div class="minHeight400 marL3" id="bannerTab"></div>
-			<div class="minHeight400 marL3" id="typeaheadTab"></div>
+			<div class="minHeight400 marL3" id="typeaheadTab"></div> -->
 		</div>
 		<!--  end tabs -->
 
@@ -63,7 +63,7 @@
 					<span>Show:</span> 
 					<select id="ruleFilter">
 						<option value="">All Rules</option>
-						<option value="delete">Approved Rules for Deletion</option>
+						<!-- <option value="delete">Approved Rules for Deletion</option> -->
 						<option value="approved">Approved Rules for Publishing</option>
 						<option value="published">Published Rules</option>
 					</select>
@@ -110,7 +110,7 @@
 				style="background: #f3f3f3; width:97.5%">
 				<h3 style="border: none">Publishing Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
-					<div id="pgApprovedForPublishing" class="publishingGuidelines" style="display:none">To push previously approved rules to production:<br>
+					<div id="pgApprovedForPublishing" class="publishingGuidelines" style="display:none">To push rules to production:<br>
 					<p align="justify" class="padL10">In the <strong>Show</strong> dropdown box, select <span class="fitalic">Approved Rules for Publishing.</span><br>
 					When the list has refreshed, tick all applicable rules.<br>
 					Provide notes in the <strong>Comment</strong> box and click the <strong>Publish</strong> button.</p></div>
@@ -131,6 +131,9 @@
 				</label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
+					<a id="rejectPublishBtn" href="javascript:void(0);" class="buttons btnGray clearfix">
+						<div class="buttons fontBold">Reject</div>
+					</a>
 					<a id="publishBtn" href="javascript:void(0);" class="buttons btnGray clearfix">
 						<div class="buttons fontBold">Publish</div>
 					</a> 
@@ -204,7 +207,7 @@
 				<div align="right" class="padR15 marT10">
 					<a id="publishBtn" href="javascript:void(0);" class="buttons btnGray clearfix">
 						<div class="buttons fontBold">Publish</div>
-					</a> 
+					</a>
 				</div>
 			</div>
 			<div class="clearB"></div>

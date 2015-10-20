@@ -405,11 +405,52 @@
 		var base = this;
 		base.$el.find("#submitForApprovalBtn").off().on({
 			click: function(e){
-				jConfirm(base.options.moduleName + " " + base.options.rule["ruleName"] + " will be locked for approval. Continue?", "Submit For Approval", function(result){
+				var moduleName = base.options.moduleName;
+				if (moduleName === 'Query Cleaning') {
+					moduleName = 'Redirect Rule';
+				}
+				// auto approve - ready for production (Opstrack)
+				jConfirm(moduleName + " " + base.options.rule["ruleName"] + " will be locked as ready for production. Continue?", "Submit For Publishing", function(result){
+				// jConfirm(base.options.moduleName + " " + base.options.rule["ruleName"] + " will be locked for approval. Continue?", "Submit For Approval", function(result){
 					if(result){
-						DeploymentServiceJS.submitRuleForApproval(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
+						DeploymentServiceJS.submitRuleAutoApproval(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"],
+								"Auto Approved", false, {
 							callback: function(ruleStatus){
 								base.options.afterSubmitForApprovalRequest(ruleStatus);
+							},
+							preHook:function(){
+								base.options.beforeSubmitForApprovalRequest();
+							}
+						});
+					}
+				});
+			}
+		});
+		base.$el.find("#publishNowBtn").off().on({
+			click: function(e){
+				var moduleName = base.options.moduleName;
+				if (moduleName === 'Query Cleaning') {
+					moduleName = 'Redirect Rule';
+				}
+				// auto publish (Opstrack)
+				var content = moduleName + " " + base.options.rule["ruleName"] + " will be pushed to production. Continue?";
+				content  += '		<br/><br/>';
+				content  += '		<div class="clearB"></div>';
+				content  += '			<label class="w60 floatL padT5">Comment: </label> ';
+				content  += '			<label><textarea id="forcePublishComment" style="margin-bottom: 7px" class="floatL w230"></textarea></label>';
+				content  += '		</div>';
+				jConfirm(content, "Publish Now", function(result){
+					if(result){
+						DeploymentServiceJS.submitRuleAutoApproval(GLOBAL_storeId, base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"],
+								$("#forcePublishComment").val(), true, {
+							callback: function(ruleStatus){
+								if (ruleStatus["publishedStatus"] === "PUBLISHED") {
+									jAlert(moduleName + " " + base.options.rule["ruleName"] + " was successfully published.", "Publish Success",
+										function(result) { base.options.afterSubmitForApprovalRequest(ruleStatus); });
+								} else {
+									jAlert("Publishing failed. Please contact your system administrator.", "Publish Failed",
+										function(result) { base.options.afterSubmitForApprovalRequest(ruleStatus); });
+								}
 							},
 							preHook:function(){
 								base.options.beforeSubmitForApprovalRequest();
@@ -444,9 +485,14 @@
 		template += '			<span id="statusMode" class="cOrange"></span>';
 		template += '		</li>';
 
-		if(base.options.authorizeSubmitForApproval){
+		if(base.options.authorizeSubmitForApproval) {
 			template += '		<li class="fLeft bRight">';
-			template += '			<a id="submitForApprovalBtn" class="btn_submit_approval btn" href="javascript:void(0);" alt="Submit For Approval" title="Submit For Approval">Submit for Approval</a>';
+			template += '			<a id="submitForApprovalBtn" class="btn_submit_approval btn" href="javascript:void(0);" alt="Submit for Publishing" title="Submit for Publishing">Submit</a>';
+			template += '		</li>';
+		}
+		if (allowPublish) {
+			template += '		<li class="fLeft bRight">';
+			template += '			<a id="publishNowBtn" class="btn_submit_approval btn" href="javascript:void(0);" alt="Publish Now" title="Publish Now">Publish</a>';
 			template += '		</li>';
 		}
 

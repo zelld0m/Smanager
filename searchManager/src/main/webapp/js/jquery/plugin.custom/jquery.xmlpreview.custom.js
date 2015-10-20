@@ -239,15 +239,15 @@
 						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
 					else if(PART_NUMBER){
-						memberConditions.push("EDP:"+list[i]["edp"]);
-						if($.isNotBlank(list[i]["dpNo"])){
+						memberConditions.push("SystemProductID:"+list[i]["edp"]);
+						if($.isNotBlank(list[i]["edp"])){
 							base.setImage($tr,list[i]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+							$tr.find("td#itemDPNo").html(list[i]["edp"]);
 							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 							$tr.find("td#itemName").html(list[i]["name"]);
 						}
 						else{
-							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
+							$tr.find("td#itemImage").html("Product ID:" + list[i]["edp"] + " is no longer available in the search server you are connected")
 							.prop("colspan",4)
 							.removeClass("txtAC")
 							.addClass("txtAL")

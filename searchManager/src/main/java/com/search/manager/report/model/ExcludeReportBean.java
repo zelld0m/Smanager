@@ -78,11 +78,21 @@ public class ExcludeReportBean extends ReportBean<Product> {
 	}
 
 	private String getPartNumberDetails() {
-		if (StringUtils.isNotBlank(model.getDpNo())){
-			return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append(" Name:").append(model.getName())
-			.append("  SKU #:").append(model.getDpNo()).append("  Mfr. Part #:").append(model.getMfrPN()).toString();
+		StringBuffer details = new StringBuffer();
+		
+		if (StringUtils.isNotBlank(model.getEdp())){
+			details = details.append("SystemProductID: ").append(model.getEdp());
+		}
+		if (StringUtils.isNotBlank(model.getManufacturer())){
+			details = details.append(" Manufacturer: ").append(model.getManufacturer());
+		}
+		if (StringUtils.isNotBlank(model.getMfrPN())){
+			details = details.append(" Mfr. Part #: ").append(model.getMfrPN());
+		}
+		if (StringUtils.isNotBlank(model.getName())){
+			details = details.append(" Name: ").append(model.getName());
 		}
 		
-		return new StringBuffer("EDP: ").append(model.getEdp()).toString(); 
+		return details.toString();
 	}
 }

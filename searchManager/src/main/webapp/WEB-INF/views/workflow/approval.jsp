@@ -25,24 +25,24 @@
 		        <li><a href="#elevateTab"><span>Elevate</span></a></li>
 		        <li><a href="#excludeTab"><span>Exclude</span></a></li>
 		        <li><a href="#demoteTab"><span>Demote</span></a></li>
-		        <li><a href="#facetSortTab"><span>Facet Sort</span></a></li>
+		        <!-- <li><a href="#facetSortTab"><span>Facet Sort</span></a></li> -->
 		        <li><a href="#queryCleaningTab"><span>Redirect Rule</span></a></li>
-		        <li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
+		        <!-- <li><a href="#rankingRuleTab"><span>Relevancy Rule</span></a></li>
 		        <li><a href="#didYouMeanTab"><span>Did You Mean</span></a></li>
 		        <li><a href="#bannerTab"><span>Banner</span></a></li>
-		        <li><a href="#typeaheadTab"><span>Typeahead</span></a></li>
+		        <li><a href="#typeaheadTab"><span>Typeahead</span></a></li> -->
 		        
 		    </ul>
 		   
 			<div class="minHeight400" id="elevateTab"></div>
 			<div class="minHeight400" id="excludeTab"></div>
 			<div class="minHeight400" id="demoteTab"></div>
-			<div class="minHeight400" id="facetSortTab"></div>
+			<!-- <div class="minHeight400" id="facetSortTab"></div> -->
 			<div class="minHeight400" id="queryCleaningTab"></div>
-			<div class="minHeight400" id="rankingRuleTab"></div>
+			<!-- <div class="minHeight400" id="rankingRuleTab"></div>
 			<div class="minHeight400" id="didYouMeanTab"></div>
 			<div class="minHeight400" id="bannerTab"></div>
-			<div class="minHeight400" id="typeaheadTab"></div>
+			<div class="minHeight400" id="typeaheadTab"></div> -->
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">

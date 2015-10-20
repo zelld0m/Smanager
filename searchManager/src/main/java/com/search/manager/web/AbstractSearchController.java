@@ -63,6 +63,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	private RequestProcessor facetSortRequestProcessor;
 	
 	protected final ExecutorService execService = Executors.newCachedThreadPool();
+	
+	protected final String storePrefix = PropertiesUtils.getValue("default.store.prefix");
 
 	protected final static String[] uniqueFields = {
 		SolrConstants.SOLR_PARAM_ROWS,
@@ -131,7 +133,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	 * Transform list of SearchResult class to a Solr filter query value.
 	 * SearchResult can be either a part number or a facet
 	 * 
-	 * Return Format: (EDP:(58496 8549 856785) OR ((condition1) OR (condition2) OR (condition3)))  	  
+	 * Return Format: (SystemProductID:(58496 8549 856785) OR ((condition1) OR (condition2) OR (condition3)))  	  
 	 *  
 	 * @param request HttpServletRequest
 	 * @param list list of SearchResult class to transform
@@ -165,7 +167,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				}	
 			}
 
-			String edpValues = CollectionUtils.isNotEmpty(edpList) ? StringUtils.trimToEmpty(String.format("EDP:(%s)", StringUtils.join(edpList, ' '))): "";
+			String edpValues = CollectionUtils.isNotEmpty(edpList) ? StringUtils.trimToEmpty(String.format("SystemProductID:(%s)", StringUtils.join(edpList, ' '))): "";
 			String facetValues = CollectionUtils.isNotEmpty(facetList) ? String.format("(%s)", StringUtils.join(facetList, " OR ")): "";
 
 			filterQuery.append(String.format("(%s%s%s)", edpValues, StringUtils.isNotBlank(edpValues) && StringUtils.isNotBlank(facetValues)? " OR ": "", facetValues));
@@ -621,9 +623,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			final SolrResponseParser solrHelper;
 			NameValuePair redirectFqNvp = null;
 
-			String storeId = "";
+			String storeId = PropertiesUtils.getValue("default.store");
 			try {
-				storeId = getStoreId(request);
+				//storeId = getStoreId(request);
 				solrHelper = getParser(request);
 			} catch (HttpException ex) {
 				response.sendError(400, ex.getMessage());
@@ -659,7 +661,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_SIMULATE_DATE) && StringUtils.isNotBlank(paramValue)) {
 						currentDate = getOverrideCurrentDate(storeId, paramValue);
 					} else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD)) {
-
 						String origKeyword = paramValue;
 						if (origKeyword == null) {
 							origKeyword = "";
@@ -683,13 +684,13 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						if (StringUtils.isNotBlank(paramValue)) {
 							String[] fields = paramValue.split(",");
 							for (String field : fields) {
-								if (StringUtils.equals(field, "*") || StringUtils.equals(field, "EDP")) {
+								if (StringUtils.equals(field, "*") || StringUtils.equals(field, storePrefix+SolrConstants.PRODUCT_ID)) {
 									includeEDP = true;
 									break;
 								}
 							}
 							if (!includeEDP) {
-								paramValue += ",EDP";
+								paramValue += ","+storePrefix+SolrConstants.PRODUCT_ID;
 							}
 						} else {
 							includeEDP = true;
@@ -739,7 +740,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
 			String keyword = StringUtils.trimToEmpty(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
 			String originalKeyword = keyword;
-			
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
 				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:") || keyword.startsWith("Manufacturer:")) {
@@ -751,7 +751,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					keyword = "";
 				}
 			}
-
+			
 			boolean keywordPresent = StringUtils.isNotEmpty(keyword);
 			boolean disableElevate = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_ELEVATE) != null;
 			boolean disableExclude = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_EXCLUDE) != null;
@@ -1059,7 +1059,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						}
 						if (!disableExclude) {
 							excludeList = getExcludeRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
-	
+							//clean up expired excludes
+							List<ExcludeResult> tempExcludeList = new ArrayList<ExcludeResult>();
+							for (ExcludeResult excludeResult : excludeList) {
+								if (excludeResult.getExpiryDate() == null || excludeResult.getExpiryDate().isAfter(currentDate)) {
+									tempExcludeList.add(excludeResult);
+								}
+							}
+							excludeList = tempExcludeList;
 							//TODO: refactor to method
 							if (fromSearchGui) {
 								List<ExcludeResult> expiredList = getExpiredExcludeRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1086,6 +1093,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						}
 						if (!disableDemote && bestMatchFlag) {
 							demoteList = getDemoteRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
+							//clean up expired demotes
+							List<DemoteResult> tempDemoteList = new ArrayList<DemoteResult>();
+							for (DemoteResult demoteResult : demoteList) {
+								if (demoteResult.getExpiryDate() == null || demoteResult.getExpiryDate().isAfter(currentDate)) {
+									tempDemoteList.add(demoteResult);
+								}
+							}
+							demoteList = tempDemoteList;
 							if (fromSearchGui) {
 								List<DemoteResult> expiredList = getExpiredDemoteRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 								if (logger.isDebugEnabled()) {
@@ -1112,6 +1127,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						if (!disableElevate) {
 							elevatedList = getElevateRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
 							if (CollectionUtils.isNotEmpty(elevatedList)) {
+								//clean up expired elevates
+								List<ElevateResult> tempElevatedList = new ArrayList<ElevateResult>();
+								for (ElevateResult elevateResult : elevatedList) {
+									if (elevateResult.getExpiryDate() == null || elevateResult.getExpiryDate().isAfter(currentDate)) {
+										tempElevatedList.add(elevateResult);
+									}
+								}
+								elevatedList = tempElevatedList;
 								// prepare force added list
 								for (ElevateResult elevateResult : elevatedList) {
 									if (elevateResult.isForceAdd()) {

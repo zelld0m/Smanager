@@ -21,6 +21,6 @@ public class DashboardController {
     public String execute(HttpServletRequest request, HttpServletResponse response, Model model) {
         model.addAttribute("keyword", StringUtils.defaultIfBlank(request.getParameter("keyword"), "apple"));
 
-        return "dashboard/dashboard";
+        return "statistic/topkeyword";
     }
 }

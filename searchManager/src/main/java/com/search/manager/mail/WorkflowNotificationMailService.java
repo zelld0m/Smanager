@@ -61,7 +61,6 @@ public class WorkflowNotificationMailService {
 	public boolean sendNotification(String storeId, RuleSource ruleSource, RuleStatusEntity status, 
 			String ruleType, String approvedBy,
 			List<RuleStatus> ruleStatusList, String comment) {
-
 		Map<Object, Object> model = new HashMap<Object, Object>();
 		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "";
@@ -195,7 +194,7 @@ public class WorkflowNotificationMailService {
 		model.put("store", configManager.getStoreName(storeId));
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		model.put("ruleType", ruleEntity != null ? ruleEntity.getValues()
-				.get(0) : ruleType);
+				.get(2) : ruleType);
 
 		model.put("actionBy", StringUtils.trim(actionBy));
 

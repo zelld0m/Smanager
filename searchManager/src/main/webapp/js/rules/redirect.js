@@ -141,9 +141,10 @@
         },
         showRedirect: function() {
             var self = this;
-
+			
             self.prepareRedirect();
-            $("#preloader").hide();
+            $("#preloader").hide();			
+			
             self.getRedirectRuleList(1);
             self.getRedirectRuleKeywordList(1);
 
@@ -393,9 +394,25 @@
             });
         },
         setRedirect: function(rule) {
-            var self = this;
-            self.selectedRule = rule;
-            self.showRedirect();
+			var self = this;
+			
+			//loader issues
+			var $input = $("div#keyword").find('input[type="text"]#changeKeyword');
+            var $preloader = $("div#keyword").find('#preloader');
+			$preloader.hide();
+			$input.prop({disabled: true});
+			$('div#keyword').find('#activerules').hide();
+            $('div#keyword').find('#activerules').attr('activeRuleIdentifier', rule["ruleId"]);
+			
+			RedirectServiceJS.getRule(rule["ruleId"], {
+				callback: function(data) {					
+					self.selectedRule = data;
+					self.showRedirect();
+				},
+				preHook: function() {
+					self.prepareRedirect();
+				}
+			});
         },
         getRedirectRuleList: function(page) {
             var self = this;
@@ -482,10 +499,11 @@
 
             return isDirty;
         },
-        getChangeKeywordActiveRules: function() {
-            var self = this;
+        getChangeKeywordActiveRules: function() {		
+			var self = this;
+			var calledRuleId = self.selectedRule["ruleId"];
             var $input = $("div#keyword").find('input[type="text"]#changeKeyword');
-            var $preloader = $("div#keyword").find('#preloader');
+            var $preloader = $("div#keyword").find('#preloader');			
 
             $("div#searchHeaderText").rkMessageType({
                 id: 1,
@@ -513,12 +531,12 @@
                         $preloader.show();
                         $input.prop({disabled: true});
                         $('div#keyword').find('#activerules > .alert > #rules').empty();
-                        $('div#keyword').find('#activerules').hide();
+                        $('div#keyword').find("div[activeRuleIdentifier='"+ calledRuleId +"']").show();
                     },
                     afterRequest: function() {
                         $preloader.hide();
                         $input.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
-                        $('div#keyword').find('#activerules').show();
+                        $('div#keyword').find("div[activeRuleIdentifier='"+ calledRuleId +"']").show();
                     }
                 });
         },

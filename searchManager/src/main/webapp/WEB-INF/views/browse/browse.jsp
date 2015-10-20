@@ -284,7 +284,7 @@
 }
 </style>
 <!-- Start Left Side -->
-<div class="clearB floatL minW240 sideMenuArea">
+<div class="clearB floatL minW240 sideMenuArea browseSideMenuArea">
 	<div class="clearB marT27"></div>
 	<div id="dynamicSelection"></div>
 	<div class="clearB"></div>
@@ -304,7 +304,7 @@
 <!-- End Left Side -->
 
 <!-- Start Right Side -->
-<div class="floatL w730 marL10 marT27" style="min-height: 550px">
+<div class="floatL width100percent marL10 marT27" style="min-height: 550px">
 	<!-- Redirect Url Widget -->
 	<div id="redirectUrlDiv" style="display: none; overflow: auto;">
 		<div class="floatL w150 padT5" style="width: 100%;">
@@ -326,7 +326,7 @@
 	</div>
 
 	<!-- Text Widget -->
-	<div id="search" class="floatL w730 titlePlacer marB10">
+	<div id="search" class="floatL width100percent titlePlacer marB10">
 		<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search
 			Product</div>
 		<div class="floatR">
@@ -336,22 +336,22 @@
 	</div>
 
 	<!-- Rule Selector Widget && Redirect URL Toggle Widget  -->
-	<div id="ruleSelector" class="clearfix pad5 fsize12 txtAL w720"
+	<div id="ruleSelector" class="clearfix padtop5bottom5 fsize12 txtAL width100percent"
 		style="background: #e8e8e8">
 		<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR"
 			style="height: 32px;">
 			<div id="searchKeyword"></div>
 		</div>
-		<div class="floatL w350 dropdownArea">
+		<!--<div class="floatL w350 dropdownArea" style="display:none;">
 			<div class="floatL w150 padT5">Select Relevancy Rule:</div>
 			<div class="floatL w200">
 				<select id="rankingRule" class="w178 marT5"></select>
 			</div>
-		</div>
-		<div id="redirectUrlToggle" class="floatL w350">
+		</div>-->
+		<div id="redirectUrlToggle" class="floatL w350" style="display:none;">
 			<div class="floatL w150 padT5">Redirect Rule:</div>
 			<div class="floatL w200 padT5">
-				<input id="enableRedirectToPage" type="checkbox" />&nbsp;Enable Page
+				<input id="enableRedirectToPage" type="checkbox" checked="checked"/>&nbsp;Enable Page
 				Redirection
 			</div>
 		</div>
@@ -384,9 +384,9 @@
 		</div>
 		<div class="clearB"></div>
 
-		<div id="tagCloud" class="clearB floatL w730"></div>
+		<div id="tagCloud" class="clearB floatL width100percent"></div>
 
-		<div id="docs" class="clearB floatL w730"></div>
+		<div id="docs" class="clearB floatL width100percent"></div>
 
 		<div class="clearB"></div>
 		<div class="farial fsize11 fgraypadT10">

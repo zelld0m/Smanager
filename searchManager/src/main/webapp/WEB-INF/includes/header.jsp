@@ -40,6 +40,7 @@
   <spring:eval expression="@utilityService.getTimeZoneId()" var="timeZoneId" />
   
   <script>
+  	var allowPublish = <%= request.isUserInRole("PUBLISH_RULE")%>;
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
 	var GLOBAL_allowModification = allowModify;
 	// Request server details

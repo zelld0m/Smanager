@@ -147,14 +147,14 @@
 						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
 					else if(PART_NUMBER){
-						if($.isNotBlank(list[i]["dpNo"])){
+						if($.isNotBlank(list[i]["edp"])){
 							base.setImage($tr,list[i]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+							$tr.find("td#itemDPNo").html(list[i]["edp"]);
 							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 							$tr.find("td#itemName").html(list[i]["name"]);
 						}
 						else{
-							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
+							$tr.find("td#itemImage").html("Product ID:" + list[i]["edp"] + " is no longer available in the search server you are connected")
 							.prop("colspan",4)
 							.removeClass("txtAC")
 							.addClass("txtAL")
@@ -508,10 +508,12 @@
 						$table.find("tr:not(#itemPattern)").remove();
 
 						for(var field in data.parameters){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html(field);
-							$tr.find("td#fieldValue").html(data.parameters[field]);
-							$tr.appendTo($table);
+							if (field !== 'ps2' && field !== 'ps3' && field !== 'pf3' && field !== 'pf2') {
+								$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
+								$tr.find("td#fieldName").html(field);
+								$tr.find("td#fieldValue").html(data.parameters[field]);
+								$tr.appendTo($table);
+							}
 						}	
 
 						$table.find("tr:even").addClass("alt");

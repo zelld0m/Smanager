@@ -15,11 +15,9 @@ public class DemoteProduct extends Product {
 		super();
 	}
 	
-	public DemoteProduct(String dpNo, String edp, String manufacturer, String mfrPN,
-			String name, String description, String imagePath, DateTime expiryDateTime, DateTime createdDateTime,
-			DateTime lastModifiedDateTime, String comment, String lastModifiedBy,
-			String createdBy, Integer location) {
-		super(dpNo, edp, manufacturer, mfrPN, name, description, imagePath, expiryDateTime, createdDateTime, lastModifiedDateTime, comment, lastModifiedBy, createdBy);
+	public DemoteProduct(String edp, String manufacturer, String mfrPN, String name, String description, String imagePath, DateTime expiryDateTime,
+			DateTime createdDateTime, DateTime lastModifiedDateTime, String comment, String lastModifiedBy, String createdBy, Integer location) {
+		super(edp, manufacturer, mfrPN, name, description, imagePath, expiryDateTime, createdDateTime, lastModifiedDateTime, comment, lastModifiedBy, createdBy);
 		this.location = location;
 	}
 	

@@ -34,6 +34,7 @@
             });
         },
         afterRequest: function() {
+		console.log("this one");
             var self = this;
             $(self.target).empty();
             var keyword = $.isArray(self.manager.store.values('q')) ? self.manager.store.values('q')[0] : self.manager.store.values('q');
@@ -143,8 +144,55 @@
                     	$(self.target).find("#disabledRedirectToPage").show();
                     	$li.find(".alertStatus").text("Rule Ignored").show();
                     }
-                    
                     $li.show();
+
+                    // OpsTRACK
+                    var buttonId = "publishNowBtn_" + rule["type"] + "_" + rule["name"];
+                    $li.find(".publishNow").find("a.btn_submit_approval").prop("id", buttonId);
+                    if (rule["type"] === "Ranking Rule") {
+                    	$li.find(".publishNow").hide();
+                    } else {
+                        $li.find("[id='"+ buttonId +"']").off().on("click", 
+                    		{
+                        		item: $li,
+                    			ruleObj: rule
+                    		},
+                    		function(event) {
+                    			// auto publish (Opstrack)
+								var type = event.data.ruleObj["type"];
+								if (type === 'Query Cleaning') {
+									type = 'Redirect Rule'
+								}
+                				var content = type + " " + event.data.ruleObj["name"] + " will be pushed to production. Continue?";
+                				content  += '		<br/><br/>';
+                				content  += '		<div class="clearB"></div>';
+                				content  += '			<label class="w60 floatL padT5">Comment: </label> ';
+                				content  += '			<textarea id="forcePublishComment" style="margin-bottom: 7px" class="floatL w230"></textarea>';
+                				content  += '		</div>';
+                				jConfirm(content, "Publish Now", function(result){
+                					if(result){
+                						DeploymentServiceJS.submitRuleAutoApproval(GLOBAL_storeId, event.data.ruleObj["type"], 
+                								event.data.ruleObj["id"], event.data.ruleObj["name"], $("#forcePublishComment").val(), true, {
+                							callback: function(ruleStatus){
+                								self.getRuleStatus(event.data.item, event.data.ruleObj);
+                								event.data.item.find('.preloader').hide();
+                								if (ruleStatus["publishedStatus"] === "PUBLISHED") {
+                									jAlert(event.data.ruleObj["type"] + " " + event.data.ruleObj["name"] + " was successfully published.", "Publish Success");
+                								} else {
+                									jAlert("Publishing failed. Please contact your system administrator.", "Publish Failed");
+                								}
+                							},
+                							preHook: function(){
+                								event.data.item.find('.preloader').show();
+											}
+                						});
+                					}
+                				});
+                			}
+                        );
+                    }
+
+                    
                     self.getRuleStatus($li, rule);
                     $ul.append($li);
                 }
@@ -204,11 +252,11 @@
 
             output += '<div style="display:block;" class="fsize11 marT10 fDGray border">';
             output += '	<div id="expand" style="display:none">';
-            output += '		<div id="activeRuleNoteHide" class="w655 marL20 info notification border fsize11 marB20 marT10">';
+            output += '		<div id="activeRuleNoteHide" class="w905 marL20 info notification border fsize11 marB20 marT10">';
             output += ' 		Below are rules applied to your current search. You can toggle ON/OFF of each active rules to examine its effect on search results';
             output += ' 	</div>';
             output += '		<ul id="itemListing" class="mar16 marB10 marL20" >';
-            output += '			<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
+            output += '			<li id="itemPattern" class="w905 items borderB padTB5 clearfix" style="display:none;">';
             output += '				<div class="floatL marT6">';
             output += '					<label class="select floatL w80 posRel topn3"><input type="checkbox" class="firerift-style-checkbox on-off ruleControl"></label>';
             output += '					<div class="clearB"></div>';
@@ -222,6 +270,13 @@
             output += '							<span class="statusMode fsize11 forange padL5"></span>';
             output += '						</label>';
             output += '						<label class="lastPublished w240 fgray"></label>';
+            if (allowPublish) {            
+	            output += '						<label class="publishNow w240">';
+	            output += '							<span class="fLeft bRight">';
+	            output += '								<a class="btn_submit_approval btn" href="javascript:void(0);" alt="Publish Now" title="Publish Now">Publish</a>';
+	            output += '							</span>';
+				output += '						</label>';
+            }
             output += '					</div>';
             output += '				</div>';
             output += '				<div class="floatR">';
@@ -236,24 +291,24 @@
             output += '			</li>';
             output += '		</ul>';
             output += '		<div id="hasReplacement" style="display:none">';
-            output += '			<div class="alert w655 marL20 marB10">';
+            output += '			<div class="alert width100percent marL20 marB10">';
             output += '				Search results displayed are for';
             output += '				<span id="replacement" class="fbold fred"></span>';
             output += '			</div>';
             output += '		</div>';
             output += '		<div id="hasLoop" style="display:none">';
-            output += '			<div class="alert w655 marL20 marB10">';
+            output += '			<div class="alert width100percent marL20 marB10">';
             output += '				Query Cleaning detected a circular redirection.';
             output += '			</div>';
             output += '		</div>';
             output += '		<div id="disabledRedirectToPage" style="display:none">';
-            output += '			<div class="alert w655 marL20 marB10">';
+            output += '			<div class="alert width100percent marL20 marB10">';
             output += '				Query Cleaning will redirect to a page but page redirection option is disabled.';
             output += '			</div>';
             output += '		</div>';
             output += '	</div>';
             output += '	<div id="collapse" style="display:none">';
-            output += '		<div id="activeRuleNoteShow" class="w655 marL20 info notification border fsize11 marB10 marT10">';
+            output += '		<div id="activeRuleNoteShow" class="w905 marL20 info notification border fsize11 marB10 marT10">';
             output += ' 		Toggle this section to view all rules applied to current search';
             output += ' 	</div>';
             output += '	</div>';

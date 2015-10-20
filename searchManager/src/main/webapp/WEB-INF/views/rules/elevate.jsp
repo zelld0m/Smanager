@@ -27,7 +27,7 @@
       		<select id="selectRuleItemType" class="selectCombo w178" >
 				<option value="product">Product Item</option>
 				<option value="ims">IMS Categories</option>
-				<option value="cnet">Product Site Taxonomy</option>
+				<!--  <option value="cnet">Product Site Taxonomy</option> -->
 				<option value="facet">Facets</option>
 			</select>
 			<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix marR10 marL3"><div class="btnGraph marB8"></div></a>
@@ -42,7 +42,7 @@
 	    	<li>
 	        	<a href="javascript:void(0);" 
 	                 style="color: #333; font-weight: bold;"
-	                id="uploadFromExcel">Upload SKUs from Excel Files</a>
+	                id="uploadFromExcel">Upload ProductIDs from Excel Files</a>
 	        </li>
 	     </ul>
 	  </sec:authorize>	  
@@ -127,13 +127,13 @@
 		  			
 		  			<div class="proInfo">
 		  				<div class="titleArea">
-		  					<span class="manufacturer"></span>
+		  					<!-- <span class="manufacturer"></span> -->
 		  					<span class="name proName breakWord"></span>
 		  				</div>	
 			  			<div class="clearB"></div>
 			  			<div class="textInfo marT5">
 				  			<p id="sku" style="display:none">
-				  				<span class="fgreen">SKU #:</span>
+				  				<span class="fgreen">Mfr. SYN #:</span>
 				  				<span class="sku"></span>
 				  			</p>
 			  			</div>

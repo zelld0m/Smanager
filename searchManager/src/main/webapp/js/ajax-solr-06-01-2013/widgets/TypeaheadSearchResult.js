@@ -77,12 +77,12 @@
 
 			for (var i = 0, l = self.manager.response.response.docs.length; i < l && i < GLOBAL_storeMaxSuggestion; i++) {
 				var doc = self.manager.response.response.docs[i];
-//				var debug = self.manager.response.debug.explain[doc.EDP]; 
+//				var debug = self.manager.response.debug.explain[doc.SystemProductID]; 
 
 				$(self.target).append(self.getContent(doc));
 
 				if (doc.Expired != undefined)
-					$(this.target).find("li#resultItem_" + doc.EDP + " div#expiredHolder").attr("style","display:float");
+					$(this.target).find("li#resultItem_" + doc.SystemProductID + " div#expiredHolder").attr("style","display:float");
 
 				$(self.target).find("img.itemImg, img.normalImg").on({
 					error:function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); 
@@ -198,7 +198,7 @@
 			html += '<'+tag+' class="itemImgWp floatL">';
 			if(self.mode == 'simulator')
 				html += '<a href="javascript:void(0);" class="keywordListener suggest">';
-			html += '<span id="dpno" style="display:none">'+doc.EDP+'</span>';
+			html += '<span id="dpno" style="display:none">'+doc.SystemProductID+'</span>';
 			
 			html += '		<img class="'+(self.mode == 'simulator' ? 'itemImg':'normalImg')+' floatL" width="60" src="'+doc.ImagePath_2+'"/>&nbsp;';
 			html += '		<span class="'+(self.mode == 'simulator'? 'itemNameSuggest offer':'itemNameSuggestPreview')+'">'+doc.Manufacturer+'</span>';

@@ -20,6 +20,7 @@ import com.search.manager.core.model.ModelBean;
 import com.search.manager.exception.DataException;
 import com.search.manager.service.CategoryService;
 import com.search.manager.utility.CatCodeUtil.Attribute;
+import com.search.ws.SolrConstants;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class RedirectRuleCondition extends ModelBean {
@@ -87,7 +88,7 @@ public class RedirectRuleCondition extends ModelBean {
                 builder.append(key).append(":");
                 List<String> values = map.get(key);
                 if (values.size() == 1) {
-                    if ("CatCode".equals(key)) {
+                    if (SolrConstants.CAT_CODE.equals(key)) {
                         String value = values.get(0);
                         if (!value.endsWith("*") && value.length() < 4) {
                             value += "*";
@@ -101,30 +102,30 @@ public class RedirectRuleCondition extends ModelBean {
                 } else {
                     // TODO: support for multiple values
                 }
-                builder.append(" AND ");
+                builder.append(SolrConstants.AND);
             }
         } else if (isCNetFilter()) {
             map = getCNetFilters();
-            if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
-                String value = map.get("Level1Category").get(0);
-                builder.append(forSolr ? getFacetTemplate() : "FacetTemplate").append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
-                if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
-                    value = map.get("Level2Category").get(0);
+            if (CollectionUtils.isNotEmpty(map.get(SolrConstants.LEVEL_1_CATEGORY))) {
+                String value = map.get(SolrConstants.LEVEL_1_CATEGORY).get(0);
+                builder.append(forSolr ? getFacetTemplate() : SolrConstants.FACET_TEMPLATE).append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
+                if (CollectionUtils.isNotEmpty(map.get(SolrConstants.LEVEL_2_CATEGORY))) {
+                    value = map.get(SolrConstants.LEVEL_2_CATEGORY).get(0);
                     builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
-                    if (CollectionUtils.isNotEmpty(map.get("Level3Category"))) {
-                        value = map.get("Level3Category").get(0);
+                    if (CollectionUtils.isNotEmpty(map.get(SolrConstants.LEVEL_3_CATEGORY))) {
+                        value = map.get(SolrConstants.LEVEL_3_CATEGORY).get(0);
                         builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
                     }
                 }
-                builder.append(forSolr ? "*" : "").append(" AND ");
+                builder.append(forSolr ? "*" : "").append(SolrConstants.AND);
             }
 
-            String key = "Manufacturer";
+            String key = SolrConstants.MANUFACTURER;
             List<String> values = map.get(key);
             if (values != null && values.size() == 1) {
                 String value = values.get(0);
                 builder.append("Manufacturer:").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
-                builder.append(" AND ");
+                builder.append(SolrConstants.AND);
             } else {
                 // TODO: support for multiple values
             }
@@ -135,22 +136,22 @@ public class RedirectRuleCondition extends ModelBean {
         if (MapUtils.isNotEmpty(map)) {
             String templateName = null;
             for (String key : map.keySet()) {
-                if (StringUtils.equals(key, "TemplateName")) {
+                if (StringUtils.equals(key, SolrConstants.TEMPLATE_NAME)) {
                     templateName = map.get(key).get(0);
                     String value = templateName;
-                    builder.append(key).append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value).append(" AND ");
+                    builder.append(key).append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value).append(SolrConstants.AND);
                     break;
-                } else if (StringUtils.equals(key, "FacetTemplateName")) {
+                } else if (StringUtils.equals(key, SolrConstants.FACET_TEMPLATE_NAME)) {
                     templateName = map.get(key).get(0);
                     String value = templateName;
-                    builder.append(forSolr ? getFacetTemplateName() : "FacetTemplateName").append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value).append(" AND ");
+                    builder.append(forSolr ? getFacetTemplateName() : SolrConstants.FACET_TEMPLATE_NAME).append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value).append(SolrConstants.AND);
                     break;
                 }
             }
 
             if (StringUtils.isNotBlank(templateName)) {
                 for (String key : map.keySet()) {
-                    if (!(StringUtils.equals(key, "TemplateName") || StringUtils.equals(key, "FacetTemplateName"))) {
+                    if (!(StringUtils.equals(key, SolrConstants.TEMPLATE_NAME) || StringUtils.equals(key, SolrConstants.FACET_TEMPLATE_NAME))) {
                         List<String> values = map.get(key);
                         if (CollectionUtils.isNotEmpty(values)) {
                             builder.append(key).append(":");
@@ -160,14 +161,14 @@ public class RedirectRuleCondition extends ModelBean {
                             }
                             for (String value : values) {
                                 builder.append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
-                                builder.append(forSolr ? " " : " OR ");
+                                builder.append(forSolr ? " " : SolrConstants.OR);
                             }
                             if (forSolr) {
                                 builder.append(")");
                             } else {
                                 builder.replace(builder.length() - 4, builder.length(), "");
                             }
-                            builder.append(" AND ");
+                            builder.append(SolrConstants.AND);
                         }
                     }
                 }
@@ -177,86 +178,86 @@ public class RedirectRuleCondition extends ModelBean {
 
         // Platform, Condition, Availability, License, ImageExists are grouped together
         // special processing
-        // if Condition == "Refurbished" set Refurbished_Flag:1
-        //				== "Open Box"    set OpenBox_Flag:1
-        //              == "Clearance"   set Clearance_Flag:1
-        // if License == "Non-License Products Only" set Licence_Flag:0
-        //		      == "License Products Only", set Licence_Flag:1
-        // if Availability == "In Stock" set InStock:1
-        //                 == "Call"     set InStock:0
+        // if Condition == SolrConstants.REFURBISHED set Refurbished_Flag:1
+        //				== SolrConstants.OPEN_BOX    set OpenBox_Flag:1
+        //              == SolrConstants.CLEARANCE   set Clearance_Flag:1
+        // if License == SolrConstants.NON_LICENSE set Licence_Flag:0
+        //		      == SolrConstants.LICENSE_ONLY, set Licence_Flag:1
+        // if Availability == SolrConstants.IN_STOCK set InStock:1
+        //                 == SolrConstants.CALL     set InStock:0
         // if ImageExists == "Products with Image Only" 	set ImageExists:1
         //                == "Products without Image Only"  set ImageExists:0
 
         map = getFacets();
-        if (map.containsKey("Condition")) {
-            String value = map.get("Condition").get(0);
-            if (value.equals("Refurbished")) {
-                builder.append("Refurbished_Flag").append(":1").append(" AND ");
-            } else if (value.equals("Open Box")) {
-                builder.append("OpenBox_Flag").append(":1").append(" AND ");
-            } else if (value.equals("Clearance")) {
-                builder.append("Clearance_Flag").append(":1").append(" AND ");
+        if (map.containsKey(SolrConstants.AND)) {
+            String value = map.get(SolrConstants.AND).get(0);
+            if (value.equals(SolrConstants.REFURBISHED)) {
+                builder.append(SolrConstants.IS_REFURB).append(":"+SolrConstants.YES).append(SolrConstants.AND);
+            } else if (value.equals(SolrConstants.OPEN_BOX)) {
+                builder.append(SolrConstants.IS_OPEN_BOX).append(":"+SolrConstants.YES).append(SolrConstants.AND);
+            } else if (value.equals(SolrConstants.CLEARANCE)) {
+                builder.append(SolrConstants.IS_CLEARANCE).append(":"+SolrConstants.YES).append(SolrConstants.AND);
             }
         }
-        if (map.containsKey("License")) {
-            String value = map.get("License").get(0);
-            if (value.equals("Non-License Products Only")) {
-                builder.append("Licence_Flag").append(":0").append(" AND ");
-            } else if (value.equals("License Products Only")) {
-                builder.append("Licence_Flag").append(":1").append(" AND ");
-            }
-        }
-
-        if (map.containsKey("ImageExists")) {
-            String value = map.get("ImageExists").get(0);
-            if (value.equals("Products Without Image Only")) {
-                builder.append("ImageExists").append(":0").append(" AND ");
-            } else if (value.equals("Products With Image Only")) {
-                builder.append("ImageExists").append(":1").append(" AND ");
+        if (map.containsKey(SolrConstants.LICENSE)) {
+            String value = map.get(SolrConstants.LICENSE).get(0);
+            if (value.equals(SolrConstants.NON_LICENSE_ONLY)) {
+                builder.append(SolrConstants.IS_LICENSE).append(":"+SolrConstants.NO).append(SolrConstants.AND);
+            } else if (value.equals(SolrConstants.LICENSE_ONLY)) {
+                builder.append(SolrConstants.IS_LICENSE).append(":"+SolrConstants.YES).append(SolrConstants.AND);
             }
         }
 
-        if (map.containsKey("Availability")) {
-            String value = map.get("Availability").get(0);
-            if (value.equals("Call")) {
-                builder.append("InStock").append(":0").append(" AND ");
-            } else if (value.equals("In Stock")) {
-                builder.append("InStock").append(":1").append(" AND ");
+        if (map.containsKey(SolrConstants.IMAGE_EXISTS)) {
+            String value = map.get(SolrConstants.IMAGE_EXISTS).get(0);
+            if (value.equals(SolrConstants.NO_IMAGE_ONLY)) {
+                builder.append(SolrConstants.IMAGE_EXISTS).append(":0").append(SolrConstants.AND);
+            } else if (value.equals(SolrConstants.IMAGE_ONLY)) {
+                builder.append(SolrConstants.IMAGE_EXISTS).append(":1").append(SolrConstants.AND);
             }
         }
-        if (map.containsKey("Platform")) {
-            builder.append("Platform").append(":").append(map.get("Platform").get(0)).append(" AND ");
+
+        if (map.containsKey(SolrConstants.AVAILABILITY)) {
+            String value = map.get(SolrConstants.AVAILABILITY).get(0);
+            if (value.equals(SolrConstants.CALL)) {
+                builder.append(SolrConstants.QTY_AVAILABLE).append(":0").append(SolrConstants.AND);
+            } else if (value.equals(SolrConstants.IN_STOCK)) {
+                builder.append(SolrConstants.QTY_AVAILABLE).append(":[1 TO *]").append(SolrConstants.AND);
+            }
+        }
+        if (map.containsKey(SolrConstants.PLATFORM)) {
+            builder.append(SolrConstants.PLATFORM).append(":").append(map.get(SolrConstants.PLATFORM).get(0)).append(SolrConstants.AND);
         }
 
-        if (map.containsKey("Name")) {
-            String value = map.get("Name").get(0);
+        if (map.containsKey(SolrConstants.NAME)) {
+            String value = map.get(SolrConstants.NAME).get(0);
             if (forSolr) {
                 value = ClientUtils.escapeQueryChars(value);
-                builder.append("(").append(facetPrefix).append("_Name").append(":").append(value).append(" OR ");
+                builder.append("(").append(facetPrefix).append(SolrConstants.NAME_INDEX_SUFFIX).append(":").append(value).append(SolrConstants.OR);
             }
-            builder.append("Name").append(":").append(value);
+            builder.append(SolrConstants.NAME).append(":").append(value);
             if (forSolr) {
                 builder.append(")");
             }
-            builder.append(" AND ");
+            builder.append(SolrConstants.AND);
         }
-        if (map.containsKey("Description")) {
-            String value = map.get("Description").get(0);
+        if (map.containsKey(SolrConstants.DESCRIPTION)) {
+            String value = map.get(SolrConstants.DESCRIPTION).get(0);
             if (forSolr) {
                 value = ClientUtils.escapeQueryChars(value);
-                builder.append("(").append(facetPrefix).append("_Description").append(":").append(value).append(" OR ");
+                builder.append("(").append(facetPrefix).append(SolrConstants.DESCRIPTION_SUFFIX).append(":").append(value).append(SolrConstants.OR);
             }
-            builder.append("Description").append(":").append(value);
+            builder.append(SolrConstants.DESCRIPTION).append(":").append(value);
             if (forSolr) {
                 builder.append(")");
             }
-            builder.append(" AND ");
+            builder.append(SolrConstants.AND);
         }
 
-        if (map.containsKey("MfrPN")) {
-            String value = map.get("MfrPN").get(0);
+        if (map.containsKey(SolrConstants.MFR_PN)) {
+            String value = map.get(SolrConstants.MFR_PN).get(0);
             builder.append(value);
-            builder.append(" AND ");
+            builder.append(SolrConstants.AND);
         }
         
         if (builder.length() > 0) {
@@ -290,24 +291,24 @@ public class RedirectRuleCondition extends ModelBean {
         if (isIMSFilter()) {
             map = getIMSFilters();
 
-            if (CollectionUtils.isNotEmpty(map.get("CatCode"))) {
-                builder.append("Category Code is \"").append(map.get("CatCode").get(0));
+            if (CollectionUtils.isNotEmpty(map.get(SolrConstants.CAT_CODE))) {
+                builder.append("Category Code is \"").append(map.get(SolrConstants.CAT_CODE).get(0));
                 builder.append("\" and ");
-            } else if (CollectionUtils.isNotEmpty(map.get("Category"))) {
-                builder.append("Category is \"").append(map.get("Category").get(0));
-                if (CollectionUtils.isNotEmpty(map.get("SubCategory"))) {
-                    builder.append(" > ").append(map.get("SubCategory").get(0));
-                    if (CollectionUtils.isNotEmpty(map.get("Class"))) {
-                        builder.append(" > ").append(map.get("Class").get(0));
-                        if (CollectionUtils.isNotEmpty(map.get("SubClass"))) {
-                            builder.append(" > ").append(map.get("SubClass").get(0));
+            } else if (CollectionUtils.isNotEmpty(map.get(SolrConstants.CATEGORY))) {
+                builder.append("Category is \"").append(map.get(SolrConstants.CATEGORY).get(0));
+                if (CollectionUtils.isNotEmpty(map.get(SolrConstants.SUB_CATEGORY))) {
+                    builder.append(" > ").append(map.get(SolrConstants.SUB_CATEGORY).get(0));
+                    if (CollectionUtils.isNotEmpty(map.get(SolrConstants.CLASS))) {
+                        builder.append(" > ").append(map.get(SolrConstants.CLASS).get(0));
+                        if (CollectionUtils.isNotEmpty(map.get(SolrConstants.SUB_CLASS))) {
+                            builder.append(" > ").append(map.get(SolrConstants.SUB_CLASS).get(0));
                         }
                     }
                 }
                 builder.append("\" and ");
             }
 
-            String key = "Manufacturer";
+            String key = SolrConstants.MANUFACTURER;
             if (CollectionUtils.isNotEmpty(map.get(key))) {
                 builder.append(key).append(" is ");
                 List<String> values = map.get(key);
@@ -320,18 +321,18 @@ public class RedirectRuleCondition extends ModelBean {
             }
         } else if (isCNetFilter()) {
             map = getCNetFilters();
-            if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
-                builder.append("Category is \"").append(map.get("Level1Category").get(0));
-                if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
-                    builder.append(" > ").append(map.get("Level2Category").get(0));
-                    if (CollectionUtils.isNotEmpty(map.get("Level3Category"))) {
-                        builder.append(" > ").append(map.get("Level3Category").get(0));
+            if (CollectionUtils.isNotEmpty(map.get(SolrConstants.LEVEL_1_CATEGORY))) {
+                builder.append("Category is \"").append(map.get(SolrConstants.LEVEL_1_CATEGORY).get(0));
+                if (CollectionUtils.isNotEmpty(map.get(SolrConstants.LEVEL_2_CATEGORY))) {
+                    builder.append(" > ").append(map.get(SolrConstants.LEVEL_2_CATEGORY).get(0));
+                    if (CollectionUtils.isNotEmpty(map.get(SolrConstants.LEVEL_3_CATEGORY))) {
+                        builder.append(" > ").append(map.get(SolrConstants.LEVEL_3_CATEGORY).get(0));
                     }
                 }
                 builder.append("\" and ");
             }
 
-            String key = "Manufacturer";
+            String key = SolrConstants.MANUFACTURER;
             if (CollectionUtils.isNotEmpty(map.get(key))) {
                 builder.append(key).append(" is ");
                 List<String> values = map.get(key);
@@ -350,8 +351,8 @@ public class RedirectRuleCondition extends ModelBean {
             boolean isCNET = false;
             String templateName = null;
             for (String key : map.keySet()) {
-                if (StringUtils.equals(key, "TemplateName") || StringUtils.equals(key, "FacetTemplateName")) {
-                    isCNET = StringUtils.equals(key, "FacetTemplateName");
+                if (StringUtils.equals(key, SolrConstants.TEMPLATE_NAME) || StringUtils.equals(key, SolrConstants.FACET_TEMPLATE_NAME)) {
+                    isCNET = StringUtils.equals(key, SolrConstants.FACET_TEMPLATE_NAME);
                     templateName = map.get(key).get(0);
                     break;
                 }
@@ -372,7 +373,7 @@ public class RedirectRuleCondition extends ModelBean {
                     	attributeMap = new HashMap<String, Attribute>();
                     }
                     for (String key : map.keySet()) {
-                        if (!(StringUtils.equals(key, "TemplateName") || StringUtils.equals(key, "FacetTemplateName"))) {
+                        if (!(StringUtils.equals(key, SolrConstants.TEMPLATE_NAME) || StringUtils.equals(key, SolrConstants.FACET_TEMPLATE_NAME))) {
                             Attribute a = attributeMap.get(key);
                             List<String> values = map.get(key);
                             if (CollectionUtils.isNotEmpty(values)) {
@@ -383,7 +384,7 @@ public class RedirectRuleCondition extends ModelBean {
                                     builder.append(" or ");
                                 }
                                 builder.replace(builder.length() - 4, builder.length(), "");
-                                builder.append(" AND ");
+                                builder.append(SolrConstants.AND);
                             }
                         }
                     }
@@ -393,11 +394,11 @@ public class RedirectRuleCondition extends ModelBean {
             }
         }
 
-        String[] arrFieldContains = {"Name", "Description"};
+        String[] arrFieldContains = {SolrConstants.NAME, SolrConstants.DESCRIPTION};
 
         map = getFacets();
         for (String key : map.keySet()) {
-            if ("ImageExists".equalsIgnoreCase(key)) {
+            if (SolrConstants.IMAGE_EXISTS.equalsIgnoreCase(key)) {
                 builder.append("Product Image");
             } else {
                 builder.append(key);
@@ -426,7 +427,7 @@ public class RedirectRuleCondition extends ModelBean {
             list = new ArrayList<String>();
             conditionMap.put(key, list);
         }
-        for (String value : values.split(" OR ")) {
+        for (String value : values.split(SolrConstants.OR)) {
             list.add(value);
         }
     }
@@ -453,7 +454,7 @@ public class RedirectRuleCondition extends ModelBean {
         while (fieldStart < condition.length()) {
             // TODO: what if value contains : and AND
             colonPosition = condition.indexOf(":", fieldStart);
-            valueEnd = condition.indexOf(" AND ", colonPosition + 1);
+            valueEnd = condition.indexOf(SolrConstants.AND, colonPosition + 1);
             if (valueEnd < 0) {
                 valueEnd = condition.length();
             }
@@ -462,31 +463,31 @@ public class RedirectRuleCondition extends ModelBean {
             String fieldValue = condition.substring(colonPosition + 1, valueEnd);
 
             // special processing for the following:
-            // if Refurbished_Flag:1 set Condition to "Refurbished" 
-            //	      OpenBox_Flag:1 set Condition to "Open Box"
-            //      Clearance_Flag:1 set Condition to "Clearance"
-            if (fieldName.equals("Refurbished_Flag") && fieldValue.equals("1")) {
-                putToConditionMap("Condition", "Refurbished");
-            } else if (fieldName.equals("OpenBox_Flag") && fieldValue.equals("1")) {
-                putToConditionMap("Condition", "Open Box");
-            } else if (fieldName.equals("Clearance_Flag") && fieldValue.equals("1")) {
-                putToConditionMap("Condition", "Clearance");
-            } // if  Licence_Flag:0 set License to "Non-License Products Only"
-            //                 :1 set License to "License Products Only"
-            else if (fieldName.equals("Licence_Flag") && fieldValue.equals("0")) {
-                putToConditionMap("License", "Non-License Products Only");
-            } else if (fieldName.equals("Licence_Flag") && fieldValue.equals("1")) {
-                putToConditionMap("License", "License Products Only");
-            } // if  ImageExists:0 set ImageExists to "Products Without Image Only"
-            //                 :1 set ImageExists to "Products With Image Only"
-            else if (fieldName.equals("ImageExists") && fieldValue.equals("0")) {
-                putToConditionMap("ImageExists", "Products Without Image Only");
-            } else if (fieldName.equals("ImageExists") && fieldValue.equals("1")) {
-                putToConditionMap("ImageExists", "Products With Image Only");
+            // if Refurbished_Flag:1 set Condition to SolrConstants.REFURBISHED 
+            //	      OpenBox_Flag:1 set Condition to SolrConstants.OPEN_BOX
+            //      Clearance_Flag:1 set Condition to SolrConstants.CLEARANCE
+            if (fieldName.equals(SolrConstants.IS_REFURB) && fieldValue.equals(SolrConstants.YES)) {
+                putToConditionMap(SolrConstants.AND, SolrConstants.REFURBISHED);
+            } else if (fieldName.equals(SolrConstants.IS_OPEN_BOX) && fieldValue.equals(SolrConstants.YES)) {
+                putToConditionMap(SolrConstants.AND, SolrConstants.OPEN_BOX);
+            } else if (fieldName.equals(SolrConstants.IS_CLEARANCE) && fieldValue.equals(SolrConstants.YES)) {
+                putToConditionMap(SolrConstants.AND, SolrConstants.CLEARANCE);
+            } // if  Licence_Flag:N set License to SolrConstants.NON_LICENSE
+            //                 :Y set License to SolrConstants.LICENSE_ONLY
+            else if (fieldName.equals(SolrConstants.IS_LICENSE) && fieldValue.equals(SolrConstants.NO)) {
+                putToConditionMap(SolrConstants.LICENSE, SolrConstants.NON_LICENSE_ONLY);
+            } else if (fieldName.equals(SolrConstants.IS_LICENSE) && fieldValue.equals(SolrConstants.YES)) {
+                putToConditionMap(SolrConstants.LICENSE, SolrConstants.LICENSE_ONLY);
+            } // if  ImageExists:0 set ImageExists to SolrConstants.NO_IMAGE_ONLY
+            //                 :1 set ImageExists to SolrConstants.IMAGE_ONLY
+            else if (fieldName.equals(SolrConstants.IMAGE_EXISTS) && fieldValue.equals("0")) {
+                putToConditionMap(SolrConstants.IMAGE_EXISTS, SolrConstants.NO_IMAGE_ONLY);
+            } else if (fieldName.equals(SolrConstants.IMAGE_EXISTS) && fieldValue.equals("1")) {
+                putToConditionMap(SolrConstants.IMAGE_EXISTS, SolrConstants.IMAGE_ONLY);
             } // CNET
             // TODO: update when MacMall and other stores support CNET Facet Template
-            else if (fieldName.endsWith("_FacetTemplate") // for legacy values
-                    || StringUtils.equals(fieldName, "FacetTemplate")) {
+            else if (fieldName.endsWith(SolrConstants.FACET_TEMPLATE_SUFFIX) // for legacy values
+                    || StringUtils.equals(fieldName, SolrConstants.FACET_TEMPLATE)) {
 
                 if (fieldValue.endsWith("*")) {
                     fieldValue = fieldValue.substring(0, fieldValue.length() - 1);
@@ -494,32 +495,32 @@ public class RedirectRuleCondition extends ModelBean {
                 String[] facets = fieldValue.split("\\ \\|\\ ");
                 if (facets.length > 0) {
                     if (StringUtils.isNotEmpty(facets[0])) {
-                        putToConditionMap("Level1Category", facets[0].replaceAll("\\\\", ""));
+                        putToConditionMap(SolrConstants.LEVEL_1_CATEGORY, facets[0].replaceAll("\\\\", ""));
                     }
                 }
                 if (facets.length > 1) {
-                    putToConditionMap("Level2Category", facets[1].replaceAll("\\\\", ""));
+                    putToConditionMap(SolrConstants.LEVEL_2_CATEGORY, facets[1].replaceAll("\\\\", ""));
                 }
                 if (facets.length > 2) {
-                    putToConditionMap("Level3Category", facets[2].replaceAll("\\\\", ""));
+                    putToConditionMap(SolrConstants.LEVEL_3_CATEGORY, facets[2].replaceAll("\\\\", ""));
                 }
             } else if (fieldName.endsWith("_FacetTemplateName") // for legacy values
-                    || StringUtils.equals(fieldName, "FacetTemplateName")) {
-                putToConditionMap("FacetTemplateName", fieldValue);
+                    || StringUtils.equals(fieldName, SolrConstants.FACET_TEMPLATE_NAME)) {
+                putToConditionMap(SolrConstants.FACET_TEMPLATE_NAME, fieldValue);
             } // Dynamic attributes
             else if (fieldName.startsWith("af_")) {
                 putListToConditionMap(fieldName, fieldValue);
-            } // If InStock:0 set Availability to "In Stock"
-            //           :1 set Availability to "Call"
-            else if (fieldName.equals("InStock") && fieldValue.equals("0")) {
-                putToConditionMap("Availability", "Call");
-            } else if (fieldName.equals("InStock") && fieldValue.equals("1")) {
-                putToConditionMap("Availability", "In Stock");
+            } // If InStock:0 set Availability to SolrConstants.IN_STOCK
+            //           :1 set Availability to SolrConstants.CALL
+            else if (fieldName.equals(SolrConstants.QTY_AVAILABLE) && fieldValue.equals("0")) {
+                putToConditionMap(SolrConstants.AVAILABILITY, SolrConstants.CALL);
+            } else if (fieldName.equals(SolrConstants.QTY_AVAILABLE) && fieldValue.equals("[1 TO *]")) {
+                putToConditionMap(SolrConstants.AVAILABILITY, SolrConstants.IN_STOCK);
             } else {
                 putToConditionMap(fieldName, fieldValue);
             }
 
-            fieldStart = valueEnd + 5; // 5 = length of " AND "
+            fieldStart = valueEnd + 5; // 5 = length of SolrConstants.AND
         }
 
     }
@@ -528,7 +529,7 @@ public class RedirectRuleCondition extends ModelBean {
         // FacetTemplate
         LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
         if (isCNetFilter()) {
-            String[] facetKeys = {"Level1Category", "Level2Category", "Level3Category", "Manufacturer"};
+            String[] facetKeys = {SolrConstants.LEVEL_1_CATEGORY, SolrConstants.LEVEL_2_CATEGORY, SolrConstants.LEVEL_3_CATEGORY, SolrConstants.MANUFACTURER};
             for (String key : facetKeys) {
                 List<String> value = conditionMap.get(key);
                 List<String> newValue = new ArrayList<String>();
@@ -549,8 +550,8 @@ public class RedirectRuleCondition extends ModelBean {
         LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
 
         if (isIMSFilter()) {
-            String[] categoryKeys = {"Category", "SubCategory", "Class", "SubClass", "Manufacturer"};
-            String[] catCodeKeys = {"CatCode", "Manufacturer"};
+            String[] categoryKeys = {SolrConstants.CATEGORY, SolrConstants.SUB_CATEGORY, SolrConstants.CLASS, SolrConstants.SUB_CLASS, SolrConstants.MANUFACTURER};
+            String[] catCodeKeys = {SolrConstants.CAT_CODE, SolrConstants.MANUFACTURER};
             // TODO: update once CNET filters is available
             for (String key : isImsUsingCategory() ? categoryKeys : catCodeKeys) {
                 List<String> value = conditionMap.get(key);
@@ -567,35 +568,35 @@ public class RedirectRuleCondition extends ModelBean {
     }
 
     public boolean isImsUsingCatCode() {
-        return conditionMap.get("CatCode") != null && !conditionMap.get("CatCode").isEmpty() && StringUtils.isNotBlank(conditionMap.get("CatCode").get(0));
+        return conditionMap.get(SolrConstants.CAT_CODE) != null && !conditionMap.get(SolrConstants.CAT_CODE).isEmpty() && StringUtils.isNotBlank(conditionMap.get(SolrConstants.CAT_CODE).get(0));
     }
 
     public boolean isImsUsingCategory() {
-        return conditionMap.get("Category") != null && !conditionMap.get("Category").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Category").get(0));
+        return conditionMap.get(SolrConstants.CATEGORY) != null && !conditionMap.get(SolrConstants.CATEGORY).isEmpty() && StringUtils.isNotBlank(conditionMap.get(SolrConstants.CATEGORY).get(0));
     }
 
     public boolean isIMSFilter() {
         return (!isCNetFilter()
-                && (CollectionUtils.isNotEmpty(conditionMap.get("Manufacturer")) && StringUtils.isNotBlank(conditionMap.get("Manufacturer").get(0))
-                || CollectionUtils.isNotEmpty(conditionMap.get("TemplateName"))
+                && (CollectionUtils.isNotEmpty(conditionMap.get(SolrConstants.MANUFACTURER)) && StringUtils.isNotBlank(conditionMap.get(SolrConstants.MANUFACTURER).get(0))
+                || CollectionUtils.isNotEmpty(conditionMap.get(SolrConstants.TEMPLATE_NAME))
                 || isImsUsingCatCode()
                 || isImsUsingCategory()));
     }
 
     public boolean isCNetFilter() {
         for (String key : conditionMap.keySet()) {
-            if (key.endsWith("FacetTemplateName")) {
+            if (key.endsWith(SolrConstants.FACET_TEMPLATE_NAME)) {
                 return true;
             }
         }
-        return (conditionMap.get("Level1Category") != null && !conditionMap.get("Level1Category").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Level1Category").get(0)));
+        return (conditionMap.get(SolrConstants.LEVEL_1_CATEGORY) != null && !conditionMap.get(SolrConstants.LEVEL_1_CATEGORY).isEmpty() && StringUtils.isNotBlank(conditionMap.get(SolrConstants.LEVEL_1_CATEGORY).get(0)));
     }
 
     public Map<String, List<String>> getFacets() {
         // if any of the following fields are present return them;
         // Platform, Condition, Availability, License, ImageExists
         LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-        String[] keys = {"MfrPN", "Platform", "Condition", "Availability", "License", "ImageExists", "Name", "Description"};
+        String[] keys = {SolrConstants.MFR_PN, SolrConstants.PLATFORM, SolrConstants.AND, SolrConstants.AVAILABILITY, SolrConstants.LICENSE, SolrConstants.IMAGE_EXISTS, SolrConstants.NAME, SolrConstants.DESCRIPTION};
         for (String key : keys) {
             List<String> value = conditionMap.get(key);
             if (value != null && !value.isEmpty()) {
@@ -613,7 +614,7 @@ public class RedirectRuleCondition extends ModelBean {
         // if any of the following fields are present return them;
         // Platform, Condition, Availability, License
         for (String key : conditionMap.keySet()) {
-            if (key.contains("TemplateName") || key.startsWith("af_")) {
+            if (key.contains(SolrConstants.TEMPLATE_NAME) || key.startsWith("af_")) {
                 List<String> value = conditionMap.get(key);
                 if (value != null && !value.isEmpty()) {
                     map.put(key, new ArrayList<String>(value));
@@ -639,16 +640,16 @@ public class RedirectRuleCondition extends ModelBean {
 //        }
 //
 //
-//        // if Condition == "Refurbished" set Refurbished_Flag:1
-//        //				== "Open Box"    set OpenBox_Flag:1
-//        //              == "Clearance"   set Clearance_Flag:1
-//        // if License == "License Products Only" set Licence_Flag:1
-//        //		      == "Non-License Products Only", set Licence_Flag:0
+//        // if Condition == SolrConstants.REFURBISHED set Refurbished_Flag:1
+//        //				== SolrConstants.OPEN_BOX    set OpenBox_Flag:1
+//        //              == SolrConstants.CLEARANCE   set Clearance_Flag:1
+//        // if License == SolrConstants.LICENSE_ONLY set Licence_Flag:1
+//        //		      == SolrConstants.NON_LICENSE, set Licence_Flag:0
 //        //            else, set Licence_Flag:0
-//        // if Availability == "In Stock" set InStock:1
-//        //                 == "Call"     set InStock:0
-//        // if ImageExists == "Products Without Image Only", set ImageExists:0
-//        //                == "Products With Image Only", set ImageExists:2
+//        // if Availability == SolrConstants.IN_STOCK set InStock:1
+//        //                 == SolrConstants.CALL     set InStock:0
+//        // if ImageExists == SolrConstants.NO_IMAGE_ONLY, set ImageExists:0
+//        //                == SolrConstants.IMAGE_ONLY, set ImageExists:2
 //        String[] conditions = {
 //            //				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
 //            //				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",

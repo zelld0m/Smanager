@@ -94,8 +94,8 @@
 			target: '#sortResult',
 			sortLabel: 'Sort By: ',
 			perPageLabel: 'Show: ',
-			perPageOptions: 5,
-			perPageInterval: 5
+			perPageOptions: 15,
+			perPageInterval: 15
 		});
 
 		Manager.addWidget(sortWidget);

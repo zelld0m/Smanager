@@ -26,7 +26,7 @@
 //			template  += '		<h3 class="padT10"></h3>';
 			template  += '		<div class="clearB"></div>';
 			template  += '		<div class="floatL marT5 marL5">';
-			template  += '			<label class="w60 floatL padT5">SKU #: </label>';
+			template  += '			<label class="w60 floatL padT5">ProductID: </label>';
 			template  += '			<label>';
 			template  += '				<span class="fsize10 fgray txtAR" style="bottom:-3px; position:relative">(separated by whitespaces or commas)</span>';
 			template  += '				<textarea id="addItemDPNo" style="width: 230px; float: left; margin-bottom: 7px"></textarea>';
@@ -43,10 +43,10 @@
 				template  += '			<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '		</div>';
 				template  += '		<div class="clearB"></div>';
-				template  += '		<div class="floatL marT5 marL5">';
 			}
 
 			template  += '		<div class="clearB"></div>';
+			template  += '		<div class="floatL marT5 marL5">';
 			template  += '			<label class="w60 floatL padT5">Comment: </label> ';
 			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL w230"></textarea></label>';
 			template  += '		</div>';
@@ -266,29 +266,29 @@
 			template  += '						<input id="descriptionContains" type="text" class="w249"/>';
 			template  += '					</td>';
 			template  += '				</tr>';		
-			template  += '				<tr>';
-			template  += '					<td class="w175">Platform :</td>';
-			template  += '					<td class="iepadBT0 padT1">';
-			template  += '						<select name="select" id="platformList" class="selectCombo" style="width: 100%;" title="Select Platform" >';
-			template  += '							<option value="">-Select Platform-</option>';
-			template  += '							<option value="universal">Universal</option>';
-			template  += '							<option value="pc">PC</option>';
-			template  += '							<option value="linux">Linux</option>';
-			template  += '							<option value="mac">Macintosh</option>';
-			template  += '						</select>';
-			template  += '					</td>';
-			template  += '				</tr>';
-			template  += '				<tr>';
-			template  += '					<td class="w175">Condition :</td>';
-			template  += '					<td class="iepadBT0 padT1">';
-			template  += '						<select name="select" id="conditionList" class="selectCombo" style="width: 100%;" title="Select Condition" >';
-			template  += '							<option value="">-Select Condition-</option>';
-			template  += '							<option value="refurbished">Refurbished</option>';
-			template  += '							<option value="open">Open Box</option>';
-			template  += '							<option value="clearance">Clearance</option>';
-			template  += '						</select>';
-			template  += '					</td>';
-			template  += '				</tr>';
+//			template  += '				<tr>';
+//			template  += '					<td class="w175">Platform :</td>';
+//			template  += '					<td class="iepadBT0 padT1">';
+//			template  += '						<select name="select" id="platformList" class="selectCombo" style="width: 100%;" title="Select Platform" >';
+//			template  += '							<option value="">-Select Platform-</option>';
+//			template  += '							<option value="universal">Universal</option>';
+//			template  += '							<option value="pc">PC</option>';
+//			template  += '							<option value="linux">Linux</option>';
+//			template  += '							<option value="mac">Macintosh</option>';
+//			template  += '						</select>';
+//			template  += '					</td>';
+//			template  += '				</tr>';
+//			template  += '				<tr>';
+//			template  += '					<td class="w175">Condition :</td>';
+//			template  += '					<td class="iepadBT0 padT1">';
+//			template  += '						<select name="select" id="conditionList" class="selectCombo" style="width: 100%;" title="Select Condition" >';
+//			template  += '							<option value="">-Select Condition-</option>';
+//			template  += '							<option value="refurbished">Refurbished</option>';
+//			template  += '							<option value="open">Open Box</option>';
+//			template  += '							<option value="clearance">Clearance</option>';
+//			template  += '						</select>';
+//			template  += '					</td>';
+//			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Availability :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
@@ -299,16 +299,16 @@
 			template  += '						</select>';
 			template  += '					</td>';
 			template  += '				</tr>';
-			template  += '				<tr>';
-			template  += '					<td class="w175">License :</td>';
-			template  += '					<td class="iepadBT0 padT1">';
-			template  += '						<select name="select" id="licenseList" class="selectCombo" style="width: 100%;" title="Select License" >';
-			template  += '							<option value="all">-Select License-</option>';
-			template  += '							<option value="license">License Products Only</option>';
-			template  += '							<option value="nonlicense">Non-License Products Only</option>';
-			template  += '						</select>';
-			template  += '					</td>';
-			template  += '				</tr>';
+//			template  += '				<tr>';
+//			template  += '					<td class="w175">License :</td>';
+//			template  += '					<td class="iepadBT0 padT1">';
+//			template  += '						<select name="select" id="licenseList" class="selectCombo" style="width: 100%;" title="Select License" >';
+//			template  += '							<option value="all">-Select License-</option>';
+//			template  += '							<option value="license">License Products Only</option>';
+//			template  += '							<option value="nonlicense">Non-License Products Only</option>';
+//			template  += '						</select>';
+//			template  += '					</td>';
+//			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Product Image :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
@@ -1462,7 +1462,7 @@
 			});
 
 			base.contentHolder.find("#addItemDate").datepicker({
-				showOn: "button",
+				showOn: "both",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
 				changeMonth: true,
@@ -1556,7 +1556,7 @@
 		base.promptAddProductItem = function(){
 			base.contentHolder.html(base.getAddProductItemTemplate());
 			base.contentHolder.find("#addItemDate").datepicker({
-				showOn: "button",
+				showOn: "both",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
 				changeMonth: true,
@@ -1602,10 +1602,10 @@
 					base.contentHolder.find("#addItemDate").datepicker('disable');
 
 					if ($.isBlank(skus)) {
-						jAlert("There are no SKUs specified in the list.", base.getTypeLabel());
+						jAlert("There are no Products specified in the list.", base.getTypeLabel());
 					}
 					else if (!commaDelimitedNumberPattern.test(skus)) {
-						jAlert("List contains an invalid SKU.", base.getTypeLabel());
+						jAlert("List contains an invalid ProductID.", base.getTypeLabel());
 					}							
 					else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 						jAlert("Invalid date specified.", base.getTypeLabel());
@@ -1665,8 +1665,8 @@
 					target: $(window)
 				},
 				show:{
-					ready: true,
-					modal:true
+					solo: true,
+					ready: true
 				},
 				style: {
 					width: 'auto'
@@ -1686,7 +1686,7 @@
 					},
 					show: function(event, api){
 						destroy = true;
-						base.contentHolder.find("#addItemDate").datepicker('enable');
+						base.contentHolder.find("#addItemDate").prop({readonly: true}).datepicker('enable');
 						base.addClearButtonListener(type);
 					},
 					hide: function(event, api) {

@@ -279,4 +279,5 @@ public interface DaoService extends SearchDaoService {
     public boolean deleteSpellRuleVersion(String store, int versionNo) throws DaoException;
     public List<SpellRule> getSpellRuleVersion(String store, int versionNo) throws DaoException;
 	public boolean importSpellRule(String dest, String origin, String username, Integer maxSuggest) throws DaoException;
+	User getUser(String username, String store) throws DaoException;
 }

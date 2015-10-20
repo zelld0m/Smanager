@@ -201,13 +201,13 @@
 			$li.find("#position").html(item["location"]);
 
 			if(isPartNumber){
-				if (item["dpNo"] === base.doc["DPNo"]){
+				if (item["edp"] === base.doc["SystemProductID"]){
 					base.isItemMember = true;
 					$li.addClass("selected");
 				}
 
 				$li.find("#conditionText").remove();
-				$li.find("#partNo").html(item["dpNo"]);
+				$li.find("#partNo").html(item["edp"]);
 				$li.find("#mfrNo").html(item["mfrPN"]);
 
 			}else if(isFacet){
@@ -241,7 +241,7 @@
 			// make it available
 			for (var itm in list){
 				base.memberIdToItem[list[itm]["memberId"]] = list[itm];
-				if(base.doc["EDP"] === parseInt(list[itm]["edp"]))
+				if(base.doc["SystemProductID"] === parseInt(list[itm]["edp"]))
 					base.selectedItem = list[itm];
 			}
 
@@ -355,7 +355,7 @@
 			template += '		</div>';
 			template += '	<div>';
 			template += '	<ul class="listProd">';
-			template += '		<li><label class="fbold title">SKU #: </label><span id="selItemPartNo">' + base.doc["DPNo"] + '</span></li>';
+			template += '		<li><label class="fbold title">Product ID #: </label><span id="selItemPartNo">' + base.doc["SystemProductID"] + '</span></li>';
 
 			if(base.options.promptPosition){
 				template += '		<li><label class="fbold title">Position: </label><input type="text" id="selItemPosition" style="width:30px"></li>';
@@ -415,7 +415,7 @@
 			}
 
 			template += '							<li id="validityText" class="label"><img id="stampExpired" src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></li><li class="value" id="validityDate"></li>';
-			template += '							<li id="partNoLabel" class="label">SKU #:</li><li class="value" id="partNo"></li>'; 
+			template += '							<li id="partNoLabel" class="label">Product ID #:</li><li class="value" id="partNo"></li>'; 
 			template += '							<li id="mfrNoLabel" class="label">Mfr Part #:</li><li class="value" id="mfrNo"></label>';
 			template += '				  		</ul>';
 			template += '					</div>';
@@ -439,7 +439,7 @@
 
 						var positionInfo = base.options.promptPosition? " at position " + e.data.item["location"] + "?": "?";
 						switch(e.data.item["memberTypeEntity"]){
-						case "PART_NUMBER": itemName = " product item with SKU#: " + e.data.item["dpNo"] + positionInfo; break;
+						case "PART_NUMBER": itemName = " product item with SKU#: " + e.data.item["edp"] + positionInfo; break;
 						case "FACET": itemName = " facet item with condition " + e.data.item.condition["readableString"] + positionInfo; break;
 						}
 
@@ -475,7 +475,7 @@
 						jAlert("Expiry date cannot be earlier than today", "Search Simulator");
 					}else if(base.selectedItem==null){
 						comment = comment.replace(/\n\r?/g, '<br/>');
-						base.options.itemAddItemCallback(base, base.doc["EDP"], position, validityDate, comment);
+						base.options.itemAddItemCallback(base, base.doc["SystemProductID"], position, validityDate, comment);
 					}else if(base.selectedItem!=null){
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						base.options.itemUpdateItemCallback(base, base.selectedItem["memberId"], position, validityDate, comment);
@@ -534,7 +534,7 @@
 
 						var positionInfo = base.options.promptPosition? " at position " + e.data.item["location"] + "?": "?";
 						switch(e.data.item["memberTypeEntity"]){
-						case "PART_NUMBER": itemName = " product item with SKU#: " + e.data.item["dpNo"] + positionInfo; break;
+						case "PART_NUMBER": itemName = " product item with SKU#: " + e.data.item["edp"] + positionInfo; break;
 						case "FACET": itemName = " facet item with condition " + e.data.item.condition["readableString"]  + positionInfo; break;
 						}
 

@@ -18,9 +18,9 @@ public class Product extends ModelBean {
 
 	private static final long serialVersionUID = -7549453734255029359L;
 
-	private String dpNo;
 	private String edp;
 	private String manufacturer;
+	private String distSku;
 	private String mfrPN;
 	private String name;
 	private String description;
@@ -36,12 +36,10 @@ public class Product extends ModelBean {
 		super();
 	}
 
-	public Product(String dpNo, String edp, String manufacturer, String mfrPN,
-			String name, String description, String imagePath, DateTime expiryDateTime, DateTime createdDateTime,
-			DateTime lastModifiedDateTime, String comment, String lastModifiedBy,
-			String createdBy) {
+	public Product(String edp, String manufacturer, String mfrPN, String name, String description, String imagePath,
+			DateTime expiryDateTime, DateTime createdDateTime, DateTime lastModifiedDateTime, String comment,
+			String lastModifiedBy, String createdBy) {
 		super();
-		this.dpNo = dpNo;
 		this.edp = edp;
 		this.manufacturer = manufacturer;
 		this.mfrPN = mfrPN;
@@ -71,18 +69,10 @@ public class Product extends ModelBean {
 		this.setStore(e.getStoreKeyword().getStoreId());
 	}
 	
-	public String getDpNo() {
-		return dpNo;
-	}
-	
-	public void setDpNo(String dpNo) {
-		this.dpNo = dpNo;
-	}
-	
 	public String getEdp() {
 		return edp;
 	}
-	
+
 	public void setEdp(String edp) {
 		this.edp = edp;
 	}
@@ -95,6 +85,14 @@ public class Product extends ModelBean {
 		this.manufacturer = manufacturer;
 	}
 	
+	public String getDistSku() {
+		return distSku;
+	}
+
+	public void setDistSku(String distSku) {
+		this.distSku = distSku;
+	}
+
 	public String getMfrPN() {
 		return mfrPN;
 	}
@@ -102,7 +100,7 @@ public class Product extends ModelBean {
 	public void setMfrPN(String mfrPN) {
 		this.mfrPN = mfrPN;
 	}
-	
+
 	public String getName() {
 		return name;
 	}

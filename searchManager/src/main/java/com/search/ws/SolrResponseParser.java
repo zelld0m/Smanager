@@ -42,6 +42,7 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.SpellRule;
+import com.search.manager.utility.PropertiesUtils;
 
 public abstract class SolrResponseParser {
 
@@ -104,6 +105,7 @@ public abstract class SolrResponseParser {
 	protected JsonSlurper slurper;
 	protected Map<String, List<String>> popularFacetMap;
 	
+	protected final String storePrefix = PropertiesUtils.getValue("default.store.prefix");
 	
 	public SolrResponseParser() {
 		jsonConfig = new JsonConfig();
@@ -214,7 +216,7 @@ public abstract class SolrResponseParser {
 			for (SearchResult result : list) {
 				if (result.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (values.length() == 0) {
-						values.append("EDP:(");
+						values.append("SystemProductID:(");
 					}
 					values.append(" ").append(result.getEdp());
 				}
@@ -271,7 +273,7 @@ public abstract class SolrResponseParser {
 			if (edpFlag || facetFlag) {
 				filter.append("-(");
 				if (edpFlag) {
-					filter.append("EDP:(").append(edpValues).append(")");
+					filter.append("SystemProductID:(").append(edpValues).append(")");
 				}
 				if (facetFlag) {
 					if (edpFlag) {

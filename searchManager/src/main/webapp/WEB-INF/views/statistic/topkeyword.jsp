@@ -26,7 +26,6 @@
 	</div>  
 	
 	<div class="clearB"></div>
-	
 	<div id="tabs">
 		<ul>
 		    <li><a id="report-link" href="#report-tab">Reports</a></li>
@@ -55,11 +54,11 @@
 				</div>
 				<div id="itemHeader2" class="items border clearfix" style="display:none">
 					<label class="iter floatL w45 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> &nbsp; </label>
-					<label class="count floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Count</label>
-					<label class="floatL w320 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>
+					<label class="count floatL w65 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Count</label>
+					<label class="floatL w220 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>
 					<label class="results floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Results</label>
-					<label class="sku floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">SKU</label>
-					<label class="toggle floatL w120 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>
+					<label class="sku floatL w150 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Mfr SKU</label>
+					<label class="toggle floatL w100 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>
 				</div>
 			</div>	
 			<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:365px; overflow-y:auto">
@@ -76,14 +75,14 @@
 				</div>
 				<div id="itemPattern2" class="items pad5 borderB mar0 clearfix" style="display:none">
 					<label class="iter floatL w45"></label>
-					<label class="count floatL w70"></label>
-					<label class="floatL w320">
-						<label class="keyword floatL w310"></label> 
+					<label class="count floatL w65"></label>
+					<label class="floatL w220">
+						<label class="keyword floatL w220"></label> 
 						<div class="rules" style="display:none"></div>
 					</label>
 					<label class="results floatL w70"></label>
-					<label class="sku floatL w70"></label> 
-					<label class="floatR fsize11 w90 txtAC">
+					<label class="sku floatL w150"></label> 
+					<label class="floatR fsize11 w93 txtAC">
 						<a class="toggle" href="javascript:void(0);"></a>
 					</label>
 				</div>
@@ -119,12 +118,13 @@
 					<label class="floatL w535 txtAC fbold padTB5" style="background:#eee">Keyword</label>
 				</div>
 			</div>	
+
 			<div id="customRangeItemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:365px; overflow-y:auto">
 				<div id="itemPattern" class="items pad5 borderB mar0 clearfix" style="display:none">
 					<label class="iter floatL w80"></label>
 					<label class="count floatL w80"></label>
 					<label class="floatL w500">
-						<label class="keyword floatL w400"></label> 
+						<label class="keyword floatL w400"></label>
 						<label class="floatL fsize11 w100">
 							<a class="toggle" href="javascript:void(0);"></a>
 						</label>
@@ -134,6 +134,5 @@
 			</div>
 		</div>
 	</div>
-</div> 
-
+</div>
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

@@ -37,7 +37,7 @@
 			$(self.target).empty();
 
 			if (self.manager.response.response.docs.length > 0 && $.isNotBlank(self.manager.store.values('q'))){
-				var defaultPageOptions = 5;
+				var defaultPageOptions = 15;
 				var defaultPageInterval = 5;
 				var totalResults = this.manager.response.response.numFound;
 
@@ -69,11 +69,10 @@
 
 				var rows = self.manager.store.values('rows');
 				var perPageOptions = {};
-
-				for (var i = 1 ; i < parseInt(this.pageOptions || defaultPageOptions) + 1; i++) {
-					var displayText = parseInt(this.perPageInterval || defaultPageInterval)*i;
-					if (parseInt(totalResults) >= displayText || displayText == rows )
-						perPageOptions[parseInt(this.perPageInterval || defaultPageInterval)*i] = displayText;
+				var revisedOptions = [15, 30, 50];
+				for (var i = 0 ; i < revisedOptions.length; i++) {
+					var displayText = revisedOptions[i];
+					perPageOptions[displayText] = displayText;
 				}
 
 				var selectedSort = "best";
@@ -95,14 +94,14 @@
 				if ($(this.perPageLabel)){
 					$(this.target).append(this.perPageLabel);
 				}
-
+				
 				$(this.target).append(AjaxSolr.theme('select_tag', 'itemsPerPage', AjaxSolr.theme('options_for_select', perPageOptions, selectedPageOptions)));
 				$(this.target).append(" ");
 				
 				if ($(this.sortLabel)){
 					$(this.target).append(this.sortLabel);
 				}
-
+				
 				$(this.target).append(AjaxSolr.theme('select_tag', 'sortBy', AjaxSolr.theme('options_for_select', sort, selectedSort)));
 				
 				$(this.target).find('#sortBy').change(function () {
@@ -118,6 +117,8 @@
 						self.manager.doRequest(0);
 					}
 				});
+				
+				$(this.target).find('#sortBy').prop( "disabled", true );
 
 				$(this.target).find('#itemsPerPage').change(function () {
 					var value = ($(this).val()).trim();

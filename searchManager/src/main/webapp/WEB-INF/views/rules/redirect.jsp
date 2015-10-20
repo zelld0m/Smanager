@@ -70,7 +70,7 @@
                 <ul>
                     <li><a href="#filter"><span>Set Redirect</span></a></li>
                     <li><a href="#keyword"><span>Keyword Redirect</span></a></li>
-                    <li><a href="#page"><span>Page Redirect</span></a></li>
+                   <li><a href="#page"><span>Page Redirect</span></a></li>
                 </ul>
 
                 <div id="page" class="containerRedirect">
@@ -132,7 +132,7 @@
                         <h2 class="borderB padB3">Create Filter Group : 
                             <select id="filterGroup" name="select" class="selectCombo w178" >
                                 <option value="ims">IMS Categories</option>
-                                <option value="cnet">Product Site Taxonomy</option>
+                                <!-- <option value="cnet">Product Site Taxonomy</option>-->
                                 <option value="facet">Facets</option>
                             </select>
                             <a id="addFilterGroupBtn" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
@@ -343,7 +343,7 @@
                                                             <input id="descriptionContains" type="text" style="width: 244px;"/>
                                                         </td>
                                                     </tr>							
-                                                    <tr>
+                                                    <!--<tr>
                                                         <td class="w175">Platform :</td>
                                                         <td class="iepadBT0">
                                                             <select name="select" id="platformList" class="selectCombo w250" title="Select Platform" >
@@ -365,7 +365,7 @@
                                                                 <option value="clearance">Clearance</option>
                                                             </select>
                                                         </td>
-                                                    </tr>
+                                                    </tr>-->
                                                     <tr>
                                                         <td class="w175">Availability :</td>
                                                         <td class="iepadBT0">
@@ -376,7 +376,7 @@
                                                             </select>
                                                         </td>
                                                     </tr>
-                                                    <tr>
+                                                    <!--<tr>
                                                         <td class="w175">License :</td>
                                                         <td class="iepadBT0">
                                                             <select name="select" id="licenseList" class="selectCombo w250" title="Select License" >
@@ -385,7 +385,7 @@
                                                                 <option value="nonlicense">Non-License Products Only</option>
                                                             </select>
                                                         </td>
-                                                    </tr>
+                                                    </tr> -->
                                                     <tr>
                                                         <td class="w175">Product Image :</td>
                                                         <td class="iepadBT0">
@@ -410,7 +410,7 @@
                                                 <a href="javascript:void(0);" class="cloneBtn buttons btnGray clearfix"><div class="buttons fontBold">Clone</div></a> 
                                                 <a href="javascript:void(0);" class="deleteBtn buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
                                             </div>
-                                            <div class="clearB"></div>	
+                                            <div class="clearB"></div>
                                         </div>
                                     </div><!--  end white container -->
                                 </div>

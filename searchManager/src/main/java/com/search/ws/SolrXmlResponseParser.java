@@ -191,7 +191,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						Node kNode = docNodes.item(k);
 						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT)
 								&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
-								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
+								.equalsIgnoreCase("SystemProductID")) {
 							String edp = kNode.getTextContent();
 							tagSearchResult(currentDoc, docNode, facet);
 							if (!includeEDP) {
@@ -271,7 +271,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						Node kNode = docNodes.item(k);
 						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT)
 								&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
-								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
+								.equalsIgnoreCase("SystemProductID")) {
 							String edp = kNode.getTextContent();
 							if (!includeEDP) {
 								docNode.removeChild(kNode);
@@ -374,22 +374,24 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						addedRecords++;
 						Node docNode = children.item(j);
 						if (docNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_DOC)) {
-							Node edpNode = locateElementNode(docNode, SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP);
-							String edp = edpNode.getTextContent();
-							if (expiredElevatedEDPs.contains(edp)) {
-								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_ELEVATE_EXPIRED);
-								docNode.appendChild(expiredNode);
-							}
-							if (expiredDemotedEDPs.contains(edp)) {
-								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_DEMOTE_EXPIRED);
-								docNode.appendChild(expiredNode);
-							}
-							if (!includeEDP) {
-								docNode.removeChild(edpNode);
-							}
-							resultNode.appendChild(mainDoc.importNode(docNode, true));
-							if (explainNode != null) {
-								explainNode.appendChild(mainDoc.importNode(locateElementNode(resultElevateNode, SolrConstants.TAG_STR, edp), true));
+							Node edpNode = locateElementNode(docNode, SolrConstants.TAG_ARR, storePrefix+SolrConstants.PRODUCT_ID);
+							if (edpNode != null) {
+								String edp = edpNode.getChildNodes().item(0).getTextContent();
+								if (expiredElevatedEDPs.contains(edp)) {
+									Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_ELEVATE_EXPIRED);
+									docNode.appendChild(expiredNode);
+								}
+								if (expiredDemotedEDPs.contains(edp)) {
+									Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_DEMOTE_EXPIRED);
+									docNode.appendChild(expiredNode);
+								}
+								if (!includeEDP) {
+									docNode.removeChild(edpNode);
+								}
+								resultNode.appendChild(mainDoc.importNode(docNode, true));
+								if (explainNode != null) {
+									explainNode.appendChild(mainDoc.importNode(locateElementNode(resultElevateNode, SolrConstants.TAG_STR, edp), true));
+								}
 							}
 						}
 					}

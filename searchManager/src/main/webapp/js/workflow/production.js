@@ -88,7 +88,7 @@
 		};
 		
 		var publishHandler = function(){
-			$(tabSelected).find("a#publishBtn, a#unpublishBtn").on({
+			$(tabSelected).find("a#publishBtn, a#unpublishBtn, a#rejectPublishBtn").on({
 				click: function(evt){
 					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
 					
@@ -174,6 +174,47 @@
 										exceptionHandler: function(message, exc){ 
 											exception = true; 
 											jAlert(message, "Unpublish Rule"); 
+										}
+									});
+								}
+							});
+							break;
+
+						case "rejectPublishBtn": 
+							var confirmMsg = "Reject publishing of the following rules:<ul class='mar0 padL30'><li>" + a.join('</li><li>') + "</li></ul>";
+
+							jConfirm(confirmMsg, "Reject Publish", function(status){
+								if(status){
+									var exception = false;
+									DeploymentServiceJS.unapproveRule(GLOBAL_storeId, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+										callback: function(data){
+											
+											console.log(JSON.stringify(data));
+											var done = 'Following rules were successfully rejected <ul class="mar0 padL30">';
+											for(var i=0; i<data.length; i++){	
+												done += '<li>'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").text() + '</li>';
+											}
+											done += '</ul>'
+											jAlert(done,"Reject");
+											getForProductionList(selRuleFltr, function() {  });	
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											if (!exception) {
+												cleanUpTabContent()
+											}
+											else {
+												$("div.circlePreloader").hide();
+												$(tabSelected).find('table.tblItems').show();
+												$(tabSelected).find('div.filter').show();
+												$(tabSelected).find('div#actionBtn').show();
+											}; 
+										},
+										exceptionHandler: function(message, exc){ 
+											exception = true; 
+											jAlert(message, "Reject Publish Rule"); 
 										}
 									});
 								}
@@ -391,7 +432,9 @@
 								break;
 							case "published" : 
 							case "delete" : 
-								$(tabSelected).find('a#publishBtn').hide(); break;
+								$(tabSelected).find('a#publishBtn').hide();
+								$(tabSelected).find('a#rejectPublishBtn').hide(); 
+								break;
 							case undefined:
 							default:
 								$(tabSelected).find('div#actionBtn').hide();

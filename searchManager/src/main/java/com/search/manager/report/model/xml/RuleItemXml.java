@@ -25,7 +25,6 @@ public class RuleItemXml extends BaseEntityXml{
 	private MemberTypeEntity memberType;
 	private String edp;
 	private String condition;
-	private String dpNo;
 	private String imagePath;
 	private String mfrNo;
 	private String manufacturer;
@@ -88,15 +87,6 @@ public class RuleItemXml extends BaseEntityXml{
 
 	public void setExpiryDate(DateTime expiryDate) {
 		this.expiryDate = expiryDate;
-	}
-
-	@XmlTransient
-	public String getDpNo() {
-		return dpNo;
-	}
-
-	public void setDpNo(String dpNo) {
-		this.dpNo = dpNo;
 	}
 
 	@XmlTransient

@@ -343,7 +343,7 @@
 
 				$pLi.find("#prodInfo").text(product["condition"]["readableString"]);
 			}else if(product["memberType"]==="PART_NUMBER"){
-				if($.isNotBlank(product["dpNo"])){
+				if($.isNotBlank(product["edp"])){
 					if($.isNotBlank(product["imagePath"])){
 						setTimeout(function(){
 							$pLi.find("#prodImage").attr("src", product["imagePath"]).off().on({
@@ -353,7 +353,7 @@
 							});
 						},10);
 					}
-					$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
+					$pLi.find("#prodInfo > #prodSKU").text(product["edp"]);
 					$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
 					$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrPN"]);							
 				}else{

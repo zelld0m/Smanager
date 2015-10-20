@@ -89,6 +89,7 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.report.model.xml.SpellRules;
 import com.search.manager.report.model.xml.TypeaheadRuleXml;
+import com.search.manager.utility.PropertiesUtils;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -1196,6 +1197,16 @@ public class DaoServiceImpl implements DaoService {
     @Override
     public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeName) throws DaoException {
         return usersDAO.getUsers(searchCriteria, matchTypeName);
+    }
+    
+    @Override
+    public User getUser(String username, String store) throws DaoException {
+        User user = new User();
+        user.setUsername(username);
+        user.setStoreId(store);
+        SearchCriteria<User> criteria = new SearchCriteria<User>(user, null, null, 0, 0);
+        RecordSet<User> users = getUsers(criteria, MatchType.MATCH_ID);
+        return users.getTotalSize() > 0 ? users.getList().get(0) : null;
     }
 
     @Override

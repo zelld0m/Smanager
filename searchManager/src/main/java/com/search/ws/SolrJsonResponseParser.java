@@ -79,7 +79,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             }
             solrResponse = client.execute(post);
             initialJson = parseJsonResponse(slurper, solrResponse);
-            System.out.println(initialJson.toString());
             // locate the result node and reference it <result name="response" maxScore="23.015398" start="0" numFound="360207">
             // results will be added here
             resultArray = initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
@@ -262,7 +261,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             Map<String, JSONObject> entries = new HashMap<String, JSONObject>();
             for (int j = 0, length = docs.size(); j < length; j++) {
                 JSONObject doc = (JSONObject) docs.get(j);
-                String edp = doc.getString("EDP");
+                String edp = doc.getString("SystemProductID");
                 entries.put(edp, doc);
             }
 
@@ -288,7 +287,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                         demotedResults.add(node);
                     }
                     if (explainObject != null) {
-                        explainObject.put(edp, tmpExplain.getString(edp));
+                    	String opsID = new StringBuilder(edp).insert(0, "OPS").toString();
+                        explainObject.put(edp, tmpExplain.getString(opsID));
                     }
                 }
             }
@@ -335,7 +335,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             }
             for (int j = 0, length = docs.size(); j < length; j++) {
                 JSONObject doc = (JSONObject) docs.get(j);
-                String edp = doc.getString("EDP");
+                String edp = doc.getString("SystemProductID");
                 // insert the demote results to the docs entry
                 addedRecords++;
                 tagSearchResult(doc, edp, facet);
@@ -345,7 +345,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     demotedResults.add(doc);
                 }
                 if (explainObject != null) {
-                    explainObject.put(edp, tmpExplain.getString(edp));
+                    explainObject.put(edp, tmpExplain.getString(doc.getString("ProductID")));
                 }
             }
         } catch (Exception e) {
@@ -394,7 +394,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 addedRecords++;
 
                 JSONObject doc = (JSONObject) docs.get(j);
-                String edp = doc.getString("EDP");
+                String edp = doc.getJSONArray(storePrefix+SolrConstants.PRODUCT_ID).getString(0);
                 if (expiredElevatedEDPs.contains(edp)) {
                     doc.element(SolrConstants.TAG_ELEVATE_EXPIRED, "");
                 }
@@ -402,12 +402,12 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     doc.element(SolrConstants.TAG_DEMOTE_EXPIRED, "");
                 }
                 if (!includeEDP) { // remove EDP if not requested
-                    doc.remove("EDP");
+                    doc.remove(storePrefix+"ProductID");
                 }
 
                 resultArray.add(doc);
                 if (explainObject != null) {
-                    explainObject.put(edp, tmpExplain.getString(edp));
+                    explainObject.put(edp, tmpExplain.getString(doc.getString("ProductID")));
                 }
             }
         } catch (Exception e) {
@@ -640,7 +640,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             int i = 0;
             for (JSONObject object : elevatedResults) {
                 if (!includeEDP) { // remove EDP if not requested
-                    object.remove("EDP");
+                    object.remove("SystemProductID");
                 }
                 // insert the elevate results to the docs entry
                 resultArray.add(i++, object);
@@ -652,7 +652,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
         if (demotedResults != null) {
             for (JSONObject object : demotedResults) {
                 if (!includeEDP) { // remove EDP if not requested
-                    object.remove("EDP");
+                    object.remove("SystemProductID");
                 }
                 // insert the elevate results to the docs entry
                 resultArray.add(object);
@@ -698,9 +698,21 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     continue;
                 }
 
-                JSONObject obj = suggestionsJson.getJSONObject(searchTerm);
-                JSONArray sugs = obj.getJSONArray(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
-
+                Object jsonO = suggestionsJson.get(searchTerm);
+                JSONArray sugs = new JSONArray(); 
+                if (jsonO instanceof JSONObject) {
+	                JSONObject obj = suggestionsJson.getJSONObject(searchTerm);
+	                sugs = obj.getJSONArray(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                } else if (jsonO instanceof JSONArray) {
+                	JSONArray arr = suggestionsJson.getJSONArray(searchTerm);
+                	for (int k=0; k<arr.size(); k++) {
+                		JSONArray temp = arr.getJSONObject(k).getJSONArray(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION);
+                		for (int l=0; l<temp.size(); l++) {
+                			sugs.add(temp.get(l));
+                		}
+                	}
+                }
+                
                 for (int j = 0; j < sugs.size(); j++) {
                     String kw = StringUtils.trim(sugs.getString(j));
                     if (!suggestedKeywords.contains(kw)) {

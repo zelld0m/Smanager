@@ -558,6 +558,52 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
+	// Used by Submit for Publishing (Opstrack requirement)
+	public RuleStatus submitRuleAutoApproval(String storeId, String ruleType, String ruleRefId, String description, 
+			String comment, Boolean autoPublish) {
+	    boolean result;
+        try {
+            String username = utilityService.getUsername();
+            RuleStatus ruleStatus = createRuleStatus(storeId);
+            ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+            ruleStatus.setRuleRefId(ruleRefId);
+            ruleStatus.setDescription(description);
+            ruleStatus.setLastModifiedBy(username);
+            ruleStatus.setRuleSource(RuleSource.USER);
+            ruleStatus.setStoreId(storeId);
+
+            result = ruleStatusService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, DateTime.now()) != null;
+            if (result) {
+                List<String> ruleRefIdList = new ArrayList<String>();
+                ruleRefIdList.add(ruleRefId);
+                approveRule(storeId, RuleSource.USER, ruleType, ruleRefIdList, StringUtils.isBlank(comment) ? "Auto Approve" : comment);
+                try {
+                	RuleStatus ruleStatusInfo = ruleStatusService.getRuleStatus(storeId, ruleType, ruleRefId);
+                    commentService.addRuleStatusComment(RuleStatusEntity.APPROVED, storeId, utilityService.getUsername(),
+                    		StringUtils.isBlank(comment) ? "Auto Approve" : comment, ruleStatusInfo.getRuleStatusId());
+
+                    // for auto publish
+                    if (autoPublish) {
+                    	Map<String, Boolean> ruleMap = publishRule(storeId, RuleSource.USER, ruleType, ruleRefIdList, StringUtils.isBlank(comment) ? "Auto Publish" : comment);
+                    	if (!MapUtils.isEmpty(ruleMap)) {
+	                    	ruleStatusInfo = ruleStatusService.getRuleStatus(storeId, ruleType, ruleRefId);
+	                        commentService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, storeId, utilityService.getUsername(),
+	                        		StringUtils.isBlank(comment) ? "Auto Publish" : comment, ruleStatusInfo.getRuleStatusId());
+                    	}
+                    }
+                    return ruleStatusInfo;
+                } catch (CoreServiceException e) {
+                    logger.error("Error adding rule status comment. ", e);
+                }
+            }
+        } catch (CoreServiceException e) {
+            logger.error("Failed during processRuleStatus()", e);
+        }
+        
+        return null;
+	}
+
+	@RemoteMethod
 	public int recallRule(String ruleType, List<String> ruleRefIdList) {
 		return 0;
 		//return unpublishRule(ruleType, ruleRefIdList);

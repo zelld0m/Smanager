@@ -1,6 +1,7 @@
 package com.search.manager.authentication.dao;
 
 import com.search.manager.authentication.dao.internal.UserDetailsImpl;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +22,8 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.model.Group;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.User;
+import com.search.manager.utility.PropertiesUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +56,7 @@ public class UserAuthenticationProvider implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         UserDetailsImpl userDetails = new UserDetailsImpl();
         try {
-            User user = daoService.getUser(username);
+            User user = daoService.getUser(username, PropertiesUtils.getValue("default.store"));
             if (user != null) {
                 userDetails = new UserDetailsImpl(user);
                 userDetails.setAuthorities(getAuthorities(user.getGroupId()));
