@@ -1462,7 +1462,7 @@
 			});
 
 			base.contentHolder.find("#addItemDate").datepicker({
-				showOn: "button",
+				showOn: "both",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
 				changeMonth: true,
@@ -1556,7 +1556,7 @@
 		base.promptAddProductItem = function(){
 			base.contentHolder.html(base.getAddProductItemTemplate());
 			base.contentHolder.find("#addItemDate").datepicker({
-				showOn: "button",
+				showOn: "both",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
 				changeMonth: true,
@@ -1665,8 +1665,8 @@
 					target: $(window)
 				},
 				show:{
-					ready: true,
-					modal:true
+					solo: true,
+					ready: true
 				},
 				style: {
 					width: 'auto'
@@ -1686,7 +1686,7 @@
 					},
 					show: function(event, api){
 						destroy = true;
-						base.contentHolder.find("#addItemDate").datepicker('enable');
+						base.contentHolder.find("#addItemDate").prop({readonly: true}).datepicker('enable');
 						base.addClearButtonListener(type);
 					},
 					hide: function(event, api) {
