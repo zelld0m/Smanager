@@ -220,7 +220,7 @@
 		if (i % 2 ==1) altclass=" alt-bgGray";
 		if (doc["ForceAdd"] != undefined) altclass=" forceAddClass";
 
-		var output = '<li id="resultItem_' + doc.SystemProductID + '" class="handle' + altclass + '">';
+		var output = '<li id="resultItem_' + doc.DistSku + '" class="handle' + altclass + '">';
 		output += '<table width="100%" border="0" cellpadding="0" cellspacing="0" class="farial fsize12 fDGray marT10 ">';
 		output += '	<tr>';
 		output += '      <td width="28%" rowspan="5" align="center" valign="top"><div style="width:116px; height:100px" class="border itemImg">';

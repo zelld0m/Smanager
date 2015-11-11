@@ -284,12 +284,12 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 	}
 	private void printBottom(StringBuffer message,StringBuffer passedSKU,StringBuffer failedSKU){
 		if (!passedSKU.toString().trim().isEmpty()){
-			message.append("<li>Passed ProductID/s:[");
+			message.append("<li>Passed DistSku/s:[");
 			message.append(passedSKU.toString());
 			message.append("]</li>");
 		}
 		if (!failedSKU.toString().trim().isEmpty()){
-			message.append("<li>Failed ProductID/s:[");
+			message.append("<li>Failed DistSku/s:[");
 			message.append(failedSKU.toString());
 			message.append("]</li>");
 		}						

@@ -216,7 +216,7 @@ public abstract class SolrResponseParser {
 			for (SearchResult result : list) {
 				if (result.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (values.length() == 0) {
-						values.append("SystemProductID:(");
+						values.append("DistSku2:(");
 					}
 					values.append(" ").append(result.getEdp());
 				}
@@ -273,7 +273,7 @@ public abstract class SolrResponseParser {
 			if (edpFlag || facetFlag) {
 				filter.append("-(");
 				if (edpFlag) {
-					filter.append("SystemProductID:(").append(edpValues).append(")");
+					filter.append("DistSku2:(").append(edpValues).append(")");
 				}
 				if (facetFlag) {
 					if (edpFlag) {

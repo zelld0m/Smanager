@@ -261,7 +261,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             Map<String, JSONObject> entries = new HashMap<String, JSONObject>();
             for (int j = 0, length = docs.size(); j < length; j++) {
                 JSONObject doc = (JSONObject) docs.get(j);
-                String edp = doc.getString("SystemProductID");
+                String edp = doc.getString("DistSku");
                 entries.put(edp, doc);
             }
 
@@ -287,7 +287,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                         demotedResults.add(node);
                     }
                     if (explainObject != null) {
-                    	String opsID = new StringBuilder(edp).insert(0, "OPS").toString();
+                    	String opsID = node.getString("ProductID");
                         explainObject.put(edp, tmpExplain.getString(opsID));
                     }
                 }
@@ -335,7 +335,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             }
             for (int j = 0, length = docs.size(); j < length; j++) {
                 JSONObject doc = (JSONObject) docs.get(j);
-                String edp = doc.getString("SystemProductID");
+                String edp = doc.getString("DistSku");
                 // insert the demote results to the docs entry
                 addedRecords++;
                 tagSearchResult(doc, edp, facet);
@@ -640,7 +640,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             int i = 0;
             for (JSONObject object : elevatedResults) {
                 if (!includeEDP) { // remove EDP if not requested
-                    object.remove("SystemProductID");
+                    object.remove("DistSku");
                 }
                 // insert the elevate results to the docs entry
                 resultArray.add(i++, object);
@@ -652,7 +652,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
         if (demotedResults != null) {
             for (JSONObject object : demotedResults) {
                 if (!includeEDP) { // remove EDP if not requested
-                    object.remove("SystemProductID");
+                    object.remove("DistSku");
                 }
                 // insert the elevate results to the docs entry
                 resultArray.add(object);

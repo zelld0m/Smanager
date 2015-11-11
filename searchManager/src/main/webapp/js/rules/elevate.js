@@ -128,7 +128,7 @@
 					//$li.find(".manufacturer").html($item["manufacturer"]);
 					$li.find(".name").html($item["name"]);
 					$li.find("#sku,#mfrpn").show();
-					$li.find(".sku").html($item["distSku"]);
+					$li.find(".sku").html($item["edp"]);
 					$li.find(".mfrpn").html($item["mfrPN"]);
 				}
 

@@ -148,7 +148,7 @@ public class SearchHelper {
 			        .concat("select?");
 			int size = productList.size();
 			boolean isWithEDP = false;
-			StringBuilder edps = new StringBuilder("SystemProductID:(");
+			StringBuilder edps = new StringBuilder("DistSku2:(");
 			String edp = "";
 			for (Product product : productList.values()) {
 				edp = product.getEdp();
@@ -208,7 +208,7 @@ public class SearchHelper {
 				String description = null;
 				for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
 					JSONObject json = resultArray.getJSONObject(i);
-					Product product = productList.get(json.getString("SystemProductID"));
+					Product product = productList.get(json.getString("DistSku"));
 					name = "";
 					description = "";
 					if (product != null) {
@@ -216,10 +216,8 @@ public class SearchHelper {
 						Set<String> keys = (Set<String>) json.keySet();
 						for (String key : keys) {
 							String value = json.getString(key);
-							if ("SystemProductID".equals(key)) {
+							if ("DistSku".equals(key)) {
 								product.setEdp(value);
-							} else if ("DistSku".equals(key)) {
-								product.setDistSku(value);
 							} else if ("MfgSku".equals(key)) {
 								product.setMfrPN(value);
 							} else if ("Manufacturer".equals(key)) {
@@ -293,7 +291,7 @@ public class SearchHelper {
 			if (edps.toString().trim().length() == 0) {
 				return;
 			} else {
-				edps.insert(0, "SystemProductID:(").append(")");
+				edps.insert(0, "DistSku2:(").append(")");
 			}
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -343,7 +341,7 @@ public class SearchHelper {
 			String description = null;
 			for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
 				JSONObject json = resultArray.getJSONObject(i);
-				Product product = productList.get(json.getString("SystemProductID"));
+				Product product = productList.get(json.getString("DistSku"));
 				name = "";
 				description = "";
 				if (product != null) {
@@ -351,10 +349,8 @@ public class SearchHelper {
 					Set<String> keys = (Set<String>) json.keySet();
 					for (String key : keys) {
 						String value = json.getString(key);
-						if ("SystemProductID".equals(key)) {
+						if ("DistSku".equals(key)) {
 							product.setEdp(value);
-						} else if ("DistSku".equals(key)) {
-							product.setDistSku(value);
 						} else if ("MfgSku".equals(key)) {
 							product.setMfrPN(value);
 						} else if ("Manufacturer".equals(key)) {
@@ -571,7 +567,7 @@ public class SearchHelper {
 			for(NameValuePair pair : configManager.getDefaultSolrParameters(storeId)) {
 				nameValuePairs.add(new BasicNameValuePair(pair.getName(), pair.getValue()));
 			}
-			nameValuePairs.add(new BasicNameValuePair("fl", "SystemProductID"));
+			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
 			nameValuePairs.add(new BasicNameValuePair("qt", "standard"));
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
 
@@ -642,7 +638,7 @@ public class SearchHelper {
 			// build the query
 			String core = configManager.getStoreParameter(storeId, "core");
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core)
-			        .concat("select?").replace("http://", PropertiesUtils.getValue("browsejssolrurl"));
+			        .concat("select?");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("q", keyword));
 			nameValuePairs.add(new BasicNameValuePair("qt", configManager.getStoreParameter(storeId, "qt")));
@@ -696,12 +692,12 @@ public class SearchHelper {
 		return forceAdd;
 	}
 
-	public boolean verifyProductId(String server, String storeId, String productId) {
+	public boolean verifyProduct(String server, String storeId, String pid) {
 		boolean result = false;
 		HttpClient client = null;
 		HttpPost post = null;
 		HttpResponse solrResponse = null;
-		if (StringUtils.isEmpty(productId)) {
+		if (StringUtils.isEmpty(pid)) {
 			return result;
 		}
 		try {
@@ -718,7 +714,7 @@ public class SearchHelper {
 			for(NameValuePair pair : configManager.getDefaultSolrParameters(storeId)) {
 				nameValuePairs.add(new BasicNameValuePair(pair.getName(), pair.getValue()));
 			}
-			nameValuePairs.add(new BasicNameValuePair("fl", "SystemProductID"));
+			nameValuePairs.add(new BasicNameValuePair("fl", "DistSku"));
 			nameValuePairs.add(new BasicNameValuePair("qt", qt));
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
 
@@ -728,7 +724,7 @@ public class SearchHelper {
 				nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
 			}
 
-			nameValuePairs.add(new BasicNameValuePair("q", "SystemProductID:" + productId));
+			nameValuePairs.add(new BasicNameValuePair("q", "DistSku2:" + pid));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			if (logger.isDebugEnabled()) {

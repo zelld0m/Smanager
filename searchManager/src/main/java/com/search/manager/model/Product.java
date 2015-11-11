@@ -20,7 +20,6 @@ public class Product extends ModelBean {
 
 	private String edp;
 	private String manufacturer;
-	private String distSku;
 	private String mfrPN;
 	private String name;
 	private String description;
@@ -85,14 +84,6 @@ public class Product extends ModelBean {
 		this.manufacturer = manufacturer;
 	}
 	
-	public String getDistSku() {
-		return distSku;
-	}
-
-	public void setDistSku(String distSku) {
-		this.distSku = distSku;
-	}
-
 	public String getMfrPN() {
 		return mfrPN;
 	}

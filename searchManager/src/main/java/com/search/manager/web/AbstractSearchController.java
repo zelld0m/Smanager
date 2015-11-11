@@ -133,7 +133,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	 * Transform list of SearchResult class to a Solr filter query value.
 	 * SearchResult can be either a part number or a facet
 	 * 
-	 * Return Format: (SystemProductID:(58496 8549 856785) OR ((condition1) OR (condition2) OR (condition3)))  	  
+	 * Return Format: (DistSku:(xxxxx yyyyy zzzzz) OR ((condition1) OR (condition2) OR (condition3)))  	  
 	 *  
 	 * @param request HttpServletRequest
 	 * @param list list of SearchResult class to transform
@@ -167,7 +167,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				}	
 			}
 
-			String edpValues = CollectionUtils.isNotEmpty(edpList) ? StringUtils.trimToEmpty(String.format("SystemProductID:(%s)", StringUtils.join(edpList, ' '))): "";
+			String edpValues = CollectionUtils.isNotEmpty(edpList) ? StringUtils.trimToEmpty(String.format("DistSku2:(%s)", StringUtils.join(edpList, ' '))): "";
 			String facetValues = CollectionUtils.isNotEmpty(facetList) ? String.format("(%s)", StringUtils.join(facetList, " OR ")): "";
 
 			filterQuery.append(String.format("(%s%s%s)", edpValues, StringUtils.isNotBlank(edpValues) && StringUtils.isNotBlank(facetValues)? " OR ": "", facetValues));

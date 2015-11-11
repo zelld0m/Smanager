@@ -201,7 +201,7 @@
 			$li.find("#position").html(item["location"]);
 
 			if(isPartNumber){
-				if (item["edp"] === base.doc["SystemProductID"]){
+				if (item["edp"] === base.doc["DistSku"]){
 					base.isItemMember = true;
 					$li.addClass("selected");
 				}
@@ -241,7 +241,7 @@
 			// make it available
 			for (var itm in list){
 				base.memberIdToItem[list[itm]["memberId"]] = list[itm];
-				if(base.doc["SystemProductID"] === parseInt(list[itm]["edp"]))
+				if(base.doc["DistSku"] === parseInt(list[itm]["edp"]))
 					base.selectedItem = list[itm];
 			}
 
@@ -355,7 +355,7 @@
 			template += '		</div>';
 			template += '	<div>';
 			template += '	<ul class="listProd">';
-			template += '		<li><label class="fbold title">Product ID #: </label><span id="selItemPartNo">' + base.doc["SystemProductID"] + '</span></li>';
+			template += '		<li><label class="fbold title">Product ID #: </label><span id="selItemPartNo">' + base.doc["DistSku"] + '</span></li>';
 
 			if(base.options.promptPosition){
 				template += '		<li><label class="fbold title">Position: </label><input type="text" id="selItemPosition" style="width:30px"></li>';
@@ -475,7 +475,7 @@
 						jAlert("Expiry date cannot be earlier than today", "Search Simulator");
 					}else if(base.selectedItem==null){
 						comment = comment.replace(/\n\r?/g, '<br/>');
-						base.options.itemAddItemCallback(base, base.doc["SystemProductID"], position, validityDate, comment);
+						base.options.itemAddItemCallback(base, base.doc["DistSku"], position, validityDate, comment);
 					}else if(base.selectedItem!=null){
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						base.options.itemUpdateItemCallback(base, base.selectedItem["memberId"], position, validityDate, comment);

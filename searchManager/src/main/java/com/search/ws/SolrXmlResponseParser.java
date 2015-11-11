@@ -191,7 +191,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						Node kNode = docNodes.item(k);
 						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT)
 								&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
-								.equalsIgnoreCase("SystemProductID")) {
+								.equalsIgnoreCase("DistSku")) {
 							String edp = kNode.getTextContent();
 							tagSearchResult(currentDoc, docNode, facet);
 							if (!includeEDP) {
@@ -271,7 +271,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						Node kNode = docNodes.item(k);
 						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT)
 								&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
-								.equalsIgnoreCase("SystemProductID")) {
+								.equalsIgnoreCase("DistSku")) {
 							String edp = kNode.getTextContent();
 							if (!includeEDP) {
 								docNode.removeChild(kNode);

@@ -126,7 +126,7 @@
 					//$li.find(".manufacturer").html($item["manufacturer"]);
 					$li.find(".name").html($item["name"]);
 					$li.find("#sku,#mfrpn").show();
-					$li.find(".sku").html($item["distSku"]);
+					$li.find(".sku").html($item["edp"]);
 					$li.find(".mfrpn").html($item["mfrPN"]);
 				}
 
@@ -496,7 +496,7 @@
 												
 												var conditionForSolr = new Array();
 												for (var i = 0; i < skus.length; i++) {
-													conditionForSolr[i] = "SystemProductID:" + skus[i];
+													conditionForSolr[i] = "DistSku:" + skus[i];
 												}
 												
 												ElevateServiceJS.isItemInNaturalResult(self.selectedRule["ruleId"], skus, conditionForSolr, {

@@ -86,7 +86,7 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 		StringBuffer details = new StringBuffer();
 		
 		if (StringUtils.isNotBlank(model.getEdp())){
-			details = details.append("SystemProductID: ").append(model.getEdp());
+			details = details.append("DistSku: ").append(model.getEdp());
 		}
 		if (StringUtils.isNotBlank(model.getManufacturer())){
 			details = details.append(" Manufacturer: ").append(model.getManufacturer());

@@ -34,13 +34,13 @@
 					
 					for (var i = 0, l = self.manager.response.response.docs.length; i < l; i++) {
 						var doc = self.manager.response.response.docs[i];
-						var debug = self.manager.response.debug.explain[doc.SystemProductID]; 
+						var debug = self.manager.response.debug.explain[doc.DistSku]; 
 						$(self.target).append(AjaxSolr.theme('result', i, hasKeyword,doc, AjaxSolr.theme('snippet', doc), self.auditHandler(doc), self.docHandler(doc), self.debugHandler(doc), self.featureHandler(keywordUsed,doc), self.elevateHandler(keywordUsed,doc), self.excludeHandler(keywordUsed,doc), self.demoteHandler(keywordUsed,doc),self.forceAddHandler(doc)));
 
 						if (doc.Expired != undefined)
-							$(this.target).find("li#resultItem_" + doc.SystemProductID + " div#expiredHolder").attr("style","display:float");
+							$(this.target).find("li#resultItem_" + doc.DistSku + " div#expiredHolder").attr("style","display:float");
 
-						$(self.target).find("li#resultItem_" + doc.SystemProductID + " div.itemImg img").on({
+						$(self.target).find("li#resultItem_" + doc.DistSku + " div.itemImg img").on({
 							error:function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); 
 							}
 						});						
@@ -81,13 +81,13 @@
 		auditHandler: function (doc) {
 
 //			return function () {
-//				var selector  = "#resultItem_" + doc.SystemProductID + " div#auditHolder";
+//				var selector  = "#resultItem_" + doc.DistSku + " div#auditHolder";
 //
 //				$(selector).off().on({
 //					click: function(e){
 //						$(e.currentTarget).viewaudit({
 //							itemDataCallback: function(base, page){
-//								AuditServiceJS.getItemTrail(e.data.doc["SystemProductID"], base.options.page, base.options.pageSize, {
+//								AuditServiceJS.getItemTrail(e.data.doc["DistSku"], base.options.page, base.options.pageSize, {
 //									callback: function(data){
 //										var total = data.totalSize;
 //										base.populateList(data);
@@ -112,9 +112,9 @@
 
 			return function () {
 
-				var selector  = "#resultItem_" + doc.SystemProductID + " div#debugHolder";
-				var title = "Scoring Details for Item " + doc.SystemProductID;
-				var content = self.manager.response.debug.explain[doc.Opstrack_ProductID[0]]; 
+				var selector  = "#resultItem_" + doc.DistSku + " div#debugHolder";
+				var title = "Scoring Details for Item " + doc.DistSku;
+				var content = self.manager.response.debug.explain[doc.DistSku[0]]; 
 
 				$(selector).qtip({
 					content: {
@@ -139,8 +139,8 @@
 
 		forceAddHandler: function (doc) {
 			var self = this;
-			var selector  = "#resultItem_" + doc["SystemProductID"] + " div#forceAddHolder";
-			var title = "Force Add Product ID#: " + doc["SystemProductID"];
+			var selector  = "#resultItem_" + doc["DistSku"] + " div#forceAddHolder";
+			var title = "Force Add DistSku: " + doc["DistSku"];
 
 			return function () {
 				$(selector).qtip({
@@ -160,7 +160,7 @@
 							var content = $('div', api.elements.content);
 							content.html(AjaxSolr.theme('productForceAdd'));
 
-							content.find('#sku').text(doc["SystemProductID"]);
+							content.find('#sku').text(doc["DistSku"]);
 
 							content.find('#validityDate').prop({readonly:true}).datepicker({
 								showOn: "both",
@@ -185,7 +185,7 @@
 									}
 
 									if (e.data.doc["ElevateType"] === "PART_NUMBER" && keyword.toLowerCase() === currKeyword.toLowerCase()){
-										jAlert("Product ID# " + e.data.doc["SystemProductID"] + " is already elevated at position " + e.data.doc["Elevate"], "Search Simulator");
+										jAlert("DistSku " + e.data.doc["DistSku"] + " is already elevated at position " + e.data.doc["Elevate"], "Search Simulator");
 										return
 									}
 									
@@ -196,9 +196,9 @@
 
 									comment = comment.replace(/\n\r?/g, '<br/>');
 									
-									ElevateServiceJS.addProductItemForceAdd(keyword, e.data.doc["SystemProductID"], 1, validityDate, comment, {
+									ElevateServiceJS.addProductItemForceAdd(keyword, e.data.doc["DistSku"], 1, validityDate, comment, {
 										callback:function(data){
-											showActionResponse(data, "force add", "Product ID#: " + e.data.doc["SystemProductID"] + " in " + keyword);
+											showActionResponse(data, "force add", "DistSku: " + e.data.doc["DistSku"] + " in " + keyword);
 										},
 										postHook: function(){
 											self.manager.doRequest();
@@ -223,8 +223,8 @@
 
 			return function () {
 
-				var selector  = "#resultItem_" + doc.SystemProductID + " div#docHolder";
-				var title = "Schema Details for Item " + doc.SystemProductID;
+				var selector  = "#resultItem_" + doc.DistSku + " div#docHolder";
+				var title = "Schema Details for Item " + doc.DistSku;
 
 				$(selector).qtip({
 					content: {
@@ -270,7 +270,7 @@
 
 		elevateHandler: function (keyword, doc) {
 			var self = this;
-			var selector  = "#resultItem_EDP div#elevateHolder".replace("EDP", doc["SystemProductID"]);
+			var selector  = "#resultItem_EDP div#elevateHolder".replace("EDP", doc["DistSku"]);
 
 			return function(){
 				$(selector).ruleitem({
@@ -373,7 +373,7 @@
 
 		excludeHandler: function (keyword,doc) {
 			var self = this;
-			var selector  = "#resultItem_EDP div#excludeHolder".replace("EDP", doc["SystemProductID"]);
+			var selector  = "#resultItem_EDP div#excludeHolder".replace("EDP", doc["DistSku"]);
 
 			return function(){
 				$(selector).ruleitem({
@@ -459,7 +459,7 @@
 
 		demoteHandler: function (keyword,doc) {
 			var self = this;
-			var selector  = "#resultItem_EDP div#demoteHolder".replace("EDP", doc["SystemProductID"]);
+			var selector  = "#resultItem_EDP div#demoteHolder".replace("EDP", doc["DistSku"]);
 
 			return function(){
 				$(selector).ruleitem({

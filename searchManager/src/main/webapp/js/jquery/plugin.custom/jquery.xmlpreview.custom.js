@@ -239,7 +239,7 @@
 						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
 					else if(PART_NUMBER){
-						memberConditions.push("SystemProductID:"+list[i]["edp"]);
+						memberConditions.push("DistSku:"+list[i]["edp"]);
 						if($.isNotBlank(list[i]["edp"])){
 							base.setImage($tr,list[i]);
 							$tr.find("td#itemDPNo").html(list[i]["edp"]);
