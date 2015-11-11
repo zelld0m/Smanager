@@ -174,7 +174,7 @@
 							<th width="20px">#</th>
 							<th width="60px" id="selectAll">Image</th>
 							<th width="94px">Manufacturer</th>
-							<th width="70px">SKU #</th>
+							<th width="70px">Distributor SKU</th>
 							<th width="160px">Name</th>
 							<th width="90px">Validity</th>
 						</tr>

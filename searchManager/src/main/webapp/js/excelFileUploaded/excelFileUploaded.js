@@ -55,13 +55,14 @@
 				},				
 				deleteExcelFileUploaded : function(e){
 					var fileName=$("#fileName").val();
-					var msg = "Are you sure delete Excel file Upload [" + fileName + "] ?";
+					var msg = "Do you want to delete [" + fileName + "] ?";
 					jConfirm(msg, "Confirm", function(status){					
 						if(status){
+							var ruleType = $("#titleText").text().toLowerCase();
 							$("#dialog-modal-details").dialog("close");
 							var excelFileUploadedId=$("#excelFileUploadedId").val();
 							var storeId=$("#storeId").val();							
-							ExcelFileUploadedServiceJS.deleteExcelFileUploaded(excelFileUploadedId,storeId,fileName,{
+							ExcelFileUploadedServiceJS.deleteExcelFileUploaded(excelFileUploadedId,storeId,fileName,ruleType,{
 								callback: function(count){ 
 									excelFileUploaded.loadPaging();
 								},
@@ -143,7 +144,7 @@
 				        },
 				        success: function(data) {
 				        	if(data.toLowerCase().indexOf("error") >= 0){
-				        		jAlert(data, "Error on excelfile upload.", function(){
+				        		jAlert(data, "Error on excel file upload.", function(){
 									excelFileUploaded.loadPaging();});
 				        	}else{
 					        	$( "#dialog-modal" ).dialog({

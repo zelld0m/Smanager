@@ -49,7 +49,7 @@
 		template += '<div class="w250">';
 		template += '	<div>';
 		template += '		<ul class="listItemInfo">';
-		template += '			<li><label class="floatL fbold title w100 padTB2">Product ID#: </label><label class="floatL w100 padTB2"><span id="sku"></span></label></li>';
+		template += '			<li><label class="floatL fbold title w100 padTB2">Distributor SKU: </label><label class="floatL w100 padTB2"><span id="sku"></span></label></li>';
 		template += '			<li><label class="floatL fbold title w100 padTB2">Keyword: </label><label class="floatL w100 padTB2"><input type="text" id="keyword"></label></li>';
 		template += '			<li><label class="floatL fbold title w100 padTB2">Valid Until: </label><label class="floatL w100 padTB2"><input type="text" id="validityDate" style="width:65px"></label></li>';
 		template += '			<li><label class="floatL fbold title padTB2">Comments:</label><label class="floatL padTB2"><textarea id="comment" class="w240"></textarea></label></li>';
@@ -220,7 +220,7 @@
 		if (i % 2 ==1) altclass=" alt-bgGray";
 		if (doc["ForceAdd"] != undefined) altclass=" forceAddClass";
 
-		var output = '<li id="resultItem_' + doc.SystemProductID + '" class="handle' + altclass + '">';
+		var output = '<li id="resultItem_' + doc.DistSku + '" class="handle' + altclass + '">';
 		output += '<table width="100%" border="0" cellpadding="0" cellspacing="0" class="farial fsize12 fDGray marT10 ">';
 		output += '	<tr>';
 		output += '      <td width="28%" rowspan="5" align="center" valign="top"><div style="width:116px; height:100px" class="border itemImg">';
@@ -266,7 +266,7 @@
 		output += '		<td colspan="2" align="left" valign="top" class="padTB7 fgray">';
 		output += '			<table width="100%" border="0" cellpadding="0" cellspacing="0">';
 		output += '				<tr>';
-		output += '       			<td width="50%"><span class="fgreen">SYN #: </span>' + doc.DistSku + '</td>';
+		output += '       			<td width="50%"><span class="fgreen">Distributor SKU: </span>' + doc.DistSku + '</td>';
 		output += '       			<td width="50%"><span class="fgreen">Mfr. Part #:</span>' + doc.MfrPN + '</td>';
 		output += '				</tr>';
 		output += '      		</table>';

@@ -105,10 +105,11 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 
 	@RemoteMethod
 	public int deleteExcelFileUploaded(String excelFileUploadedId,
-			String storeId, String fileName) throws DaoException {
+			String storeId, String fileName, String ruleType) throws DaoException {
 		ExcelFileUploaded excelFileUploaded = new ExcelFileUploaded();
 		excelFileUploaded.setExcelFileUploadedId(excelFileUploadedId);
 		excelFileUploaded.setFileName(fileName);
+		excelFileUploaded.setRuleTypeId(RuleEntity.find(ruleType).getCode());
 		excelFileUploaded.setStoreId(storeId);
 		
 		ExcelFileUploaded result = dao.getExcelFileUploaded(excelFileUploaded);
@@ -284,12 +285,12 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 	}
 	private void printBottom(StringBuffer message,StringBuffer passedSKU,StringBuffer failedSKU){
 		if (!passedSKU.toString().trim().isEmpty()){
-			message.append("<li>Passed ProductID/s:[");
+			message.append("<li>Passed Distributor SKU(s):[");
 			message.append(passedSKU.toString());
 			message.append("]</li>");
 		}
 		if (!failedSKU.toString().trim().isEmpty()){
-			message.append("<li>Failed ProductID/s:[");
+			message.append("<li>Failed Distributor SKU(s):[");
 			message.append(failedSKU.toString());
 			message.append("]</li>");
 		}						

@@ -239,7 +239,7 @@
 						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
 					else if(PART_NUMBER){
-						memberConditions.push("SystemProductID:"+list[i]["edp"]);
+						memberConditions.push("Distributor SKU:"+list[i]["edp"]);
 						if($.isNotBlank(list[i]["edp"])){
 							base.setImage($tr,list[i]);
 							$tr.find("td#itemDPNo").html(list[i]["edp"]);
@@ -247,7 +247,7 @@
 							$tr.find("td#itemName").html(list[i]["name"]);
 						}
 						else{
-							$tr.find("td#itemImage").html("Product ID:" + list[i]["edp"] + " is no longer available in the search server you are connected")
+							$tr.find("td#itemImage").html("Distributor SKU:" + list[i]["edp"] + " is no longer available in the search server you are connected")
 							.prop("colspan",4)
 							.removeClass("txtAC")
 							.addClass("txtAL")
@@ -1230,7 +1230,7 @@
 				template += '					<th width="20px">#</th>';
 				template += '					<th width="60px" id="selectAll">Image</th>';
 				template += '					<th width="94px">Manufacturer</th>';
-				template += '					<th width="70px">SKU #</th>';
+				template += '					<th width="70px">Distributor SKU</th>';
 				template += '					<th width="160px">Name</th>';
 				template += '					<th width="90px">Validity</th>';
 				template += '				</tr>';

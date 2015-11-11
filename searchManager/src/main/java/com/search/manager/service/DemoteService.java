@@ -228,8 +228,8 @@ public class DemoteService extends RuleService {
         sequence = (sequence == 0) ? 1 : sequence;
         for (String partNumber : partNumbers) {
             count = 0;
-            if (searchHelper.verifyProductId(serverName, storeName, partNumber)) {
-	        	// OPSTRACK - no more DPNo > EDP conversion - the partNumbers list contains Opstrack_ProductID
+            if (searchHelper.verifyProduct(serverName, storeName, partNumber)) {
+	        	// OPSTRACK - no more DPNo > EDP conversion - the partNumbers list contains Opstrack DistSku
 	            count = addItem(keyword, partNumber, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER);
             }
             if (count > 0) {

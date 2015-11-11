@@ -17,7 +17,7 @@
 			            <tr class="alt">
 			                <th>Keyword</th>
 			                <th>Rank</th>
-			                <th>SKU</th>
+			                <th>Distributor SKU</th>
 			                <th>Name</th>
 			                <th>Expiration</th>
 			            </tr>

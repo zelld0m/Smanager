@@ -33,19 +33,19 @@
 			<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix marR10 marL3"><div class="btnGraph marB8"></div></a>
       	</sec:authorize>
       </div>
-	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
+	  <div class="w450 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
-	  <sec:authorize access="hasRole('CREATE_RULE')">
+	  <%-- <sec:authorize access="hasRole('CREATE_RULE')">
 		<ul class="fsize12 padT10 padR10 floatR" style="list-style-type: none;">
 	    	<li>
 	        	<a href="javascript:void(0);" 
 	                 style="color: #333; font-weight: bold;"
-	                id="uploadFromExcel">Upload ProductIDs from Excel Files</a>
+	                id="uploadFromExcel">Upload Distributor SKU(s) from Excel Files</a>
 	        </li>
 	     </ul>
-	   </sec:authorize>	  
+	   </sec:authorize> --%>
 	</div>
 	<div class="clearB"></div>	 
 	
@@ -122,8 +122,8 @@
 			  			<div class="clearB"></div>
 			  			<div class="textInfo marT5">
 				  			<p id="sku" style="display:none">
-				  				<span class="fgreen">Mfr. SYN #:</span>
-				  				<span class="sku"></span>
+				  				<span class="fgreen">Distributor SKU:</span>
+				  				<div class="sku"></div>
 				  			</p>
 			  			</div>
 		  				<div class="textInfo">

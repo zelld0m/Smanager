@@ -246,3 +246,6 @@ div.listView ul li div.validityDate { float:left; width:33% }
 
 
 .tblItems td p { margin:0; padding:3 }
+
+div.sku { float: left; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+span.fgreen { float: left; padding-right: 3px; }

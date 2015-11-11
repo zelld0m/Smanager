@@ -9,14 +9,14 @@
   <system-timezone>America/Los_Angeles</system-timezone>
   
   <big-bets>
-    <fields>SystemProductID,DistSku,MfgSku,SystemKW,Opstrack*,Category,SubCategory,Class,SubClass,CatCode,ImagePath</fields>
+    <fields>SystemProductID,DistSku,Manufacturer,MfgSku,SystemKW,Opstrack*,Category,SubCategory,Class,SubClass,CatCode,ImagePath</fields>
     <query>json.nl=map%amp;wt=json%amp;fl=%amp;start=0</query>
   </big-bets>
   
   <!-- Opstrack -->
   <store id="opstrack" name="Opstrack">
     <core>Products</core>
-    <sort>score desc</sort>
+    <sort>CatCodeOrder asc, score desc</sort>
     <qt>/opstrack</qt>
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
     <facet-name>Opstrack</facet-name>
