@@ -33,7 +33,7 @@
 			<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix marR10 marL3"><div class="btnGraph marB8"></div></a>
       	</sec:authorize>
       </div>
-	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
+	  <div class="w450 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
