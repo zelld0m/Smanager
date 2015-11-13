@@ -133,8 +133,8 @@
 			  			<div class="clearB"></div>
 			  			<div class="textInfo marT5">
 				  			<p id="sku" style="display:none">
-				  				<span class="fgreen">Mfr. SYN #:</span>
-				  				<span class="sku"></span>
+				  				<span class="fgreen">Distributor SKU:</span>
+				  				<div class="sku"></div>
 				  			</p>
 			  			</div>
 		  				<div class="textInfo">

@@ -266,7 +266,7 @@
 		output += '		<td colspan="2" align="left" valign="top" class="padTB7 fgray">';
 		output += '			<table width="100%" border="0" cellpadding="0" cellspacing="0">';
 		output += '				<tr>';
-		output += '       			<td width="50%"><span class="fgreen">SYN #: </span>' + doc.DistSku + '</td>';
+		output += '       			<td width="50%"><span class="fgreen">Distributor SKU: </span>' + doc.DistSku + '</td>';
 		output += '       			<td width="50%"><span class="fgreen">Mfr. Part #:</span>' + doc.MfrPN + '</td>';
 		output += '				</tr>';
 		output += '      		</table>';
