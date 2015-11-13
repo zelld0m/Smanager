@@ -42,7 +42,7 @@
 	    	<li>
 	        	<a href="javascript:void(0);" 
 	                 style="color: #333; font-weight: bold;"
-	                id="uploadFromExcel">Upload DistSku(s) from Excel Files</a>
+	                id="uploadFromExcel">Upload Distributor SKU(s) from Excel Files</a>
 	        </li>
 	     </ul>
 	   </sec:authorize>	    

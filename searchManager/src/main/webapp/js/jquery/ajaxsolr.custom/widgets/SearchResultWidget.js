@@ -140,7 +140,7 @@
 		forceAddHandler: function (doc) {
 			var self = this;
 			var selector  = "#resultItem_" + doc["DistSku"] + " div#forceAddHolder";
-			var title = "Force Add DistSku: " + doc["DistSku"];
+			var title = "Force Add Distributor SKU: " + doc["DistSku"];
 
 			return function () {
 				$(selector).qtip({
@@ -185,7 +185,7 @@
 									}
 
 									if (e.data.doc["ElevateType"] === "PART_NUMBER" && keyword.toLowerCase() === currKeyword.toLowerCase()){
-										jAlert("DistSku " + e.data.doc["DistSku"] + " is already elevated at position " + e.data.doc["Elevate"], "Search Simulator");
+										jAlert("Distributor SKU " + e.data.doc["DistSku"] + " is already elevated at position " + e.data.doc["Elevate"], "Search Simulator");
 										return
 									}
 									
@@ -198,7 +198,7 @@
 									
 									ElevateServiceJS.addProductItemForceAdd(keyword, e.data.doc["DistSku"], 1, validityDate, comment, {
 										callback:function(data){
-											showActionResponse(data, "force add", "DistSku: " + e.data.doc["DistSku"] + " in " + keyword);
+											showActionResponse(data, "force add", "Distributor SKU: " + e.data.doc["DistSku"] + " in " + keyword);
 										},
 										postHook: function(){
 											self.manager.doRequest();

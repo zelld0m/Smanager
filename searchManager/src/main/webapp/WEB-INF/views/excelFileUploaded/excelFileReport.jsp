@@ -33,7 +33,7 @@
 						<thead>
 		            		<tr class="alt">			                
 		                		<th>Rank</th>
-		                		<th>SKU</th>
+		                		<th>Distributor SKU</th>
 		                		<th>Name</th>
 		                		<th>Expiration</th>
 		            		</tr>

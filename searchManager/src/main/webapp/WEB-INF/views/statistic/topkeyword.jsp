@@ -57,7 +57,7 @@
 					<label class="count floatL w65 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Count</label>
 					<label class="floatL w220 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Keyword</label>
 					<label class="results floatL w70 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Results</label>
-					<label class="sku floatL w150 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">DistSku</label>
+					<label class="sku floatL w150 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Distributor SKU</label>
 					<label class="toggle floatL w100 txtAC fbold padTB5" style="background:#eee"> &nbsp; </label>
 				</div>
 			</div>	

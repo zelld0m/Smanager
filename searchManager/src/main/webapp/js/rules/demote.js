@@ -158,7 +158,7 @@
 												api.destroy();
 												showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? 
 														"Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + e.data.item.condition["readableString"] : 
-														"Product ID#: " + e.data.item["edp"]));
+														"Distributor SKU: " + e.data.item["edp"]));
 												self.populateRuleItem(self.selectedRuleItemPage);
 											},
 										});
@@ -260,7 +260,7 @@
 							itemAddComment: function(base, comment){
 								DemoteServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : "Product ID#: " + e.data.item["edp"]));
+										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : "Distributor SKU: " + e.data.item["edp"]));
 										base.getList(base.options.page);
 									},
 									preHook: function(){
@@ -305,7 +305,7 @@
 							if(result){
 								DemoteServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {	
 									callback: function(code){
-										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : "Product ID#: " + e.data.item["edp"]);
+										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(e.data.item) + " Item: " + e.data.item.condition["readableString"] : "Distributor SKU: " + e.data.item["edp"]);
 										self.showRuleContent();
 									},
 									preHook: function(){
@@ -398,7 +398,7 @@
 				var $item = item;
 				DemoteServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionCallBackJobResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel($item) + " Item: " + $item.condition["readableString"] : "Product ID#: " + $item["edp"]),
+						showActionCallBackJobResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel($item) + " Item: " + $item.condition["readableString"] : "Distributor SKU: " + $item["edp"]),
 								function(){if(code==1) self.populateRuleItem(self.selectedRuleItemPage);});						
 					}
 				});
@@ -752,7 +752,7 @@
 
 				DemoteServiceJS.update(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
-						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + $item.condition["readableString"] : "Product ID#: " + $item["edp"]);
+						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule " + self.getFacetRuleTypeLabel(item) + " Item: " + $item.condition["readableString"] : "Distributor SKU: " + $item["edp"]);
 						self.populateRuleItem();
 						showActionResponse(code, "update position", updateMessage);
 					},

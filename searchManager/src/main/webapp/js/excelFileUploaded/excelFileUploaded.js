@@ -143,7 +143,7 @@
 				        },
 				        success: function(data) {
 				        	if(data.toLowerCase().indexOf("error") >= 0){
-				        		jAlert(data, "Error on excelfile upload.", function(){
+				        		jAlert(data, "Error on excel file upload.", function(){
 									excelFileUploaded.loadPaging();});
 				        	}else{
 					        	$( "#dialog-modal" ).dialog({

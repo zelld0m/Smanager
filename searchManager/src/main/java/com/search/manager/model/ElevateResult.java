@@ -49,7 +49,7 @@ public class ElevateResult extends SearchResult {
 
 	@Override
 	public String toString() {
-		return "(StoreKeyword: " + storeKeyword + "\tDistSku: " + edp + "\tlocation: " + location + ")";
+		return "(StoreKeyword: " + storeKeyword + "\tDistributor SKU: " + edp + "\tlocation: " + location + ")";
 	}
 	
 	public Integer getLocation() {

@@ -49,7 +49,7 @@
 		template += '<div class="w250">';
 		template += '	<div>';
 		template += '		<ul class="listItemInfo">';
-		template += '			<li><label class="floatL fbold title w100 padTB2">Product ID#: </label><label class="floatL w100 padTB2"><span id="sku"></span></label></li>';
+		template += '			<li><label class="floatL fbold title w100 padTB2">Distributor SKU: </label><label class="floatL w100 padTB2"><span id="sku"></span></label></li>';
 		template += '			<li><label class="floatL fbold title w100 padTB2">Keyword: </label><label class="floatL w100 padTB2"><input type="text" id="keyword"></label></li>';
 		template += '			<li><label class="floatL fbold title w100 padTB2">Valid Until: </label><label class="floatL w100 padTB2"><input type="text" id="validityDate" style="width:65px"></label></li>';
 		template += '			<li><label class="floatL fbold title padTB2">Comments:</label><label class="floatL padTB2"><textarea id="comment" class="w240"></textarea></label></li>';

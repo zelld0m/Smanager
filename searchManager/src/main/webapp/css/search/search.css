@@ -29,7 +29,7 @@ span.count						{ font-size:11px !important; color:#808080 }
 .listProd						{ list-style:none; margin-left:0; padding-left:10px }
 .listProd li span				{ padding-top:3px; position:relative; top:4px}
 .listProd li label	 			{ margin:5px 0}
-.listProd li label.title 		{ width:70px; float:left; display:inline; }
+.listProd li label.title 		{ float:left; display:inline; }
 .listProd li input[type=text]	{ font-size:11px; color:#282828}
 .listProd li img.ui-datepicker-trigger			{ margin-bottom:-4px; margin-left:5px }
 

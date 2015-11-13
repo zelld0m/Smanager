@@ -86,7 +86,7 @@ public class DemoteReportBean extends ReportBean<DemoteProduct> {
 		StringBuffer details = new StringBuffer();
 		
 		if (StringUtils.isNotBlank(model.getEdp())){
-			details = details.append("DistSku: ").append(model.getEdp());
+			details = details.append("Distributor SKU: ").append(model.getEdp());
 		}
 		if (StringUtils.isNotBlank(model.getManufacturer())){
 			details = details.append(" Manufacturer: ").append(model.getManufacturer());

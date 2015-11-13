@@ -26,7 +26,7 @@
 //			template  += '		<h3 class="padT10"></h3>';
 			template  += '		<div class="clearB"></div>';
 			template  += '		<div class="floatL marT5 marL5">';
-			template  += '			<label class="w60 floatL padT5">DistSku: </label>';
+			template  += '			<label class="w60 floatL padT5">Distributor SKU: </label>';
 			template  += '			<label>';
 			template  += '				<span class="fsize10 fgray txtAR" style="bottom:-3px; position:relative">(separated by whitespaces or commas)</span>';
 			template  += '				<textarea id="addItemDPNo" style="width: 230px; float: left; margin-bottom: 7px"></textarea>';
