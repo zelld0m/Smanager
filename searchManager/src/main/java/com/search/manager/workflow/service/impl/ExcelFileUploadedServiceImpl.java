@@ -105,10 +105,11 @@ public class ExcelFileUploadedServiceImpl implements  ExcelFileUploadedService{
 
 	@RemoteMethod
 	public int deleteExcelFileUploaded(String excelFileUploadedId,
-			String storeId, String fileName) throws DaoException {
+			String storeId, String fileName, String ruleType) throws DaoException {
 		ExcelFileUploaded excelFileUploaded = new ExcelFileUploaded();
 		excelFileUploaded.setExcelFileUploadedId(excelFileUploadedId);
 		excelFileUploaded.setFileName(fileName);
+		excelFileUploaded.setRuleTypeId(RuleEntity.find(ruleType).getCode());
 		excelFileUploaded.setStoreId(storeId);
 		
 		ExcelFileUploaded result = dao.getExcelFileUploaded(excelFileUploaded);
