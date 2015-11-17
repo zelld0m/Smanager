@@ -70,6 +70,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		SolrConstants.SOLR_PARAM_WRITER_TYPE,
 		SolrConstants.SOLR_PARAM_START
 	};
+	private static final String MANUFACTURER_KEYWORD_PROPERTY = "fq-manufacturer";
 
 	public void setSolrService(SearchDaoService solrService) {
 		this.solrService = solrService;
@@ -749,6 +750,16 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						nameValuePairs.add(nvp);
 					}
 					keyword = "";
+				}
+			}
+
+			// add special case fq (manufacturer is in keyword)
+			for (String keyVal : StringUtils.trim(PropertiesUtils.getValue(MANUFACTURER_KEYWORD_PROPERTY)).split(";")) {
+				if (StringUtils.containsIgnoreCase(originalKeyword, keyVal)) {
+					nvp = new BasicNameValuePair("fq", "Manufacturer:" + keyVal);
+					if (ParameterUtils.addNameValuePairToMap(paramMap, "fq", nvp, uniqueFields)) {
+						nameValuePairs.add(nvp);
+					}
 				}
 			}
 

@@ -240,7 +240,7 @@ public class ConfigManager {
 			solrParamNames.contains(solrParamName);
 			List<String> solrParamValues = hc.getList("param-value");
 			for (String solrParamValue : solrParamValues) {
-				nameValuePairList.add(new BasicNameValuePair(solrParamName, solrParamValue));
+				nameValuePairList.add(new BasicNameValuePair(solrParamName, solrParamValue.replace("\\", "")));
 			}
 		}
 

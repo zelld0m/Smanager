@@ -25,7 +25,10 @@
     </solr-param-name>
     <solr-param-value name="fq">
     	<param-value>PcMall_StoreFlag:true</param-value>
-    </solr-param-value>    
+    </solr-param-value>
+    <solr-param-value name="fq">
+        <param-value>-Manufacturer:\"Server Technology\"</param-value>
+    </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
     <default-server>search</default-server>
@@ -71,6 +74,12 @@
     <qt>dismaxpcmallrelevancy</qt>
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
     <facet-name>PcMall</facet-name>
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    <solr-param-value name="fq">
+        <param-value>-Manufacturer:\"Server Technology\"</param-value>
+    </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
     <default-timezone>America/Los_Angeles</default-timezone>
@@ -91,7 +100,13 @@
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
-    <facet-name>PCMG</facet-name> 
+    <facet-name>PCMG</facet-name>
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    <solr-param-value name="fq">
+        <param-value>-Manufacturer:\"Server Technology\"</param-value>
+    </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
 	<default-timezone>America/Los_Angeles</default-timezone>
