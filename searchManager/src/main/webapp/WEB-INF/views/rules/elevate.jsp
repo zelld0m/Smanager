@@ -37,7 +37,7 @@
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
-	  <sec:authorize access="hasRole('CREATE_RULE')">
+	  <%-- <sec:authorize access="hasRole('CREATE_RULE')">
 		 <ul class="fsize12 padT10 padR10 floatR" style="list-style-type: none;">
 	    	<li>
 	        	<a href="javascript:void(0);" 
@@ -45,7 +45,7 @@
 	                id="uploadFromExcel">Upload Distributor SKU(s) from Excel Files</a>
 	        </li>
 	     </ul>
-	  </sec:authorize>	  
+	  </sec:authorize> --%>
 	</div>
 	<div class="clearB"></div>	 
 	
