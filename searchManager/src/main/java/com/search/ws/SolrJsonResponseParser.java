@@ -504,43 +504,22 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 
         JSONObject facets = new JSONObject();
         if (root.getFacetCount() > 1) {
-
-//            if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !configManager.isMemberOf("PCM", facetSortRule.getStoreId())) {
-        	if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !isCNETImplementation) {    
-        		List<FacetEntry> entries = new ArrayList<FacetEntry>();
-        		for (String lvl1Key : root.getFacets()) {
-        			entries.add(new FacetEntry(lvl1Key, root.getFacet(lvl1Key).getCount()));
-                }
-        		
-        		// Sort by popularity
-        		if(popularFacetMap != null && popularFacetMap.size() > 0) {
-        			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
-        		}
-        		
-        		for (FacetEntry entry : entries) {
-                    lvl1Map.put(entry.getLabel(), entry.getCount());
-                }
-            } else {
-                facetSortRule.getItems().containsKey("Category");
-                List<FacetEntry> entries = new ArrayList<FacetEntry>();
-                for (String lvl1Key : root.getFacets()) {
-                    entries.add(new FacetEntry(lvl1Key, root.getFacet(lvl1Key).getCount()));
-                }
-                
-                // Sort by popularity
-        		if(popularFacetMap != null && popularFacetMap.size() > 0 && popularFacetMap.get(facetTemplate) != null) {
-        			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
-        		}
-                
+        	List<FacetEntry> entries = new ArrayList<FacetEntry>();
+    		for (String lvl1Key : root.getFacets()) {
+    			entries.add(new FacetEntry(lvl1Key, root.getFacet(lvl1Key).getCount()));
+            }
+    		if(popularFacetMap != null && popularFacetMap.size() > 0 && popularFacetMap.get(facetTemplate) != null) {
+    			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
+    		}
+        	if (facetSortRule != null && facetSortRule.getItems().get("Category") != null && isCNETImplementation) {
                 SortType sortType = facetSortRule.getGroupSortType().get("Category");
                 if (sortType == null) {
                     sortType = facetSortRule.getSortType();
                 }
                 FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get("Category"), false);
-
-                for (FacetEntry entry : entries) {
-                    lvl1Map.put(entry.getLabel(), entry.getCount());
-                }
+            }
+        	for (FacetEntry entry : entries) {
+                lvl1Map.put(entry.getLabel(), entry.getCount());
             }
         } else {
             // lvl1
@@ -549,25 +528,47 @@ public class SolrJsonResponseParser extends SolrResponseParser {
             lvl1Map.put(lvl1Key, lvl1.getCount());
 
             if (lvl1.getFacetCount() > 1) {
-                // more than 1 level 2
-                for (String lvl2Key : lvl1.getFacets()) {
-                    CNetFacetTemplate lvl2 = lvl1.getFacet(lvl2Key);
-                    if (lvl2 != null) {
-                        lvl2Map.put(lvl2Key, lvl2.getCount());
+            	// lvl2
+                List<FacetEntry> entries = new ArrayList<FacetEntry>();
+        		for (String lvl2Key : lvl1.getFacets()) {
+        			entries.add(new FacetEntry(lvl2Key, lvl1.getFacet(lvl2Key).getCount()));
+                }
+        		if(popularFacetMap != null && popularFacetMap.size() > 0 && popularFacetMap.get(facetTemplate) != null) {
+        			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
+        		}
+            	if (facetSortRule != null && facetSortRule.getItems().get("Category") != null && isCNETImplementation) {
+                    SortType sortType = facetSortRule.getGroupSortType().get("Category");
+                    if (sortType == null) {
+                        sortType = facetSortRule.getSortType();
                     }
+                    FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get("Category"), false);
+                }
+            	for (FacetEntry entry : entries) {
+            		lvl2Map.put(entry.getLabel(), entry.getCount());
                 }
             } else {
-                // only one level 2
+                // lvl3
                 if (lvl1.getFacets().size() > 0) {
                     String lvl2Key = lvl1.getFacets().get(0);
                     CNetFacetTemplate lvl2 = lvl1.getFacet(lvl2Key);
                     lvl2Map.put(lvl2Key, lvl2.getCount());
 
-                    for (String lvl3Key : lvl2.getFacets()) {
-                        CNetFacetTemplate lvl3 = lvl2.getFacet(lvl3Key);
-                        if (lvl3 != null) {
-                            lvl3Map.put(lvl3Key, lvl3.getCount());
+                    List<FacetEntry> entries = new ArrayList<FacetEntry>();
+            		for (String lvl3Key : lvl2.getFacets()) {
+            			entries.add(new FacetEntry(lvl3Key, lvl2.getFacet(lvl3Key).getCount()));
+                    }
+            		if(popularFacetMap != null && popularFacetMap.size() > 0 && popularFacetMap.get(facetTemplate) != null) {
+            			FacetEntry.sortEntries(entries, SortType.ASC_ALPHABETICALLY, popularFacetMap.get(facetTemplate), !"desc".equals(defaultSortOrder));
+            		}
+                	if (facetSortRule != null && facetSortRule.getItems().get("Category") != null && isCNETImplementation) {
+                        SortType sortType = facetSortRule.getGroupSortType().get("Category");
+                        if (sortType == null) {
+                            sortType = facetSortRule.getSortType();
                         }
+                        FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get("Category"), false);
+                    }
+                	for (FacetEntry entry : entries) {
+                		lvl3Map.put(entry.getLabel(), entry.getCount());
                     }
                 }
             }
