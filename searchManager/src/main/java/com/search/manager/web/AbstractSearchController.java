@@ -71,6 +71,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		SolrConstants.SOLR_PARAM_START
 	};
 	private static final String MANUFACTURER_KEYWORD_PROPERTY = "fq-manufacturer";
+	private static final String KEYWORD_OVERRIDE = "keywordOverride";
 
 	public void setSolrService(SearchDaoService solrService) {
 		this.solrService = solrService;
@@ -653,9 +654,32 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				nameValuePairs.add(nvp);
 			}
 			
+			String keyOverride = "";
+			
 			// parse the parameters, construct POST form
+			@SuppressWarnings("unchecked")
 			Set<String> paramNames = (Set<String>) request.getParameterMap().keySet();
 			for (String paramName : paramNames) {
+
+				// special case : add conditional rule
+				if (PropertiesUtils.getValue(KEYWORD_OVERRIDE) != null && paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELD_QUERY)) {
+					for (String key : StringUtils.trim(PropertiesUtils.getValue(KEYWORD_OVERRIDE)).split(";")) {
+						String ruleKey = key.split("#")[0];
+						boolean meet = true;
+						int index = 0;
+						for (String condition : key.split("#")) {
+							if (index > 0 && !(Arrays.asList(request.getParameterValues(paramName)).contains(condition))) {
+								meet = false;
+							}
+							index++;
+						}
+						if (meet) {
+							keyOverride = ruleKey;
+							break;
+						}
+					}
+				}
+
 				for (String paramValue : request.getParameterValues(paramName)) {
 					if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_SIMULATE_DATE) && StringUtils.isNotBlank(paramValue)) {
 						currentDate = getOverrideCurrentDate(storeId, paramValue);
@@ -738,9 +762,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// ?q=MallIn_RebateFlag%3A1+OR+MacMallRebate_RebateFlag%3A1+OR+Manufacturer_RebateFlag%3A1
 			// &facet=true&rows=0&qt=standard&facet.mincount=1&facet.limit=15
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
-			String keyword = StringUtils.trimToEmpty(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
+			String keyword = StringUtils.isNotBlank(keyOverride) ? keyOverride :
+					StringUtils.trimToEmpty(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
 			String originalKeyword = keyword;
-			
+
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
 				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:") || keyword.startsWith("Manufacturer:")) {
@@ -1152,7 +1177,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 							}
 						}
 					}
-	
+
 					// BANNER
 					try {
                         requestPropertyBean = new RequestPropertyBean(storeId, keyword, keywordPresent, fromSearchGui,
