@@ -762,9 +762,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// ?q=MallIn_RebateFlag%3A1+OR+MacMallRebate_RebateFlag%3A1+OR+Manufacturer_RebateFlag%3A1
 			// &facet=true&rows=0&qt=standard&facet.mincount=1&facet.limit=15
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
-			String keyword = StringUtils.isNotBlank(keyOverride) ? keyOverride :
-					StringUtils.trimToEmpty(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
+			String keyword = StringUtils.trimToEmpty(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
 			String originalKeyword = keyword;
+			String ruleKeyword = StringUtils.isNotBlank(keyOverride) ? keyOverride : keyword;
+				
 
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
@@ -822,7 +823,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			List<String> expiredDemotedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
 			List<String> expiredExcludedList = new ArrayList<String>();
-			List<BannerRuleItem> bannerList = null;
 			
 			String sort = request.getParameter(SolrConstants.SOLR_PARAM_SORT);
 			boolean bestMatchFlag = StringUtils.isEmpty(sort) || !(StringUtils.containsIgnoreCase(sort, "price") || StringUtils.containsIgnoreCase(sort, "manufacturer"));
@@ -1089,9 +1089,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				    RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId);
 					// EXCLUDE
 					if (isActiveSearchRule(storeId, RuleEntity.EXCLUDE)) {
-						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, keyword);
+						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, ruleKeyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, ruleKeyword, ruleKeyword, !disableExclude));
 						}
 						if (!disableExclude) {
 							excludeList = getExcludeRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1116,9 +1116,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	
 					// DEMOTE
 					if (isActiveSearchRule(storeId, RuleEntity.DEMOTE)) {
-						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, keyword);
+						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, ruleKeyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, ruleKeyword, ruleKeyword, !disableDemote));
 						}
 						if (!disableDemote && bestMatchFlag) {
 							demoteList = getDemoteRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1141,9 +1141,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	
 					// ELEVATE
 					if (isActiveSearchRule(storeId, RuleEntity.ELEVATE)) {
-						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, keyword);
+						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, ruleKeyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, ruleKeyword, ruleKeyword, !disableElevate));
 						}
 						if (!disableElevate) {
 							elevatedList = getElevateRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
