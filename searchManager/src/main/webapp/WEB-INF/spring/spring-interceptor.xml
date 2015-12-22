@@ -16,6 +16,8 @@
                 <list>
                     <value>/search/**</value>
                     <value>/enterpriseSearch/**</value>
+                    <value>/contentSearch/**</value>
+                    <value>/sectionSearch/**</value>
                 </list>
             </property>
         </bean>

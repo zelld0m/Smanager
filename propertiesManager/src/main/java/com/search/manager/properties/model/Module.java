@@ -30,6 +30,8 @@ public class Module implements java.io.Serializable {
     private String name;
     @XmlAttribute
     private String title;
+    @XmlAttribute
+    private boolean enableUI;
     @XmlElementWrapper(name = "groups")
     @XmlElement(name = "group")
     private List<Group> groups = Lists.newArrayList();
@@ -63,7 +65,15 @@ public class Module implements java.io.Serializable {
         this.title = title;
     }
 
-    public List<Group> getGroups() {
+    public boolean getEnableUI() {
+		return enableUI;
+	}
+
+	public void setEnableUI(boolean enableUI) {
+		this.enableUI = enableUI;
+	}
+
+	public List<Group> getGroups() {
         return groups;
     }
 

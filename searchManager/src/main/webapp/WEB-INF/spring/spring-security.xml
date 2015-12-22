@@ -28,6 +28,8 @@
 			
 			<!-- Exclude web service and entry point from authentication -->
 			<security:intercept-url pattern="/search/**" filters="none"/>
+			<security:intercept-url pattern="/contentSearch/**" filters="none"/>
+			<security:intercept-url pattern="/sectionSearch/**" filters="none"/>
 			<security:intercept-url pattern="/enterpriseSearch/**" filters="none"/>
 			<security:intercept-url pattern="/login.jsp*" access="permitAll" />
 			<security:intercept-url pattern="/health.jsp" filters="none" />

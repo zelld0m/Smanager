@@ -1,9 +1,17 @@
 package com.search.manager.properties;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -14,8 +22,18 @@ import com.google.common.collect.Lists;
 import com.search.manager.properties.dao.PropertiesDao;
 import com.search.manager.properties.exception.NotDirectoryException;
 import com.search.manager.properties.exception.PropertyException;
-import com.search.manager.properties.model.*;
-import com.search.manager.properties.util.*;
+import com.search.manager.properties.model.DBProperty;
+import com.search.manager.properties.model.Group;
+import com.search.manager.properties.model.Member;
+import com.search.manager.properties.model.Module;
+import com.search.manager.properties.model.Property;
+import com.search.manager.properties.model.Store;
+import com.search.manager.properties.model.StoreProperties;
+import com.search.manager.properties.model.StorePropertiesFile;
+import com.search.manager.properties.model.StoreProperty;
+import com.search.manager.properties.util.Modules;
+import com.search.manager.properties.util.Propertys;
+import com.search.manager.properties.util.Stores;
 
 /**
  * Controls the loading and reading of the store properties.
@@ -250,7 +268,7 @@ public class PropertiesManager {
         List<StoreProperty> storeProperties = storePropertiesFile.getStoreProperties();
 
         for (StoreProperty storeProperty : storeProperties) {
-            properties.setProperty(storeProperty.getName(), storeProperty.getValue());
+            properties.setProperty(storeProperty.getName(), StringUtils.defaultString(storeProperty.getValue()));
         }
 
         return properties;

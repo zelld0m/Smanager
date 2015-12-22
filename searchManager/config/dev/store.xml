@@ -2,7 +2,7 @@
 <!-- Dev Config -->
 <store-properties>
 	<store id="ecost" extends="pcmall">
-		<module name="settings" title="Settings">
+    	<module name="settings" title="Settings" enableUI="false">
 			<properties>
 				<property id="site_domain" type="String">
 					<label>New Site Domain</label>
@@ -40,7 +40,7 @@
 	</store>
 
 	<store id="macmall" extends="pcmall">
-		<module name="settings" title="Settings">
+        <module name="settings" title="Settings" enableUI="false">
 			<properties>
 				<property id="site_domain" type="String" required="true">
 					<label>Site Domain</label>
@@ -71,7 +71,7 @@
 	</store>
 
 	<store id="macmallbd" extends="pcmall">
-		<module name="settings" title="Settings">
+		<module name="settings" title="Settings" enableUI="false">
 			<properties>
 				<property id="site_domain" type="String" required="true">
 					<label>Site Domain</label>
@@ -102,7 +102,7 @@
 	</store>
 
 	<store id="pcmallcap" extends="pcmall">
-		<module name="workflow" title="Workflow">
+    	<module name="workflow" title="Workflow" enableUI="false">
 			<groups>
 				<group name="General">
 					<member property-id="maxRunAttempts" />
@@ -221,7 +221,7 @@
 				</property>
 			</properties>
 		</module>
-		<module name="settings" title="Settings">
+        <module name="settings" title="Settings" enableUI="false">
 			<groups>
 				<group name="New Banner Ads Feature">
 					<member property-id="site_domain" />
@@ -242,7 +242,7 @@
 	</store>
 
 	<store id="pcmallgov" extends="pcmall">
-		<module name="workflow" title="Workflow">
+        <module name="workflow" title="Workflow" enableUI="false">
 			<groups>
 				<group name="General">
 					<member property-id="maxRunAttempts" />
@@ -361,7 +361,7 @@
 				</property>
 			</properties>
 		</module>
-		<module name="settings" title="Settings">
+        <module name="settings" title="Settings" enableUI="false">
 			<properties>
 				<property id="site_domain" type="String" required="true">
 					<label>Site Domain</label>
@@ -382,7 +382,7 @@
 	</store>
 
 	<store id="pcmall">
-		<module name="searchwithin" title="Search Within">
+    	<module name="searchwithin" title="Search Within" enableUI="false">
 			<groups>
 				<group name="Search Within">
 					<member property-id="searchwithin.enable" />
@@ -525,7 +525,7 @@
 				</property>
 			</properties>
 		</module>
-		<module name="facetsort" title="Facet Sort">
+		<module name="facetsort" title="Facet Sort" enableUI="false">
 			<groups>
 				<group>
 					<member property-id="facetsort.enabled" />
@@ -538,7 +538,7 @@
 				</property>
 			</properties>
 		</module>
-		<module name="spell" title="Did You Mean">
+        <module name="spell" title="Did You Mean" enableUI="false">
 			<groups>
 				<group>
 					<member property-id="maxSpellSuggestions" />
@@ -551,7 +551,7 @@
 				</property>
 			</properties>
 		</module>
-		<module name="typeahead" title="Type-ahead">
+		<module name="typeahead" title="Type-ahead" enableUI="true">
 			<groups>
 				<group name="Threshold">
 					<member property-id="typeahead.dailySearchCountThreshold" />
@@ -566,6 +566,7 @@
 					<member property-id="typeahead.keywordBrandMax" />
 					<member property-id="typeahead.keywordCategoryMax" />
 					<member property-id="typeahead.categoryMax" />
+					<member property-id="typeahead.showImage"/>
 				</group>
 			</groups>
 			<properties>
@@ -619,9 +620,13 @@
 					<label>Category Max Display</label>
 					<defaultValue>5</defaultValue>
 				</property>
+				<property id="typeahead.showImage" type="Boolean">
+                    <label>Show Product Image</label>
+                    <defaultValue>false</defaultValue>
+                </property>
 			</properties>
 		</module>
-		<module name="workflow" title="Workflow">
+        <module name="workflow" title="Workflow" enableUI="false">
 			<groups>
 				<group name="Export Feature">
 					<member property-id="auto_export" />
@@ -654,7 +659,7 @@
 				</property>
 			</properties>
 		</module>
-		<module name="mail" title="Mail">
+    	<module name="mail" title="Mail" enableUI="false">
 			<groups>
 				<group>
 					<member property-id="pendingNotification" />
@@ -804,7 +809,7 @@
 				</property>
 			</properties>
 		</module>
-		<module name="settings" title="Settings">
+        <module name="settings" title="Settings" enableUI="false">
 			<groups>
 				<group name="Banner Ads Feature">
 					<member property-id="site_domain" />
@@ -860,6 +865,184 @@
 					<label>Facet Template</label>
 					<defaultValue>CNET</defaultValue>
 				</property>
+			</properties>
+		</module>
+		<module name="contents" title="Content Search" enableUI="true">
+			<groups>
+				<group name="General Properties">
+					<member property-id="filters.tags"/>
+					<member property-id="section.maxDisplay"/>
+				</group>
+				<group name="Section" collapse="true">
+					<member property-id="section.one.enable"/>
+					<member property-id="section.one.name"/>
+					<member property-id="section.one.type"/>
+					<member property-id="section.one.showImage"/>
+					<member property-id="section.one.showAuthor"/>
+					<member property-id="section.one.showCreatedDate"/>
+				</group>
+				<group name="Section" collapse="true">
+					<member property-id="section.two.enable"/>
+					<member property-id="section.two.name"/>
+					<member property-id="section.two.type"/>
+					<member property-id="section.two.showImage"/>
+					<member property-id="section.two.showAuthor"/>
+					<member property-id="section.two.showCreatedDate"/>
+				</group>
+				<group name="Section" collapse="true">
+					<member property-id="section.three.enable"/>
+					<member property-id="section.three.name"/>
+					<member property-id="section.three.type"/>
+					<member property-id="section.three.showImage"/>
+					<member property-id="section.three.showAuthor"/>
+					<member property-id="section.three.showCreatedDate"/>
+				</group>
+				<group name="Section" collapse="true">
+					<member property-id="section.four.enable"/>
+					<member property-id="section.four.name"/>
+					<member property-id="section.four.type"/>
+					<member property-id="section.four.showImage"/>
+					<member property-id="section.four.showAuthor"/>
+					<member property-id="section.four.showCreatedDate"/>
+				</group>
+				<group name="Section" collapse="true">
+					<member property-id="section.five.enable"/>
+					<member property-id="section.five.name"/>
+					<member property-id="section.five.type"/>
+					<member property-id="section.five.showImage"/>
+					<member property-id="section.five.showAuthor"/>
+					<member property-id="section.five.showCreatedDate"/>
+				</group>
+			</groups>
+			<properties>
+				<property id="filters.tags" type="DropDown" multiValued="true">
+                    <label>Usable Filter Tags</label>
+                    <defaultValue></defaultValue>
+                </property>
+                <property id="section.maxDisplay" type="String" multiValued="false">
+                    <label>Sections Max Display</label>
+                    <defaultValue>5</defaultValue>
+                </property>
+				<property id="section.one.enable" type="Boolean">
+                    <label>Enable</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.two.enable" type="Boolean">
+                    <label>Enable</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.three.enable" type="Boolean">
+                    <label>Enable</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.four.enable" type="Boolean">
+                    <label>Enable</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.five.enable" type="Boolean">
+                    <label>Enable</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.one.name" type="String" multiValued="false">
+                    <label>Title</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.two.name" type="String" multiValued="false">
+                    <label>Title</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.three.name" type="String" multiValued="false">
+                    <label>Title</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.four.name" type="String" multiValued="false">
+                    <label>Title</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.five.name" type="String" multiValued="false">
+                    <label>Title</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.one.type" type="DropDown" multiValued="true">
+                    <label>Content Type</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.two.type" type="DropDown" multiValued="true">
+                    <label>Content Type</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.three.type" type="DropDown" multiValued="true">
+                    <label>Content Type</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.four.type" type="DropDown" multiValued="true">
+                    <label>Content Type</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.five.type" type="DropDown" multiValued="true">
+                    <label>Content Type</label>
+                    <defaultValue></defaultValue>
+                </property>
+				<property id="section.one.showImage" type="Boolean" required="true">
+                    <label>Show Image</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.two.showImage" type="Boolean" required="true">
+                    <label>Show Image</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.three.showImage" type="Boolean" required="true">
+                    <label>Show Image</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.four.showImage" type="Boolean" required="true">
+                    <label>Show Image</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.five.showImage" type="Boolean" required="true">
+                    <label>Show Image</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.one.showAuthor" type="Boolean" required="true">
+                    <label>Show Author</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.two.showAuthor" type="Boolean" required="true">
+                    <label>Show Author</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.three.showAuthor" type="Boolean" required="true">
+                    <label>Show Author</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.four.showAuthor" type="Boolean" required="true">
+                    <label>Show Author</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.five.showAuthor" type="Boolean" required="true">
+                    <label>Show Author</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.one.showCreatedDate" type="Boolean" required="true">
+                    <label>Show Date Created</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.two.showCreatedDate" type="Boolean" required="true">
+                    <label>Show Date Created</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.three.showCreatedDate" type="Boolean" required="true">
+                    <label>Show Date Created</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.four.showCreatedDate" type="Boolean" required="true">
+                    <label>Show Date Created</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+				<property id="section.five.showCreatedDate" type="Boolean" required="true">
+                    <label>Show Date Created</label>
+                    <defaultValue>false</defaultValue>
+                </property>
 			</properties>
 		</module>
 	</store>

@@ -2,8 +2,18 @@ package com.search.manager.web;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,17 +37,36 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.Store;
-import com.search.manager.core.processor.*;
-import com.search.manager.dao.*;
+import com.search.manager.core.processor.RequestProcessor;
+import com.search.manager.core.processor.RequestProcessorUtil;
+import com.search.manager.core.processor.RequestPropertyBean;
+import com.search.manager.dao.DaoException;
+import com.search.manager.dao.DaoService;
+import com.search.manager.dao.SearchDaoService;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.jodatime.JodaDateTimeUtil;
 import com.search.manager.jodatime.JodaPatternType;
-import com.search.manager.model.*;
-import com.search.manager.utility.*;
-import com.search.ws.*;
+import com.search.manager.model.DemoteResult;
+import com.search.manager.model.ElevateResult;
+import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.Keyword;
+import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
+import com.search.manager.model.Relevancy;
+import com.search.manager.model.SearchResult;
+import com.search.manager.model.SpellRule;
+import com.search.manager.model.StoreKeyword;
+import com.search.manager.utility.ParameterUtils;
+import com.search.manager.utility.PropertiesUtils;
+import com.search.manager.utility.QueryValidator;
+import com.search.manager.utility.SearchLogger;
+import com.search.ws.ConfigManager;
+import com.search.ws.SolrConstants;
+import com.search.ws.SolrJsonResponseParser;
+import com.search.ws.SolrResponseParser;
+import com.search.ws.SolrXmlResponseParser;
 
 public abstract class AbstractSearchController implements InitializingBean, DisposableBean {
 
@@ -71,6 +100,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		SolrConstants.SOLR_PARAM_START
 	};
 	private static final String MANUFACTURER_KEYWORD_PROPERTY = "fq-manufacturer";
+	private static final String KEYWORD_OVERRIDE = "keywordOverride";
 
 	public void setSolrService(SearchDaoService solrService) {
 		this.solrService = solrService;
@@ -653,9 +683,18 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				nameValuePairs.add(nvp);
 			}
 			
+			String keyOverride = "";
+			
 			// parse the parameters, construct POST form
+			@SuppressWarnings("unchecked")
 			Set<String> paramNames = (Set<String>) request.getParameterMap().keySet();
 			for (String paramName : paramNames) {
+
+				// special case : add conditional rule
+				if (PropertiesUtils.getValue(KEYWORD_OVERRIDE) != null && paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELD_QUERY)) {
+					keyOverride = setKeyOverride(paramName, request);
+				}
+
 				for (String paramValue : request.getParameterValues(paramName)) {
 					if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_SIMULATE_DATE) && StringUtils.isNotBlank(paramValue)) {
 						currentDate = getOverrideCurrentDate(storeId, paramValue);
@@ -740,7 +779,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
 			String keyword = StringUtils.trimToEmpty(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
 			String originalKeyword = keyword;
-			
+			String ruleKeyword = StringUtils.isNotBlank(keyOverride) ? keyOverride : keyword;
+				
+
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
 				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:") || keyword.startsWith("Manufacturer:")) {
@@ -797,7 +838,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			List<String> expiredDemotedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
 			List<String> expiredExcludedList = new ArrayList<String>();
-			List<BannerRuleItem> bannerList = null;
 			
 			String sort = request.getParameter(SolrConstants.SOLR_PARAM_SORT);
 			boolean bestMatchFlag = StringUtils.isEmpty(sort) || !(StringUtils.containsIgnoreCase(sort, "price") || StringUtils.containsIgnoreCase(sort, "manufacturer"));
@@ -1064,9 +1104,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				    RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId);
 					// EXCLUDE
 					if (isActiveSearchRule(storeId, RuleEntity.EXCLUDE)) {
-						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, keyword);
+						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, ruleKeyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, ruleKeyword, ruleKeyword, !disableExclude));
 						}
 						if (!disableExclude) {
 							excludeList = getExcludeRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1091,9 +1131,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	
 					// DEMOTE
 					if (isActiveSearchRule(storeId, RuleEntity.DEMOTE)) {
-						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, keyword);
+						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, ruleKeyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, ruleKeyword, ruleKeyword, !disableDemote));
 						}
 						if (!disableDemote && bestMatchFlag) {
 							demoteList = getDemoteRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1116,9 +1156,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	
 					// ELEVATE
 					if (isActiveSearchRule(storeId, RuleEntity.ELEVATE)) {
-						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, keyword);
+						StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, ruleKeyword);
 						if (!fromSearchGui || isRegisteredKeyword(sk)) {
-							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+							activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, ruleKeyword, ruleKeyword, !disableElevate));
 						}
 						if (!disableElevate) {
 							elevatedList = getElevateRules(sk, fromSearchGui, requestProcessorUtil.getFacetMap(sk.getStoreId()));
@@ -1152,7 +1192,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 							}
 						}
 					}
-	
+
 					// BANNER
 					try {
                         requestPropertyBean = new RequestPropertyBean(storeId, keyword, keywordPresent, fromSearchGui,
@@ -1505,5 +1545,26 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			logger.error("Failed to send solr request {}", t);
 			throw new ServletException(t);
 		}
+	}
+
+	private String setKeyOverride(String paramName, HttpServletRequest request) {
+		// loop over all keyword-condition configuration entries
+		for (String key : StringUtils.trim(PropertiesUtils.getValue(KEYWORD_OVERRIDE)).split(";")) {
+			String ruleKey = key.split("#")[0];
+			boolean meet = true;
+			int index = 0;
+			// split the entry on # to get all conditions of the special rule 
+			for (String condition : key.split("#")) {
+				if (index > 0 && !(Arrays.asList(request.getParameterValues(paramName)).contains(condition))) {
+					meet = false;
+					break;
+				}
+				index++;
+			}
+			if (index > 1 && meet) {
+				return ruleKey;
+			}
+		}
+		return null;
 	}
 }
