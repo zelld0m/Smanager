@@ -764,8 +764,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
 			String keyword = StringUtils.trimToEmpty(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
 			String originalKeyword = keyword;
-			String ruleKeyword = StringUtils.isNotBlank(keyOverride) ? keyOverride : keyword;
-				
 
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
@@ -1084,7 +1082,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					logger.debug("Store config sort: {}", configManager.getStoreParameter(storeId, "sort"));
 					logger.debug("Store requested sort: {}", ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 				}
-				
+
+				String ruleKeyword = StringUtils.isNotBlank(keyOverride) ? keyOverride : keyword;
 				if (keywordPresent) {
 				    RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId);
 					// EXCLUDE
