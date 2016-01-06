@@ -9,8 +9,7 @@ $(function() {
     var booleanFieldTemplate = "<input id='#{id}' type='checkbox' class='firerift-style-checkbox on-off'/>";
     var accountRoleFieldTemplate = "<select class='w240p mar0' id='#{id}' style='cursor:pointer'></select>";
     var multiDropDownFieldTemplate = "<select class='w240p mar0' id='#{id}' style='cursor:pointer' multiple='multiple'></select>";
-    var addButtonTemplate = "<a id='addBtn' href='javascript:void(0);' class='#{id}'>#{label}</a>";
-    var hideLinkTemplate = "&nbsp;(<a class='hideBtn' href='javascript:void(0);'>hide</a>)"
+    var collapseLinkTemplate = "&nbsp;&nbsp;(<a class='hideBtn' href='javascript:void(0);'>#{label}</a>)";
         
     var dropDownListMap = new Object();
     var tabObjects = new Array();
@@ -24,9 +23,8 @@ $(function() {
         this.name = name;
         this.value = value;
     };
-    
+
     dropDownListMap['mail.workflow.approver.group'] = accountRoleArray;
-    
     dropDownListMap['typeahead.excelUploadDefaultStatus'] = dropDownListMap['typeahead.weeklyDefaultStatus'] = dropDownListMap['typeahead.dailyDefaultStatus'] = dropDownListMap['status.elevate'] = dropDownListMap['status.exclude'] = dropDownListMap['status.demote'] = dropDownListMap['status.facetSort'] 
     = dropDownListMap['status.queryCleaning'] = dropDownListMap['status.didYouMean'] = dropDownListMap['status.banner'] = dropDownListMap['status.rankingRule'] = dropDownListMap['status.typeahead'] = ruleEntityArray;
 
@@ -84,8 +82,7 @@ $(function() {
 	
 	            if (groups !== null) {
 	                var content = new StringBuilder();
-	                var firstCollapse = true;
-	
+
 	                for (var j = 0; j < groups.length; j++) {
 	                    var group = groups[j];
 	                    var groupName = group.name;
@@ -150,21 +147,10 @@ $(function() {
 	                            fields.push(new Field(fieldId, propertyId, type));
 	                        }
 	                    }
-	
+
 	                    // add the module name and it's fields to tabObjects array
 	                    addToTabObjectArray(moduleName, fields);
-	
 	                    content.append("</table>");
-	                    
-	                    if (group.collapse === true && firstCollapse) {
-	                    		firstCollapse = false;
-	                    		content.append("<table class='fsize12 marT20 marL20'>");
-	                    		var addBtnThis = addButtonTemplate.replace(/#\{id\}/g, moduleName).replace(/#\{label\}/g, "Show More Section");
-	                    		content.append("<tbody><tr><td colspan='2'>");
-	                    		content.append(addBtnThis);
-	                    		content.append("</td></tr></tbody>");
-	                    		content.append("</table>");
-	                    }
 	                }
 	
 	                var toAppend = tabContentTemplate.replace(/#\{id\}/g, module.name).
@@ -234,7 +220,6 @@ $(function() {
                                     case "Boolean":
                                         var booleanValue = changeStringToBoolean(
                                                 storeProperty.value);
-
                                         $("#" + fieldId).slidecheckbox({
                                             initOn: booleanValue,
                                             locked: false
@@ -269,11 +254,6 @@ $(function() {
     };
 
     var setSelectedOptionByValue = function(fieldId, fieldValue, isMultiple) {
-    	
-    	
-    	console.log("FIELD: "+fieldId+" --- VALUE: "+fieldValue+" --- MULT:"+isMultiple);
-    	
-    	
     	if (!isMultiple) {
 	        $("#" + fieldId + " option").each(function() {
 	        	if ($(this).text() === fieldValue) {
@@ -410,6 +390,8 @@ $(function() {
 	                 // hides the error messages
 	                 hideErrorMessages();
 	                 // remove the loading icon
+
+                     handleCollapse(modules);
                      store_settings.unbusy();
 	             }
              );
@@ -422,16 +404,29 @@ $(function() {
             var module = modules[i];
             var $tabs = $("#"+module.name);
             var $collapse = $tabs.find(".collapse");
-            $collapse.not(":first").hide();
-            
-            $collapse.not(":first").find(".groupHeader").each(function() {
-            	$(this).find("td").find(":first-child").append(hideLinkTemplate);
+
+            $collapse.each(function() {
+            	var collapseLabel = "";
+            	if ($(this).find("input[id*='_enable']").is(':checked')) {
+            		collapseLabel = collapseLinkTemplate.replace(/#\{label\}/g, "-")
+            	} else {
+            		collapseLabel = collapseLinkTemplate.replace(/#\{label\}/g, "+")
+            		$(this).find("tr:gt(0)").hide();
+            	}
+
+            	$(this).find(".groupHeader").find("td").find(":first-child").append(collapseLabel);
             });
-            $tabs.find("#addBtn."+module.name).click(function(){
-            	$tabs.find(".collapse:hidden").first().show();
-            });
+
             $collapse.find(".hideBtn").click(function(){
-            	$(this).parents(".collapse").hide();
+            	var text = "";
+            	if ($(this).parents(".collapse").find("tr:eq(1)").is(":hidden")) {
+            		text = "-";
+            	} else {
+            		text = "+";
+            	}
+
+            	$(this).text(text)
+            	$(this).parents(".collapse").find("tr:gt(0)").toggle();
             	return false;
             });
         }
@@ -503,11 +498,6 @@ $(function() {
                                 			success: function(data) {
                                 				var $xml = $(data.activeElement);
                                 				$xml.find("productAttributes").each(function() {
-                                					
-                                					
-                                					console.log($(this).html());
-                                					
-                                					
                                 					var name = $(this).find("name").text();
                                 					var id = $(this).find("id").text();
                                 					contentTypeArray.push( new DropDownOption(name, id));
@@ -568,8 +558,6 @@ $(function() {
 
                                 loadFieldsFromProperty(id, modules);  
                             	// for populating the fields 
-
-                                handleCollapse(modules);
                             }
                         }
                     }
