@@ -4,7 +4,7 @@ var callbackCount = 0;
 $(function() {
     var tabContentTemplate = "<div id='#{id}'><p>#{content}</p><br/><br/></div>";
     var tabContentHeaderTemplate = "<tr class='groupHeader'><td colspan='2'><h2 class='padT5'>#{header}</h2></tr></tr>";
-    var tabContentFieldTemplate = "<tr><td>#{label}&nbsp;</td><td>#{field}</td></tr>";
+    var tabContentFieldTemplate = "<tr><td class='itemLabel'>#{label}&nbsp;</td><td>#{field}</td></tr>";
     var stringFieldTemplate = "<input type='text' class='w240' id='#{id}'/>";
     var booleanFieldTemplate = "<input id='#{id}' type='checkbox' class='firerift-style-checkbox on-off'/>";
     var accountRoleFieldTemplate = "<select class='w240p mar0' id='#{id}' style='cursor:pointer'></select>";
@@ -89,9 +89,9 @@ $(function() {
 	                    var members = group.members;
 
 	                    if (group.collapse === true) {
-	                    	content.append("<table class='collapse fsize12 marT20 marL20'>");
+	                    	content.append("<table class='collapse fsize12 marT20 marL20 settingsTable'>");
 	                    } else {
-	                    	content.append("<table class='fsize12 marT20 marL20'>");
+	                    	content.append("<table class='fsize12 marT20 marL20 settingsTable'>");
 	                    }
 
 	                    if (groupName !== null) {
@@ -414,6 +414,7 @@ $(function() {
             		$(this).find("tr:gt(0)").hide();
             	}
 
+            	$(this).find(".groupHeader").next().addClass("collapseHeader")
             	$(this).find(".groupHeader").find("td").find(":first-child").append(collapseLabel);
             });
 

@@ -315,6 +315,9 @@
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
 
+  <!-- store settings page css --> 
+  <link type="text/css" href="<spring:url value="/css/settings/settings.css" />" rel="stylesheet">
+
   <!-- /Init -->	  
   <script type="text/javascript" src="<spring:url value="/js/init.js" />" ></script>
 </head>
