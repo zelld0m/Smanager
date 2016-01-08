@@ -27,7 +27,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.search.manager.core.model.BannerRuleItem;
 import com.search.manager.core.model.Store;
 import com.search.manager.core.processor.*;
 import com.search.manager.dao.*;
@@ -42,7 +41,6 @@ import com.search.ws.*;
 public abstract class AbstractSearchController implements InitializingBean, DisposableBean {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractSearchController.class);
-
 	@Autowired
 	@Qualifier("daoService")
 	private SearchDaoService daoService;
@@ -61,9 +59,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	@Autowired
 	@Qualifier("facetSortRequestProcessor")
 	private RequestProcessor facetSortRequestProcessor;
-	
 	protected final ExecutorService execService = Executors.newCachedThreadPool();
-
 	protected final static String[] uniqueFields = {
 		SolrConstants.SOLR_PARAM_ROWS,
 		SolrConstants.SOLR_PARAM_KEYWORD,
@@ -106,8 +102,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	}
 
 	public String applyValueOverride(String value, HttpServletRequest request, RuleEntity ruleEntity) {
-		// override is only applied in enterprise search
-		return value;
+		return value; // override is only applied in enterprise search
 	}
 
 	protected String applyRelevancyOverrides(HttpServletRequest request, String paramName, String paramValue) {
@@ -116,16 +111,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 
 	public String getOverrideMapAttributeName(RuleEntity ruleEntity) {
 		String overrideMapAttribName = "";
-
 		switch (ruleEntity) {
-		case ELEVATE: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_ELEVATE_OVERRIDE_MAP; break;
-		case EXCLUDE: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP; break;
-		case DEMOTE: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_DEMOTE_OVERRIDE_MAP; break;
-		case QUERY_CLEANING: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP; break;
-		case RANKING_RULE: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP; break;
-		default: overrideMapAttribName= ""; break;
+			case ELEVATE: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_ELEVATE_OVERRIDE_MAP; break;
+			case EXCLUDE: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP; break;
+			case DEMOTE: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_DEMOTE_OVERRIDE_MAP; break;
+			case QUERY_CLEANING: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP; break;
+			case RANKING_RULE: overrideMapAttribName = SolrConstants.REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP; break;
+			default: overrideMapAttribName= ""; break;
 		}
-
 		return overrideMapAttribName;
 	}
 
@@ -166,18 +159,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					break;
 				}	
 			}
-
 			String edpValues = CollectionUtils.isNotEmpty(edpList) ? StringUtils.trimToEmpty(String.format("EDP:(%s)", StringUtils.join(edpList, ' '))): "";
 			String facetValues = CollectionUtils.isNotEmpty(facetList) ? String.format("(%s)", StringUtils.join(facetList, " OR ")): "";
-
 			filterQuery.append(String.format("(%s%s%s)", edpValues, StringUtils.isNotBlank(edpValues) && StringUtils.isNotBlank(facetValues)? " OR ": "", facetValues));
 			logger.debug("{}:{}", RuleEntity.getValue(ruleEntity.getCode()), filterQuery.toString());
 		}
-
 		return filterQuery;
 	}
 
-	
 	protected SearchDaoService getDaoService(boolean fromSearchGui) {
 		return fromSearchGui ? daoService : solrService;
 	}
@@ -287,7 +276,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		String relevancyRuleId = StringUtils.defaultIfBlank(configManager.getStoreParameter(storeId, "default-relevancy-rule"), storeId + "_default");
 		return getRelevancyRule(store, relevancyRuleId, fromSearchGui);
 	}
-	
+
 	protected String getDefType(String storeId) throws DaoException {
 		return StringUtils.defaultIfBlank(configManager.getStoreParameter(storeId, "defType"), "edismax");
 	}
@@ -443,7 +432,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
     protected abstract void bannerRequestProcessor(HttpServletRequest request, SolrResponseParser solrHelper,
             RequestPropertyBean requestPropertyBean, List<Map<String, String>> activeRules,
             Map<String, List<NameValuePair>> paramMap, List<NameValuePair> nameValuePairs);
-		
+
 	protected abstract String getRequestPath(HttpServletRequest request);
 
 	protected boolean generateSearchNav(HttpServletRequest request) {
@@ -460,7 +449,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		}
 	}
 
-	protected void initFieldOverrideMaps(HttpServletRequest request, SolrResponseParser solrHelper, String storeId) {
+	protected void initFieldOverrideMaps(HttpServletRequest request, SolrResponseParser solrHelper, String storeId) { }
+	protected void removeDiscontinuedItems(List<NameValuePair> nameValuePairs, HashMap<String, List<NameValuePair>> paramMap, String fqVerify) {
+		// only implemented for /search --- does nothing for /enterpriseSearch
 	}
 
 	/**
@@ -477,15 +468,12 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		if (!matcher.matches()) {
 			throw new HttpException("Invalid request");
 		}
-
 		String serverName = matcher.group(1);
 		String solr = matcher.group(2);
 		String coreName = matcher.group(3);
 		String storeId = coreName;
 		String storeName = configManager.getStoreName(storeId);
-
 		String solrSelectorParam = configManager.getSolrSelectorParam();
-
 		if (configManager.isSharedCore() && StringUtils.isNotBlank(solrSelectorParam)) {
 			// Verify if request parameter store is a valid store id
 			String storeParam = request.getParameter(solrSelectorParam);
@@ -497,14 +485,12 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				logger.info("Core as storeId: {}", coreName);
 			}
 		}
-
 		if (logger.isDebugEnabled()) {
 			logger.debug("Server name: {}", serverName);
 			logger.debug("Solr path: {}", solr);
 			logger.debug("Core name: {}", coreName);
 			logger.debug("Store name: {}", storeName);
 		}
-
 		return storeId;
 	}
 
@@ -543,7 +529,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	protected DateTime getOverrideCurrentDate(String storeId, String dateText) {
 		DateTime convertedCurrentDate = DateTime.now();
 		DateTime overrideCurrentDate = jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, dateText, JodaPatternType.DATE);
-
 		logger.info("Current Date: {}", convertedCurrentDate.toString());
 		if (overrideCurrentDate != null) {
 			convertedCurrentDate = convertedCurrentDate.withYear(overrideCurrentDate.getYear());
@@ -551,7 +536,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			convertedCurrentDate = convertedCurrentDate.withDayOfMonth(overrideCurrentDate.getDayOfMonth());
 			logger.info("Simulate date: {} -> {}", dateText, convertedCurrentDate.toString());
 		}
-
 		return convertedCurrentDate;
 	}
 
@@ -563,7 +547,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				return true;
 			}
 		}
-		
 		// configured domain
 		List<String> domains = configManager.getPropertyList("settings", storeId, "redirect_self_domain");
 		for(String domain: domains) {
@@ -571,7 +554,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				return true;
 			}
 		}
-		
 		return false;
 	}
 	
@@ -596,17 +578,13 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		// get the server name, solr path, core name and do mapping for the store name to use for the search
 		Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
 		String requestPath = getRequestPath(request);
-
 		if (StringUtils.isBlank(requestPath)) {
 			throw new HttpException("Invalid request");
 		}
-
 		Matcher matcher = pathPattern.matcher(requestPath);
-
 		if (!matcher.matches()) {
 			throw new HttpException("Invalid request");
 		}
-
 		return matcher.group(3);
 	}
 
@@ -622,7 +600,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			NameValuePair nvp;
 			final SolrResponseParser solrHelper;
 			NameValuePair redirectFqNvp = null;
-
 			String storeId = "";
 			try {
 				storeId = getStoreId(request);
@@ -631,12 +608,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				response.sendError(400, ex.getMessage());
 				return;
 			}
-
 			if (!QueryValidator.accept(getCoreName(request), request)) {
 				response.sendError(400, "Invalid solr query.");
 				return;
 			}
-
 			NameValuePair defTypeNVP = new BasicNameValuePair("defType", getDefType(storeId));
 			String storeName = configManager.getStoreName(storeId);
 			initFieldOverrideMaps(request, solrHelper, storeId);
@@ -653,7 +628,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			if (ParameterUtils.addNameValuePairToMap(paramMap, "echoParams", nvp, uniqueFields)) {
 				nameValuePairs.add(nvp);
 			}
-			
 			String keyOverride = "";
 			
 			// parse the parameters, construct POST form
@@ -684,22 +658,18 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_SIMULATE_DATE) && StringUtils.isNotBlank(paramValue)) {
 						currentDate = getOverrideCurrentDate(storeId, paramValue);
 					} else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD)) {
-
 						String origKeyword = paramValue;
 						if (origKeyword == null) {
 							origKeyword = "";
 						}
-
 						if (StringUtils.equals("*:*", paramValue)) {
 							paramValue = "";
 						} else {
 							paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("\\s+", " ").replaceAll("[\\p{Cntrl}]", "");
 						}
-
 						String convertedKeyword = paramValue;
 
 						logger.info(String.format("CLEANUP %s keyword: %s[%s] %s[%s]", storeName, origKeyword, Hex.encodeHexString(origKeyword.getBytes()), convertedKeyword, Hex.encodeHexString(convertedKeyword.getBytes())));
-
 					} else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FACET_FIELD)) {
 						if (paramValue.endsWith("_FacetTemplate")) {
 							includeFacetTemplateFacet = true;
@@ -727,28 +697,26 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						ParameterUtils.addNameValuePairToMap(paramMap, paramName, nvp, uniqueFields);
 						spellcheckParams.add(nvp);
 						continue;
+					} else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELD_QUERY)) {
+						removeDiscontinuedItems(nameValuePairs, paramMap, paramValue);
 					}
-
 					nvp = new BasicNameValuePair(paramName, paramValue);
 					if (ParameterUtils.addNameValuePairToMap(paramMap, paramName, nvp, uniqueFields)) {
 						nameValuePairs.add(nvp);
 					}
 				}
 			}
-			
+
 			// Integrate search within request processor
 			searchWithinRequestProcessor.process(request, solrHelper, new RequestPropertyBean(storeId), null, paramMap, nameValuePairs);
-			
 			boolean fromSearchGui = "true".equalsIgnoreCase(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 			addDefaultParameters(storeId, nameValuePairs, paramMap);
-
 			Map<String, String> facetMap = requestProcessorUtil.getFacetMap(storeId);
 			String facetTemplate = facetMap.get(SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
-			
+
 			if (fromSearchGui) {
 				nameValuePairs.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
 			}
-			
 			if (generateSearchNav(request) && !includeFacetTemplateFacet) {
 				nvp = new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplate);
 				if (ParameterUtils.addNameValuePairToMap(paramMap, SolrConstants.TAG_FACET_FIELD, nvp, uniqueFields)) {
@@ -764,7 +732,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
 			String keyword = StringUtils.trimToEmpty(ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
 			String originalKeyword = keyword;
-
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
 				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:") || keyword.startsWith("Manufacturer:")) {
@@ -797,22 +764,18 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			String disableRedirectId = disableRedirect ? request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT) : "";
 			boolean enableRedirectToPage = request.getParameter(SolrConstants.SOLR_PARAM_ENABLE_REDIRECT_TO_PAGE) != null;
 			boolean isRedirectToPage = false;
-			
 			boolean disableRelevancy = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
 			boolean disableFacetSort = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
 			final String facetDefaultSorting = configManager.getProperty("facetsort", storeId, "facetsort.defaultSorting");
 			String facetDefaultSortingOrder = configManager.getProperty("facetsort", storeId, "facetsort.defaultSortingOrder");
 			final boolean disableDidYouMean = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_DID_YOU_MEAN) != null;
-			
 			final List<Map<String, String>> activeRules = new ArrayList<Map<String, String>>();
 			boolean disableBanner = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_BANNER) != null;
-
 			final String maxTopFacetRows; 
 			{
 				String temp = configManager.getProperty("facetsort", storeId, "facetsort.maxRows");
 				maxTopFacetRows = StringUtils.isNotBlank(temp) ? temp : "200";
 			}
-			
 			List<ElevateResult> elevatedList = null;
 			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
@@ -821,7 +784,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			List<String> expiredDemotedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
 			List<String> expiredExcludedList = new ArrayList<String>();
-			
 			String sort = request.getParameter(SolrConstants.SOLR_PARAM_SORT);
 			boolean bestMatchFlag = StringUtils.isEmpty(sort) || !(StringUtils.containsIgnoreCase(sort, "price") || StringUtils.containsIgnoreCase(sort, "manufacturer"));
 			
@@ -831,47 +793,36 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					RedirectRule redirect = null;
 					RedirectRule originalRedirect = null;
 					RedirectRule appliedRedirect = null;
-
 					List<String> keywordHistory = new ArrayList<String>();
 					StoreKeyword sk = getStoreKeywordOverride(RuleEntity.QUERY_CLEANING, storeId, keyword);
 					while (true) { // look for change keyword
-						
 						if (StringUtils.isBlank(keyword)) {
 							break;
 						}
-						
 						keywordHistory.add(StringUtils.lowerCase(keyword));
-						
 						redirect = getRedirectRule(sk, fromSearchGui);
-						
 						if (redirect == null) {
 							break;
 						}
-
 						if (originalRedirect == null) {
 							originalRedirect = redirect;
 						}
-						
 						boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
 						activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));
-
 						if (stop) {
 							redirect = null;
 							break;
 						}
-
 						if (!redirect.isRedirectChangeKeyword()) {
 							break;
 						}
-
 						logger.info("Applying Redirect Rule {} with id {}", redirect.getRuleName(), redirect.getRuleId());
 						appliedRedirect = redirect;
-
 						keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
 						sk.setKeyword(new Keyword(keyword));
+
 						// remove the original keyword
 						ParameterUtils.removeNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_KEYWORD);
-
 						if (StringUtils.isEmpty(keyword)) {
 							sk.setKeyword(null);
 							keywordPresent = false;
@@ -888,10 +839,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 								appliedRedirect = null;
 								keyword = originalKeyword;
 								sk.setKeyword(new Keyword(keyword));
-								
+
 								// set q to original keyword
 								ParameterUtils.resetNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_KEYWORD, keyword, uniqueFields);
-								
+
 								// tag active redirect rule as loop
 								for(Map<String, String> activeRule : activeRules) {
 									if(activeRule.containsValue(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT)) {
@@ -902,14 +853,12 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 							}
 						}
 					}
-					
+
 					if (redirect != null && !redirect.isRedirectChangeKeyword()) {
 						logger.info("Applying redirect rule {} with id {}", redirect.getRuleName(), redirect.getRuleId());
 						appliedRedirect = redirect;
-						
 						if (redirect.isRedirectToPage()) { // Direct Hit
 							boolean validRedirectToPage = true;
-							
 							if(enableRedirectToPage) {
 								nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
 								if(ParameterUtils.addNameValuePairToMap(paramMap, SolrConstants.REDIRECT_URL, nvp, uniqueFields)) {
@@ -930,7 +879,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 												activeRule.put(SolrConstants.TAG_RULE_ACTIVE, "loop");
 											}
 										}
-										
 										validRedirectToPage = false;
 									}
 								}
@@ -944,7 +892,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 								}
 								validRedirectToPage = false;
 							}
-							
 							if (validRedirectToPage) {
 								isRedirectToPage = true;
 								// set number of requested rows to 0
@@ -958,10 +905,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 								redirect = null;
 								appliedRedirect = null;
 								ParameterUtils.removeNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.REDIRECT_URL);
-								
 								keyword = originalKeyword;
 								sk.setKeyword(new Keyword(keyword));
-								
+
 								// set q to original keyword
 								ParameterUtils.resetNameValuePairFromMapAndList(paramMap, nameValuePairs, SolrConstants.SOLR_PARAM_KEYWORD, keyword, uniqueFields);
 							}
@@ -1015,11 +961,9 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					} else if (keywordPresent) {
 						relevancy = getRelevancyRule(sk, fromSearchGui);
 					}
-	
 					if (relevancy == null) {
 						relevancy = getDefaultRelevancyRule(sk.getStore(), fromSearchGui);
 					}
-	
 					if (relevancy != null) {
 						activeRules.add(requestProcessorUtil.generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_RELEVANCY, relevancy.getRelevancyId(), relevancy.getRelevancyName(), !disableRelevancy));
 						if (!disableRelevancy) {
@@ -1031,7 +975,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					} else {
 						logger.error("Unable to find default relevancy!");
 					}
-	
 					if (relevancy != null) {
 						nameValuePairs.remove(ParameterUtils.getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
 						nameValuePairs.add(defTypeNVP);
@@ -1071,18 +1014,15 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						}
 					}
 				}
-	
 				if (logger.isDebugEnabled()) {
 					for (NameValuePair p : nameValuePairs) {
 						logger.debug("Parameter: {}={}", p.getName(), p.getValue());
 					}
 				}
-	
 				if (logger.isDebugEnabled()) {
 					logger.debug("Store config sort: {}", configManager.getStoreParameter(storeId, "sort"));
 					logger.debug("Store requested sort: {}", ParameterUtils.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 				}
-
 				String ruleKeyword = StringUtils.isNotBlank(keyOverride) ? keyOverride : keyword;
 				if (keywordPresent) {
 				    RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId);
@@ -1101,11 +1041,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 								String excludeItem = "";
 								for (ExcludeResult expired : expiredList) {
 									switch(expired.getExcludeEntity()){
-									case PART_NUMBER: excludeItem = expired.getEdp(); break;
-									case FACET: excludeItem = expired.getCondition().getConditionForSolr(); break;
-									default: 
+										case PART_NUMBER: excludeItem = expired.getEdp(); break;
+										case FACET: excludeItem = expired.getCondition().getConditionForSolr(); break;
+										default: 
 									}
-	
 									expiredExcludedList.add(excludeItem);
 									logger.debug("Expired Excluded Item: {}" + excludeItem);
 								}
@@ -1246,14 +1185,12 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			if (CollectionUtils.isNotEmpty(forceAddList)) {
 				// generate force add filter
 				StringBuilder forceAddFilter = toSolrFilterQueryValue(request, forceAddList);
-
 				if (redirectFqNvp != null) {
 					nameValuePairs.remove(redirectFqNvp);
 					StringBuilder newRedirectFilter = new StringBuilder();
 					newRedirectFilter.append(String.format("(%s) OR (%s)", redirectFqNvp.getValue(), forceAddFilter.toString()));
 					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, newRedirectFilter.toString()));
 				}
-
 				NameValuePair keywordNvp = ParameterUtils.getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
 				if (keywordNvp != null && nameValuePairs.remove(defTypeNVP)) {
 					nameValuePairs.remove(keywordNvp);
@@ -1271,7 +1208,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
                 facetSortRequestProcessor.process(request, solrHelper, requestPropertyBean, activeRules, paramMap,
                         nameValuePairs);
 			}
-
 			Future<Integer> getTemplateCount = null;
 			Future<Integer> getElevatedCount = null;
 			Future<Integer> getDemotedCount = null;
@@ -1286,7 +1222,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				}
 			});
 			tasks++;
-
 			nameValuePairs.remove(ParameterUtils.getNameValuePairFromMap(paramMap, "facet"));
 
 			// TASK 1B - get spellcheck if requested
@@ -1331,7 +1266,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// Collate Elevate and Demote items 
 			StringBuilder elevateFilters = toSolrFilterQueryValue(request, elevatedList);
 			StringBuilder demoteFilters = toSolrFilterQueryValue(request, demoteList);
-
 			Integer numFound = 0;
 			Integer numElevateFound = 0;
 			Integer numNormalFound = 0;
@@ -1340,10 +1274,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 			// NameValue pair excluding demoted items, empty fq will be added if no demote items
 			String excludeDemoteSolrFQValue = (demoteFilters.length() > 0 ? "-": "") + demoteFilters.toString();
 			NameValuePair excludeDemoteNameValuePair = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeDemoteSolrFQValue);
-
 			if (bestMatchFlag) {
 				nameValuePairs.add(excludeDemoteNameValuePair);
-
 				if (requestedRows != 0 && (elevateFilters.length() > 0)) {
 					/* Second Request */
 					// set filter to exclude & include elevated list only
@@ -1358,7 +1290,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					});
 					tasks++;
 				}
-
 				if (requestedRows != 0 && (demoteFilters.length() > 0)) {
 					// TASK 1D - get count of demoted items
 					final ArrayList<NameValuePair> getDemotedCountParams = new ArrayList<NameValuePair>(nameValuePairs);
@@ -1373,7 +1304,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					tasks++;
 				}
 			}
-			
 			if(StringUtils.isNotBlank(facetDefaultSorting) && StringUtils.isNotBlank(facetDefaultSortingOrder)) {
 				// TASK 1E - get default facet sorting
 				final ArrayList<NameValuePair> getPopularFacet = new ArrayList<NameValuePair>(nameValuePairs);
@@ -1389,9 +1319,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						fields = new String[2];
 						fields[0] = sortableCategory;
 						fields[1] = "Manufacturer";
-						
 						facetFieldMap.put("Category", sortableCategory);
-						
 					} else {
 						fields = new String[1];
 						fields[0] = "Manufacturer";
@@ -1405,7 +1333,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				});
 				tasks++;
 			}
-
 			while (tasks > 0) {
 				Future<Integer> completed = completionService.take();
 				if (completed.equals(getTemplateCount)) {
@@ -1422,15 +1349,12 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				}
 				tasks--;
 			}
-
 			numNormalFound = numFound - numElevateFound - numDemoteFound;
 
 			// cleanup request parameters, remove start and row
 			nameValuePairs.remove(paramMap.get(SolrConstants.SOLR_PARAM_START).get(0));
 			nameValuePairs.remove(paramMap.get(SolrConstants.SOLR_PARAM_ROWS).get(0));
-
 			if (requestedRows != 0 && (numFound + numElevateFound) != 0) {
-
 				Future<Integer> getElevatedItems = null;
 				Future<Integer> getNormalItems = null;
 				Future<Integer> getDemotedItems = null;
@@ -1439,7 +1363,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				// check if elevateList is to be included in this batch
 				if (bestMatchFlag && numElevateFound > startRow) {
 					logger.debug("Total number of elevated found including force added items: {}", numElevateFound);
-
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					final int nStart = startRow;
 					final int nRequested = requestedRows;
@@ -1459,7 +1382,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					startRow -= numElevateFound;
 					startRow = startRow < 0 ? 0 : startRow;
 				}
-
 				logger.debug("[Normal items] start row: {}", startRow);
 				logger.debug("[Normal items] requested rows: {}", requestedRows);
 
@@ -1468,7 +1390,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					// set filter to not include elevate and exclude list
 					// set rows parameter to original number requested minus results returned in second request
 					// grab all the doc nodes <doc>
-
 					final ArrayList<NameValuePair> getNormalItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					if (elevateFilters.length() > 0) {
 						elevateFilters.insert(0, "-");
@@ -1483,7 +1404,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						}
 					});
 					tasks++;
-
 					requestedRows -= (numNormalFound - startRow);
 					requestedRows = requestedRows < 0 ? 0 : requestedRows;
 				}
@@ -1493,7 +1413,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					startRow -= numNormalFound;
 					startRow = startRow < 0 ? 0 : startRow;
 				}
-
 				if (bestMatchFlag && requestedRows > 0 && numDemoteFound > 0) {
 					final ArrayList<NameValuePair> getDemotedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					getDemotedItemsParams.remove(excludeDemoteNameValuePair);
@@ -1507,7 +1426,6 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					});
 					tasks++;
 				}
-
 				while (tasks > 0) {
 					Future<Integer> completed = completionService.take();
 					if (completed.equals(getElevatedItems)) {
@@ -1520,7 +1438,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					tasks--;
 				}
 			}
-			
+
 			/* Generate response */
 			Long qtime = new Date().getTime() - start;
 			solrHelper.generateServletResponse(response, qtime);
