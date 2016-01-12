@@ -30,3 +30,15 @@ div#importAlert img						{position: relative; top: 2px;}
     white-space: normal;
     word-break: break-all;
 }
+
+table.settingsTable > * > tr > * {
+   padding: 3px 1em;
+}
+
+tr.collapseHeader {
+	border-top: 1px solid black;
+}
+
+td.itemLabel {
+	width: 200px;
+}

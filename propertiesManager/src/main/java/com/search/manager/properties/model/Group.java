@@ -28,6 +28,8 @@ public class Group implements java.io.Serializable {
     private String name;
     @XmlElement(name = "member")
     private List<Member> members = Lists.newArrayList();
+    @XmlAttribute
+    private boolean collapse;
 
     public Group() {
     }
@@ -53,7 +55,15 @@ public class Group implements java.io.Serializable {
         this.members = members;
     }
 
-    @Override
+    public boolean getCollapse() {
+		return collapse;
+	}
+
+	public void setCollapse(boolean collapse) {
+		this.collapse = collapse;
+	}
+
+	@Override
     public String toString() {
         return Objects.toStringHelper(this).
                 add("name", name).

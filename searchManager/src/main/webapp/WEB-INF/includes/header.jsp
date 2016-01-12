@@ -315,6 +315,9 @@
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
 
+  <!-- store settings page css --> 
+  <link type="text/css" href="<spring:url value="/css/settings/settings.css" />" rel="stylesheet">
+
   <!-- /Init -->	  
   <script type="text/javascript" src="<spring:url value="/js/init.js" />" ></script>
 </head>
@@ -331,7 +334,7 @@
           <td align="left" class="padTB5">
           	<div class="clearB floatL farial fsize12 fLgray2">
 	          	<img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" style="margin-bottom:-3px"> Welcome <span id="username" class="fbold fdecoNone"><a href="javascript:void(0);" style="font-decoration:none; color: #60c3e0;"><sec:authentication property="principal.username" /></a></span> <span class="fsize10">|</span>
-	          	<span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href=""> help</a></span> <span class="fsize10">|</span>
+	          	<span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href="javascript:void(0);"> help</a></span> <span class="fsize10">|</span>
 			    <span class="fLALink fdecoNone fsize11 txtCapitalize"><a href="<spring:url value="/logout" />">Logout</a></span>
 		    </div>
           </td>

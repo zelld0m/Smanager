@@ -380,6 +380,11 @@ public class UtilityService {
 		return configManager.getSolrSelectorParam();
 	}
 
+	@RemoteMethod
+	public String getConfigProperty(String key) {
+		return PropertiesUtils.getValue(key);
+	}
+
 	public String getStoreSetting(String property) {
 		return configManager.getProperty("settings", getStoreId(), property);
 	}
