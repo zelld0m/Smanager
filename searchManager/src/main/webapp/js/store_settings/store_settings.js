@@ -482,7 +482,7 @@ $(function() {
                                 			success: function(data) {
                                 				for(var i = 0; i < data.tags.length; i++) {
                                 					var tagData = data.tags[i];
-                                					contentTagsArray.push( new DropDownOption(tagData["name"], tagData["name"]));
+                                					contentTagsArray.push( new DropDownOption(tagData["name"], tagData["name"].replace(/ /g, "_")));
                                 				}
                                 				callbackCount++;
                                 			}

@@ -2,6 +2,7 @@ package com.search.manager.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class ContentSearchController extends AbstractSearchController {
 		final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		String storeId = "";
 		String wrf = "";
-		final ContentSearchHelper searchHelper = new ContentSearchHelper(propertiesServce);
+		final ContentSearchHelper searchHelper = new ContentSearchHelper();
 		this.handle = "/sectionSearch";
 
 		try {
@@ -97,6 +98,24 @@ public class ContentSearchController extends AbstractSearchController {
 			}
 		}
 
+		// filter tags as facets
+    	String tagSettings = propertiesServce.getProperty(storeId, "contents.filters.tags").getValue();
+        List<String> tagList = Arrays.asList(tagSettings.split("\\s*,\\s*"));
+        boolean addFacet = false;
+    	for (String tag : tagList) {
+    		nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FACET_FIELD, tag);
+			if (ParameterUtils.addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_FACET_FIELD, nvp, uniqueFields)) {
+				nameValuePairs.add(nvp);
+				addFacet = true;
+			}
+		}
+    	if (addFacet) {
+    		nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FACET, Boolean.toString(addFacet));
+			if (ParameterUtils.addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_FACET, nvp, uniqueFields)) {
+				nameValuePairs.add(nvp);
+			}
+    	}
+
 		// get global setting for the content sections
 		List<Map<String, String>> sectionProps = new ArrayList<Map<String, String>>();
 		for (String section : sections) {
@@ -130,7 +149,7 @@ public class ContentSearchController extends AbstractSearchController {
 		final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		String storeId = "";
 		String wrf = "";
-		final ContentSearchHelper searchHelper = new ContentSearchHelper(propertiesServce);
+		final ContentSearchHelper searchHelper = new ContentSearchHelper();
 		this.handle = "/contentSearch";
 
 		try {
@@ -159,6 +178,24 @@ public class ContentSearchController extends AbstractSearchController {
 				}
 			}
 		}
+
+		// filter tags as facets
+    	String tagSettings = propertiesServce.getProperty(storeId, "contents.filters.tags").getValue();
+        List<String> tagList = Arrays.asList(tagSettings.split("\\s*,\\s*"));
+        boolean addFacet = false;
+    	for (String tag : tagList) {
+    		nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FACET_FIELD, tag);
+			if (ParameterUtils.addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_FACET_FIELD, nvp, uniqueFields)) {
+				nameValuePairs.add(nvp);
+				addFacet = true;
+			}
+		}
+    	if (addFacet) {
+    		nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FACET, Boolean.toString(addFacet));
+			if (ParameterUtils.addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_FACET, nvp, uniqueFields)) {
+				nameValuePairs.add(nvp);
+			}
+    	}
 
 		// generate response
 		try {

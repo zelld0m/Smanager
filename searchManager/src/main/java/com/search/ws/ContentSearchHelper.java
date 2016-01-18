@@ -37,8 +37,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.search.manager.core.service.PropertiesService;
-
 public class ContentSearchHelper {
 
 	protected final ExecutorService execService = Executors.newCachedThreadPool();
@@ -55,13 +53,10 @@ public class ContentSearchHelper {
 	private final String POSITION = "position";
 	private final String DISPLAY = "maxDisplay";
 
-	private PropertiesService propertiesServce;
-
-	public ContentSearchHelper(PropertiesService propertiesServce) {
+	public ContentSearchHelper() {
 		jsonConfig = new JsonConfig();
 		jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 		slurper = new JsonSlurper(jsonConfig);
-		this.propertiesServce = propertiesServce;
 	}
 
 	public void setSolrUrl(String solrUrl) {
@@ -79,15 +74,6 @@ public class ContentSearchHelper {
         			? paramMap.get(SolrConstants.SOLR_PARAM_KEYWORD).get(0)
         			: new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*");
             addSections(keywordQuery, sectionProps);
-
-            // add filter tags
-            JSONArray tags = new JSONArray();
-            String tagSettings = propertiesServce.getProperty(storeId, "contents.filters.tags").getValue();
-            List<String> tagList = Arrays.asList(tagSettings.split("\\s*,\\s*"));
-    		for (String tag : tagList) {
-    			tags.add(tag);
-    		}
-            initialJson.element("Filter Tags", tags);
 
             boolean wrfPresent = !StringUtils.isEmpty(wrf);
             response.setContentType("application/json;charset=UTF-8");
@@ -112,15 +98,6 @@ public class ContentSearchHelper {
         boolean success = false;
         try {
         	initialJson = querySolr(requestParams); // base query
-
-            // add filter tags
-            JSONArray tags = new JSONArray();
-            String tagSettings = propertiesServce.getProperty(storeId, "contents.filters.tags").getValue();
-            List<String> tagList = Arrays.asList(tagSettings.split("\\s*,\\s*"));
-    		for (String tag : tagList) {
-    			tags.add(tag);
-    		}
-            initialJson.element("Filter Tags", tags);
 
             boolean wrfPresent = !StringUtils.isEmpty(wrf);
             response.setContentType("application/json;charset=UTF-8");
