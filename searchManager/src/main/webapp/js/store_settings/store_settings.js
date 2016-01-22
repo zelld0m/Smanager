@@ -494,6 +494,7 @@ $(function() {
                                 	callback: function(servletUrl) {
                                 		jQuery.ajax({
                                 			url: servletUrl,
+                                			data: { store : GLOBAL_storeId },
                                 			type: 'POST',
                                 			dataType: 'xml',
                                 			success: function(data) {
