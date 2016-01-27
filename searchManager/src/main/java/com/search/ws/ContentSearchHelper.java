@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -173,7 +174,7 @@ public class ContentSearchHelper {
                 logger.debug("Parameter: " + requestParams);
             }
             solrResponse = client.execute(post);
-            result = (JSONObject) parseJsonResponse(slurper, solrResponse);
+            result = formatFacets((JSONObject) parseJsonResponse(slurper, solrResponse));
         } catch (Exception e) {
             String error = "Error occured while trying to get number of items";
             logger.error(error, e);
@@ -189,6 +190,31 @@ public class ContentSearchHelper {
             }
         }
 		return result;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private JSONObject formatFacets(JSONObject response) {
+		JSONObject facetFields = SolrResponseParser.locateJSONObject(response, new String[]{"facet_counts", "facet_fields"});
+		if (facetFields == null) {
+			return response;
+		}
+		Iterator<String> facetItr = facetFields.keys();
+		while (facetItr.hasNext()) {
+			String key = facetItr.next();
+			JSONObject updatedFacet = new JSONObject();
+			Map<String, Integer> pairs = new HashMap<String, Integer>();
+			JSONArray facetField = facetFields.getJSONArray(key);
+			for (int i = 0; i < facetField.size(); i = i + 2) {
+				pairs.put(facetField.getString(i), facetField.getInt(i+1));
+            }
+			Iterator mapItr = pairs.entrySet().iterator();
+			while (mapItr.hasNext()) {
+				Map.Entry pair = (Map.Entry) mapItr.next();
+				updatedFacet.element((String) pair.getKey(), pair.getValue());
+            }
+			facetFields.put(key, updatedFacet);
+		}
+		return response;
 	}
 
 	private void addSections(final NameValuePair keywordQuery, List<Map<String, String>> sectionProps) {
@@ -208,7 +234,7 @@ public class ContentSearchHelper {
 					result.element(SHOW_AUTHOR, property.get(SHOW_AUTHOR));
 					result.element(POSITION, property.get(POSITION));
 					result.element(DISPLAY, property.get(DISPLAY));
-					result.element("docs", getContentDocs(keywordQuery, property));
+					result.element("data", getContentDocs(keywordQuery, property));
 					return result;
 				}
 			});
@@ -231,8 +257,8 @@ public class ContentSearchHelper {
 		initialJson.element("Sections", sections);
 	}
 
-	private JSONArray getContentDocs(NameValuePair keywordQuery, Map<String, String> property) {
-		JSONArray resultDocs = new JSONArray();
+	private JSONObject getContentDocs(NameValuePair keywordQuery, Map<String, String> property) {
+		JSONObject resultDocs = new JSONObject();
 		List<NameValuePair> requestParams = new ArrayList<NameValuePair>();
 		requestParams.add(keywordQuery);
 
@@ -249,7 +275,7 @@ public class ContentSearchHelper {
 		requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, property.get(DISPLAY)));
 		
 		JSONObject obj = querySolr(requestParams);
-		resultDocs = obj.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
+		resultDocs = obj.getJSONObject(SolrConstants.TAG_RESPONSE);
 
 		return resultDocs;
 	}

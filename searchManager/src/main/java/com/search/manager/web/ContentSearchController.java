@@ -77,12 +77,6 @@ public class ContentSearchController extends AbstractSearchController {
 		}
 		searchHelper.setSolrUrl(getRequestPath(request));
 
-		// set row for base query - based on max row per sections
-		String count = propertiesServce.getProperty(storeId, MODULE + DISPLAY).getValue();
-		nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, count);
-		ParameterUtils.addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp, uniqueFields);
-		nameValuePairs.add(nvp);
-		
 		// parse the original parameters
 		@SuppressWarnings("unchecked")
 		Set<String> paramNames = (Set<String>) request.getParameterMap().keySet();
@@ -127,7 +121,7 @@ public class ContentSearchController extends AbstractSearchController {
 				prop.put(SHOW_IMAGE, propertiesServce.getProperty(storeId, MODULE + section +".showImage").getValue());
 				prop.put(SHOW_AUTHOR, propertiesServce.getProperty(storeId, MODULE + section +".showAuthor").getValue());
 				prop.put(POSITION, section);
-				prop.put(DISPLAY, count);
+				prop.put(DISPLAY, propertiesServce.getProperty(storeId, MODULE + DISPLAY).getValue());
 				sectionProps.add(prop);
 			}
 		}
