@@ -16,7 +16,7 @@
   <!-- Opstrack -->
   <store id="opstrack" name="Opstrack">
     <core>Products</core>
-    <sort>CatCodeOrder asc, score desc</sort>
+    <sort>score desc,Opstrack_0_MfgCat_Rank desc,Opstrack_7139_MfgCat_Rank desc,Opstrack_7139_Rank desc,QtyAvailable desc</sort>
     <qt>/opstrack</qt>
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
     <facet-name>Opstrack</facet-name>
@@ -24,7 +24,7 @@
     	<param-name>fq</param-name>
     </solr-param-name>
     <solr-param-value name="fq">
-    	<param-value>Opstrack_ProductID:*</param-value>
+    	<param-value>RebateGroupID:(0 OR MCEJS) AND SecurityLevel:(30 OR 28 OR 26 OR 24 OR 22 OR 20 OR 18 OR 16 OR 14 OR 12 OR 10 OR 8 OR 6 OR 4 OR 2 OR 0) AND Status:A AND CatalogID:(1)</param-value>
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
