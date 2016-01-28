@@ -55,6 +55,10 @@
                             RedirectServiceJS.deleteRule(self.selectedRule["ruleId"], {
                                 callback: function(code) {
                                     showActionResponse(code, "delete", self.selectedRule["ruleName"]);
+
+                                    DeploymentServiceJS.submitRuleAutoApproval(GLOBAL_storeId, "Query Cleaning", self.selectedRule["ruleId"], self.selectedRule["ruleName"],
+            								"Auto Approved", false);
+
                                     if (code == 1) {
                                         self.selectedRule = null;
                                         self.setRedirect(null);

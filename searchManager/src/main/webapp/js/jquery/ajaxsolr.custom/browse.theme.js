@@ -199,7 +199,7 @@
 		var stockText = "Call Us!";
 		var stockIcon = "availabityImg0.png";
 
-		if (doc.NextDayUnits>0){
+		if (doc.QtyAvailable>0){
 			stockText = "In Stock";
 			stockIcon = "availabityImg1.png";
 		}else if(doc.SecondDayUnits > 0){

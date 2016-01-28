@@ -63,7 +63,7 @@
 					<span>Show:</span> 
 					<select id="ruleFilter">
 						<option value="">All Rules</option>
-						<!-- <option value="delete">Approved Rules for Deletion</option> -->
+						<option value="delete">Approved Rules for Deletion</option>
 						<option value="approved">Approved Rules for Publishing</option>
 						<option value="published">Published Rules</option>
 					</select>
