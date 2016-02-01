@@ -238,6 +238,8 @@
 			<select id="facetName">
 				<option value="Manufacturer">Manufacturer</option>
 				<option value="Category">Category</option>
+				<option value="ImageExists">ImageExists</option>
+				<option value="InStock">InStock</option>
 			</select>
 			</h3>
 		</div>
