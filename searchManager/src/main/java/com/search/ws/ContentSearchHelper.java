@@ -229,11 +229,11 @@ public class ContentSearchHelper {
 					JSONObject result = new JSONObject();
 					result.element(NAME, property.get(NAME));
 					result.element(TYPE, property.get(TYPE));
-					result.element(SHOW_DATE, property.get(SHOW_DATE));
-					result.element(SHOW_IMAGE, property.get(SHOW_IMAGE));
-					result.element(SHOW_AUTHOR, property.get(SHOW_AUTHOR));
+					result.element(SHOW_DATE, Boolean.parseBoolean(property.get(SHOW_DATE)));
+					result.element(SHOW_IMAGE, Boolean.parseBoolean(property.get(SHOW_IMAGE)));
+					result.element(SHOW_AUTHOR, Boolean.parseBoolean(property.get(SHOW_AUTHOR)));
 					result.element(POSITION, property.get(POSITION));
-					result.element(DISPLAY, property.get(DISPLAY));
+					result.element(DISPLAY, Integer.parseInt(property.get(DISPLAY)));
 					result.element("data", getContentDocs(keywordQuery, property));
 					return result;
 				}
