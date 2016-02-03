@@ -499,9 +499,9 @@ $(function() {
                                 			dataType: 'xml',
                                 			success: function(data) {
                                 				var $xml = $(data.activeElement);
-                                				$xml.find("productAttributes").each(function() {
+                                				$xml.find("pageType").each(function() {
                                 					var name = $(this).find("name").text();
-                                					var id = $(this).find("id").text();
+                                					var id = $(this).find("code").text();
                                 					contentTypeArray.push( new DropDownOption(name, id));
                                 				});
                                 				callbackCount++;

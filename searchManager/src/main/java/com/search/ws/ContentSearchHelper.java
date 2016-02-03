@@ -218,6 +218,7 @@ public class ContentSearchHelper {
 	}
 
 	private void addSections(final NameValuePair keywordQuery, List<Map<String, String>> sectionProps) {
+		JSONObject[] data = new JSONObject[sectionProps.size()];
 		JSONArray sections = new JSONArray();
 		ExecutorCompletionService<JSONObject> completionService = new ExecutorCompletionService<JSONObject>(execService);
 		int tasks = 0;
@@ -232,7 +233,7 @@ public class ContentSearchHelper {
 					result.element(SHOW_DATE, Boolean.parseBoolean(property.get(SHOW_DATE)));
 					result.element(SHOW_IMAGE, Boolean.parseBoolean(property.get(SHOW_IMAGE)));
 					result.element(SHOW_AUTHOR, Boolean.parseBoolean(property.get(SHOW_AUTHOR)));
-					result.element(POSITION, property.get(POSITION));
+					result.element(POSITION, Integer.parseInt(property.get(POSITION)));
 					result.element(DISPLAY, Integer.parseInt(property.get(DISPLAY)));
 					result.element("data", getContentDocs(keywordQuery, property));
 					return result;
@@ -244,7 +245,8 @@ public class ContentSearchHelper {
 			Future<JSONObject> completed = null;
 			try {
 				completed = completionService.take();
-				sections.add(completed.get());
+				JSONObject resp = completed.get();
+				data[resp.getInt(POSITION)] = resp;
 			} catch (InterruptedException e) {
 				logger.error("Concurrent process exception: ", e);
 			} catch (ExecutionException e) {
@@ -253,7 +255,7 @@ public class ContentSearchHelper {
 			
 			tasks--;
 		}
-
+		sections.addAll(Arrays.asList(data));
 		initialJson.element("Sections", sections);
 	}
 

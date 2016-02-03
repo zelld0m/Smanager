@@ -112,6 +112,7 @@ public class ContentSearchController extends AbstractSearchController {
 
 		// get global setting for the content sections
 		List<Map<String, String>> sectionProps = new ArrayList<Map<String, String>>();
+		int posCount = 0;
 		for (String section : sections) {
 			if (propertiesServce.getProperty(storeId, MODULE + section +".enable").getValue().equalsIgnoreCase("true")) {
 				Map<String, String> prop = new HashMap<String, String>();
@@ -120,9 +121,10 @@ public class ContentSearchController extends AbstractSearchController {
 				prop.put(SHOW_DATE, propertiesServce.getProperty(storeId, MODULE + section +".showCreatedDate").getValue());
 				prop.put(SHOW_IMAGE, propertiesServce.getProperty(storeId, MODULE + section +".showImage").getValue());
 				prop.put(SHOW_AUTHOR, propertiesServce.getProperty(storeId, MODULE + section +".showAuthor").getValue());
-				prop.put(POSITION, section);
+				prop.put(POSITION, Integer.toString(posCount));
 				prop.put(DISPLAY, propertiesServce.getProperty(storeId, MODULE + DISPLAY).getValue());
 				sectionProps.add(prop);
+				posCount++;
 			}
 		}
 
