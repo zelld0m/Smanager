@@ -19,6 +19,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
@@ -37,6 +39,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
+import com.search.manager.utility.PropertiesUtils;
 
 public class ContentSearchHelper {
 
@@ -48,11 +54,15 @@ public class ContentSearchHelper {
 	private String solrUrl = "";
 	private final String NAME = "name";
 	private final String TYPE = "type";
+	private final String SHOW_TYPE = "showType";
 	private final String SHOW_DATE = "showCreatedDate";
 	private final String SHOW_IMAGE = "showImage";
 	private final String SHOW_AUTHOR = "showAuthor";
 	private final String POSITION = "position";
 	private final String DISPLAY = "maxDisplay";
+	private final String CMT_SERVICE = "getContentTypeService";
+	private final String PAGE_TYPE = "pageType";
+	private final String CODE = "code";
 
 	public ContentSearchHelper() {
 		jsonConfig = new JsonConfig();
@@ -75,6 +85,7 @@ public class ContentSearchHelper {
         			? paramMap.get(SolrConstants.SOLR_PARAM_KEYWORD).get(0)
         			: new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*");
             addSections(keywordQuery, sectionProps);
+            addPageTypeMapping(storeId);
 
             boolean wrfPresent = !StringUtils.isEmpty(wrf);
             response.setContentType("application/json;charset=UTF-8");
@@ -95,10 +106,26 @@ public class ContentSearchHelper {
     }
 
 	public boolean generateContentSearchResponse(String storeId, HashMap<String, List<NameValuePair>> paramMap,
-			List<NameValuePair> requestParams, HttpServletResponse response, String wrf) throws SearchException {
+			List<NameValuePair> requestParams, Map<String, String> sectionProp,
+			HttpServletResponse response, String wrf) throws SearchException {
         boolean success = false;
         try {
         	initialJson = querySolr(requestParams); // base query
+
+        	// add section property data
+        	if (!sectionProp.isEmpty()) {
+	        	JSONObject section = new JSONObject();
+	        	section.element(NAME, sectionProp.get(NAME));
+	        	section.element(TYPE, sectionProp.get(TYPE));
+	        	section.element(SHOW_TYPE, Boolean.parseBoolean(sectionProp.get(SHOW_TYPE)));
+	        	section.element(SHOW_DATE, Boolean.parseBoolean(sectionProp.get(SHOW_DATE)));
+	        	section.element(SHOW_IMAGE, Boolean.parseBoolean(sectionProp.get(SHOW_IMAGE)));
+	        	section.element(SHOW_AUTHOR, Boolean.parseBoolean(sectionProp.get(SHOW_AUTHOR)));
+	        	section.element(POSITION, Integer.parseInt(sectionProp.get(POSITION)));
+	        	section.element(DISPLAY, Integer.parseInt(sectionProp.get(DISPLAY)));
+	        	initialJson.element("Section", section);
+        	}
+        	addPageTypeMapping(storeId);
 
             boolean wrfPresent = !StringUtils.isEmpty(wrf);
             response.setContentType("application/json;charset=UTF-8");
@@ -176,7 +203,7 @@ public class ContentSearchHelper {
             solrResponse = client.execute(post);
             result = formatFacets((JSONObject) parseJsonResponse(slurper, solrResponse));
         } catch (Exception e) {
-            String error = "Error occured while trying to get number of items";
+            String error = "Error occured while trying to query content data from sorl";
             logger.error(error, e);
         } finally {
             if (post != null) {
@@ -230,6 +257,7 @@ public class ContentSearchHelper {
 					JSONObject result = new JSONObject();
 					result.element(NAME, property.get(NAME));
 					result.element(TYPE, property.get(TYPE));
+					result.element(SHOW_TYPE, Boolean.parseBoolean(property.get(SHOW_TYPE)));
 					result.element(SHOW_DATE, Boolean.parseBoolean(property.get(SHOW_DATE)));
 					result.element(SHOW_IMAGE, Boolean.parseBoolean(property.get(SHOW_IMAGE)));
 					result.element(SHOW_AUTHOR, Boolean.parseBoolean(property.get(SHOW_AUTHOR)));
@@ -282,4 +310,74 @@ public class ContentSearchHelper {
 		return resultDocs;
 	}
 
+	@SuppressWarnings("rawtypes")
+	private void addPageTypeMapping(String storeId) {
+		HttpClient client = null;
+		HttpPost post = null;
+		HttpResponse response = null;
+		InputStream in = null;
+		Map<String, String> pairs = new HashMap<String, String>();
+		List<NameValuePair> requestParams = new ArrayList<NameValuePair>();
+		NameValuePair nvp = new BasicNameValuePair("store", storeId);
+		requestParams.add(nvp);
+		
+		try {
+			client = new DefaultHttpClient();
+			post = new HttpPost(PropertiesUtils.getValue(CMT_SERVICE));
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: {} Parameter: {}", post.getURI(), requestParams);
+			}
+			response = client.execute(post);
+			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			in = response.getEntity().getContent();
+			Document doc = docBuilder.parse(in);
+			// parse data
+			NodeList docNodes = doc.getDocumentElement().getElementsByTagName(PAGE_TYPE);
+			for (int i = 0; i < docNodes.getLength(); i++) {
+				String code = "";
+				String name = "";
+				NodeList props = docNodes.item(i).getChildNodes();
+				for (int j = 0; j < props.getLength(); j++) {
+					if (props.item(j).getNodeName().equalsIgnoreCase(CODE)) {
+						code = props.item(j).getTextContent();
+					} else if (props.item(j).getNodeName().equalsIgnoreCase(NAME)) {
+						name = props.item(j).getTextContent();
+					}
+				}
+				if (StringUtils.isNotBlank(code)) {
+					pairs.put(code, name);
+					code = ""; name = "";
+				}
+			}
+		} catch (Exception e) {
+			String error = "Error occured while trying to get page type mappings";
+			logger.error(error, e);
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+			}
+			if (post != null) {
+				if (response != null) {
+					EntityUtils.consumeQuietly(response.getEntity());
+				}
+				post.releaseConnection();
+			}
+			if (client != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}
+		
+		JSONObject mapping = new JSONObject();
+		Iterator mapItr = pairs.entrySet().iterator();
+		while (mapItr.hasNext()) {
+			Map.Entry pair = (Map.Entry) mapItr.next();
+			mapping.element((String) pair.getKey(), pair.getValue());
+        }
+		initialJson.element("Type Mapping", mapping);
+	}
 }

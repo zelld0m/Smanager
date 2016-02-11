@@ -41,6 +41,7 @@ public class ContentSearchController extends AbstractSearchController {
 	private final String MODULE = "contents.section.";
 	private final String NAME = "name";
 	private final String TYPE = "type";
+	private final String SHOW_TYPE = "showType";
 	private final String SHOW_DATE = "showCreatedDate";
 	private final String SHOW_IMAGE = "showImage";
 	private final String SHOW_AUTHOR = "showAuthor";
@@ -118,9 +119,10 @@ public class ContentSearchController extends AbstractSearchController {
 				Map<String, String> prop = new HashMap<String, String>();
 				prop.put(NAME, propertiesServce.getProperty(storeId, MODULE + section +".name").getValue());
 				prop.put(TYPE, propertiesServce.getProperty(storeId, MODULE + section +".type").getValue());
-				prop.put(SHOW_DATE, propertiesServce.getProperty(storeId, MODULE + section +".showCreatedDate").getValue());
-				prop.put(SHOW_IMAGE, propertiesServce.getProperty(storeId, MODULE + section +".showImage").getValue());
-				prop.put(SHOW_AUTHOR, propertiesServce.getProperty(storeId, MODULE + section +".showAuthor").getValue());
+				prop.put(SHOW_TYPE, propertiesServce.getProperty(storeId, MODULE + section +".showType").getValue());
+				prop.put(SHOW_DATE, propertiesServce.getProperty(storeId, MODULE + SHOW_DATE).getValue());
+				prop.put(SHOW_IMAGE, propertiesServce.getProperty(storeId, MODULE + SHOW_IMAGE).getValue());
+				prop.put(SHOW_AUTHOR, propertiesServce.getProperty(storeId, MODULE + SHOW_AUTHOR).getValue());
 				prop.put(POSITION, Integer.toString(posCount));
 				prop.put(DISPLAY, propertiesServce.getProperty(storeId, MODULE + DISPLAY).getValue());
 				sectionProps.add(prop);
@@ -147,6 +149,7 @@ public class ContentSearchController extends AbstractSearchController {
 		String wrf = "";
 		final ContentSearchHelper searchHelper = new ContentSearchHelper();
 		this.handle = "/contentSearch";
+		Integer positionParam = null;
 
 		try {
 			storeId = getStoreCore(request, STORE_PATTERN);
@@ -164,12 +167,16 @@ public class ContentSearchController extends AbstractSearchController {
 		@SuppressWarnings("unchecked")
 		Set<String> paramNames = (Set<String>) request.getParameterMap().keySet();
 		for (String paramName : paramNames) {
-			for (String paramValue : request.getParameterValues(paramName)) {
-				nvp = new BasicNameValuePair(paramName, paramValue);
-				if (ParameterUtils.addNameValuePairToMap(paramMap, paramName, nvp, uniqueFields)) {
-					nameValuePairs.add(nvp);
-					if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION)) {
-						wrf = paramValue;
+			if (paramName.equalsIgnoreCase(POSITION)) {
+				positionParam = Integer.parseInt(request.getParameterValues(paramName)[0]);
+			} else {
+				for (String paramValue : request.getParameterValues(paramName)) {
+					nvp = new BasicNameValuePair(paramName, paramValue);
+					if (ParameterUtils.addNameValuePairToMap(paramMap, paramName, nvp, uniqueFields)) {
+						nameValuePairs.add(nvp);
+						if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION)) {
+							wrf = paramValue;
+						}
 					}
 				}
 			}
@@ -193,9 +200,47 @@ public class ContentSearchController extends AbstractSearchController {
 			}
     	}
 
+    	// get global setting for the content sections
+    	Map<String, String> prop = new HashMap<String, String>();
+    	if (positionParam != null){
+			int posCount = 0;
+			for (String section : sections) {
+				boolean isEnabled = propertiesServce.getProperty(storeId, MODULE + section +".enable").getValue().equalsIgnoreCase("true");
+				if (isEnabled) {
+					if (positionParam.intValue() == posCount) {
+						String types = propertiesServce.getProperty(storeId, MODULE + section +".type").getValue();
+						prop.put(NAME, propertiesServce.getProperty(storeId, MODULE + section +".name").getValue());
+						prop.put(TYPE, types);
+						prop.put(SHOW_TYPE, propertiesServce.getProperty(storeId, MODULE + section +".showType").getValue());
+						prop.put(SHOW_DATE, propertiesServce.getProperty(storeId, MODULE + SHOW_DATE).getValue());
+						prop.put(SHOW_IMAGE, propertiesServce.getProperty(storeId, MODULE + SHOW_IMAGE).getValue());
+						prop.put(SHOW_AUTHOR, propertiesServce.getProperty(storeId, MODULE + SHOW_AUTHOR).getValue());
+						prop.put(POSITION, Integer.toString(posCount));
+						prop.put(DISPLAY, propertiesServce.getProperty(storeId, MODULE + DISPLAY).getValue());
+						if (StringUtils.isNotEmpty(types)) {
+							List<String> typeList = Arrays.asList(types.split(","));					
+							StringBuffer typeFq = new StringBuffer("type:(");
+							typeFq.append(typeList.get(0));
+							for (int i = 1; i < typeList.size(); i++) {
+								typeFq.append(" OR ");
+								typeFq.append(typeList.get(i));
+							}
+							typeFq.append(")");
+							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, typeFq.toString());
+							if (ParameterUtils.addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_FIELD_QUERY, nvp, uniqueFields)) {
+								nameValuePairs.add(nvp);
+							}
+						}
+						break;
+					}
+					posCount++;
+				}
+			}
+    	}
+
 		// generate response
 		try {
-			searchHelper.generateContentSearchResponse(storeId, paramMap, nameValuePairs, response, wrf);
+			searchHelper.generateContentSearchResponse(storeId, paramMap, nameValuePairs, prop, response, wrf);
 		} catch (SearchException e) {
 			logger.error("Failed to send solr request {}", e);
 		}

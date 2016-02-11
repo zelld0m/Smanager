@@ -872,46 +872,39 @@
 				<group name="General Properties">
 					<member property-id="filters.tags"/>
 					<member property-id="section.maxDisplay"/>
+					<member property-id="section.showImage"/>
+					<member property-id="section.showAuthor"/>
+					<member property-id="section.showCreatedDate"/>
 				</group>
 				<group name="Section" collapse="true">
 					<member property-id="section.one.enable"/>
 					<member property-id="section.one.name"/>
 					<member property-id="section.one.type"/>
-					<member property-id="section.one.showImage"/>
-					<member property-id="section.one.showAuthor"/>
-					<member property-id="section.one.showCreatedDate"/>
+					<member property-id="section.one.showType"/>
 				</group>
 				<group name="Section" collapse="true">
 					<member property-id="section.two.enable"/>
 					<member property-id="section.two.name"/>
 					<member property-id="section.two.type"/>
-					<member property-id="section.two.showImage"/>
-					<member property-id="section.two.showAuthor"/>
-					<member property-id="section.two.showCreatedDate"/>
+					<member property-id="section.two.showType"/>
 				</group>
 				<group name="Section" collapse="true">
 					<member property-id="section.three.enable"/>
 					<member property-id="section.three.name"/>
 					<member property-id="section.three.type"/>
-					<member property-id="section.three.showImage"/>
-					<member property-id="section.three.showAuthor"/>
-					<member property-id="section.three.showCreatedDate"/>
+					<member property-id="section.three.showType"/>
 				</group>
 				<group name="Section" collapse="true">
 					<member property-id="section.four.enable"/>
 					<member property-id="section.four.name"/>
 					<member property-id="section.four.type"/>
-					<member property-id="section.four.showImage"/>
-					<member property-id="section.four.showAuthor"/>
-					<member property-id="section.four.showCreatedDate"/>
+					<member property-id="section.four.showType"/>
 				</group>
 				<group name="Section" collapse="true">
 					<member property-id="section.five.enable"/>
 					<member property-id="section.five.name"/>
 					<member property-id="section.five.type"/>
-					<member property-id="section.five.showImage"/>
-					<member property-id="section.five.showAuthor"/>
-					<member property-id="section.five.showCreatedDate"/>
+					<member property-id="section.five.showType"/>
 				</group>
 			</groups>
 			<properties>
@@ -922,6 +915,18 @@
                 <property id="section.maxDisplay" type="String" multiValued="false">
                     <label>Sections Max Display</label>
                     <defaultValue>5</defaultValue>
+                </property>
+                <property id="section.showImage" type="Boolean" required="true">
+                    <label>Sections Show Image</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+                <property id="section.showAuthor" type="Boolean" required="true">
+                    <label>Sections Show Author</label>
+                    <defaultValue>false</defaultValue>
+                </property>
+                <property id="section.showCreatedDate" type="Boolean" required="true">
+                    <label>Sections Show Date Created</label>
+                    <defaultValue>false</defaultValue>
                 </property>
 				<property id="section.one.enable" type="Boolean">
                     <label>Enable</label>
@@ -964,83 +969,43 @@
                     <defaultValue></defaultValue>
                 </property>
 				<property id="section.one.type" type="DropDown" multiValued="true">
-                    <label>Content Type</label>
+                    <label>Page Type</label>
                     <defaultValue></defaultValue>
                 </property>
 				<property id="section.two.type" type="DropDown" multiValued="true">
-                    <label>Content Type</label>
+                    <label>Page Type</label>
                     <defaultValue></defaultValue>
                 </property>
 				<property id="section.three.type" type="DropDown" multiValued="true">
-                    <label>Content Type</label>
+                    <label>Page Type</label>
                     <defaultValue></defaultValue>
                 </property>
 				<property id="section.four.type" type="DropDown" multiValued="true">
-                    <label>Content Type</label>
+                    <label>Page Type</label>
                     <defaultValue></defaultValue>
                 </property>
 				<property id="section.five.type" type="DropDown" multiValued="true">
-                    <label>Content Type</label>
+                    <label>Page Type</label>
                     <defaultValue></defaultValue>
                 </property>
-				<property id="section.one.showImage" type="Boolean" required="true">
-                    <label>Show Image</label>
+				<property id="section.one.showType" type="Boolean" required="true">
+                    <label>Show Page Type</label>
                     <defaultValue>false</defaultValue>
                 </property>
-				<property id="section.two.showImage" type="Boolean" required="true">
-                    <label>Show Image</label>
+				<property id="section.two.showType" type="Boolean" required="true">
+                    <label>Show Page Type</label>
                     <defaultValue>false</defaultValue>
                 </property>
-				<property id="section.three.showImage" type="Boolean" required="true">
-                    <label>Show Image</label>
+				<property id="section.three.showType" type="Boolean" required="true">
+                    <label>Show Page Type</label>
                     <defaultValue>false</defaultValue>
                 </property>
-				<property id="section.four.showImage" type="Boolean" required="true">
-                    <label>Show Image</label>
+				<property id="section.four.showType" type="Boolean" required="true">
+                    <label>Show Page Type</label>
                     <defaultValue>false</defaultValue>
                 </property>
-				<property id="section.five.showImage" type="Boolean" required="true">
-                    <label>Show Image</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.one.showAuthor" type="Boolean" required="true">
-                    <label>Show Author</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.two.showAuthor" type="Boolean" required="true">
-                    <label>Show Author</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.three.showAuthor" type="Boolean" required="true">
-                    <label>Show Author</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.four.showAuthor" type="Boolean" required="true">
-                    <label>Show Author</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.five.showAuthor" type="Boolean" required="true">
-                    <label>Show Author</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.one.showCreatedDate" type="Boolean" required="true">
-                    <label>Show Date Created</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.two.showCreatedDate" type="Boolean" required="true">
-                    <label>Show Date Created</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.three.showCreatedDate" type="Boolean" required="true">
-                    <label>Show Date Created</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.four.showCreatedDate" type="Boolean" required="true">
-                    <label>Show Date Created</label>
-                    <defaultValue>false</defaultValue>
-                </property>
-				<property id="section.five.showCreatedDate" type="Boolean" required="true">
-                    <label>Show Date Created</label>
+				<property id="section.five.showType" type="Boolean" required="true">
+                    <label>Show Page Type</label>
                     <defaultValue>false</defaultValue>
                 </property>
 			</properties>
