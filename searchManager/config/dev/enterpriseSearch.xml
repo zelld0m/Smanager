@@ -162,6 +162,13 @@
 		<store-specific-fields override="pcmall"/>
 		<search-rule override="pcmall"/>
 	</store>
+	<store name="afs">
+		<catalog>Master Catalog</catalog>
+		<store-flag>PCMMaster_StoreFlag</store-flag>
+		<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
+		<store-specific-fields override="pcmall"/>
+		<search-rule override="pcmall"/>
+	</store>
 	
 	<!-- PCMG Open -->
 	<store name="pcmallgov">
