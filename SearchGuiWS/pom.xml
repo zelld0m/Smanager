@@ -39,9 +39,6 @@
         <commons.lang.version>2.6</commons.lang.version>
         <commons.pool.version>1.2</commons.pool.version>
 
-        <!-- DIRECT WEB REMOTING VERSION -->
-        <dwr.version>3.0.0-rc3-SNAPSHOT</dwr.version>
-
         <!-- EHCACHE VERSION -->
         <ehcache.version>1.6.0</ehcache.version>
 
@@ -364,12 +361,12 @@
             <version>${javasimon.jmx.version}</version>
         </dependency>
 
-        <!-- OPENSYMPHONY -->
+        <!-- OPENSYMPHONY
         <dependency>
             <groupId>org.opensymphony.quartz</groupId>
             <artifactId>quartz</artifactId>
             <version>${quartz.version}</version>
-        </dependency>
+        </dependency>-->
 
         <!-- JAXEN VERSION -->
         <dependency>

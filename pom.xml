@@ -6,24 +6,6 @@
     <version>1.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <repositories>
-        <repository>
-            <id>repository.sonatype.org -public</id>
-            <name>DWR repository</name>
-            <url>https://oss.sonatype.org/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>jboss - third-party-releases</id>
-            <name>JBoss Repositories</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
-        </repository>
-        <repository>
-            <id>VTORGUISCHDEV01.pcmall.com</id>
-            <name>VTORGUISCHDEV01.pcmall.com-searchManager</name>
-            <url>http://vtorguischdev01:8081/artifactory/searchManager</url>
-        </repository>
-    </repositories>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.6</java.version>
@@ -35,7 +17,7 @@
 
         <!-- MAVEN PLUGIN VERSION -->
         <enforcer.plugin.version>1.2</enforcer.plugin.version>
-        <maven.version.range>[2.2.1,3.2.1]</maven.version.range>
+        <maven.version.range>[2.2.1,3.2.2]</maven.version.range>
 
         <!-- APACHE AXIS VERSION -->
         <axis.version>1.4</axis.version>
@@ -83,6 +65,9 @@
 
         <!-- XML SECURITY VERSION -->
         <xml.security.version>1.3.0</xml.security.version>
+
+        <!-- DIRECT WEB REMOTING VERSION -->
+        <dwr.version>3.0.0-rc3-RELEASE</dwr.version>
     </properties>
 
     <build>
@@ -141,7 +126,7 @@
     </build>
 
     <modules>
-	<module>reportsManager</module>
+	    <module>reportsManager</module>
         <module>propertiesManager</module>
         <module>searchManager</module>
         <module>SearchGuiWS</module>
@@ -273,7 +258,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <!-- LOGBACK -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -307,6 +292,14 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-jdk14</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.restlet.jee</groupId>
+                    <artifactId>org.restlet</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.restlet.jee</groupId>
+                    <artifactId>org.restlet.ext.servlet</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -348,17 +341,4 @@
             <version>${xml.security.version}</version>
         </dependency>
     </dependencies>
-    <distributionManagement>
-        <repository>
-            <id>searchManager</id>
-            <name>Search Manager Releases</name>
-            <url>http://vtorguischdev01:8081/artifactory/searchManager-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>searchManager</id>
-            <name>Search Manager Snapshots</name>
-            <uniqueVersion>true</uniqueVersion>
-            <url>http://vtorguischdev01:8081/artifactory/searchManager-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>

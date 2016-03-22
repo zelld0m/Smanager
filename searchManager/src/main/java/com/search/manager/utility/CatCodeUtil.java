@@ -436,8 +436,10 @@ public class CatCodeUtil {
         storesMapping = Collections.unmodifiableMap(_storesMapping);
     }
     private static String checkStoreMapping(String store) {
-    	String _store = store.toLowerCase();
-    	return storesMapping.get(_store) == null ? _store : storesMapping.get(_store);
+        String lstore = store.toLowerCase();
+    	String _store = storesMapping.get(lstore);
+        if(_store == null) _store = lstore;
+    	return _store;
     }
 
     public static List<String> getAllIMSTemplatesByStore(String store) throws DataException {

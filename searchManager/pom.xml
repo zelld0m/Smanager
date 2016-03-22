@@ -24,9 +24,6 @@
         <!-- DBCP VERSION -->
         <commons.dbcp.version>1.2.2</commons.dbcp.version>
 
-        <!-- DWR VERSION -->
-        <dwr.version>3.0.0-rc3-SNAPSHOT</dwr.version>
-
         <!-- HTTP COMPONENTS VERSION -->
         <httpcomponents.version>4.2.3</httpcomponents.version>
 
