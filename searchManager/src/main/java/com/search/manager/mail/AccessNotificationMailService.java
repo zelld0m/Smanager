@@ -22,7 +22,7 @@ public class AccessNotificationMailService {
 		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "default-adduser.vm";
 		String subject = "[SearchManager] Welcome to Search Manager";
-		Map<Object,Object> model = new HashMap<Object,Object>();
+		Map<String,Object> model = new HashMap<String,Object>();
 		
 		messageDetails.setTo(user.getEmail());
 		messageDetails.setSubject(subject);
@@ -40,7 +40,7 @@ public class AccessNotificationMailService {
 		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "default-resetpassword.vm";
 		String subject = "[SearchManager] Your password was reset";
-		Map<Object,Object> model = new HashMap<Object,Object>();
+		Map<String,Object> model = new HashMap<String,Object>();
 		
 		messageDetails.setTo(user.getEmail());
 		messageDetails.setSubject(subject);

@@ -19,7 +19,7 @@ public class ReportNotificationMailService {
 		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "default-topkeyword.vm";
 		String subject = "[SearchManager] Top Keyword";
-		Map<Object,Object> model = new HashMap<Object,Object>();
+		Map<String,Object> model = new HashMap<String,Object>();
 		Map<String, InputStreamSource> attachments = new HashMap<String, InputStreamSource>();
 
 		messageDetails.setTo(recipients);
@@ -34,7 +34,7 @@ public class ReportNotificationMailService {
         SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
         String templateLocation = "default-topkeyword.vm";
         String subject = "[SearchManager] Top Keyword";
-        Map<Object,Object> model = new HashMap<Object,Object>();
+        Map<String,Object> model = new HashMap<String,Object>();
         Map<String, InputStreamSource> attachments = new HashMap<String, InputStreamSource>();
 
         messageDetails.setTo(recipients);
@@ -49,7 +49,7 @@ public class ReportNotificationMailService {
 		SimpleMailMessage messageDetails = new SimpleMailMessage(mailDetails);
 		String templateLocation = "default-zeroresult.vm";
 		String subject = "[SearchManager] Zero Result";
-		Map<Object,Object> model = new HashMap<Object,Object>();
+		Map<String,Object> model = new HashMap<String,Object>();
 		Map<String, InputStreamSource> attachments = new HashMap<String, InputStreamSource>();
 
 		messageDetails.setTo(recipients);

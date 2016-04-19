@@ -111,7 +111,7 @@ public class EmailSender{
 	 */
 	public boolean send(final SimpleMailMessage messageDetails,
 			final String templateLocation,
-			final Map<Object, Object> hTemplateVariables, 
+			final Map<String, Object> hTemplateVariables,
 			Map<String, InputStreamSource> attachmentMap,final ByteArrayInputStream bais,final String contentType) {
 
 		boolean sent = false;
@@ -138,14 +138,14 @@ public class EmailSender{
 	}
 	public boolean send(final SimpleMailMessage messageDetails,
 			final String templateLocation,
-			final Map<Object, Object> hTemplateVariables, 
+			final Map<String, Object> hTemplateVariables,
 			Map<String, InputStreamSource> attachmentMap){
 		return send(messageDetails, templateLocation, hTemplateVariables, attachmentMap,null,null);
 	}
 	
 	public boolean send(final SimpleMailMessage messageDetails,
 			final String templateLocation,
-			final Map<Object, Object> hTemplateVariables) {
+			final Map<String, Object> hTemplateVariables) {
 		return send(messageDetails, templateLocation, hTemplateVariables, null,null,null);
 	}
 }

@@ -1584,6 +1584,7 @@
                 var availability = ui.find("select#availabilityList  > option:gt(0):selected:eq(0)").text();
                 var license = ui.find("select#licenseList > option:gt(0):selected:eq(0)").text();
                 var nameContains = $.trim(ui.find("input#nameContains").val());
+                var exactName = $.trim(ui.find("input#exact-name").val());
                 var descriptionContains = $.trim(ui.find("input#descriptionContains").val());
                 var imageExists = ui.find("select#imageExistsList > option:gt(0):selected:eq(0)").text();
 
@@ -1653,6 +1654,9 @@
 
                 if ($.isNotBlank(nameContains))
                     condMap["Name"] = $.makeArray(nameContains);
+
+                if ($.isNotBlank(exactName))
+                    condMap["ExactName"] = $.makeArray(exactName);
 
                 if ($.isNotBlank(descriptionContains))
                     condMap["Description"] = $.makeArray(descriptionContains);

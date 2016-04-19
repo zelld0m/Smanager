@@ -8,6 +8,9 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -172,12 +175,9 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
         BufferedReader bufferedReader = null;
         try {
             storeIndexedDate.put(store, 0L);
-            FileInputStream fileInputStream = new FileInputStream(new StringBuilder().append(BASE_RULE_DIR)
-                    .append(File.separator).append(store).append(File.separator).append(DID_YOU_MEAN)
-                    .append(File.separator).append(DATA_INDEX).toString());
-
-            if (fileInputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(new DataInputStream(fileInputStream)));
+            Path path = Paths.get(BASE_RULE_DIR, store, DID_YOU_MEAN, DATA_INDEX);
+            if (Files.exists(path)) {
+                bufferedReader = new BufferedReader(new InputStreamReader(new DataInputStream(new FileInputStream(path.toFile()))));
                 String str = "";
 
                 while ((str = bufferedReader.readLine()) != null) {

@@ -39,7 +39,7 @@
   <spring:eval expression="@utilityService.getIndexedSchemaFields()" var="schemaFields" />
   <spring:eval expression="@utilityService.getTimeZoneId()" var="timeZoneId" />
   
-  <script>
+  <script type="text/javascript">
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
 	var GLOBAL_allowModification = allowModify;
 	// Request server details
@@ -55,8 +55,8 @@
 	timezoneJS.timezone.init();
 	var GLOBAL_currentDate = new timezoneJS.Date('${year}', '${month-1}', '${day}', '${hour}', '${min}', GLOBAL_timeZoneId);
 	
-	var GLOBAL_storeProperties = $.parseJSON('${storeProperties}');
-	var GLOBAL_storeSolrParameters = $.parseJSON('${storeSolrParameters}');
+	var GLOBAL_storeProperties = $.parseJSON('<spring:message text="${storeProperties}" javaScriptEscape="true"/>');
+	var GLOBAL_storeSolrParameters = $.parseJSON('<spring:message text="${storeSolrParameters}" javaScriptEscape="true"/>');
 	//store schema indexed fields
 	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
 	var GLOBAL_indexedFields = GLOBAL_schemaFields["indexedFields"];

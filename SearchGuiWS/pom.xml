@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.search</groupId>
         <artifactId>searchManager-parent</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>adam-1.6.0-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -31,7 +31,6 @@
         <commons.cli.version>1.2</commons.cli.version>
         <commons.codec.version>1.7</commons.codec.version>
         <commons.collections.version>3.2.1</commons.collections.version>
-        <commons.dbcp.version>1.2.1</commons.dbcp.version>
         <commons.digester.version>2.1</commons.digester.version>
         <commons.fileupload.version>1.2.1</commons.fileupload.version>
         <commons.httpclient.version>3.0</commons.httpclient.version>
@@ -42,28 +41,13 @@
         <!-- EHCACHE VERSION -->
         <ehcache.version>1.6.0</ehcache.version>
 
-        <!-- FASTERXML VERSION -->
-        <fasterxml.version>3.1.3</fasterxml.version>
-
-        <!-- GUAVA VERSION -->
-        <guava.version>13.0.1</guava.version>
-
         <!-- HSQLDB VERSION -->
         <hsqldb.version>1.8.0.10</hsqldb.version>
-
-        <!-- APACHE HTTP COMPONENTS VERSION -->
-        <httpcomponents.version>4.2.4</httpcomponents.version>
 
         <!-- JAVA SIMPLE MONITORING API VERSION -->
         <javasimon.version>3.3.0</javasimon.version>
         <javasimon.jdbc3.version>2.5.0</javasimon.jdbc3.version>
         <javasimon.jmx.version>2.5.0</javasimon.jmx.version>
-
-        <!-- JMAIL VERSION -->
-        <javax.mail.version>1.4.7</javax.mail.version>
-
-        <!-- JAVAX XML VERSION -->
-        <javax.xml.version>1.1.1</javax.xml.version>
 
         <!-- JAXEN VERSION -->
         <jaxen.version>1.1.4</jaxen.version>
@@ -71,29 +55,14 @@
         <!-- JDOM VERSION -->
         <jdom.version>1.0</jdom.version>
 
-        <!-- JAVA SECURITY CHANNEL API VERSION -->
-        <jsch.version>0.1.50</jsch.version>
-
-        <!-- JTDS VERSION -->
-        <jtds.version>1.2.6</jtds.version>
-
         <!-- JUG VERSION -->
         <jug.version>2.0.0</jug.version>
 
         <!-- LUCENE VERSION -->
         <lucene.version>4.3.1</lucene.version>
 
-        <!-- OPEN SYMPHONY VERSION -->
-        <quartz.version>1.6.5</quartz.version>
-
-        <!-- LOGGING VERSIONS -->
-        <slf4j.version>1.7.5</slf4j.version>
-
         <!-- SPATIAL VERSION -->
         <spatial4j.version>0.3</spatial4j.version>
-
-        <!-- SPRING SUPPORT VERSION -->
-        <spring.support.version>2.0.8</spring.support.version>
 
         <!-- WOODSTOX VERSION -->
         <woodstox.version>3.1.3</woodstox.version>
@@ -545,14 +514,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-support</artifactId>
-            <version>${spring.support.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
+            <artifactId>spring-context-support</artifactId>
         </dependency>
 
         <!-- SPATIAL -->
@@ -940,6 +902,43 @@
             </exclusions>
             <classifier>jdk15</classifier>
         </dependency>
+
+
+        <dependency>
+            <groupId>javax.xml</groupId>
+            <artifactId>jaxrpc-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-jxpath</groupId>
+            <artifactId>commons-jxpath</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -952,6 +951,15 @@
                     <warName>searchguiws</warName>
                     <archiveClasses>true</archiveClasses>
                     <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <path>/searchguiws</path>
+                    <port>8081</port>
                 </configuration>
             </plugin>
         </plugins>

@@ -335,6 +335,8 @@
                                                         <td class="w175">Name (contains) :</td>
                                                         <td class="iepadBT0">
                                                             <input id="nameContains" type="text" style="width: 244px;"/>
+                                                            <input id="exact-name" name="exact-name" type="checkbox" value="ON"/>
+                                                            <label for="exact-name">Exact Match</label>
                                                         </td>
                                                     </tr>
                                                     <tr>

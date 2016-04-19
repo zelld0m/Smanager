@@ -431,8 +431,7 @@
 				</property>
 				<property id="searchwithin.type" type="String" multiValued="true">
 					<label>Type</label>
-					<defaultValue>includeAll,includeSome,includeExact,excludeAll
-					</defaultValue>
+					<defaultValue>includeAll,includeSome,includeExact,excludeAll</defaultValue>
 				</property>
 				<property id="searchwithin.solrfieldlist" type="String"
 					multiValued="true">
@@ -788,8 +787,7 @@
 
 				<property id="mail.workflow.pendingSubject" type="String">
 					<label>Pending Rule Subject</label>
-					<defaultValue>Search Manager: Rules Submitted For Approval
-					</defaultValue>
+					<defaultValue>Search Manager: Rules Submitted For Approval</defaultValue>
 				</property>
 				<property id="mail.workflow.approvedSubject" type="String">
 					<label>Approved Rule Subject</label>

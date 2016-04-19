@@ -191,50 +191,56 @@ public class RedirectRuleCondition extends ModelBean {
         if (map.containsKey("Condition")) {
             String value = map.get("Condition").get(0);
             if (value.equals("Refurbished")) {
-                builder.append("Refurbished_Flag").append(":1").append(" AND ");
+                builder.append("Refurbished_Flag:1 AND ");
             } else if (value.equals("Open Box")) {
-                builder.append("OpenBox_Flag").append(":1").append(" AND ");
+                builder.append("OpenBox_Flag:1 AND ");
             } else if (value.equals("Clearance")) {
-                builder.append("Clearance_Flag").append(":1").append(" AND ");
+                builder.append("Clearance_Flag:1 AND ");
             }
         }
         if (map.containsKey("License")) {
             String value = map.get("License").get(0);
             if (value.equals("Non-License Products Only")) {
-                builder.append("Licence_Flag").append(":0").append(" AND ");
+                builder.append("Licence_Flag:0 AND ");
             } else if (value.equals("License Products Only")) {
-                builder.append("Licence_Flag").append(":1").append(" AND ");
+                builder.append("Licence_Flag:1 AND ");
             }
         }
 
         if (map.containsKey("ImageExists")) {
             String value = map.get("ImageExists").get(0);
             if (value.equals("Products Without Image Only")) {
-                builder.append("ImageExists").append(":0").append(" AND ");
+                builder.append("ImageExists:0 AND ");
             } else if (value.equals("Products With Image Only")) {
-                builder.append("ImageExists").append(":1").append(" AND ");
+                builder.append("ImageExists:1 AND ");
             }
         }
 
         if (map.containsKey("Availability")) {
             String value = map.get("Availability").get(0);
             if (value.equals("Call")) {
-                builder.append("InStock").append(":0").append(" AND ");
+                builder.append("InStock:0 AND ");
             } else if (value.equals("In Stock")) {
-                builder.append("InStock").append(":1").append(" AND ");
+                builder.append("InStock:1 AND ");
             }
         }
         if (map.containsKey("Platform")) {
-            builder.append("Platform").append(":").append(map.get("Platform").get(0)).append(" AND ");
+            builder.append("Platform:").append(map.get("Platform").get(0)).append(" AND ");
         }
 
         if (map.containsKey("Name")) {
+            boolean isExact = map.containsKey("ExactName");
             String value = map.get("Name").get(0);
             if (forSolr) {
                 value = ClientUtils.escapeQueryChars(value);
-                builder.append("(").append(facetPrefix).append("_Name").append(":").append(value).append(" OR ");
+                if(isExact) {
+                    value = new StringBuilder(value.length() + 2).append('"').append(value).append('"').toString();
+                }
+                builder.append("(").append(facetPrefix).append("_Name:").append(value).append(" OR ");
+            } else if(isExact) {
+                builder.append("ExactName:ON AND ");
             }
-            builder.append("Name").append(":").append(value);
+            builder.append("Name:").append(value);
             if (forSolr) {
                 builder.append(")");
             }
@@ -244,9 +250,9 @@ public class RedirectRuleCondition extends ModelBean {
             String value = map.get("Description").get(0);
             if (forSolr) {
                 value = ClientUtils.escapeQueryChars(value);
-                builder.append("(").append(facetPrefix).append("_Description").append(":").append(value).append(" OR ");
+                builder.append("(").append(facetPrefix).append("_Description:").append(value).append(" OR ");
             }
-            builder.append("Description").append(":").append(value);
+            builder.append("Description:").append(value);
             if (forSolr) {
                 builder.append(")");
             }
@@ -595,7 +601,7 @@ public class RedirectRuleCondition extends ModelBean {
         // if any of the following fields are present return them;
         // Platform, Condition, Availability, License, ImageExists
         LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-        String[] keys = {"MfrPN", "Platform", "Condition", "Availability", "License", "ImageExists", "Name", "Description"};
+        String[] keys = {"MfrPN", "Platform", "Condition", "Availability", "License", "ImageExists", "Name", "ExactName", "Description"};
         for (String key : keys) {
             List<String> value = conditionMap.get(key);
             if (value != null && !value.isEmpty()) {
