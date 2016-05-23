@@ -189,7 +189,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					break;
 				}	
 			}
-			String edpValues = CollectionUtils.isNotEmpty(edpList) ? StringUtils.trimToEmpty(String.format("EDP:(%s)", StringUtils.join(edpList, ' '))): "";
+			String edpValues = CollectionUtils.isNotEmpty(edpList) ? StringUtils.trimToEmpty(String.format("ProductID:(%s)", StringUtils.join(edpList, ' '))): "";
 			String facetValues = CollectionUtils.isNotEmpty(facetList) ? String.format("(%s)", StringUtils.join(facetList, " OR ")): "";
 			filterQuery.append(String.format("(%s%s%s)", edpValues, StringUtils.isNotBlank(edpValues) && StringUtils.isNotBlank(facetValues)? " OR ": "", facetValues));
 			logger.debug("{}:{}", RuleEntity.getValue(ruleEntity.getCode()), filterQuery.toString());
@@ -643,7 +643,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				return;
 			}
 			NameValuePair defTypeNVP = new BasicNameValuePair("defType", getDefType(storeId));
-			String storeName = configManager.getStoreName(storeId);
+			String storeName = storeId; //configManager.getStoreName(storeId);
 			initFieldOverrideMaps(request, solrHelper, storeId);
 			logger.debug("Config store name mapped to {}: {}", storeId, storeName);
 			
@@ -694,13 +694,13 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						if (StringUtils.isNotBlank(paramValue)) {
 							String[] fields = paramValue.split(",");
 							for (String field : fields) {
-								if (StringUtils.equals(field, "*") || StringUtils.equals(field, "EDP")) {
+								if (StringUtils.equals(field, "*") || StringUtils.equals(field, "ProductID")) {
 									includeEDP = true;
 									break;
 								}
 							}
 							if (!includeEDP) {
-								paramValue += ",EDP";
+								paramValue += ",ProductID";
 							}
 						} else {
 							includeEDP = true;

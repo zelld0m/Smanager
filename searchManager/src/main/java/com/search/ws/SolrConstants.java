@@ -103,6 +103,7 @@ public class SolrConstants {
 	public final static String ATTR_NAME_VALUE_PARAMS = "params";
 	public final static String ATTR_NAME_VALUE_DEBUG = "debug";
 	public final static String ATTR_NAME_VALUE_EXPLAIN = "explain";
+    public final static String ATTR_NAME_VALUE_PRODUCTID = "ProductID";
 
 	public final static String ATTR_NAME_VALUE_SPELLCHECK = "spellcheck";
     public static final String ATTR_NAME_VALUE_SPELLCHECK_SUGGESTION = "suggestion";  

@@ -26,6 +26,10 @@
 			/WEB-INF/spring/spring-app.xml
 		</param-value>
   </context-param>
+  <context-param>
+    <param-name>log4jExposeWebAppRoot</param-name>
+    <param-value>false</param-value>
+  </context-param>  
   <servlet>
     <servlet-name>XFireServlet</servlet-name>
     <servlet-class>

@@ -2,6 +2,7 @@ package com.search.ws;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -187,9 +190,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					NodeList docNodes = docNode.getChildNodes();
 					for (int k = 0, kSize = docNodes.getLength(); k < kSize; k++) {
 						Node kNode = docNodes.item(k);
-						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT)
+						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_STR)
 								&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
-								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
+								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_PRODUCTID)) {
 							String edp = kNode.getTextContent();
 							tagSearchResult(currentDoc, docNode, facet);
 							if (!includeEDP) {
@@ -267,9 +270,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					NodeList docNodes = docNode.getChildNodes();
 					for (int k = 0, kSize = docNodes.getLength(); k < kSize; k++) {
 						Node kNode = docNodes.item(k);
-						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT)
+						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_STR)
 								&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
-								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
+								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_PRODUCTID)) {
 							String edp = kNode.getTextContent();
 							if (!includeEDP) {
 								docNode.removeChild(kNode);
@@ -372,7 +375,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						addedRecords++;
 						Node docNode = children.item(j);
 						if (docNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_DOC)) {
-							Node edpNode = locateElementNode(docNode, SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP);
+							Node edpNode = locateElementNode(docNode, SolrConstants.TAG_STR, SolrConstants.ATTR_NAME_VALUE_PRODUCTID);
 							String edp = edpNode.getTextContent();
 							if (expiredElevatedEDPs.contains(edp)) {
 								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_ELEVATE_EXPIRED);
@@ -1011,4 +1014,21 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		el.setAttribute(SolrConstants.ATTR_NAME, name);
 		return el;
 	}
+	
+
+
+	static String getNodeString(Node node) {
+    try {
+        StringWriter writer = new StringWriter();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(new DOMSource(node), new StreamResult(writer));
+        String output = writer.toString();
+        return output.substring(output.indexOf("?>") + 2);//remove <?xml version="1.0" encoding="UTF-8"?>
+    } catch (TransformerException e) {
+        e.printStackTrace();
+    }
+    return node.getTextContent();
+}
+
+
 }

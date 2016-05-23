@@ -6,7 +6,8 @@
 
 		// Initialize manager
 		var Manager = new AjaxSolr.Manager({
-			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/'
+//			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/'
+			solrUrl: GLOBAL_solrUrl
 		});
 
 		// Install component widgets
@@ -179,7 +180,8 @@
 				'spellcheck.count': 3,
 				'spellcheck.collate': true,
 				'gui': GLOBAL_isFromGUI,
-				'json.nl': 'map'
+				'json.nl': 'map',
+				'store': GLOBAL_storeId,
 		};
 
 		params[GLOBAL_solrSelectorParam] = GLOBAL_storeId;
@@ -214,7 +216,8 @@
 		//Typeahead Managers
 		var widgetManager = Manager;
 		var typeaheadManager = new AjaxSolr.Manager({
-			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+//			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+			solrUrl: GLOBAL_solrUrl,
 			store: (new AjaxSolr.ParameterStore())
 		});
 		typeaheadManager.searchManager = widgetManager;

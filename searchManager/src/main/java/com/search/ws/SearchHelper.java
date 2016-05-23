@@ -148,7 +148,7 @@ public class SearchHelper {
 			        .concat("select?");
 			int size = productList.size();
 			boolean isWithEDP = false;
-			StringBuilder edps = new StringBuilder("EDP:(");
+			StringBuilder edps = new StringBuilder("ProductID:(");
 			String edp = "";
 			for (Product product : productList.values()) {
 				edp = product.getEdp();
@@ -292,7 +292,7 @@ public class SearchHelper {
 			if (edps.toString().trim().length() == 0) {
 				return;
 			} else {
-				edps.insert(0, "EDP:(").append(")");
+				edps.insert(0, "ProductID:(").append(")");
 			}
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();

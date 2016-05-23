@@ -620,7 +620,7 @@ public class ElevateService extends RuleService {
                         utilityService.setFacetTemplateValues(rr);
                         condition = rr.getConditionForSolr();
                     } else {
-                        condition = String.format("EDP:%s", elevate.getEdp());
+                        condition = String.format("ProductID:%s", elevate.getEdp());
                     }
                     final String filter = condition;
                     completionService.submit(new Callable<Boolean>() {

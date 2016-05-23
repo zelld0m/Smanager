@@ -214,7 +214,7 @@ public abstract class SolrResponseParser {
 			for (SearchResult result : list) {
 				if (result.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (values.length() == 0) {
-						values.append("EDP:(");
+						values.append("ProductID:(");
 					}
 					values.append(" ").append(result.getEdp());
 				}
@@ -271,7 +271,7 @@ public abstract class SolrResponseParser {
 			if (edpFlag || facetFlag) {
 				filter.append("-(");
 				if (edpFlag) {
-					filter.append("EDP:(").append(edpValues).append(")");
+					filter.append("ProductID:(").append(edpValues).append(")");
 				}
 				if (facetFlag) {
 					if (edpFlag) {

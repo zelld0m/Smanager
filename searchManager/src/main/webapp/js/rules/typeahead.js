@@ -55,7 +55,8 @@
 			});
 
 			self.typeaheadManager = new AjaxSolr.Manager({
-				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+//				solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/',
+				solrUrl: GLOBAL_solrUrl + '/',
 				store: (new AjaxSolr.ParameterStore())
 			});
 

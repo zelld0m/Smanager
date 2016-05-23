@@ -41,7 +41,7 @@ public class EnterpriseSearchController extends AbstractSearchController {
 
     // TODO: transfer to config file
     private final static String[] supportedCores = {
-        "pcmall", "macmall", "ecost", "pcmallgov", "enterpriseSearch"
+        "pcmall", "macmall", "ecost", "pcmallgov", "enterpriseSearch","ECProducts"
     };
 
     public void afterPropertiesSet() throws Exception {
@@ -93,16 +93,20 @@ public class EnterpriseSearchController extends AbstractSearchController {
             throw new HttpException("Invalid request: Invalid URL");
         }
         Matcher matcher = pathPattern.matcher(requestPath);
+
+        String storeId = StringUtils.lowerCase(request.getParameter("store"));
+        if (storeId == null) {
+            storeId = StringUtils.lowerCase(request.getParameter("storeAlias"));
+        }
         if (!matcher.matches()) {
             throw new HttpException("Invalid request: Invalid URL");
-        } else if (StringUtils.isEmpty(request.getParameter("store"))) {
+        } else if (StringUtils.isEmpty(storeId)) {
             throw new HttpException("Invalid request: No store parameter");
         }
 
         String serverName = matcher.group(1);
         String solr = matcher.group(2);
         String solrCore = matcher.group(3);
-        String storeId = StringUtils.lowerCase(request.getParameter("store"));
 
         if (logger.isDebugEnabled()) {
             logger.debug("Server name: " + serverName);
