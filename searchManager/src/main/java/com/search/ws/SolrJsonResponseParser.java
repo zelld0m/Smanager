@@ -393,7 +393,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                 addedRecords++;
 
                 JSONObject doc = (JSONObject) docs.get(j);
-                String edp = doc.getString("EDP");
+                String edp = doc.getString("ProductID");
                 if (expiredElevatedEDPs.contains(edp)) {
                     doc.element(SolrConstants.TAG_ELEVATE_EXPIRED, "");
                 }
@@ -401,7 +401,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
                     doc.element(SolrConstants.TAG_DEMOTE_EXPIRED, "");
                 }
                 if (!includeEDP) { // remove EDP if not requested
-                    doc.remove("EDP");
+                    doc.remove("ProductID");
                 }
 
                 resultArray.add(doc);

@@ -74,7 +74,13 @@ public class EnterpriseSearchController extends AbstractSearchController {
             Map<String, List<NameValuePair>> paramMap) {
         String storeFlag = enterpriseSearchConfigManager.getStoreFlag(storeId);
         if (StringUtils.isNotBlank(storeFlag)) {
-            NameValuePair nvp = new BasicNameValuePair("fq", String.format("%s:true", storeFlag));
+            NameValuePair nvp = null;
+            if (storeId.indexOf("InCatalog") > 0) {
+                nvp = new BasicNameValuePair("fq", String.format("%s:Y", storeFlag));
+            } else {
+                nvp = new BasicNameValuePair("fq", String.format("%s:true", storeFlag));
+            }
+            
             if (ParameterUtils.addNameValuePairToMap(paramMap, "fq", nvp, uniqueFields)) {
                 nameValuePairs.add(nvp);
             }

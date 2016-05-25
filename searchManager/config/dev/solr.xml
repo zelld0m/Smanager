@@ -18,6 +18,7 @@
     <store-id-aliases>pcm</store-id-aliases>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
+    <default-relevancy-rule>0064dYW0V0PZdEN8oGi5</default-relevancy-rule>
     <defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
 	<facet-name>PcMall</facet-name>
     <solr-param-name>
@@ -28,6 +29,9 @@
     </solr-param-value>
     <solr-param-value name="fq">
         <param-value>-Manufacturer:\"Server Technology\"</param-value>
+    </solr-param-value>
+    <solr-param-value name="fq">
+        <param-value>*:* AND -CatCode:PHCA</param-value>
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
@@ -46,7 +50,8 @@
     <core>macmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxmacmallrelevancy</qt>
-	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
+    <default-relevancy-rule>0064dYW0V0Pb3l4kQcfM</default-relevancy-rule>
+    <defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
     <facet-name>MacMall</facet-name>
     <solr-param-name>
     	<param-name>fq</param-name>
@@ -58,8 +63,8 @@
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
     <default-timezone>America/Los_Angeles</default-timezone>    
     <default-server>search</default-server>
-    <facet-template>MacMall_Template</facet-template>
-    <facet-template-name>MacMall_TemplateName</facet-template-name>
+    <facet-template>MacMall_FacetTemplate</facet-template>
+    <facet-template-name>MacMall_FacetTemplateName</facet-template-name>
     <group-membership>
     	<group>Store</group>
     	<group>MacMall</group>
@@ -72,6 +77,7 @@
     <store-id-aliases>pcmbd</store-id-aliases>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
+    <default-relevancy-rule>0064dYW0V0PZdEN8oGi5</default-relevancy-rule>
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
     <facet-name>PcMall</facet-name>
     <solr-param-name>
@@ -79,6 +85,9 @@
     </solr-param-name>
     <solr-param-value name="fq">
         <param-value>-Manufacturer:\"Server Technology\"</param-value>
+    </solr-param-value>
+    <solr-param-value name="fq">
+    	<param-value>PCMBD_StoreFlag:true</param-value>
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
@@ -102,10 +111,13 @@
 	<defType>edismax</defType><!-- Solr 1.4: dismax, Solr 4.3: edismax -->
     <facet-name>PCMG</facet-name>
     <solr-param-name>
-    	<param-name>fq</param-name>
+        <param-name>fq</param-name>
     </solr-param-name>
     <solr-param-value name="fq">
         <param-value>-Manufacturer:\"Server Technology\"</param-value>
+    </solr-param-value>
+    <solr-param-value name="fq">
+        <param-value>*:* AND -CatCode:PHCA</param-value>
     </solr-param-value>
     <date-format>MM/dd/yyyy</date-format>
     <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
@@ -171,7 +183,7 @@
 
   <!-- Atlanta Solr Server Production-->
   <server name='search'><!-- Solr Server F5 -->
-    <url>http://10.17.35.36:8080/solr4/(core)/</url><!-- Solr 1.4: solr14 , Solr 4.3: solr4 -->
+    <url>http://afs-sl-schmstr.afservice.org:8080/solr4/ECProducts/</url><!-- Solr 1.4: solr14 , Solr 4.3: solr4 -->
     <store>pcmall,pcmallcap,pcmallgov,macmall,macmallbd,ecost</store>
   </server>
   <server name='afs-pl-schpd07'>
