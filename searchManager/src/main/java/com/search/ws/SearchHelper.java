@@ -342,7 +342,7 @@ public class SearchHelper {
 			String description = null;
 			for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
 				JSONObject json = resultArray.getJSONObject(i);
-				Product product = productList.get(json.getString("EDP"));
+				Product product = productList.get(json.getString("ProductID"));
 				name = "";
 				description = "";
 				if (product != null) {
@@ -350,7 +350,7 @@ public class SearchHelper {
 					Set<String> keys = (Set<String>) json.keySet();
 					for (String key : keys) {
 						String value = json.getString(key);
-						if ("EDP".equals(key)) {
+						if ("ProductID".equals(key)) {
 							product.setEdp(value);
 						} else if ("DPNo".equals(key)) {
 							product.setDpNo(value);
@@ -570,7 +570,7 @@ public class SearchHelper {
 			for(NameValuePair pair : configManager.getDefaultSolrParameters(storeId)) {
 				nameValuePairs.add(new BasicNameValuePair(pair.getName(), pair.getValue()));
 			}
-			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
+			nameValuePairs.add(new BasicNameValuePair("fl", "ProductID"));
 			nameValuePairs.add(new BasicNameValuePair("qt", "standard"));
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
 
@@ -580,7 +580,7 @@ public class SearchHelper {
 				nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
 			}
 
-			nameValuePairs.add(new BasicNameValuePair("q", "DPNo:" + partNumber));
+			nameValuePairs.add(new BasicNameValuePair("q", "ProductID:" + partNumber));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			if (logger.isDebugEnabled()) {
@@ -613,7 +613,7 @@ public class SearchHelper {
 			// locate the result node
 			resultArray = initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			if (resultArray.size() > 0) {
-				edp = resultArray.getJSONObject(0).getString("EDP");
+				edp = resultArray.getJSONObject(0).getString("ProductID");
 			}
 		} catch (Throwable t) {
 			logger.error("Error while retrieving from Solr", t);

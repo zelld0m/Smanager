@@ -1604,9 +1604,9 @@
 					if ($.isBlank(skus)) {
 						jAlert("There are no SKUs specified in the list.", base.getTypeLabel());
 					}
-					else if (!commaDelimitedNumberPattern.test(skus)) {
-						jAlert("List contains an invalid SKU.", base.getTypeLabel());
-					}							
+//					else if (!commaDelimitedNumberPattern.test(skus)) {
+//						jAlert("List contains an invalid SKU.", base.getTypeLabel());
+//					}							
 					else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 						jAlert("Invalid date specified.", base.getTypeLabel());
 					}
