@@ -1148,6 +1148,7 @@
                 $facet.find("select#imageExistsList > option:contains('" + condition.facets["ImageExists"][0] + "')").prop("selected", true);
 
             $facet.find("input#nameContains").val(condition.facets["Name"]);
+            $facet.find("input#exact-name").attr('checked',$.isNotBlank(condition.facets["ExactName"]));
             $facet.find("input#descriptionContains").val(condition.facets["Description"]);
 
         },
@@ -1584,7 +1585,7 @@
                 var availability = ui.find("select#availabilityList  > option:gt(0):selected:eq(0)").text();
                 var license = ui.find("select#licenseList > option:gt(0):selected:eq(0)").text();
                 var nameContains = $.trim(ui.find("input#nameContains").val());
-                var exactName = $.trim(ui.find("input#exact-name").val());
+                var exactName = $.trim(ui.find("input#exact-name:checked").val());
                 var descriptionContains = $.trim(ui.find("input#descriptionContains").val());
                 var imageExists = ui.find("select#imageExistsList > option:gt(0):selected:eq(0)").text();
 

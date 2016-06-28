@@ -29,7 +29,7 @@
         </solr-param-value>
         <date-format>MM/dd/yyyy</date-format>
         <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
-        <default-server>search</default-server>
+        <default-server>VIP ATL</default-server>
         <default-timezone>America/Los_Angeles</default-timezone>
         <facet-template>PCMall_FacetTemplate</facet-template>
         <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
@@ -55,7 +55,7 @@
         <date-format>MM/dd/yyyy</date-format>
         <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
         <default-timezone>America/Los_Angeles</default-timezone>
-        <default-server>search</default-server>
+        <default-server>VIP ATL</default-server>
         <facet-template>xxx</facet-template>
         <facet-template-name>TemplateName</facet-template-name>
         <group-membership>
@@ -81,7 +81,7 @@
         <date-format>MM/dd/yyyy</date-format>
         <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
         <default-timezone>America/Los_Angeles</default-timezone>
-        <default-server>search</default-server>
+        <default-server>VIP ATL</default-server>
         <facet-template>PCMall_FacetTemplate</facet-template>
         <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
         <group-membership>
@@ -108,7 +108,7 @@
         <date-format>MM/dd/yyyy</date-format>
         <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
         <default-timezone>America/Los_Angeles</default-timezone>
-        <default-server>search</default-server>
+        <default-server>VIP ATL</default-server>
         <facet-template>PCMG_FacetTemplate</facet-template>
         <facet-template-name>PCMG_FacetTemplateName</facet-template-name>
         <group-membership>
@@ -136,7 +136,7 @@
         <date-format>MM/dd/yyyy</date-format>
         <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
         <default-timezone>America/Los_Angeles</default-timezone>
-        <default-server>search</default-server>
+        <default-server>VIP ATL</default-server>
         <facet-template>xxx</facet-template>
         <facet-template-name>TemplateName</facet-template-name>
         <group-membership>
@@ -164,7 +164,7 @@
         <date-format>MM/dd/yyyy</date-format>
         <datetime-format>MM/dd/yyyy HH:mm aa</datetime-format>
         <default-timezone>America/Los_Angeles</default-timezone>
-        <default-server>search</default-server>
+        <default-server>VIP ATL</default-server>
         <facet-template>xxx</facet-template>
         <facet-template-name>TemplateName</facet-template-name>
         <group-membership>

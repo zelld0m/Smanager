@@ -1,8 +1,8 @@
 package com.search.manager.authentication.session;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.session.SessionIdentifierAware;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.util.Assert;
 
 public class SessionRegistryUtils {
@@ -21,10 +21,10 @@ public class SessionRegistryUtils {
 	public static String getSessionId(Authentication auth){
 		Assert.notNull(auth, "Authentication required");
 		Assert.notNull(auth.getDetails(), "Authentication.getDetails() required");
-		Assert.isInstanceOf(SessionIdentifierAware.class, auth.getDetails());
+		Assert.isInstanceOf(WebAuthenticationDetails.class, auth.getDetails());
 
-		String sessionId = ((SessionIdentifierAware) auth.getDetails()).getSessionId();
-		Assert.hasText(sessionId, "SessionIdentifierAware did not return a Session ID (" + auth.getDetails() + ")");
+		String sessionId = ((WebAuthenticationDetails) auth.getDetails()).getSessionId();
+		Assert.hasText(sessionId, "WebAuthenticationDetails did not return a Session ID (" + auth.getDetails() + ")");
 		return sessionId;
 	}
 }

@@ -9,7 +9,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.7</java.version>
+        <java.version>1.8</java.version>
 
         <!-- Test Dependencies -->
         <junit.version>4.11</junit.version>
@@ -60,11 +60,14 @@
         <!-- SOLR VERSION -->
         <solr.version>4.3.0</solr.version>
 
-        <!-- SPRING FRAMEWORK VERSION -->
+        <!-- SPRING FRAMEWORK VERSION
+        <spring.version>4.2.6.RELEASE</spring.version>
+
+        <spring-security.version>4.1.0.RELEASE</spring-security.version>-->
+
         <spring.version>3.2.16.RELEASE</spring.version>
 
         <spring-security.version>3.2.9.RELEASE</spring-security.version>
-
         <!-- WSDL4J VERSION -->
         <wsdl4j.version>1.6.3</wsdl4j.version>
 
@@ -78,7 +81,7 @@
         <fasterxml.version>3.1.3</fasterxml.version>
 
         <!-- ASPECTJ VERSION -->
-        <aspectj.version>1.6.10</aspectj.version>
+        <aspectj.version>1.8.9</aspectj.version>
 
         <!-- CGLIB VERSION -->
         <cglib.version>2.2</cglib.version>
@@ -163,7 +166,6 @@
                                     <searchTransitive>true</searchTransitive>
                                     <excludes>
                                         <exclude>javassist:javaassist</exclude>
-                                        <exclude>commons-logging</exclude>
                                         <exclude>aspectj:aspectj*</exclude>
                                         <exclude>hqldb:hsqldb</exclude>
                                         <exclude>log4j:log4j</exclude>
@@ -665,6 +667,13 @@
                 <groupId>xml-security</groupId>
                 <artifactId>xmlsec</artifactId>
                 <version>${xml.security.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.2</version>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>

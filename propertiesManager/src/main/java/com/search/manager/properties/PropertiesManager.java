@@ -126,11 +126,16 @@ public class PropertiesManager {
     public StoreProperties getStorePropertiesFromXML() throws PropertyException {
         try {
             File file = new File(storePropertiesFile);
-            JAXBContext context = JAXBContext.newInstance(Group.class, Member.class, Module.class, Property.class,
-                    Store.class, StoreProperties.class);
+            if(!file.exists()) {
+                file = new File(this.getClass().getResource(storePropertiesFile).getFile());
+            }
+            if(file.exists()) {
+                JAXBContext context = JAXBContext.newInstance(Group.class, Member.class, Module.class, Property.class,
+                        Store.class, StoreProperties.class);
 
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (StoreProperties) unmarshaller.unmarshal(file);
+                Unmarshaller unmarshaller = context.createUnmarshaller();
+                return (StoreProperties) unmarshaller.unmarshal(file);
+            }
         } catch (JAXBException e) {
             logger.error("Unable to unmarshall the XML to an object", e);
         }

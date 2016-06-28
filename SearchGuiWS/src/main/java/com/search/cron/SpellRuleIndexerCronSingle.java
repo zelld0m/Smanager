@@ -1,33 +1,18 @@
 package com.search.cron;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.search.manager.core.model.Store;
 import com.search.manager.dao.DaoException;
 import com.search.manager.solr.service.SolrService;
 import com.search.manager.utility.PropertiesUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class SpellRuleIndexerCronSingle extends TimerTask {
 
@@ -176,7 +161,7 @@ public class SpellRuleIndexerCronSingle extends TimerTask {
         try {
             storeIndexedDate.put(store, 0L);
             Path path = Paths.get(BASE_RULE_DIR, store, DID_YOU_MEAN, DATA_INDEX);
-            if (Files.exists(path)) {
+            if (Files.isRegularFile(path)) {
                 bufferedReader = new BufferedReader(new InputStreamReader(new DataInputStream(new FileInputStream(path.toFile()))));
                 String str = "";
 

@@ -13,6 +13,11 @@
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+	<context:annotation-config />
+	<context:component-scan base-package="com.search.manager.core.dao.solr" />
+	<context:component-scan base-package="com.search.manager.core.dao.sp" />
+	<context:component-scan base-package="com.search.manager.properties" />
+
 	<!-- Specify that messages.properties is loaded to load resource bundles. 
 		This means that we can apply overrides to binding messages which aren't very 
 		nice -->

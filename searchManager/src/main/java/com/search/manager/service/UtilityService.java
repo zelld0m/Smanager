@@ -198,6 +198,11 @@ public class UtilityService {
 	public String getSolrConfig() {
 		JSONObject json = new JSONObject();
 		String url = configManager.getServerParameter(getServerName(), "url");
+		if(StringUtils.isBlank(url)) {
+			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+			attr.removeAttribute("serverName", RequestAttributes.SCOPE_SESSION);
+			url = configManager.getServerParameter(getServerName(), "url");
+		}
 		Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
 		Matcher m = pattern.matcher(url);
 		if (m.matches()) {
