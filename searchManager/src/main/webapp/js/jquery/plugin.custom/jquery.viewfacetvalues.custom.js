@@ -174,7 +174,8 @@
 		base.getFacetValueList = function () {
 			var self = this;
 			$.getJSON(
-					GLOBAL_solrUrl + GLOBAL_storeCore + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
+//					GLOBAL_solrUrl + GLOBAL_storeCore + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
+					GLOBAL_solrUrl + 'select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
 					function (json, textStatus) { 
 						if (textStatus!=="success"){
 							api.destroy();

@@ -198,7 +198,8 @@ public class UtilityService {
 	public String getSolrConfig() {
 		JSONObject json = new JSONObject();
 		String url = configManager.getServerParameter(getServerName(), "url");
-		Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
+//        Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
+		Pattern pattern = Pattern.compile("http://(.*)");
 		Matcher m = pattern.matcher(url);
 		if (m.matches()) {
 			json.put("solrUrl", PropertiesUtils.getValue("browsejssolrurl") + m.group(1));
@@ -211,7 +212,8 @@ public class UtilityService {
 	public JSONObject getSourceSolrConfig(String storeId) {
 		JSONObject json = new JSONObject();
 		String url = configManager.getServerParameter(configManager.getServerName(storeId), "url");
-		Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
+//		Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
+		Pattern pattern = Pattern.compile("http://(.*)");
 		Matcher m = pattern.matcher(url);
 		if (m.matches()) {
 			json.put("solrUrl", PropertiesUtils.getValue("browsejssolrurl") + m.group(1));

@@ -62,6 +62,7 @@ import com.search.manager.utility.ParameterUtils;
 import com.search.manager.utility.PropertiesUtils;
 import com.search.manager.utility.QueryValidator;
 import com.search.manager.utility.SearchLogger;
+import com.search.manager.utility.StringUtil;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
 import com.search.ws.SolrJsonResponseParser;
@@ -501,7 +502,14 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 		String serverName = matcher.group(1);
 		String solr = matcher.group(2);
 		String coreName = matcher.group(3);
-		String storeId = coreName;
+		String storeId = StringUtils.lowerCase(request.getParameter("store"));
+		if (StringUtil.isBlank(storeId)) {
+		    if ("products".equalsIgnoreCase(coreName)) {
+	            storeId = "pcmall";
+		    } else {
+	            storeId = coreName;
+		    }
+		}
 		String storeName = configManager.getStoreName(storeId);
 		String solrSelectorParam = configManager.getSolrSelectorParam();
 		if (configManager.isSharedCore() && StringUtils.isNotBlank(solrSelectorParam)) {
@@ -546,10 +554,10 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 	}
 
 	protected void setDefaultQueryType(HttpServletRequest request, List<NameValuePair> nameValuePairs, String storeId) {
-		if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
-			nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE,
-					configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
-		}
+//		if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
+//			nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE,
+//					configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
+//		}
 	}
 
 	protected Relevancy getDefaultRelevancy(String storeId) {
@@ -643,7 +651,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				return;
 			}
 			NameValuePair defTypeNVP = new BasicNameValuePair("defType", getDefType(storeId));
-			String storeName = configManager.getStoreName(storeId);
+			String storeName = storeId; //configManager.getStoreName(storeId);
 			initFieldOverrideMaps(request, solrHelper, storeId);
 			logger.debug("Config store name mapped to {}: {}", storeId, storeName);
 			
