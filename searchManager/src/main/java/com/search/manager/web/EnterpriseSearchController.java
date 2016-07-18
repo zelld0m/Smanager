@@ -75,7 +75,7 @@ public class EnterpriseSearchController extends AbstractSearchController {
         String storeFlag = enterpriseSearchConfigManager.getStoreFlag(storeId);
         if (StringUtils.isNotBlank(storeFlag)) {
             NameValuePair nvp = null;
-            if (storeId.indexOf("InCatalog") > 0) {
+            if (storeFlag.indexOf("InCatalog") > 0) {
                 nvp = new BasicNameValuePair("fq", String.format("%s:Y", storeFlag));
             } else {
                 nvp = new BasicNameValuePair("fq", String.format("%s:true", storeFlag));
