@@ -190,7 +190,8 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 					break;
 				}	
 			}
-			String edpValues = CollectionUtils.isNotEmpty(edpList) ? StringUtils.trimToEmpty(String.format("EDP:(%s)", StringUtils.join(edpList, ' '))): "";
+			String edpValues = CollectionUtils.isNotEmpty(edpList) ? 
+					StringUtils.trimToEmpty(String.format("ProductID:(%s)", StringUtils.join(edpList, ' '))): StringUtils.EMPTY;
 			String facetValues = CollectionUtils.isNotEmpty(facetList) ? String.format("(%s)", StringUtils.join(facetList, " OR ")): "";
 			filterQuery.append(String.format("(%s%s%s)", edpValues, StringUtils.isNotBlank(edpValues) && StringUtils.isNotBlank(facetValues)? " OR ": "", facetValues));
 			logger.debug("{}:{}", RuleEntity.getValue(ruleEntity.getCode()), filterQuery.toString());

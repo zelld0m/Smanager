@@ -166,7 +166,7 @@ public class ElevateService extends RuleService {
     private int addItem(String keyword, String edp, RedirectRuleCondition condition, int sequence, String expiryDate, String comment, MemberTypeEntity entity, boolean forceAdd) {
         int result = -1;
         try {
-            logger.info(String.format("%s %s %s %d %s %s", keyword, edp, condition != null ? condition.getCondition() : "", sequence, expiryDate, comment));
+            logger.info(String.format("%s %s %s %d %s %s", keyword, edp, condition != null ? condition.getCondition() : "", sequence, expiryDate, comment));           
             String storeId = utilityService.getStoreId();
             String userName = utilityService.getUsername();
             daoService.addKeyword(new StoreKeyword(storeId, keyword)); // TODO: What if keyword is not added?
@@ -242,7 +242,8 @@ public class ElevateService extends RuleService {
         for (String partNumber : partNumbers) {
             count = 0;
             try {
-                String edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
+            	//use Product ID instead of EDP
+                String edp = daoService.getProductIdByPartNumber(server, store, StringUtils.EMPTY, StringUtils.trim(partNumber));                
                 if (StringUtils.isNotBlank(edp)) {
                     count = addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER, false);
                 }
@@ -620,7 +621,7 @@ public class ElevateService extends RuleService {
                         utilityService.setFacetTemplateValues(rr);
                         condition = rr.getConditionForSolr();
                     } else {
-                        condition = String.format("EDP:%s", elevate.getEdp());
+                        condition = String.format("ProductID:%s", elevate.getEdp());
                     }
                     final String filter = condition;
                     completionService.submit(new Callable<Boolean>() {

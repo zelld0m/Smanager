@@ -18,7 +18,8 @@
 					if(ui.panel){
 						self.tabSelected = ui.panel.id;
 						self.entityName = self.tabSelected.substring(0, self.tabSelected.length-3);
-						self.getExportList();
+						$("#"+self.tabSelected).find('div#paginationDiv').css('display', 'none');
+						self.getExportListWithPaging(1);
 					}
 				}
 			});
@@ -149,7 +150,7 @@
 									callback: function(data){
 										showActionResponseFromMap(data, "export", "Export",
 										"Unable to find published data for this rule. Please contact Search Manager Team.");
-										self.getExportList();	
+										self.getExportListWithPaging(1);
 									},
 								});
 							}
@@ -157,6 +158,52 @@
 					}
 				}
 			});
+		},
+		
+		paginationHandler : function(){
+			var self = this;
+			var $selectedTab = $("#"+self.tabSelected);
+			$selectedTab.find('div#paginationDiv').find('.page-arrows').find('.left-arrow').on({
+				click: function(evt){
+					var pageNum = $(this).attr('prevpage');
+					if (typeof pageNum !== 'undefined'){
+						$selectedTab.find('div#paginationDiv').css('display', 'none');
+						self.getExportListWithPaging(pageNum);
+					}
+				}
+			});
+			$selectedTab.find('div#paginationDiv').find('.page-arrows').find('.right-arrow').on({
+				click: function(evt){
+					var pageNum = $(this).attr('nextpage');
+					if (typeof pageNum !== 'undefined'){
+						$selectedTab.find('div#paginationDiv').css('display', 'none');
+						self.getExportListWithPaging(pageNum);						
+					}
+				}
+			});
+		},
+		
+		updatePagination : function(pageNum, totalItems, maxRowCount){
+			var self = this;
+			var $selectedTab = $("#"+self.tabSelected);
+			
+			var totalPagination = Math.ceil(totalItems/maxRowCount);
+			$selectedTab.find('div#paginationDiv').find('.page-cnt').find('.page-counter').text(pageNum);
+			$selectedTab.find('div#paginationDiv').find('.page-cnt').find('.page-total').text(totalPagination);
+		    if (pageNum > 1) {
+		    	$selectedTab.find('div#paginationDiv').find('.page-arrows').find(
+		            '.left-arrow').attr('prevpage', parseInt(pageNum) - 1);
+		    }else{
+		    	$selectedTab.find('div#paginationDiv').find('.page-arrows').find(
+		    	'.left-arrow').addClass('arrow-inactive');
+		    }
+		    if (totalPagination != pageNum) {
+		    	$selectedTab.find('div#paginationDiv').find('.page-arrows').find(
+		            '.right-arrow').attr('nextpage', parseInt(pageNum) + 1);
+		    }else{
+		    	$selectedTab.find('div#paginationDiv').find('.page-arrows').find(
+	            '.right-arrow').addClass('arrow-inactive');
+		    }
 		},
 		
 		getRuleEntityList : function(){
@@ -347,6 +394,172 @@
 							$selectedTab.find('th#selectAll > input[type="checkbox"]').remove();
 						}
 
+					}else{
+						$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
+						$selectedTab.find('th#selectAll > input[type="checkbox"]').remove();
+						$selectedTab.find('div#actionBtn').hide();
+					}
+				},
+				preHook:function(){ 
+					self.prepareTabContent(); 
+				},
+				postHook:function(){ 
+					self.cleanUpTabContent(); 
+				}
+			});
+		},
+		
+		getExportListWithPaging : function(pageNum){
+			var self = this;
+			var $selectedTab = $("#"+self.tabSelected); 
+			var maxRowCount = 10;
+			RuleTransferServiceJS.getPublishedRulesWithPaging(self.entityName, pageNum, maxRowCount, {
+				callback:function(data){
+					var list = data.list;
+					var totalSize = (data) ? data.totalSize : 0;
+					
+					$selectedTab.html($("div#tabContentTemplate").html());
+
+					if (totalSize>0){
+						if (maxRowCount < totalSize){
+							self.updatePagination(pageNum, totalSize, maxRowCount);
+							$selectedTab.find('div#paginationDiv').css('display', 'block');
+						}
+						
+						// Populate table row
+						var dataCount = maxRowCount > list.length ? list.length : maxRowCount;
+						for(var i=0; i < dataCount; i++){
+							var rule = list[i];
+							var $table = $selectedTab.find("table#rule");
+							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(rule["ruleRefId"])).show();
+							var lastPublishedDate = $.toStoreFormat(rule["lastPublishedDate"]);
+							var lastExportedDate = $.toStoreFormat(rule["lastExportDate"]);
+							var showId = rule["ruleRefId"].toLowerCase() !== rule["description"].toLowerCase();
+
+							$tr.find("td#select > input[type='checkbox']").attr("id", rule["ruleRefId"]);
+							$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleStatusId"]);
+
+							//TODO: Get delete details from file
+							if (rule["updateStatus"]!=="DELETE"){
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", rule["ruleRefId"]);
+								
+								if (self.entityName === "didYouMean") {
+									var preview = $tr.find("td#ruleOption > img.previewIcon");
+									preview.attr("src", "/searchManager/images/iconDownload.png");
+									preview.download({
+										headerText:"Download Did You Mean Rules",
+										moduleName: self.entityName,
+										ruleType: self.entityName,  
+										solo: $(".internal-tooltip"),
+										classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped internal-tooltip',
+										requestCallback:function(e2) {
+											var params = new Array();
+											var url = GLOBAL_contextPath + "/spell/" + GLOBAL_storeId + "/export/xls";
+											var urlParams = "";
+											var count = 0;
+
+											params["filename"] = e2.data.filename;
+											params["type"] = e2.data.type;
+											params["id"] = "spell_rule";
+											params["clientTimezone"] = +new Date();
+
+											for(var key in params){
+												if (count>0) urlParams +='&';
+												urlParams += (key + '=' + encodeURIComponent(params[key]));
+												count++;
+											};
+											document.location.href = url + '?' + urlParams;
+										}
+									});
+								}
+								else {
+									$tr.find("td#ruleOption > img.previewIcon").xmlpreview({
+										transferType: "export",
+										ruleType: self.entityName,
+										ruleId: rule["ruleRefId"],
+										ruleName: rule["ruleName"],
+										ruleInfo: rule["description"],
+										requestType: rule["updateStatus"],
+										enablePreTemplate: true,
+										enablePostTemplate: true,
+										leftPanelSourceData: "xml",
+										postTemplate: self.getPostTemplate(),
+										postButtonClick: function(){
+											self.getExportListWithPaging(1);
+										},
+										itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){
+											RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
+												callback: function(xml){
+													if (xml == null || $.isEmptyObject(xml)) {
+														jAlert("Unable to find published data for this rule. Please contact Search Manager Team.", self.moduleName,
+																function() {base.api.hide()});
+													}
+													else {
+														base.options.ruleXml = xml;
+														base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
+													}
+												}
+											});
+										},
+										postButtonClick: function(){
+											self.getExportListWithPaging(1);
+										},
+										itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+											if (self.entityName.toLowerCase() === "elevate"){
+												ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+													callback:function(data){
+														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+													},
+													preHook: function(){
+														base.prepareForceAddStatus(contentHolder);
+													}
+												});
+											}
+										},
+										itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+											if (self.entityName.toLowerCase() === "elevate"){
+												ElevateServiceJS.isItemInNaturalResult(ruleName, memberIds, memberConditions, {
+													callback:function(data){
+														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+													},
+													preHook: function(){
+														base.prepareForceAddStatus(contentHolder);
+													}
+												});
+											}
+										}
+									});
+								}
+
+							}else{
+								$tr.find("td#ruleOption > img.previewIcon").hide();
+							}
+
+							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
+							$tr.find("td#type").html(list[i]["exportType"]);
+							
+							//TODO
+							$tr.find("td#publishDate > p#requestedBy").html(list[i]["publishedStatus"]);
+							$tr.find("td#publishDate > p#requestedDate").html(lastPublishedDate);
+							
+							$tr.find("td#exportDate > p#requestedBy").html(list[i]["exportBy"]);
+							$tr.find("td#exportDate > p#requestedDate").html(lastExportedDate);
+							$tr.appendTo($table);
+						}
+
+						$selectedTab.find("div#ruleCount").html(totalSize + (totalSize == 1 ? " Rule" : " Rules"));
+						
+						// Alternate row style
+						$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
+
+						self.checkSelectHandler();
+						self.checkSelectAllHandler();
+						self.exportHandler();
+						self.paginationHandler();
+						
+						if (totalSize==1){
+							$selectedTab.find('th#selectAll > input[type="checkbox"]').remove();
+						}
 					}else{
 						$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 						$selectedTab.find('th#selectAll > input[type="checkbox"]').remove();

@@ -149,6 +149,7 @@ public interface DaoService extends SearchDaoService {
 	public ElevateProduct getElevatedProduct(String serverName, ElevateResult elevate) throws DaoException;
 	public Product getExcludedProduct(String serverName, ExcludeResult exclude) throws DaoException;
 	public String getEdpByPartNumber(String serverName, String storeId, String keyword, String partNumber) throws DaoException;
+	public String getProductIdByPartNumber(String serverName, String storeId, String keyword, String partNumber) throws DaoException;
 	public RecordSet<DemoteProduct> getDemotedProducts(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public RecordSet<DemoteProduct> getDemotedProductsIgnoreKeyword(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public RecordSet<DemoteProduct> getNoExpiryDemotedProducts(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException;

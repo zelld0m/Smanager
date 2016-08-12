@@ -87,7 +87,7 @@
 					<tbody>
 				</table>
 			</div>
-			<div style="max-height:360px; overflow-y:auto">
+			<div style="max-height:430px; overflow-y:auto">
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
@@ -111,6 +111,18 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div id="paginationDiv" class="paginationDiv" style="display: none;">
+				<div class="page-cnt">
+					<div class="page-label">Page</div>				
+					<div class="page-counter fbold"></div>
+					<div class="page-label-of">of</div>
+					<div class="page-total fbold"></div>
+				</div>
+				<div class="page-arrows">
+					<a class="left-arrow" href="javascript:void(0);">Prev</a>
+					<a class="right-arrow" href="javascript:void(0);">Next</a>
+				</div>
 			</div>
 			<div id="actionBtn"
 				class="floatR marT10 fsize12 border pad10 marB20"
