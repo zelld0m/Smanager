@@ -148,6 +148,140 @@ public class SearchHelper {
 			        .concat("select?");
 			int size = productList.size();
 			boolean isWithEDP = false;
+			StringBuilder edps = new StringBuilder("ProductID:(");
+			String edp = "";
+			for (Product product : productList.values()) {
+				edp = product.getEdp();
+				if (product.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && StringUtils.isNotBlank(edp)) {
+					edps.append(" ").append(edp);
+					isWithEDP = true;
+				}
+			}
+			edps.append(")");
+			if (isWithEDP) {
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("q", keyword != null ? keyword : "*:*"));
+				nameValuePairs.add(new BasicNameValuePair("fl", fields));
+				nameValuePairs.add(new BasicNameValuePair("qt", qt));
+				nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
+				nameValuePairs.add(new BasicNameValuePair("fq", edps.toString()));
+
+				String solrSelectorParam = configManager.getSolrSelectorParam();
+
+				if (StringUtils.isNotBlank(solrSelectorParam)) {
+					nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
+				}
+
+				nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+				nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+				if (logger.isDebugEnabled()) {
+					for (NameValuePair p : nameValuePairs) {
+						logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+					}
+				}
+
+				/* JSON */
+				JSONObject initialJson = null;
+				JsonSlurper slurper = null;
+				JSONArray resultArray = null;
+
+				// send solr request
+				client = new DefaultHttpClient();
+				post = new HttpPost(serverUrl);
+				post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+				post.addHeader("Connection", "close");
+				if (logger.isDebugEnabled()) {
+					logger.debug("URL: " + post.getURI());
+					logger.debug("Parameter: " + nameValuePairs);
+				}
+				solrResponse = client.execute(post);
+				JsonConfig jsonConfig = new JsonConfig();
+				jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+				slurper = new JsonSlurper(jsonConfig);
+				initialJson = (JSONObject) parseJsonResponse(slurper, solrResponse);
+
+				// locate the result node
+				resultArray = initialJson.getJSONObject(SolrConstants.TAG_RESPONSE)
+				        .getJSONArray(SolrConstants.TAG_DOCS);
+				String name = null;
+				String description = null;
+				for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
+					JSONObject json = resultArray.getJSONObject(i);
+					Product product = productList.get(json.getString("ProductID"));
+					name = "";
+					description = "";
+					if (product != null) {
+						@SuppressWarnings("unchecked")
+						Set<String> keys = (Set<String>) json.keySet();
+						for (String key : keys) {
+							String value = json.getString(key);
+							if ("ProductID".equals(key)) {
+								product.setEdp(value);
+							} else if ("DPNo".equals(key)) {
+								product.setDpNo(value);
+							} else if ("MfrPN".equals(key)) {
+								product.setMfrPN(value);
+							} else if ("Manufacturer".equals(key)) {
+								product.setManufacturer(value);
+							} else if ("ImageLinkSM".equals(key)) {
+								product.setImagePath(value);
+							} else if ("Name".equals(key)) {
+								name = value;
+							} else if ("Description".equals(key)) {
+								description = value;
+							} else if (key.matches("(.*)_Name$")) {
+								product.setName(value);
+							} else if (key.matches("(.*)_Description$")) {
+								product.setDescription(value);
+							}
+						}
+					}
+					if (StringUtils.isBlank(product.getName())) {
+						product.setName(name);
+					}
+					if (StringUtils.isBlank(product.getDescription())) {
+						product.setDescription(description);
+					}
+				}
+			}
+		} catch (Throwable t) {
+			logger.error("Error while retrieving from Solr", t);
+		} finally {
+			if (post != null) {
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
+				post.releaseConnection();
+			}
+			if (client != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}
+	}
+	
+	public void getProductsByEdp(Map<String, ? extends Product> productList, String storeId, String server,
+	        String keyword) {
+		HttpClient client = null;
+		HttpPost post = null;
+		HttpResponse solrResponse = null;
+		try {
+			if (productList == null || productList.isEmpty()) {
+				return;
+			}
+			
+			// build the query
+			String facetName = configManager.getStoreParameter(storeId, "facet-name");
+			// TODO: replace qt with relevancy
+			String qt = configManager.getStoreParameter(storeId, "qt");
+			if (StringUtils.isEmpty(qt)) {
+				qt = "standard";
+			}
+			String core = configManager.getStoreParameter(storeId, "core");
+			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core)
+			        .concat("select?");
+			int size = productList.size();
+			boolean isWithEDP = false;
 			StringBuilder edps = new StringBuilder("EDP:(");
 			String edp = "";
 			for (Product product : productList.values()) {
@@ -223,7 +357,7 @@ public class SearchHelper {
 								product.setMfrPN(value);
 							} else if ("Manufacturer".equals(key)) {
 								product.setManufacturer(value);
-							} else if ("ImagePath".equals(key)) {
+							} else if ("ImageLinkSM".equals(key)) {
 								product.setImagePath(value);
 							} else if ("Name".equals(key)) {
 								name = value;
@@ -292,7 +426,8 @@ public class SearchHelper {
 			if (edps.toString().trim().length() == 0) {
 				return;
 			} else {
-				edps.insert(0, "EDP:(").append(")");
+				//edps.insert(0, "EDP:(").append(")");
+				edps.insert(0, "ProductID:(").append(")");
 			}
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -342,7 +477,7 @@ public class SearchHelper {
 			String description = null;
 			for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
 				JSONObject json = resultArray.getJSONObject(i);
-				Product product = productList.get(json.getString("EDP"));
+				Product product = productList.get(json.getString("ProductID"));
 				name = "";
 				description = "";
 				if (product != null) {
@@ -350,7 +485,7 @@ public class SearchHelper {
 					Set<String> keys = (Set<String>) json.keySet();
 					for (String key : keys) {
 						String value = json.getString(key);
-						if ("EDP".equals(key)) {
+						if ("ProductID".equals(key)) {
 							product.setEdp(value);
 						} else if ("DPNo".equals(key)) {
 							product.setDpNo(value);
@@ -358,7 +493,7 @@ public class SearchHelper {
 							product.setMfrPN(value);
 						} else if ("Manufacturer".equals(key)) {
 							product.setManufacturer(value);
-						} else if ("ImagePath".equals(key)) {
+						} else if ("ImageLinkSM".equals(key)) {
 							product.setImagePath(value);
 						} else if ("Name".equals(key)) {
 							name = value;
@@ -631,6 +766,85 @@ public class SearchHelper {
 		return edp;
 	}
 
+	public String getProductIdByPartNumber(String server, String storeId, String partNumber) {
+		String productId = StringUtils.EMPTY;
+		HttpClient client = null;
+		HttpPost post = null;
+		HttpResponse solrResponse = null;
+		if (StringUtils.isEmpty(partNumber)) {
+			return productId;
+		}
+		try {
+			// build the query
+			String core = configManager.getStoreParameter(storeId, "core");
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core)
+			        .concat("select?");
+
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			for(NameValuePair pair : configManager.getDefaultSolrParameters(storeId)) {
+				nameValuePairs.add(new BasicNameValuePair(pair.getName(), pair.getValue()));
+			}
+			nameValuePairs.add(new BasicNameValuePair("fl", "ProductID"));
+			nameValuePairs.add(new BasicNameValuePair("qt", "standard"));
+			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
+
+			String solrSelectorParam = configManager.getSolrSelectorParam();
+
+			if (StringUtils.isNotBlank(solrSelectorParam)) {
+				nameValuePairs.add(new BasicNameValuePair(solrSelectorParam, storeId));
+			}
+
+			nameValuePairs.add(new BasicNameValuePair("q", "DPNo:" + partNumber));
+			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			if (logger.isDebugEnabled()) {
+				for (NameValuePair p : nameValuePairs) {
+					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+				}
+			}
+
+			/* JSON */
+			JSONObject initialJson = null;
+			JsonSlurper slurper = null;
+			JSONArray resultArray = null;
+
+			// send solr request
+			client = new DefaultHttpClient();
+			client = new DefaultHttpClient();
+			post = new HttpPost(serverUrl);
+			post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + nameValuePairs);
+			}
+			solrResponse = client.execute(post);
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+			slurper = new JsonSlurper(jsonConfig);
+			initialJson = (JSONObject) parseJsonResponse(slurper, solrResponse);
+
+			// locate the result node
+			resultArray = initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
+			if (resultArray.size() > 0) {
+				productId = resultArray.getJSONObject(0).getString("ProductID");
+			}
+		} catch (Throwable t) {
+			logger.error("Error while retrieving from Solr", t);
+		} finally {
+			if (post != null) {
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
+				post.releaseConnection();
+			}
+			if (client != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}
+		return productId;
+	}
+	
 	public boolean isForceAddCondition(String server, String storeId, String keyword, String fqCondition) {
 		boolean forceAdd = false;
 		HttpClient client = null;
