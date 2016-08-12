@@ -219,9 +219,9 @@ public class RedirectRuleCondition extends ModelBean {
         if (map.containsKey("Availability")) {
             String value = map.get("Availability").get(0);
             if (value.equals("Call")) {
-                builder.append("InStock").append(":0").append(" AND ");
+                builder.append("VWInv:[* TO 0] OR MemphisInv:[* TO 0]");
             } else if (value.equals("In Stock")) {
-                builder.append("InStock").append(":1").append(" AND ");
+                builder.append("VWInv:[1 TO *] OR MemphisInv:[1 TO *]");
             }
         }
         if (map.containsKey("Platform")) {
