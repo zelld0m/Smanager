@@ -29,6 +29,7 @@ public class RedirectRuleXml extends RuleXml{
 	private RuleConditionXml ruleCondition;
 	private ReplaceKeywordMessageType replaceKeywordMessageType;
 	private String replaceKeywordMessageCustomText;
+	private String redirectUrl;
 	
 	public RedirectRuleXml() {
 		super(serialVersionUID);
@@ -46,6 +47,7 @@ public class RedirectRuleXml extends RuleXml{
 			this.setRedirectType(rr.getRedirectType());	
 			this.setRuleKeyword(new RuleKeywordXml(rr.getSearchTerms()));
 			this.setRuleCondition(new RuleConditionXml(rr.getConditions(), BooleanUtils.isTrue(rr.getIncludeKeyword())));
+			this.setRedirectUrl(rr.getRedirectUrl());
 			this.setCreatedBy(rr.getCreatedBy());
 			this.setCreatedDate(rr.getCreatedDate());
 			this.setLastModifiedBy(rr.getLastModifiedBy());
@@ -64,14 +66,23 @@ public class RedirectRuleXml extends RuleXml{
 		this(store, 0, "", "", "", queryCleaning);
 	}
 	
-	@XmlAttribute(name="type")
-	public RedirectType getRedirectType() {
-		return redirectType;
-	}
+    @XmlAttribute(name="type")
+    public RedirectType getRedirectType() {
+        return redirectType;
+    }
 
-	public void setRedirectType(RedirectType redirectType) {
-		this.redirectType = redirectType;
-	}
+    public void setRedirectType(RedirectType redirectType) {
+        this.redirectType = redirectType;
+    }
+
+    @XmlElement(name="redirect-url")
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
 
 	@XmlElement(name="replace-kw")
 	public String getReplacementKeyword() {
