@@ -219,9 +219,9 @@ public class RedirectRuleCondition extends ModelBean {
         if (map.containsKey("Availability")) {
             String value = map.get("Availability").get(0);
             if (value.equals("Call")) {
-                builder.append("VWInv:[* TO 0] OR MemphisInv:[* TO 0]");
+                builder.append("VWInv:[* TO 0] OR MemphisInv:[* TO 0]").append(" AND ");
             } else if (value.equals("In Stock")) {
-                builder.append("VWInv:[1 TO *] OR MemphisInv:[1 TO *]");
+                builder.append("VWInv:[1 TO *] OR MemphisInv:[1 TO *]").append(" AND ");
             }
         }
         if (map.containsKey("Platform")) {
@@ -511,9 +511,9 @@ public class RedirectRuleCondition extends ModelBean {
                 putListToConditionMap(fieldName, fieldValue);
             } // If InStock:0 set Availability to "In Stock"
             //           :1 set Availability to "Call"
-            else if (fieldName.equals("InStock") && fieldValue.equals("0")) {
+            else if (fieldName.equals("VWInv") && fieldValue.equals("[* TO 0] OR MemphisInv:[* TO 0]")) {
                 putToConditionMap("Availability", "Call");
-            } else if (fieldName.equals("InStock") && fieldValue.equals("1")) {
+            } else if (fieldName.equals("VWInv") && fieldValue.equals("[1 TO *] OR MemphisInv:[1 TO *]")) {
                 putToConditionMap("Availability", "In Stock");
             } else {
                 putToConditionMap(fieldName, fieldValue);
@@ -595,7 +595,7 @@ public class RedirectRuleCondition extends ModelBean {
         // if any of the following fields are present return them;
         // Platform, Condition, Availability, License, ImageExists
         LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-        String[] keys = {"MfrPN", "Platform", "Condition", "Availability", "License", "ImageExists", "Name", "Description"};
+        String[] keys = {"MfrPN", "Platform", "Condition", "Availability", "License", "ImageExists", "Name", "Description", "VWInv"};
         for (String key : keys) {
             List<String> value = conditionMap.get(key);
             if (value != null && !value.isEmpty()) {
