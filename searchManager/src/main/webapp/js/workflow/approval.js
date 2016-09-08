@@ -105,7 +105,7 @@
 									DeploymentServiceJS.approveRule(GLOBAL_storeId, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){
 											postMsg(data,true);	
-											getApprovalList();
+											getApprovalListWithPaging(1);
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -129,7 +129,7 @@
 									DeploymentServiceJS.unapproveRule(GLOBAL_storeId, entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 										callback: function(data){
 											postMsg(data,false);	
-											getApprovalList();
+											getApprovalListWithPaging(1);
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -162,7 +162,7 @@
 									DeploymentServiceJS.approveRule(GLOBAL_storeId, entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){
 											jAlert("Did You Mean List was successfully approved.", "Approval");
-											getApprovalList();
+											getApprovalListWithPaging(1);
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -185,7 +185,7 @@
 									DeploymentServiceJS.unapproveRule(GLOBAL_storeId, entityName, ["spell_rule"], comment, [ruleStatusId],{
 										callback: function(data){
 											jAlert("Did You Mean List was successfully rejected.", "Approval");
-											getApprovalList();
+											getApprovalListWithPaging(1);
 										},
 										preHook:function(){ 
 											prepareTabContent(); 
@@ -535,6 +535,266 @@
 				}			
 			});
 		};
+		
+		var getApprovalListWithPaging = function(pageNum){
+			var maxRowCount = 10;
+			DeploymentServiceJS.getApprovalListWithPaging(entityName, pageNum, maxRowCount, {
+				callback:function(data){
+					var list = data.list;
+					var HTML;
+					if (entityName === "didYouMean") {
+						HTML = $("div#tabContentTemplateLinguistics").html();
+					}
+					else {
+						HTML = $("div#tabContentTemplate").html();
+					}
+					$(tabSelected).html(HTML);
+
+					if (data.totalSize>0){
+						if (maxRowCount < data.totalSize){
+							updatePagination (pageNum, data.totalSize, maxRowCount);
+							$(tabSelected).find('div#paginationDiv').css('display', 'block');
+						}
+						
+						
+						if (entityName === 'didYouMean'){
+							$(tabSelected).find("label#requestedBy").html(list[0]["requestBy"]);
+							$(tabSelected).find("label#requestedDate").html($.toStoreFormat(list[0]["lastRequestDate"]));
+							// set to number to be displayed + 1, to detect if there is an overflow
+							var ruleStatusId = list[0]["ruleStatusId"];
+							var displaySize = 50;
+							SpellRuleServiceJS.getModifiedSpellRules(1, displaySize + 1, {
+								callback: function(response) {
+									// Populate table row
+									var responseData = response.data;
+									var responseList = responseData.spellRule;
+									$table = $(tabSelected).find("table#rule");
+									$(tabSelected).find("label#numSuggestions").append(responseData.maxSuggest);
+									if (responseList.length == 0) {
+										$table.append('<tr><td class="txtAC" colspan="3"><div>No new/modified entries found. Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</div></td></tr>');
+									}
+									else {
+										if (displaySize > responseList.length) {
+											displaySize = responseList.length;
+										}
+										for(var i=0; i<displaySize ; i++){
+											var termHTML = "";
+											var suggestionHTML = "";
+											$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(responseList[i]["ruleId"])).show();
+											responseList[i].searchTerms.forEach(function (item) {
+												termHTML += "<span class=\"term\">" + item + "</span>";
+											});
+											$tr.find("td#searchTerms").html(termHTML);
+											responseList[i].suggestions.forEach(function (item) {
+												suggestionHTML += "<span class=\"term\">" + item + "</span>";
+											});
+											$tr.find("td#suggestions").html(suggestionHTML);
+											$tr.find("td#type").html(responseList[i]["status"]);
+											$tr.appendTo($table);
+										}
+										$table.append('<tr><td class="txtAC" colspan="3"><div>Click <a href="javascript:void(0);" id="downloadIcon">here</a> to download full list.</div></td></tr>');
+									}
+									
+									// Alternate row style
+									$(tabSelected).find("tr:not(#ruleItemPattern):even").addClass("alt");
+									
+									$(tabSelected).find("table#rule tr td div a#downloadIcon").download({
+										headerText:"Download Did You Mean Rules",
+										moduleName: entityName,
+										ruleType: entityName,  
+										solo: $(".internal-tooltip"),
+										classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped internal-tooltip',
+										requestCallback:function(e2) {
+											var params = new Array();
+											var url = GLOBAL_contextPath + "/spell/" + GLOBAL_storeId + "/xls";
+											var urlParams = "";
+											var count = 0;
+
+											params["filename"] = e2.data.filename;
+											params["type"] = e2.data.type;
+											params["id"] = "spell_rule";
+											params["clientTimezone"] = +new Date();
+
+											for(var key in params){
+												if (count>0) urlParams +='&';
+												urlParams += (key + '=' + encodeURIComponent(params[key]));
+												count++;
+											};
+											document.location.href = url + '?' + urlParams;
+										}
+									});
+									
+									approvalHandlerLinguistics(ruleStatusId);
+								}
+							});
+						}
+						else {
+							// Populate table row
+							var dataCount = maxRowCount > list.length ? list.length : maxRowCount;
+							for(var i=0; i<dataCount ; i++){
+								$table = $(tabSelected).find("table#rule");
+								$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
+								var ruleStatus = list[i];
+								var requestedDate = $.toStoreFormat(list[i]["lastModifiedDate"]);
+								//var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
+	
+								$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
+								$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
+	
+								//TODO: Get delete details from file
+								if (list[i]["updateStatus"]!=="DELETE"){
+									$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).preview({
+										ruleType: entityName,
+										ruleId: ruleStatus["ruleId"],
+										ruleRefId: ruleStatus["ruleRefId"],
+										ruleStatusId: ruleStatus["ruleStatusId"],
+										requestType: ruleStatus["updateStatus"],
+										ruleInfo: ruleStatus["description"],
+										center: true,
+										enablePreTemplate: true,
+										enablePostTemplate: true,
+										preTemplate: function(base){
+											return preTemplate(base.options.ruleType);
+										},
+										postTemplate: function(base){
+											return postTemplate(base.options.ruleType);
+										},
+										templateEvent: function(base){
+											var $content = base.contentHolder; 
+											$content.find("a#approveBtn, a#rejectBtn").off().on({
+												click: function(evt){
+													var comment = $.defaultIfBlank($content.find("#approvalComment").val(),"");
+	
+													if (validateComment("Approval", comment, 1, 250)){
+														comment = comment.replace(/\n\r?/g, '<br/>');
+														
+														switch($(evt.currentTarget).attr("id")){
+														case "approveBtn": 
+															DeploymentServiceJS.approveRule(GLOBAL_storeId, entityName, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
+																callback: function(data){
+																	postMsg(data,true);	
+																	getApprovalListWithPaging(1);
+																},
+																preHook: function(){
+																	base.api.destroy();
+																}
+															});break;
+	
+														case "rejectBtn": 
+															if (checkIfDeleted()) {
+																jAlert("Deleted rules cannot be rejected!","Approval");
+																return;
+															}
+															DeploymentServiceJS.unapproveRule(GLOBAL_storeId, entityName, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
+																callback: function(data){
+																	postMsg(data,false);	
+																	getApprovalListWithPaging(1);
+																},
+																preHook: function(){
+																	base.api.destroy();
+																}
+															});break;
+														}	
+													}
+												}
+											});
+										},
+										itemForceAddStatusCallback: function(base, memberIds){
+											if (base.options.ruleType.toLowerCase() === "elevate"){
+												ElevateServiceJS.isRequireForceAdd(base.options.ruleId, memberIds, {
+													callback:function(data){
+														base.updateForceAddStatus(data);
+													},
+													preHook: function(){
+														base.prepareForceAddStatus();
+													}
+												});
+											}
+										}
+									});
+								}else{
+									$tr.find("td#ruleOption > img.previewIcon").hide();
+								}
+	
+								//if(showId) 
+								//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+	
+								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
+								$tr.find("td#type").html(list[i]["updateStatus"]);
+								$tr.find("td#requested > p#requestedBy").html(list[i]["requestBy"]);
+								$tr.find("td#requested > p#requestedDate").html(requestedDate);
+								$tr.appendTo($table);
+							}
+							
+							// Alternate row style
+							$(tabSelected).find("tr:not(#ruleItemPattern):even").addClass("alt");
+
+							checkSelectHandler();
+							checkSelectAllHandler();
+							approvalHandler();
+							paginationHandler();
+							
+							if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+							
+						}
+					}else{
+						$(tabSelected).find("div#requestDetails").hide();
+						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
+						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+						$(tabSelected).find('div#actionBtn').hide();
+					}
+				},
+				preHook:function(){ 
+					prepareTabContent(); 
+				},
+				postHook:function(){ 
+					cleanUpTabContent(); 
+				}			
+			});
+		};
+		
+		var updatePagination = function(pageNum, totalItems, maxRowCount){
+			var totalPagination = Math.ceil(totalItems/maxRowCount);
+			$(tabSelected).find('div#paginationDiv').find('.page-cnt').find('.page-counter').text(pageNum);
+			$(tabSelected).find('div#paginationDiv').find('.page-cnt').find('.page-total').text(totalPagination);
+		    if (pageNum > 1) {
+		    	$(tabSelected).find('div#paginationDiv').find('.page-arrows').find(
+		            '.left-arrow').attr('prevpage', parseInt(pageNum) - 1);
+		    }else{
+		    	$(tabSelected).find('div#paginationDiv').find('.page-arrows').find(
+	            '.left-arrow').addClass('arrow-inactive');
+		    }
+		    if (totalPagination != pageNum) {
+		    	$(tabSelected).find('div#paginationDiv').find('.page-arrows').find(
+		            '.right-arrow').attr('nextpage', parseInt(pageNum) + 1);
+		    }else{
+		    	$(tabSelected).find('div#paginationDiv').find('.page-arrows').find(
+	            '.right-arrow').addClass('arrow-inactive');
+		    }
+			return;			
+		};
+		
+		var paginationHandler = function(filterBy){
+			$(tabSelected).find('div#paginationDiv').find('.page-arrows').find('.left-arrow').on({
+				click: function(evt){
+					var pageNum = $(this).attr('prevpage');
+					if (typeof pageNum !== 'undefined'){
+						$(tabSelected).find('div#paginationDiv').css('display', 'none');
+						getApprovalListWithPaging(pageNum);
+					}
+				}
+			});
+			$(tabSelected).find('div#paginationDiv').find('.page-arrows').find('.right-arrow').on({
+				click: function(evt){
+					var pageNum = $(this).attr('nextpage');
+					if (typeof pageNum !== 'undefined'){
+						$(tabSelected).find('div#paginationDiv').css('display', 'none');
+						getApprovalListWithPaging(pageNum);						
+					}
+				}
+			});
+			return;
+		};
 
 		var prepareTabContent = function(){
 			if (!$("div.circlePreloader").is(":visible")) $('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo($(tabSelected));
@@ -552,7 +812,8 @@
 				tabSelected = $(this).attr("href");
 				tabSelectedText = $(this).find("span").html();
 				entityName = tabSelected.substring(1, tabSelected.length-3);
-				getApprovalList();
+				$(tabSelected).find('div#paginationDiv').css('display', 'none');
+				getApprovalListWithPaging(1);
 			}
 		});
 
@@ -560,7 +821,8 @@
 			tabSelected = $("li.ui-tabs-selected > a").attr("href");
 			tabSelectedText = $("li.ui-tabs-selected > a").find("span").html();
 			entityName = tabSelected.substring(1, tabSelected.length-3);
-			getApprovalList();
+			$(tabSelected).find('div#paginationDiv').css('display', 'none');
+			getApprovalListWithPaging(1);
 			switchTab;
 		};
 

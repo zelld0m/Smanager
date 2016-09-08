@@ -229,7 +229,8 @@ public class DemoteService extends RuleService {
         for (String partNumber : partNumbers) {
             count = 0;
             try {
-                String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
+                //use Product ID instead of EDP
+            	String edp = daoService.getProductIdByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
                 if (StringUtils.isNotBlank(edp)) {
                     count = addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER);
                 }

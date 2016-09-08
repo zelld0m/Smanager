@@ -266,7 +266,7 @@ public class TypeaheadRuleDwrServiceImpl implements TypeaheadRuleDwrService{
 			dpNumEdpMap.put(edp, product);
 		}
 		
-		searchHelper.getProducts(dpNumEdpMap, storeId, utilityService.getServerName(), null);
+		searchHelper.getProductsByEdp(dpNumEdpMap, storeId, utilityService.getServerName(), null);
 		
 		return dpNumEdpMap;
 	}

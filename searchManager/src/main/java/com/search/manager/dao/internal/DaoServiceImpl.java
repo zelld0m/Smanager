@@ -1764,4 +1764,10 @@ public class DaoServiceImpl implements DaoService {
     public boolean importSpellRule(String dest, String origin, String username, Integer maxSuggest) throws DaoException {
         return spellRuleDAO.importRule(dest, origin, username) && spellRuleDAO.setMaxSuggest(dest, maxSuggest);
     }
+
+	@Override
+	public String getProductIdByPartNumber(String serverName, String storeId,
+			String keyword, String partNumber) throws DaoException {
+		return searchHelper.getProductIdByPartNumber(serverName, storeId, partNumber);
+	}
 }

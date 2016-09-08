@@ -224,7 +224,7 @@
 		output += '<table width="100%" border="0" cellpadding="0" cellspacing="0" class="farial fsize12 fDGray marT10 ">';
 		output += '	<tr>';
 		output += '      <td width="28%" rowspan="5" align="center" valign="top"><div style="width:116px; height:100px" class="border itemImg">';
-		output += '	   		<img src="' + doc.ImagePath + '"></div>';
+		output += '	   		<img src="' + doc.ImageLinkSM + '"></div>';
 		output += '	   </td>';
 		output += '      <td colspan="2" align="left" valign="top" class="borderB">';
 		output += '			<div class="floatL">';

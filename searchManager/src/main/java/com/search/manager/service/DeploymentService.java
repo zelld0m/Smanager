@@ -101,6 +101,23 @@ public class DeploymentService {
 		}
 		return rSet;
 	}
+	
+	@RemoteMethod
+	public RecordSet<RuleStatus> getApprovalListWithPaging(String ruleType, int pageNumber, int maxRowCount) {
+		RecordSet<RuleStatus> rSet = null;
+		int ruleTypeId = RuleEntity.getId(ruleType);
+		try {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(ruleTypeId);
+			ruleStatus.setStoreId(utilityService.getStoreId());
+			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
+			SearchResult<RuleStatus> searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
+			rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+		} catch (CoreServiceException e) {
+			logger.error("Failed during getApprovalListWithPaging()", e);
+		}
+		return rSet;
+	}
 
 	private String[] getRuleStatusIdList(String[] ruleRefIdList, String[] ruleStatusIdList, List<String> ruleRefIdsToMatch) {
 		List<String> list = new ArrayList<String>();
@@ -241,6 +258,49 @@ public class DeploymentService {
 			logger.error("Failed during getDeployedRules()", e);
 		}
 		
+		return rSet;
+	}
+	
+	@RemoteMethod
+	public RecordSet<RuleStatus> getDeployedRulesWithPaging(String ruleType, String filterBy, int pageNumber, int maxRowCount) {
+		RecordSet<RuleStatus> rSet = null;
+		try {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+			ruleStatus.setStoreId(utilityService.getStoreId());
+			SearchResult<RuleStatus> searchResult;
+			
+			if (StringUtils.isBlank(filterBy)) {
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
+				searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
+				RecordSet<RuleStatus> approvedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+				
+				ruleStatus.setApprovalStatus(null);
+				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+				searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
+	            RecordSet<RuleStatus> publishedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+	            
+				rSet = combineRecordSet(approvedRset, publishedRset);
+			} else if (StringUtils.equalsIgnoreCase(RuleStatusEntity.APPROVED.toString(), filterBy)) {
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setUpdateStatus("ADD,UPDATE");
+				searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
+				rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+			} else if (StringUtils.equalsIgnoreCase(RuleStatusEntity.PUBLISHED.toString(), filterBy)) {
+				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+				ruleStatus.setUpdateStatus("ADD,UPDATE");
+				searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
+                rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+			} else if (StringUtils.equalsIgnoreCase("DELETE", filterBy)) {
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setUpdateStatus("DELETE");
+				searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
+                rSet = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+			}
+		} catch (CoreServiceException e) {
+			logger.error("Failed during getDeployedRulesWithPaging()", e);
+		}		
 		return rSet;
 	}
 

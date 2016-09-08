@@ -30,3 +30,36 @@ div#importAlert img						{position: relative; top: 2px;}
     white-space: normal;
     word-break: break-all;
 }
+.paginationDiv {
+    float: right;
+    height: 32px;
+    width: 185px;
+}
+.page-cnt {
+    float: left;
+    width: 100px;
+    line-height: 32px;
+}
+.page-arrows {
+    float: right;
+    width: 80px;
+    line-height: 32px;
+}
+.page-cnt > div, .page-arrows > a {
+	float: left;
+    font-size: 14px;
+}
+.left-arrow, .right-arrow {
+    padding-right: 10px !important;
+}
+.page-label{
+	padding-right: 5px !important;
+}
+.page-label-of{
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+.page-arrows .arrow-inactive {
+	pointer-events: none;
+	color: #555 !important;
+}

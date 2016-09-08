@@ -104,6 +104,11 @@ public class RuleTransferService {
 	public RecordSet<RuleStatus> getPublishedRules(String ruleType) {
 		return deploymentService.getDeployedRules(ruleType, "PUBLISHED");
 	}
+	
+	@RemoteMethod
+	public RecordSet<RuleStatus> getPublishedRulesWithPaging(String ruleType, int pageNumber, int maxRowCount) {
+		return deploymentService.getDeployedRulesWithPaging(ruleType, "PUBLISHED", pageNumber, maxRowCount);
+	}
 
 	@RemoteMethod
 	public List<RuleXml> getAllRulesToImport(String ruleType) {
