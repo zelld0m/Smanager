@@ -274,15 +274,49 @@ public class DeploymentService {
 				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
 				ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
 				searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
-				RecordSet<RuleStatus> approvedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
-				
-				ruleStatus.setApprovalStatus(null);
-				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
-				searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
-	            RecordSet<RuleStatus> publishedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
-	            
-				rSet = combineRecordSet(approvedRset, publishedRset);
-			} else if (StringUtils.equalsIgnoreCase(RuleStatusEntity.APPROVED.toString(), filterBy)) {
+				int totalApprovedItems = searchResult.getTotalCount();
+				if (totalApprovedItems > 0){
+					RecordSet<RuleStatus> approvedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+					int approvedItemsTotalPage = (int) Math.ceil((double) searchResult.getTotalCount() / maxRowCount);
+					if (pageNumber < approvedItemsTotalPage){
+						rSet = approvedRset;
+					}else if (pageNumber == approvedItemsTotalPage){
+						int noOfRetrievedItems = searchResult.getList().size();
+						int remainingItemsToRetrieve = maxRowCount - noOfRetrievedItems;
+						ruleStatus.setApprovalStatus(null);
+						ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+						searchResult = ruleStatusService.search(ruleStatus, 1, remainingItemsToRetrieve);
+		                RecordSet<RuleStatus> publishedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+		                rSet = combineRecordSet(approvedRset, publishedRset);
+					}else{
+						int firstPageItems = maxRowCount - (totalApprovedItems % maxRowCount);
+						int totalItemsToRetrieve = ((pageNumber - approvedItemsTotalPage) * maxRowCount) + firstPageItems;
+						ruleStatus.setApprovalStatus(null);
+						ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+						searchResult = ruleStatusService.search(ruleStatus, 1, totalItemsToRetrieve);
+						
+						int i = 0;
+						List<RuleStatus> rsListToRemove = new ArrayList<RuleStatus>();
+						int totalItemsToRemove = ((pageNumber - approvedItemsTotalPage - 1) * maxRowCount) + firstPageItems;
+						while (i < totalItemsToRemove){
+							rsListToRemove.add(searchResult.getResult().get(i));
+							i++;
+						}
+						List<RuleStatus> publishedList = new ArrayList<RuleStatus>(searchResult.getResult());
+						publishedList.removeAll(rsListToRemove);
+						
+						RecordSet<RuleStatus> publishedRset = new RecordSet<RuleStatus>(publishedList, 
+								totalApprovedItems + searchResult.getTotalCount());
+						rSet = publishedRset;
+					}
+				}else{
+					ruleStatus.setApprovalStatus(null);
+					ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+					searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
+	                RecordSet<RuleStatus> publishedRset = new RecordSet<RuleStatus>(searchResult.getResult(), searchResult.getTotalCount());
+	                rSet = publishedRset;
+				}
+			}else if (StringUtils.equalsIgnoreCase(RuleStatusEntity.APPROVED.toString(), filterBy)) {
 				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
 				ruleStatus.setUpdateStatus("ADD,UPDATE");
 				searchResult = ruleStatusService.search(ruleStatus, pageNumber, maxRowCount);
