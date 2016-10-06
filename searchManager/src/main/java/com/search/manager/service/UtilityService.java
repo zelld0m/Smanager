@@ -266,7 +266,8 @@ public class UtilityService {
 		json.put("searchWithinParamName", configManager.getProperty("searchwithin", storeId, "searchwithin.paramname"));
 		json.put("isTargetStore", configManager.getProperty("workflow", storeId, "targetStore"));
 		json.put("allStoresDisplayName", configManager.getAllStoresDisplayName());
-
+		json.put("allStoresDisplayNameAndLogo", configManager.getAllStoresDisplayNameAndLogo());
+		
 		return json.toString();
 	}
 	
@@ -298,6 +299,15 @@ public class UtilityService {
 		json.put("allStoresDisplayName", configManager.getAllStoresDisplayName());
 
 		return json;
+	}
+	
+	@RemoteMethod
+	public Map<String, Map<String, String>> getStoreListNameAndLogo(boolean includeSelectedStore) {
+		Map<String, Map<String, String>> map = configManager.getAllStoresDisplayNameAndLogo();
+		if (!includeSelectedStore) {
+			map.remove(getStoreId());
+		}
+		return map;
 	}
 
 	@RemoteMethod

@@ -173,6 +173,18 @@ public class ConfigManager {
 	    
 	    return storeNames; 
     }
+	
+	public Map<String, Map<String, String>> getAllStoresDisplayNameAndLogo() {
+	    Map<String, Map<String, String>> storeValues = new HashMap<String, Map<String, String>>();
+	    List<String> storeIds = getStoreIds();	  
+	    for(String storeId: storeIds){
+	    	Map<String, String> storeValuesMap = new HashMap<String, String>();
+	    	storeValuesMap.put("name", solrXMLConfig.getString(String.format("/store[@id='%s']/@name",storeId)));
+	    	storeValuesMap.put("logo", solrXMLConfig.getString(String.format("/store[@id='%s']/@logo",storeId)));
+	    	storeValues.put(storeId, storeValuesMap);
+	    }
+	    return storeValues; 
+    }
 
 	public List<String> getCoreNames() {
 		return getStoreAttributes("core", true);

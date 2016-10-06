@@ -63,7 +63,10 @@ public class ClusterAwareUsernamePasswordAuthentication
         //Delete cookies
         response.addCookie(CookieUtils.expireNow("server.selection", request.getContextPath()));
         response.addCookie(CookieUtils.expireNow("server.selected", request.getContextPath()));
-
+        
+        response.addCookie(CookieUtils.expireNow("store.selection", request.getContextPath()));
+        response.addCookie(CookieUtils.expireNow("store.selected", request.getContextPath()));
+        
         User user = new User();
         user.setUsername(obtainUsername(request));
         user.setLastAccessDate(DateTime.now());
@@ -76,6 +79,7 @@ public class ClusterAwareUsernamePasswordAuthentication
             logger.error("Updating successful login failed! " + e.getMessage(), e);
         }
 
+        response.addCookie(CookieUtils.setCookie("store.selected", storeId, request.getContextPath()));
         super.successfulAuthentication(request, response, authResult);
     }
 

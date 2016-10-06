@@ -348,6 +348,12 @@
 		         	  		<select id="select-server"></select>
 		         	  	</sec:authorize>
 		        	</li>
+		      		<li class="submenu">
+		         		<sec:authorize access="hasRole('MANAGE_USER')">
+		         			<span>Store</span>
+		         	  		<select id="select-store"></select>
+		         	  	</sec:authorize>
+		        	</li>
 		        </ul>
          	  </div>
 	      </td>
@@ -358,6 +364,25 @@
       			document.write('<a href="javascript:void(0);"><img src="' + GLOBAL_contextPath + '/images/logo-' + GLOBAL_storeId + '.png"></a>');
       		</script>
       	<div class="clearB"></div>
+	    <!-- <div class="dropdown" id="store-selector">
+			<a data-toggle="dropdown" class="dropdown-toggle macmall-logo" href="javascript:void(0);">
+				<img class="current-mall" src="/searchManager/images/logo-pcmall.png">
+				<b class="caret"></b>
+			</a>
+			<ul class="dropdown-menu dropdown-default">
+		        <li>
+		        	<a href="/automerchandising/switch/store/85b4db57-ab5c-11e3-98ff-78acc0a56deb">
+		            	<img class="current-mall" src="/searchManager/images/logo-macmall.png">
+		            </a>
+		        </li>   
+		       	<li class="divider"></li>
+		        <li>
+		        	<a href="/automerchandising/switch/store/85bacec8-ab5c-11e3-98ff-78acc0a56deb">
+		            	<img class="current-mall" src="/searchManager/images/logo-pcmallgov.png">
+		            </a>
+		        </li>   
+			</ul>
+		</div> -->
       </div>
     </div>
   </div>
