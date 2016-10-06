@@ -208,6 +208,52 @@ public class ElevateService extends RuleService {
         }
         return result;
     }
+    
+    private int addItemByStore(String keyword, String edp, RedirectRuleCondition condition, 
+    		int sequence, String expiryDate, String comment, MemberTypeEntity entity, boolean forceAdd, String storeId) {
+        int result = -1;
+        try {
+            logger.info(String.format("%s %s %s %d %s %s %s", keyword, edp, condition != null ? condition.getCondition() : "", 
+            		sequence, expiryDate, comment, storeId));           
+            String userName = utilityService.getUsername();
+            daoService.addKeyword(new StoreKeyword(storeId, keyword));
+
+            ElevateResult e = new ElevateResult(new StoreKeyword(storeId, keyword));
+            e.setLocation(sequence);
+            e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
+            e.setCreatedBy(userName);
+            e.setComment(comment);
+            e.setElevateEntity(entity);
+            e.setForceAdd(forceAdd);
+            switch (entity) {
+                case PART_NUMBER:
+                    e.setEdp(edp);
+                    break;
+                case FACET:
+                    e.setCondition(condition);
+                    break;
+            }
+
+            result = daoService.addElevateResult(e);
+            if (result > 0) {
+                if (StringUtils.isNotBlank(comment)) {
+                    addComment(comment, e);
+                }
+                if (e.isForceAdd()) {
+                    result = 2;
+                }
+                try {
+                    ruleStatusService.add(new RuleStatus(RuleEntity.ELEVATE, DAOUtils.getStoreId(e.getStoreKeyword()),
+                            keyword, keyword, userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+                } catch (CoreServiceException de) {
+                    logger.error("Failed to create rule status for elevate: " + keyword);
+                }
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during addItemByStore()", e);
+        }
+        return result;
+    }
 
     @RemoteMethod
     public int addProductItemForceAdd(String keyword, String edp, int sequence, String expiryDate, String comment) {
@@ -266,6 +312,44 @@ public class ElevateService extends RuleService {
         rrCondition.setStoreId(utilityService.getStoreId());
         utilityService.setFacetTemplateValues(rrCondition);
         return addItem(keyword, null, rrCondition, sequence, expiryDate, comment, MemberTypeEntity.FACET, false);
+    }
+    
+    @RemoteMethod
+    public int copyElevatedItems(String keyword, String storeId, int deleteExisting) {
+    	int result = 0;
+    	//delete existing data first before copying
+    	if (deleteExisting > 0){
+    		RecordSet<ElevateProduct> allExistingProducts = getAllElevatedProductsIgnoreKeywordByStore(keyword, storeId, 1, 0);
+    		if (allExistingProducts.getTotalSize() > 0){
+    			clearRuleByStore(keyword, storeId);
+    		}
+    	}
+    	RecordSet<ElevateProduct> allElevatedProducts = getAllElevatedProductsIgnoreKeyword(keyword, 1, 0);
+    	if (allElevatedProducts != null && allElevatedProducts.getTotalSize() > 0){
+    		List<ElevateProduct> elevateList = allElevatedProducts.getList();
+    		for (ElevateProduct e : elevateList){
+    			MemberTypeEntity entity = e.getMemberType();
+    			String expiryDate = e.getExpiryDate() != null ? 
+    					StringUtils.trimToEmpty(jodaDateTimeUtil.formatFromStorePattern(storeId, e.getExpiryDate(), JodaPatternType.DATE)) : null;
+    			
+                switch (entity) {
+	                case PART_NUMBER:
+	                	result += addItemByStore(keyword, e.getEdp(), null, Integer.parseInt(String.valueOf(e.getLocation())), 
+	                			expiryDate, e.getComment(), MemberTypeEntity.PART_NUMBER, false, storeId);
+	                    break;
+	                case FACET:
+	                	RedirectRuleCondition rrCondition = e.getCondition();
+	                	rrCondition.setStoreId(storeId);
+	                	rrCondition.setFacetPrefix(utilityService.getStoreFacetPrefixByStore(storeId));
+	                	rrCondition.setFacetTemplate(utilityService.getStoreFacetTemplateByStore(storeId));
+	                	rrCondition.setFacetTemplateName(utilityService.getStoreFacetTemplateNameByStore(storeId));
+	                	result += addItemByStore(keyword, null, rrCondition, Integer.parseInt(String.valueOf(e.getLocation())), 
+	                			expiryDate, e.getComment(), MemberTypeEntity.FACET, false, storeId);
+	                    break;
+                }
+    		}
+    	}
+    	return result;
     }
 
     @RemoteMethod
@@ -426,7 +510,7 @@ public class ElevateService extends RuleService {
         }
         return result;
     }
-
+    
     @RemoteMethod
     public RecordSet<ElevateProduct> getAllElevatedProductsIgnoreKeyword(String keyword, int page, int itemsPerPage) {
         try {
@@ -439,6 +523,20 @@ public class ElevateService extends RuleService {
             return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
         } catch (DaoException e) {
             logger.error("Failed during getAllElevatedProducts()", e);
+        }
+        return null;
+    }
+    
+    @RemoteMethod
+    public RecordSet<ElevateProduct> getAllElevatedProductsIgnoreKeywordByStore(String keyword, String storeId,  int page, int itemsPerPage) {
+        try {
+            logger.info(String.format("%s %s %d %d", keyword, storeId, page, itemsPerPage));
+            String server = utilityService.getServerName();
+            ElevateResult e = new ElevateResult(new StoreKeyword(storeId, keyword));
+            SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null, page, itemsPerPage);
+            return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
+        } catch (DaoException e) {
+            logger.error("Failed during getAllElevatedProductsIgnoreKeywordByStore()", e);
         }
         return null;
     }
@@ -562,6 +660,17 @@ public class ElevateService extends RuleService {
         try {
             logger.info(String.format("%s", keyword));
             return daoService.clearElevateResult(new StoreKeyword(utilityService.getStoreId(), keyword));
+        } catch (DaoException e) {
+            logger.error("Failed during clearRule()", e);
+        }
+        return -1;
+    }
+    
+    @RemoteMethod
+    public int clearRuleByStore(String keyword, String storeId) {
+        try {
+            logger.info(String.format("%s %s", keyword, storeId));
+            return daoService.clearElevateResult(new StoreKeyword(storeId, keyword));
         } catch (DaoException e) {
             logger.error("Failed during clearRule()", e);
         }

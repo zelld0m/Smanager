@@ -197,6 +197,48 @@ public class DemoteService extends RuleService {
         }
         return result;
     }
+    
+    private int addItemByStore(String keyword, String edp, RedirectRuleCondition condition, int sequence, 
+    		String expiryDate, String comment, MemberTypeEntity entity, String storeId) {
+        int result = -1;
+        try {
+            logger.info(String.format("%s %s %s %d, %s %s %s", keyword, edp, condition != null ? condition.getCondition() : "", 
+            		sequence, expiryDate, comment, storeId));
+            String userName = utilityService.getUsername();
+            daoService.addKeyword(new StoreKeyword(storeId, keyword));
+
+            DemoteResult e = new DemoteResult(new StoreKeyword(storeId, keyword));
+            e.setLocation(sequence);
+            e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
+            e.setCreatedBy(userName);
+            e.setComment(comment);
+            e.setDemoteEntity(entity);
+            switch (entity) {
+                case PART_NUMBER:
+                    e.setEdp(edp);
+                    break;
+                case FACET:
+                    e.setCondition(condition);
+                    break;
+            }
+
+            result = daoService.addDemoteResult(e);
+            if (result > 0) {
+                if (StringUtils.isNotBlank(comment)) {
+                    addComment(comment, e);
+                }
+                try {
+                    ruleStatusService.add(new RuleStatus(RuleEntity.DEMOTE, DAOUtils.getStoreId(e.getStoreKeyword()),
+                            keyword, keyword, userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+                } catch (CoreServiceException ex) {
+                    logger.error("Failed to create rule status for demote: " + keyword);
+                }
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during addItemByStore()", e);
+        }
+        return result;
+    }
 
     @RemoteMethod
     public int add(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
@@ -252,6 +294,44 @@ public class DemoteService extends RuleService {
         rrCondition.setStoreId(utilityService.getStoreId());
         utilityService.setFacetTemplateValues(rrCondition);
         return addItem(keyword, null, rrCondition, sequence, expiryDate, comment, MemberTypeEntity.FACET);
+    }
+    
+    @RemoteMethod
+    public int copyDemoteItems(String keyword, String storeId, int deleteExisting) {
+    	int result = 0;
+    	//delete existing data first before copying
+    	if (deleteExisting > 0){
+    		RecordSet<DemoteProduct> allExistingProducts = getAllProductsIgnoreKeywordByStore(keyword, storeId, 1, 0);
+    		if (allExistingProducts.getTotalSize() > 0){
+    			clearRuleByStore(keyword, storeId);
+    		}
+    	}
+    	RecordSet<DemoteProduct> allDemoteProducts = getAllProductsIgnoreKeyword(keyword, 1, 0);
+    	if (allDemoteProducts != null && allDemoteProducts.getTotalSize() > 0){
+    		List<DemoteProduct> demoteList = allDemoteProducts.getList();
+    		for (DemoteProduct e : demoteList){
+    			MemberTypeEntity entity = e.getMemberType();
+    			String expiryDate = e.getExpiryDate() != null ? 
+    					StringUtils.trimToEmpty(jodaDateTimeUtil.formatFromStorePattern(storeId, e.getExpiryDate(), JodaPatternType.DATE)) : null;
+    			
+                switch (entity) {
+	                case PART_NUMBER:
+	                	result += addItemByStore(keyword, e.getEdp(), null, Integer.parseInt(String.valueOf(e.getLocation())), 
+	                			expiryDate, e.getComment(), MemberTypeEntity.PART_NUMBER, storeId);
+	                    break;
+	                case FACET:
+	                	RedirectRuleCondition rrCondition = e.getCondition();
+	                	rrCondition.setStoreId(storeId);
+	                	rrCondition.setFacetPrefix(utilityService.getStoreFacetPrefixByStore(storeId));
+	                	rrCondition.setFacetTemplate(utilityService.getStoreFacetTemplateByStore(storeId));
+	                	rrCondition.setFacetTemplateName(utilityService.getStoreFacetTemplateNameByStore(storeId));
+	                	result += addItemByStore(keyword, null, rrCondition, Integer.parseInt(String.valueOf(e.getLocation())), 
+	                			expiryDate, e.getComment(), MemberTypeEntity.FACET, storeId);
+	                    break;
+                }
+    		}
+    	}
+    	return result;
     }
 
     @RemoteMethod
@@ -405,6 +485,21 @@ public class DemoteService extends RuleService {
         }
         return null;
     }
+    
+    @RemoteMethod
+    public RecordSet<DemoteProduct> getAllProductsIgnoreKeywordByStore(String keyword, String storeId, int page, int itemsPerPage) {
+        try {
+            logger.info(String.format("%s %s %d %d", keyword, storeId, page, itemsPerPage));
+            String server = utilityService.getServerName();
+            DemoteResult e = new DemoteResult();
+            e.setStoreKeyword(new StoreKeyword(storeId, keyword));
+            SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, null, page, itemsPerPage);
+            return daoService.getDemotedProductsIgnoreKeyword(server, criteria);
+        } catch (DaoException e) {
+            logger.error("Failed during getAllProductsIgnoreKeywordByStore()", e);
+        }
+        return null;
+    }
 
     @RemoteMethod
     public RecordSet<DemoteProduct> getActiveProducts(String keyword, int page, int itemsPerPage) {
@@ -502,6 +597,17 @@ public class DemoteService extends RuleService {
             return daoService.clearDemoteResult(new StoreKeyword(utilityService.getStoreId(), keyword));
         } catch (DaoException e) {
             logger.error("Failed during clearRule()", e);
+        }
+        return -1;
+    }
+    
+    @RemoteMethod
+    public int clearRuleByStore(String keyword, String storeId) {
+        try {
+            logger.info(String.format("%s %s", keyword, storeId));
+            return daoService.clearDemoteResult(new StoreKeyword(storeId, keyword));
+        } catch (DaoException e) {
+            logger.error("Failed during clearRuleByStore()", e);
         }
         return -1;
     }

@@ -296,7 +296,6 @@ function initFileUploads() {
 		var COOKIE_SERVER_SELECTED = "server.selected";
 
 		var getServerList = function(){
-
 			var serverSelection = $.trim($.cookie(COOKIE_SERVER_SELECTION));
 
 			if($.isNotBlank(serverSelection)){
@@ -355,6 +354,77 @@ function initFileUploads() {
 				$("#select-server option[value='" + serverSelected + "']").attr("selected", "selected");				
 			}
 		};
+		
+		var COOKIE_STORE_SELECTION = "store.selection";
+		var COOKIE_STORE_SELECTED = "store.selected";
+		var COOKIE_ENTERED_KEYWORD = "entered.keyword";
+		
+		var getStoreList = function(){
+			var storeSelection = $.trim($.cookie(COOKIE_STORE_SELECTION));
+			$("#select-store option").remove();		
+			if($.isNotBlank(storeSelection)){
+				parseData = JSON.parse($.trim($.cookie(COOKIE_STORE_SELECTION)));
+				for (key in parseData){
+					var keyVal = parseData[key];
+					var storeName = keyVal['name'];
+					$("#select-store").append($("<option>", { value : key }).text(storeName));					
+				}
+			}else{				
+				UtilityServiceJS.getStoreListNameAndSyn(true, {
+					callback:function(data){
+						$.cookie(COOKIE_STORE_SELECTION, JSON.stringify(data) ,{path: GLOBAL_contextPath});
+						for (key in data){
+							var keyVal = data[key];
+							var storeName = keyVal['name'];
+							$("#select-store").append($("<option>", { value : key }).text(storeName));			
+						}
+					}
+				});
+			}
+			setSelectedStore();				
+			$("#select-store").off().on({
+				change: function(event, data){
+					var reload;
+					if (data != undefined) {
+						reload = data["reload"];
+					}
+					if (reload == undefined) {
+						var selectedStore = $("#select-store option:selected").val();
+						$.cookie(COOKIE_STORE_SELECTED, selectedStore ,{path:GLOBAL_contextPath});
+						var keyword = $.trim($.cookie(COOKIE_ENTERED_KEYWORD));						
+						UtilityServiceJS.setStoreId(selectedStore, {
+							callback:function(){
+								var url = window.location.href;
+								url = url.substring(0, url.lastIndexOf('/'));
+								if(!url.endsWith('searchManager')) {
+									url = url + '/' + selectedStore;
+								}
+								window.location.href = url;
+								UtilityServiceJS.setStoreNameById(selectedStore);
+							}
+						});						
+					}
+					else if (reload == true) {
+						setSelectedStore();
+					}
+				}
+			});
+		};
+		
+		var setSelectedStore = function() {
+			var storeSelected = $.trim($.cookie(COOKIE_STORE_SELECTED));
+			if ($.isBlank(storeSelected)) {
+				UtilityServiceJS.getStoreId({
+					callback:function(id){
+						$.cookie(COOKIE_STORE_SELECTED, id ,{path:GLOBAL_contextPath});
+						$("#select-store option[value='" + id + "']").attr("selected", "selected");
+					}
+				});
+			}
+			else {
+				$("#select-store option[value='" + storeSelected + "']").attr("selected", "selected");				
+			}
+		};
 
 		var COOKIE_NAME_DOCK = "dock.active";
 
@@ -408,6 +478,7 @@ function initFileUploads() {
 		useTabs();
 		useTinyMCE();
 		getServerList();
+		getStoreList();
 		refreshDock();
 	});
 })(jQuery);

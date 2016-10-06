@@ -189,6 +189,12 @@ public class UtilityService {
 	}
 
 	@RemoteMethod
+	public void setStoreNameById(String storeId) {
+		String storeName = configManager.getStoreName(storeId);
+		setStoreName(storeName);
+	}
+	
+	@RemoteMethod
 	public void setStoreName(String storeName) {
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
@@ -266,7 +272,8 @@ public class UtilityService {
 		json.put("searchWithinParamName", configManager.getProperty("searchwithin", storeId, "searchwithin.paramname"));
 		json.put("isTargetStore", configManager.getProperty("workflow", storeId, "targetStore"));
 		json.put("allStoresDisplayName", configManager.getAllStoresDisplayName());
-
+		json.put("allStoresDisplayNameAndSyn", configManager.getAllStoresDisplayNameAndSyn());
+		
 		return json.toString();
 	}
 	
@@ -298,6 +305,15 @@ public class UtilityService {
 		json.put("allStoresDisplayName", configManager.getAllStoresDisplayName());
 
 		return json;
+	}
+	
+	@RemoteMethod
+	public Map<String, Map<String, String>> getStoreListNameAndSyn(boolean includeSelectedStore) {
+		Map<String, Map<String, String>> map = configManager.getAllStoresDisplayNameAndSyn();
+		if (!includeSelectedStore) {
+			map.remove(getStoreId());
+		}
+		return map;
 	}
 
 	@RemoteMethod
@@ -462,5 +478,21 @@ public class UtilityService {
 
 	public String getStoreFacetTemplateType(String storeId) {
 		return getStoreSetting(storeId, DAOConstants.SETTINGS_FACET_TEMPLATE);
+	}
+	
+	public String getStoreFacetPrefixByStore(String storeId) {
+		return configManager.getStoreFacetPrefix(storeId);
+	}
+
+	public String getStoreFacetTemplateByStore(String storeId) {
+		return configManager.getStoreFacetTemplate(storeId);
+	}
+
+	public String getStoreFacetTemplateNameByStore(String storeId) {
+		return configManager.getStoreFacetTemplateName(storeId);
+	}
+
+	public String getStoreFacetNameByStore(String storeId) {
+		return configManager.getStoreFacetName(storeId);
 	}
 }

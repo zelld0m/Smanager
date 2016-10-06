@@ -21,6 +21,7 @@
 			removeRuleItemConfirmText: "Item will be removed from this rule. Continue?",
 			clearRuleItemConfirmText: "All items associated to this rule will be removed. Continue?",
 			addForceAddItem: " is not part of natural search results. Continue?",
+			clearRuleItemForCopyConfirmText: "All items associated for the selected store will be removed before copying. Continue?",
 
 			getRuleList: function(){
 				var self = this;
@@ -452,6 +453,42 @@
 					afterSubmitForApprovalRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
 						self.showRuleContent();
+					},
+					copyKeywordAndRuleRequest: function(keyword, storeCode, ruleStatusId){
+						self.preShowRuleContent();
+						StoreKeywordServiceJS.addKeywordByStore(keyword, storeCode, {
+							callback : function(data){
+								if(data!=null){									
+									DemoteServiceJS.copyDemoteItems(keyword, storeCode, 0, {
+										callback: function(data){
+											self.postShowRuleContent();
+											if (data != null){
+												var copyMessage = 'Demote rule of ' + keyword;
+												showActionResponse(1, "copy", copyMessage);
+											}
+										}
+									});
+									
+								}
+							}
+						});
+
+					},
+					copyRuleRequest: function(keyword, storeCode, ruleStatusId){
+						jConfirm(self.clearRuleItemForCopyConfirmText, "Delete Items Before Copying", function(result){
+							if(result){ 
+								self.preShowRuleContent();
+								DemoteServiceJS.copyDemoteItems(keyword, storeCode, 1, {
+									callback: function(data){
+										if (data != null){
+											self.postShowRuleContent();
+											var copyMessage = 'Demote rule of ' + keyword;
+											showActionResponse(1, "copy", copyMessage);
+										}
+									}
+								});
+							}
+						});
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;

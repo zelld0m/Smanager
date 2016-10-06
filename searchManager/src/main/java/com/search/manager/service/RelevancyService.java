@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
@@ -293,6 +294,35 @@ public class RelevancyService extends RuleService {
         }
         return 0;
     }
+    
+    @RemoteMethod
+    public int deleteRuleByStore(String ruleId, String storeId) {
+        try {
+            try {
+                daoService.createRuleVersion(storeId, RuleEntity.RANKING_RULE, 
+                		ruleId, utilityService.getUsername(), "Deleted Rule", "Deleted Rule");
+            } catch (Exception e) {
+                logger.error("Error creating backup. " + e.getMessage());
+            }
+            String username = utilityService.getUsername();
+            Relevancy rule = new Relevancy();
+            rule.setRuleId(ruleId);
+            rule.setStore(new Store(storeId));
+            rule.setLastModifiedBy(username);
+            int status = daoService.deleteRelevancy(rule);
+            if (status > 0) {
+                RuleStatus ruleStatus = new RuleStatus();
+                ruleStatus.setRuleTypeId(RuleEntity.RANKING_RULE.getCode());
+                ruleStatus.setRuleRefId(rule.getRuleId());
+                ruleStatus.setStoreId(storeId);
+                ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, username);
+            }
+            return status;
+        } catch (Exception e) {
+            logger.error("Failed during deleteRuleByStore()", e);
+        }
+        return 0;
+    }
 
     @RemoteMethod
     public BoostQueryModel getValuesByString(String bq) {
@@ -549,5 +579,145 @@ public class RelevancyService extends RuleService {
 
     public void setDaoService(DaoService daoService) {
         this.daoService = daoService;
+    }
+    
+    @RemoteMethod
+    public int copyRelevancyRule(String keyword, String storeId, String existingRuleId, int deleteExisting) {
+    	int result = 0;
+    	String copiedRelevancyId = StringUtils.EMPTY;
+        Relevancy copiedRelevancy = null;
+        String userName = utilityService.getUsername();
+        try {
+            Relevancy relevancyToCopy = getRule(existingRuleId);
+        	
+        	//delete existing data first before copying
+        	if (deleteExisting > 0){
+                Relevancy relevancy = new Relevancy();
+                relevancy.setStore(new Store(storeId));
+                relevancy.setRelevancyName(relevancyToCopy.getRuleName());
+                SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, 0, 0);
+                RecordSet<Relevancy> set = daoService.searchRelevancy(criteria, MatchType.MATCH_NAME);
+                if (set.getTotalSize() > 0) {
+                    for (Relevancy r : set.getList()) {
+                    	deleteRuleByStore(r.getRelevancyId(), storeId);
+                    	break;
+                    }
+                }
+        	}
+        	
+            Relevancy relevancy = new Relevancy();
+            relevancy.setStore(new Store(storeId));
+            relevancy.setRelevancyName(relevancyToCopy.getRelevancyName());
+            relevancy.setDescription(relevancyToCopy.getDescription());
+            relevancy.setStartDate(relevancyToCopy.getStartDate());
+            relevancy.setEndDate(relevancyToCopy.getEndDate());
+            relevancy.setFormattedStartDate(jodaDateTimeUtil.formatFromStorePattern(storeId, relevancyToCopy.getStartDate(), JodaPatternType.DATE));
+            relevancy.setFormattedEndDate(jodaDateTimeUtil.formatFromStorePattern(storeId, relevancyToCopy.getEndDate(), JodaPatternType.DATE));            
+            relevancy.setCreatedBy(userName);
+            copiedRelevancyId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
+            if (StringUtils.isNotEmpty(copiedRelevancyId)){
+            	result = 1;
+                copiedRelevancy = getRule(copiedRelevancyId);
+
+                //add fields
+                Map<String, String> fields = relevancyToCopy.getParameters();
+                for (String key : fields.keySet()) {
+                    try {
+                    	addRuleFieldValueByStore(copiedRelevancyId, key, fields.get(key), storeId);
+                    } catch (Exception e) {
+                        daoService.deleteRelevancy(copiedRelevancy);
+                        logger.error("Failed during copyRelavancyRule()", e);
+                    }
+                }
+                
+                //add keywords
+                copyKeywordsToRuleByStore(relevancyToCopy.getRelevancyId(), copiedRelevancyId, storeId);
+                
+                try {
+                    ruleStatusService.add(new RuleStatus(RuleEntity.RANKING_RULE, storeId, copiedRelevancyId, copiedRelevancy.getRelevancyName(),
+                            userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+                } catch (CoreServiceException de) {
+                    logger.error("Failed to create rule status for relevancy rule: " + copiedRelevancy.getRelevancyName());
+                }
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during copyRelavancyRule()", e);
+        }
+    	return result;
+    }
+    
+    private int addRuleFieldValueByStore(String relevancyId, String fieldName, String fieldValue, String storeId) throws Exception {
+        try {
+            logger.info(String.format("%s %s %s %s", relevancyId, fieldName, fieldValue, storeId));
+            Relevancy relevancy = new Relevancy();
+            relevancy.setRelevancyId(relevancyId);
+            relevancy.setStore(new Store(storeId));
+            relevancy.setLastModifiedBy(utilityService.getUsername());
+
+            RelevancyField relevancyField = new RelevancyField();
+            //bq post-processing
+            if (StringUtils.equalsIgnoreCase("bq", fieldName)) {
+                try {
+                    Schema schema = SolrSchemaUtility.getSchema(utilityService.getSolrServerUrl(utilityService.getServerName()), 
+                    		utilityService.getStoreCore(storeId));
+                    BoostQueryModel boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
+                    fieldValue = boostQueryModel.toString();
+                } catch (SchemaException e) {
+                    logger.error("Failed during addRuleFieldValueByStore()", e);
+                    return 0;
+                }
+            }
+
+            //bf post-processing
+            if (StringUtils.equalsIgnoreCase("bf", fieldName)) {
+                try {
+                	Schema schema = SolrSchemaUtility.getSchema(utilityService.getSolrServerUrl(utilityService.getServerName()), 
+                			utilityService.getStoreCore(storeId));
+                    BoostFunctionModel.toModel(schema, fieldValue, true);
+                } catch (SchemaException e) {
+                    logger.error("Failed during addRuleFieldValueByStore()", e);
+                    return 0;
+                } catch (Exception e) {
+                    logger.error("Failed during addRuleFieldValueByStore()", e);
+                    return 0;
+                }
+            }
+
+            relevancyField.setFieldName(fieldName);
+            relevancyField.setFieldValue(fieldValue);
+            relevancyField.setRelevancy(relevancy);
+            return daoService.addOrUpdateRelevancyField(relevancyField);
+        } catch (DaoException e) {
+            logger.error("Failed during addRuleFieldValueByStore()", e);
+        }
+        return 0;
+    }
+    
+    
+    private int copyKeywordsToRuleByStore(String relevancyToCopyId, String copiedRelevancyId, String storeId) {
+        int result = -1;
+        try {        	
+        	RelevancyKeyword rk = new RelevancyKeyword();
+            Relevancy r = new Relevancy();
+            r.setRelevancyId(relevancyToCopyId);
+            r.setStore(new Store(utilityService.getStoreId()));
+            rk.setRelevancy(r);
+            rk.setKeyword(new Keyword(""));
+            SearchCriteria<RelevancyKeyword> criteria = new SearchCriteria<RelevancyKeyword>(rk, null, null, 0, 0);
+            RecordSet<RelevancyKeyword> rs = daoService.searchRelevancyKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR);
+            List<RelevancyKeyword> list = new ArrayList<RelevancyKeyword>(rs.getList());
+            if (CollectionUtils.isNotEmpty(list)){
+            	for (RelevancyKeyword rKeyword : list){
+                    Relevancy relevancy = new Relevancy(copiedRelevancyId);
+                    relevancy.setStore(new Store(storeId));
+                    daoService.addKeyword(new StoreKeyword(storeId, rKeyword.getKeyword().getKeywordId()));
+                    Keyword keyword = new Keyword(rKeyword.getKeyword().getKeywordId());
+                    daoService.addRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
+            	}
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during copyKeywordsToRuleByStore()", e);
+        }
+        return result;
     }
 }

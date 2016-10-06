@@ -45,6 +45,8 @@
 
 					$ul.find('li > a').click(function(e){
 						$(self.target).hide();
+						var COOKIE_ENTERED_KEYWORD = "entered.keyword";
+						$.cookie(COOKIE_ENTERED_KEYWORD, $.trim($(e.target).text()) ,{path:GLOBAL_contextPath});
 						self.manager.store.addByValue('q',$.trim($(e.target).text()));
 						self.manager.doRequest(0);
 					});

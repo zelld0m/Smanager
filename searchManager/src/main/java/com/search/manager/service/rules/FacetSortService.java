@@ -104,6 +104,43 @@ public class FacetSortService extends RuleService {
 
         return null;
     }
+    
+    @RemoteMethod
+    public FacetSort addRuleByStore(String ruleName, String ruleType, String sortType, String storeId) {
+        int result = -1;
+        String ruleId = StringUtils.EMPTY;
+        String username = utilityService.getUsername();
+        try {
+            FacetSort rule = new FacetSort(ruleName, ruleType, sortType, storeId);
+            rule.setCreatedBy(username);
+            ruleId = daoService.addFacetSortAndGetId(rule);
+            if (StringUtils.isNotBlank(ruleId)) {
+                if (RuleType.KEYWORD.getDisplayText().equalsIgnoreCase(ruleType)) {
+                    daoService.addKeyword(new StoreKeyword(storeId, ruleName));
+                }
+                result = addAllFacetGroup(ruleId);
+            }
+            try {
+                ruleStatusService.add(new RuleStatus(RuleEntity.FACET_SORT, storeId, ruleId, ruleName,
+                        username, username, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+            } catch (CoreServiceException de) {
+                logger.error("Failed to create rule status for facet sort rule: " + ruleName);
+            }
+
+            if (result > 0) {
+                return getRule(new FacetSort(ruleId, storeId));
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during addRuleByStore()", e);
+            try {
+                daoService.deleteFacetSort(new FacetSort(ruleId, storeId));
+            } catch (DaoException de) {
+                logger.error("Unable to complete process, need to manually delete rule", de);
+            }
+        }
+
+        return null;
+    }
 
     @RemoteMethod
     public static Map<String, String> getSortOrderList() {
@@ -138,6 +175,87 @@ public class FacetSortService extends RuleService {
         }
 
         return result;
+    }
+    
+    @RemoteMethod
+    public int deleteRuleByStore(String ruleId, String storeId) {
+        int result = -1;
+        try {
+            String username = utilityService.getUsername();
+            FacetSort rule = new FacetSort(ruleId, storeId);
+            rule.setLastModifiedBy(username);
+            result = daoService.deleteFacetSort(rule);
+            if (result > 0) {
+                RuleStatus ruleStatus = new RuleStatus();
+                ruleStatus.setRuleTypeId(RuleEntity.FACET_SORT.getCode());
+                ruleStatus.setRuleRefId(ruleId);
+                ruleStatus.setStoreId(storeId);
+                ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, username);
+            }
+        } catch (Exception e) {
+            logger.error("Failed during deleteRuleByStore()", e);
+        }
+
+        return result;
+    }
+    
+    @RemoteMethod
+    public int copyFacetSortRule(String keyword, String storeId, int deleteExisting) {
+    	int result = 0;
+    	try{
+    		//delete existing data first before copying
+        	if (deleteExisting > 0){
+        		FacetSort existingFacetSort = getRuleByName(storeId, keyword);
+        		if (existingFacetSort != null){
+        			deleteRuleByStore(existingFacetSort.getRuleId(), storeId);
+        		}
+        	}
+        	
+        	FacetSort fsFromCurrStore = getRuleByName(utilityService.getStoreId(), keyword);   	
+        	if (fsFromCurrStore != null){
+            	FacetSort newFacetSortRule = addRuleByStore(fsFromCurrStore.getRuleName(), 
+            			fsFromCurrStore.getRuleType().getDisplayText(), fsFromCurrStore.getSortType().getDisplayText(), storeId);
+            	RecordSet<FacetGroup> fgNewStoreSet = getAllFacetGroup(newFacetSortRule.getRuleId());
+            	if (fgNewStoreSet.getTotalSize() > 0){
+            		List<FacetGroup> fgNewStoreList = fgNewStoreSet.getList();
+            		for (FacetGroup newFg : fgNewStoreList){
+            			RecordSet<FacetGroup> fgCurrStoreSet = getAllFacetGroup(fsFromCurrStore.getRuleId());
+                		if (fgCurrStoreSet.getTotalSize() > 0){
+                        	List<FacetGroup> fgCurrStoreList = fgCurrStoreSet.getList();
+                        	for (FacetGroup fgCurrStore : fgCurrStoreList){
+                        		if (newFg.getFacetGroupType().equals(fgCurrStore.getFacetGroupType())){
+                        			newFg.setSequence(fgCurrStore.getSequence());
+                        			newFg.setSortType(fgCurrStore.getSortType());
+                        			newFg.setLastModifiedBy(utilityService.getUsername());
+                        			daoService.updateFacetGroup(newFg);
+
+                        			String facetGroupCurrStoreId = fgCurrStore.getId();
+                           			RecordSet<FacetGroupItem> fgiCurrStoreSet = 
+                           					getAllFacetGroupItem(fsFromCurrStore.getRuleId(), facetGroupCurrStoreId);
+                            		if (fgiCurrStoreSet.getTotalSize() > 0){
+                            			List<FacetGroupItem> fgiCurrStoreList = fgiCurrStoreSet.getList();
+                            			for (FacetGroupItem fgCurrStoreItem : fgiCurrStoreList){
+                            				FacetGroupItem fgiToCopy = new FacetGroupItem();
+                            				fgiToCopy.setId(StringUtils.EMPTY);
+                            				fgiToCopy.setRuleId(newFacetSortRule.getRuleId());
+                            				fgiToCopy.setFacetGroupId(newFg.getId());
+                            				fgiToCopy.setName(fgCurrStoreItem.getName());
+                            				fgiToCopy.setSequence(fgCurrStoreItem.getSequence());
+                            				fgiToCopy.setCreatedBy(utilityService.getUsername());
+                                            fgiToCopy.setStoreId(storeId);
+                            				result += addFacetGroupItem(fgiToCopy);
+                            			}
+                            		}
+                        		}
+                        	}
+                		}
+            		}
+            	}
+        	}
+    	} catch (DaoException e) {
+            logger.error("Failed during copyFacetSortRule()", e);
+        } 
+    	return result;
     }
 
     @RemoteMethod
@@ -234,11 +352,21 @@ public class FacetSortService extends RuleService {
         String store = utilityService.getStoreId();
         return getRule(new FacetSort(ruleId, store));
     }
+    
+    @RemoteMethod
+    public FacetSort getRuleByIdAndStore(String ruleId, String storeId) {
+        return getRule(new FacetSort(ruleId, storeId));
+    }
 
     @RemoteMethod
     public FacetSort getRuleByNameAndType(String ruleName, String ruleType) {
         String store = utilityService.getStoreId();
         return getRule(new FacetSort(ruleName, RuleType.get(ruleType), null, new Store(store)));
+    }
+    
+    @RemoteMethod
+    public FacetSort getRuleByNameTypeAndStore(String ruleName, String ruleType, String storeId) {
+        return getRule(new FacetSort(ruleName, RuleType.get(ruleType), null, new Store(storeId)));
     }
 
     @RemoteMethod

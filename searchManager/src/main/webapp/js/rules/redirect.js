@@ -17,6 +17,8 @@
         newFilterGroupText: "New Filter Group Condition",
         defaultIMS: "CatCode",
         templateAttributes: null,
+        clearRuleItemForCopyConfirmText: "All items associated for the selected store will be removed before copying. Continue?",
+        
         addDownloadListener: function() {
             var self = this;
             $("a#downloadIcon").download({
@@ -174,6 +176,30 @@
                 beforeRuleStatusRequest: function() {
                     self.prepareRedirect();
                 },
+    			copyKeywordAndRuleRequest: function(keyword, storeCode, ruleStatusId){
+    				self.prepareRedirect();
+    				RedirectServiceJS.copyRedirectRule(keyword, storeCode, self.selectedRule["ruleId"], 1, {
+    					callback: function(data){
+    						self.showRedirect();
+    						if (data != null){
+    							var copyMessage = 'Redirect rule of ' + keyword;
+    							showActionResponse(1, "copy", copyMessage);
+    						}
+    					}
+    				});
+    			},
+    			copyRuleRequest: function(keyword, storeCode, ruleStatusId){
+    				self.prepareRedirect();
+    				RedirectServiceJS.copyRedirectRule(keyword, storeCode, self.selectedRule["ruleId"], 1, {
+    					callback: function(data){
+    						self.showRedirect();
+    						if (data != null){
+    							var copyMessage = 'Redirect rule of ' + keyword;
+    							showActionResponse(1, "copy", copyMessage);
+    						}
+    					}
+    				});
+    			},
                 afterRuleStatusRequest: function(ruleStatus) {
                     $("#submitForApproval").show();
                     $("#preloader").hide();

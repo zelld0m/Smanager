@@ -15,6 +15,7 @@
 			rulePageSize: 15,
 
 			removeFacetGroupItemConfirmText: "Delete facet value?",
+			clearRuleItemForCopyConfirmText: "All items associated for the selected store will be removed before copying. Continue?",
 
 			facetFields : ["Category", "Manufacturer"],	//TODO This might be retrieved from a lookup table
 			facetValueList: null,
@@ -72,6 +73,35 @@
 					},
 					beforeRuleStatusRequest: function(){
 						self.prepareFacetSort();	
+					},
+					copyKeywordAndRuleRequest: function(keyword, storeCode, ruleStatusId){
+						self.prepareFacetSort();
+						FacetSortServiceJS.copyFacetSortRule(keyword, storeCode, 1, {
+							callback: function(data){
+								self.showFacetSort();
+								if (data != null){
+									var copyMessage = 'Facet Sort Rule of ' + keyword;
+									showActionResponse(1, "copy", copyMessage);
+								}
+							}
+						});
+
+					},
+					copyRuleRequest: function(keyword, storeCode, ruleStatusId){
+						jConfirm(self.clearRuleItemForCopyConfirmText, "Delete Items Before Copying", function(result){
+							if(result){
+								self.prepareFacetSort();
+								FacetSortServiceJS.copyFacetSortRule(keyword, storeCode, 1, {
+									callback: function(data){
+										self.showFacetSort();
+										if (data != null){
+											var copyMessage = 'Facet Sort rule of ' + keyword;
+											showActionResponse(1, "copy", copyMessage);
+										}
+									}
+								});
+							}
+						});
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						$("#preloader").hide();

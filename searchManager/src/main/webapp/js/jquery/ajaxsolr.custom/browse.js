@@ -9,7 +9,7 @@
 //			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/'
 			solrUrl: GLOBAL_solrUrl
 		});
-
+	
 		// Install component widgets
 		Manager.addWidget(new AjaxSolr.SearchKeywordWidget({
 			id: WIDGET_ID_searchKeyword,
@@ -147,8 +147,8 @@
 			target: '#prodAttribFilter'
 		}));
 
-		Manager.init();
-
+		Manager.init();	
+		
 		// default IMS
 		var facetTemplate = ['Category', 'Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 
@@ -240,6 +240,12 @@
 		$('#keyword').after($('#mockTypeahead').html());
 		PCM.typeAhead.init($('#keyword'), $('#typeahead'), 100, typeaheadManager);
 		
+		var COOKIE_ENTERED_KEYWORD = "entered.keyword";
+		var enteredKeyword = $.trim($.cookie(COOKIE_ENTERED_KEYWORD));
+		if (enteredKeyword != undefined && enteredKeyword != ''){
+			Manager.store.addByValue('q', enteredKeyword);
+			Manager.doRequest(0);
+		}		
 	});
 
 	

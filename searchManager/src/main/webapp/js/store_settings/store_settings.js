@@ -537,6 +537,19 @@ $(function() {
                                     }
                                 });
                                 
+        						UtilityServiceJS.getStoreListNameAndSyn(true, {
+        							callback:function(data){
+        								$.cookie(COOKIE_STORE_SELECTION, JSON.stringify(data) ,{path: GLOBAL_contextPath});
+        								storeList = data;
+        								$("select#refstore").append($("<option>", { value : "" }).text("All Stores"));
+        								for (key in data){
+        									var keyVal = data[key];
+        									var storeName = keyVal['name'];
+        									$("select#refstore").append($("<option>", { value : key }).text(storeName));
+        								}
+        							}
+        						});
+                                
                                 SecurityServiceJS.getImportTypeList({
                                     callback: function(data) {
                                         roleList = data;

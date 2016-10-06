@@ -8,7 +8,8 @@
 	var keywordInRulePageSize = 5;
 	var deleteRuleConfirmText = "Delete this relevancy rule?";
 	var ruleNameErrorText = "Please provide a valid relevancy rule name.";
-
+	var clearRuleItemForCopyConfirmText = "All items associated for the selected store will be removed before copying. Continue?";
+	
 	var schemaFieldsPageSize = 8;
 	var schemaFieldsTotal = 0;
 	var schemaFieldsSearchText = "Enter Field Name";
@@ -1240,6 +1241,34 @@
 					},
 					preHook:function(){
 						prepareRelevancy();
+					}
+				});
+			},
+			copyKeywordAndRuleRequest: function(keyword, storeCode, ruleStatusId){
+				prepareRelevancy();
+				RelevancyServiceJS.copyRelevancyRule(keyword, storeCode, selectedRule.ruleId, 1, {
+					callback: function(data){
+						showRelevancy();
+						if (data != null){
+							var copyMessage = 'Relevancy rule of ' + keyword;
+							showActionResponse(1, "copy", copyMessage);
+						}
+					}
+				});
+			},
+			copyRuleRequest: function(keyword, storeCode, ruleStatusId){
+				jConfirm(clearRuleItemForCopyConfirmText, "Delete Items Before Copying", function(result){
+					if(result){
+						prepareRelevancy();
+						RelevancyServiceJS.copyRelevancyRule(keyword, storeCode, selectedRule.ruleId, 1, {
+							callback: function(data){
+								showRelevancy();
+								if (data != null){
+									var copyMessage = 'Relevancy rule of ' + keyword;
+									showActionResponse(1, "copy", copyMessage);
+								}
+							}
+						});
 					}
 				});
 			},

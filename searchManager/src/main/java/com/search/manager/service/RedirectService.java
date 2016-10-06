@@ -212,6 +212,26 @@ public class RedirectService extends RuleService {
         }
         return result;
     }
+    
+    @RemoteMethod
+    public int deleteRuleByStore(String ruleId, String storeId) {
+        int result = -1;
+        try {
+            String username = utilityService.getUsername();
+            RedirectRule rule = new RedirectRule(ruleId);
+            result = daoService.deleteRedirectRule(rule);
+            if (result > 0) {
+                RuleStatus ruleStatus = new RuleStatus();
+                ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
+                ruleStatus.setRuleRefId(rule.getRuleId());
+                ruleStatus.setStoreId(storeId);
+                ruleStatusService.updateRuleStatusDeletedInfo(ruleStatus, username);
+            }
+        } catch (Exception e) {
+            logger.error("Failed during deleteRuleByStore()", e);
+        }
+        return result;
+    }
 
     @RemoteMethod
     public RecordSet<RedirectRule> getAllRule(String name, int page, int itemsPerPage) {
@@ -270,6 +290,19 @@ public class RedirectService extends RuleService {
         }
         return null;
     }
+    
+    @RemoteMethod
+    public RedirectRule getRuleByStore(String ruleId, String storeId) {
+        try {
+            RedirectRule redirectRule = new RedirectRule();
+            redirectRule.setStoreId(storeId);
+            redirectRule.setRuleId(ruleId);
+            return daoService.getRedirectRule(redirectRule);
+        } catch (DaoException e) {
+            logger.error("Failed during getRuleByStore()", e);
+        }
+        return null;
+    }
 
     @RemoteMethod
     public int addKeywordToRule(String ruleId, String keyword) {
@@ -285,6 +318,23 @@ public class RedirectService extends RuleService {
             result = daoService.addRedirectKeyword(rule);
         } catch (DaoException e) {
             logger.error("Failed during addKeywordToRule()", e);
+        }
+        return result;
+    }
+    
+    
+    public int addKeywordToRuleByStore(String ruleId, String keyword, String storeId) {
+        int result = -1;
+        try {
+            daoService.addKeyword(new StoreKeyword(storeId, keyword));
+            RedirectRule rule = new RedirectRule();
+            rule.setStoreId(storeId);
+            rule.setRuleId(ruleId);
+            rule.setSearchTerm(keyword);
+            rule.setLastModifiedBy(utilityService.getUsername());
+            result = daoService.addRedirectKeyword(rule);
+        } catch (DaoException e) {
+            logger.error("Failed during addKeywordToRuleByStore()", e);
         }
         return result;
     }
@@ -329,6 +379,22 @@ public class RedirectService extends RuleService {
                 return getConditionInRule(ruleId, 0, 0);
             }
 
+        } catch (DaoException e) {
+            logger.error("Failed during addRuleCondition()", e);
+        }
+        return null;
+    }
+    
+    public RecordSet<RedirectRuleCondition> addRuleConditionByStore(String ruleId, Map<String, List<String>> filter, String storeId) {
+        try {
+            RedirectRuleCondition rr = new RedirectRuleCondition();
+            rr.setStoreId(storeId);
+            rr.setRuleId(ruleId);
+            rr.setFilter(filter);
+            utilityService.setFacetTemplateValues(rr);
+            if (daoService.addRedirectCondition(rr) > 0) {
+                return getConditionInRuleByStore(ruleId, 0, 0, storeId);
+            }
         } catch (DaoException e) {
             logger.error("Failed during addRuleCondition()", e);
         }
@@ -410,6 +476,28 @@ public class RedirectService extends RuleService {
         }
         return null;
     }
+    
+    @RemoteMethod
+    public RecordSet<Keyword> getAllKeywordInRuleByStore(String ruleId, String keyword, int page, int itemsPerPage, String storeId) {
+        try {
+            RedirectRule rule = new RedirectRule();
+            rule.setRuleId(ruleId);
+            rule.setStoreId(storeId);
+            rule.setSearchTerm(keyword);
+            SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null, page, itemsPerPage);
+            RecordSet<StoreKeyword> storeKeyword = daoService.getRedirectKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR);
+            List<Keyword> list = new ArrayList<Keyword>();
+            if (storeKeyword.getTotalSize() > 0) {
+                for (StoreKeyword sk : storeKeyword.getList()) {
+                    list.add(sk.getKeyword());
+                }
+            }
+            return new RecordSet<Keyword>(list, storeKeyword.getTotalSize());
+        } catch (DaoException e) {
+            logger.error("Failed during getAllKeywordInRuleByStore()", e);
+        }
+        return null;
+    }
 
     @RemoteMethod
     public RecordSet<RedirectRuleCondition> getConditionInRule(String ruleId, int page, int itemsPerPage) {
@@ -421,6 +509,19 @@ public class RedirectService extends RuleService {
             return daoService.getRedirectConditions(criteria);
         } catch (DaoException e) {
             logger.error("Failed during getConditionInRule()", e);
+        }
+        return null;
+    }
+    
+    public RecordSet<RedirectRuleCondition> getConditionInRuleByStore(String ruleId, int page, int itemsPerPage, String storeId) {
+        try {
+            RedirectRule rule = new RedirectRule();
+            rule.setRuleId(ruleId);
+            rule.setStoreId(storeId);
+            SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null, page, itemsPerPage);
+            return daoService.getRedirectConditions(criteria);
+        } catch (DaoException e) {
+            logger.error("Failed during getConditionInRuleByStore()", e);
         }
         return null;
     }
@@ -468,5 +569,98 @@ public class RedirectService extends RuleService {
             logger.error("Failed during getAllRuleUsedByKeyword()", e);
         }
         return null;
+    }
+    
+    @RemoteMethod
+    public int copyRedirectRule(String keyword, String storeId, String existingRuleId, int deleteExisting) {
+    	int result = 0;
+    	String copiedRedirectId = StringUtils.EMPTY;
+    	RedirectRule copiedRedirect = null;
+        try {
+        	RedirectRule redirectToCopy = getRule(existingRuleId);
+        	//delete existing data first before copying
+        	if (deleteExisting > 0){
+                RedirectRule redirectRule = new RedirectRule();
+                redirectRule.setStoreId(storeId);
+                redirectRule.setRuleName(redirectToCopy.getRuleName());
+                SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(redirectRule, null, null, 0, 0);
+                RecordSet<RedirectRule> set = daoService.searchRedirectRule(criteria, MatchType.LIKE_NAME);
+                if (set.getTotalSize() > 0) {
+                    for (RedirectRule r : set.getList()) {
+                    	deleteRuleByStore(r.getRuleId(), storeId);
+                    	break;
+                    }
+                }
+        	}
+        	
+        	RedirectRule redirect = getRedirectRule(redirectToCopy, storeId);
+            if (daoService.addRedirectRule(redirect) > 0) {
+            	copiedRedirectId = redirect.getRuleId();
+            }
+            
+            if (StringUtils.isNotEmpty(copiedRedirectId)){
+            	result = 1;
+            	copiedRedirect = getRuleByStore(copiedRedirectId, storeId);
+                //add conditions
+            	RecordSet<RedirectRuleCondition> existingRuleCondSet =  getConditionInRule(existingRuleId, 0, 0);
+            	if (existingRuleCondSet.getTotalSize() > 0){
+            		List<RedirectRuleCondition> existingRuleCondList = existingRuleCondSet.getList();
+            		for (RedirectRuleCondition rrc : existingRuleCondList){
+            			RedirectRuleCondition rr = getRedirectRuleCondition(rrc, copiedRedirectId, storeId);
+                        daoService.addRedirectCondition(rr);
+            		}
+            	}
+                
+                //add keywords
+            	RecordSet<Keyword> redirectToCopyKeywords = 
+            			getAllKeywordInRule(existingRuleId, redirectToCopy.getSearchTerm(), 0, 0);
+            	if (redirectToCopyKeywords.getTotalSize() > 0){
+            		List<Keyword> keywordList = redirectToCopyKeywords.getList();
+            		for (Keyword kw : keywordList){
+            			addKeywordToRuleByStore(copiedRedirectId, kw.getKeyword(), storeId);
+            		}
+            	}            	
+                try {
+                    ruleStatusService.add(new RuleStatus(RuleEntity.QUERY_CLEANING, storeId, copiedRedirect.getRuleId(), copiedRedirect.getRuleName(),
+                    		utilityService.getUsername(), utilityService.getUsername(), RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+                } catch (CoreServiceException de) {
+                    logger.error("Failed to create rule status for redirect rule: " + copiedRedirect.getRuleName());
+                }
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during copyRedirectRule()", e);
+        }
+    	return result;
+    }
+    
+    private RedirectRule getRedirectRule(RedirectRule redirectToCopy, String storeId){
+    	RedirectRule rule = new RedirectRule();
+    	rule.setRuleName(redirectToCopy.getRuleName());
+    	rule.setRedirectType(redirectToCopy.getRedirectType());
+    	rule.setRedirectTypeId(redirectToCopy.getRedirectTypeId());
+    	rule.setDescription(redirectToCopy.getDescription());
+    	rule.setChangeKeyword(redirectToCopy.getChangeKeyword());
+    	rule.setSearchTerm(redirectToCopy.getSearchTerm());
+    	rule.setRedirectUrl(redirectToCopy.getRedirectUrl());
+    	rule.setIncludeKeyword(redirectToCopy.getIncludeKeyword());
+    	rule.setReplaceKeywordMessageType(redirectToCopy.getReplaceKeywordMessageType());
+    	rule.setReplaceKeywordMessageCustomText(redirectToCopy.getReplaceKeywordMessageCustomText());
+    	rule.setPriority(redirectToCopy.getPriority());
+    	rule.setStoreId(storeId);
+    	rule.setCreatedBy(utilityService.getUsername());        	
+    	return rule;
+    }
+    
+    private RedirectRuleCondition getRedirectRuleCondition(RedirectRuleCondition conditionToCopy, 
+    		String ruleIdToUse, String storeId){
+    	RedirectRuleCondition rrCondition = new RedirectRuleCondition();
+    	rrCondition.setStoreId(storeId);
+    	rrCondition.setRuleId(ruleIdToUse);
+    	rrCondition.setCondition(conditionToCopy.getCondition());
+    	rrCondition.setSequenceNumber(conditionToCopy.getSequenceNumber());
+    	rrCondition.setFacetPrefix(utilityService.getStoreFacetPrefixByStore(storeId));
+    	rrCondition.setFacetTemplate(utilityService.getStoreFacetTemplateByStore(storeId));
+    	rrCondition.setFacetTemplateName(utilityService.getStoreFacetTemplateNameByStore(storeId));
+    	return rrCondition;
     }
 }

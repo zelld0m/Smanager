@@ -20,6 +20,7 @@
 			removeExpiryDateConfirmText: "Expiry date for this item will be removed. Continue?",
 			removeRuleItemConfirmText: "Item will be removed from this rule. Continue?",
 			clearRuleItemConfirmText: "All items associated to this rule will be removed. Continue?",
+			clearRuleItemForCopyConfirmText: "All items associated for the selected store will be removed before copying. Continue?",
 
 			getRuleList: function(){
 				var self = this;
@@ -486,7 +487,7 @@
 				var self = this;
 				self.selectedRuleItemPage = page;
 				self.preShowRuleContent();
-
+				
 				$("#submitForApproval").rulestatusbar({
 					moduleName: self.moduleName,
 					ruleType: "Elevate",
@@ -504,6 +505,42 @@
 					afterSubmitForApprovalRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
 						self.showRuleContent();
+					},
+					copyKeywordAndRuleRequest: function(keyword, storeCode, ruleStatusId){
+						self.preShowRuleContent();
+						StoreKeywordServiceJS.addKeywordByStore(keyword, storeCode, {
+							callback : function(data){
+								if(data!=null){
+									ElevateServiceJS.copyElevatedItems(keyword, storeCode, 0, {
+										callback: function(data){
+											self.postShowRuleContent();
+											if (data != null){
+												var copyMessage = 'Elevate rule of ' + keyword;
+												showActionResponse(1, "copy", copyMessage);
+											}
+										}
+									});
+									
+								}
+							}
+						});
+
+					},
+					copyRuleRequest: function(keyword, storeCode, ruleStatusId){
+						jConfirm(self.clearRuleItemForCopyConfirmText, "Delete Items Before Copying", function(result){
+							if(result){
+								self.preShowRuleContent();
+								ElevateServiceJS.copyElevatedItems(keyword, storeCode, 1, {
+									callback: function(data){
+										self.postShowRuleContent();
+										if (data != null){
+											var copyMessage = 'Elevate rule of ' + keyword;
+											showActionResponse(1, "copy", copyMessage);
+										}
+									}
+								});
+							}
+						});
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;

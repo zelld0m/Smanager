@@ -91,7 +91,7 @@ public class ExcludeService extends RuleService {
 
             result = daoService.addExcludeResult(e);
             if (result > 0) {
-                if (!StringUtils.isBlank(comment)) {
+                if (StringUtils.isNotBlank(comment)) {
                     addComment(comment, e);
                 }
                 try {
@@ -104,6 +104,44 @@ public class ExcludeService extends RuleService {
             }
         } catch (DaoException e) {
             logger.error("Failed during excludeItem()", e);
+        }
+        return result;
+    }
+    
+    private int addItemByStore(String keyword, String edp, RedirectRuleCondition condition, 
+    		String expiryDate, String comment, MemberTypeEntity entity, String storeId) {
+        int result = -1;
+        try {
+            logger.info(String.format("%s %s %s %s %s %s", keyword, edp, condition != null ? condition.getCondition() : "", expiryDate, comment, storeId));
+            String userName = utilityService.getUsername();
+            daoService.addKeyword(new StoreKeyword(storeId, keyword));
+            ExcludeResult e = new ExcludeResult(new StoreKeyword(storeId, keyword));
+            e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate, JodaPatternType.DATE));
+            e.setCreatedBy(userName);
+            e.setComment(comment);
+            e.setExcludeEntity(entity);
+            switch (entity) {
+                case PART_NUMBER:
+                    e.setEdp(edp);
+                    break;
+                case FACET:
+                    e.setCondition(condition);
+                    break;
+            }
+            result = daoService.addExcludeResult(e);
+            if (result > 0) {
+                if (!StringUtils.isBlank(comment)) {
+                    addComment(comment, e);
+                }
+                try {
+                    ruleStatusService.add(new RuleStatus(RuleEntity.EXCLUDE, DAOUtils.getStoreId(e.getStoreKeyword()),
+                            keyword, keyword, userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+                } catch (CoreServiceException de) {
+                    logger.error("Failed to create rule status for exclude: " + keyword);
+                }
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during addItemByStore()", e);
         }
         return result;
     }
@@ -163,6 +201,41 @@ public class ExcludeService extends RuleService {
         return addItem(keyword, memberTypeEntity == MemberTypeEntity.PART_NUMBER ? value : null,
                 memberTypeEntity == MemberTypeEntity.FACET ? new RedirectRuleCondition(utilityService.getStoreId(), value) : null,
                 expiryDate, comment, memberTypeEntity);
+    }
+    
+    @RemoteMethod
+    public int copyExcludeItems(String keyword, String storeId, int deleteExisting) {
+    	int result = 0;
+    	//delete existing data first before copying
+    	if (deleteExisting > 0){
+    		RecordSet<Product> allExistingProducts = getAllExcludedProductsIgnoreKeywordByStore(keyword, storeId, 1, 0);
+    		if (allExistingProducts.getTotalSize() > 0){
+    			clearRuleByStore(keyword, storeId);
+    		}
+    	}
+    	RecordSet<Product> allExcludeProducts = getAllExcludedProductsIgnoreKeyword(keyword, 1, 0);
+    	if (allExcludeProducts != null && allExcludeProducts.getTotalSize() > 0){
+    		List<Product> excludeList = allExcludeProducts.getList();
+    		for (Product e : excludeList){
+    			MemberTypeEntity entity = e.getMemberType();
+    			String expiryDate = e.getExpiryDate() != null ? 
+    					StringUtils.trimToEmpty(jodaDateTimeUtil.formatFromStorePattern(storeId, e.getExpiryDate(), JodaPatternType.DATE)) : null;
+                switch (entity) {
+	                case PART_NUMBER:
+	                	result += addItemByStore(keyword, e.getEdp(), null, expiryDate, e.getComment(), MemberTypeEntity.PART_NUMBER, storeId);
+	                    break;
+	                case FACET:
+	                	RedirectRuleCondition rrCondition = e.getCondition();
+	                	rrCondition.setStoreId(storeId);
+	                	rrCondition.setFacetPrefix(utilityService.getStoreFacetPrefixByStore(storeId));
+	                	rrCondition.setFacetTemplate(utilityService.getStoreFacetTemplateByStore(storeId));
+	                	rrCondition.setFacetTemplateName(utilityService.getStoreFacetTemplateNameByStore(storeId));
+	                	result += addItemByStore(keyword, null, rrCondition, expiryDate, e.getComment(), MemberTypeEntity.FACET, storeId);
+	                    break;
+                }
+    		}
+    	}
+    	return result;
     }
 
     @RemoteMethod
@@ -269,6 +342,21 @@ public class ExcludeService extends RuleService {
             return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
         } catch (DaoException e) {
             logger.error("Failed during getAllExcludedProducts()", e);
+        }
+        return null;
+    }
+    
+    @RemoteMethod
+    public RecordSet<Product> getAllExcludedProductsIgnoreKeywordByStore(String keyword, String storeId, int page, int itemsPerPage) {
+        try {
+            logger.info(String.format("%s %s %d %d", keyword, storeId, page, itemsPerPage));
+            String server = utilityService.getServerName();
+            ExcludeResult e = new ExcludeResult();
+            e.setStoreKeyword(new StoreKeyword(storeId, keyword));
+            SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null, page, itemsPerPage);
+            return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
+        } catch (DaoException e) {
+            logger.error("Failed during getAllExcludedProductsIgnoreKeywordByStore()", e);
         }
         return null;
     }
@@ -455,6 +543,17 @@ public class ExcludeService extends RuleService {
             return daoService.clearExcludeResult(new StoreKeyword(utilityService.getStoreId(), keyword));
         } catch (DaoException e) {
             logger.error("Failed during clearRule()", e);
+        }
+        return 0;
+    }
+    
+    @RemoteMethod
+    public int clearRuleByStore(String keyword, String storeId) {
+        try {
+            logger.info(String.format("%s %s", keyword, storeId));
+            return daoService.clearExcludeResult(new StoreKeyword(storeId, keyword));
+        } catch (DaoException e) {
+            logger.error("Failed during clearRuleByStore()", e);
         }
         return 0;
     }

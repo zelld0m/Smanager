@@ -210,6 +210,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_TIMEZONE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 		}
 	}
 
@@ -242,6 +243,7 @@ public class UsersDAO {
 			}
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, modifiedBy);
 			inputs.put(DAOConstants.PARAM_TIMEZONE_ID, user.getTimezoneId());
+			inputs.put(DAOConstants.PARAM_STORE_ID, user.getStoreId());
 			result = DAOUtils.getUpdateCount(updateUserStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {

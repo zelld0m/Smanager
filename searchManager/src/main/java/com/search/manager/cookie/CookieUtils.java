@@ -16,4 +16,12 @@ public class CookieUtils {
 		
 		return cookie;
 	}
+	
+	public static Cookie setCookie(String cookieName, String value, String path){
+		Cookie cookie = new Cookie(cookieName, null);
+		cookie.setValue(value);
+		cookie.setSecure(true);
+		if (StringUtils.isNotBlank(path)) cookie.setPath(path);
+		return cookie;
+	}
 }

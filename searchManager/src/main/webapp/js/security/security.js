@@ -6,12 +6,14 @@
 				cursrc : '',
 				curmem : '',
 				currole : '',
+				curstore : '',
 				curstat : '',
 				curexp : '',
 				curid:'',
 				curname : '',
 				curtot : '0',
 				roleList : null,
+				storeList : null,
 				dateMinDate : 0,
 				dateMaxDate : '+1Y',
 				expadd : '',
@@ -31,6 +33,7 @@
 					var shexp = $.trim(e.find('#shexp_1').val());
 					var shemail = $.trim(e.find('#shemail').val());
 					var shrole = $.trim(e.find('#shrole').val());
+					var shstore = $.trim(e.find('#shstore').val());
 					var shlck = e.find('div[rel="shlck"]').hasClass('off');
 					var shtimezone = e.find('#shtimezone').val();
 
@@ -43,11 +46,12 @@
 					else if(!validateDate('Validity Date',shexp,1,minDate))
 						return;
 
-					SecurityServiceJS.updateUser(shrole,user,shexp,shlck,shemail,shtimezone,{
+					SecurityServiceJS.updateUserWithStore(shrole,user,shexp,shlck,shemail,shtimezone,shstore,{
 						callback:function(data){
 							if(data.status == '200'){
 								jAlert(data.message,"Security");
-								sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+								//sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+								sec.getUserListWithStoreFilter(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore);
 								api.destroy();
 							}else{
 								jAlert(data.message,"Security");
@@ -76,7 +80,8 @@
 					var adtimezone = e.find('#adtimezone').val();			
 					var adexp = $.trim(e.find('#adexp_1').val());
 					var adlck = e.find('div[rel="adlck"]').hasClass('off');
-
+					var adstore = $.trim(e.find('#adstore').val());
+					
 					var adpass = $.trim(e.find('#adpass').val());
 
 					minDate = new Date();
@@ -94,11 +99,12 @@
 					else if(!validateDate('Validity Date',adexp,1,minDate))
 						return;
 
-					SecurityServiceJS.addUser(adrole,sec.curname,aduser,adfull,adpass,adexp,adlck,ademail,adtimezone,{
+					SecurityServiceJS.addUserWithStore(adrole,sec.curname,aduser,adfull,adpass,adexp,adlck,ademail,adtimezone,adstore,{
 						callback:function(data){
 							if(data.status == '200'){
 								jAlert(data.message,"Security");
-								sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+								//sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+								sec.getUserListWithStoreFilter(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore);
 								api.destroy();
 							}else{
 								jAlert(data.message,"Security");
@@ -133,6 +139,13 @@
 
 								for (var i=0; i < roleList.list.length; i++){
 									contentHolder.find("#adrole").append($("<option>", { value : roleList.list[i]["id"]}).text(roleList.list[i]["rolename"]));
+								}
+								
+								for (key in storeList){
+									var keyVal = parseData[key];
+									var storeName = keyVal['name'];
+									$option = $("<option>", { value : key}).text(storeName);
+									contentHolder.find("#adstore").append($option);
 								}
 
 								contentHolder.find('input#adlck').slidecheckbox({
@@ -246,6 +259,15 @@
 										
 									contentHolder.find("#shrole").append($option);
 								}
+								
+								for (key in storeList){
+									var keyVal = parseData[key];
+									var storeName = keyVal['name'];
+									$option = $("<option>", { value : key}).text(storeName);
+									if (key == data.storeId) $option.prop("selected","selected");
+									contentHolder.find("#shstore").append($option);
+								}
+								
 
 								contentHolder.find('input#shlck').slidecheckbox({
 									initOn: data.isAccountNonLocked
@@ -302,6 +324,7 @@
 					$('#refsrc').val(sec.src);
 					$('#refmem').val('');
 					$('#refrole').prop("selectedIndex", 0);
+					$('#refstore').prop("selectedIndex", 0);
 					$('#refstat').prop("selectedIndex", 0);
 					$('#refexp').prop("selectedIndex", 0);
 					
@@ -312,6 +335,7 @@
 					sec.cursrc = $('#refsrc').val() !== sec.src ? $.trim($('#refsrc').val()) : "";
 					sec.curmem =  $('#refmem').val();
 					sec.currole =  $('#refrole').val();
+					sec.curstore =  $('#refstore').val();
 					sec.curstat = $('#refstat').val();
 					sec.curexp = $('#refexp').val();
 
@@ -321,7 +345,8 @@
 					else if($.isNotBlank(sec.curmem) && !validformat.test(sec.curmem))
 						jAlert("Invalid date. (Use MM/DD/YYYY format)","Security");
 					else
-						sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+						//sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+					    sec.getUserListWithStoreFilter(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore);
 				},	
 
 				showPaging : function(page,id,name,total){
@@ -342,9 +367,12 @@
 							
 							return displayText;
 						},
-						pageLinkCallback: function(e){ sec.getUserList(id,name,e.data.page,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
+/*						pageLinkCallback: function(e){ sec.getUserList(id,name,e.data.page,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
 						nextLinkCallback: function(e){ sec.getUserList(id,name,e.data.page + 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
-						prevLinkCallback: function(e){ sec.getUserList(id,name,e.data.page - 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); }
+						prevLinkCallback: function(e){ sec.getUserList(id,name,e.data.page - 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); }*/
+						pageLinkCallback: function(e){ sec.getUserListWithStoreFilter(id,name,e.data.page,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore); },
+						nextLinkCallback: function(e){ sec.getUserListWithStoreFilter(id,name,e.data.page + 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore); },
+						prevLinkCallback: function(e){ sec.getUserListWithStoreFilter(id,name,e.data.page - 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore); }
 					});
 				},
 
@@ -361,6 +389,33 @@
 							}
 						}		
 					});
+				},
+				
+				getStoreList : function(){
+					var COOKIE_STORE_SELECTION = "store.selection";
+					var COOKIE_STORE_SELECTED = "store.selected";
+					var storeSelection = $.trim($.cookie(COOKIE_STORE_SELECTION));	
+					if($.isNotBlank(storeSelection)){
+						parseData = JSON.parse($.trim($.cookie(COOKIE_STORE_SELECTION)));
+						storeList = parseData;
+						for (key in parseData){
+							var keyVal = parseData[key];
+							var storeName = keyVal['name'];
+							$("select#refstore").append($("<option>", { value : key }).text(storeName));					
+						}
+					}else{				
+						UtilityServiceJS.getStoreListNameAndSyn(true, {
+							callback:function(data){
+								$.cookie(COOKIE_STORE_SELECTION, JSON.stringify(data) ,{path: GLOBAL_contextPath});
+								storeList = data;
+								for (key in data){
+									var keyVal = data[key];
+									var storeName = keyVal['name'];
+									$("select#refstore").append($("<option>", { value : key }).text(storeName));			
+								}
+							}
+						});
+					}
 				},
 
 				setUserValues : function(data){
@@ -433,6 +488,67 @@
 						}
 					});	
 				},
+				
+				getUserListWithStoreFilter : function(id,name,pg,src,mem,stat,exp,store){
+					UtilityServiceJS.getUsername({
+						preHook:function(){ 
+							$('#preloader').show();
+						},
+						postHook:function(){ 
+							$('#preloader').hide();
+						},
+						callback:function(username){
+							SecurityServiceJS.getUserListWithStoreFilter(id,pg,src,mem,stat,exp,store,{
+								callback:function(data){
+									var list = data.list;
+									var content = '';
+									$('.conTr').remove();
+
+									$('tr.conTableItem').filter('tr:not(#conTr1Pattern)').remove();
+
+									if (list.length>0){	
+										$table = $('table.conTable');
+										$('.conTable tr#nomatch').remove();
+										for(var i=0; i<list.length; i++){
+											$tr = $table.find('tr#conTr1Pattern').clone();
+											$tr.prop("id", $.formatAsId(list[i].username)).show();
+											if (username === list[i].username) {
+												$tr.find("td#delIcon > a").hide();
+											}
+											else {
+												$tr.find("td#delIcon > a").prop("id", "del"+$.formatAsId(list[i].username));
+											}
+											$tr.find("td#userInfo > span#username > a").prop("id", "user"+$.formatAsId(list[i].username)).text(list[i].username);
+											$tr.find("td#userInfo > span#fullName").text(list[i].fullName);
+											$tr.find("td#userInfo > span#email").text(list[i].email);
+											$tr.find("td#role > span").text(list[i].groupId);
+
+											$tr.find("td#memberSince > span").text(list[i]["createdDate"]!=null? $.toStoreFormat(list[i]["createdDate"]): "");
+											$tr.find("td#status > span#nonLocked").text(list[i].isAccountNonLocked==true? "Active" : "Locked");
+											$tr.find("td#status > span#nonExpired").text(list[i].isAccountNonExpired==true? "Valid" : "Expired");
+											$tr.find("td#validity > span").text(list[i].thruDate!=null? 
+													$.toStoreFormat(list[i]["thruDate"],GLOBAL_storeDateFormat): "");
+
+											$tr.find("td#lastAccess > span#dateAccess").text(list[i]["lastAccessDate"]? $.toStoreFormat(list[i]["lastAccessDate"]): "");
+											$tr.find("td#lastAccess > span#ipAccess").text(list[i].ip);
+											if (i%2!=0) $tr.addClass("alt"); 
+											$table.append($tr);
+											sec.setUserValues(list[i]);
+										}					
+
+										sec.showPaging(pg,id,name,data.totalSize);
+									}else{	
+										$empty = '<tr class="conTableItem"><td colspan="7" class="txtAC">No matching records found</td></tr>';
+										$('.conTable').append($empty);
+										
+										$('#sortablePagingTop').hide();
+										$('#sortablePagingBottom').hide();			
+									}		
+								},
+							});
+						}
+					});	
+				},
 
 				init : function(){
 
@@ -445,7 +561,8 @@
 					$("#clrFilBtn").on({
 						click: function(e){
 							sec.clrFil();
-							sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+							//sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+							sec.getUserListWithStoreFilter(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore);
 						}
 					});		
 
@@ -477,7 +594,9 @@
 					});
 					
 					sec.getRoleList();
-					sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+					sec.getStoreList();
+					//sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+					sec.getUserListWithStoreFilter(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore);
 				},
 
 				delUser : function(e){
@@ -487,7 +606,8 @@
 							callback:function(data){
 								if(data.status == '200'){
 									jAlert(data.message,"Security");
-									sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+									//sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+									sec.getUserListWithStoreFilter(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp,sec.curstore);
 								}else{
 									jAlert(data.message,"Security");
 								}

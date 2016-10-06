@@ -58,7 +58,15 @@ public class SecurityService {
     
     @RemoteMethod
     public RecordSet<User> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
-    	String storeId = utilityService.getStoreId();
+        return getUserList(roleId, page, search, memberSince, status, expired, utilityService.getStoreId());
+    }
+    
+    @RemoteMethod
+    public RecordSet<User> getUserListWithStoreFilter(String roleId, String page, String search, String memberSince, String status, String expired, String storeId) {
+        return getUserList(roleId, page, search, memberSince, status, expired, storeId);
+    }
+       
+    private RecordSet<User> getUserList(String roleId, String page, String search, String memberSince, String status, String expired, String storeId) {
         User user = new User();
         user.setGroupId(StringUtils.trimToNull(roleId));
         user.setStoreId(storeId);
@@ -70,7 +78,6 @@ public class SecurityService {
         if (StringUtils.isNotEmpty(expired)) {
             user.setAccountNonExpired(!StringUtils.equalsIgnoreCase("YES", expired));
         }
-
         SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user, null, null, Integer.parseInt(page), 10);
         searchCriteria.setStartDate(jodaDateTimeUtil.toDateTimeFromStorePattern(storeId, memberSince, JodaPatternType.DATE));
         RecordSet<User> users = getUsers(searchCriteria, MatchType.LIKE_NAME);
@@ -149,10 +156,22 @@ public class SecurityService {
     }
 
     @RemoteMethod
-    public JSONObject addUser(String roleId, String rolename, String username, String fullname, String password, String expire, String locked, String email, String timezoneId) {
-        JSONObject json = new JSONObject();
-        String storeId = utilityService.getStoreId();
+    public JSONObject addUser(String roleId, String rolename, String username, String fullname, 
+    		String password, String expire, String locked, String email, String timezoneId) {
+        return addUserDetails(roleId, rolename, username, fullname, 
+        		password, expire, locked, email, timezoneId, utilityService.getStoreId());
+    }
 
+    @RemoteMethod
+    public JSONObject addUserWithStore(String roleId, String rolename, String username, String fullname, 
+    		String password, String expire, String locked, String email, String timezoneId, String storeId) {
+        return addUserDetails(roleId, rolename, username, fullname, 
+        		password, expire, locked, email, timezoneId, storeId);
+    }
+    
+    private JSONObject addUserDetails(String roleId, String rolename, String username, String fullname, 
+    		String password, String expire, String locked, String email, String timezoneId, String storeId) {
+        JSONObject json = new JSONObject();
         int result = -1;
         try {
             //check if username already exist
@@ -190,7 +209,7 @@ public class SecurityService {
                 return json;
             }
         } catch (DaoException e) {
-            logger.error("Failed during addComment()", e);
+            logger.error("Failed during addUserDetails()", e);
         }
 
         json.put("status", RESPONSE_STATUS_FAILED);
@@ -198,7 +217,7 @@ public class SecurityService {
 
         return json;
     }
-
+    
     @RemoteMethod
     public RecordSet<RoleModel> getRoleList() {
         List<RoleModel> roleList = new ArrayList<RoleModel>();
@@ -265,10 +284,17 @@ public class SecurityService {
 
     @RemoteMethod
     public JSONObject updateUser(String roleId, String username, String expire, String locked, String email, String timezoneId) {
+    	return updateUserDetails(roleId, username, expire, locked, email, timezoneId, utilityService.getStoreId());
+    }
+    
+    @RemoteMethod
+    public JSONObject updateUserWithStore(String roleId, String username, String expire, String locked, String email, String timezoneId, String store) {
+        return updateUserDetails(roleId, username, expire, locked, email, timezoneId, store);
+    }
+    
+    private JSONObject updateUserDetails(String roleId, String username, String expire, String locked, String email, String timezoneId, String storeId){
         JSONObject json = new JSONObject();
         username = StringUtils.trim(username);
-        String storeId = utilityService.getStoreId();
-
         int result = -1;
 
         try {
@@ -285,7 +311,7 @@ public class SecurityService {
                     user.setThruDate(newExpiryDate);
                     user.setAccountNonExpired(newExpiryDate.isAfter(DateTime.now()));
                 }
-                user.setStoreId(utilityService.getStoreId());
+                user.setStoreId(storeId);
                 if (StringUtils.isNotEmpty(locked)) {
                     user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
                 }
@@ -311,7 +337,7 @@ public class SecurityService {
                 return json;
             }
         } catch (Exception e) {
-            logger.error("Failed during updateUser()", e);
+            logger.error("Failed during updateUserDetails()", e);
         }
 
         json.put("status", RESPONSE_STATUS_FAILED);

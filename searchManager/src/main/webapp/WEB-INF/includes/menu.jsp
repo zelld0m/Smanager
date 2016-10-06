@@ -9,7 +9,7 @@
               <li ${topmenu eq 'synonyms'? 'class="active"': ''}><a href="<spring:url value="/synonyms/"/>${storeId}">Synonyms</a></li>
                -->
               <li ${topmenu eq 'rules'? 'class="active"': ''}><span><a href="<spring:url value="/elevate/"/>${storeId}">Search Rules</a></span></li>
-              <li ${topmenu eq 'ads'? 'class="active"': ''}><span><a href="<spring:url value="/banner/"/>${storeId}">Search Ads</a></span></li>
+              <!--  <li ${topmenu eq 'ads'? 'class="active"': ''}><span><a href="<spring:url value="/banner/"/>${storeId}">Search Ads</a></span></li> -->
               <sec:authorize access="hasRole('APPROVE_RULE')">
                   <li ${topmenu eq 'workflow'? 'class="active"': ''}><span><a href="<spring:url value="/approval/"/>${storeId}">Workflow</a></span></li>
               </sec:authorize>

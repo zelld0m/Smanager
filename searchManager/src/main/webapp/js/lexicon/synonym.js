@@ -42,8 +42,28 @@
 			});		
 		},
 		
+		setSynonymFile: function(){
+			var self = this;
+			var COOKIE_STORE_SELECTION = "store.selection";
+			var COOKIE_STORE_SELECTED = "store.selected";
+			var storeSelected = $.trim($.cookie(COOKIE_STORE_SELECTED));
+			var storeSelection = $.trim($.cookie(COOKIE_STORE_SELECTION));
+			if($.isNotBlank(storeSelection)){
+				parseData = JSON.parse($.trim($.cookie(COOKIE_STORE_SELECTION)));
+				for (key in parseData){
+					var keyVal = parseData[key];
+					var syn = keyVal['syn'];
+					if (storeSelected == key){
+						self.fileName = self.defaultFilename + '_' + syn + '.txt';
+						self.defaultFilename = self.defaultFilename + '_' + syn;
+					}		
+				}
+			}
+		},
+		
 		init: function(){
 			var self= this;
+			self.setSynonymFile();
 			self.showSynonym();
 		}
 	};

@@ -388,8 +388,27 @@
 							});
 
 						}
-					});
+					});				
 				}
+				
+				base.$el.find("#copyBtn").copy({
+					title: "Copy",
+					requestCallback:function(e){
+						var keyword = base.options.rule["ruleName"];
+						var storeCode = e.data.storeCode;
+						var ruleStatusId = base.options.ruleStatus["ruleStatusId"];						
+						StoreKeywordServiceJS.getKeywordByStore(keyword, storeCode, {
+							callback : function(data){
+								if(data==null){
+									base.options.copyKeywordAndRuleRequest(keyword, storeCode, ruleStatusId);
+								}
+								else {
+									base.options.copyRuleRequest(keyword, storeCode, ruleStatusId);
+								}
+							}
+						});
+					}
+				});
 			}
 		});	
 	};
@@ -420,9 +439,9 @@
 			}
 		});
 	};
-
+	
 	$.rulestatusbar.prototype.getTemplate = function(){
-		var base = this;
+		var base = this;	
 		var template = "";
 		template += '<div class="plugin-rulestatusbar">';
 
@@ -463,7 +482,14 @@
 
 		template += '		<li class="fLeft bRight">';
 		template += '			<div id="commentBtn" class="ico_comments icon" alt="Show Rule Comment" title="Show Rule Comment"></div>';
-		template += '		</li>';	
+		template += '		</li>';
+		
+		var moduleName = base.options.moduleName;
+		if (moduleName != "Banner" &&  moduleName != "Did You Mean" && moduleName != "Typeahead"){
+			template += '		<li class="fLeft bRight">';
+			template += '			<div id="copyBtn" class="ico_copy icon" alt="Copy" title="Copy"></div>';
+			template += '		</li>';
+		}
 		template += '		<li class="fRight">';
 		template += '			<span class="fbold">Last Published</span>:';
 		template += '			<span id="publishedDate">' + base.options.noPublishedDateText + '</span>';
@@ -494,6 +520,8 @@
 			postRestoreCallback: function(base, rule){},
 			noPublishedDateText: "No data available",
 			autoImportWarningText: "Rule from storeName is queued on createdDate to replace this rule",
+			copyKeywordAndRuleRequest: function(keyword, storeCode, ruleStatusId){},
+			copyRuleRequest: function(keyword, storeCode, ruleStatusId){},
 	};
 
 	$.fn.rulestatusbar = function(options){
