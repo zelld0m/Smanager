@@ -842,7 +842,8 @@
 				base.initializeSourceStoreProperties(xml.store);
 
 				base.typeaheadSourceManager = new AjaxSolr.Manager({
-					solrUrl: base.GLOBAL_sourceSolrUrl + base.GLOBAL_sourceStoreCore + '/',
+//					solrUrl: base.GLOBAL_sourceSolrUrl + base.GLOBAL_sourceStoreCore + '/',
+					solrUrl: base.GLOBAL_sourceSolrUrl + '/',
 					store: (new AjaxSolr.ParameterStore())
 				});
 
