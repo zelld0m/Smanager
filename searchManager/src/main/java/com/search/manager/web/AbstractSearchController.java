@@ -1052,6 +1052,7 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 				}
 				String ruleKeyword = StringUtils.isNotBlank(keyOverride) ? keyOverride : keyword;
 				if (keywordPresent) {
+				    nameValuePairs.add(new BasicNameValuePair("bq","PCMall_NameIndex:\"pcmtag " + ruleKeyword + "\"~2"));
 				    RequestPropertyBean requestPropertyBean = new RequestPropertyBean(storeId);
 					// EXCLUDE
 					if (isActiveSearchRule(storeId, RuleEntity.EXCLUDE)) {
