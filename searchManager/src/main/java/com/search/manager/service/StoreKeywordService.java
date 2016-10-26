@@ -100,12 +100,38 @@ public class StoreKeywordService {
     }
 
     @RemoteMethod
+    public Keyword addKeywordByStore(String keyword, String storeId) {
+        Keyword newKeyword = null;
+        try {
+            logger.info(String.format("%s - %s", keyword, storeId));
+            int result = daoService.addKeyword(new StoreKeyword(storeId, keyword));
+            if (result == 1) {
+                newKeyword = new Keyword(keyword, keyword);
+            }
+        } catch (DaoException e) {
+            logger.error("Failed during addKeywordByStore()", e);
+        }
+        return newKeyword;
+    }
+    
+    @RemoteMethod
     public Keyword getKeyword(String keyword) {
         StoreKeyword storeKeyword = null;
         try {
             storeKeyword = daoService.getKeyword(utilityService.getStoreId(), keyword);
         } catch (DaoException e) {
             logger.error("Failed during getKeyword()", e);
+        }
+        return (storeKeyword == null) ? null : storeKeyword.getKeyword();
+    }
+    
+    @RemoteMethod
+    public Keyword getKeywordByStore(String keyword, String storeId) {
+        StoreKeyword storeKeyword = null;
+        try {
+            storeKeyword = daoService.getKeyword(storeId, keyword);
+        } catch (DaoException e) {
+            logger.error("Failed during getKeywordByStore()", e);
         }
         return (storeKeyword == null) ? null : storeKeyword.getKeyword();
     }

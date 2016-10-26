@@ -14,6 +14,10 @@
 	};
 
 	AjaxSolr.theme.prototype.searchKeyword = function(){
+		var COOKIE_ENTERED_KEYWORD = "entered.keyword";
+		var keyword = $.trim($.cookie(COOKIE_ENTERED_KEYWORD));
+		alert('searchKeyword keyword---- ' + keyword);
+		
 		var template = '';
 //		template += '<a id="statisticIcon" href="javascript:void(0);">';
 //		template += '	<img align="absmiddle" class="marR3 marT5 floatR  posRel" src="' + GLOBAL_contextPath + '/images/icon_statistics.png">';

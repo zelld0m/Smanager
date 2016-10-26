@@ -9,7 +9,7 @@
 //			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/'
 			solrUrl: GLOBAL_solrUrl
 		});
-
+	
 		// Install component widgets
 		Manager.addWidget(new AjaxSolr.SearchKeywordWidget({
 			id: WIDGET_ID_searchKeyword,
@@ -148,6 +148,9 @@
 		}));
 
 		Manager.init();
+		
+		alert('after Manager.init');
+		
 
 		// default IMS
 		var facetTemplate = ['Category', 'Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];

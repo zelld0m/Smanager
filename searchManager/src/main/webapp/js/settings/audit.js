@@ -240,6 +240,7 @@
 			
 			$('#userList').prop("selectedIndex", 0);
 			$('#refrole').prop("selectedIndex", 0);
+			$('#refstore').prop("selectedIndex", 0);
 			$('#actionList').prop("selectedIndex", 0);
 			$('#typeList').prop("selectedIndex", 0);
 			$('#refList').prop("selectedIndex", 0);

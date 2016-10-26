@@ -357,6 +357,7 @@ function initFileUploads() {
 		
 		var COOKIE_STORE_SELECTION = "store.selection";
 		var COOKIE_STORE_SELECTED = "store.selected";
+		var COOKIE_ENTERED_KEYWORD = "entered.keyword";
 		
 		var getStoreList = function(){
 			var storeSelection = $.trim($.cookie(COOKIE_STORE_SELECTION));
@@ -390,6 +391,10 @@ function initFileUploads() {
 					if (reload == undefined) {
 						var selectedStore = $("#select-store option:selected").val();
 						$.cookie(COOKIE_STORE_SELECTED, selectedStore ,{path:GLOBAL_contextPath});
+						
+						var keyword = $.trim($.cookie(COOKIE_ENTERED_KEYWORD));
+						alert('select-store keyword---- ' + keyword);
+						
 						UtilityServiceJS.setStoreId(selectedStore, {
 							callback:function(){
 								var url = window.location.href;

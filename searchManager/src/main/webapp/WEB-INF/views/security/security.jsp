@@ -27,6 +27,12 @@
 					<option value="">All Roles</option>
 				</select>
 			</label>
+			<label class="marT8 floatL w100p">Store</label> 
+       		<label class="marT3 floatL w100p">
+				<select class="w90p mar0" id="refstore" style="cursor:pointer">
+					<option value="">All Stores</option>
+				</select>
+			</label>
        		<label class="marT8 floatL w100p">Account Status</label> 
        		<label class="marT3 floatL w100p">
 				<select class="w90p mar0" id="refstat" style="cursor:pointer">
@@ -153,6 +159,12 @@
 				            <label class="floatL w200">
 				            	<input type="text" class="w200" id="shemail">
 				            </label>
+							<div class="clearB marT10"></div>
+				      		
+				      		<label class="floatL w80 padT3 padL5">Default Store: </label>
+				            <label class="floatL w100">
+								<select id="shstore" class="mar0"></select>
+							</label>
 				            <div class="clearB marT10"></div>
 				      		
 				      		<label class="floatL w80 padT3 padL5">Role: </label>
@@ -172,6 +184,7 @@
 				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox active-locked">
 				            </label>
 				            <div class="clearB marT10"></div>
+				            
 				           	<div>
 					            <div class="floatL w80 padT3 padL5">Timezone:</div>
 					            <div class="floatL w200">
@@ -223,6 +236,12 @@
 			            <label class="floatL w80 marL10 marB5">Email :</label>
 			            <label>
 			            	<input type="text" class="w200" id="ademail">
+			            </label>
+			            <div class="clearB marT10"></div>
+			            
+			            <label class="floatL w80 marL10 marB5">Default Store :</label>
+			            <label>
+			            	<select id="adstore" class="mar0"></select>
 			            </label>
 			            <div class="clearB marT10"></div>
 			            

@@ -5,6 +5,13 @@
         init: function() {
             var self = this;
             self.searchKeyword = "";
+            
+            var COOKIE_ENTERED_KEYWORD = "entered.keyword";
+			var keyword_cookie = $.trim($.cookie(COOKIE_ENTERED_KEYWORD));
+			alert('SearchKeywordWidget init: ' + keyword_cookie);
+			//self.makeRequest(keyword_cookie);
+			
+            
             $(self.target).html(AjaxSolr.theme('searchKeyword'));
             $(self.target).find('input#keyword').off().on({
                 focusin: function(e) {
@@ -27,6 +34,8 @@
             $(self.target).find('#searchBtn').off().on({
                 click: function(e) {
                     var keyword = $.trim($(self.target).find('input#keyword').val());
+					var COOKIE_ENTERED_KEYWORD = "entered.keyword";
+					$.cookie(COOKIE_ENTERED_KEYWORD, keyword, {path:GLOBAL_contextPath});
                     if (keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
                         self.makeRequest(keyword);
                 }

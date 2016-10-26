@@ -320,6 +320,24 @@
 							});
 						}
 					});
+					
+					base.$el.find("#copyBtn").off().on({
+						click:function(e){
+							$(this).copy({
+								title: "Copy",
+								requestCallback:function(e){
+									alert('outside if');
+									if(base.options.ruleStatus && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
+										alert('inside copyBtn rule status id - ' + base.options.ruleStatus["ruleStatusId"]);
+										alert('inside copyBtn storeCode - ' + e.data.storeCode);
+										
+										
+									}
+									
+								}
+							});
+						}
+					});
 				}
 
 				base.addSubmitForApprovalListener();
@@ -463,6 +481,9 @@
 
 		template += '		<li class="fLeft bRight">';
 		template += '			<div id="commentBtn" class="ico_comments icon" alt="Show Rule Comment" title="Show Rule Comment"></div>';
+		template += '		</li>';
+		template += '		<li class="fLeft bRight">';
+		template += '			<div id="copyBtn" class="ico_comments icon" alt="Copy" title="Copy"></div>';
 		template += '		</li>';	
 		template += '		<li class="fRight">';
 		template += '			<span class="fbold">Last Published</span>:';
