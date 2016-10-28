@@ -320,28 +320,11 @@
 							});
 						}
 					});
-					
-					base.$el.find("#copyBtn").off().on({
-						click:function(e){
-							$(this).copy({
-								title: "Copy",
-								requestCallback:function(e){
-									alert('outside if');
-									if(base.options.ruleStatus && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
-										alert('inside copyBtn rule status id - ' + base.options.ruleStatus["ruleStatusId"]);
-										alert('inside copyBtn storeCode - ' + e.data.storeCode);
-										
-										
-									}
-									
-								}
-							});
-						}
-					});
 				}
 
 				base.addSubmitForApprovalListener();
 				base.options.afterRuleStatusRequest(ruleStatus);
+				base.addCopyToStoreListener();
 
 				if ($.endsWith(base.options.rule["ruleId"], "_default")){
 					base.$el.empty();
@@ -438,6 +421,32 @@
 			}
 		});
 	};
+	
+	$.rulestatusbar.prototype.addCopyToStoreListener = function(){
+		var base = this;
+		base.$el.find("#copyBtn").off().on({
+			click: function(e){
+				$(this).copy({
+					title: "Copy",
+					requestCallback:function(e){
+						var keyword = base.options.ruleStatus["ruleName"];
+						var storeCode = e.data.storeCode;
+						var ruleStatusId = base.options.ruleStatus["ruleStatusId"];
+						StoreKeywordServiceJS.getKeywordByStore(keyword, storeCode, {
+							callback : function(data){
+								if(data==null){
+									base.options.copyKeywordAndRuleRequest(keyword, storeCode, ruleStatusId);
+								}
+								else {
+									base.options.copyRuleRequest(keyword, storeCode, ruleStatusId);
+								}
+							}
+						});
+					}
+				});
+			}
+		});
+	};
 
 	$.rulestatusbar.prototype.getTemplate = function(){
 		var base = this;
@@ -515,6 +524,8 @@
 			postRestoreCallback: function(base, rule){},
 			noPublishedDateText: "No data available",
 			autoImportWarningText: "Rule from storeName is queued on createdDate to replace this rule",
+			copyKeywordAndRuleRequest: function(keyword, storeCode, ruleStatusId){},
+			copyRuleRequest: function(keyword, storeCode, ruleStatusId){},
 	};
 
 	$.fn.rulestatusbar = function(options){

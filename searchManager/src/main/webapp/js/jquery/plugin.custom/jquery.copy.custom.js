@@ -80,8 +80,7 @@
 				events: { 
 					show: function(event, api){
 						var $content = $("div", api.elements.content);
-						$content.html(base.getTemplate());
-						
+						$content.html(base.getTemplate());						
 						$content.find("a#copy").off().on({
 							click: function(e){
 								e.data = { storeCode: $content.find('select#storeCode option:selected').val() };
@@ -103,7 +102,7 @@
 			currentStore: '',
 			solo: true,
 			classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped',
-			requestCallback: function(e){} 
+			requestCallback: function(e){}
 	};
 
 	$.fn.copy = function(options){

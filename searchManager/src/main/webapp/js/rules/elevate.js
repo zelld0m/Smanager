@@ -486,7 +486,7 @@
 				var self = this;
 				self.selectedRuleItemPage = page;
 				self.preShowRuleContent();
-
+				
 				$("#submitForApproval").rulestatusbar({
 					moduleName: self.moduleName,
 					ruleType: "Elevate",
@@ -504,6 +504,16 @@
 					afterSubmitForApprovalRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
 						self.showRuleContent();
+					},
+					copyKeywordAndRuleRequest: function(keyword, storeCode, ruleStatusId){
+						alert('copyKeywordAndRuleRequest keyword - ' + keyword);
+						alert('copyKeywordAndRuleRequest storeCode - ' + storeCode);
+						alert('copyKeywordAndRuleRequest ruleStatusId - ' + ruleStatusId);
+					},
+					copyRuleRequest: function(keyword, storeCode, ruleStatusId){
+						alert('copyRuleRequest keyword - ' + keyword);
+						alert('copyRuleRequest storeCode - ' + storeCode);
+						alert('copyRuleRequest ruleStatusId - ' + ruleStatusId);
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
