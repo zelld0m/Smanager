@@ -399,7 +399,9 @@ function initFileUploads() {
 							callback:function(){
 								var url = window.location.href;
 								url = url.substring(0, url.lastIndexOf('/'));
+								if(!url.endsWith('searchManager')) {
 								url = url + '/' + selectedStore;
+								}
 								window.location.href = url;
 							}
 						});						
