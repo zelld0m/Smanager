@@ -403,6 +403,7 @@ function initFileUploads() {
 								url = url + '/' + selectedStore;
 								}
 								window.location.href = url;
+								UtilityServiceJS.setStoreNameById(selectedStore);
 							}
 						});						
 					}

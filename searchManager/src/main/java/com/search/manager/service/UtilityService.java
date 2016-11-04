@@ -181,6 +181,12 @@ public class UtilityService {
 		String storeName = (String) attr.getAttribute("storeName", RequestAttributes.SCOPE_SESSION);
 		return storeName;
 	}
+	
+	@RemoteMethod
+	public void setStoreNameById(String storeId) {
+		String storeName = configManager.getStoreName(storeId);
+		setStoreName(storeName);
+	}
 
 	@RemoteMethod
 	public void setStoreId(String storeId) {
