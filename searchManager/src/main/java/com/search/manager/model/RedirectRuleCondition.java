@@ -219,11 +219,10 @@ public class RedirectRuleCondition extends ModelBean {
         if (map.containsKey("Availability")) {
             String value = map.get("Availability").get(0);
             if (value.equals("Call")) {
-                builder.append("InStock").append(":0").append(" AND ");
+                builder.append("VWInv:[* TO 0] OR MemphisInv:[* TO 0]").append(" AND ");
             } else if (value.equals("In Stock")) {
-                builder.append("InStock").append(":1").append(" AND ");
-            }
-        }
+                builder.append("VWInv:[1 TO *] OR MemphisInv:[1 TO *]").append(" AND ");
+            }        }
         if (map.containsKey("Platform")) {
             builder.append("Platform").append(":").append(map.get("Platform").get(0)).append(" AND ");
         }
@@ -511,9 +510,9 @@ public class RedirectRuleCondition extends ModelBean {
                 putListToConditionMap(fieldName, fieldValue);
             } // If InStock:0 set Availability to "In Stock"
             //           :1 set Availability to "Call"
-            else if (fieldName.equals("InStock") && fieldValue.equals("0")) {
+            else if (fieldName.equals("VWInv") && fieldValue.equals("[* TO 0] OR MemphisInv:[* TO 0]")) {
                 putToConditionMap("Availability", "Call");
-            } else if (fieldName.equals("InStock") && fieldValue.equals("1")) {
+            } else if (fieldName.equals("VWInv") && fieldValue.equals("[1 TO *] OR MemphisInv:[1 TO *]")) {
                 putToConditionMap("Availability", "In Stock");
             } else {
                 putToConditionMap(fieldName, fieldValue);

@@ -65,7 +65,7 @@ public class CategoryService {
     public List<String> getIMSManufacturers(String catcode, String category, String subcategory, String className, String subclass) {
         List<String> filters = new ArrayList<String>();
         if (StringUtils.isNotBlank(catcode)) {
-            filters.add(String.format("CatCode: %s", catcode));
+            filters.add(String.format("IMSCatCode: %s", catcode));
         }
         if (StringUtils.isNotBlank(category)) {
             filters.add(String.format("Category: \"%s\"", category));
