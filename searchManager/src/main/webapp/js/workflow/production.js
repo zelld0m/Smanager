@@ -231,7 +231,7 @@
 		};		
 		
 		var getForProductionListWithPaging = function(filterBy, pageNum, callback){
-			var maxRowCount = 10;
+			var maxRowCount = 500;
 			DeploymentServiceJS.getDeployedRulesWithPaging(entityName, filterBy, pageNum, maxRowCount, {
 				callback:function(data){
 					var list = data.list;

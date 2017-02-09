@@ -537,7 +537,7 @@
 		};
 		
 		var getApprovalListWithPaging = function(pageNum){
-			var maxRowCount = 10;
+			var maxRowCount = 500;
 			DeploymentServiceJS.getApprovalListWithPaging(entityName, pageNum, maxRowCount, {
 				callback:function(data){
 					var list = data.list;
