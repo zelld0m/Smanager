@@ -684,13 +684,13 @@ public abstract class AbstractSearchController implements InitializingBean, Disp
 						if (StringUtils.isNotBlank(paramValue)) {
 							String[] fields = paramValue.split(",");
 							for (String field : fields) {
-								if (StringUtils.equals(field, "*") || StringUtils.equals(field, storePrefix+SolrConstants.PRODUCT_ID)) {
+								if (StringUtils.equals(field, "*") || StringUtils.equals(field, SolrConstants.PRODUCT_ID)) {
 									includeEDP = true;
 									break;
 								}
 							}
 							if (!includeEDP) {
-								paramValue += ","+storePrefix+SolrConstants.PRODUCT_ID;
+								paramValue += ","+SolrConstants.PRODUCT_ID;
 							}
 						} else {
 							includeEDP = true;
