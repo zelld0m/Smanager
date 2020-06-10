@@ -27,7 +27,7 @@
 
         <!-- APACHE COMMONS VERSIONS -->
         <commons.attributes.version>2.1</commons.attributes.version>
-        <commons.beanutils.version>1.8.3</commons.beanutils.version>
+        <commons.beanutils.version>1.9.2</commons.beanutils.version>
         <commons.cli.version>1.2</commons.cli.version>
         <commons.codec.version>1.7</commons.codec.version>
         <commons.collections.version>3.2.1</commons.collections.version>
