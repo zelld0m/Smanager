@@ -60,7 +60,7 @@
         <jstl-version>1.2</jstl-version>
         
         <!-- UNIT TESTING VERSIONS -->
-        <junit-version>4.11</junit-version>
+        <junit-version>4.13.1</junit-version>
         <org.easymock-version>3.1</org.easymock-version>
         <org.powermock-version>1.5</org.powermock-version>
         
