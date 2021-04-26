@@ -35,7 +35,7 @@
         <commons.digester.version>2.1</commons.digester.version>
         <commons.fileupload.version>1.2.1</commons.fileupload.version>
         <commons.httpclient.version>3.0</commons.httpclient.version>
-        <commons.io.version>2.1</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <commons.lang.version>2.6</commons.lang.version>
         <commons.pool.version>1.2</commons.pool.version>
 
