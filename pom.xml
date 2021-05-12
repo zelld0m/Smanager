@@ -73,7 +73,7 @@
         <slf4j.version>1.6.6</slf4j.version>
         
         <!-- SOLR VERSION -->
-        <solr.version>4.3.0</solr.version>
+        <solr.version>8.8.2</solr.version>
 
         <!-- SPRING FRAMEWORK VERSION -->
         <spring.version>3.0.5.RELEASE</spring.version>
