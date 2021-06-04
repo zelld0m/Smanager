@@ -28,7 +28,7 @@
         <dwr.version>3.0.0-rc3-SNAPSHOT</dwr.version>
 
         <!-- HTTP COMPONENTS VERSION -->
-        <httpcomponents.version>4.2.3</httpcomponents.version>
+        <httpcomponents.version>4.5.13</httpcomponents.version>
 
         <!-- JACKSON VERSION -->
         <jackson.version>1.7.7</jackson.version>
