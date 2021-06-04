@@ -55,7 +55,7 @@
         <hsqldb.version>1.8.0.10</hsqldb.version>
 
         <!-- APACHE HTTP COMPONENTS VERSION -->
-        <httpcomponents.version>4.2.4</httpcomponents.version>
+        <httpcomponents.version>4.5.13</httpcomponents.version>
 
         <!-- JAVA SIMPLE MONITORING API VERSION -->
         <javasimon.version>3.3.0</javasimon.version>
