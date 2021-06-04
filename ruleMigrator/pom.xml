@@ -99,7 +99,7 @@
         <commons-configuration-version>1.6</commons-configuration-version>
         
         <!-- HTTP COMPONENTS VERSION -->
-        <org.apache.httpcomponents-version>4.2.3</org.apache.httpcomponents-version>
+        <org.apache.httpcomponents-version>4.5.13</org.apache.httpcomponents-version>
         
         <!-- CGLIB VERSION -->
         <cglib-version>2.2</cglib-version>
