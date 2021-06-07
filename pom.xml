@@ -66,7 +66,7 @@
         <json.version>2.4</json.version>
 
         <!-- LOGBACK -->
-        <logback.version>1.0.13</logback.version>
+        <logback.version>1.2.0</logback.version>
         <logback.ext.version>0.1.1</logback.ext.version>
         
         <!-- LOGGING VERSIONS -->
