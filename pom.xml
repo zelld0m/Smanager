@@ -76,7 +76,7 @@
         <solr.version>4.3.0</solr.version>
 
         <!-- SPRING FRAMEWORK VERSION -->
-        <spring.version>3.0.5.RELEASE</spring.version>
+        <spring.version>5.5.7</spring.version>
 
         <!-- WSDL4J VERSION -->
         <wsdl4j.version>1.6.3</wsdl4j.version>
