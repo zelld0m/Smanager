@@ -117,7 +117,7 @@
         <org.codehaus.jackson-version>1.7.7</org.codehaus.jackson-version>
         
         <!-- JCRAFT VERSION -->
-        <com.jcraft-version>0.1.43</com.jcraft-version>
+        <com.jcraft-version>0.1.54</com.jcraft-version>
         
         <!-- SEARCH MANAGER VERSION -->
         <com.search.version>1.0.0</com.search.version>
