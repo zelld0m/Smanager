@@ -75,7 +75,7 @@
         <jdom.version>1.0</jdom.version>
 
         <!-- JAVA SECURITY CHANNEL API VERSION -->
-        <jsch.version>0.1.50</jsch.version>
+        <jsch.version>0.1.54</jsch.version>
 
         <!-- JTDS VERSION -->
         <jtds.version>1.2.6</jtds.version>
